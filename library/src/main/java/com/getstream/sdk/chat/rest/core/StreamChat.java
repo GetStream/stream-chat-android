@@ -31,6 +31,10 @@ public class StreamChat {
         this.apiKey = apiKey;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void setUser(User user, String userToken) {
         this.userToken = userToken;
         this.user = user;

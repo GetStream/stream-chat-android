@@ -129,9 +129,6 @@ public class MediaSourceProvider {
         @Nullable
         public final String looseComparisonRegex;
 
-        /**
-         * @deprecated Use {@link #SourceTypeBuilder(MediaSourceBuilder, String, String, String)}
-         */
         @Deprecated
         public SourceTypeBuilder(@NonNull MediaSourceBuilder builder, @NonNull String extension, @Nullable String looseComparisonRegex) {
             this(builder, null, extension, looseComparisonRegex);

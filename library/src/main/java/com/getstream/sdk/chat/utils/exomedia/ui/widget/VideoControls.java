@@ -295,13 +295,6 @@ public abstract class VideoControls extends RelativeLayout implements VideoContr
         updateTextContainerVisibility();
     }
 
-    /**
-     * Sets the description text to display for the current item in playback.  This will be displayed
-     * as the third line of text and unlike the {@link #setTitle(CharSequence)} and {@link #setSubTitle(CharSequence)}
-     * this text wont be limited to a single line of text
-     *
-     * @param description The artist to display
-     */
     public void setDescription(@Nullable CharSequence description) {
         descriptionTextView.setText(description);
         updateTextContainerVisibility();

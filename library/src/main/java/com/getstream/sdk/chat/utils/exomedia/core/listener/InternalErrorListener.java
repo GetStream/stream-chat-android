@@ -16,16 +16,6 @@
 
 package com.getstream.sdk.chat.utils.exomedia.core.listener;
 
-import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.ExoMediaPlayer;
-
-/**
- * A listener for internal errors.
- * <p>
- * These errors are not visible to the user, and hence this listener is provided for
- * informational purposes only. Note however that an internal error may cause a fatal
- * error if the player fails to recover. If this happens, {@link ExoPlayerListener#onError(ExoMediaPlayer, Exception)}
- * will be invoked.
- */
 public interface InternalErrorListener {
     void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs);
 

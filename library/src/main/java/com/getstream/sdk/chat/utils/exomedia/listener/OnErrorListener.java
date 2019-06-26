@@ -21,15 +21,5 @@ package com.getstream.sdk.chat.utils.exomedia.listener;
  * has been an error during an asynchronous operation.
  */
 public interface OnErrorListener {
-    /**
-     * Called to indicate an error has occurred. In the case that the error was
-     * caused by the Native {@link android.media.MediaPlayer} <code>e</code> should
-     * be of the type {@link com.getstream.sdk.chat.utils.exomedia.core.exception.NativeMediaPlaybackException}
-     * while all other exceptions will be provided by the {@link com.google.android.exoplayer2.ExoPlayer}
-     * implementation directly.
-     *
-     * @param e The {@link Exception} that caused or describes the error
-     * @return True if the method handled the error, false if it didn't.
-     */
     boolean onError(Exception e);
 }

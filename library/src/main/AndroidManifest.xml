@@ -8,8 +8,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application
-        android:name=".BaseApplication">
+    <application>
         <activity android:name=".view.activity.ChatActivity" />
         <activity android:name=".view.activity.AttachmentMediaActivity" />
         <activity android:name=".view.activity.AttachmentDocumentActivity" />

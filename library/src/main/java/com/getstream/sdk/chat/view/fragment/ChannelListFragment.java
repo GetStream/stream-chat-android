@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
@@ -127,6 +128,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         webSocketService.setWSResponseHandler(this);
         urlSessionService = new URLSessionService();
         urlSessionService.setUrlSessionHandler(this);
+        Fresco.initialize(getContext());
         connectionCheck();
         permissionCheck();
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
@@ -282,6 +284,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
             if (!TextUtils.isEmpty(event.getConnection_id()) && TextUtils.isEmpty(Global.streamChat.getClientID())) {
                 String connectionId = event.getConnection_id();
+                if (event.getMe() != null) Global.streamChat.setUser(event.getMe());
                 Global.streamChat.setClientID(connectionId);
                 Log.d(TAG, "Client ID : " + connectionId);
                 getChannels();

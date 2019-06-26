@@ -16,6 +16,7 @@
 
 package com.getstream.sdk.chat.utils.exomedia.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -109,6 +110,7 @@ public class ResourceUtil {
      * @param drawableResourceId The id for the drawable to retrieve
      * @return The drawable associated with <code>resourceId</code>
      */
+    @SuppressLint("RestrictedApi")
     public static Drawable getDrawable(Context context, @DrawableRes int drawableResourceId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return context.getResources().getDrawable(drawableResourceId, context.getTheme());

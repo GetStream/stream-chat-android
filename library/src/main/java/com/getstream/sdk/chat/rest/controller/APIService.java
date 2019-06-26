@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.controller;
 
+import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
@@ -12,12 +13,15 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.apimodel.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 
 import org.json.JSONObject;
 
 import okhttp3.MultipartBody;
+import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -29,6 +33,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APIService {
+    // region Channel
     @GET("/channels")
     Call<GetChannelsResponse> getChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
@@ -38,6 +43,15 @@ public interface APIService {
     @POST("/channels/messaging/{id}/query")
     Call<ChannelResponse> pagination(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body PaginationRequest request);
 
+    // endregion
+
+    // region User
+    @GET("/users")
+    Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+
+    // endregion
+
+    // region Message
     @POST("/channels/messaging/{id}/message")
     Call<MessageResponse> sendMessage(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
 
@@ -72,4 +86,14 @@ public interface APIService {
     @Multipart
     @POST("/channels/messaging/{id}/file")
     Call<FileSendResponse> sendFile(@Path("id") String channlId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    // endregion
+
+    // region Device
+    @GET("/devices")
+    Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") JSONObject payload);
+
+    @POST("devices")
+    Call<Response> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
+
+    // endregion
 }
