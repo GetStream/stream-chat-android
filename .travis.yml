@@ -1,17 +1,20 @@
 language: android
-
-jdk:
-  - oraclejdk8
+jdk: oraclejdk8
+sudo: false
 
 android:
   components:
     - tools
-    - build-tools-27.0.2
+    - platform-tools
+    - build-tools-$ANDROID_BUILD_TOOLS
+    - android-$ANDROID_API
+    - android-22
     - extra-android-support
-    - extra-google-m2repository
-    - extra-android-m2repository
-licenses:
-    - 'android-sdk-license-.+'
+   
+  licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+
 
-before_install:
-  - yes | sdkmanager "platforms;android-27"
+before_install: 
+    - yes | sdkmanager "platforms;android-27"
