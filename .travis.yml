@@ -1,11 +1,17 @@
 language: android
-dist: trusty
+
+jdk:
+  - oraclejdk8
+
 android:
   components:
-    - build-tools-26.0.2
-    - android-26
-    - extra-google-google_play_services
+    - tools
+    - build-tools-27.0.2
+    - extra-android-support
     - extra-google-m2repository
     - extra-android-m2repository
-    - sys-img-x86-android-26
-    - sys-img-armeabi-v7a-android-17
+licenses:
+    - 'android-sdk-license-.+'
+
+before_install:
+  - yes | sdkmanager "platforms;android-27"
