@@ -7,7 +7,9 @@
 You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
 
 ## Installation
+
 ּּּּ- Step 1 Add repository into root build.gradle
+
   allprojects {
       repositories {
       ...
@@ -16,7 +18,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
       }
   }
  
- - Step 2 Add library dependency into app build.gradle
+- Step 2 Add library dependency into app build.gradle
  
   > See the jitpack badge above for the latest version number
   
