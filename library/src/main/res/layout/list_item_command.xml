@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="isCommand"
+            type="boolean" />
+
+        <variable
+            name="user"
+            type="com.getstream.sdk.chat.model.User" />
+
+        <variable
+            name="command"
+            type="com.getstream.sdk.chat.model.Command" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tv_initials"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/circle_message_user_initials"
+            android:gravity="center"
+            android:text="@{!isCommand?user.userInitials:null}"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:isGone="@{isCommand}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/cv_avatar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerCrop"
+            app:imageFromUrl="@{!isCommand?user.image:null}"
+            app:isGone="@{isCommand}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_command"
+            style="@style/text_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@{isCommand? command.name : user.name}"
+            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            style="@style/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@{command.args}"
+            app:isGone="@{!isCommand}"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_command"
+            app:layout_constraintStart_toEndOf="@+id/tv_command"
+            app:layout_constraintTop_toTopOf="@+id/tv_command" />
+
+        <TextView
+            android:id="@+id/tv_des"
+            style="@style/text_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="@{command.description}"
+            app:isGone="@{!isCommand}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_command" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

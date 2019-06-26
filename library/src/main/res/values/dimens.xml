@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Message Composer-->
+    <dimen name="composer_stroke_width">2dp</dimen>
+    <dimen name="composer_corner_radius">10dp</dimen>
+    <!--Message Item-->
+    <dimen name="message_corner_radius1">16dp</dimen>
+    <dimen name="message_corner_radius2">2dp</dimen>
+    <dimen name="message_stroke_width">1dp</dimen>
+    <dimen name="message_margin_start">47dp</dimen>
+    <dimen name="message_gap">5px</dimen>
+    <dimen name="message_avatar_margin">10dp</dimen>
+    <dimen name="message_date_margin">5dp</dimen>
+    <!--Attachment Item-->
+    <dimen name="attach_image_width">250dp</dimen>
+    <dimen name="attach_image_height">200dp</dimen>
+    <dimen name="attach_file_height">50dp</dimen>
+    <!--Reaction-->
+    <dimen name="reaction_corner_radius">12dp</dimen>
+    <!--Thread-->
+    <dimen name="thread_toolbar_radius">10dp</dimen>
+    <dimen name="user_avatar_margin_left">15dp</dimen>
+    <!--exomedia-->
+    <dimen name="exomedia_min_button_height">44dp</dimen>
+    <dimen name="exomedia_leanback_ripple_selector_size">90dp</dimen>
+    <dimen name="exomedia_leanback_controls_height">64dp</dimen>
+    <dimen name="exomedia_leanback_controls_bottom_margin">64dp</dimen>
+    <dimen name="exomedia_leanback_controls_horizontal_margin">132dp</dimen>
+</resources>

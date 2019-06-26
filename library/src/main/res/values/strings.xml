@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">GetStreamChatSDK</string>
+
+    <string name="today">TODAY</string>
+    <string name="yesterday">YESTERDAY</string>
+    <string name="hint_enter_a_message">Type a message…</string>
+    <!--Chat-->
+    <string name="no_connection">Connection failure, reconnecting now&#8230;</string>
+    <string name="command_title">Commands matching</string>
+    <string name="mention_title">Searching for people</string>
+    <!-- Menu actions -->
+    <string name="action_create_channel">Create channel</string>
+
+    <!-- Message Status -->
+    <string name="delete_message">This message was deleted.</string>
+    <string name="message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
+    <string name="message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
+    <!--Thread-->
+    <string name="reply_count">%d reply.</string>
+    <string name="replies_count">%d replies.</string>
+    <!--Chat Screen-->
+    <string name="title_media">Select your photo or video</string>
+    <string name="title_file">Select your file</string>
+</resources>

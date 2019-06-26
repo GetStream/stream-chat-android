@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#2196F3</color>
+
+    <!--Default-->
+    <color name="gray">#ebebeb</color>
+    <color name="gray_light">#e8e8e8</color>
+    <color name="gray_transparent">#a6efefef</color>
+    <color name="gray_dark">#858585</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <!--Message Composer-->
+    <color name="composer_stroke_select">#0076FF</color>
+    <color name="chat_no_connection">#1AD0021B</color>
+    <!--Message Item-->
+    <color name="backgroundIncoming">#FFFFFF</color>
+    <color name="backgroundOutgoing">#0D000000</color>
+    <color name="mesage_border">#14000000</color>
+    <color name="message_failed">#1AD0021B</color>
+    <!--Reaction-->
+    <color name="reaction_background">#1B1B1B</color>
+    <!--More Action-->
+    <color name="destroy">#e94f4f</color>
+    <color name="fileTitle">#026DFE</color>
+    <color name="attach_more">#4D000000</color>
+    <!--Attachment file-->
+    <color name="attachment_close">#80FFFFFF</color>
+    <!--exomedia-->
+    <color name="exomedia_default_controls_button_normal">#FFFFFFFF</color>
+    <color name="exomedia_default_controls_button_pressed">#FFE0E0E0</color>
+    <color name="exomedia_default_controls_button_disabled">#FF757575</color>
+    <!--ONLY_FOR_DEBUG-->
+    <color name="gap_header">#FE0909</color>
+    <color name="gap_reaction">#0971FE</color>
+    <color name="gap_message">#673AB7</color>
+    <color name="gap_media_file">#00FF00</color>
+    <color name="gap_attach">#FFEB3B</color>
+</resources>
