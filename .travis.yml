@@ -1,3 +1,11 @@
-language: java
-jdk:
-  - oraclejdk8
+language: android
+dist: trusty
+android:
+  components:
+    - build-tools-26.0.2
+    - android-26
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - sys-img-x86-android-26
+    - sys-img-armeabi-v7a-android-17
