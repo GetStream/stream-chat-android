@@ -70,7 +70,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/colorPrimary"
+            android:background="@color/colorPrimary"
             android:minHeight="@dimen/exomedia_leanback_controls_height">
 
             <TextView

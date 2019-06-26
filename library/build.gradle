@@ -6,8 +6,9 @@ group='com.github.GetStream'
 android {
     compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
+        vectorDrawables.useSupportLibrary = true
     }
 
     dataBinding {
@@ -53,4 +54,10 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
+    // JWT TOKEN
+    api 'io.jsonwebtoken:jjwt-api:0.10.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.10.5'
+    runtimeOnly('io.jsonwebtoken:jjwt-orgjson:0.10.5') {
+        exclude group: 'org.json', module: 'json'
+    }
 }

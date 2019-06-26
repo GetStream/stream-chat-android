@@ -9,8 +9,12 @@ import com.getstream.sdk.chat.utils.Global;
 
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class StreamChat {
 
@@ -33,6 +37,14 @@ public class StreamChat {
         Global.streamChat = this;
     }
 
+    public String creatUserToken(String secretKey, String userId) {
+        Map map = new HashMap<String, Object>();
+        map.put("type", "JWT");
+        Date date = new Date();
+
+        long time = date.getTime() / 1000;
+        return Jwts.builder().claim("user_id", userId).claim("iat", time).signWith(SignatureAlgorithm.HS256, secretKey.getBytes()).setHeader(map).compact();
+    }
 
     public User getUser() {
         return user;
