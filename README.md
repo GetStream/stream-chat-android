@@ -8,24 +8,37 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 ## Installation
 
-ּּּּ- Step 1 Add repository into root build.gradle
+- **Step 1** Add repository into root build.gradle
 
-  allprojects {
-      repositories
-      ...
-      maven {
-          url 'https://jitpack.io' }
-      }
-  }
- 
-- Step 2 Add library dependency into app build.gradle
- 
-  > See the jitpack badge above for the latest version number
-  
-  dependencies {
+~~~gradle
+allprojects {
+    repositories {
+    ...
+    maven {
+        url 'https://jitpack.io' }
+    }
+}
+~~~
+
+- **Step 2** Add library dependency into app build.gradle
+
+> See the jitpack badge above for the latest version number
+
+~~~gradle
+android {
+    ...
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+dependencies {
     implementation 'com.github.getstream:stream-chat-android:<latest-version>'
-  }
-  
+}
+~~~
 ```bash
 ```
 
