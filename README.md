@@ -11,6 +11,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 ## Documentation
 
+TODO - Swift Chat Tutorial page
 [Official API Docs](https://getstream.io/chat/docs)
 
 ## Supported features
