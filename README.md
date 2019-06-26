@@ -11,7 +11,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 ּּּּ- Step 1 Add repository into root build.gradle
 
   allprojects {
-      repositories {
+      repositories
       ...
       maven {
           url 'https://jitpack.io' }
