@@ -48,6 +48,7 @@ import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.model.message.SelectAttachmentModel;
@@ -236,17 +237,27 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-        // Last Active
-        User opponent = Global.getOpponentUser(channelResponse);
-        if (opponent != null) {
-            if (TextUtils.isEmpty(Global.differentTime(opponent.getLast_active())))
-                binding.tvActive.setVisibility(View.GONE);
-            else {
-                binding.tvActive.setVisibility(View.VISIBLE);
-                binding.tvActive.setText(Global.differentTime(opponent.getLast_active()));
+
+        if (!TextUtils.isEmpty(channel.getName())) {
+            binding.tvChannelInitial.setText(channel.getInitials());
+            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImageURL());
+            if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
+                binding.tvChannelInitial.setVisibility(View.INVISIBLE);
+            } else {
+                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
+                binding.tvChannelInitial.setVisibility(View.VISIBLE);
             }
         } else {
-            binding.tvActive.setVisibility(View.GONE);
+            User opponent = Global.getOpponentUser(channelResponse);
+            if (opponent != null) {
+                Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
+                binding.tvChannelInitial.setVisibility(View.INVISIBLE);
+                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvChannelInitial.setVisibility(View.VISIBLE);
+                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

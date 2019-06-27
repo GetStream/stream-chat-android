@@ -31,9 +31,6 @@ public final class Constant {
     public static final int USER_LIMIT = 30;
 
     // Channel
-    public static final String CHANNEL_NAME_DEFAULT = "CHANNEL_NAME_DEFAULT";
-    public static final String CHANNEL_IMAGE_DEFAULT = "CHANNEL_IMAGE_DEFAULT";
-
     public static final int TYPYING_CLEAN_INTERVAL = 15 * 1000;
     // Permission Code
     public static final int SELECT_PICTURE_REQUEST_CODE = 1001;
@@ -48,8 +45,8 @@ public final class Constant {
     // Command
     public static final String COMMAND_GIPHY = "giphy";
     public static final String COMMAND_IMGUR = "imgur";
-    public static final String COMMAND_BAN =   "ban";
-    public static final String COMMAND_FLAG  = "flag";
+    public static final String COMMAND_BAN = "ban";
+    public static final String COMMAND_FLAG = "flag";
     // Error
     public static final String CONNECTION_ERROR = "Read error";
 

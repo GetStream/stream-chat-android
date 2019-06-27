@@ -179,10 +179,20 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 mLastFirstVisibleItem = firstVisibleItem;
             }
         });
-        binding.tvSend.setOnClickListener((View view) -> {
-            Intent intent = new Intent(getContext(), UsersActivity.class);
-            startActivityForResult(intent, Constant.USERSLISTACTIVITY_REQUEST);
+        binding.clHeader.setOnClickListener((View view) -> {
+            navigateUserList();
         });
+        binding.etSearch.setOnClickListener((View view) -> {
+            navigateUserList();
+        });
+        binding.tvSend.setOnClickListener((View view) -> {
+            navigateUserList();
+        });
+    }
+
+    private void navigateUserList() {
+        Intent intent = new Intent(getContext(), UsersActivity.class);
+        startActivityForResult(intent, Constant.USERSLISTACTIVITY_REQUEST);
     }
 
     public void setStreamChat() {

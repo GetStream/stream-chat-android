@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/cl_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -16,6 +15,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_active_mark"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:background="@drawable/circle_user_online"
+            app:layout_constraintEnd_toEndOf="@+id/view_user_avator"
+            app:layout_constraintStart_toEndOf="@+id/view_user_avator"
+            app:layout_constraintTop_toTopOf="@+id/view_user_avator" />
 
         <TextView
             android:id="@+id/tv_name"

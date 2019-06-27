@@ -82,5 +82,10 @@ public class UserListItemAdapter extends BaseAdapter {
             cv_avatar.setVisibility(View.INVISIBLE);
         }
         binding.tvName.setText(user.getName());
+
+        if(user.getOnline())
+            binding.ivActiveMark.setVisibility(View.VISIBLE);
+        else
+            binding.ivActiveMark.setVisibility(View.GONE);
     }
 }

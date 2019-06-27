@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 
 import com.getstream.sdk.chat.R;
@@ -51,6 +52,10 @@ public class UsersActivity extends AppCompatActivity {
         getUsers();
     }
 
+    public void onClickBackFinish(View v) {
+        finish();
+    }
+
     private void configChannelListView() {
         adapter = new UserListItemAdapter(this, users);
         binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
@@ -60,14 +65,42 @@ public class UsersActivity extends AppCompatActivity {
                 Utils.showMessage(UsersActivity.this, "No internet connection!");
         });
         binding.listUsers.setAdapter(adapter);
+
+        binding.listUsers.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (mLastFirstVisibleItem < firstVisibleItem) {
+                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
+                    if (view.getLastVisiblePosition() == users.size() - 1)
+                        getUsers();
+                }
+                if (mLastFirstVisibleItem > firstVisibleItem) {
+                    Log.d(TAG, "SCROLLING UP");
+                }
+                mLastFirstVisibleItem = firstVisibleItem;
+            }
+        });
     }
 
+    boolean isCalling;
+
     private void getUsers() {
-        if (isLastPage) return;
+        Log.d(TAG,"getUsers");
+        Log.d(TAG,"isLastPage: " + isLastPage);
+        Log.d(TAG,"isCalling: " + isCalling);
+        if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
+        isCalling = true;
         RestController.GetUsersCallback callback = (GetUsersResponse response) -> {
             binding.setShowMainProgressbar(false);
-
+            isCalling = false;
             if (response.getUsers().isEmpty()) {
                 Utils.showMessage(this, "There is no any active user(s)!");
                 return;
@@ -88,7 +121,7 @@ public class UsersActivity extends AppCompatActivity {
         };
         Global.mRestController.getUsers(getPayload(), callback, (String errMsg, int errCode) -> {
             binding.setShowMainProgressbar(false);
-
+            isCalling = false;
             Utils.showMessage(this, errMsg);
             Log.d(TAG, "Failed Get Channels : " + errMsg);
         });
@@ -104,10 +137,8 @@ public class UsersActivity extends AppCompatActivity {
         binding.setShowMainProgressbar(true);
 
         String channelId = Global.streamChat.getUser().getId() + "-" + user.getId();
-        String channelName = Constant.CHANNEL_NAME_DEFAULT;
-        String channelImage = Constant.CHANNEL_IMAGE_DEFAULT;
 
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, channelName, channelImage);
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, null, null);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
