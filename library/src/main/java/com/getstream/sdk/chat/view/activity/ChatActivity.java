@@ -15,6 +15,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
@@ -35,9 +36,11 @@ import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.model.message.MessageTagModel;
+import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendActionRequest;
+import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
@@ -99,6 +102,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         init();
         configDelivered();
         initUIs();
+        addDevice();
     }
 
     @Override
@@ -232,6 +236,18 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+        // Last Active
+        User opponent = Global.getOpponentUser(channelResponse);
+        if (opponent != null) {
+            if (TextUtils.isEmpty(Global.differentTime(opponent.getLast_active())))
+                binding.tvActive.setVisibility(View.GONE);
+            else {
+                binding.tvActive.setVisibility(View.VISIBLE);
+                binding.tvActive.setText(Global.differentTime(opponent.getLast_active()));
+            }
+        } else {
+            binding.tvActive.setVisibility(View.GONE);
+        }
     }
 
     private List<Message> messages() {
@@ -300,6 +316,17 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                 }, 500);
                 fVPosition = currentFirstVisible;
             }
+        });
+    }
+
+    void addDevice() {
+        Log.d(TAG, "DeviceId:" + Global.deviceId);
+        if (TextUtils.isEmpty(Global.deviceId)) return;
+        AddDeviceRequest request = new AddDeviceRequest();
+        Global.mRestController.addDevice(request, (AddDevicesResponse response) -> {
+            Log.d(TAG, "ADDED Device:");
+        }, (String errMsg, int errCode) -> {
+            Log.d(TAG, "Failed ADD Device:" + errMsg);
         });
     }
 
@@ -417,7 +444,8 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                     e.printStackTrace();
                 }
             } finally {
-                clearTyingUserHandler.postDelayed(runnableTypingClear, 1000 * 3);
+//                eventFunction.sendEvent(Event.typing_stop);
+                clearTyingUserHandler.postDelayed(runnableTypingClear, Constant.TYPYING_CLEAN_INTERVAL);
             }
         }
     };

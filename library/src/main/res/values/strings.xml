@@ -8,6 +8,7 @@
     <string name="no_connection">Connection failure, reconnecting now&#8230;</string>
     <string name="command_title">Commands matching</string>
     <string name="mention_title">Searching for people</string>
+    <string name="you">(you)</string>
     <!-- Menu actions -->
     <string name="action_create_channel">Create channel</string>
 

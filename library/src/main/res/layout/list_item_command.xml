@@ -16,6 +16,7 @@
         <variable
             name="command"
             type="com.getstream.sdk.chat.model.Command" />
+
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -34,8 +35,10 @@
             android:textSize="14sp"
             android:textStyle="bold"
             app:isGone="@{isCommand}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"
+            app:layout_constraintEnd_toEndOf="@+id/cv_avatar"
+            app:layout_constraintStart_toStartOf="@+id/cv_avatar"
+            app:layout_constraintTop_toTopOf="@+id/cv_avatar" />
 
         <ImageView
             android:id="@+id/cv_avatar"
@@ -43,10 +46,11 @@
             android:layout_height="30dp"
             android:layout_margin="5dp"
             android:scaleType="centerCrop"
-            app:imageFromUrl="@{!isCommand?user.image:null}"
+            app:circleImageFromUrl="@{!isCommand?user.image:null}"
             app:isGone="@{isCommand}"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_command"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_command"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -64,8 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@{command.args}"
-            app:isGone="@{!isCommand}"
+            android:text="@{isCommand? command.args : user.me ? @string/you : null}"
             app:layout_constraintBottom_toBottomOf="@+id/tv_command"
             app:layout_constraintStart_toEndOf="@+id/tv_command"
             app:layout_constraintTop_toTopOf="@+id/tv_command" />
@@ -83,5 +86,6 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_command" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

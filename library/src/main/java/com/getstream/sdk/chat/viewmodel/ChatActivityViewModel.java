@@ -6,6 +6,7 @@ import android.databinding.ObservableField;
 
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
+import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class ChatActivityViewModel extends ViewModel {
 
     public boolean isOnline() {
         try {
-            if (channelResponse.getMembers().size() > 1)
+            if (Global.getOpponentUser(channelResponse) == null)
                 return false;
-            else if (channelResponse.getMembers().size() == 1)
-                return channelResponse.getMembers().get(0).getUser().getOnline();
+
+            return Global.getOpponentUser(channelResponse).getOnline();
         } catch (Exception e) {
             e.printStackTrace();
         }

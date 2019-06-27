@@ -175,9 +175,56 @@ public class Global {
     public static boolean isCommandMessage(Message message) {
         return message.getText().startsWith("/");
     }
+
+    // Passed Time
+    public static String differentTime(String dateStr) {
+        if (TextUtils.isEmpty(dateStr)) return null;
+        Date lastActiveDate = null;
+        try {
+            lastActiveDate = messageDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Date dateTwo = new Date();
+        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
+        String differTime = "last active: " + TimeElapsed(timeDiff) + " ago";
+        return differTime;
+    }
+
+    public static String TimeElapsed(long seconds) {
+        String elapsed;
+        if (seconds < 60) {
+            elapsed = "Just now";
+        } else if (seconds < 60 * 60) {
+            int minutes = (int) (seconds / 60);
+            elapsed = String.valueOf(minutes) + " " + ((minutes > 1) ? "mins" : "min");
+        } else if (seconds < 24 * 60 * 60) {
+            int hours = (int) (seconds / (60 * 60));
+            elapsed = String.valueOf(hours) + " " + ((hours > 1) ? "hours" : "hour");
+        } else {
+            int days = (int) (seconds / (24 * 60 * 60));
+            elapsed = String.valueOf(days) + " " + ((days > 1) ? "days" : "day");
+        }
+        return elapsed;
+    }
     // endregion
 
     // region Channel
+    public static ChannelResponse getPrivateChannel(User user) {
+        String channelId1 = streamChat.getUser().getId() + "-" + user.getId();
+        String channelId2 = user.getId() + "-" + streamChat.getUser().getId();
+        ChannelResponse channelResponse = null;
+        for (ChannelResponse response : channels) {
+            if (response.getChannel().getId().equals(channelId1) || response.getChannel().getId().equals(channelId2)) {
+                channelResponse = response;
+                break;
+            }
+        }
+        return channelResponse;
+    }
+
     public static void addChannelResponse(ChannelResponse response) {
         boolean isContain = false;
         for (ChannelResponse response1 : channels) {
@@ -190,19 +237,21 @@ public class Global {
             channels.add(response);
     }
 
-    public static String getOpponentId(ChannelResponse channelResponse) {
-        String opponentId = null;
+    public static User getOpponentUser(ChannelResponse channelResponse) {
+        if (channelResponse.getMembers() == null || channelResponse.getMembers().isEmpty())
+            return null;
+        if (channelResponse.getMembers().size() > 2) return null;
+        User opponent = null;
         try {
-            String[] userIds = channelResponse.getChannel().getId().split("-");
-            for (String userId : userIds) {
-                if (!userId.equals(streamChat.getUser().getId())) {
-                    opponentId = userId;
+            for (Member member : channelResponse.getMembers()) {
+                if (!member.getUser().getId().equals(streamChat.getUser().getId())) {
+                    opponent = member.getUser();
                     break;
                 }
             }
         } catch (Exception e) {
         }
-        return opponentId;
+        return opponent;
     }
 
     // endregion

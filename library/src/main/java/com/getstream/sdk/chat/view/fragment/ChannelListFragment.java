@@ -4,6 +4,7 @@ import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -51,10 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class ChannelListFragment extends Fragment implements WebSocketService.WSResponseHandler {
 
     final String TAG = ChannelListFragment.class.getSimpleName();
@@ -69,6 +66,8 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
     EventFunction eventFunction = new EventFunction();
     boolean isLastPage = false;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
 
     public static ChannelListFragment newInstance() {
         return new ChannelListFragment();
@@ -147,7 +146,9 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         Fresco.initialize(getContext());
         connectionCheck();
         permissionCheck();
-        addDevice();
+
+        pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
 
@@ -192,21 +193,6 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         }
         streamChat.wsConnection = webSocketService;
         streamChat.setupWebSocket();
-    }
-
-    void addDevice() {
-        AddDeviceRequest request = new AddDeviceRequest();
-        Global.mRestController.addDevice(request, new Callback() {
-            @Override
-            public void onResponse(Call call, Response response) {
-                Log.d(TAG, "ADDED Device:" + response.message());
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                Log.d(TAG, "Failed ADD Device:" + t);
-            }
-        });
     }
 
     boolean isCalling;

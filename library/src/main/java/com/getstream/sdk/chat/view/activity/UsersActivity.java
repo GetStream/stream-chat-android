@@ -95,6 +95,12 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void getChannel(User user) {
+
+        if (Global.getPrivateChannel(user) != null) {
+            navigateChatActivity(Global.getPrivateChannel(user));
+            return;
+        }
+
         binding.setShowMainProgressbar(true);
 
         String channelId = Global.streamChat.getUser().getId() + "-" + user.getId();
@@ -118,6 +124,7 @@ public class UsersActivity extends AppCompatActivity {
         RestController.ChannelDetailCallback callback = (ChannelResponse response) -> {
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
+            Global.addChannelResponse(response);
             navigateChatActivity(response);
         };
         Global.mRestController.channelDetailWithID(channel.getId(), request, callback, (String errMsg, int errCode) -> {
@@ -144,7 +151,6 @@ public class UsersActivity extends AppCompatActivity {
 
     private void navigateChatActivity(ChannelResponse response) {
         Global.channelResponse = response;
-        Global.addChannelResponse(response);
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", true);
         setResult(Activity.RESULT_OK, returnIntent);

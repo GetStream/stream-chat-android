@@ -110,15 +110,28 @@ public class ChannelListItemAdapter extends BaseAdapter {
 
     private void configChannelInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
         Channel channel = channelResponse.getChannel();
-        binding.tvInitials.setText(channel.getInitials());
-        binding.tvName.setText(channel.getName());
-        if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+        if (!TextUtils.isEmpty(channel.getName())) {
+            binding.tvInitials.setText(channel.getInitials());
+            binding.tvName.setText(channel.getName());
             Utils.circleImageLoad(binding.ivAvatar, channel.getImageURL());
-            binding.ivAvatar.setVisibility(View.VISIBLE);
-            binding.tvInitials.setVisibility(View.INVISIBLE);
+            if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+                binding.ivAvatar.setVisibility(View.VISIBLE);
+                binding.tvInitials.setVisibility(View.INVISIBLE);
+            } else {
+                binding.ivAvatar.setVisibility(View.INVISIBLE);
+                binding.tvInitials.setVisibility(View.VISIBLE);
+            }
         } else {
-            binding.tvInitials.setVisibility(View.VISIBLE);
-            binding.ivAvatar.setVisibility(View.INVISIBLE);
+            User opponent = Global.getOpponentUser(channelResponse);
+            if (opponent != null) {
+                Utils.circleImageLoad(binding.ivAvatar, opponent.getImage());
+                binding.tvName.setText(opponent.getName());
+                binding.tvInitials.setVisibility(View.INVISIBLE);
+                binding.ivAvatar.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvInitials.setVisibility(View.VISIBLE);
+                binding.ivAvatar.setVisibility(View.INVISIBLE);
+            }
         }
     }
 

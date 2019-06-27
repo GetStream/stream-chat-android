@@ -33,6 +33,8 @@ public final class Constant {
     // Channel
     public static final String CHANNEL_NAME_DEFAULT = "CHANNEL_NAME_DEFAULT";
     public static final String CHANNEL_IMAGE_DEFAULT = "CHANNEL_IMAGE_DEFAULT";
+
+    public static final int TYPYING_CLEAN_INTERVAL = 15 * 1000;
     // Permission Code
     public static final int SELECT_PICTURE_REQUEST_CODE = 1001;
     public static final int CAPTURE_IMAGE_REQUEST_CODE = 1002;

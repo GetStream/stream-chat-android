@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.rest.apimodel.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
@@ -405,17 +406,17 @@ public class RestController {
 
     // region Device
 
-    public void addDevice(final AddDeviceRequest request, final Callback callback) {
+    public void addDevice(final AddDeviceRequest request, final AddDeviceCallback callback, final ErrCallback errCallback) {
 
-        mService.addDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<okhttp3.Response>() {
+        mService.addDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<AddDevicesResponse>() {
             @Override
-            public void onResponse(Call<okhttp3.Response> call, Response<okhttp3.Response> response) {
-                callback.onResponse(call, response);
+            public void onResponse(Call<AddDevicesResponse> call, Response<AddDevicesResponse> response) {
+                callback.onSuccess(response.body());
             }
 
             @Override
-            public void onFailure(Call<okhttp3.Response> call, Throwable t) {
-                callback.onFailure(call, t);
+            public void onFailure(Call<AddDevicesResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -465,6 +466,10 @@ public class RestController {
 
     public interface GetUsersCallback {
         void onSuccess(GetUsersResponse response);
+    }
+
+    public interface AddDeviceCallback {
+        void onSuccess(AddDevicesResponse response);
     }
 
     public interface GetDevicesCallback {

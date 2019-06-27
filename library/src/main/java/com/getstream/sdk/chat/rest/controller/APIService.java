@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.rest.apimodel.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
@@ -97,7 +98,7 @@ public interface APIService {
     Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map<String, String> body);
 
     @POST("devices")
-    Call<Response> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
+    Call<AddDevicesResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
 
     // endregion
 }

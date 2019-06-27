@@ -2,11 +2,11 @@ package com.getstream.sdk.chat.function;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.model.Device;
+import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.message.Attachment;
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageFunction {
+
     private final String TAG = MessageFunction.class.getSimpleName();
     private ChannelResponse channelResponse;
 
@@ -91,11 +92,11 @@ public class MessageFunction {
     }
 
     private void sendNotification(String text) {
-        String opponetId = Global.getOpponentId(channelResponse);
-        if (TextUtils.isEmpty(opponetId)) return;
+        User opponet = Global.getOpponentUser(channelResponse);
+        if (opponet == null) return;
 
         Map<String, String> map = new HashMap<>();
-        map.put("user_id", Global.getOpponentId(channelResponse));
+        map.put("user_id", Global.getOpponentUser(channelResponse).getId());
         Global.mRestController.getDevices(map, (GetDevicesResponse response) -> {
             List<Device> devices = response.getDevices();
             Log.d(TAG, "Devices: " + devices);
