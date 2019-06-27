@@ -58,7 +58,7 @@ User user = new User("USER ID", "USER NAME", "USER IMAGE");
 - **Set User**
 
 ~~~java
-String userToken = streamChat.creatUserToken(AppSecretKey.SECRET, userId);
+String userToken = streamChat.creatUserToken("API SECRET", "USER ID");
 streamChat.setUser(user, userToken);
 ~~~
 
