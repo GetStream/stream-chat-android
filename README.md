@@ -68,10 +68,10 @@ You can add getstream chat fragment in any Activity or Fragment
 
 ~~~xml
 <FrameLayout
-  android:fitsSystemWindows="true"
-  android:id="@+id/title_fragment"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent" />	
+    android:fitsSystemWindows="true"
+    android:id="@+id/title_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />	
 ~~~
 
 ## Documentation
