@@ -54,7 +54,6 @@ public class Global {
     public static Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
 
     public static String fcmserverkey;
-    public static User opponent;
 
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {

@@ -35,21 +35,69 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
 dependencies {
     implementation 'com.github.getstream:stream-chat-android:<latest-version>'
 }
 ~~~
-```bash
-```
+
+## Getting started
+
+- **Initialize client**
+
+~~~java
+StreamChat streamChat = new StreamChat("API KEY", "FIREBASE SERVER KEY");
+~~~
+
+- **Initialize User**
+
+~~~java
+User user = new User("USER ID", "USER NAME", "USER IMAGE");
+~~~
+
+- **Set User**
+
+~~~java
+String userToken = streamChat.creatUserToken(AppSecretKey.SECRET, userId);
+streamChat.setUser(user, userToken);
+~~~
+
+- **Adding GetStream Chat Fragment**
+
+You can add getstream chat fragment in any Activity or Fragment
+
+~~~xml
+<FrameLayout
+	android:fitsSystemWindows="true"
+	android:id="@+id/title_fragment"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" />	
+~~~
 
 ## Documentation
 
-TODO - Swift Chat Tutorial page
+TODO - Java Chat Tutorial page
 [Official API Docs](https://getstream.io/chat/docs)
 
 ## Supported features
 
-- TODO 
+- A group chat
+- Channel list
+- Reactions
+- A link preview
+- Attach images, videos or files
+- Commands (e.g. `/giphy`)
+- Edit a message
+- Typing events
+- Read events
+- Threads
+- Notifications
+- Opening a link in the internal browser
+- Image gallery
+- Supporting Gifs
+- Light/Dark styles
+- Style customization
+- UI customization
 
 ## Getting started
 
