@@ -20,6 +20,8 @@ import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 
 import org.json.JSONObject;
 
+import java.util.Map;
+
 import okhttp3.MultipartBody;
 import okhttp3.Response;
 import retrofit2.Call;
@@ -92,7 +94,7 @@ public interface APIService {
 
     // region Device
     @GET("/devices")
-    Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") JSONObject payload);
+    Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map<String, String> body);
 
     @POST("devices")
     Call<Response> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);

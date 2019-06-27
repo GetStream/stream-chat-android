@@ -27,8 +27,9 @@ public class StreamChat {
 
     public WebSocketService wsConnection;
 
-    public StreamChat(String apiKey) {
+    public StreamChat(String apiKey, String fcmServerKey) {
         this.apiKey = apiKey;
+        Global.fcmserverkey = fcmServerKey;
     }
 
     public void setUser(User user) {

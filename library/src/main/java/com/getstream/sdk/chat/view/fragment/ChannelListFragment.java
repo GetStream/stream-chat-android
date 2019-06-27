@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.model.channel.Event;
 import com.getstream.sdk.chat.rest.Parser;
+import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
@@ -49,6 +50,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChannelListFragment extends Fragment implements WebSocketService.WSResponseHandler {
 
@@ -129,7 +134,8 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 if (result) {
                     navigationChannel(Global.channelResponse);
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
     }
     //endregion
@@ -141,6 +147,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         Fresco.initialize(getContext());
         connectionCheck();
         permissionCheck();
+        addDevice();
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
 
@@ -185,6 +192,21 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         }
         streamChat.wsConnection = webSocketService;
         streamChat.setupWebSocket();
+    }
+
+    void addDevice() {
+        AddDeviceRequest request = new AddDeviceRequest();
+        Global.mRestController.addDevice(request, new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                Log.d(TAG, "ADDED Device:" + response.message());
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.d(TAG, "Failed ADD Device:" + t);
+            }
+        });
     }
 
     boolean isCalling;

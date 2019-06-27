@@ -53,6 +53,9 @@ public class Global {
     public static String deviceId;
     public static Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
 
+    public static String fcmserverkey;
+    public static User opponent;
+
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
         if (messages == null) return;
@@ -158,7 +161,7 @@ public class Global {
         if (response.getReads() == null || response.getReads().isEmpty()) return null;
         List<User> users = new ArrayList<>();
 
-        Log.d(TAG,"Read Users: " + response.getReads().size());
+        Log.d(TAG, "Read Users: " + response.getReads().size());
         for (int i = response.getReads().size() - 1; i >= 0; i--) {
             ChannelUserRead read = response.getReads().get(i);
             if (readMessage(read.getLast_read(), message.getCreated_at())) {
@@ -168,13 +171,14 @@ public class Global {
         }
         return users;
     }
-    public static boolean isCommandMessage(Message message){
+
+    public static boolean isCommandMessage(Message message) {
         return message.getText().startsWith("/");
     }
     // endregion
 
     // region Channel
-    public static void addChannelResponse(ChannelResponse response){
+    public static void addChannelResponse(ChannelResponse response) {
         boolean isContain = false;
         for (ChannelResponse response1 : channels) {
             if (response1.getChannel().getId().equals(response.getChannel().getId())) {
@@ -185,6 +189,22 @@ public class Global {
         if (!isContain)
             channels.add(response);
     }
+
+    public static String getOpponentId(ChannelResponse channelResponse) {
+        String opponentId = null;
+        try {
+            String[] userIds = channelResponse.getChannel().getId().split("-");
+            for (String userId : userIds) {
+                if (!userId.equals(streamChat.getUser().getId())) {
+                    opponentId = userId;
+                    break;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return opponentId;
+    }
+
     // endregion
 
     // region Message

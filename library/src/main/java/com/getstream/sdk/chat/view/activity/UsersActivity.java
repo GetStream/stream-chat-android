@@ -131,11 +131,8 @@ public class UsersActivity extends AppCompatActivity {
 
         Map<String, Object> sort = new HashMap<>();
         sort.put("created_at", -1);
-
         payload.put("filter_conditions", filter_conditions);
-
         payload.put("sort", Collections.singletonList(sort));
-
         if (users.size() > 0)
             payload.put("offset", users.size());
         payload.put("limit", Constant.USER_LIMIT);
@@ -145,7 +142,7 @@ public class UsersActivity extends AppCompatActivity {
         return json;
     }
 
-    private void navigateChatActivity(ChannelResponse response){
+    private void navigateChatActivity(ChannelResponse response) {
         Global.channelResponse = response;
         Global.addChannelResponse(response);
         Intent returnIntent = new Intent();

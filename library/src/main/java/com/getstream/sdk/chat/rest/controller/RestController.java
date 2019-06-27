@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.controller;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
@@ -15,6 +16,7 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.apimodel.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
@@ -22,6 +24,8 @@ import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONObject;
+
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -377,7 +381,7 @@ public class RestController {
             }
         });
     }
-    
+
     // region User
     public void getUsers(@NonNull JSONObject payload, final GetUsersCallback callback, final ErrCallback errCallback) {
 
@@ -397,7 +401,45 @@ public class RestController {
             }
         });
     }
-    // regionend
+    // endregion
+
+    // region Device
+
+    public void addDevice(final AddDeviceRequest request, final Callback callback) {
+
+        mService.addDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<okhttp3.Response>() {
+            @Override
+            public void onResponse(Call<okhttp3.Response> call, Response<okhttp3.Response> response) {
+                callback.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(Call<okhttp3.Response> call, Throwable t) {
+                callback.onFailure(call, t);
+            }
+        });
+    }
+
+    public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback, final ErrCallback errCallback) {
+        mService.getDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetDevicesResponse>() {
+            @Override
+            public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+
+    // endregion
 
     private void handleError(ResponseBody errBody, int errCode, ErrCallback errCallback) {
         if (errBody == null) {
@@ -420,11 +462,15 @@ public class RestController {
     public interface GetChannelsCallback {
         void onSuccess(GetChannelsResponse response);
     }
-    
+
     public interface GetUsersCallback {
         void onSuccess(GetUsersResponse response);
     }
-    
+
+    public interface GetDevicesCallback {
+        void onSuccess(GetDevicesResponse response);
+    }
+
     public interface ChannelDetailCallback {
         void onSuccess(ChannelResponse response);
     }
