@@ -12,7 +12,7 @@
         android:layout_height="20dp"
         android:background="@drawable/circle_message_user_initials"
         android:gravity="center"
-        android:textSize="11sp"
+        android:textSize="10sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

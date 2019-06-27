@@ -114,7 +114,8 @@ public class UsersActivity extends AppCompatActivity {
             }
 
             for (int i = 0; i < response.getUsers().size(); i++)
-                users.add(response.getUsers().get(i));
+                if (!response.getUsers().get(i).isMe())
+                    users.add(response.getUsers().get(i));
 
             adapter.notifyDataSetChanged();
             isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
@@ -166,11 +167,12 @@ public class UsersActivity extends AppCompatActivity {
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> filter_conditions = new HashMap<>();
-
+//        filter_conditions.put("presence",false);
         Map<String, Object> sort = new HashMap<>();
-        sort.put("created_at", -1);
+        sort.put("last_active", -1);
         payload.put("filter_conditions", filter_conditions);
         payload.put("sort", Collections.singletonList(sort));
+
         if (users.size() > 0)
             payload.put("offset", users.size());
         payload.put("limit", Constant.USER_LIMIT);

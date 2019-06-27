@@ -5,7 +5,6 @@ import android.util.Log;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +17,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Push {
+    private static final String TAG = Push.class.getSimpleName();
     public static void sendPushNotification2(String to, String title, String text) {
+
+//        to = "fbkC9EeZsDE:APA91bFwSVZqXhgUx1BCTNcIHMki-YYeSpIY9jpn7hEELwPjJd5UUIb7ppOVJweFrMSZ4sXmunPiSyssErqzs7Z4jhs76w8ROQMordfhGqcIpBtB0_Na-v72W9rqE_PtdFTzIYPB4ihh";
+        Log.d(TAG,"User Token:" + to);
         String url = "https://fcm.googleapis.com/fcm/send";
         Map<String, Object> body = new HashMap<>();
         body.put("title", title);
@@ -32,17 +35,17 @@ public class Push {
 
         String jsonStr = new JSONObject(notification).toString();
 
-        Log.d("PUSH", "Body : " + jsonStr);
+        Log.d(TAG, "Body : " + jsonStr);
         sendPushnotification(url, jsonStr);
 
     }
 
-    static public void sendPushnotification(String url, String params) {
+    public static void sendPushnotification(String url, String params) {
         final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, params);
 
         OkHttpClient client = new OkHttpClient();
-
+        Log.d(TAG,"Server Key: " + Global.fcmserverkey);
         final Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -51,24 +54,23 @@ public class Push {
                 .build();
 
 
-        Log.d("PUSH", "Push Notification sending...");
+        Log.d(TAG, "Push Notification sending...");
         Call call = client.newCall(request);
 
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                InputStream instream = response.body().byteStream();
                 try {
-                    Log.d("PUSH", "Sent Notification!");
+                    Log.d(TAG, response.message());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Log.d("PUSH", "Error : " + e.getLocalizedMessage());
+                    Log.d(TAG, "Error : " + e.getLocalizedMessage());
                 }
             }
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.d("PUSH", "Failure:" + e);
+                Log.d(TAG, "Failure:" + e);
             }
         });
     }

@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.model.channel.Event;
 import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
@@ -146,7 +147,6 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         Fresco.initialize(getContext());
         connectionCheck();
         permissionCheck();
-
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
@@ -291,6 +291,17 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         });
         binding.listChannels.setAdapter(adapter);
     }
+
+    void addDevice() {
+        Log.d(TAG, "DeviceId:" + Global.deviceId);
+        if (TextUtils.isEmpty(Global.deviceId)) return;
+        AddDeviceRequest request = new AddDeviceRequest();
+        Global.mRestController.addDevice(request, (AddDevicesResponse response) -> {
+            Log.d(TAG, "ADDED Device:");
+        }, (String errMsg, int errCode) -> {
+            Log.d(TAG, "Failed ADD Device:" + errMsg);
+        });
+    }
     //endregion
 
     // region Listners
@@ -323,6 +334,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 if (event.getMe() != null) Global.streamChat.setUser(event.getMe());
                 Global.streamChat.setClientID(connectionId);
                 Log.d(TAG, "Client ID : " + connectionId);
+                addDevice();
                 getChannels();
                 return;
             }

@@ -103,7 +103,6 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         init();
         configDelivered();
         initUIs();
-        addDevice();
     }
 
     @Override
@@ -250,9 +249,10 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
             }
         } else {
             User opponent = Global.getOpponentUser(channelResponse);
+            binding.tvChannelInitial.setText(opponent.getUserInitials());
             if (opponent != null) {
                 Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
-                binding.tvChannelInitial.setVisibility(View.INVISIBLE);
+                binding.tvChannelInitial.setVisibility(View.VISIBLE);
                 binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
             } else {
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
@@ -330,16 +330,6 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         });
     }
 
-    void addDevice() {
-        Log.d(TAG, "DeviceId:" + Global.deviceId);
-        if (TextUtils.isEmpty(Global.deviceId)) return;
-        AddDeviceRequest request = new AddDeviceRequest();
-        Global.mRestController.addDevice(request, (AddDevicesResponse response) -> {
-            Log.d(TAG, "ADDED Device:");
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, "Failed ADD Device:" + errMsg);
-        });
-    }
 
     public void onClickBackFinish(View v) {
         finish();

@@ -123,10 +123,11 @@ public class ChannelListItemAdapter extends BaseAdapter {
             }
         } else {
             User opponent = Global.getOpponentUser(channelResponse);
+            binding.tvInitials.setText(opponent.getUserInitials());
             if (opponent != null) {
                 Utils.circleImageLoad(binding.ivAvatar, opponent.getImage());
                 binding.tvName.setText(opponent.getName());
-                binding.tvInitials.setVisibility(View.INVISIBLE);
+                binding.tvInitials.setVisibility(View.VISIBLE);
                 binding.ivAvatar.setVisibility(View.VISIBLE);
             } else {
                 binding.tvInitials.setVisibility(View.VISIBLE);
