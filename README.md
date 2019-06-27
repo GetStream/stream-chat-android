@@ -43,10 +43,10 @@ dependencies {
 
 ## Getting started
 
-- **Initialize client**
+- **Initialize Client**
 
 ~~~java
-StreamChat streamChat = new StreamChat("API KEY", "FIREBASE SERVER KEY");
+StreamChat streamChat = new StreamChat("API KEY");
 ~~~
 
 - **Initialize User**
@@ -58,7 +58,7 @@ User user = new User("USER ID", "USER NAME", "USER IMAGE");
 - **Set User**
 
 ~~~java
-String userToken = streamChat.creatUserToken("API SECRET", "USER ID");
+String userToken = streamChat.createUserToken("API SECRET", "USER ID");
 streamChat.setUser(user, userToken);
 ~~~
 
