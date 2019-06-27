@@ -31,32 +31,32 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.rest.URLSessionService;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.activity.ChatActivity;
+import com.getstream.sdk.chat.view.activity.UsersActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChannelListFragment extends Fragment implements WebSocketService.WSResponseHandler, URLSessionService.URLSessionHandler {
+public class ChannelListFragment extends Fragment implements WebSocketService.WSResponseHandler {
 
     final String TAG = ChannelListFragment.class.getSimpleName();
 
     private ChannelListViewModel mViewModel;
     private FragmentChannelListBinding binding;
     private WebSocketService webSocketService;
-    private URLSessionService urlSessionService;
     private ChannelListItemAdapter adapter;
 
     public int containerResId;
@@ -120,14 +120,24 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         Log.d(TAG, "OnStart");
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data); comment this unless you want to pass your result to the activity.
+        if (requestCode == Constant.USERSLISTACTIVITY_REQUEST) {
+            try {
+                boolean result = data.getBooleanExtra("result", false);
+                if (result) {
+                    navigationChannel(Global.channelResponse);
+                }
+            }catch (Exception e){}
+        }
+    }
     //endregion
 
     // region Private Functions
     void init() {
         webSocketService = new WebSocketService();
         webSocketService.setWSResponseHandler(this);
-        urlSessionService = new URLSessionService();
-        urlSessionService.setUrlSessionHandler(this);
         Fresco.initialize(getContext());
         connectionCheck();
         permissionCheck();
@@ -160,6 +170,10 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 }
                 mLastFirstVisibleItem = firstVisibleItem;
             }
+        });
+        binding.tvSend.setOnClickListener((View view) -> {
+            Intent intent = new Intent(getContext(), UsersActivity.class);
+            startActivityForResult(intent, Constant.USERSLISTACTIVITY_REQUEST);
         });
     }
 
@@ -216,8 +230,11 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> filter_conditions = new HashMap<>();
         Map<String, Object> user_details = new HashMap<>();
+        Map<String, List<String>> filterOption = new HashMap<>();
 
+        filterOption.put("$in", Arrays.asList(Global.streamChat.getUser().getId()));
         filter_conditions.put("type", "messaging");
+        filter_conditions.put("members", filterOption);
 
         user_details.put("id", Global.streamChat.getUser().getId());
         user_details.put("name", Global.streamChat.getUser().getName());
@@ -228,6 +245,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         sort.put("direction", -1);
 
         payload.put("filter_conditions", filter_conditions);
+
         payload.put("sort", Collections.singletonList(sort));
         payload.put("user_details", user_details);
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
@@ -293,7 +311,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
             eventFunction.handleReceiveEvent(event);
 
-            switch (event.getType()){
+            switch (event.getType()) {
                 case Event.message_new:
                 case Event.message_read:
                     if (getActivity() != null)
@@ -301,14 +319,6 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                     break;
             }
         }
-    }
-
-    @Override
-    public void handleURLResponse(final ChannelResponse response) {
-        getActivity().runOnUiThread(() -> {
-            binding.setShowMainProgressbar(false);
-            navigationChannel(response);
-        });
     }
 
     void navigationChannel(ChannelResponse response) {

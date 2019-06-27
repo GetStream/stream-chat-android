@@ -49,6 +49,8 @@ public interface APIService {
     @GET("/users")
     Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
+    @POST("/channels/messaging/{id}")
+    Call<ChannelResponse> addMembers(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
     // endregion
 
     // region Message

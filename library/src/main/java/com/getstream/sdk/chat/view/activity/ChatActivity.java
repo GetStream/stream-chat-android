@@ -243,6 +243,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     }
 
     void configDelivered() {
+        if (messages() == null || messages().isEmpty()) return;
         if (!messages().get(messages().size() - 1).isIncoming())
             messages().get(messages().size() - 1).setDelivered(true);
     }
@@ -634,6 +635,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
 
     private void showAlertReadUsers(Message message) {
         List<User> readUsers = Global.getReadUsers(channelResponse, message);
+        if (readUsers == null) return;
         String msg = "";
         if (readUsers.size() > 0) {
             if (readUsers.size() == 1) msg = readUsers.get(0).getName();

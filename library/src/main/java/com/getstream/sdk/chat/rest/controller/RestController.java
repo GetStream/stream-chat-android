@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
@@ -39,7 +40,7 @@ public class RestController {
         Log.d(TAG, mService.toString());
     }
 
-    public void getChannels(@NonNull JSONObject payload, final RestController.GetChannelsCallback callback, final RestController.ErrCallback errCallback) {
+    public void getChannels(@NonNull JSONObject payload, final GetChannelsCallback callback, final ErrCallback errCallback) {
 
         mService.getChannels(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetChannelsResponse>() {
             @Override
@@ -155,7 +156,7 @@ public class RestController {
      * @param {string} messageID the message id needs to be specified
      * @return {object} Response that includes the message
      */
-    public void deleteMessage(@NonNull String messageId, final RestController.SendMessageCallback sendMessageCallback, final RestController.ErrCallback errCallback) {
+    public void deleteMessage(@NonNull String messageId, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
         mService.deleteMessage(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -179,7 +180,7 @@ public class RestController {
      *
      * @return {Promise} Description
      */
-    public void readMark(@NonNull String channelId, MarkReadRequest readRequest, final RestController.EventCallback eventCallback, final RestController.ErrCallback errCallback) {
+    public void readMark(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
 
         mService.readMark(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), readRequest).enqueue(new Callback<EventResponse>() {
             @Override
@@ -208,7 +209,7 @@ public class RestController {
      * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
      * @return {type} A channelResponse with a list of messages
      */
-    public void getReplies(@NonNull String parentId, final RestController.GetRepliesCallback callback, final RestController.ErrCallback errCallback) {
+    public void getReplies(@NonNull String parentId, final GetRepliesCallback callback, final ErrCallback errCallback) {
 
         mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<GetRepliesResponse>() {
             @Override
@@ -238,7 +239,7 @@ public class RestController {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final RestController.SendMessageCallback sendMessageCallback, final RestController.ErrCallback errCallback) {
+    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
         mService.sendReaction(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -265,7 +266,7 @@ public class RestController {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final RestController.SendMessageCallback sendMessageCallback, final RestController.ErrCallback errCallback) {
+    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
         mService.deleteReaction(messageId, reactionType, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -376,8 +377,26 @@ public class RestController {
             }
         });
     }
-    // region Action
+    
+    // region User
+    public void getUsers(@NonNull JSONObject payload, final GetUsersCallback callback, final ErrCallback errCallback) {
 
+        mService.getUsers(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetUsersResponse>() {
+            @Override
+            public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUsersResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
     // regionend
 
     private void handleError(ResponseBody errBody, int errCode, ErrCallback errCallback) {
@@ -401,7 +420,11 @@ public class RestController {
     public interface GetChannelsCallback {
         void onSuccess(GetChannelsResponse response);
     }
-
+    
+    public interface GetUsersCallback {
+        void onSuccess(GetUsersResponse response);
+    }
+    
     public interface ChannelDetailCallback {
         void onSuccess(ChannelResponse response);
     }

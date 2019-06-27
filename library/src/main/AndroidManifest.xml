@@ -9,9 +9,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application>
+        <activity android:name=".view.activity.UsersActivity"></activity>
         <activity android:name=".view.activity.ChatActivity" />
         <activity android:name=".view.activity.AttachmentMediaActivity" />
         <activity android:name=".view.activity.AttachmentDocumentActivity" />
         <activity android:name=".view.activity.AttachmentActivity" />
     </application>
+
 </manifest>

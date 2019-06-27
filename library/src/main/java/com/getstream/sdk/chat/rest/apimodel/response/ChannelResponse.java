@@ -70,6 +70,7 @@ public class ChannelResponse {
     }
 
     public User getLastReadUser() {
+        if (this.reads == null || this.reads.isEmpty()) return null;
         User lastReadUser = null;
         try {
             if (!isSorted && this.reads != null) {
@@ -90,8 +91,8 @@ public class ChannelResponse {
     }
 
     public String getReadDateOfChannelLastMessage(boolean isMyRead) {
+        if (this.reads == null || this.reads.isEmpty()) return null;
         String lastReadDate = null;
-        if (this.reads == null) return lastReadDate;
         if (!isSorted) {
             Global.sortUserReads(this.reads);
             isSorted = true;
@@ -121,6 +122,7 @@ public class ChannelResponse {
     }
 
     public void setReadDateOfChannelLastMessage(User user, String readDate) {
+        if (this.reads == null || this.reads.isEmpty()) return;
         boolean isSet = false;
         for (final ChannelUserRead userLastRead : this.reads) {
             try {

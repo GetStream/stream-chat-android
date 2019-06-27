@@ -230,7 +230,7 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
         if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
             view_read_indicator.setVisibility(View.VISIBLE);
             List<User> readUsers = Global.getReadUsers(channelResponse, message);
-            if (!TextUtils.isEmpty(message.getDeleted_at()) || message.getType().equals(ModelType.message_error)) {
+            if (readUsers == null || !TextUtils.isEmpty(message.getDeleted_at()) || message.getType().equals(ModelType.message_error)) {
                 view_read_indicator.setVisibility(View.GONE);
                 Log.d(TAG, "Deliever Indicator 1");
                 return;

@@ -155,7 +155,9 @@ public class Global {
     }
 
     public static List<User> getReadUsers(ChannelResponse response, Message message) {
+        if (response.getReads() == null || response.getReads().isEmpty()) return null;
         List<User> users = new ArrayList<>();
+
         Log.d(TAG,"Read Users: " + response.getReads().size());
         for (int i = response.getReads().size() - 1; i >= 0; i--) {
             ChannelUserRead read = response.getReads().get(i);
@@ -168,6 +170,20 @@ public class Global {
     }
     public static boolean isCommandMessage(Message message){
         return message.getText().startsWith("/");
+    }
+    // endregion
+
+    // region Channel
+    public static void addChannelResponse(ChannelResponse response){
+        boolean isContain = false;
+        for (ChannelResponse response1 : channels) {
+            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
+                isContain = true;
+                break;
+            }
+        }
+        if (!isContain)
+            channels.add(response);
     }
     // endregion
 
