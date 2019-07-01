@@ -19,8 +19,6 @@ import okhttp3.Response;
 public class Push {
     private static final String TAG = Push.class.getSimpleName();
     public static void sendPushNotification2(String to, String title, String text) {
-
-//        to = "fbkC9EeZsDE:APA91bFwSVZqXhgUx1BCTNcIHMki-YYeSpIY9jpn7hEELwPjJd5UUIb7ppOVJweFrMSZ4sXmunPiSyssErqzs7Z4jhs76w8ROQMordfhGqcIpBtB0_Na-v72W9rqE_PtdFTzIYPB4ihh";
         Log.d(TAG,"User Token:" + to);
         String url = "https://fcm.googleapis.com/fcm/send";
         Map<String, Object> body = new HashMap<>();

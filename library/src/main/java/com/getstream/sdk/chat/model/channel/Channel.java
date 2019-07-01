@@ -157,5 +157,4 @@ public class Channel{
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         return null;
     }
-
 }

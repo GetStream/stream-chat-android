@@ -44,8 +44,19 @@ public interface APIService {
     Call<ChannelResponse> chatDetail(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 
     @POST("/channels/messaging/{id}/query")
+    Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+
+    @POST("/channels/messaging/{id}/stop-watching")
+    Call<ChannelResponse> chatStopWatch(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
+
+    @POST("/channels/messaging/{id}/query")
     Call<ChannelResponse> pagination(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body PaginationRequest request);
 
+    @POST("/channels/messaging/{id}")
+    Call<ChannelResponse> acceptInviate(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
+
+    @POST("/channels/messaging/{id}")
+    Call<ChannelResponse> rejectInviate(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
     // endregion
 
     // region User
@@ -53,7 +64,7 @@ public interface APIService {
     Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelResponse> addMembers(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> addMembers(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body JSONObject body);
     // endregion
 
     // region Message
@@ -95,7 +106,7 @@ public interface APIService {
 
     // region Device
     @GET("/devices")
-    Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map<String, String> body);
+    Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map body);
 
     @POST("devices")
     Call<AddDevicesResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);

@@ -26,9 +26,12 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
 import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
@@ -42,6 +45,7 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.activity.ChatActivity;
 import com.getstream.sdk.chat.view.activity.UsersActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +63,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
     private ChannelListViewModel mViewModel;
     private FragmentChannelListBinding binding;
-    private WebSocketService webSocketService;
+    public WebSocketService webSocketService;
     private ChannelListItemAdapter adapter;
 
     public int containerResId;
@@ -156,7 +160,6 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
         frameLayout.setFitsSystemWindows(true);
         binding.setShowMainProgressbar(true);
-        binding.setNoConnection(false);
         configChannelListView();
         binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
             private int mLastFirstVisibleItem;
@@ -179,15 +182,9 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 mLastFirstVisibleItem = firstVisibleItem;
             }
         });
-        binding.clHeader.setOnClickListener((View view) -> {
-            navigateUserList();
-        });
-        binding.etSearch.setOnClickListener((View view) -> {
-            navigateUserList();
-        });
-        binding.tvSend.setOnClickListener((View view) -> {
-            navigateUserList();
-        });
+        binding.clHeader.setOnClickListener((View view) -> navigateUserList());
+        binding.etSearch.setOnClickListener((View view) -> navigateUserList());
+        binding.tvSend.setOnClickListener((View view) -> navigateUserList());
     }
 
     private void navigateUserList() {
@@ -205,9 +202,15 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         streamChat.setupWebSocket();
     }
 
+    private void initLoadingChannel() {
+        isCalling = false;
+        isLastPage = false;
+    }
+
     boolean isCalling;
 
     private void getChannels() {
+        Log.d(TAG, "getChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
@@ -216,7 +219,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
             isCalling = false;
 
             if (response.getChannels().isEmpty()) {
-                Utils.showMessage(getContext(), "There is no any active channel(s)!");
+                Utils.showMessage(getContext(), "There is no any active Channel(s)!");
                 return;
             }
 
@@ -224,6 +227,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
             boolean isReconnecting = false;
             if (Global.channels.isEmpty()) {
                 configChannelListView();
+                binding.setNoConnection(false);
                 isReconnecting = true;
             }
 
@@ -241,6 +245,34 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
             Utils.showMessage(getContext(), errMsg);
             Log.d(TAG, "Failed Get Channels : " + errMsg);
+        });
+    }
+
+    private void getChannel(Channel channel) {
+        binding.setShowMainProgressbar(true);
+        channel.setType(ModelType.channel_messaging);
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("limit", Constant.DEFAULT_LIMIT);
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", channel.getName());
+        data.put("image", channel.getImageURL());
+        data.put("members", Arrays.asList(Global.streamChat.getUser().getId()));
+        data.put("watch", true);
+        data.put("state", true);
+        Log.d(TAG, "Channel Connecting...");
+
+        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+
+        RestController.ChannelDetailCallback callback = (ChannelResponse response) -> {
+            if (!response.getMessages().isEmpty())
+                Global.setStartDay(response.getMessages(), null);
+            Global.addChannelResponse(response);
+            Gson gson = new Gson();
+            Log.d(TAG,"Channel Response: "+ gson.toJson(response));
+            navigationChannel(response);
+        };
+        Global.mRestController.channelDetailWithID(channel.getId(), request, callback, (String errMsg, int errCode) -> {
+            Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
     }
 
@@ -284,7 +316,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         adapter = new ChannelListItemAdapter(getContext(), Global.channels, (View view) -> {
             int position = (Integer) view.getTag();
             Log.d(TAG, "onItemClick : " + position);
-            if (!Global.noConnection)
+            if (!binding.getNoConnection())
                 navigationChannel(Global.channels.get(position));
             else
                 Utils.showMessage(getContext(), "No internet connection!");
@@ -310,8 +342,8 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
         if (response.getClass().equals(String.class)) {
 
             // Checking No connection
-            binding.setNoConnection(Global.noConnection);
             if (Global.noConnection) {
+                binding.setNoConnection(true);
                 eventFunction.handleReconnect(Global.noConnection);
                 binding.setShowMainProgressbar(false);
                 return;
@@ -334,8 +366,14 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                 if (event.getMe() != null) Global.streamChat.setUser(event.getMe());
                 Global.streamChat.setClientID(connectionId);
                 Log.d(TAG, "Client ID : " + connectionId);
+                initLoadingChannel();
                 addDevice();
-                getChannels();
+                if (streamChat.getChannel() == null){
+                    getChannels();
+                }else{
+                    getChannel(streamChat.getChannel());
+                }
+
                 return;
             }
 
@@ -353,6 +391,7 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
 
     void navigationChannel(ChannelResponse response) {
         Global.setStartDay(response.getMessages(), null);
+        Log.d(TAG,"Channel ID:" + response.getChannel());
         Global.eventFunction = eventFunction;
         Global.channelResponse = response;
         Intent intent = new Intent(getContext(), ChatActivity.class);

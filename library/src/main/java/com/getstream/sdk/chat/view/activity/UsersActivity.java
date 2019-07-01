@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 
+import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
@@ -71,6 +72,7 @@ public class UsersActivity extends AppCompatActivity {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+
             }
 
             @Override
@@ -92,9 +94,9 @@ public class UsersActivity extends AppCompatActivity {
     boolean isCalling;
 
     private void getUsers() {
-        Log.d(TAG,"getUsers");
-        Log.d(TAG,"isLastPage: " + isLastPage);
-        Log.d(TAG,"isCalling: " + isCalling);
+        Log.d(TAG, "getUsers");
+        Log.d(TAG, "isLastPage: " + isLastPage);
+        Log.d(TAG, "isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
@@ -149,6 +151,10 @@ public class UsersActivity extends AppCompatActivity {
         data.put("members", Arrays.asList(Global.streamChat.getUser().getId(), user.getId()));
         data.put("watch", true);
         data.put("state", true);
+
+        if (Component.Channel.invitation) {
+            data.put("invites", Arrays.asList(user.getId()));
+        }
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
@@ -163,6 +169,7 @@ public class UsersActivity extends AppCompatActivity {
             Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
     }
+
 
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();

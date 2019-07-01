@@ -107,7 +107,6 @@ public class RestController {
 
     /**
      * sendMessage - Send a message to this channel
-     *
      * @param {object} message The Message object
      * @return {object} The Server Response
      */

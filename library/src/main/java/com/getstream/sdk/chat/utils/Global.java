@@ -212,8 +212,8 @@ public class Global {
 
     // region Channel
     public static ChannelResponse getPrivateChannel(User user) {
-        String channelId1 = streamChat.getUser().getId() + "-" + user.getId();
-        String channelId2 = user.getId() + "-" + streamChat.getUser().getId();
+        String channelId1 = streamChat.getUser().getId() + "-" + user.getId(); // Created by
+        String channelId2 = user.getId() + "-" + streamChat.getUser().getId(); // Invited by
         ChannelResponse channelResponse = null;
         for (ChannelResponse response : channels) {
             if (response.getChannel().getId().equals(channelId1) || response.getChannel().getId().equals(channelId2)) {

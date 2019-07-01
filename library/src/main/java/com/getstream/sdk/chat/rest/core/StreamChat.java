@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.core;
 import android.util.Log;
 
 import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.Global;
@@ -25,11 +26,12 @@ public class StreamChat {
     private String userToken;
     private String clientID;
 
+    private Channel channel;
+
     public WebSocketService wsConnection;
 
-    public StreamChat(String apiKey, String fcmServerKey) {
+    public StreamChat(String apiKey) {
         this.apiKey = apiKey;
-        Global.fcmserverkey = fcmServerKey;
     }
 
     public void setUser(User user) {
@@ -42,12 +44,13 @@ public class StreamChat {
         Global.streamChat = this;
     }
 
-    public String creatUserToken(String secretKey, String userId) {
+    public String createUserToken(String secretKey, String userId) {
         Map map = new HashMap<String, Object>();
         map.put("type", "JWT");
         Date date = new Date();
 
         long time = date.getTime() / 1000;
+        Log.d(TAG,"Time: " + time);
         return Jwts.builder().claim("user_id", userId).claim("iat", time).signWith(SignatureAlgorithm.HS256, secretKey.getBytes()).setHeader(map).compact();
     }
 
@@ -71,6 +74,19 @@ public class StreamChat {
         this.clientID = clientID;
     }
 
+    // region Customize Components
+    public void setChannel(String channelId, String channelName, String channelImage){
+        this.channel = new Channel();
+        this.channel.setId(channelId);
+        this.channel.setName(channelName);
+        this.channel.setImageURL(channelImage);
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    // end region
     public void setupWebSocket() {
         Map<String, Object> jsonParameter = new HashMap<>();
         Map<String, Object> map = new HashMap<>();

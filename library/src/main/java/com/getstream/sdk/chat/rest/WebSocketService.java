@@ -107,14 +107,16 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(TAG, "Error: " + t.getMessage());
-            Global.channels = new ArrayList<>();
-            Global.streamChat.setClientID(null);
-            Global.noConnection = true;
-            try {
-                mResponseHandler.handleWSResponse(Constant.CONNECTION_ERROR);
-                client.dispatcher().cancelAll();// to cancel all requests
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (t.getMessage().contains("Connection reset by peer")){
+                Global.channels = new ArrayList<>();
+                Global.streamChat.setClientID(null);
+                Global.noConnection = true;
+                try {
+                    mResponseHandler.handleWSResponse(Constant.CONNECTION_ERROR);
+                    client.dispatcher().cancelAll();// to cancel all requests
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
