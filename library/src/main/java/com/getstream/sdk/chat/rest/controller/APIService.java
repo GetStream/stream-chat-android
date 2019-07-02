@@ -43,6 +43,9 @@ public interface APIService {
     @POST("/channels/messaging/{id}/query")
     Call<ChannelResponse> chatDetail(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 
+    @DELETE("/channels/messaging/{id}")
+    Call<ChannelResponse> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+
     @POST("/channels/messaging/{id}/query")
     Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 

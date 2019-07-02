@@ -35,12 +35,14 @@ public class ChannelListItemAdapter extends BaseAdapter {
     private List<ChannelResponse> channels;
     private Markwon markwon;
     private View.OnClickListener clickListener;
+    private View.OnLongClickListener longClickListener;
 
-    public ChannelListItemAdapter(Context context, List channels, View.OnClickListener clickListener) {
+    public ChannelListItemAdapter(Context context, List channels, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         this.context = context;
         this.channels = channels;
         this.layoutInflater = LayoutInflater.from(context);
         this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
         this.markwon = Markwon.builder(context)
                 .usePlugin(ImagesPlugin.create(context))
                 .usePlugin(CorePlugin.create())
@@ -95,7 +97,13 @@ public class ChannelListItemAdapter extends BaseAdapter {
         binding.tvClick.setOnClickListener(view -> {
             view.setTag(position);
             binding.tvClick.setBackgroundColor(context.getResources().getColor(R.color.mesage_border));
-            ChannelListItemAdapter.this.clickListener.onClick(view);
+            this.clickListener.onClick(view);
+        });
+
+        binding.tvClick.setOnLongClickListener(view -> {
+            view.setTag(position);
+            this.longClickListener.onLongClick(view);
+            return true;
         });
         return binding.getRoot();
     }

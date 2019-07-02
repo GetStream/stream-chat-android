@@ -44,7 +44,7 @@ public class RestController {
         mService = RetrofitClient.getAuthrizedClient().create(APIService.class);
         Log.d(TAG, mService.toString());
     }
-
+    // region Channel
     public void getChannels(@NonNull JSONObject payload, final GetChannelsCallback callback, final ErrCallback errCallback) {
 
         mService.getChannels(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetChannelsResponse>() {
@@ -82,7 +82,32 @@ public class RestController {
             }
         });
     }
+    /**
+     * deleteMessage - Delete the given message
+     *
+     * @param channelId the Channel id needs to be specified
+     * @return {object} Response that includes the channel
+     */
+    public void deleteChannel(@NonNull String channelId, final ChannelDetailCallback callback, final ErrCallback errCallback) {
 
+        mService.deleteChannel(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<ChannelResponse>() {
+            @Override
+            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    Log.d(TAG, "Failed Deleting");
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.d(TAG, "Failed Deleting1");
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
     public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
 
         mService.pagination(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<ChannelResponse>() {
@@ -102,6 +127,7 @@ public class RestController {
         });
     }
 
+    // endregion
 
     // region Message
 

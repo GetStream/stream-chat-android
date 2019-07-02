@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view.fragment;
 import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,12 +15,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
@@ -259,9 +263,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
-//        data.put("name", channel.getName());
-//        data.put("image", channel.getImageURL());
-//        data.put("members", Arrays.asList(Global.streamChat.getUser().getId()));
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
@@ -281,32 +282,26 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> filter_conditions = new HashMap<>();
-        Map<String, Object> user_details = new HashMap<>();
         Map<String, List<String>> filterOption = new HashMap<>();
 
         filterOption.put("$in", Arrays.asList(Global.streamChat.getUser().getId()));
         filter_conditions.put("type", "messaging");
         filter_conditions.put("members", filterOption);
 
-        user_details.put("id", Global.streamChat.getUser().getId());
-        user_details.put("name", Global.streamChat.getUser().getName());
-        user_details.put("image", Global.streamChat.getUser().getImage());
-
         Map<String, Object> sort = new HashMap<>();
         sort.put("field", "last_message_at");
         sort.put("direction", -1);
 
         payload.put("filter_conditions", filter_conditions);
-
         payload.put("sort", Collections.singletonList(sort));
-        payload.put("user_details", user_details);
+
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
             payload.put("offset", Global.channels.size());
         payload.put("limit", Constant.CHANNEL_LIMIT);
         payload.put("presence", false);
         payload.put("state", true);
-//        payload.put("subscribe", true);
+        payload.put("subscribe", true);
         payload.put("watch", true);
 
         JSONObject json;
@@ -323,6 +318,32 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             else
                 navigationChannelDetail(Global.channels.get(position));
 
+        }, (View view) -> {
+            int position = (Integer) view.getTag();
+            final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setTitle("Do you want to delete this channel?")
+                    .setMessage("If you delete this channel, will delete all chat history for this channel!")
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create();
+
+            alertDialog.setOnShowListener((DialogInterface dialog) -> {
+                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener((View v) -> {
+                    String channelId = Global.channels.get(position).getChannel().getId();
+                    Log.d(TAG,"Deleting Channel ID: " + channelId);
+                    Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
+                        Utils.showMessage(getContext(),"Deleted successfully!");
+                    }, (String errMsg, int errCode) -> {
+                        Log.d(TAG, "Failed Deleting: " + errMsg);
+                        Utils.showMessage(getContext(),errMsg);
+                    });
+                    alertDialog.dismiss();
+                });
+
+            });
+            alertDialog.show();
+            return true;
         });
         binding.listChannels.setAdapter(adapter);
     }
