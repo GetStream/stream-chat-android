@@ -26,6 +26,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
+import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
@@ -57,7 +58,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChannelListFragment extends Fragment implements WebSocketService.WSResponseHandler {
+public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     final String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -387,6 +388,11 @@ public class ChannelListFragment extends Fragment implements WebSocketService.WS
                     break;
             }
         }
+    }
+
+    @Override
+    public void onFailed(String errMsg, int errCode) {
+
     }
 
     void navigationChannel(ChannelResponse response) {

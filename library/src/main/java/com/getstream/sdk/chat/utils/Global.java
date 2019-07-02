@@ -53,8 +53,6 @@ public class Global {
     public static String deviceId;
     public static Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
 
-    public static String fcmserverkey;
-
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
         if (messages == null) return;

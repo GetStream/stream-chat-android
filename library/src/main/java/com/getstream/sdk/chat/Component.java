@@ -12,4 +12,8 @@ public class Component {
     public static class Message{
 
     }
+
+    public static class User{
+
+    }
 }

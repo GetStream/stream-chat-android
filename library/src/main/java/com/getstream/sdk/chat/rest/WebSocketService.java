@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest;
 import android.os.Handler;
 import android.util.Log;
 
+import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 
@@ -18,10 +19,6 @@ import okio.ByteString;
 public class WebSocketService extends WebSocketListener {
 
     private final String TAG = WebSocketService.class.getSimpleName();
-
-    public interface WSResponseHandler {
-        void handleWSResponse(Object response);
-    }
 
     private WSResponseHandler mResponseHandler;
     public String wsURL;
@@ -112,7 +109,7 @@ public class WebSocketService extends WebSocketListener {
                 Global.streamChat.setClientID(null);
                 Global.noConnection = true;
                 try {
-                    mResponseHandler.handleWSResponse(Constant.CONNECTION_ERROR);
+                    mResponseHandler.onFailed(t.getMessage(),t.hashCode());
                     client.dispatcher().cancelAll();// to cancel all requests
                 } catch (Exception e) {
                     e.printStackTrace();

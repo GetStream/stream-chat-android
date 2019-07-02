@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Device;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.message.Attachment;
@@ -16,7 +17,6 @@ import com.getstream.sdk.chat.rest.apimodel.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.Push;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +26,6 @@ public class MessageFunction {
 
     private final String TAG = MessageFunction.class.getSimpleName();
     private ChannelResponse channelResponse;
-
-    public interface MessageSendListener {
-        void onSuccess(MessageResponse response);
-
-        void onFailed(String errMsg, int errCode);
-    }
 
     public MessageFunction(ChannelResponse channelResponse) {
         this.channelResponse = channelResponse;
@@ -44,14 +38,12 @@ public class MessageFunction {
         if (isSendLock) return;
         String parentId = (parentMessage != null) ? parentMessage.getId() : null;
         isSendLock = true;
-        sendNotification(text);
 
         SendMessageRequest request = new SendMessageRequest(this.channelResponse, text, attachments, parentId, false);
-        RestController.SendMessageCallback callback = (MessageResponse response) -> {
+        Global.mRestController.sendMessage(channelResponse.getChannel().getId(), request, (MessageResponse response) -> {
             sendListener.onSuccess(response);
             isSendLock = false;
-        };
-        Global.mRestController.sendMessage(channelResponse.getChannel().getId(), request, callback, (String errMsg, int errCode) -> {
+        }, (String errMsg, int errCode) -> {
             sendListener.onFailed(errMsg, errCode);
             isSendLock = false;
         });
@@ -88,22 +80,6 @@ public class MessageFunction {
         };
         Global.mRestController.deleteMessage(message.getId(), callback, (String errMsg, int errCode) -> {
             Log.d(TAG, "Failed DeleteMessage : " + errMsg);
-        });
-    }
-
-    private void sendNotification(String text) {
-        User opponet = Global.getOpponentUser(channelResponse);
-        if (opponet == null) return;
-
-        Map<String, String> map = new HashMap<>();
-        map.put("user_id", Global.getOpponentUser(channelResponse).getId());
-        Global.mRestController.getDevices(map, (GetDevicesResponse response) -> {
-            List<Device> devices = response.getDevices();
-            Log.d(TAG, "Devices: " + devices);
-            String title = Global.streamChat.getUser().getName() + " sent you a text message.";
-            Push.sendPushNotification2(devices.get(0).getId(), title, text);
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, "Failed get Devices");
         });
     }
     // endregion

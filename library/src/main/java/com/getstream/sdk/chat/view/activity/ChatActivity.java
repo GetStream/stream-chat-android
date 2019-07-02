@@ -30,6 +30,7 @@ import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
@@ -347,7 +348,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                 ephemeralMessage = createOfflineMessage(false);
                 handleAction(ephemeralMessage);
             }
-            messageFunction.sendMessage(binding.etMessage.getText().toString(), thread_parentMessage, sendFileFunction.getSelectedAttachments(), new MessageFunction.MessageSendListener() {
+            messageFunction.sendMessage(binding.etMessage.getText().toString(), thread_parentMessage, sendFileFunction.getSelectedAttachments(), new MessageSendListener() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     if (!isThreadMode()) {
@@ -369,7 +370,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
             });
             initSendMessage();
         } else
-            messageFunction.updateMessage(binding.etMessage.getText().toString(), (Message) binding.etMessage.getTag(), sendFileFunction.getSelectedAttachments(), new MessageFunction.MessageSendListener() {
+            messageFunction.updateMessage(binding.etMessage.getText().toString(), (Message) binding.etMessage.getTag(), sendFileFunction.getSelectedAttachments(), new MessageSendListener() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
@@ -608,17 +609,15 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                         break;
                     }
                     handleAction(message);
-                    messageFunction.sendMessage(message.getText(), isThreadMode() ? thread_parentMessage : null, null, new MessageFunction.MessageSendListener() {
+                    messageFunction.sendMessage(message.getText(), isThreadMode() ? thread_parentMessage : null, null, new MessageSendListener() {
                         @Override
                         public void onSuccess(MessageResponse response) {
                             initSendMessage();
-                            Log.d(TAG, "Failed Message Sent!");
                         }
 
                         @Override
                         public void onFailed(String errMsg, int errCode) {
                             initSendMessage();
-                            Log.d(TAG, "Failed Message Sending Failed!");
                         }
                     });
                     break;
