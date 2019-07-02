@@ -83,7 +83,7 @@ public class RestController {
         });
     }
     /**
-     * deleteMessage - Delete the given message
+     * deleteChannel - Delete the given channel
      *
      * @param channelId the Channel id needs to be specified
      * @return {object} Response that includes the channel

@@ -40,7 +40,6 @@ import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
@@ -331,12 +330,16 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
                     String channelId = Global.channels.get(position).getChannel().getId();
-                    Log.d(TAG,"Deleting Channel ID: " + channelId);
+                    Log.d(TAG, "Deleting Channel ID: " + channelId);
                     Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
-                        Utils.showMessage(getContext(),"Deleted successfully!");
+                        Utils.showMessage(getContext(), "Deleted successfully!");
+                        Global.channels.remove(position);
+                        adapter.notifyDataSetChanged();
                     }, (String errMsg, int errCode) -> {
                         Log.d(TAG, "Failed Deleting: " + errMsg);
-                        Utils.showMessage(getContext(),errMsg);
+                        Utils.showMessage(getContext(), errMsg);
+                        Global.channels.remove(position);
+                        adapter.notifyDataSetChanged();
                     });
                     alertDialog.dismiss();
                 });

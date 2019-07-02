@@ -127,6 +127,7 @@ public class Event {
     public static final String member_added                         = "member.added";
     public static final String member_removed                       = "member.removed";
     public static final String channel_updated                      = "channel.updated";
+    public static final String channel_deleted                      = "channel.deleted";
     public static final String health_check                         = "health.check";
     public static final String connection_changed                   = "connection.changed";
     public static final String connection_recovered                 = "connection.recovered";

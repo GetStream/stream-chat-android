@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
-import okhttp3.Response;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;

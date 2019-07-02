@@ -163,6 +163,13 @@ public class EventFunction {
             case Event.reaction_deleted:
                 handleReactionEvent(channelResponse, event);
                 break;
+            case Event.notification_invited:
+            case Event.notification_invite_accepted:
+                handleInvite(channelResponse, event);
+                break;
+            case Event.channel_updated:
+            case Event.channel_deleted:
+                handleChannelEvent(channelResponse, event);
             default:
                 break;
         }
@@ -228,5 +235,26 @@ public class EventFunction {
         channelResponse.setReadDateOfChannelLastMessage(event.getUser(), event.getCreated_at());
         channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
     }
+    // endregion
+
+    // region Handle Invite
+    public void handleInvite(ChannelResponse channelResponse, Event event) {
+
+    }
+    // endregion
+
+    // region Handle Channel Event
+    public void handleChannelEvent(ChannelResponse channelResponse, Event event) {
+        switch (event.getType()) {
+            case Event.channel_deleted:
+                Global.deleteChannelResponse(channelResponse);
+                break;
+            case Event.channel_updated:
+                break;
+            default:
+                break;
+        }
+    }
+
     // endregion
 }

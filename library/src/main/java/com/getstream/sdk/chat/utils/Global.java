@@ -233,6 +233,17 @@ public class Global {
             channels.add(response);
     }
 
+    public static void deleteChannelResponse(ChannelResponse response) {
+        boolean isContain = false;
+        for (ChannelResponse response1 : channels) {
+            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
+                channels.remove(response1);
+                isContain = true;
+                break;
+            }
+        }
+    }
+
     public static User getOpponentUser(ChannelResponse channelResponse) {
         if (channelResponse.getMembers() == null || channelResponse.getMembers().isEmpty())
             return null;
