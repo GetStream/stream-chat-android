@@ -259,11 +259,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
-        data.put("name", channel.getName());
-        data.put("image", channel.getImageURL());
-        data.put("members", Arrays.asList(Global.streamChat.getUser().getId()));
-        data.put("watch", true);
-        data.put("state", true);
+//        data.put("name", channel.getName());
+//        data.put("image", channel.getImageURL());
+//        data.put("members", Arrays.asList(Global.streamChat.getUser().getId()));
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);

@@ -149,8 +149,6 @@ public class UsersActivity extends AppCompatActivity {
         data.put("name", channel.getName());
         data.put("image", channel.getImageURL());
         data.put("members", Arrays.asList(Global.streamChat.getUser().getId(), user.getId()));
-        data.put("watch", true);
-        data.put("state", true);
 
         if (Component.Channel.invitation) {
             data.put("invites", Arrays.asList(user.getId()));

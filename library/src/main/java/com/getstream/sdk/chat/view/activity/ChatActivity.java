@@ -179,7 +179,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
         binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(false);
+        binding.setNoConnection(Global.noConnection);
         binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             binding.setActiveMessageComposer(hasFocus);
             lockRVScrollListener = hasFocus;
