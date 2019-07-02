@@ -47,8 +47,5 @@ public final class Constant {
     public static final String COMMAND_IMGUR = "imgur";
     public static final String COMMAND_BAN = "ban";
     public static final String COMMAND_FLAG = "flag";
-    // Error
-    public static final String CONNECTION_ERROR = "Read error";
-
 }
 

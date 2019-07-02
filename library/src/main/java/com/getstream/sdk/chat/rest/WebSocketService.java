@@ -105,9 +105,6 @@ public class WebSocketService extends WebSocketListener {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(TAG, "Error: " + t.getMessage());
             if (t.getMessage().contains("Connection reset by peer")){
-                Global.channels = new ArrayList<>();
-                Global.streamChat.setClientID(null);
-                Global.noConnection = true;
                 try {
                     mResponseHandler.onFailed(t.getMessage(),t.hashCode());
                     client.dispatcher().cancelAll();// to cancel all requests

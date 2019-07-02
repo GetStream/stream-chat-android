@@ -50,7 +50,6 @@ public class Global {
 
     public static List<ChannelResponse> channels = new ArrayList<>();
     public static List<User> typingUsers = new ArrayList<>();
-    public static String deviceId;
     public static Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
 
     // region Set Date and Time
