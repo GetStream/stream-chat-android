@@ -33,13 +33,14 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
             android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toStartOf="@+id/tv_date"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/checkbox"
             app:layout_constraintStart_toEndOf="@+id/view_user_avator"
             app:layout_constraintTop_toTopOf="@+id/view_user_avator" />
 
         <TextView
-            android:id="@+id/tv_last_message"
+            android:id="@+id/tv_id"
             style="@style/text_single_line"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -47,18 +48,17 @@
             android:textColor="@color/gray_dark"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/view_user_avator"
-            app:layout_constraintEnd_toStartOf="@+id/tv_date"
+            app:layout_constraintEnd_toStartOf="@+id/checkbox"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/tv_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
-        <TextView
-            android:id="@+id/tv_date"
+        <CheckBox
+            android:id="@+id/checkbox"
             style="@style/text_s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name"
             app:layout_constraintTop_toTopOf="@+id/tv_name" />

@@ -23,6 +23,7 @@ public class UserListItemAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private List<User> users;
+    public boolean groupChatMode = false;
 
     public UserListItemAdapter(Context context, List users) {
         this.context = context;
@@ -83,9 +84,12 @@ public class UserListItemAdapter extends BaseAdapter {
         }
         binding.tvName.setText(user.getName());
 
-        if(user.getOnline())
+        if (user.getOnline())
             binding.ivActiveMark.setVisibility(View.VISIBLE);
         else
             binding.ivActiveMark.setVisibility(View.GONE);
+
+        binding.tvId.setText("id: " + user.getId());
+        binding.checkbox.setVisibility(groupChatMode ? View.VISIBLE : View.GONE);
     }
 }

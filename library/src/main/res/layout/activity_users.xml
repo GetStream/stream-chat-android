@@ -63,6 +63,19 @@
 
         </android.support.v7.widget.Toolbar>
 
+        <TextView
+            android:id="@+id/tv_group_name"
+            style="@style/text_single_line"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:layout_height="50dp"
+            android:paddingLeft="20dp"
+            android:textSize="14sp"
+            android:text="Test Group Chat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header"/>
+
         <ListView
             android:id="@+id/list_users"
             android:layout_width="match_parent"

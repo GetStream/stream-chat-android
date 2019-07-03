@@ -1,16 +1,23 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 
-import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
@@ -45,12 +52,72 @@ public class UsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
+        setSupportActionBar(binding.header);
+
         init();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.new_chat, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.menu_chat) {
+            Log.d("debug", "action new chat has clicked");
+            createNewChat();
+            return true;
+        } else if (i == R.id.menu_group_chat) {
+            Log.d("debug", "action Group clicked");
+            createNewGroupChat();
+            return true;
+        }
+        return false;
     }
 
     private void init() {
         configChannelListView();
         getUsers();
+    }
+
+    private void createNewChat() {
+        adapter.groupChatMode = false;
+        adapter.notifyDataSetChanged();
+    }
+
+    private void createNewGroupChat() {
+        inputGroupName();
+    }
+
+    private void inputGroupName() {
+        final EditText inputName = new EditText(this);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setHint("Group name");
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("New Group Chat")
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setView(inputName);
+        alertDialog.setOnShowListener((DialogInterface dialog) -> {
+
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener((View view) -> {
+                String userName = inputName.getText().toString();
+                if (TextUtils.isEmpty(userName)) {
+                    inputName.setError("Invalid Name!");
+                    return;
+                }
+                adapter.groupChatMode = true;
+                adapter.notifyDataSetChanged();
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
     }
 
     public void onClickBackFinish(View v) {
