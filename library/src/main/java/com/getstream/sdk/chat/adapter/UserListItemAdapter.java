@@ -24,12 +24,14 @@ public class UserListItemAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private List<User> users;
+    private List<User> selectUsers;
     public boolean groupChatMode = false;
     private CompoundButton.OnCheckedChangeListener checkedChangeListener;
 
-    public UserListItemAdapter(Context context, List users, CompoundButton.OnCheckedChangeListener checkedChangeListener) {
+    public UserListItemAdapter(Context context, List users, List selectUsers, CompoundButton.OnCheckedChangeListener checkedChangeListener) {
         this.context = context;
         this.users = users;
+        this.selectUsers = selectUsers;
         this.layoutInflater = LayoutInflater.from(context);
         this.checkedChangeListener = checkedChangeListener;
     }
@@ -92,7 +94,7 @@ public class UserListItemAdapter extends BaseAdapter {
         else
             binding.ivActiveMark.setVisibility(View.GONE);
 
-//        binding.checkbox.setChecked(users.contains(user));
+        binding.checkbox.setChecked(selectUsers.contains(user));
         binding.tvId.setText("id: " + user.getId());
         binding.checkbox.setVisibility(groupChatMode ? View.VISIBLE : View.GONE);
         binding.checkbox.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {

@@ -51,7 +51,7 @@ public class UsersActivity extends AppCompatActivity {
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
     private List<User> users = new ArrayList<>();
-    private List<User> groupUsers;
+    private List<User> groupUsers = new ArrayList<>();
     boolean isLastPage = false;
 
     RecyclerView.LayoutManager mLayoutManager;
@@ -105,12 +105,13 @@ public class UsersActivity extends AppCompatActivity {
     private void createNewGroupChat() {
         adapter.groupChatMode = true;
         adapter.notifyDataSetChanged();
+        groupUsers.clear();
         binding.llGroup.setVisibility(View.VISIBLE);
-        groupUsers = new ArrayList<>();
         groupListAdapter = new UserGroupListAdapter(this, groupUsers, (View view) -> {
             User user = (User) view.getTag();
             groupUsers.remove(user);
             groupListAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
         });
         binding.rvSelectedUsers.setAdapter(groupListAdapter);
     }
@@ -146,11 +147,10 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, users, (CompoundButton buttonView, boolean isChecked) -> {
+        adapter = new UserListItemAdapter(this, users, groupUsers, (CompoundButton buttonView, boolean isChecked) -> {
             User user = (User) buttonView.getTag();
             Log.d(TAG, "User Selected: " + user.getName());
             if (isChecked) {
-                if (groupUsers == null) groupUsers = new ArrayList<>();
                 groupUsers.add(user);
             } else {
                 groupUsers.remove(user);

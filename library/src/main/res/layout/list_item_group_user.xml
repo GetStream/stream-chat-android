@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="90dp"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
 
         <include
             android:id="@+id/view_user_avator"
             layout="@layout/view_user_avatar_initials"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

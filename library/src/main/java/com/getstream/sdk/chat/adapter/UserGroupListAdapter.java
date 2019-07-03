@@ -24,9 +24,9 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
     private List<User> users;
     private View.OnClickListener clickListener;
 
-    public UserGroupListAdapter(Context context, List<User> mediaPaths, View.OnClickListener clickListener) {
+    public UserGroupListAdapter(Context context, List<User> users, View.OnClickListener clickListener) {
         this.context = context;
-        this.users = mediaPaths;
+        this.users = users;
         this.clickListener = clickListener;
     }
 
