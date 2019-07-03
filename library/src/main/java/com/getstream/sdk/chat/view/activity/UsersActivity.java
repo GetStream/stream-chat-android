@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.R;
@@ -41,9 +40,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class UsersActivity extends AppCompatActivity {
     private static final String TAG = UsersActivity.class.getSimpleName();
@@ -51,11 +52,12 @@ public class UsersActivity extends AppCompatActivity {
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
     private List<User> users = new ArrayList<>();
-    private List<User> groupUsers = new ArrayList<>();
+    private List<User> groupUsers;
     boolean isLastPage = false;
 
     RecyclerView.LayoutManager mLayoutManager;
 
+    // region LifeCycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +87,9 @@ public class UsersActivity extends AppCompatActivity {
         }
         return false;
     }
+    // endregion
 
+    // region Init
     private void init() {
         configChannelListView();
         getUsers();
@@ -94,26 +98,87 @@ public class UsersActivity extends AppCompatActivity {
     private void configUIs() {
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         binding.rvSelectedUsers.setLayoutManager(mLayoutManager);
+        binding.clGroup.setVisibility(View.GONE);
     }
 
+    public void onClickBackFinish(View v) {
+        finish();
+    }
+
+    private void configChannelListView() {
+        adapter = new UserListItemAdapter(this, users, (View view) -> {
+            User user = (User) view.getTag();
+            Log.d(TAG, "User Selected: " + user.getName());
+            if (!groupUsers.contains(user)) {
+                groupUsers.add(user);
+            } else {
+                groupUsers.remove(user);
+            }
+            changeGroupUsers(false);
+        });
+        binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            if (binding.clGroup.getVisibility() == View.VISIBLE) return;
+            if (!Global.noConnection)
+                getChannel(Arrays.asList(users.get(i)));
+            else
+                Utils.showMessage(UsersActivity.this, "No internet connection!");
+        });
+
+        binding.listUsers.setAdapter(adapter);
+
+        binding.listUsers.setOnScrollListener(new AbsListView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if (mLastFirstVisibleItem < firstVisibleItem) {
+                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
+                    if (view.getLastVisiblePosition() == users.size() - 1)
+                        getUsers();
+                }
+                if (mLastFirstVisibleItem > firstVisibleItem) {
+                    Log.d(TAG, "SCROLLING UP");
+                }
+                mLastFirstVisibleItem = firstVisibleItem;
+            }
+        });
+    }
+    // endregion
+
+    // region New Chat
     private void createNewChat() {
         adapter.groupChatMode = false;
         adapter.notifyDataSetChanged();
-        binding.llGroup.setVisibility(View.GONE);
+        binding.clGroup.setVisibility(View.GONE);
     }
 
     private void createNewGroupChat() {
         adapter.groupChatMode = true;
         adapter.notifyDataSetChanged();
-        groupUsers.clear();
-        binding.llGroup.setVisibility(View.VISIBLE);
+
+        groupUsers = new ArrayList<>();
+        binding.clGroup.setVisibility(View.VISIBLE);
+        binding.tvDone.setVisibility(View.GONE);
         groupListAdapter = new UserGroupListAdapter(this, groupUsers, (View view) -> {
             User user = (User) view.getTag();
             groupUsers.remove(user);
-            groupListAdapter.notifyDataSetChanged();
-            adapter.notifyDataSetChanged();
+            changeGroupUsers(true);
         });
         binding.rvSelectedUsers.setAdapter(groupListAdapter);
+    }
+
+    private void changeGroupUsers(boolean fromGroupView) {
+        adapter.selectUsers = new ArrayList<>(groupUsers);
+        groupListAdapter.notifyDataSetChanged();
+        if (fromGroupView)
+            adapter.notifyDataSetChanged();
+        binding.tvDone.setVisibility(groupUsers.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void inputGroupName() {
@@ -141,55 +206,9 @@ public class UsersActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
+    // endregion
 
-    public void onClickBackFinish(View v) {
-        finish();
-    }
-
-    private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, users, groupUsers, (CompoundButton buttonView, boolean isChecked) -> {
-            User user = (User) buttonView.getTag();
-            Log.d(TAG, "User Selected: " + user.getName());
-            if (isChecked) {
-                groupUsers.add(user);
-            } else {
-                groupUsers.remove(user);
-            }
-            groupListAdapter.notifyDataSetChanged();
-        });
-        binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
-            if (binding.llGroup.getVisibility() == View.VISIBLE) return;
-
-            if (!Global.noConnection)
-                getChannel(users.get(i));
-            else
-                Utils.showMessage(UsersActivity.this, "No internet connection!");
-        });
-        binding.listUsers.setAdapter(adapter);
-
-        binding.listUsers.setOnScrollListener(new AbsListView.OnScrollListener() {
-            private int mLastFirstVisibleItem;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (mLastFirstVisibleItem < firstVisibleItem) {
-                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
-                    if (view.getLastVisiblePosition() == users.size() - 1)
-                        getUsers();
-                }
-                if (mLastFirstVisibleItem > firstVisibleItem) {
-                    Log.d(TAG, "SCROLLING UP");
-                }
-                mLastFirstVisibleItem = firstVisibleItem;
-            }
-        });
-    }
+    // region Get Users and Channel
 
     boolean isCalling;
 
@@ -230,25 +249,41 @@ public class UsersActivity extends AppCompatActivity {
         });
     }
 
-    private void getChannel(User user) {
-
-        if (Global.getPrivateChannel(user) != null) {
-            navigateChatActivity(Global.getPrivateChannel(user));
+    private void getChannel(List<User> users) {
+        boolean isPrivateChannel = users.size() == 1;
+        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
+            navigateChatActivity(Global.getPrivateChannel(users.get(0)));
             return;
         }
 
+
         binding.setShowMainProgressbar(true);
+        String channelId;
+        if (isPrivateChannel){
+            channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
+        }else{
+            String memberIds = "";
+            for (User user : users) {
+                memberIds += user.getId() + "-";
+            }
+            channelId = memberIds + getRandomHexString();
+        }
 
-        String channelId = Global.streamChat.getUser().getId() + "-" + user.getId();
 
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, null, null);
+        Log.d(TAG, "Channel ID: " + channelId);
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, isPrivateChannel ? null : binding.tvGroupName.getText().toString(), null);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
         data.put("name", channel.getName());
         data.put("image", channel.getImageURL());
-        data.put("members", Arrays.asList(Global.streamChat.getUser().getId(), user.getId()));
+        List members = new ArrayList();
+        members.add(Global.streamChat.getUser().getId());
+        for (User user : users) {
+            members.add(user.getId());
+        }
+        data.put("members", members);
 
 //        if (Component.Channel.invitation) {
 //            data.put("invites", Arrays.asList(user.getId()));
@@ -256,18 +291,17 @@ public class UsersActivity extends AppCompatActivity {
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-        RestController.ChannelDetailCallback callback = (ChannelResponse response) -> {
+        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
             navigateChatActivity(response);
-        };
-        Global.mRestController.channelDetailWithID(channel.getId(), request, callback, (String errMsg, int errCode) -> {
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            binding.setShowMainProgressbar(false);
+        }, (String errMsg, int errCode) -> {
+            binding.setShowMainProgressbar(false);
+            Utils.showMessage(this, errMsg);
         });
     }
-
 
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();
@@ -286,6 +320,20 @@ public class UsersActivity extends AppCompatActivity {
         json = new JSONObject(payload);
         return json;
     }
+
+    public void onClickCreateGroupChat(View view) {
+        getChannel(groupUsers);
+    }
+
+    private String getRandomHexString() {
+        Random r = new Random();
+        StringBuffer sb = new StringBuffer();
+        while (sb.length() < 10) {
+            sb.append(Integer.toHexString(r.nextInt()));
+        }
+        return sb.toString().substring(0, 10);
+    }
+    // endregion
 
     private void navigateChatActivity(ChannelResponse response) {
         Global.channelResponse = response;

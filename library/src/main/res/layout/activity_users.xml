@@ -64,11 +64,11 @@
         </android.support.v7.widget.Toolbar>
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/ll_group"
+            android:id="@+id/cl_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header">
@@ -97,6 +97,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="3dp"
                 android:text="Done"
+                android:onClick="onClickCreateGroupChat"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -123,7 +124,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_group"
+            app:layout_constraintTop_toBottomOf="@+id/cl_group"
             tools:listitem="@layout/list_item_user" />
 
         <TextView
