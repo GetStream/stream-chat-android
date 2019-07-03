@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,11 +25,13 @@ public class UserListItemAdapter extends BaseAdapter {
     private Context context;
     private List<User> users;
     public boolean groupChatMode = false;
+    private CompoundButton.OnCheckedChangeListener checkedChangeListener;
 
-    public UserListItemAdapter(Context context, List users) {
+    public UserListItemAdapter(Context context, List users, CompoundButton.OnCheckedChangeListener checkedChangeListener) {
         this.context = context;
         this.users = users;
         this.layoutInflater = LayoutInflater.from(context);
+        this.checkedChangeListener = checkedChangeListener;
     }
 
     @Override
@@ -89,7 +92,13 @@ public class UserListItemAdapter extends BaseAdapter {
         else
             binding.ivActiveMark.setVisibility(View.GONE);
 
+//        binding.checkbox.setChecked(users.contains(user));
         binding.tvId.setText("id: " + user.getId());
         binding.checkbox.setVisibility(groupChatMode ? View.VISIBLE : View.GONE);
+        binding.checkbox.setOnCheckedChangeListener((CompoundButton buttonView, boolean isChecked) -> {
+                    buttonView.setTag(user);
+                    this.checkedChangeListener.onCheckedChanged(buttonView, isChecked);
+                }
+        );
     }
 }

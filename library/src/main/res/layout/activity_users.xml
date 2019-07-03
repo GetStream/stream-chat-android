@@ -63,18 +63,39 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/tv_group_name"
-            style="@style/text_single_line"
+        <LinearLayout
+            android:id="@+id/ll_group"
             android:layout_width="match_parent"
-            android:gravity="center_vertical"
-            android:layout_height="50dp"
-            android:paddingLeft="20dp"
-            android:textSize="14sp"
-            android:text="Test Group Chat"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header"/>
+            app:layout_constraintTop_toBottomOf="@+id/header">
+
+            <TextView
+                android:id="@+id/tv_group_name"
+                style="@style/text_single_line"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:text="Test Group Chat"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_selected_users"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:divider="@null"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_group_name"
+                tools:listitem="@layout/list_item_group_user" />
+        </LinearLayout>
+
 
         <ListView
             android:id="@+id/list_users"
@@ -85,7 +106,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header"
+            app:layout_constraintTop_toBottomOf="@+id/ll_group"
             tools:listitem="@layout/list_item_user" />
 
         <TextView

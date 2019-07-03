@@ -10,6 +10,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -55,7 +56,6 @@ public class Utils {
             }
         });
     }
-
 
     public static void showMessage(Context mContext, String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();

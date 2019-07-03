@@ -7,6 +7,8 @@ import android.databinding.DataBindingUtil;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,9 +18,11 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.model.ModelType;
@@ -45,16 +49,21 @@ public class UsersActivity extends AppCompatActivity {
     private static final String TAG = UsersActivity.class.getSimpleName();
     private ActivityUsersBinding binding;
     private UserListItemAdapter adapter;
+    private UserGroupListAdapter groupListAdapter;
     private List<User> users = new ArrayList<>();
+    private List<User> groupUsers;
     boolean isLastPage = false;
+
+    RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
-        setSupportActionBar(binding.header);
 
+        setSupportActionBar(binding.header);
         init();
+        configUIs();
     }
 
     @Override
@@ -68,12 +77,10 @@ public class UsersActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int i = menuItem.getItemId();
         if (i == R.id.menu_chat) {
-            Log.d("debug", "action new chat has clicked");
             createNewChat();
             return true;
         } else if (i == R.id.menu_group_chat) {
-            Log.d("debug", "action Group clicked");
-            createNewGroupChat();
+            inputGroupName();
             return true;
         }
         return false;
@@ -84,13 +91,28 @@ public class UsersActivity extends AppCompatActivity {
         getUsers();
     }
 
+    private void configUIs() {
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        binding.rvSelectedUsers.setLayoutManager(mLayoutManager);
+    }
+
     private void createNewChat() {
         adapter.groupChatMode = false;
         adapter.notifyDataSetChanged();
+        binding.llGroup.setVisibility(View.GONE);
     }
 
     private void createNewGroupChat() {
-        inputGroupName();
+        adapter.groupChatMode = true;
+        adapter.notifyDataSetChanged();
+        binding.llGroup.setVisibility(View.VISIBLE);
+        groupUsers = new ArrayList<>();
+        groupListAdapter = new UserGroupListAdapter(this, groupUsers, (View view) -> {
+            User user = (User) view.getTag();
+            groupUsers.remove(user);
+            groupListAdapter.notifyDataSetChanged();
+        });
+        binding.rvSelectedUsers.setAdapter(groupListAdapter);
     }
 
     private void inputGroupName() {
@@ -104,16 +126,15 @@ public class UsersActivity extends AppCompatActivity {
                 .create();
         alertDialog.setView(inputName);
         alertDialog.setOnShowListener((DialogInterface dialog) -> {
-
             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener((View view) -> {
-                String userName = inputName.getText().toString();
-                if (TextUtils.isEmpty(userName)) {
+                String groupName = inputName.getText().toString();
+                if (TextUtils.isEmpty(groupName)) {
                     inputName.setError("Invalid Name!");
                     return;
                 }
-                adapter.groupChatMode = true;
-                adapter.notifyDataSetChanged();
+                binding.tvGroupName.setText(groupName);
+                createNewGroupChat();
                 alertDialog.dismiss();
             });
         });
@@ -125,8 +146,20 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, users);
+        adapter = new UserListItemAdapter(this, users, (CompoundButton buttonView, boolean isChecked) -> {
+            User user = (User) buttonView.getTag();
+            Log.d(TAG, "User Selected: " + user.getName());
+            if (isChecked) {
+                if (groupUsers == null) groupUsers = new ArrayList<>();
+                groupUsers.add(user);
+            } else {
+                groupUsers.remove(user);
+            }
+            groupListAdapter.notifyDataSetChanged();
+        });
         binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+            if (binding.llGroup.getVisibility() == View.VISIBLE) return;
+
             if (!Global.noConnection)
                 getChannel(users.get(i));
             else
