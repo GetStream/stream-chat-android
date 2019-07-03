@@ -16,7 +16,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,9 +173,24 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 mLastFirstVisibleItem = firstVisibleItem;
             }
         });
-        binding.clHeader.setOnClickListener((View view) -> navigateUserList());
-        binding.etSearch.setOnClickListener((View view) -> navigateUserList());
+//        binding.clHeader.setOnClickListener((View view) -> navigateUserList());
+//        binding.etSearch.setOnClickListener((View view) -> navigateUserList());
         binding.tvSend.setOnClickListener((View view) -> navigateUserList());
+
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                adapter.filter = binding.etSearch.getText().toString();
+                adapter.notifyDataSetChanged();
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+            }
+        });
     }
 
     public void setStreamChat() {
@@ -310,15 +327,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     private void configChannelListView() {
         adapter = new ChannelListItemAdapter(getContext(), Global.channels, (View view) -> {
-            int position = (Integer) view.getTag();
-            Log.d(TAG, "onItemClick : " + position);
+            String channelId = view.getTag().toString();
+            ChannelResponse response = Global.getChannelResponseById(channelId);
             if (Global.channels.isEmpty())
                 Utils.showMessage(getContext(), "No internet connection!");
-            else
-                navigationChannelDetail(Global.channels.get(position));
+            else if (response != null)
+                navigationChannelDetail(response);
 
         }, (View view) -> {
-            int position = (Integer) view.getTag();
+            String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                     .setTitle("Do you want to delete this channel?")
                     .setMessage("If you delete this channel, will delete all chat history for this channel!")
@@ -329,17 +346,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    String channelId = Global.channels.get(position).getChannel().getId();
                     Log.d(TAG, "Deleting Channel ID: " + channelId);
+                    ChannelResponse response_ = Global.getChannelResponseById(channelId);
                     Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
                         Utils.showMessage(getContext(), "Deleted successfully!");
-                        Global.channels.remove(position);
+                        Global.channels.remove(response_);
                         adapter.notifyDataSetChanged();
                     }, (String errMsg, int errCode) -> {
                         Log.d(TAG, "Failed Deleting: " + errMsg);
                         Utils.showMessage(getContext(), errMsg);
-                        Global.channels.remove(position);
-                        adapter.notifyDataSetChanged();
                     });
                     alertDialog.dismiss();
                 });

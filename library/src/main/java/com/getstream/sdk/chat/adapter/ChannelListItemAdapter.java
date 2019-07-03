@@ -4,6 +4,7 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.noties.markwon.Markwon;
@@ -33,6 +35,7 @@ public class ChannelListItemAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private Context context;
     private List<ChannelResponse> channels;
+    public String filter;
     private Markwon markwon;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
@@ -52,12 +55,13 @@ public class ChannelListItemAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return channels.size();
+
+        return filterChannels(filter).size();
     }
 
     @Override
     public Object getItem(int position) {
-        return channels.get(position);
+        return filterChannels(filter).get(position);
     }
 
     @Override
@@ -83,7 +87,7 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
 
         binding = binding1;
-        ChannelResponse channelResponse = channels.get(position);
+        ChannelResponse channelResponse = filterChannels(filter).get(position);
 
         Message lastMessage = channelResponse.getLastMessage();
         configUIs(binding, position);
@@ -95,13 +99,13 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
 
         binding.tvClick.setOnClickListener(view -> {
-            view.setTag(position);
+            view.setTag(channelResponse.getChannel().getId());
             binding.tvClick.setBackgroundColor(context.getResources().getColor(R.color.mesage_border));
             this.clickListener.onClick(view);
         });
 
         binding.tvClick.setOnLongClickListener(view -> {
-            view.setTag(position);
+            view.setTag(channelResponse.getChannel().getId());
             this.longClickListener.onLongClick(view);
             return true;
         });
@@ -190,5 +194,27 @@ public class ChannelListItemAdapter extends BaseAdapter {
             binding.tvLastMessage.setTypeface(binding.tvLastMessage.getTypeface(), Typeface.BOLD);
             binding.tvLastMessage.setTextColor(context.getResources().getColor(R.color.black));
         }
+    }
+
+    private List<ChannelResponse>filterChannels(String channelName){
+        Log.d(TAG,"channelName: "+ channelName);
+        if (TextUtils.isEmpty(channelName)) return this.channels;
+
+        List<ChannelResponse>channels_ = new ArrayList<>();
+        for (int i = 0; i < this.channels.size(); i++){
+            ChannelResponse response = this.channels.get(i);
+            Channel channel = response.getChannel();
+            if (TextUtils.isEmpty(channel.getName())){
+                User opponent = Global.getOpponentUser(response);
+                if (opponent != null && opponent.getName().contains(channelName)) {
+                    channels_.add(response);
+                }
+            }else{
+                if (channel.getName().contains(channelName)){
+                    channels_.add(response);
+                }
+            }
+        }
+        return channels_;
     }
 }

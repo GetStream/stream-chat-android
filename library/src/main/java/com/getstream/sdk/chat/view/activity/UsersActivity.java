@@ -150,9 +150,9 @@ public class UsersActivity extends AppCompatActivity {
         data.put("image", channel.getImageURL());
         data.put("members", Arrays.asList(Global.streamChat.getUser().getId(), user.getId()));
 
-        if (Component.Channel.invitation) {
-            data.put("invites", Arrays.asList(user.getId()));
-        }
+//        if (Component.Channel.invitation) {
+//            data.put("invites", Arrays.asList(user.getId()));
+//        }
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);

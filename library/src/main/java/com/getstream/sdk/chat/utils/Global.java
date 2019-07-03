@@ -75,7 +75,7 @@ public class Global {
     private static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 
     private static void setFormattedDate(Message message) {
-        if (message.getDate() != null) return;
+        if (message == null || message.getDate() != null) return;
         messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String sendDate = message.getCreated_at();
 
@@ -208,6 +208,17 @@ public class Global {
     // endregion
 
     // region Channel
+    public static ChannelResponse getChannelResponseById(String id) {
+        ChannelResponse response_ = null;
+        for (ChannelResponse response : channels) {
+            if (id.equals(response.getChannel().getId())) {
+                response_ = response;
+                break;
+            }
+        }
+        return response_;
+    }
+
     public static ChannelResponse getPrivateChannel(User user) {
         String channelId1 = streamChat.getUser().getId() + "-" + user.getId(); // Created by
         String channelId2 = user.getId() + "-" + streamChat.getUser().getId(); // Invited by
