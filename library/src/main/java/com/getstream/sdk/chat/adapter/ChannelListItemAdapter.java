@@ -96,6 +96,9 @@ public class ChannelListItemAdapter extends BaseAdapter {
         if (lastMessage != null) {
             configMessageDate(binding, lastMessage);
             configLastMessageDate(binding, channelResponse, lastMessage);
+        }else{
+            binding.tvLastMessage.setText("");
+            binding.tvDate.setText("");
         }
 
         binding.tvClick.setOnClickListener(view -> {
@@ -150,7 +153,11 @@ public class ChannelListItemAdapter extends BaseAdapter {
 
     private void configIndicatorUserInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
         User lastReadUser = channelResponse.getLastReadUser();
-        if (lastReadUser != null) {
+        Message lastMessage = channelResponse.getLastMessage();
+        if (lastMessage == null) {
+            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
+            binding.ivIndicator.setVisibility(View.INVISIBLE);
+        } else if (lastReadUser != null) {
             if (StringUtility.isValidImageUrl(lastReadUser.getImage())) {
                 Utils.circleImageLoad(binding.ivIndicator, lastReadUser.getImage());
                 binding.ivIndicator.setVisibility(View.VISIBLE);
@@ -167,7 +174,6 @@ public class ChannelListItemAdapter extends BaseAdapter {
     }
 
     private void configMessageDate(ListItemChannelBinding binding, Message lastMessage) {
-        ;
         if (TextUtils.isEmpty(lastMessage.getText())) {
             if (!lastMessage.getAttachments().isEmpty()) {
                 Attachment attachment = lastMessage.getAttachments().get(0);
@@ -196,21 +202,21 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
     }
 
-    private List<ChannelResponse>filterChannels(String channelName){
-        Log.d(TAG,"channelName: "+ channelName);
+    private List<ChannelResponse> filterChannels(String channelName) {
+
         if (TextUtils.isEmpty(channelName)) return this.channels;
 
-        List<ChannelResponse>channels_ = new ArrayList<>();
-        for (int i = 0; i < this.channels.size(); i++){
+        List<ChannelResponse> channels_ = new ArrayList<>();
+        for (int i = 0; i < this.channels.size(); i++) {
             ChannelResponse response = this.channels.get(i);
             Channel channel = response.getChannel();
-            if (TextUtils.isEmpty(channel.getName())){
+            if (TextUtils.isEmpty(channel.getName())) {
                 User opponent = Global.getOpponentUser(response);
-                if (opponent != null && opponent.getName().contains(channelName)) {
+                if (opponent != null && opponent.getName().toLowerCase().contains(channelName.toLowerCase())) {
                     channels_.add(response);
                 }
-            }else{
-                if (channel.getName().contains(channelName)){
+            } else {
+                if (channel.getName().toLowerCase().contains(channelName.toLowerCase())) {
                     channels_.add(response);
                 }
             }
