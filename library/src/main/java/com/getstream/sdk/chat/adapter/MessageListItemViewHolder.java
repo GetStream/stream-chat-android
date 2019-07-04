@@ -799,6 +799,7 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
         }
         if (message.getReplyCount() == 1) tv_reply.setText("1" + " reply");
         if (message.getReplyCount() > 1) tv_reply.setText(message.getReplyCount() + " replies");
+
         cl_reply.setOnClickListener((View v) -> {
             if (clickListener != null) {
                 v.setTag(new MessageTagModel(Constant.TAG_MOREACTION_REPLY, position));

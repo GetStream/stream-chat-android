@@ -492,14 +492,13 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
             threadBinding.setShowThread(true);
         } else {
             binding.setShowMainProgressbar(true);
-            RestController.GetRepliesCallback callback = (GetRepliesResponse response) -> {
+            Global.mRestController.getReplies(message.getId(), (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
                 Global.setStartDay(threadMessages, null);
                 setThreadAdapter();
                 threadBinding.setShowThread(true);
                 binding.setShowMainProgressbar(false);
-            };
-            Global.mRestController.getReplies(message.getId(), callback, (String errMsg, int errCode) -> {
+            }, (String errMsg, int errCode) -> {
                 Utils.showMessage(ChatActivity.this, errMsg);
                 thread_parentMessage = null;
                 binding.setShowMainProgressbar(false);

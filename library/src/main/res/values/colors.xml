@@ -14,6 +14,7 @@
     <!--Message Composer-->
     <color name="composer_stroke_select">#0076FF</color>
     <color name="chat_no_connection">#1AD0021B</color>
+    <color name="composer_background">#0D000000</color>
     <!--Message Item-->
     <color name="backgroundIncoming">#FFFFFF</color>
     <color name="backgroundOutgoing">#0D000000</color>

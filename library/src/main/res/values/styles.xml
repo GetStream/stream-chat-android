@@ -86,7 +86,7 @@
 
     <!--region Chat-->
     <style name="chat_theme">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/gray</item>
     </style>
     <!--endregion-->
 </resources>
