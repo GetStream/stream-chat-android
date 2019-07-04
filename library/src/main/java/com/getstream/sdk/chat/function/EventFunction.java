@@ -167,6 +167,9 @@ public class EventFunction {
             case Event.notification_invite_accepted:
                 handleInvite(channelResponse, event);
                 break;
+            case Event.notification_added_to_channel:
+                Global.addChannelResponse(channelResponse);
+                break;
             case Event.channel_updated:
             case Event.channel_deleted:
                 handleChannelEvent(channelResponse, event);

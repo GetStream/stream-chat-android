@@ -11,6 +11,9 @@
     <color name="gray_dark">#858585</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <!--Theme-->
+    <color name="chat_theme">#FFFFFF</color>
+    <color name="channel_theme">#FFFFFF</color>
     <!--Message Composer-->
     <color name="composer_stroke_select">#0076FF</color>
     <color name="chat_no_connection">#1AD0021B</color>
@@ -36,8 +39,6 @@
     <color name="exomedia_default_controls_button_normal">#FFFFFFFF</color>
     <color name="exomedia_default_controls_button_pressed">#FFE0E0E0</color>
     <color name="exomedia_default_controls_button_disabled">#FF757575</color>
-
-
 
     <!--ONLY_FOR_DEBUG-->
     <color name="gap_header">#FE0909</color>

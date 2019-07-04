@@ -717,6 +717,14 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                 case Event.reaction_deleted:
                     reactionEvent(event);
                     break;
+                case Event.channel_updated:
+                case Event.channel_deleted:
+                    eventFunction.handleChannelEvent(channelResponse, event);
+                    if (event.getType().equals(Event.channel_deleted)) {
+                        Utils.showMessage(this, "Channel Owner just removed this channel!");
+                        finish();
+                    }
+                    break;
                 default:
                     break;
             }

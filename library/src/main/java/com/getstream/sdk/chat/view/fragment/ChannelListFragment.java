@@ -217,7 +217,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         if (streamChat.getChannel() != null) {
             // If default Channel exist
-            getChannel(streamChat.getChannel());
+            getChannel(streamChat.getChannel(), true);
         } else {
             getChannels();
         }
@@ -272,7 +272,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
     }
 
-    private void getChannel(Channel channel) {
+    private void getChannel(Channel channel, boolean goChat) {
         binding.setShowMainProgressbar(true);
         channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
@@ -283,13 +283,21 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
         Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
+            binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
+            if (goChat) {
+                navigationChannelDetail(response);
+            } else {
+                if (getActivity() != null)
+                    getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+            }
             Gson gson = new Gson();
             Log.d(TAG, "Channel Response: " + gson.toJson(response));
-            navigationChannelDetail(response);
+
         }, (String errMsg, int errCode) -> {
+            binding.setShowMainProgressbar(false);
             Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
     }
@@ -436,9 +444,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 return;
             }
             eventFunction.handleReceiveEvent(event);
+            if (event.getType().equals(Event.notification_added_to_channel)) {
+                Channel channel_ = event.getChannel();
+                getChannel(channel_, false);
+            }
             switch (event.getType()) {
                 case Event.message_new:
                 case Event.message_read:
+                case Event.channel_deleted:
+                case Event.channel_updated:
                     if (getActivity() != null)
                         getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
                     break;
