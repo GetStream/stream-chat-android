@@ -289,15 +289,14 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView = v.findViewById(R.id.cv_avatar);
             textView.setText(user.getUserInitials());
             Utils.circleImageLoad(imageView, user.getImage());
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
+            int height = (int) context.getResources().getDimension(R.dimen.message_typing_indicator_size);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(height, height);
             if (i == 0) {
                 params.setMargins(0, 0, 0, 0);
             } else {
                 params.setMargins(-(int) marginLeft, 0, 0, 0);
             }
+
             v.setLayoutParams(params);
             ll_typingusers.addView(v);
         }
@@ -435,9 +434,9 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
             tv_text.setBackgroundResource(background);
         }
         // Set Color
-        if (message.isIncoming()){
+        if (message.isIncoming()) {
             tv_text.setTextColor(context.getResources().getColor(R.color.message_text_incoming));
-        }else{
+        } else {
             tv_text.setTextColor(context.getResources().getColor(R.color.message_text_outgoing));
         }
 
