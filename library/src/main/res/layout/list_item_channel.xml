@@ -7,14 +7,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <com.getstream.sdk.chat.utils.CircleView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_initials"
+            app:layout_constraintEnd_toEndOf="@+id/tv_initials"
+            app:layout_constraintStart_toStartOf="@+id/tv_initials"
+            app:layout_constraintTop_toTopOf="@+id/tv_initials" />
+
         <TextView
             android:id="@+id/tv_initials"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/circle_channel_initials"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:textStyle="bold"
+            style="@style/channel_preview_initials"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"
             app:layout_constraintEnd_toEndOf="@+id/iv_avatar"
             app:layout_constraintStart_toStartOf="@+id/iv_avatar"
@@ -22,34 +27,38 @@
 
         <ImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
+            style="@style/channel_preview_avatar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/text_single_line"
+            style="@style/channel_preview_channel_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
-            android:textColor="@color/black"
-            android:textSize="14sp"
+            android:ellipsize="end"
+            android:ems="3"
+            android:gravity="start"
+            android:maxLines="1"
+            android:singleLine="true"
             app:layout_constraintEnd_toStartOf="@+id/tv_date"
             app:layout_constraintStart_toEndOf="@+id/iv_avatar"
             app:layout_constraintTop_toTopOf="@+id/iv_avatar" />
 
         <TextView
             android:id="@+id/tv_last_message"
-            style="@style/text_single_line"
+            style="@style/channel_preview_channel_last_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:textColor="@color/gray_dark"
-            android:textSize="13sp"
+            android:ellipsize="end"
+            android:ems="3"
+            android:gravity="start"
+            android:maxLines="1"
+            android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="@+id/iv_avatar"
             app:layout_constraintEnd_toStartOf="@+id/tv_date"
             app:layout_constraintHorizontal_bias="0"
@@ -58,11 +67,10 @@
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/text_s"
+            style="@style/channel_preview_channel_last_message_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:textSize="11sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name"
             app:layout_constraintTop_toTopOf="@+id/tv_name" />

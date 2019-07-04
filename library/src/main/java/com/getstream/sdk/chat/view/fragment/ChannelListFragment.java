@@ -173,8 +173,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 mLastFirstVisibleItem = firstVisibleItem;
             }
         });
-//        binding.clHeader.setOnClickListener((View view) -> navigateUserList());
-//        binding.etSearch.setOnClickListener((View view) -> navigateUserList());
+
         binding.tvSend.setOnClickListener((View view) -> navigateUserList());
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {
@@ -367,6 +366,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void navigationChannelDetail(ChannelResponse response) {
+        binding.setShowMainProgressbar(false);
         Global.setStartDay(response.getMessages(), null);
         Log.d(TAG, "Channel ID:" + response.getChannel());
         Global.eventFunction = eventFunction;

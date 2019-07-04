@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;

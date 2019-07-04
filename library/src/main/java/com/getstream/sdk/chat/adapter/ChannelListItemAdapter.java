@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemChannelBinding;
 import com.getstream.sdk.chat.model.User;
@@ -152,6 +153,12 @@ public class ChannelListItemAdapter extends BaseAdapter {
     }
 
     private void configIndicatorUserInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
+        if (!Component.Channel.readIndicator){
+            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
+            binding.ivIndicator.setVisibility(View.INVISIBLE);
+            return;
+        }
+
         User lastReadUser = channelResponse.getLastReadUser();
         Message lastMessage = channelResponse.getLastMessage();
         if (lastMessage == null) {
@@ -223,4 +230,5 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
         return channels_;
     }
+
 }
