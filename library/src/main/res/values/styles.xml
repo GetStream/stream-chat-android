@@ -60,14 +60,12 @@
     <style name="channel_preview_initials">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/black</item>
-        <item name="android:gravity">center</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="channel_preview_avatar">
         <item name="android:layout_width">40dp</item>
         <item name="android:layout_height">40dp</item>
-        <item name="android:layout_margin">10dp</item>
     </style>
 
     <style name="channel_preview_channel_name">
