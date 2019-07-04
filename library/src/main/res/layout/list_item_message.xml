@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cl_message"
@@ -24,27 +23,35 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_height="1px"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintBottom_toBottomOf="@+id/layout1"
+                app:layout_constraintEnd_toStartOf="@+id/layout1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/layout1"
+                tools:ignore="ContentDescription" />
+            <ImageView
+                android:layout_width="0dp"
                 android:layout_height="1px"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:background="@android:color/darker_gray"
                 app:layout_constraintBottom_toBottomOf="@+id/layout1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/layout1"
                 app:layout_constraintTop_toTopOf="@+id/layout1"
                 tools:ignore="ContentDescription" />
-
             <LinearLayout
                 android:id="@+id/layout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="@+id/imageView"
-                app:layout_constraintStart_toStartOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView

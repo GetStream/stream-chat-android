@@ -83,4 +83,10 @@
         <item name="android:textColor">@color/gray_dark</item>
     </style>
     <!--endregion-->
+
+    <!--region Chat-->
+    <style name="chat_theme">
+        <item name="android:background">@color/white</item>
+    </style>
+    <!--endregion-->
 </resources>
