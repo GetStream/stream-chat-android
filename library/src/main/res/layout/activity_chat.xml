@@ -35,10 +35,10 @@
     </data>
 
     <android.support.constraint.ConstraintLayout
+        style="@style/chat_theme"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        style="@style/chat_theme"
         tools:context=".view.activity.ChatActivity">
 
         <android.support.v7.widget.Toolbar

@@ -11,6 +11,7 @@
     <dimen name="message_gap">5px</dimen>
     <dimen name="message_avatar_margin">10dp</dimen>
     <dimen name="message_date_margin">5dp</dimen>
+    <dimen name="message_text_font_size">15sp</dimen>
     <!--Attachment Item-->
     <dimen name="attach_image_width">250dp</dimen>
     <dimen name="attach_image_height">200dp</dimen>

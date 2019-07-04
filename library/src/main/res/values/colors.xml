@@ -16,8 +16,10 @@
     <color name="chat_no_connection">#1AD0021B</color>
     <color name="composer_background">#0D000000</color>
     <!--Message Item-->
-    <color name="backgroundIncoming">#FFFFFF</color>
-    <color name="backgroundOutgoing">#0D000000</color>
+    <color name="message_background_incoming">#FFFFFF</color>
+    <color name="message_background_outgoing">#0D000000</color>
+    <color name="message_text_incoming">#000000</color>
+    <color name="message_text_outgoing">#000000</color>
     <color name="mesage_border">#14000000</color>
     <color name="message_failed">#1AD0021B</color>
     <color name="user_intials_back">#CCCCA4D6</color>
@@ -29,10 +31,14 @@
     <color name="attach_more">#4D000000</color>
     <!--Attachment file-->
     <color name="attachment_close">#80FFFFFF</color>
+
     <!--exomedia-->
     <color name="exomedia_default_controls_button_normal">#FFFFFFFF</color>
     <color name="exomedia_default_controls_button_pressed">#FFE0E0E0</color>
     <color name="exomedia_default_controls_button_disabled">#FF757575</color>
+
+
+
     <!--ONLY_FOR_DEBUG-->
     <color name="gap_header">#FE0909</color>
     <color name="gap_reaction">#0971FE</color>

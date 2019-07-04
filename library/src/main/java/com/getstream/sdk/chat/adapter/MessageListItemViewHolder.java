@@ -434,6 +434,12 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
             }
             tv_text.setBackgroundResource(background);
         }
+        // Set Color
+        if (message.isIncoming()){
+            tv_text.setTextColor(context.getResources().getColor(R.color.message_text_incoming));
+        }else{
+            tv_text.setTextColor(context.getResources().getColor(R.color.message_text_outgoing));
+        }
 
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
