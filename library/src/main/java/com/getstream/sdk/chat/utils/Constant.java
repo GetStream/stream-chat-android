@@ -27,9 +27,9 @@ public final class Constant {
     // pagination
     public static final int CHANNEL_LIMIT = 30;
     public static final int CHANNEL_MESSAGE_LIMIT = 25;
+    public static final int THREAD_MESSAGE_LIMIT = 25;
 
     public static final int USER_LIMIT = 30;
-
     // Channel
     public static final int TYPYING_CLEAN_INTERVAL = 15 * 1000;
     // Permission Code

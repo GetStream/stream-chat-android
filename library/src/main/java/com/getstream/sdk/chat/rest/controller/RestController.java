@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.controller;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
@@ -44,6 +45,7 @@ public class RestController {
         mService = RetrofitClient.getAuthrizedClient().create(APIService.class);
         Log.d(TAG, mService.toString());
     }
+
     // region Channel
     public void getChannels(@NonNull JSONObject payload, final GetChannelsCallback callback, final ErrCallback errCallback) {
 
@@ -82,6 +84,7 @@ public class RestController {
             }
         });
     }
+
     /**
      * deleteChannel - Delete the given channel
      *
@@ -108,6 +111,7 @@ public class RestController {
             }
         });
     }
+
     public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
 
         mService.pagination(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<ChannelResponse>() {
@@ -133,6 +137,7 @@ public class RestController {
 
     /**
      * sendMessage - Send a message to this channel
+     *
      * @param {object} message The Message object
      * @return {object} The Server Response
      */
@@ -239,23 +244,41 @@ public class RestController {
      * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
      * @return {type} A channelResponse with a list of messages
      */
-    public void getReplies(@NonNull String parentId, final GetRepliesCallback callback, final ErrCallback errCallback) {
-
-        mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<GetRepliesResponse>() {
-            @Override
-            public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+    public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback, final ErrCallback errCallback) {
+        if (TextUtils.isEmpty(firstId)){
+            mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit).enqueue(new Callback<GetRepliesResponse>() {
+                @Override
+                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        handleError(response.errorBody(), response.code(), errCallback);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
+                @Override
+                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
+                    errCallback.onError(t.getLocalizedMessage(), -1);
+                }
+            });
+        }else{
+            mService.getRepliesMore(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
+                @Override
+                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        handleError(response.errorBody(), response.code(), errCallback);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
+                    errCallback.onError(t.getLocalizedMessage(), -1);
+                }
+            });
+        }
+
     }
     // endregion
 

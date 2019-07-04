@@ -80,7 +80,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     private MessageListItemAdapter mAdapter, mThreadAdapter;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
-    private boolean noHistory;
+    private boolean noHistory, noHistoryThread;
     // Functions
     private MessageFunction messageFunction;
     private EventFunction eventFunction = Global.eventFunction;
@@ -170,6 +170,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         sendFileFunction = new SendFileFunction(this, binding, channelResponse);
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
+        noHistoryThread = false;
     }
 
     boolean lockRVScrollListener = false;
@@ -267,7 +268,9 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     private RecyclerView recyclerView() {
         return isThreadMode() ? threadBinding.rvThread : binding.rvMessage;
     }
-
+    private boolean isNoHistory() {
+        return isThreadMode() ? noHistoryThread : noHistory;
+    }
     void configDelivered() {
         if (messages() == null || messages().isEmpty()) return;
         if (!messages().get(messages().size() - 1).isIncoming())
@@ -319,7 +322,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                 if (currentFirstVisible < fVPosition) {
                     Utils.hideSoftKeyboard(ChatActivity.this);
                     binding.etMessage.clearFocus();
-                    if (currentFirstVisible == 0 && !noHistory && !isThreadMode()) loadMore();
+                    if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
                 }
                 new Handler().postDelayed(() -> {
                     lVPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
@@ -492,12 +495,13 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
             threadBinding.setShowThread(true);
         } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(message.getId(), (GetRepliesResponse response) -> {
+            Global.mRestController.getReplies(message.getId(),String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null,(GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
                 Global.setStartDay(threadMessages, null);
                 setThreadAdapter();
                 threadBinding.setShowThread(true);
                 binding.setShowMainProgressbar(false);
+                if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
             }, (String errMsg, int errCode) -> {
                 Utils.showMessage(ChatActivity.this, errMsg);
                 thread_parentMessage = null;
@@ -544,6 +548,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         threadMessages = null;
         lVPosition = 0;
         fVPosition = 0;
+        noHistoryThread = false;
         binding.rvMessage.clearOnScrollListeners();
         threadBinding.rvThread.clearOnScrollListeners();
         Utils.hideSoftKeyboard(this);
@@ -926,35 +931,56 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     boolean isCalling;
 
     private void loadMore() {
-        if (noHistory || isCalling) return;
+        if (isNoHistory() || isCalling) return;
         Log.d(TAG, "Next pagination...");
         isCalling = true;
-        binding.setShowLoadMoreProgressbar(true);
-        PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
+        if (!isThreadMode()){
+            binding.setShowLoadMoreProgressbar(true);
+            PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
+            Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
+                binding.setShowLoadMoreProgressbar(false);
+                List<Message> newMessages = new ArrayList<>(response.getMessages());
+                Log.d(TAG, "new Message Count: " + newMessages.size());
+                if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
 
-        RestController.ChannelDetailCallback callback = (ChannelResponse response) -> {
-            binding.setShowLoadMoreProgressbar(false);
+                // Set Date Time
+                Global.setStartDay(newMessages, null);
+                // Add new to current Message List
+                for (int i = newMessages.size() - 1; i > -1; i--) {
+                    channelMessages.add(0, newMessages.get(i));
+                }
+                scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                mViewModel.setChannelMessages(channelMessages);
+                isCalling = false;
+            }, (String errMsg, int errCode) -> {
+                Utils.showMessage(ChatActivity.this, errMsg);
+                isCalling = false;
+                binding.setShowLoadMoreProgressbar(false);
+            });
+        }else{
+            binding.setShowMainProgressbar(true);
+            Global.mRestController.getReplies(thread_parentMessage.getId(),String.valueOf(Constant.THREAD_MESSAGE_LIMIT),threadMessages.get(0).getId(), (GetRepliesResponse response) -> {
+                binding.setShowMainProgressbar(false);
+                List<Message> newMessages = new ArrayList<>(response.getMessages());
+                Log.d(TAG, "new Message Count: " + newMessages.size());
+                if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
 
-            List<Message> newMessages = new ArrayList<>(response.getMessages());
-            Log.d(TAG, "new Message Count: " + newMessages.size());
-            if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
+                Global.setStartDay(newMessages, null);
+                // Add new to current Message List
+                for (int i = newMessages.size() - 1; i > -1; i--) {
+                    threadMessages.add(0, newMessages.get(i));
+                }
+                int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                mThreadAdapter.notifyDataSetChanged();
+                recyclerView().scrollToPosition(scrollPosition);
+                isCalling = false;
+            }, (String errMsg, int errCode) -> {
+                Utils.showMessage(ChatActivity.this, errMsg);
+                isCalling = false;
+                binding.setShowMainProgressbar(false);
+            });
+        }
 
-            // Set Date Time
-            Global.setStartDay(newMessages, null);
-            // Add new to current Message List
-            for (int i = newMessages.size() - 1; i > -1; i--) {
-                channelMessages.add(0, newMessages.get(i));
-            }
-            scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-            mViewModel.setChannelMessages(channelMessages);
-            isCalling = false;
-        };
-
-        Global.mRestController.pagination(channel.getId(), request, callback, (String errMsg, int errCode) -> {
-            Log.d(TAG, errMsg);
-            isCalling = false;
-            binding.setShowLoadMoreProgressbar(false);
-        });
     }
 
     // endregion
