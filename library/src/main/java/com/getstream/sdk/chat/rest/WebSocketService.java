@@ -81,7 +81,6 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(TAG, "WebSocket Connected : " + response);
-            Global.noConnection = false;
             stopRepeatingTask();
             startRepeatingTask();
         }
@@ -102,10 +101,10 @@ public class WebSocketService extends WebSocketListener {
                 if (json == null) return;
 
                 Event event = Parser.parseEvent(json);
-                if (!TextUtils.isEmpty(event.getConnection_id())){
+                if (!TextUtils.isEmpty(event.getConnection_id())) {
                     String connectionId = event.getConnection_id();
                     Global.streamChat.setClientID(connectionId);
-                    Log.d(TAG,"Connection ID: " + connectionId);
+                    Log.d(TAG, "Connection ID: " + connectionId);
                 }
             }
         }
@@ -126,14 +125,16 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             Log.d(TAG, "Error: " + t.getMessage());
-            if (t.getMessage().contains("Connection reset by peer")){
-                try {
+
+            try {
+                if (t.getMessage().contains("Connection reset by peer")) {
                     if (webSocketListener != null)
-                        webSocketListener.onFailed(t.getMessage(),t.hashCode());
+                        webSocketListener.onFailed(t.getMessage(), t.hashCode());
+
                     client.dispatcher().cancelAll();// to cancel all requests
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

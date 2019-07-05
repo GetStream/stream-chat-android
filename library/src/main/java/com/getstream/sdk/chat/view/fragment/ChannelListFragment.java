@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.fragment;
 
-import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 
@@ -8,10 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -261,7 +258,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding.setShowMainProgressbar(false);
         isCalling = false;
         if (response.getChannels().isEmpty()) {
-            Utils.showMessage(getContext(), "There is no any active Channel(s)!");
+            if (Global.channels == null || Global.channels.isEmpty())
+                Utils.showMessage(getContext(), "There is no any active Channel(s)!");
             return;
         }
 

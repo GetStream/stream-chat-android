@@ -186,9 +186,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Init
     void init() {
-        try{
+        try {
             Fresco.initialize(getApplicationContext());
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         channelResponse = Global.channelResponse;
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
@@ -801,22 +802,27 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     @Override
     public void handleWSResponse(Object response) {
         Global.noConnection = false;
-        if (response.getClass().equals(String.class)) {
-            // Checking No connection
-            JSONObject json = null;
-            try {
-                json = new JSONObject(response.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (json == null) return;
 
-            Event event = Parser.parseEvent(json);
-            if (!event.getType().equals(Event.health_check))
-                Log.d(TAG, "Connection Response : " + json);
+        if (!response.getClass().equals(String.class)) return;
 
-            if (Global.eventFunction != null)
-                Global.eventFunction.handleReceiveEvent(event);
+        // Checking No connection
+        JSONObject json = null;
+        try {
+            json = new JSONObject(response.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (json == null) return;
+
+        Event event = Parser.parseEvent(json);
+        if (!event.getType().equals(Event.health_check))
+            Log.d(TAG, "Connection Response : " + json);
+
+        if (Global.eventFunction != null)
+            Global.eventFunction.handleReceiveEvent(event);
+
+        if (!TextUtils.isEmpty(event.getConnection_id()) && TextUtils.isEmpty(Global.streamChat.getClientID())) {
+            Global.eventFunction.handleReconnect(Global.noConnection);
         }
     }
 
@@ -1180,6 +1186,40 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Reconnection
     private void reconnectionHandler() {
+        if (singleConversation){
+            Channel channel_ = Global.streamChat.getChannel();
+            binding.setShowMainProgressbar(true);
+            channel_.setType(ModelType.channel_messaging);
+            Map<String, Object> messages = new HashMap<>();
+            messages.put("limit", Constant.DEFAULT_LIMIT);
+            Map<String, Object> data = new HashMap<>();
+            Log.d(TAG, "Channel Connecting...");
+
+            ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+
+            Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+                binding.setShowMainProgressbar(false);
+                if (!response.getMessages().isEmpty())
+                    Global.setStartDay(response.getMessages(), null);
+                Global.addChannelResponse(response);
+                Global.channelResponse = response;
+                Gson gson = new Gson();
+                Log.d(TAG, "Channel Response: " + gson.toJson(response));
+
+                init();
+                List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+                if (ephemeralMessages != null && !ephemeralMessages.isEmpty())
+                    for (int i = 0; i < ephemeralMessages.size(); i++) {
+                        channelMessages.add(ephemeralMessages.get(i));
+                    }
+
+                setRecyclerViewAdapder();
+            }, (String errMsg, int errCode) -> {
+                binding.setShowMainProgressbar(false);
+                Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            });
+            return;
+        }
         for (ChannelResponse channelResponse : Global.channels) {
             if (channelResponse.getChannel().getId().equals(channel.getId())) {
                 Global.channelResponse = channelResponse;
