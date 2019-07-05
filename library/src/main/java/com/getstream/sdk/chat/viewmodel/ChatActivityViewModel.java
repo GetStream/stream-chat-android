@@ -39,6 +39,7 @@ public class ChatActivityViewModel extends ViewModel {
     }
 
     public boolean isOnline() {
+        if (channelResponse == null) return false;
         try {
             if (Global.getOpponentUser(channelResponse) == null)
                 return false;
@@ -50,6 +51,7 @@ public class ChatActivityViewModel extends ViewModel {
         return false;
     }
     public String channelName() {
+        if (channelResponse == null) return null;
         if (!TextUtils.isEmpty(channelResponse.getChannel().getName())) {
             return channelResponse.getChannel().getName();
         } else {
@@ -61,6 +63,7 @@ public class ChatActivityViewModel extends ViewModel {
         return null;
     }
     public boolean isVisibleLastActive() {
+        if (channelResponse == null) return false;
         User opponent = Global.getOpponentUser(channelResponse);
         if (opponent != null) {
             if (TextUtils.isEmpty(Global.differentTime(opponent.getLast_active())))
@@ -73,6 +76,7 @@ public class ChatActivityViewModel extends ViewModel {
         return false;
     }
     public String lastActive(){
+        if (channelResponse == null) return null;
         // Last Active
         User opponent = Global.getOpponentUser(channelResponse);
         if (opponent != null) {

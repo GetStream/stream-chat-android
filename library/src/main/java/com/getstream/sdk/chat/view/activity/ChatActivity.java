@@ -20,6 +20,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
@@ -32,12 +33,15 @@ import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
+import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.model.message.MessageTagModel;
+import com.getstream.sdk.chat.rest.Parser;
+import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.SendActionRequest;
@@ -58,6 +62,9 @@ import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,7 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity implements EventHandler {
+public class ChatActivity extends AppCompatActivity implements EventHandler, WSResponseHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
 
@@ -84,8 +91,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
     private boolean noHistory, noHistoryThread;
     // Functions
     private MessageFunction messageFunction;
-//    private EventFunction eventFunction;
+    // private EventFunction eventFunction;
     private SendFileFunction sendFileFunction;
+
+    private boolean singleConversation;
 
     // region LifeCycle
     @Override
@@ -100,29 +109,43 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
         threadBinding = binding.clThread;
         threadBinding.setViewModel(mViewModel);
 
-        init();
-        configDelivered();
-        initUIs();
+        singleConversation = (Global.streamChat.getChannel() != null);
+        if (!singleConversation) {
+            init();
+            configDelivered();
+            configUIs();
+        } else {
+            Global.webSocketService.setWSResponseHandler(this);
+            if (!TextUtils.isEmpty(Global.streamChat.getClientID())) {
+                getChannel();
+            }
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Global.eventFunction.setEventHandler(null);
-        Global.eventFunction.setChannel(null);
+
         Global.channelResponse = null;
+        Global.streamChat.setChannel(null);
+
+        if (Global.eventFunction != null) {
+            Global.eventFunction.setEventHandler(null);
+            Global.eventFunction.setChannel(null);
+        }
+
         stopTypingClearRepeatingTask();
-        Log.d(TAG, "onStop");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Global.eventFunction = Global.eventFunction;
-        Global.eventFunction.setChannel(this.channel);
-        Global.eventFunction.setEventHandler(this);
+        if (Global.eventFunction != null) {
+            Global.eventFunction.setChannel(this.channel);
+            Global.eventFunction.setEventHandler(this);
+        }
+
         startTypingClearRepeatingTask();
-        Log.d(TAG, "OnResume");
     }
 
     @Override
@@ -163,6 +186,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
 
     // region Init
     void init() {
+        try{
+            Fresco.initialize(getApplicationContext());
+        }catch (Exception e){}
         channelResponse = Global.channelResponse;
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
@@ -171,11 +197,16 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
+
+        if (Global.eventFunction == null)
+            Global.eventFunction = new EventFunction();
+        Global.eventFunction.setChannel(this.channel);
+        Global.eventFunction.setEventHandler(this);
     }
 
     boolean lockRVScrollListener = false;
 
-    void initUIs() {
+    void configUIs() {
         // Message Composer
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
@@ -237,6 +268,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
+        configHeaderView();
+    }
+
+    private void configHeaderView() {
+        // Avatar
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvChannelInitial.setText(channel.getInitials());
             Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImageURL());
@@ -259,6 +295,74 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
                 binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
             }
         }
+        // Channel name
+        String channelName = "";
+
+        if (!TextUtils.isEmpty(channelResponse.getChannel().getName())) {
+            channelName = channelResponse.getChannel().getName();
+        } else {
+            User opponent = Global.getOpponentUser(channelResponse);
+            if (opponent != null) {
+                channelName = opponent.getName();
+            }
+        }
+
+        binding.tvChannelName.setText(channelName);
+
+        // Last Active
+        String lastActive = null;
+        User opponent = Global.getOpponentUser(channelResponse);
+        if (opponent != null) {
+            if (!TextUtils.isEmpty(Global.differentTime(opponent.getLast_active()))) {
+                lastActive = Global.differentTime(opponent.getLast_active());
+            }
+        }
+        if (TextUtils.isEmpty(lastActive)) {
+            binding.tvActive.setVisibility(View.GONE);
+        } else {
+            binding.tvActive.setVisibility(View.VISIBLE);
+            binding.tvActive.setText(lastActive);
+        }
+        // Online Mark
+
+        try {
+            if (Global.getOpponentUser(channelResponse) == null)
+                binding.ivActiveMark.setVisibility(View.GONE);
+            else {
+                binding.ivActiveMark.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            binding.ivActiveMark.setVisibility(View.GONE);
+        }
+    }
+
+    private void getChannel() {
+        Channel channel_ = Global.streamChat.getChannel();
+        binding.setShowMainProgressbar(true);
+        channel_.setType(ModelType.channel_messaging);
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("limit", Constant.DEFAULT_LIMIT);
+        Map<String, Object> data = new HashMap<>();
+        Log.d(TAG, "Channel Connecting...");
+
+        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+
+        Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+            binding.setShowMainProgressbar(false);
+            if (!response.getMessages().isEmpty())
+                Global.setStartDay(response.getMessages(), null);
+            Global.addChannelResponse(response);
+            Global.channelResponse = response;
+            Gson gson = new Gson();
+            Log.d(TAG, "Channel Response: " + gson.toJson(response));
+
+            init();
+            configDelivered();
+            configUIs();
+        }, (String errMsg, int errCode) -> {
+            binding.setShowMainProgressbar(false);
+            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+        });
     }
 
     private List<Message> messages() {
@@ -692,6 +796,39 @@ public class ChatActivity extends AppCompatActivity implements EventHandler {
         Utils.showMessage(this, msg);
     }
     // endregion
+
+    // WebSocket Listener
+    @Override
+    public void handleWSResponse(Object response) {
+        Global.noConnection = false;
+        if (response.getClass().equals(String.class)) {
+            // Checking No connection
+            JSONObject json = null;
+            try {
+                json = new JSONObject(response.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (json == null) return;
+
+            Event event = Parser.parseEvent(json);
+            if (!event.getType().equals(Event.health_check))
+                Log.d(TAG, "Connection Response : " + json);
+
+            if (Global.eventFunction != null)
+                Global.eventFunction.handleReceiveEvent(event);
+        }
+    }
+
+    @Override
+    public void onFailed(String errMsg, int errCode) {
+        Global.noConnection = true;
+        Global.streamChat.setClientID(null);
+        binding.setNoConnection(true);
+        if (Global.eventFunction != null)
+            Global.eventFunction.handleReconnect(Global.noConnection);
+        binding.setShowMainProgressbar(false);
+    }
 
     // Event Listener
     @Override

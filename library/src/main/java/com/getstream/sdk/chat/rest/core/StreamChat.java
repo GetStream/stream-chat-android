@@ -28,8 +28,6 @@ public class StreamChat {
 
     private Channel channel;
 
-    public WebSocketService wsConnection;
-
     public StreamChat(String apiKey) {
         this.apiKey = apiKey;
     }
@@ -75,11 +73,8 @@ public class StreamChat {
     }
 
     // region Customize Components
-    public void setChannel(String channelId, String channelName, String channelImage){
-        this.channel = new Channel();
-        this.channel.setId(channelId);
-        this.channel.setName(channelName);
-        this.channel.setImageURL(channelImage);
+    public void setChannel(Channel channel){
+        this.channel = channel;
     }
 
     public Channel getChannel() {
@@ -87,7 +82,7 @@ public class StreamChat {
     }
 
     // end region
-    public void setupWebSocket() {
+    public void setUp() {
         Map<String, Object> jsonParameter = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put("id", this.user.getId());
@@ -101,7 +96,7 @@ public class StreamChat {
         String wsURL = Global.baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
                 + this.apiKey + "&authorization=" + this.userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
-        wsConnection.wsURL = wsURL;
-        wsConnection.connect();
+        Global.webSocketService.wsURL = wsURL;
+        Global.webSocketService.connect();
     }
 }

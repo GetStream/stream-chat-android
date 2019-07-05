@@ -13,7 +13,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,7 +45,6 @@ import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
@@ -75,13 +73,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     private ChannelListViewModel mViewModel;
     private FragmentChannelListBinding binding;
-    public WebSocketService webSocketService;
     private ChannelListItemAdapter adapter;
 
     public int containerResId;
     public StreamChat streamChat;
 
-    //    private EventFunction eventFunction;
     private boolean isLastPage = false;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -102,6 +98,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         init();
         configUIs();
         setStreamChat();
+        getChannels();
         return binding.getRoot();
     }
 
@@ -152,16 +149,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     // region Private Functions
     private void init() {
-        webSocketService = new WebSocketService();
-        webSocketService.setWSResponseHandler(this);
-        if (Global.eventFunction == null) {
-            Global.eventFunction = new EventFunction();
+        Global.webSocketService.setWSResponseHandler(this);
+        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
+        try {
             Fresco.initialize(getContext());
-            connectionCheck();
-            permissionCheck();
-            pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
-            editor = pref.edit();
-        }
+        }catch (Exception e){}
+
+        connectionCheck();
+        pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
+        editor = pref.edit();
 
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
@@ -169,6 +165,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private void configUIs() {
         FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
         frameLayout.setFitsSystemWindows(true);
+
+        binding.clHeader.setVisibility(View.VISIBLE);
+        binding.listChannels.setVisibility(View.VISIBLE);
         configChannelListView();
         binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
             private int mLastFirstVisibleItem;
@@ -211,17 +210,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     public void setStreamChat() {
-        if (Global.streamChat != null && !TextUtils.isEmpty(Global.streamChat.getClientID()))
-            return;
-
-
         if (Global.noConnection) {
             Utils.showMessage(getContext(), "No internet connection!");
             return;
         }
+        Global.webSocketService.setWSResponseHandler(this);
         binding.setShowMainProgressbar(true);
-        streamChat.wsConnection = webSocketService;
-        streamChat.setupWebSocket();
     }
 
     private void setAfterFirstConnection(Event event) {
@@ -236,13 +230,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Log.d(TAG, "Client ID : " + connectionId);
 
         initLoadingChannels();
-
-        if (streamChat.getChannel() != null) {
-            // If default Channel exist
-            getChannel(streamChat.getChannel(), true);
-        } else {
-            getChannels();
-        }
+        getChannels();
         // get and save Device Token
         getDeviceToken();
     }
@@ -466,6 +454,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 return;
             }
             Global.eventFunction.handleReceiveEvent(event);
+
             if (event.getType().equals(Event.notification_added_to_channel)) {
                 Channel channel_ = event.getChannel();
                 getChannel(channel_, false);
@@ -479,7 +468,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                     if (activity != null) {
                         Log.d(TAG, event.getType());
                         activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
-
                     }
                     break;
             }
@@ -498,42 +486,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Permission
-    private void permissionCheck() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                && getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-            int hasStoragePermission = getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int hasReadPermission = getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            int hasCameraPermission = getActivity().checkSelfPermission(Manifest.permission.CAMERA);
-
-
-            List<String> permissions = new ArrayList<>();
-            if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-            if (hasReadPermission != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            }
-            if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.CAMERA);
-            }
-
-            if (!permissions.isEmpty()) {
-                requestPermissions(permissions.toArray(new String[permissions.size()]),
-                        Constant.PERMISSIONS_REQUEST);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            // TODO: 7/12/2016 DO NOTHING
-        }
-    }
     // endregion
 
     // region Connection Check

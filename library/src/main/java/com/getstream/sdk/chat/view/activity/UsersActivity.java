@@ -62,8 +62,10 @@ public class UsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
+        try {
+            setSupportActionBar(binding.header);
+        }catch (Exception e){}
 
-        setSupportActionBar(binding.header);
         init();
         configUIs();
     }

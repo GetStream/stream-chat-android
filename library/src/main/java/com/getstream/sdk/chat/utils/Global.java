@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.model.channel.Member;
 import com.getstream.sdk.chat.model.message.Attachment;
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.rest.BaseURL;
+import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.controller.RestController;
@@ -45,7 +46,10 @@ public class Global {
     public static RestController mRestController = new RestController();
     public static ChannelResponse channelResponse;
     public static SelectAttachmentModel selectAttachmentModel;
+
+    public static WebSocketService webSocketService = new WebSocketService();
     public static EventFunction eventFunction;
+
     public static boolean noConnection = false;
 
     public static List<ChannelResponse> channels = new ArrayList<>();

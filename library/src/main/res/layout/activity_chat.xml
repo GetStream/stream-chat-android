@@ -83,19 +83,17 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/tv_channel_name"
                         style="@style/text_b"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@{viewModel.channelName()}" />
+                        android:gravity="center_horizontal" />
 
                     <TextView
                         android:id="@+id/tv_active"
                         style="@style/text_s"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{viewModel.lastActive()}"
-                        app:isGone="@{!viewModel.isVisibleLastActive()}" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <TextView
@@ -124,8 +122,8 @@
                     android:id="@+id/iv_active_mark"
                     android:layout_width="7dp"
                     android:layout_height="7dp"
+                    android:visibility="gone"
                     android:background="@drawable/circle_user_online"
-                    app:isGone="@{!viewModel.isOnline()}"
                     app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"
                     app:layout_constraintStart_toEndOf="@+id/iv_header_avatar"
                     app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />
