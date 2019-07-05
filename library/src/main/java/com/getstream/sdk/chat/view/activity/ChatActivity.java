@@ -30,6 +30,7 @@ import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
@@ -64,7 +65,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity implements EventFunction.EventHandler {
+public class ChatActivity extends AppCompatActivity implements EventHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
 
@@ -83,7 +84,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     private boolean noHistory, noHistoryThread;
     // Functions
     private MessageFunction messageFunction;
-    private EventFunction eventFunction = Global.eventFunction;
+//    private EventFunction eventFunction;
     private SendFileFunction sendFileFunction;
 
     // region LifeCycle
@@ -107,8 +108,8 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     @Override
     public void onStop() {
         super.onStop();
-        eventFunction.setEventHandler(null);
-        eventFunction.setChannel(null);
+        Global.eventFunction.setEventHandler(null);
+        Global.eventFunction.setChannel(null);
         Global.channelResponse = null;
         stopTypingClearRepeatingTask();
         Log.d(TAG, "onStop");
@@ -117,8 +118,9 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     @Override
     public void onResume() {
         super.onResume();
-        eventFunction.setChannel(this.channel);
-        eventFunction.setEventHandler(this);
+        Global.eventFunction = Global.eventFunction;
+        Global.eventFunction.setChannel(this.channel);
+        Global.eventFunction.setEventHandler(this);
         startTypingClearRepeatingTask();
         Log.d(TAG, "OnResume");
     }
@@ -164,8 +166,6 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         channelResponse = Global.channelResponse;
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
-
-        eventFunction.setChannel(channel);
         messageFunction = new MessageFunction(this.channelResponse);
         sendFileFunction = new SendFileFunction(this, binding, channelResponse);
         checkReadMark();
@@ -268,9 +268,11 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     private RecyclerView recyclerView() {
         return isThreadMode() ? threadBinding.rvThread : binding.rvMessage;
     }
+
     private boolean isNoHistory() {
         return isThreadMode() ? noHistoryThread : noHistory;
     }
+
     void configDelivered() {
         if (messages() == null || messages().isEmpty()) return;
         if (!messages().get(messages().size() - 1).isIncoming())
@@ -422,12 +424,12 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
 
         if (!isTyping) {
             Log.d(TAG, "typing.start");
-            eventFunction.sendEvent(Event.typing_start);
+            Global.eventFunction.sendEvent(Event.typing_start);
             isTyping = true;
         }
         new Handler().postDelayed(() -> {
             if (isTyping) {
-                eventFunction.sendEvent(Event.typing_stop);
+                Global.eventFunction.sendEvent(Event.typing_stop);
                 isTyping = false;
                 Log.d(TAG, "typing.stop");
             }
@@ -495,7 +497,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
             threadBinding.setShowThread(true);
         } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(message.getId(),String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null,(GetRepliesResponse response) -> {
+            Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
                 Global.setStartDay(threadMessages, null);
                 setThreadAdapter();
@@ -724,7 +726,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                     break;
                 case Event.channel_updated:
                 case Event.channel_deleted:
-                    eventFunction.handleChannelEvent(channelResponse, event);
+                    Global.eventFunction.handleChannelEvent(channelResponse, event);
                     if (event.getType().equals(Event.channel_deleted)) {
                         Utils.showMessage(this, "Channel Owner just removed this channel!");
                         finish();
@@ -761,7 +763,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                             channelMessages.remove(ephemeralMessage);
                         } catch (Exception e) {
                         }
-                        eventFunction.newMessage(channelResponse, message);
+                        Global.eventFunction.newMessage(channelResponse, message);
                         scrollPosition = 0;
                         mViewModel.setChannelMessages(channelMessages);
                         messageReadMark();
@@ -917,7 +919,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
     }
 
     void messageReadEvent(Event event) {
-        eventFunction.readMessage(channelResponse, event);
+        Global.eventFunction.readMessage(channelResponse, event);
         if (!channelResponse.getLastMessage().isIncoming()) {
             mAdapter.notifyItemChanged(channelMessages.size() - 1);
         }
@@ -934,7 +936,7 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
         if (isNoHistory() || isCalling) return;
         Log.d(TAG, "Next pagination...");
         isCalling = true;
-        if (!isThreadMode()){
+        if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
             Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
@@ -957,9 +959,9 @@ public class ChatActivity extends AppCompatActivity implements EventFunction.Eve
                 isCalling = false;
                 binding.setShowLoadMoreProgressbar(false);
             });
-        }else{
+        } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(thread_parentMessage.getId(),String.valueOf(Constant.THREAD_MESSAGE_LIMIT),threadMessages.get(0).getId(), (GetRepliesResponse response) -> {
+            Global.mRestController.getReplies(thread_parentMessage.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), threadMessages.get(0).getId(), (GetRepliesResponse response) -> {
                 binding.setShowMainProgressbar(false);
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
                 Log.d(TAG, "new Message Count: " + newMessages.size());

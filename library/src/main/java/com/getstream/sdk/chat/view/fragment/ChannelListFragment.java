@@ -1,8 +1,10 @@
 package com.getstream.sdk.chat.view.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -78,10 +81,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     public int containerResId;
     public StreamChat streamChat;
 
-    EventFunction eventFunction = new EventFunction();
-    boolean isLastPage = false;
-    SharedPreferences pref;
-    SharedPreferences.Editor editor;
+    //    private EventFunction eventFunction;
+    private boolean isLastPage = false;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
 
     public static ChannelListFragment newInstance() {
         return new ChannelListFragment();
@@ -95,7 +98,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding = FragmentChannelListBinding.inflate(inflater, container, false);
         mViewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         binding.setViewModel(mViewModel);
-
+        Log.d(TAG, "onCreateView");
         init();
         configUIs();
         setStreamChat();
@@ -133,24 +136,39 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             }
         }
     }
+
+    private Activity activity;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            Log.d(TAG, "onAttach");
+            activity = (Activity) context;
+        }
+    }
+
     //endregion
 
     // region Private Functions
     private void init() {
         webSocketService = new WebSocketService();
         webSocketService.setWSResponseHandler(this);
-        Fresco.initialize(getContext());
-        connectionCheck();
-        permissionCheck();
-        pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
-        editor = pref.edit();
+        if (Global.eventFunction == null) {
+            Global.eventFunction = new EventFunction();
+            Fresco.initialize(getContext());
+            connectionCheck();
+            permissionCheck();
+            pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
+            editor = pref.edit();
+        }
+
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
 
     private void configUIs() {
         FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
         frameLayout.setFitsSystemWindows(true);
-        binding.setShowMainProgressbar(true);
         configChannelListView();
         binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
             private int mLastFirstVisibleItem;
@@ -193,11 +211,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     public void setStreamChat() {
-        binding.setShowMainProgressbar(!Global.noConnection);
+        if (Global.streamChat != null && !TextUtils.isEmpty(Global.streamChat.getClientID()))
+            return;
+
+
         if (Global.noConnection) {
             Utils.showMessage(getContext(), "No internet connection!");
             return;
         }
+        binding.setShowMainProgressbar(true);
         streamChat.wsConnection = webSocketService;
         streamChat.setupWebSocket();
     }
@@ -266,7 +288,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         for (int i = 0; i < response.getChannels().size(); i++)
             Global.channels.add(response.getChannels().get(i));
 
-        if (isReconnecting) this.eventFunction.handleReconnect(Global.noConnection);
+        if (isReconnecting) Global.eventFunction.handleReconnect(Global.noConnection);
 
         adapter.notifyDataSetChanged();
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
@@ -376,11 +398,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private void navigationChannelDetail(ChannelResponse response) {
         binding.setShowMainProgressbar(false);
         Global.setStartDay(response.getMessages(), null);
-        Log.d(TAG, "Channel ID:" + response.getChannel());
-        Global.eventFunction = eventFunction;
         Global.channelResponse = response;
         Intent intent = new Intent(getContext(), ChatActivity.class);
         getActivity().startActivity(intent);
+        Log.d(TAG, "Channel ID:" + response.getChannel().getId());
+        Log.d(TAG, "Event Function:" + Global.eventFunction);
     }
 
     private void navigateUserList() {
@@ -443,7 +465,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 setAfterFirstConnection(event);
                 return;
             }
-            eventFunction.handleReceiveEvent(event);
+            Global.eventFunction.handleReceiveEvent(event);
             if (event.getType().equals(Event.notification_added_to_channel)) {
                 Channel channel_ = event.getChannel();
                 getChannel(channel_, false);
@@ -453,8 +475,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 case Event.message_read:
                 case Event.channel_deleted:
                 case Event.channel_updated:
-                    if (getActivity() != null)
-                        getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+                    Log.d(TAG, event.getType());
+                    if (activity != null) {
+                        Log.d(TAG, event.getType());
+                        activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+                    }
                     break;
             }
         }
@@ -465,7 +491,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Global.noConnection = true;
         Global.streamChat.setClientID(null);
         binding.setNoConnection(true);
-        eventFunction.handleReconnect(Global.noConnection);
+        Global.eventFunction.handleReconnect(Global.noConnection);
         binding.setShowMainProgressbar(false);
     }
 

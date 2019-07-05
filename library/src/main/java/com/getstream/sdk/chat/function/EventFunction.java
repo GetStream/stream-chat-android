@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
@@ -11,12 +12,10 @@ import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,21 +23,22 @@ public class EventFunction {
 
     private final String TAG = EventFunction.class.getSimpleName();
 
-    public interface EventHandler {
-        void handleEvent(Event event);
-
-        void handleReconnection(boolean disconnect);
-    }
-
     private EventHandler eventHandler;
 
     public void setEventHandler(EventHandler eventHandler) {
+        if (this.eventHandler != null) {
+            this.eventHandler = null;
+        }
         this.eventHandler = eventHandler;
     }
 
     private Channel channel;
 
     public void setChannel(@Nullable Channel channel) {
+        if (channel != null)
+            Log.d(TAG, "New Channel: " + channel.getId());
+        else
+            Log.d(TAG, "New Channel Null");
         this.channel = channel;
     }
 
@@ -52,11 +52,9 @@ public class EventFunction {
         final Map<String, Object> event = new HashMap<>();
         event.put("type", type);
         SendEventRequest request = new SendEventRequest(event);
-        RestController.EventCallback callback = (EventResponse response) -> {
+        Global.mRestController.sendEvent(channel.getId(), request, (EventResponse response) -> {
             Log.d(TAG, "Event Send!");
-        };
-
-        Global.mRestController.sendEvent(channel.getId(), request, callback, (String errMsg, int errCode) -> {
+        }, (String errMsg, int errCode) -> {
             Log.d(TAG, "Send Event Failed!");
         });
     }
@@ -121,10 +119,14 @@ public class EventFunction {
             return;
         }
         if (this.channel != null) {
+            Log.d(TAG, "Current Channel ID: " + this.channel.getId());
             if (this.channel.getId().equals(channelId) && this.eventHandler != null) {
                 this.eventHandler.handleEvent(event);
+                Log.d(TAG, "GoTo Current Channel: " + channelId);
                 return;
             }
+        } else {
+            Log.d(TAG, "Current Channel Null");
         }
         handlerReceiveEvent(channel_, event);
     }
