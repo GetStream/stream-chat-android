@@ -134,7 +134,7 @@ private void addChannelListFragment(StreamChat streamChat) {
 
  Kotlin
 ~~~kotlin
-fun addChatListFragment(streamChat: StreamChat) {
+fun addChannelListFragment(streamChat: StreamChat) {
    val fragment = ChannelListFragment()
    fragment.containerResId = R.id.container
    fragment.streamChat = streamChat
