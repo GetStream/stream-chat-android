@@ -62,16 +62,86 @@ String userToken = streamChat.createUserToken("API SECRET", "USER ID");
 streamChat.setUser(user, userToken);
 ~~~
 
-- **Adding GetStream Chat Fragment**
+- **Adding Single Conversation Screen**
 
-You can add getstream chat fragment in any Activity or Fragment
+Adding chat is simple as the library comes with a built-in **ChatActivity** of library class which loads messages for a specified channel using the APIs and renders its content.
+
+  1. Set specified **channel** object with channel Id, channel name and channel image.
+  2. Set  specified **channel** to **streamChat**.
+  3. Navigate to **ChatActivity** 
+
+- Java
+
+~~~java
+// Setting Channel
+Channel channel = new Channel();
+channel.setId(channelId);
+channel.setName(<Channel Name>);
+channel.setImageURL(<Channel Image>);
+streamChat.setChannel(channel);
+ 
+// Start ChatActivity
+Intent i = new Intent(this, ChatActivity.class);
+startActivity(i);
+~~~
+
+- Kotlin
+
+~~~kotlin
+// Setting Channel
+val channel = Channel()
+channel.id = channelId
+channel.name = <Channel Name>
+channel.imageURL = <Channel Image>
+streamChat.setChannel(channel)
+ 
+// Start ChatActivity
+val i = Intent(this, ChatActivity::class.java)
+startActivity(i)
+~~~
+
+- **Multiple conversations**
+
+We can add **ChannelListFragment** of library in any Activity or Fragment directly.
+
+- xml layout
 
 ~~~xml
 <FrameLayout
     android:fitsSystemWindows="true"
-    android:id="@+id/title_fragment"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />	
+~~~
+
+- Java
+
+~~~java
+private void addChannelListFragment(StreamChat streamChat) {
+   ChannelListFragment fragment = new ChannelListFragment(); 
+   fragment.containerResId = R.id.container;
+   fragment.streamChat = streamChat;
+   FragmentManager fragmentManager = getSupportFragmentManager();
+   FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+   fragmentTransaction.replace(R.id.container, fragment);
+   fragmentTransaction.addToBackStack(null);
+   fragmentTransaction.commit();
+}
+~~~
+
+- Kotlin
+
+~~~kotlin
+fun addChatListFragment(streamChat: StreamChat) {
+   val fragment = ChannelListFragment()
+   fragment.containerResId = R.id.container
+   fragment.streamChat = streamChat
+   val fragmentManager = supportFragmentManager
+   val fragmentTransaction = fragmentManager.beginTransaction()
+   fragmentTransaction.replace(R.id.container, fragment)
+   fragmentTransaction.addToBackStack(null)
+   fragmentTransaction.commit()
+}
 ~~~
 
 ## Documentation
@@ -102,4 +172,4 @@ TODO - Java Chat Tutorial page
 ## Getting started
 
 
-TODO: https://getstream.io/chat/docs/#introduction but with Swift code examples
+TODO: https://getstream.io/chat/docs/#introduction but with Android code examples
