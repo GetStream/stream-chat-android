@@ -42,6 +42,11 @@ dependencies {
 }
 ~~~
 
+- **Step 3** Add Firebase
+
+We’ll be using Firebase Cloud Messaging to power push notifications and you must add [Firebase to your Project](https://firebase.google.com/docs/cloud-messaging/android/client).
+
+
 ## Getting started
 
 - **Initialize Client**
@@ -147,39 +152,37 @@ You can customize UI components by overriding resource values.
 
 Following resource values can be overridden. 
 
-- **colors**
-Theme
--"chat_theme"
--"channel_theme"
+### colors
+**Theme**
+- "chat_theme"
+- "channel_theme"
  
-Input Message Box
--"input_message_box_stroke_select"
--"input_message_box_background"
+**Input Message Box**
+- "input_message_box_stroke_select"
+- "input_message_box_background"
  
-Message Item View
--"message_background_incoming"
--"message_background_outgoing"
--"message_text_incoming"
--"message_text_outgoing"
--"mesage_border"
--"user_intials_background"
+**Message Item View**
+- "message_background_incoming"
+- "message_background_outgoing"
+- "message_text_incoming"
+- "message_text_outgoing"
+- "mesage_border"
+- "user_intials_background"
  
-Message Reaction View
--"reaction_background"
+**Message Reaction View**
+- "reaction_background"
 
-- **dimensions**
+### dimensions
+**Message Item View**
+- "message_text_font_size"
 
-Message Item View
--"message_text_font_size"
-
-- **styles**
-
-Channel preview
--"channel_preview_initials"
--"channel_preview_avatar"
--"channel_preview_channel_name"
--"channel_preview_channel_last_message"
--"channel_preview_channel_last_message_date"
+### styles
+**Channel preview**
+- "channel_preview_initials"
+- "channel_preview_avatar"
+- "channel_preview_channel_name"
+- "channel_preview_channel_last_message"
+- "channel_preview_channel_last_message_date"
 
 ***Note**: If you don’t want to override it, you should not use the same values in resource!*
 
