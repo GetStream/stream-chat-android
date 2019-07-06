@@ -148,6 +148,7 @@ You can customize UI components by overriding resource values.
 Following resource values can be overridden. 
 
 - **colors**
+
 Theme
 - "chat_theme"
 - "channel_theme"
@@ -168,10 +169,12 @@ Message Reaction View
 - "reaction_background"
 
 - **dimensions**
+
 Message Item View
 - "message_text_font_size"
 
 - **styles **
+
 Channel preview
 - "channel_preview_initials"
 - "channel_preview_avatar"
@@ -179,7 +182,7 @@ Channel preview
 - "channel_preview_channel_last_message"
 - "channel_preview_channel_last_message_date"
 
-*Note: If you don’t want to override it, you should not use the same values in resource!*
+***Note**: If you don’t want to override it, you should not use the same values in resource!*
 
 
 ## Documentation
