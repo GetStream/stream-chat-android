@@ -71,8 +71,7 @@ Adding chat is simple as the library comes with a built-in **ChatActivity** of l
   2. Set  specified **channel** to **streamChat**.
   3. Navigate to **ChatActivity** 
 
-- Java
-
+ Java
 ~~~java
 // Setting Channel
 Channel channel = new Channel();
@@ -86,8 +85,7 @@ Intent i = new Intent(this, ChatActivity.class);
 startActivity(i);
 ~~~
 
-- Kotlin
-
+ Kotlin 
 ~~~kotlin
 // Setting Channel
 val channel = Channel()
@@ -105,7 +103,7 @@ startActivity(i)
 
 We can add **ChannelListFragment** of library in any Activity or Fragment directly.
 
-- xml layout
+ Xml layout
 
 ~~~xml
 <FrameLayout
@@ -115,8 +113,7 @@ We can add **ChannelListFragment** of library in any Activity or Fragment direct
     android:layout_height="match_parent" />	
 ~~~
 
-- Java
-
+ Java
 ~~~java
 private void addChannelListFragment(StreamChat streamChat) {
    ChannelListFragment fragment = new ChannelListFragment(); 
@@ -130,8 +127,7 @@ private void addChannelListFragment(StreamChat streamChat) {
 }
 ~~~
 
-- Kotlin
-
+ Kotlin
 ~~~kotlin
 fun addChatListFragment(streamChat: StreamChat) {
    val fragment = ChannelListFragment()
@@ -144,6 +140,47 @@ fun addChatListFragment(streamChat: StreamChat) {
    fragmentTransaction.commit()
 }
 ~~~
+
+## Customize
+
+You can customize UI components by overriding resource values.
+
+Following resource values can be overridden. 
+
+- **colors**
+Theme
+- "chat_theme"
+- "channel_theme"
+ 
+Input Message Box
+- "input_message_box_stroke_select"
+- "input_message_box_background"
+ 
+Message Item View
+- "message_background_incoming"
+- "message_background_outgoing"
+- "message_text_incoming"
+- "message_text_outgoing"
+- "mesage_border"
+- "user_intials_background"
+ 
+Message Reaction View
+- "reaction_background"
+
+- **dimensions**
+Message Item View
+- "message_text_font_size"
+
+- **styles **
+Channel preview
+- "channel_preview_initials"
+- "channel_preview_avatar"
+- "channel_preview_channel_name"
+- "channel_preview_channel_last_message"
+- "channel_preview_channel_last_message_date"
+
+*Note: If you don’t want to override it, you should not use the same values in resource!*
+
 
 ## Documentation
 
