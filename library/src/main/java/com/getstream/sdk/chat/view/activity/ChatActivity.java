@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -52,6 +53,7 @@ import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -203,6 +205,8 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Global.eventFunction = new EventFunction();
         Global.eventFunction.setChannel(this.channel);
         Global.eventFunction.setEventHandler(this);
+        // Permission Check
+        PermissionChecker.permissionCheck(this, null);
     }
 
     boolean lockRVScrollListener = false;
@@ -330,7 +334,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             if (Global.getOpponentUser(channelResponse) == null)
                 binding.ivActiveMark.setVisibility(View.GONE);
             else {
-                binding.ivActiveMark.setVisibility(View.VISIBLE);
+                if (Global.getOpponentUser(channelResponse).getOnline()) {
+                    binding.ivActiveMark.setVisibility(View.VISIBLE);
+                } else {
+                    binding.ivActiveMark.setVisibility(View.GONE);
+                }
             }
         } catch (Exception e) {
             binding.ivActiveMark.setVisibility(View.GONE);
@@ -1186,7 +1194,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Reconnection
     private void reconnectionHandler() {
-        if (singleConversation){
+        if (singleConversation) {
             Channel channel_ = Global.streamChat.getChannel();
             binding.setShowMainProgressbar(true);
             channel_.setType(ModelType.channel_messaging);
@@ -1237,4 +1245,20 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         }
     }
     // end region
+
+    // region Permission
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean granted = true;
+            for (int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            if (!granted) PermissionChecker.showRationalDialog(this, null);
+        }
+    }
+    // endregion
 }

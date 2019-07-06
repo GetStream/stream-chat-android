@@ -15,9 +15,10 @@
     <color name="chat_theme">#FFFFFF</color>
     <color name="channel_theme">#FFFFFF</color>
     <!--Message Composer-->
-    <color name="composer_stroke_select">#0076FF</color>
+    <color name="input_message_box_stroke_select">#0076FF</color>
+    <color name="input_message_box_background">#0D000000</color>
+
     <color name="chat_no_connection">#1AD0021B</color>
-    <color name="composer_background">#0D000000</color>
     <!--Message Item-->
     <color name="message_background_incoming">#FFFFFF</color>
     <color name="message_background_outgoing">#0D000000</color>
@@ -25,7 +26,7 @@
     <color name="message_text_outgoing">#000000</color>
     <color name="mesage_border">#14000000</color>
     <color name="message_failed">#1AD0021B</color>
-    <color name="user_intials_back">#CCCCA4D6</color>
+    <color name="user_intials_background">#CCCCA4D6</color>
     <!--Reaction-->
     <color name="reaction_background">#1B1B1B</color>
     <!--More Action-->

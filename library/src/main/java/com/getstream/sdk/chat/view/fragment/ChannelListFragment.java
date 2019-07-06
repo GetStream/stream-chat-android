@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.activity.ChatActivity;
 import com.getstream.sdk.chat.view.activity.UsersActivity;
@@ -96,6 +98,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         configUIs();
         setStreamChat();
         getChannels();
+        PermissionChecker.permissionCheck(getActivity(), this);
         return binding.getRoot();
     }
 
@@ -484,7 +487,19 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Permission
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean granted = true;
+            for(int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED){
+                    granted = false;
+                    break;
+                }
+            if (!granted) PermissionChecker.showRationalDialog(getContext(), this);
+        }
+    }
     // endregion
 
     // region Connection Check

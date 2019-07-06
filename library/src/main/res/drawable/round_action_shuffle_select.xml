@@ -5,6 +5,6 @@
     <solid android:color="@color/white" />
     <stroke
         android:width="@dimen/composer_stroke_width"
-        android:color="@color/composer_stroke_select" />
+        android:color="#0076FF" />
     <corners android:radius="20dp" />
 </shape>

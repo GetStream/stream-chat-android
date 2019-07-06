@@ -27,7 +27,7 @@ public class CircleView extends View {
     public void onDrawForeground(Canvas canvas) {
         super.onDrawForeground(canvas);
         Paint paint = new Paint();
-        paint.setColor(context.getResources().getColor(R.color.user_intials_back));
+        paint.setColor(context.getResources().getColor(R.color.user_intials_background));
         paint.setStyle(Paint.Style.FILL);
         float radius = getWidth()/2f;
         canvas.drawCircle(getWidth()/2f, getWidth()/2f, radius, paint);

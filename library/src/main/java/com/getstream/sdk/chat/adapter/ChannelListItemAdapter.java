@@ -153,7 +153,7 @@ public class ChannelListItemAdapter extends BaseAdapter {
     }
 
     private void configIndicatorUserInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
-        if (!Component.Channel.readIndicator){
+        if (!Component.Channel.isShowReadIndicator()){
             binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
             binding.ivIndicator.setVisibility(View.INVISIBLE);
             return;
