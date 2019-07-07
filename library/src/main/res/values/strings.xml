@@ -22,4 +22,6 @@
     <!--Chat Screen-->
     <string name="title_media">Select your photo or video</string>
     <string name="title_file">Select your file</string>
+    <!--Error-->
+    <string name="title_error">Error!</string>
 </resources>

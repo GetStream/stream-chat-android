@@ -5,6 +5,8 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Map;
+
 public class User {
     @SerializedName("id")
     @Expose
@@ -37,6 +39,8 @@ public class User {
     @SerializedName("online")
     @Expose
     private Boolean online;
+
+    private Map<String, Object>additionalFields;
 
     public String getCreated_at() {
         return created_at;
@@ -103,11 +107,20 @@ public class User {
         this.name = name;
     }
 
-    public User(String id, String name, String image) {
+    public User(String id, String name, String image, Map<String,Object> additionalFields) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.online = false;
+        this.additionalFields = additionalFields;
+    }
+
+    public Map<String, Object> getAdditionalFields() {
+        return additionalFields;
+    }
+
+    public void setAdditionalFields(Map<String, Object> additionalFields) {
+        this.additionalFields = additionalFields;
     }
 
     public boolean isMe(){

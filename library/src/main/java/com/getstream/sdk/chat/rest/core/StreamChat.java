@@ -1,21 +1,20 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.rest.BaseURL;
-import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.utils.Global;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 public class StreamChat {
 
@@ -40,16 +39,27 @@ public class StreamChat {
         this.userToken = userToken;
         this.user = user;
         Global.streamChat = this;
+        setUpWebSocket();
     }
 
-    public String createUserToken(String secretKey, String userId) {
-        Map map = new HashMap<String, Object>();
-        map.put("type", "JWT");
-        Date date = new Date();
+    public String createUserToken(@NonNull String userId) throws Exception{
+        if (TextUtils.isEmpty(userId))
+            throw new IllegalArgumentException("User ID must be non-null");
 
-        long time = date.getTime() / 1000;
-        Log.d(TAG,"Time: " + time);
-        return Jwts.builder().claim("user_id", userId).claim("iat", time).signWith(SignatureAlgorithm.HS256, secretKey.getBytes()).setHeader(map).compact();
+        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  //{"alg": "HS256", "typ": "JWT"}
+        JSONObject payloadJson = new JSONObject();
+
+        payloadJson.put("user_id", userId);
+        String payload = payloadJson.toString();
+        String payloadBase64 = Base64.encodeToString(payload.getBytes("UTF-8"), Base64.NO_WRAP);
+        String devSignature = "devtoken";
+
+        String[] a = new String[3];
+        a[0] = header;
+        a[1] = payloadBase64;
+        a[2] = devSignature;
+        return TextUtils.join(".", a);
+
     }
 
     public User getUser() {
@@ -73,7 +83,7 @@ public class StreamChat {
     }
 
     // region Customize Components
-    public void setChannel(Channel channel){
+    public void setChannel(Channel channel) {
         this.channel = channel;
     }
 
@@ -82,13 +92,20 @@ public class StreamChat {
     }
 
     // end region
-    public void setUp() {
+    private void setUpWebSocket() {
         Map<String, Object> jsonParameter = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
-        map.put("id", this.user.getId());
-        map.put("name", this.user.getName());
-        map.put("image", this.user.getImage());
-        jsonParameter.put("user_details", map);
+        if (this.getUser().getAdditionalFields() == null) {
+            map.put("id", this.user.getId());
+            map.put("name", this.user.getName());
+            map.put("image", this.user.getImage());
+            jsonParameter.put("user_details", map);
+        } else {
+            this.user.getAdditionalFields().put("id", this.user.getId());
+            this.user.getAdditionalFields().put("name", this.user.getName());
+            this.user.getAdditionalFields().put("image", this.user.getImage());
+            jsonParameter.put("user_details", this.user.getAdditionalFields());
+        }
         jsonParameter.put("user_id", this.user.getId());
         jsonParameter.put("user_token", this.userToken);
         jsonParameter.put("server_determines_connection_id", true);
