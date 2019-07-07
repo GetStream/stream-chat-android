@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
@@ -60,7 +61,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -158,6 +158,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         connectionCheck();
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
+        Global.channels = new ArrayList<>();
 
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
@@ -318,9 +319,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Map<String, Object> filter_conditions = new HashMap<>();
         Map<String, List<String>> filterOption = new HashMap<>();
 
-        filterOption.put("$in", Arrays.asList(Global.streamChat.getUser().getId()));
         filter_conditions.put("type", "messaging");
-        filter_conditions.put("members", filterOption);
+        if (Component.Channel.getFilterOptions() != null){
+            filter_conditions.put("members", Component.Channel.getFilterOptions());
+        }
 
         Map<String, Object> sort = new HashMap<>();
         sort.put("field", "last_message_at");

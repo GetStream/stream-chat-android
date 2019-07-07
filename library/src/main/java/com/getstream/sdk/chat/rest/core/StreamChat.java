@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.utils.Global;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -59,7 +58,6 @@ public class StreamChat {
         a[1] = payloadBase64;
         a[2] = devSignature;
         return TextUtils.join(".", a);
-
     }
 
     public User getUser() {

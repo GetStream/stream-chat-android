@@ -42,11 +42,6 @@ dependencies {
 }
 ~~~
 
-- **Step 3** Add Firebase
-
-We’ll be using Firebase Cloud Messaging to power push notifications and you must add [Firebase to your Project](https://firebase.google.com/docs/cloud-messaging/android/client).
-
-
 ## Getting started
 
 - **Initialize Client**
@@ -64,7 +59,7 @@ User user = new User("USER ID", "USER NAME", "USER IMAGE");
 - **Set User**
 
 ~~~java
-String userToken = streamChat.createUserToken("API SECRET", "USER ID");
+String userToken = streamChat.createUserToken("USER ID");
 streamChat.setUser(user, userToken);
 ~~~
 

@@ -280,6 +280,7 @@ public class UsersActivity extends AppCompatActivity {
         Map<String, Object> data = new HashMap<>();
         data.put("name", channel.getName());
         data.put("image", channel.getImageURL());
+
         List members = new ArrayList();
         members.add(Global.streamChat.getUser().getId());
         for (User user : users) {
