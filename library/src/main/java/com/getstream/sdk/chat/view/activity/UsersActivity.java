@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -20,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
@@ -47,6 +49,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class UsersActivity extends AppCompatActivity {
+
     private static final String TAG = UsersActivity.class.getSimpleName();
     private ActivityUsersBinding binding;
     private UserListItemAdapter adapter;
@@ -64,7 +67,8 @@ public class UsersActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
         try {
             setSupportActionBar(binding.header);
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
         init();
         configUIs();
@@ -208,6 +212,7 @@ public class UsersActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
+
     // endregion
 
     // region Get Users and Channel
@@ -221,6 +226,7 @@ public class UsersActivity extends AppCompatActivity {
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
+
         RestController.GetUsersCallback callback = (GetUsersResponse response) -> {
             binding.setShowMainProgressbar(false);
             isCalling = false;
@@ -258,12 +264,11 @@ public class UsersActivity extends AppCompatActivity {
             return;
         }
 
-
         binding.setShowMainProgressbar(true);
         String channelId;
-        if (isPrivateChannel){
+        if (isPrivateChannel) {
             channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
-        }else{
+        } else {
             String memberIds = "";
             for (User user : users) {
                 memberIds += user.getId() + "-";
@@ -291,8 +296,8 @@ public class UsersActivity extends AppCompatActivity {
 //        if (Component.Channel.invitation) {
 //            data.put("invites", Arrays.asList(user.getId()));
 //        }
-        Log.d(TAG, "Channel Connecting...");
 
+        Log.d(TAG, "Channel Connecting...");
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
         Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
             if (!response.getMessages().isEmpty())
@@ -308,12 +313,23 @@ public class UsersActivity extends AppCompatActivity {
 
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();
+
+        // Filter options
         Map<String, Object> filter_conditions = new HashMap<>();
-//        filter_conditions.put("presence",false);
-        Map<String, Object> sort = new HashMap<>();
-        sort.put("last_active", -1);
+        if (Component.User.getFilterOptions() != null)
+            filter_conditions.put(Component.User.getFilterKey(), Component.User.getFilterOptions());
         payload.put("filter_conditions", filter_conditions);
-        payload.put("sort", Collections.singletonList(sort));
+
+        // Sort options
+        if (Component.User.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Component.User.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_active");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
+
 
         if (users.size() > 0)
             payload.put("offset", users.size());

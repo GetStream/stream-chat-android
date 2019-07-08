@@ -153,7 +153,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
         try {
             Fresco.initialize(getContext());
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
 
         connectionCheck();
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
@@ -253,7 +254,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                     binding.setShowMainProgressbar(false);
                     isCalling = false;
 
-                    Utils.showMessage(getContext(), errMsg);
+//                    Utils.showMessage(getContext(), errMsg);
                     Log.d(TAG, "Failed Get Channels : " + errMsg);
                 });
     }
@@ -317,19 +318,25 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private JSONObject getPayload() {
         Map<String, Object> payload = new HashMap<>();
         Map<String, Object> filter_conditions = new HashMap<>();
-        Map<String, List<String>> filterOption = new HashMap<>();
 
+        // Filter option
         filter_conditions.put("type", "messaging");
-        if (Component.Channel.getFilterOptions() != null){
-            filter_conditions.put("members", Component.Channel.getFilterOptions());
+        if (Component.Channel.getFilterOptions() != null) {
+            filter_conditions.put(Component.Channel.getFilterKey(), Component.Channel.getFilterOptions());
         }
 
-        Map<String, Object> sort = new HashMap<>();
-        sort.put("field", "last_message_at");
-        sort.put("direction", -1);
+        // Sort Option
+        if (Component.Channel.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Component.Channel.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_message_at");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
 
         payload.put("filter_conditions", filter_conditions);
-        payload.put("sort", Collections.singletonList(sort));
+
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
@@ -494,8 +501,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                                            @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
             boolean granted = true;
-            for(int grantResult : grantResults)
-                if (grantResult != PackageManager.PERMISSION_GRANTED){
+            for (int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     granted = false;
                     break;
                 }
