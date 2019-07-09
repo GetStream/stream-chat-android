@@ -14,7 +14,7 @@ public class Component{
         private boolean invitation = true;
         private boolean showReadIndicator = true;
         private List<FilterOption> filterOptions;
-
+        private String query;
         private Map<String, Object> sortOptions;
 
         public boolean isShowReadIndicator() {
@@ -41,6 +41,14 @@ public class Component{
             this.filterOptions = filterOptions;
         }
 
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
+        }
+
         public Map<String, Object> getSortOptions() {
             return sortOptions;
         }
@@ -53,7 +61,7 @@ public class Component{
     public class User {
 
         private List<FilterOption> filterOptions;
-
+        private String query;
         private Map<String, Object> sortOptions;
 
         public List<FilterOption> getFilterOptions() {
@@ -62,6 +70,14 @@ public class Component{
 
         public void setFilterOptions(List<FilterOption> filterOptions) {
             this.filterOptions = filterOptions;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String query) {
+            this.query = query;
         }
 
         public Map<String, Object> getSortOptions() {

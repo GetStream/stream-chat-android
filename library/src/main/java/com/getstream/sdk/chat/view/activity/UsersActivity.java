@@ -33,8 +33,10 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.ErrorChecker;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -315,8 +317,23 @@ public class UsersActivity extends AppCompatActivity {
         // Filter options
         Map<String, Object> filter_conditions = new HashMap<>();
         if (Global.component.user.getFilterOptions() != null)
-            for (FilterOption filterOption : Global.component.user.getFilterOptions())
+            if (Global.component.user.getFilterOptions().size() == 1){
+                FilterOption filterOption = Global.component.user.getFilterOptions().get(0);
                 filter_conditions.put(filterOption.getKey(), filterOption.getValue());
+            }else{
+                if (!TextUtils.isEmpty(Global.component.user.getQuery())){
+                    List<Map<String,Object>> filterOptions = new ArrayList<>();
+                    for (FilterOption filterOption : Global.component.user.getFilterOptions()){
+                        Map<String, Object> map = new HashMap<>();
+                        map.put(filterOption.getKey(),filterOption.getValue());
+                        filterOptions.add(map);
+                    }
+                    filter_conditions.put(Global.component.user.getQuery(), filterOptions);
+                }else {
+                    Utils.showMessage(this,"You must set filter query!");
+                }
+            }
+
 
         payload.put("filter_conditions", filter_conditions);
 
@@ -337,6 +354,7 @@ public class UsersActivity extends AppCompatActivity {
 
         JSONObject json;
         json = new JSONObject(payload);
+        Log.d(TAG,"Payload: " + json);
         return json;
     }
 

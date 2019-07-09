@@ -64,6 +64,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ChannelListFragment extends Fragment implements WSResponseHandler {
@@ -327,9 +328,21 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         // Filter option
         filter_conditions.put("type", "messaging");
-        if (component.channel.getFilterOptions() != null) {
-            for (FilterOption filterOption : component.channel.getFilterOptions())
-                filter_conditions.put(filterOption.getKey(), filterOption.getValue());
+        if (component.channel.getFilterOptions().size() == 1){
+            FilterOption filterOption = component.channel.getFilterOptions().get(0);
+            filter_conditions.put(filterOption.getKey(), filterOption.getValue());
+        }else{
+            if (!TextUtils.isEmpty(component.channel.getQuery())){
+                List<Map<String,Object>> filterOptions = new ArrayList<>();
+                for (FilterOption filterOption : component.channel.getFilterOptions()){
+                    Map<String, Object> map = new HashMap<>();
+                    map.put(filterOption.getKey(),filterOption.getValue());
+                    filterOptions.add(map);
+                }
+                filter_conditions.put(component.channel.getQuery(), filterOptions);
+            }else {
+                Utils.showMessage(getActivity(),"You must set filter query!");
+            }
         }
 
         // Sort Option
