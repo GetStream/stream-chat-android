@@ -104,12 +104,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
-        ChatActivityViewModelFactory factory = new ChatActivityViewModelFactory(Global.channelResponse);
-        mViewModel = ViewModelProviders.of(this, factory).get(ChatActivityViewModel.class);
-        binding.setViewModel(mViewModel);
-
-        threadBinding = binding.clThread;
-        threadBinding.setViewModel(mViewModel);
 
         singleConversation = (Global.streamChat.getChannel() != null);
         if (!singleConversation) {
@@ -127,8 +121,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     @Override
     public void onStop() {
         super.onStop();
-
-        Global.channelResponse = null;
         Global.streamChat.setChannel(null);
 
         if (Global.eventFunction != null) {
@@ -190,9 +182,24 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     void init() {
         try {
             Fresco.initialize(getApplicationContext());
-        } catch (Exception e) {
+        } catch (Exception e) {}
+
+        // set viewModel
+        String channelId = null;
+        Bundle b = getIntent().getExtras();
+        if(b!=null){
+            channelId = (String) b.get(Constant.TAG_CHANNEL_RESPONSE_ID);
         }
-        channelResponse = Global.channelResponse;
+        Log.d(TAG, "Channel ID: " + channelId);
+        if (channelId != null){
+            channelResponse = Global.getChannelResponseById(channelId);
+        }
+
+        ChatActivityViewModelFactory factory = new ChatActivityViewModelFactory(channelResponse);
+        mViewModel = ViewModelProviders.of(this, factory).get(ChatActivityViewModel.class);
+        binding.setViewModel(mViewModel);
+        threadBinding = binding.clThread;
+        threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
         messageFunction = new MessageFunction(this.channelResponse);
@@ -361,7 +368,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
-            Global.channelResponse = response;
+            channelResponse = response;
             Gson gson = new Gson();
             Log.d(TAG, "Channel Response: " + gson.toJson(response));
 
@@ -1210,7 +1217,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                 if (!response.getMessages().isEmpty())
                     Global.setStartDay(response.getMessages(), null);
                 Global.addChannelResponse(response);
-                Global.channelResponse = response;
+                channelResponse = response;
                 Gson gson = new Gson();
                 Log.d(TAG, "Channel Response: " + gson.toJson(response));
 
@@ -1228,9 +1235,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             });
             return;
         }
-        for (ChannelResponse channelResponse : Global.channels) {
-            if (channelResponse.getChannel().getId().equals(channel.getId())) {
-                Global.channelResponse = channelResponse;
+        for (ChannelResponse response : Global.channels) {
+            if (response.getChannel().getId().equals(channel.getId())) {
+                channelResponse = response;
                 init();
                 List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
                 if (ephemeralMessages != null && !ephemeralMessages.isEmpty())

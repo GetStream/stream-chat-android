@@ -63,7 +63,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ChannelListFragment extends Fragment implements WSResponseHandler {
@@ -74,6 +73,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private FragmentChannelListBinding binding;
     private ChannelListItemAdapter adapter;
 
+    public Component component;
     public int containerResId;
     public StreamChat streamChat;
 
@@ -84,6 +84,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     public static ChannelListFragment newInstance() {
         return new ChannelListFragment();
     }
+
+
+    public ChannelListFragment(){ }
 
     // region LifeCycle
     @Override
@@ -127,7 +130,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             try {
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
-                    navigationChannelDetail(Global.channelResponse);
+                    String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
+                    navigationChannelDetail(Global.getChannelResponseById(channelId));
                 }
             } catch (Exception e) {
             }
@@ -321,13 +325,13 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         // Filter option
         filter_conditions.put("type", "messaging");
-        if (Component.Channel.getFilterOptions() != null) {
-            filter_conditions.put(Component.Channel.getFilterKey(), Component.Channel.getFilterOptions());
+        if (component.channel.getFilterOptions() != null) {
+            filter_conditions.put(component.channel.getFilterKey(), component.channel.getFilterOptions());
         }
 
         // Sort Option
-        if (Component.Channel.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Component.Channel.getSortOptions()));
+        if (component.channel.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(component.channel.getSortOptions()));
         } else {
             Map<String, Object> sort = new HashMap<>();
             sort.put("field", "last_message_at");
@@ -396,8 +400,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private void navigationChannelDetail(ChannelResponse response) {
         binding.setShowMainProgressbar(false);
         Global.setStartDay(response.getMessages(), null);
-        Global.channelResponse = response;
         Intent intent = new Intent(getContext(), ChatActivity.class);
+        intent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());
         getActivity().startActivity(intent);
         Log.d(TAG, "Channel ID:" + response.getChannel().getId());
         Log.d(TAG, "Event Function:" + Global.eventFunction);

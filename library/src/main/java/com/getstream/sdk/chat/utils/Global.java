@@ -44,7 +44,6 @@ public class Global {
     public static StreamChat streamChat;
     public static BaseURL baseURL = new BaseURL(Location.usEast);
     public static RestController mRestController = new RestController();
-    public static ChannelResponse channelResponse;
     public static SelectAttachmentModel selectAttachmentModel;
 
     public static WebSocketService webSocketService = new WebSocketService();

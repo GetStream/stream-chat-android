@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -42,7 +41,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +56,7 @@ public class UsersActivity extends AppCompatActivity {
     private List<User> groupUsers;
     boolean isLastPage = false;
 
+    private Component component = new Component();
     RecyclerView.LayoutManager mLayoutManager;
 
     // region LifeCycle
@@ -316,13 +315,13 @@ public class UsersActivity extends AppCompatActivity {
 
         // Filter options
         Map<String, Object> filter_conditions = new HashMap<>();
-        if (Component.User.getFilterOptions() != null)
-            filter_conditions.put(Component.User.getFilterKey(), Component.User.getFilterOptions());
+        if (component.user.getFilterOptions() != null)
+            filter_conditions.put(component.user.getFilterKey(), component.user.getFilterOptions());
         payload.put("filter_conditions", filter_conditions);
 
         // Sort options
-        if (Component.User.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Component.User.getSortOptions()));
+        if (component.user.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(component.user.getSortOptions()));
         } else {
             Map<String, Object> sort = new HashMap<>();
             sort.put("field", "last_active");
@@ -355,9 +354,9 @@ public class UsersActivity extends AppCompatActivity {
     // endregion
 
     private void navigateChatActivity(ChannelResponse response) {
-        Global.channelResponse = response;
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", true);
+        returnIntent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }

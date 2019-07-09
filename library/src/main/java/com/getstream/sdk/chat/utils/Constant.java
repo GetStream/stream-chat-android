@@ -24,6 +24,7 @@ public final class Constant {
 
     public static final String TAG_ATTACH_FILE_PATH = "TAG_ATTACH_FILE_PATH";
 
+    public static final String TAG_CHANNEL_RESPONSE_ID = "TAG_CHANNEL_RESPONSE_ID";
     // pagination
     public static final int CHANNEL_LIMIT = 30;
     public static final int CHANNEL_MESSAGE_LIMIT = 25;

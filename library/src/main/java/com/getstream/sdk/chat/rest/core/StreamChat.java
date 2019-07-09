@@ -1,10 +1,9 @@
 package com.getstream.sdk.chat.rest.core;
 
-import android.support.annotation.NonNull;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
+import com.getstream.sdk.chat.interfaces.TokenProvider;
+import com.getstream.sdk.chat.model.Token;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.rest.BaseURL;
@@ -28,36 +27,32 @@ public class StreamChat {
 
     public StreamChat(String apiKey) {
         this.apiKey = apiKey;
+        Global.streamChat = this;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void setUser(User user, String userToken) {
-        this.userToken = userToken;
+    // DevToken
+    public void setUser(User user, final TokenProvider listener) {
+        try {
+            listener.onResult(this.userToken = Token.devToken(user.getId()), null);
+        } catch (Exception e) {
+            listener.onResult(null, e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+        Log.d(TAG, "TOKEN: " + this.userToken);
         this.user = user;
-        Global.streamChat = this;
         setUpWebSocket();
     }
 
-    public String createUserToken(@NonNull String userId) throws Exception{
-        if (TextUtils.isEmpty(userId))
-            throw new IllegalArgumentException("User ID must be non-null");
-
-        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  //{"alg": "HS256", "typ": "JWT"}
-        JSONObject payloadJson = new JSONObject();
-
-        payloadJson.put("user_id", userId);
-        String payload = payloadJson.toString();
-        String payloadBase64 = Base64.encodeToString(payload.getBytes("UTF-8"), Base64.NO_WRAP);
-        String devSignature = "devtoken";
-
-        String[] a = new String[3];
-        a[0] = header;
-        a[1] = payloadBase64;
-        a[2] = devSignature;
-        return TextUtils.join(".", a);
+    // Hardcoded
+    public void setUser(User user, String userToken) {
+        this.userToken = userToken;
+        Log.d(TAG, "TOKEN: " + this.userToken);
+        this.user = user;
+        setUpWebSocket();
     }
 
     public User getUser() {
@@ -81,6 +76,20 @@ public class StreamChat {
     }
 
     // region Customize Components
+    public void setChannel(String channelType, String channelId, String channelName, String channelImage) {
+        if (channelId == null) {
+            this.channel = null;
+            return;
+        }
+
+        Channel channel_ = new Channel();
+        channel_.setType(channelType);
+        channel_.setId(channelId);
+        channel_.setName(channelName);
+        channel_.setImageURL(channelImage);
+        this.channel = channel_;
+    }
+
     public void setChannel(Channel channel) {
         this.channel = channel;
     }
