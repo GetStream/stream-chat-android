@@ -20,11 +20,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
+import com.getstream.sdk.chat.model.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
@@ -56,7 +56,6 @@ public class UsersActivity extends AppCompatActivity {
     private List<User> groupUsers;
     boolean isLastPage = false;
 
-    private Component component = new Component();
     RecyclerView.LayoutManager mLayoutManager;
 
     // region LifeCycle
@@ -315,13 +314,15 @@ public class UsersActivity extends AppCompatActivity {
 
         // Filter options
         Map<String, Object> filter_conditions = new HashMap<>();
-        if (component.user.getFilterOptions() != null)
-            filter_conditions.put(component.user.getFilterKey(), component.user.getFilterOptions());
+        if (Global.component.user.getFilterOptions() != null)
+            for (FilterOption filterOption : Global.component.user.getFilterOptions())
+                filter_conditions.put(filterOption.getKey(), filterOption.getValue());
+
         payload.put("filter_conditions", filter_conditions);
 
         // Sort options
-        if (component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(component.user.getSortOptions()));
+        if (Global.component.user.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
         } else {
             Map<String, Object> sort = new HashMap<>();
             sort.put("field", "last_active");

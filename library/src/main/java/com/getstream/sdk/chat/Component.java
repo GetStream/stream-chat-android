@@ -1,5 +1,8 @@
 package com.getstream.sdk.chat;
 
+import com.getstream.sdk.chat.model.FilterOption;
+
+import java.util.List;
 import java.util.Map;
 
 public class Component{
@@ -10,10 +13,9 @@ public class Component{
 
         private boolean invitation = true;
         private boolean showReadIndicator = true;
-        private Map<String, Object> filterOptions;
-        private String filterKey = "members";
+        private List<FilterOption> filterOptions;
+
         private Map<String, Object> sortOptions;
-       
 
         public boolean isShowReadIndicator() {
             return showReadIndicator;
@@ -31,20 +33,12 @@ public class Component{
             this.invitation = invitation;
         }
 
-        public Map<String, Object> getFilterOptions() {
+        public List<FilterOption> getFilterOptions() {
             return filterOptions;
         }
 
-        public void setFilterOptions(Map<String, Object> filterOptions) {
+        public void setFilterOptions(List<FilterOption> filterOptions) {
             this.filterOptions = filterOptions;
-        }
-
-        public String getFilterKey() {
-            return filterKey;
-        }
-
-        public void setFilterKey(String filterKey) {
-            this.filterKey = filterKey;
         }
 
         public Map<String, Object> getSortOptions() {
@@ -58,25 +52,16 @@ public class Component{
 
     public class User {
 
-        private Map<String, Object> filterOptions;
-        private String filterKey = "id";
+        private List<FilterOption> filterOptions;
 
         private Map<String, Object> sortOptions;
 
-        public Map<String, Object> getFilterOptions() {
+        public List<FilterOption> getFilterOptions() {
             return filterOptions;
         }
 
-        public void setFilterOptions(Map<String, Object> filterOptions) {
+        public void setFilterOptions(List<FilterOption> filterOptions) {
             this.filterOptions = filterOptions;
-        }
-
-        public String getFilterKey() {
-            return filterKey;
-        }
-
-        public void setFilterKey(String filterKey) {
-            this.filterKey = filterKey;
         }
 
         public Map<String, Object> getSortOptions() {

@@ -34,6 +34,7 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.model.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
@@ -159,7 +160,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
+        if (component == null) component = new Component();
+        Global.component = component;
         connectionCheck();
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
@@ -326,7 +328,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         // Filter option
         filter_conditions.put("type", "messaging");
         if (component.channel.getFilterOptions() != null) {
-            filter_conditions.put(component.channel.getFilterKey(), component.channel.getFilterOptions());
+            for (FilterOption filterOption : component.channel.getFilterOptions())
+                filter_conditions.put(filterOption.getKey(), filterOption.getValue());
         }
 
         // Sort Option

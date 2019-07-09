@@ -153,11 +153,11 @@ public class ChannelListItemAdapter extends BaseAdapter {
     }
 
     private void configIndicatorUserInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
-//        if (!component.Channel.isShowReadIndicator()){
-//            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
-//            binding.ivIndicator.setVisibility(View.INVISIBLE);
-//            return;
-//        }
+        if (!Global.component.channel.isShowReadIndicator()){
+            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
+            binding.ivIndicator.setVisibility(View.INVISIBLE);
+            return;
+        }
 
         User lastReadUser = channelResponse.getLastReadUser();
         Message lastMessage = channelResponse.getLastMessage();

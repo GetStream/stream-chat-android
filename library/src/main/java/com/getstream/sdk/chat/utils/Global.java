@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
@@ -49,6 +50,7 @@ public class Global {
     public static WebSocketService webSocketService = new WebSocketService();
     public static EventFunction eventFunction;
 
+    public static Component component = new Component();
     public static boolean noConnection = false;
 
     public static List<ChannelResponse> channels = new ArrayList<>();
