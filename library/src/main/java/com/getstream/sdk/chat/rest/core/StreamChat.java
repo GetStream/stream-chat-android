@@ -1,11 +1,13 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.TokenProvider;
-import com.getstream.sdk.chat.model.Token;
+import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
+import com.getstream.sdk.chat.model.enums.Token;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.utils.Global;
 
@@ -34,25 +36,40 @@ public class StreamChat {
         this.user = user;
     }
 
-    // DevToken
-    public void setUser(User user, final TokenProvider listener) {
+    // Server-side Token
+    public void setUser(User user, final TokenProvider provider) {
         try {
-            listener.onResult(this.userToken = Token.devToken(user.getId()), null);
+            this.user = user;
+            provider.onResult((String token) -> {
+                userToken = token;
+                setUpWebSocket();
+            });
         } catch (Exception e) {
-            listener.onResult(null, e.getLocalizedMessage());
+            provider.onError(e.getLocalizedMessage());
             e.printStackTrace();
         }
-        Log.d(TAG, "TOKEN: " + this.userToken);
-        this.user = user;
-        setUpWebSocket();
     }
 
-    // Hardcoded
-    public void setUser(User user, String userToken) {
-        this.userToken = userToken;
-        Log.d(TAG, "TOKEN: " + this.userToken);
+    // Dev, Hardcoded, Guest Token
+    public void setUser(User user, Token token) throws Exception {
         this.user = user;
-        setUpWebSocket();
+        switch (token) {
+            case DEVELOPMENT:
+                this.userToken = TokenService.devToken(user.getId());
+                break;
+            case HARDCODED:
+                this.userToken = token.getToken();
+                break;
+            case GUEST:
+                this.userToken = TokenService.createGuestToken(user.getId());
+                break;
+            default:
+                break;
+        }
+        Log.d(TAG, "TOKEN: " + this.userToken);
+        if (!TextUtils.isEmpty(this.userToken)) {
+            setUpWebSocket();
+        }
     }
 
     public User getUser() {

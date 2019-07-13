@@ -1,8 +1,9 @@
 package com.getstream.sdk.chat.model;
 
 public class FilterOption {
-    private String key;
-    private Object value;
+
+    private String key;   // Filtering field name
+    private Object value; // Filtering query syntax
 
     public FilterOption(String key, Object value){
         this.key = key;

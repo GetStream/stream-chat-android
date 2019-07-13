@@ -6,9 +6,10 @@ import android.util.Base64;
 
 import org.json.JSONObject;
 
-public class Token {
+public class TokenService {
+
     public static String devToken(@NonNull String userId) throws Exception {
-        if (TextUtils.isEmpty(userId)){
+        if (TextUtils.isEmpty(userId)) {
             throw new IllegalArgumentException("User ID must be non-null");
         }
 
@@ -28,13 +29,8 @@ public class Token {
         return TextUtils.join(".", a);
     }
 
-    public static String serverToken(@NonNull String userId){
+    public static String createGuestToken(@NonNull String userId) throws Exception {
         // some progressing
-        return "";
-    }
-
-    public static String createGuestToken(@NonNull String userId){
-        // some progressing
-        return "";
+        return devToken(userId);
     }
 }

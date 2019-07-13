@@ -240,7 +240,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         initLoadingChannels();
         getChannels();
-        // get and save Device Token
+        // get and save Device TokenService
         getDeviceToken();
     }
 
@@ -429,9 +429,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void getDeviceToken() {
-        String token = pref.getString("Token", null);
+        String token = pref.getString("TokenService", null);
         if (token != null) {
-            Log.d(TAG, "device Token: " + token);
+            Log.d(TAG, "device TokenService: " + token);
             return;
         }
         FirebaseInstanceId.getInstance().getInstanceId()
@@ -442,11 +442,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                         return;
                     }
                     String token_ = task.getResult().getToken();
-                    Log.d(TAG, "device Token: " + token_);
+                    Log.d(TAG, "device TokenService: " + token_);
                     // Save to Server
                     addDevice(token_);
                     // Save to Local
-                    editor.putString("Token", token_);
+                    editor.putString("TokenService", token_);
                     editor.commit();
                 });
     }

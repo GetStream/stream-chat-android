@@ -107,10 +107,9 @@ public class User {
         this.name = name;
     }
 
-    public User(String id, String name, String image, Map<String,Object> additionalFields) {
+    public User(String id, String name, Map<String,Object> additionalFields) {
         this.id = id;
         this.name = name;
-        this.image = image;
         this.online = false;
         this.additionalFields = additionalFields;
     }
