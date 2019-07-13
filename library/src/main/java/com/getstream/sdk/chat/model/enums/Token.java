@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.model.enums;
 
 public enum Token {
+    SERVERSIDE,
     DEVELOPMENT,
     GUEST,
     HARDCODED;
