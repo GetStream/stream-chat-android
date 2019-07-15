@@ -17,8 +17,8 @@ sudo: required
 jdk:
   - oraclejdk8
 before_install:
-  - chmod +x gradlew
-  - chmod +rx app
+- chmod +x gradlew
+- chmod +rx app 
 
 before_script:
   - chmod +x gradlew
