@@ -13,7 +13,6 @@ android:
     - '.+'
 
 sudo: required
-
 jdk:
   - oraclejdk8
 before_install:
