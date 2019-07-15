@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "841744955660",
+    "firebase_url": "https://chatsdk-f21fc.firebaseio.com",
+    "project_id": "chatsdk-f21fc",
+    "storage_bucket": "chatsdk-f21fc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841744955660:android:287e2c0479fdd767",
+        "android_client_info": {
+          "package_name": "io.getstream.chat.sdk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "841744955660-3377k3laangice31ri5hrkoh2mgrit6u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdHG8wKT7Mtidr8VIQnjbadkxQugXubZ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "841744955660-3377k3laangice31ri5hrkoh2mgrit6u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
