@@ -47,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -278,7 +279,13 @@ public class UsersActivity extends AppCompatActivity {
 
 
         Log.d(TAG, "Channel ID: " + channelId);
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, isPrivateChannel ? null : binding.tvGroupName.getText().toString(), null);
+        /**
+         * Add additional fields - you can add additional info of user
+         * @param {HashMap} additionalFields User Additional fields
+         * @return
+         */
+
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, isPrivateChannel ? null : binding.tvGroupName.getText().toString(), null, null);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
@@ -286,13 +293,13 @@ public class UsersActivity extends AppCompatActivity {
         data.put("name", channel.getName());
         data.put("image", channel.getImageURL());
 
-        List members = new ArrayList();
+        List<String> members = new ArrayList<>();
         members.add(Global.streamChat.getUser().getId());
         for (User user : users) {
             members.add(user.getId());
         }
         data.put("members", members);
-
+        data.put("group","sports");
 //        if (Component.Channel.invitation) {
 //            data.put("invites", Arrays.asList(user.getId()));
 //        }

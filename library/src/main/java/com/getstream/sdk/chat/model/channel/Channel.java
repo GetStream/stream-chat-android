@@ -5,6 +5,8 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Map;
+
 public class Channel{
     @SerializedName("id")
     @Expose
@@ -45,6 +47,9 @@ public class Channel{
     @SerializedName("example")
     @Expose
     private int example;
+
+    private Map<String, Object> additionalFields;
+
 
     public String getId() {
         return id;
@@ -130,12 +135,22 @@ public class Channel{
 
     }
 
-    public Channel(String type, String id, String name, String image){
+    public Map<String, Object> getAdditionalFields() {
+        return additionalFields;
+    }
+
+    public void setAdditionalFields(Map<String, Object> additionalFields) {
+        this.additionalFields = additionalFields;
+    }
+
+    public Channel(String type, String id, String name, String image, Map<String, Object>additionalFields){
         this.type = type;
         this.id = id;
         this.name = name;
         this.imageURL = image;
+        this.additionalFields = additionalFields;
     }
+
     public String getInitials() {
         String name = this.name;
         if (name == null){

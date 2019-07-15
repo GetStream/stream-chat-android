@@ -39,7 +39,7 @@ public class URLSessionService {
         String channelName = channel_.getName();
         String channelImage = channel_.getImageURL();
 
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, channelName, channelImage);
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, channelName, channelImage, null);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);

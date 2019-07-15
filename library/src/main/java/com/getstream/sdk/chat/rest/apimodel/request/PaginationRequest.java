@@ -43,6 +43,7 @@ public class PaginationRequest {
         this.channel.remove("frozen");
         this.channel.remove("config");
         this.channel.remove("example");
+        this.channel.remove("additionalFields");
 
         this.state = true;
         this.watch = true;

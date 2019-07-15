@@ -73,6 +73,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ChatActivity extends AppCompatActivity implements EventHandler, WSResponseHandler {
 
@@ -182,16 +183,17 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     void init() {
         try {
             Fresco.initialize(getApplicationContext());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
         // set viewModel
         String channelId = null;
         Bundle b = getIntent().getExtras();
-        if(b!=null){
+        if (b != null) {
             channelId = (String) b.get(Constant.TAG_CHANNEL_RESPONSE_ID);
         }
         Log.d(TAG, "Channel ID: " + channelId);
-        if (channelId != null){
+        if (channelId != null) {
             channelResponse = Global.getChannelResponseById(channelId);
         }
 
@@ -358,7 +360,17 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         channel_.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
+
+        // Additional Field
         Map<String, Object> data = new HashMap<>();
+        if (channel_.getAdditionalFields() != null) {
+            Set<String> keys = channel_.getAdditionalFields().keySet();
+            for (String key : keys) {
+                Object value = channel_.getAdditionalFields().get(key);
+                if (value != null)
+                    data.put(key, value);
+            }
+        }
         Log.d(TAG, "Channel Connecting...");
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);

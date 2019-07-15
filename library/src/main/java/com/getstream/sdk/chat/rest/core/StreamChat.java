@@ -93,7 +93,7 @@ public class StreamChat {
     }
 
     // region Customize Components
-    public void setChannel(String channelType, String channelId, String channelName, String channelImage) {
+    public void setChannel(String channelType, String channelId, String channelName, String channelImage, HashMap<String, Object>additionalFields) {
         if (channelId == null) {
             this.channel = null;
             return;
@@ -104,6 +104,7 @@ public class StreamChat {
         channel_.setId(channelId);
         channel_.setName(channelName);
         channel_.setImageURL(channelImage);
+
         this.channel = channel_;
     }
 
