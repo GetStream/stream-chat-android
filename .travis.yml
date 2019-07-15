@@ -1,0 +1,24 @@
+language: android
+android:
+  components:
+    - tools
+    - build-tools-28.0.0
+    - android-28
+    - platform-tools
+    - extra-android-support
+    - extra-google-google_play_services
+    - extra-android-m2repository
+    - extra-google-m2repository
+  licenses:
+    - '.+'
+
+sudo: required
+
+jdk:
+  - oraclejdk8
+before_install:
+- chmod +x gradlew
+- chmod +rx app 
+
+before_script:
+  - chmod +x gradlew
