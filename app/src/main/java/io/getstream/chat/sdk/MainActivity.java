@@ -23,7 +23,6 @@ import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.enums.Token;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.view.activity.ChatActivity;
 import com.getstream.sdk.chat.view.fragment.ChannelListFragment;
 
