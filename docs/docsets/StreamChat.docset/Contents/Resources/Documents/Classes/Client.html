@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Client Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/Client" class="dashAnchor"></a>
+    <a title="Client Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">StreamChat Docs</a> (92% documented)</p>
+        <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">StreamChat Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        Client Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AvatarView.html">AvatarView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel.html">Channel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/DecodingKeys.html">– DecodingKeys</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Command.html">– Command</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelPresenter.html">ChannelPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelTableViewCell.html">ChannelTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelsPresenter.html">ChannelsPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelsViewController.html">ChannelsViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController.html">ChatViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client.html">Client</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger.html">ClientLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger/Options.html">– Options</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerView.html">ComposerView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Notifications.html">Notifications</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TableView.html">TableView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebViewController.html">WebViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentFileType.html">AttachmentFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentType.html">AttachmentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChannelType.html">ChannelType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatItem.html">ChatItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageType.html">MessageType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Pagination.html">Pagination</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ViewChanges.html">ViewChanges</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/CGFloat.html">CGFloat</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Date.html">Date</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter.html">DateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Token.html">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIFont.html">UIFont</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage.html">UIImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/FileTypes.html">– FileTypes</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/Icons.html">– Icons</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/Logo.html">– Logo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UITableView.html">UITableView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UITableViewCell.html">UITableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html#/s:10StreamChat10AttachmentV6ActionV">– Action</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionType.html">– ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionStyle.html">– ActionStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AttachmentFile.html">AttachmentFile</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL.html">BaseURL</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:10StreamChat16ChannelsResponseV">ChannelsResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ClientErrorResponse.html">ClientErrorResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle.html">ComposerViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html">ExtraData</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData/DecodableType.html">– DecodableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MediaGalleryItem.html">MediaGalleryItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member.html">Member</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member/Role.html">– Role</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRead.html">MessageRead</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle.html">MessageViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle/Alignment.html">– Alignment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Reaction.html">Reaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Sorting.html">Sorting</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/User.html">User</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Client</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Client</span></code></pre>
+
+                </div>
+              </div>
+            <p>A network client.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC10Completiona"></a>
+                    <a name="//apple_ref/swift/Alias/Completion" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC10Completiona">Completion</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A request completion block.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">(</span><span class="kt">Result</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/ClientError.html">ClientError</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC6configAC6ConfigVvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/config" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC6configAC6ConfigVvpZ">config</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A client config (see <code><a href="../Classes/Client/Config.html">Config</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">config</span><span class="p">:</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client/Config.html">Config</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC6sharedACvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/shared" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC6sharedACvpZ">shared</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A shared client.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">Client</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC6apiKey7baseURL13callbackQueue10logOptionsACSS_AA04BaseG0VSo17OS_dispatch_queueCSgAA0C6LoggerC0K0Otcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC6apiKey7baseURL13callbackQueue10logOptionsACSS_AA04BaseG0VSo17OS_dispatch_queueCSgAA0C6LoggerC0K0Otcfc">init(apiKey:baseURL:callbackQueue:logOptions:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Init a network client.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:10StreamChat6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">apiKey</span><span class="p">,</span>
+            <span class="nv">baseURL</span><span class="p">:</span> <span class="kt"><a href="../Structs/BaseURL.html">BaseURL</a></span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:10StreamChat6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">baseURL</span><span class="p">,</span>
+            <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:10StreamChat6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">callbackQueue</span><span class="p">,</span>
+            <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:10StreamChat6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">logOptions</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>apiKey</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a Stream Chat API key.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>baseURL</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a base URL (see <code><a href="../Structs/BaseURL.html">BaseURL</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>callbackQueue</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a request callback queue, default nil (some background thread).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>logOptions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>enable logs (see <code><a href="../Classes/ClientLogger/Options.html">ClientLogger.Options</a></code>), e.g. <code>.all</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Setup"></a>
+                <a name="//apple_ref/swift/Section/Setup" class="dashAnchor"></a>
+                <a href="#/Setup">
+                  <h3 class="section-name">Setup</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC3set4user5tokenyAA4UserV_SStF"></a>
+                    <a name="//apple_ref/swift/Method/set(user:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC3set4user5tokenyAA4UserV_SStF">set(user:token:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Setup the current user with a given token.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current user (see <code><a href="../Structs/User.html">User</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>token</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a Stream Chat API token.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC3set4user_yAA4UserV_yySScXEtF"></a>
+                    <a name="//apple_ref/swift/Method/set(user:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC3set4user_yAA4UserV_yySScXEtF">set(user:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Setup the current user with a token provider (see <code><a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a></code>).</p>
+
+<p>A token provider is a function in which you send a request to your own backend to get a Stream Chat API token.
+Then you send it to the client to complete the setup with a callback function from the token provider.</p>
+
+<p>Example:</p>
+<pre class="highlight swift"><code><span class="kt">Client</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">set</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="n">user</span><span class="p">)</span> <span class="p">{</span> <span class="n">callback</span> <span class="k">in</span>
+   <span class="k">if</span> <span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"https://my.backend.io/token?user_id=</span><span class="se">\(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="se">)</span><span class="s">"</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">let</span> <span class="nv">task</span> <span class="o">=</span> <span class="kt">URLSession</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">dataTask</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span> <span class="p">{</span> <span class="n">data</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">error</span> <span class="k">in</span>
+           <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="kc">nil</span><span class="p">,</span>
+               <span class="k">let</span> <span class="nv">json</span> <span class="o">=</span> <span class="k">try</span><span class="p">?</span> <span class="kt">JSONSerialization</span><span class="o">.</span><span class="nf">jsonObject</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">data</span><span class="p">),</span>
+               <span class="k">let</span> <span class="nv">token</span> <span class="o">=</span> <span class="n">json</span><span class="p">[</span><span class="s">"token"</span><span class="p">]</span> <span class="k">as?</span> <span class="kt">String</span> <span class="p">{</span>
+               <span class="nf">callback</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+           <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+               <span class="c1">// Handle the error.</span>
+               <span class="nf">print</span><span class="p">(</span><span class="s">"Token request failed"</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+           <span class="p">}</span>
+       <span class="p">}</span>
+
+       <span class="n">task</span><span class="o">.</span><span class="nf">resume</span><span class="p">()</span>
+   <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">tokenProvider</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current user (see <code><a href="../Structs/User.html">User</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tokenProvider</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a token provider.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat6ClientC6ConfigV"></a>
+                    <a name="//apple_ref/swift/Struct/Config" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat6ClientC6ConfigV">Config</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A config for a shread <code><a href="../Classes/Client.html">Client</a></code>.</p>
+
+                        <a href="../Classes/Client/Config.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Config</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-10)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

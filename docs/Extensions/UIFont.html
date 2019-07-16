@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>UIFont Extension Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Extension/UIFont" class="dashAnchor"></a>
+    <a title="UIFont Extension Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">StreamChat Docs</a> (92% documented)</p>
+        <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">StreamChat Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        UIFont Extension Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AvatarView.html">AvatarView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel.html">Channel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/DecodingKeys.html">– DecodingKeys</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Command.html">– Command</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelPresenter.html">ChannelPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelTableViewCell.html">ChannelTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelsPresenter.html">ChannelsPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelsViewController.html">ChannelsViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController.html">ChatViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client.html">Client</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger.html">ClientLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger/Options.html">– Options</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerView.html">ComposerView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Notifications.html">Notifications</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TableView.html">TableView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebViewController.html">WebViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentFileType.html">AttachmentFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentType.html">AttachmentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChannelType.html">ChannelType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatItem.html">ChatItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageType.html">MessageType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Pagination.html">Pagination</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ViewChanges.html">ViewChanges</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/CGFloat.html">CGFloat</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Date.html">Date</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter.html">DateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Token.html">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIFont.html">UIFont</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage.html">UIImage</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/FileTypes.html">– FileTypes</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/Icons.html">– Icons</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIImage/Logo.html">– Logo</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UITableView.html">UITableView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UITableViewCell.html">UITableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html#/s:10StreamChat10AttachmentV6ActionV">– Action</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionType.html">– ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionStyle.html">– ActionStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AttachmentFile.html">AttachmentFile</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL.html">BaseURL</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:10StreamChat16ChannelsResponseV">ChannelsResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ClientErrorResponse.html">ClientErrorResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle.html">ComposerViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/State.html">– State</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/Style.html">– Style</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html">ExtraData</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData/DecodableType.html">– DecodableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MediaGalleryItem.html">MediaGalleryItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member.html">Member</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member/Role.html">– Role</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRead.html">MessageRead</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle.html">MessageViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle/Alignment.html">– Alignment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Reaction.html">Reaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Sorting.html">Sorting</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/User.html">User</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>UIFont</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIFont</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">NSCopying</span></code></pre>
+
+                </div>
+              </div>
+            
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE11chatRegularABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatRegular" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE11chatRegularABvpZ">chatRegular</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat regular font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatRegular</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE15chatRegularBoldABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatRegularBold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE15chatRegularBoldABvpZ">chatRegularBold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat regular bold font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatRegularBold</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE18chatXRegularMediumABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatXRegularMedium" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE18chatXRegularMediumABvpZ">chatXRegularMedium</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat smaller regular medium font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatXRegularMedium</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE10chatMediumABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatMedium" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE10chatMediumABvpZ">chatMedium</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat medium font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatMedium</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE14chatMediumBoldABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatMediumBold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE14chatMediumBoldABvpZ">chatMediumBold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat medium bold font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatMediumBold</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE010chatMediumE0ABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatMediumMedium" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE010chatMediumE0ABvpZ">chatMediumMedium</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat medium medium font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatMediumMedium</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE16chatMediumItalicABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatMediumItalic" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE16chatMediumItalicABvpZ">chatMediumItalic</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat medium italic font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatMediumItalic</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE9chatSmallABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatSmall" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE9chatSmallABvpZ">chatSmall</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat small font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatSmall</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE15chatSmallMediumABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatSmallMedium" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE15chatSmallMediumABvpZ">chatSmallMedium</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat small medium font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatSmallMedium</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE13chatSmallBoldABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatSmallBold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE13chatSmallBoldABvpZ">chatSmallBold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat small bold font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatSmallBold</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE10chatXSmallABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatXSmall" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE10chatXSmallABvpZ">chatXSmall</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat extra small font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatXSmall</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE14chatXSmallBoldABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatXSmallBold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE14chatXSmallBoldABvpZ">chatXSmallBold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat extra small bold font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatXSmallBold</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE11chatXXSmallABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatXXSmall" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE11chatXXSmallABvpZ">chatXXSmall</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat extra extra small font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatXXSmall</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE9chatEmojiABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/chatEmoji" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE9chatEmojiABvpZ">chatEmoji</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat emoji font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">chatEmoji</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE14reactionsEmojiABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/reactionsEmoji" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE14reactionsEmojiABvpZ">reactionsEmoji</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A chat reactions emoji font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">reactionsEmoji</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE10avatarFont4sizeABSg12CoreGraphics7CGFloatV_tFZ"></a>
+                    <a name="//apple_ref/swift/Method/avatarFont(size:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE10avatarFont4sizeABSg12CoreGraphics7CGFloatV_tFZ">avatarFont(size:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An avatar font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">avatarFont</span><span class="p">(</span><span class="nv">size</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIFont</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>size</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a font size.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a font.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE10monospaced4sizeABSg12CoreGraphics7CGFloatV_tFZ"></a>
+                    <a name="//apple_ref/swift/Method/monospaced(size:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE10monospaced4sizeABSg12CoreGraphics7CGFloatV_tFZ">monospaced(size:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A monospaced font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">monospaced</span><span class="p">(</span><span class="nv">size</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIFont</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>size</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a font size.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a monospaced font.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So6UIFontC10StreamChatE10withTraitsyABSo0a18DescriptorSymbolicE0VF"></a>
+                    <a name="//apple_ref/swift/Method/withTraits(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So6UIFontC10StreamChatE10withTraitsyABSo0a18DescriptorSymbolicE0VF">withTraits(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A font with a traits.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">withTraits</span><span class="p">(</span><span class="n">_</span> <span class="nv">traits</span><span class="p">:</span> <span class="kt">UIFontDescriptor</span><span class="o">.</span><span class="kt">SymbolicTraits</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>traits</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a traits (see <code>UIFontDescriptor.SymbolicTraits</code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a font with a traits.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-10)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

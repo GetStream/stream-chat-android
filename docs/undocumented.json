@@ -1,0 +1,341 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": null,
+      "symbol": "WebSocket",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Extensions/UIKit/TableView.swift",
+      "line": 27,
+      "symbol": "TableView.layoutSubviews()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 153,
+      "symbol": "Attachment.Action",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 169,
+      "symbol": "Attachment.ActionType",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 170,
+      "symbol": "Attachment.ActionType.button",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 173,
+      "symbol": "Attachment.ActionStyle",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 174,
+      "symbol": "Attachment.ActionStyle.default",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Attachment.swift",
+      "line": 175,
+      "symbol": "Attachment.ActionStyle.primary",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
+      "line": 115,
+      "symbol": "Filter.+(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
+      "line": 133,
+      "symbol": "Filter.+=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
+      "line": 137,
+      "symbol": "Filter.|(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
+      "line": 155,
+      "symbol": "Filter.|=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Member.swift",
+      "line": 46,
+      "symbol": "Member.Role.owner",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Member.swift",
+      "line": 47,
+      "symbol": "Member.Role.member",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Member.swift",
+      "line": 48,
+      "symbol": "Member.Role.user",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
+      "line": 56,
+      "symbol": "ChannelTableViewCell.prepareForReuse()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 39,
+      "symbol": "ChannelsViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 55,
+      "symbol": "ChannelsViewController.channelCell(at:channelPresenter:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 97,
+      "symbol": "ChannelsViewController.tableView(_:didSelectRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 177,
+      "symbol": "ChannelsViewController.tableView(_:numberOfRowsInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 181,
+      "symbol": "ChannelsViewController.tableView(_:cellForRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
+      "line": 197,
+      "symbol": "ChannelsViewController.tableView(_:willDisplay:forRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 61,
+      "symbol": "ChatViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 99,
+      "symbol": "ChatViewController.viewWillAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 105,
+      "symbol": "ChatViewController.viewWillDisappear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 110,
+      "symbol": "ChatViewController.preferredStatusBarStyle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 269,
+      "symbol": "ChatViewController.tableView(_:numberOfRowsInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 273,
+      "symbol": "ChatViewController.tableView(_:cellForRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 298,
+      "symbol": "ChatViewController.tableView(_:willDisplay:forRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 315,
+      "symbol": "ChatViewController.tableView(_:didEndDisplaying:forRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
+      "line": 321,
+      "symbol": "ChatViewController.tableView(_:shouldHighlightRowAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+Images.swift",
+      "line": 70,
+      "symbol": "ComposerView.collectionView(_:numberOfItemsInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+Images.swift",
+      "line": 74,
+      "symbol": "ComposerView.collectionView(_:cellForItemAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+TextView.swift",
+      "line": 90,
+      "symbol": "ComposerView.textViewDidBeginEditing(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+TextView.swift",
+      "line": 95,
+      "symbol": "ComposerView.textViewDidEndEditing(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+TextView.swift",
+      "line": 100,
+      "symbol": "ComposerView.textViewDidChange(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 39,
+      "symbol": "MediaGalleryViewController.selected",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 41,
+      "symbol": "MediaGalleryViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 57,
+      "symbol": "MediaGalleryViewController.viewWillAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 69,
+      "symbol": "MediaGalleryViewController.preferredStatusBarStyle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 109,
+      "symbol": "MediaGalleryViewController.scrollViewDidScroll(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 121,
+      "symbol": "MediaGalleryViewController.scrollViewDidEndDecelerating(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 160,
+      "symbol": "MediaGalleryViewController.collectionView(_:numberOfItemsInSection:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 164,
+      "symbol": "MediaGalleryViewController.collectionView(_:cellForItemAt:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Notifications.swift",
+      "line": 143,
+      "symbol": "Notifications.userNotificationCenter(_:didReceive:withCompletionHandler:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Web View/WebViewController.swift",
+      "line": 26,
+      "symbol": "WebViewController.viewDidLoad()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Web View/WebViewController.swift",
+      "line": 79,
+      "symbol": "WebViewController.webView(_:didStartProvisionalNavigation:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Web View/WebViewController.swift",
+      "line": 83,
+      "symbol": "WebViewController.webView(_:didFinish:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/alexey/Developer/stream-chat-swift"
+}
