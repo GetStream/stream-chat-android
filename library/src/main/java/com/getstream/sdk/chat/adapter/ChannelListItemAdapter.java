@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemChannelBinding;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
+import com.getstream.sdk.chat.model.enums.ReadIndicator;
 import com.getstream.sdk.chat.model.message.Attachment;
 import com.getstream.sdk.chat.model.message.Message;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
@@ -158,26 +159,42 @@ public class ChannelListItemAdapter extends BaseAdapter {
             binding.ivIndicator.setVisibility(View.INVISIBLE);
             return;
         }
+        if (Global.component.channel.getReadIndicator() == ReadIndicator.LAST_READ_USER){
+            binding.ivIndicator.setVisibility(View.VISIBLE);
+            binding.tvIndicatorInitials.setVisibility(View.VISIBLE);
+            binding.tvUnread.setVisibility(View.GONE);
 
-        User lastReadUser = channelResponse.getLastReadUser();
-        Message lastMessage = channelResponse.getLastMessage();
-        if (lastMessage == null) {
-            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
-            binding.ivIndicator.setVisibility(View.INVISIBLE);
-        } else if (lastReadUser != null) {
-            if (StringUtility.isValidImageUrl(lastReadUser.getImage())) {
-                Utils.circleImageLoad(binding.ivIndicator, lastReadUser.getImage());
-                binding.ivIndicator.setVisibility(View.VISIBLE);
+            User lastReadUser = channelResponse.getLastReadUser();
+            Message lastMessage = channelResponse.getLastMessage();
+            if (lastMessage == null) {
                 binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
+                binding.ivIndicator.setVisibility(View.INVISIBLE);
+            } else if (lastReadUser != null) {
+                if (StringUtility.isValidImageUrl(lastReadUser.getImage())) {
+                    Utils.circleImageLoad(binding.ivIndicator, lastReadUser.getImage());
+                    binding.ivIndicator.setVisibility(View.VISIBLE);
+                    binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
+                } else {
+                    binding.tvIndicatorInitials.setText(lastReadUser.getUserInitials());
+                    binding.tvIndicatorInitials.setVisibility(View.VISIBLE);
+                    binding.ivIndicator.setVisibility(View.INVISIBLE);
+                }
             } else {
-                binding.tvIndicatorInitials.setText(lastReadUser.getUserInitials());
-                binding.tvIndicatorInitials.setVisibility(View.VISIBLE);
+                binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
                 binding.ivIndicator.setVisibility(View.INVISIBLE);
             }
-        } else {
-            binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
-            binding.ivIndicator.setVisibility(View.INVISIBLE);
+        }else{
+            binding.ivIndicator.setVisibility(View.GONE);
+            binding.tvIndicatorInitials.setVisibility(View.GONE);
+            binding.tvUnread.setVisibility(View.VISIBLE);
+            int unreadMessageCount = channelResponse.getUnreadMessageCount();
+            if (unreadMessageCount == 0){
+                binding.tvUnread.setVisibility(View.GONE);
+                return;
+            }
+            binding.tvUnread.setText(unreadMessageCount + " unread");
         }
+
     }
 
     private void configMessageDate(ListItemChannelBinding binding, Message lastMessage) {

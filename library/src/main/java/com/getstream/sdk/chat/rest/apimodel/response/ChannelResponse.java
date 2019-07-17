@@ -90,6 +90,21 @@ public class ChannelResponse {
         return lastReadUser;
     }
 
+    public int getUnreadMessageCount(){
+        int unreadMessageCount = 0;
+        if (this.reads == null || this.reads.isEmpty()) return unreadMessageCount;
+
+        String lastReadDate = getReadDateOfChannelLastMessage(true);
+        if (TextUtils.isEmpty(lastReadDate)) return unreadMessageCount;
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Message message = messages.get(i);
+            if (!TextUtils.isEmpty(message.getDeleted_at())) continue;
+            if (!Global.readMessage(lastReadDate, message.getCreated_at()))
+                unreadMessageCount ++;
+        }
+        return unreadMessageCount;
+    }
+
     public String getReadDateOfChannelLastMessage(boolean isMyRead) {
         if (this.reads == null || this.reads.isEmpty()) return null;
         String lastReadDate = null;
@@ -124,7 +139,7 @@ public class ChannelResponse {
     public void setReadDateOfChannelLastMessage(User user, String readDate) {
         if (this.reads == null || this.reads.isEmpty()) return;
         boolean isSet = false;
-        for (final ChannelUserRead userLastRead : this.reads) {
+        for (ChannelUserRead userLastRead : this.reads) {
             try {
                 User user_ = userLastRead.getUser();
                 if (user_.getId().equals(user.getId())) {

@@ -82,6 +82,11 @@
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/gray_dark</item>
     </style>
+
+    <style name="channel_preview_channel_unread_indicator">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
     <!--endregion-->
 
     <!--region Chat-->

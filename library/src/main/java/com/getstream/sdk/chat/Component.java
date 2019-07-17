@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat;
 
 import com.getstream.sdk.chat.model.FilterOption;
+import com.getstream.sdk.chat.model.enums.ReadIndicator;
 
 import java.util.List;
 import java.util.Map;
@@ -16,13 +17,21 @@ public class Component{
         private List<FilterOption> filterOptions;
         private String query;
         private Map<String, Object> sortOptions;
-
+        private ReadIndicator readIndicator = ReadIndicator.UNREAD_COUNT;
         public boolean isShowReadIndicator() {
             return showReadIndicator;
         }
 
-        public void setShowReadIndicator(boolean showReadIndicator_) {
-            showReadIndicator = showReadIndicator_;
+        public void setShowReadIndicator(boolean showReadIndicator) {
+            this.showReadIndicator = showReadIndicator;
+        }
+
+        public void setReadIndicatorType(ReadIndicator readIndicator) {
+            this.readIndicator = readIndicator;
+        }
+
+        public ReadIndicator getReadIndicator() {
+            return readIndicator;
         }
 
         public boolean isInvitation() {
