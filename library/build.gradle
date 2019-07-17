@@ -27,6 +27,19 @@ android {
         source = android.sourceSets.main.java.srcDirs
         classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
         destinationDir = file("../docs/")
+        exclude '**/utils'
+        exclude '**/adapter'
+        exclude '**/function'
+        exclude '**/interfaces'
+        exclude '**/rest'
+        exclude '**/activity'
+        exclude '**/fragment'
+        exclude '**/viewmodel'
+        exclude '**/Location.java'
+        exclude '**/Command.java'
+        exclude '**/Device.java'
+        exclude '**/TokenService.java'
+        exclude '**/ModelType.java'
         failOnError false
     }
 }
