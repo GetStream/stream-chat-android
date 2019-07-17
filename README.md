@@ -1,6 +1,6 @@
 # stream-chat-android
 
-[![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Documentation](https://github.com/GetStream/stream-chat-android/blob/master/docs/badge.svg)](https://getstream.github.io/stream-chat-android/)
+[![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
 
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
@@ -178,8 +178,9 @@ Following resource values can be overridden.
 - "channel_preview_channel_name"
 - "channel_preview_channel_last_message"
 - "channel_preview_channel_last_message_date"
+- "channel_preview_channel_unread_indicator"
 
-***Note**: If you don’t want to override it, you should not use the same values in resource!*
+***Note**: If you donâ€™t want to override it, you should not use the same values in resource!*
 
 
 ## Documentation
