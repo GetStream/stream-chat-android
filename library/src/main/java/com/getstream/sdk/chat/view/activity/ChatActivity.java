@@ -144,8 +144,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         stopTypingClearRepeatingTask();
     }
 
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -576,6 +574,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         stopTyping();
         stopTyingEventHandler.removeCallbacks(runnableTypingStop);
     }
+
     /**
      * clean - Cleans the channel state and fires stop typing if needed
      */

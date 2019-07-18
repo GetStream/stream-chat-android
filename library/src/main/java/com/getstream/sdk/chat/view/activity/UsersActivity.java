@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.model.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.channel.Channel;
+import com.getstream.sdk.chat.model.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
@@ -326,18 +327,42 @@ public class UsersActivity extends AppCompatActivity {
         if (Global.component.user.getFilterOptions() != null)
             if (Global.component.user.getFilterOptions().size() == 1){
                 FilterOption filterOption = Global.component.user.getFilterOptions().get(0);
-                filter_conditions.put(filterOption.getKey(), filterOption.getValue());
+                Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
+
+                Map<String, Object> mapFilterValue_ = new HashMap<>();
+                Set keys = mapFilterValue.keySet();
+                for(Object key: keys){
+                    mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+                }
+                filter_conditions.put(filterOption.getKey(), mapFilterValue_);
             }else{
-                if (!TextUtils.isEmpty(Global.component.user.getQuery())){
-                    List<Map<String,Object>> filterOptions = new ArrayList<>();
-                    for (FilterOption filterOption : Global.component.user.getFilterOptions()){
-                        Map<String, Object> map = new HashMap<>();
-                        map.put(filterOption.getKey(),filterOption.getValue());
-                        filterOptions.add(map);
+                if (Global.component.user.getQuery() != null) {
+
+                    List<Map<String, Object>> filterOptions = new ArrayList<>();
+
+                    for (FilterOption filterOption : Global.component.user.getFilterOptions()) {
+                        // Convert from FilterQuery to String
+                        Log.d(TAG,"FilterOption Value: " + filterOption.getValue());
+                        if (filterOption.getValue().getClass().equals(String.class)){
+                            Map<String, Object> map = new HashMap<>();
+                            map.put(filterOption.getKey(), filterOption.getValue());
+                            filterOptions.add(map);
+                        }else{
+                            Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
+                            Map<String, Object> mapFilterValue_ = new HashMap<>();
+                            Set keys = mapFilterValue.keySet();
+                            for(Object key: keys){
+                                mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+                            }
+                            Map<String, Object> map = new HashMap<>();
+                            map.put(filterOption.getKey(), mapFilterValue_);
+                            filterOptions.add(map);
+                        }
+
                     }
-                    filter_conditions.put(Global.component.user.getQuery(), filterOptions);
-                }else {
-                    Utils.showMessage(this,"You must set filter query!");
+                    filter_conditions.put(Global.component.user.getQuery().get(), filterOptions);
+                } else {
+                    Utils.showMessage(this, "You must set filter query!");
                 }
             }
 

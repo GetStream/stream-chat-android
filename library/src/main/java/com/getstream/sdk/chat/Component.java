@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat;
 
 import com.getstream.sdk.chat.model.FilterOption;
+import com.getstream.sdk.chat.model.enums.FilterQuery;
 import com.getstream.sdk.chat.model.enums.ReadIndicator;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class Component{
         private boolean invitation = true;
         private boolean showReadIndicator = true;
         private List<FilterOption> filterOptions;
-        private String query;
+        private FilterQuery query;
         private Map<String, Object> sortOptions;
         private ReadIndicator readIndicator = ReadIndicator.UNREAD_COUNT;
         public boolean isShowReadIndicator() {
@@ -46,16 +47,13 @@ public class Component{
             return filterOptions;
         }
 
-        public void setFilterOptions(List<FilterOption> filterOptions) {
+        public void setFilterOptions(FilterQuery query, List<FilterOption> filterOptions) {
+            this.query = query;
             this.filterOptions = filterOptions;
         }
 
-        public String getQuery() {
+        public FilterQuery getQuery() {
             return query;
-        }
-
-        public void setQuery(String query) {
-            this.query = query;
         }
 
         public Map<String, Object> getSortOptions() {
@@ -70,23 +68,20 @@ public class Component{
     public class User {
 
         private List<FilterOption> filterOptions;
-        private String query;
+        private FilterQuery query;
         private Map<String, Object> sortOptions;
 
         public List<FilterOption> getFilterOptions() {
             return filterOptions;
         }
 
-        public void setFilterOptions(List<FilterOption> filterOptions) {
+        public void setFilterOptions(FilterQuery query, List<FilterOption> filterOptions) {
             this.filterOptions = filterOptions;
-        }
-
-        public String getQuery() {
-            return query;
-        }
-
-        public void setQuery(String query) {
             this.query = query;
+        }
+
+        public FilterQuery getQuery() {
+            return query;
         }
 
         public Map<String, Object> getSortOptions() {

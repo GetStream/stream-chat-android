@@ -38,6 +38,7 @@ import com.getstream.sdk.chat.model.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.channel.Channel;
 import com.getstream.sdk.chat.model.channel.Event;
+import com.getstream.sdk.chat.model.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
@@ -66,6 +67,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
@@ -88,7 +90,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
 
-    public ChannelListFragment(){ }
+    public ChannelListFragment() {
+    }
 
     // region LifeCycle
     @Override
@@ -328,20 +331,46 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         // Filter option
         filter_conditions.put("type", "messaging");
-        if (component.channel.getFilterOptions().size() == 1){
+        if (component.channel.getFilterOptions().size() == 1) {
             FilterOption filterOption = component.channel.getFilterOptions().get(0);
-            filter_conditions.put(filterOption.getKey(), filterOption.getValue());
-        }else{
-            if (!TextUtils.isEmpty(component.channel.getQuery())){
-                List<Map<String,Object>> filterOptions = new ArrayList<>();
-                for (FilterOption filterOption : component.channel.getFilterOptions()){
-                    Map<String, Object> map = new HashMap<>();
-                    map.put(filterOption.getKey(),filterOption.getValue());
-                    filterOptions.add(map);
+
+            // Convert from FilterQuery to String
+            Log.d(TAG,"FilterOption Value: " + filterOption.getValue());
+            Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
+
+            Map<String, Object> mapFilterValue_ = new HashMap<>();
+            Set keys = mapFilterValue.keySet();
+            for(Object key: keys){
+                mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+            }
+
+            filter_conditions.put(filterOption.getKey(), mapFilterValue_);
+        } else {
+            if (component.channel.getQuery() != null) {
+
+                List<Map<String, Object>> filterOptions = new ArrayList<>();
+
+                for (FilterOption filterOption : component.channel.getFilterOptions()) {
+                    // Convert from FilterQuery to String
+                    if (filterOption.getValue().getClass().equals(String.class)){
+                        Map<String, Object> map = new HashMap<>();
+                        map.put(filterOption.getKey(), filterOption.getValue());
+                        filterOptions.add(map);
+                    }else{
+                        Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
+                        Map<String, Object> mapFilterValue_ = new HashMap<>();
+                        Set keys = mapFilterValue.keySet();
+                        for(Object key: keys){
+                            mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+                        }
+                        Map<String, Object> map = new HashMap<>();
+                        map.put(filterOption.getKey(), mapFilterValue_);
+                        filterOptions.add(map);
+                    }
                 }
-                filter_conditions.put(component.channel.getQuery(), filterOptions);
-            }else {
-                Utils.showMessage(getActivity(),"You must set filter query!");
+                filter_conditions.put(component.channel.getQuery().get(), filterOptions);
+            } else {
+                Utils.showMessage(getActivity(), "You must set filter query!");
             }
         }
 
@@ -356,7 +385,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
 
         payload.put("filter_conditions", filter_conditions);
-
+        Log.d(TAG,"filter_conditions: " + payload);
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
