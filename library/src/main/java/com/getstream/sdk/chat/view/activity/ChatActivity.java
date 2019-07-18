@@ -120,6 +120,17 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (Global.eventFunction != null) {
+            Global.eventFunction.setChannel(this.channel);
+            Global.eventFunction.setEventHandler(this);
+        }
+        startTypingStopRepeatingTask();
+        startTypingClearRepeatingTask();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         Global.streamChat.setChannel(null);
@@ -129,19 +140,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Global.eventFunction.setChannel(null);
         }
 
+        stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (Global.eventFunction != null) {
-            Global.eventFunction.setChannel(this.channel);
-            Global.eventFunction.setEventHandler(this);
-        }
 
-        startTypingClearRepeatingTask();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -236,7 +239,8 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                 binding.setActiveMessageSend(!(text.length() == 0));
                 sendFileFunction.checkCommand(text);
                 if (text.length() > 0) {
-                    sendTypeInidcator();
+                    keystroke();
+//                    sendTypeInidcator();
                 }
             }
 
@@ -550,15 +554,85 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Typing Indicator
     boolean isTyping = false;
+    Date lastKeyStroke;
+    Date lastTypingEvent;
+    private Handler stopTyingEventHandler = new Handler();
+    Runnable runnableTypingStop = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                clean();
+            } finally {
+                stopTyingEventHandler.postDelayed(runnableTypingStop, 3000);
+            }
+        }
+    };
+
+    void startTypingStopRepeatingTask() {
+        runnableTypingStop.run();
+    }
+
+    void stopTypingStopRepeatingTask() {
+        stopTyping();
+        stopTyingEventHandler.removeCallbacks(runnableTypingStop);
+    }
+    /**
+     * clean - Cleans the channel state and fires stop typing if needed
+     */
+    void clean() {
+        if (this.lastKeyStroke != null) {
+            Date now = new Date();
+            long diff = now.getTime() - this.lastKeyStroke.getTime();
+            if (diff > 1000 && this.isTyping) {
+                this.stopTyping();
+            }
+        }
+    }
+
+    /**
+     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
+     * Call this on every keystroke
+     */
+    void keystroke() {
+        Date now = new Date();
+        long diff;
+        if (this.lastKeyStroke == null)
+            diff = 2001;
+        else
+            diff = now.getTime() - this.lastKeyStroke.getTime();
+
+
+        this.lastKeyStroke = now;
+        this.isTyping = true;
+        // send a typing.start every 2 seconds
+        if (diff > 2000) {
+            this.lastTypingEvent = new Date();
+            Global.eventFunction.sendEvent(Event.typing_start);
+            Log.d(TAG, "typing.start");
+        }
+    }
+
+    /**
+     * stopTyping - Sets last typing to null and sends the typing.stop event
+     */
+    void stopTyping() {
+        this.lastTypingEvent = null;
+        this.isTyping = false;
+        Global.eventFunction.sendEvent(Event.typing_stop);
+        Log.d(TAG, "typing.stop");
+    }
+
 
     void sendTypeInidcator() {
         if (isThreadMode()) return;
-
         if (!isTyping) {
             Log.d(TAG, "typing.start");
             Global.eventFunction.sendEvent(Event.typing_start);
             isTyping = true;
         }
+    }
+
+    private void stopTypingEvent() {
         new Handler().postDelayed(() -> {
             if (isTyping) {
                 Global.eventFunction.sendEvent(Event.typing_stop);

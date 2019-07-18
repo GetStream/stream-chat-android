@@ -9,8 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
-import com.getstream.sdk.chat.Component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemChannelBinding;
 import com.getstream.sdk.chat.model.User;
