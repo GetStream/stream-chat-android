@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.model.enums;
 
 public enum Location {
-    usEast("us-east-1");
+    USEAST("us-east-1");
 
     private String value;
 

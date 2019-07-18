@@ -43,7 +43,7 @@ public class Global {
     private static final String TAG = Global.class.getCanonicalName();
 
     public static StreamChat streamChat;
-    public static BaseURL baseURL = new BaseURL(Location.usEast);
+    public static BaseURL baseURL = new BaseURL(Location.USEAST);
     public static RestController mRestController = new RestController();
     public static SelectAttachmentModel selectAttachmentModel;
 

@@ -1,17 +1,17 @@
 package com.getstream.sdk.chat.model.enums;
 
 public enum FilterQuery {
-    equal("$eq"),
-    greater("$gt"),
-    greaterOrEqual("$gte"),
-    less("$lt"),
-    lessOrEqual("$lte"),
-    notEqual("$ne"),
-    in("$in"),
-    nin("$nin"),
-    and("$and"),
-    or("$or"),
-    nor("$nor");
+    EQUAL("$eq"),
+    GREATER("$gt"),
+    GREATER_OR_EQUAL("$gte"),
+    LESS("$lt"),
+    LESS_OR_EQUAL("$lte"),
+    NOTEQUAL("$ne"),
+    IN("$in"),
+    NIN("$nin"),
+    AND("$and"),
+    OR("$or"),
+    NOR("$nor");
 
     private String value;
 

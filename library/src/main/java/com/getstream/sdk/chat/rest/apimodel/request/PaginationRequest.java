@@ -29,7 +29,7 @@ public class PaginationRequest {
     public PaginationRequest(int limit, String messageId, Channel channel) {
         Map<String, Object> map = new HashMap<>();
         map.put("limit", limit);
-        map.put(Pagination.lessThan.get(), messageId);
+        map.put(Pagination.LESS_THAN.get(), messageId);
         this.messages = map;
 
         Gson gson = new Gson();

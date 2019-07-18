@@ -1,10 +1,10 @@
 package com.getstream.sdk.chat.model.enums;
 
 public enum Pagination {
-    greaterThan("id_gt"),
-    greaterThanOrEqual("id_gte"),
-    lessThan("id_lt"),
-    lessThanOrEqual("id_lte");
+    GREATER_THAN("id_gt"),
+    GREATER_THAN_OR_EQUAL("id_gte"),
+    LESS_THAN("id_lt"),
+    LESS_THAN_OR_EQUAL("id_lte");
 
     private String value;
 
