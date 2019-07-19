@@ -5,7 +5,7 @@ import android.app.Activity;
 import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityChatBinding;
 import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.model.channel.Channel;
+import com.getstream.sdk.chat.model.Channel;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.rest.apimodel.request;
 import android.util.Log;
 
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.Gson;

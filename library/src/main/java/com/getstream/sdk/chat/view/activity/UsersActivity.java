@@ -24,20 +24,18 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
-import com.getstream.sdk.chat.model.FilterOption;
+import com.getstream.sdk.chat.component.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.channel.Channel;
-import com.getstream.sdk.chat.model.enums.FilterQuery;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.ErrorChecker;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -283,7 +281,6 @@ public class UsersActivity extends AppCompatActivity {
         /**
          * Add additional fields - you can add additional info of user
          * @param {HashMap} additionalFields User Additional fields
-         * @return
          */
 
         Channel channel = new Channel(ModelType.channel_messaging, channelId, isPrivateChannel ? null : binding.tvGroupName.getText().toString(), null, null);

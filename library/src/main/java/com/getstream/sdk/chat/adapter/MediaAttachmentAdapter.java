@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.ListItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 
 import java.io.File;
 import java.util.List;

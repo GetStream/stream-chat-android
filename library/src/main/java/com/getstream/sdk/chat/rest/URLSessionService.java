@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
-import com.getstream.sdk.chat.model.channel.Channel;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 

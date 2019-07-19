@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.getstream.sdk.chat.utils.exomedia.listener.OnPreparedListener;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;

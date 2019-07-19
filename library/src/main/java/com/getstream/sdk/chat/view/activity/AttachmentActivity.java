@@ -16,7 +16,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;

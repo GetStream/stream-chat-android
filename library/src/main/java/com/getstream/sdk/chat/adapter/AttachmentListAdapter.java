@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 
 import java.util.List;
 

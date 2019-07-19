@@ -4,18 +4,18 @@ import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemChannelBinding;
 import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.channel.Channel;
-import com.getstream.sdk.chat.model.enums.ReadIndicator;
-import com.getstream.sdk.chat.model.message.Attachment;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.enums.ReadIndicator;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -96,7 +96,7 @@ public class ChannelListItemAdapter extends BaseAdapter {
         if (lastMessage != null) {
             configMessageDate(binding, lastMessage);
             configLastMessageDate(binding, channelResponse, lastMessage);
-        }else{
+        } else {
             binding.tvLastMessage.setText("");
             binding.tvDate.setText("");
         }
@@ -152,12 +152,12 @@ public class ChannelListItemAdapter extends BaseAdapter {
     }
 
     private void configIndicatorUserInfo(ListItemChannelBinding binding, ChannelResponse channelResponse) {
-        if (!Global.component.channel.isShowReadIndicator()){
+        if (!Global.component.channel.isShowReadIndicator()) {
             binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
             binding.ivIndicator.setVisibility(View.INVISIBLE);
             return;
         }
-        if (Global.component.channel.getReadIndicator() == ReadIndicator.LAST_READ_USER){
+        if (Global.component.channel.getReadIndicator() == ReadIndicator.LAST_READ_USER) {
             binding.ivIndicator.setVisibility(View.VISIBLE);
             binding.tvIndicatorInitials.setVisibility(View.VISIBLE);
             binding.tvUnread.setVisibility(View.GONE);
@@ -181,12 +181,12 @@ public class ChannelListItemAdapter extends BaseAdapter {
                 binding.tvIndicatorInitials.setVisibility(View.INVISIBLE);
                 binding.ivIndicator.setVisibility(View.INVISIBLE);
             }
-        }else{
+        } else {
             binding.ivIndicator.setVisibility(View.GONE);
             binding.tvIndicatorInitials.setVisibility(View.GONE);
             binding.tvUnread.setVisibility(View.VISIBLE);
             int unreadMessageCount = channelResponse.getUnreadMessageCount();
-            if (unreadMessageCount == 0){
+            if (unreadMessageCount == 0) {
                 binding.tvUnread.setVisibility(View.GONE);
                 return;
             }

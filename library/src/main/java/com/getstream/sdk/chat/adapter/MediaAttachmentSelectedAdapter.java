@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.ListItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 import com.google.gson.Gson;
 
 import java.io.File;

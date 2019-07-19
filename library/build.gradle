@@ -23,25 +23,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    task javadoc(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-        destinationDir = file("../docs/")
-        exclude '**/utils'
-        exclude '**/adapter'
-        exclude '**/function'
-        exclude '**/interfaces'
-        exclude '**/rest'
-        exclude '**/activity'
-        exclude '**/fragment'
-        exclude '**/viewmodel'
-        exclude '**/Location.java'
-        exclude '**/Command.java'
-        exclude '**/Device.java'
-        exclude '**/TokenService.java'
-        exclude '**/ModelType.java'
-        failOnError false
-    }
 }
 
 dependencies {
@@ -86,4 +67,27 @@ dependencies {
 //    implementation('io.jsonwebtoken:jjwt-orgjson:0.10.5') {
 //        exclude group: 'org.json', module: 'json'
 //    }
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../docs/")
+    exclude '**/utils'
+    exclude '**/adapter'
+    exclude '**/function'
+    exclude '**/interfaces'
+    exclude '**/rest'
+//    exclude '**/activity'
+//    exclude '**/fragment'
+    exclude '**/BaseActivity.java'
+    exclude '**/viewmodel'
+    exclude '**/Location.java'
+    exclude '**/Command.java'
+    exclude '**/Device.java'
+    exclude '**/TokenService.java'
+    exclude '**/ModelType.java'
+    exclude '**/MessageTagModel.java'
+    exclude '**/SelectAttachmentModel.java'
+    failOnError false
 }

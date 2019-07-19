@@ -4,15 +4,11 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableField;
 import android.text.TextUtils;
-import android.view.View;
 
-import com.getstream.sdk.chat.databinding.ListItemChannelBinding;
 import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;
 

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.model.channel.Event;
+import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 

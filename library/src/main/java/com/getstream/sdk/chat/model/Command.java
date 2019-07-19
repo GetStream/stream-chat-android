@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
-
+/**
+ * A command
+ */
 public class Command {
     private String name;
     private String description;

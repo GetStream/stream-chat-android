@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.model.enums.Location;
+import com.getstream.sdk.chat.enums.Location;
 
 public class BaseURL {
     private String urlString;

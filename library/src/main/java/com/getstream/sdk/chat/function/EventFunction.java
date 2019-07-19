@@ -6,9 +6,9 @@ import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.channel.Channel;
-import com.getstream.sdk.chat.model.channel.Event;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;

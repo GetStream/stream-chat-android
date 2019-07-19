@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.message.Reaction;
+import com.getstream.sdk.chat.enums.ReactionEmoji;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
             emoji = String.valueOf(reactionCount);
         }else {
             String reaction = reactions.get(position);
-            emoji = Reaction.Type.valueOf(reaction).get();
+            emoji = ReactionEmoji.valueOf(reaction).get();
         }
         holder.tv_emoji.setText(emoji);
     }

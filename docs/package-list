@@ -1,5 +1,5 @@
-com.getstream.sdk.chat
+com.getstream.sdk.chat.component
+com.getstream.sdk.chat.enums
 com.getstream.sdk.chat.model
-com.getstream.sdk.chat.model.channel
-com.getstream.sdk.chat.model.enums
-com.getstream.sdk.chat.model.message
+com.getstream.sdk.chat.view.activity
+com.getstream.sdk.chat.view.fragment

@@ -6,21 +6,16 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.model.Device;
-import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.message.Attachment;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Global;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MessageFunction {
 

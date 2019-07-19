@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.message.Attachment;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
-import com.getstream.sdk.chat.model.message.SelectAttachmentModel;
+import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;

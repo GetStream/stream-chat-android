@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.apimodel.request;
 
-import com.getstream.sdk.chat.model.channel.Channel;
-import com.getstream.sdk.chat.model.enums.Pagination;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.enums.Pagination;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

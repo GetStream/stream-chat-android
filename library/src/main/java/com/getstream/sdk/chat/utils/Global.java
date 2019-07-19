@@ -8,21 +8,21 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.getstream.sdk.chat.Component;
+import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.channel.Member;
-import com.getstream.sdk.chat.model.message.Attachment;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Member;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.model.enums.Location;
-import com.getstream.sdk.chat.model.message.SelectAttachmentModel;
+import com.getstream.sdk.chat.enums.Location;
+import com.getstream.sdk.chat.model.SelectAttachmentModel;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -43,7 +43,7 @@ public class Global {
     private static final String TAG = Global.class.getCanonicalName();
 
     public static StreamChat streamChat;
-    public static BaseURL baseURL = new BaseURL(Location.USEAST);
+    public static BaseURL baseURL = new BaseURL(Location.US_EAST);
     public static RestController mRestController = new RestController();
     public static SelectAttachmentModel selectAttachmentModel;
 

@@ -11,8 +11,9 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.message.Message;
-import com.getstream.sdk.chat.model.message.Reaction;
+import com.getstream.sdk.chat.enums.ReactionEmoji;
+import com.getstream.sdk.chat.model.Message;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.apimodel.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
 import com.getstream.sdk.chat.rest.controller.RestController;
@@ -57,7 +58,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         String type = types.get(position);
-        holder.tv_emoji.setText(Reaction.Type.valueOf(type).get());
+        holder.tv_emoji.setText(ReactionEmoji.valueOf(type).get());
 
         if (!showAvatar) {
             holder.cv_avatar.setVisibility(View.GONE);

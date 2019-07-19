@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 
 import java.util.List;

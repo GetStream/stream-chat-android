@@ -6,6 +6,9 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
+/**
+ * A user
+ */
 
 public class User {
     @SerializedName("id")
@@ -107,6 +110,12 @@ public class User {
         this.name = name;
     }
 
+    /**
+    * Constructor
+    * @param id User id
+    * @param name User name
+    * @param additionalFields Custom user fields
+    * */
     public User(String id, String name, Map<String,Object> additionalFields) {
         this.id = id;
         this.name = name;
@@ -118,13 +127,10 @@ public class User {
         return additionalFields;
     }
 
-    public void setAdditionalFields(Map<String, Object> additionalFields) {
-        this.additionalFields = additionalFields;
-    }
-
     public boolean isMe(){
         return id.equals(Global.streamChat.getUser().getId());
     }
+
     public String getUserInitials() {
         if (this.name == null) {
             this.name = "";

@@ -52,7 +52,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity{
     }
 
 
-    public class AppWebViewClients extends WebViewClient {
+    private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
-import com.getstream.sdk.chat.model.message.Message;
+import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
