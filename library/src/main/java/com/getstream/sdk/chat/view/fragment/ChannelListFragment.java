@@ -67,7 +67,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+/**
+ * A Fragment for Channels preview.
+ */
 public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     final String TAG = ChannelListFragment.class.getSimpleName();
@@ -86,10 +88,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     public static ChannelListFragment newInstance() {
         return new ChannelListFragment();
-    }
-
-
-    public ChannelListFragment() {
     }
 
     // region LifeCycle
@@ -220,7 +218,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         });
     }
 
-    public void setStreamChat() {
+    private void setStreamChat() {
         if (Global.noConnection) {
             Utils.showMessage(getContext(), "No internet connection!");
             return;
@@ -252,8 +250,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     boolean isCalling;
-
-    private void getChannels() {
+    /**
+     * Getting channels
+     */
+    public void getChannels() {
         Log.d(TAG, "getChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
@@ -490,6 +490,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Listners
+
+    /**
+     * Handle server response
+     *
+     * @param response Server response
+     */
     @Override
     public void handleWSResponse(Object response) {
         Global.noConnection = false;
@@ -532,6 +538,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
     }
 
+    /**
+     * Handle server response failures.
+     *
+     * @param errMsg  Error message
+     * @param errCode Error code
+     */
     @Override
     public void onFailed(String errMsg, int errCode) {
         Global.noConnection = true;
@@ -544,6 +556,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Permission
+    /**
+     * Permission check
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

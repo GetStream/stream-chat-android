@@ -26,6 +26,9 @@ import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 
 import java.util.List;
 
+/**
+ * An Activity showing attachments such as websites, youtube and giphy.
+ */
 public class AttachmentActivity extends AppCompatActivity {
 
     private final String TAG = AttachmentActivity.class.getSimpleName();
@@ -117,7 +120,7 @@ public class AttachmentActivity extends AppCompatActivity {
 
         switch (type) {
             case ModelType.attach_video:
-                youtubePlay(url);
+                playYoutube(url);
                 break;
             case ModelType.attach_giphy:
                 showGiphy(url);
@@ -135,7 +138,12 @@ public class AttachmentActivity extends AppCompatActivity {
         }
     }
 
-    void loadUrlToWeb(String url) {
+    /**
+     * Show web view with url
+     *
+     * @param url web url
+     */
+    public void loadUrlToWeb(String url) {
         iv_image.setVisibility(View.GONE);
         youtube_player_view.setVisibility(View.GONE);
         webView.setVisibility(View.VISIBLE);
@@ -144,23 +152,13 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.loadUrl(url);
     }
 
-    public class AppWebViewClients extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // TODO Auto-generated method stub
-            view.loadUrl(url);
-            return true;
-        }
 
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
-            super.onPageFinished(view, url);
-            progressBar.setVisibility(View.GONE);
-        }
-    }
-
-    void youtubePlay(String url) {
+    /**
+     * Play youtube with url
+     *
+     * @param url youtube url
+     */
+    public void playYoutube(String url) {
         iv_image.setVisibility(View.GONE);
         youtube_player_view.setVisibility(View.VISIBLE);
         webView.setVisibility(View.GONE);
@@ -180,7 +178,12 @@ public class AttachmentActivity extends AppCompatActivity {
         }, true);
     }
 
-    void showGiphy(String url) {
+    /**
+     * Play giphy with url
+     *
+     * @param url giphy url
+     */
+    public void showGiphy(String url) {
         if (url == null) {
             Utils.showMessage(this, "Error!");
             return;
@@ -208,5 +211,19 @@ public class AttachmentActivity extends AppCompatActivity {
                 .into(iv_image);
     }
 
+    private class AppWebViewClients extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            // TODO Auto-generated method stub
+            view.loadUrl(url);
+            return true;
+        }
 
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // TODO Auto-generated method stub
+            super.onPageFinished(view, url);
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 }

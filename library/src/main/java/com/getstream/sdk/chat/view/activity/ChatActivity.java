@@ -75,6 +75,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * An Activity of a channel.
+ */
 public class ChatActivity extends AppCompatActivity implements EventHandler, WSResponseHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
@@ -468,7 +471,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         });
     }
 
-
+    /**
+     * Finish this channel
+     */
     public void onClickBackFinish(View v) {
         finish();
     }
@@ -477,6 +482,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     // region Message
     private Message ephemeralMessage = null;
 
+    /**
+     * Send Message - Send a message to this channel
+     */
     public void onClickSendMessage(View v) {
         if (binding.etMessage.getTag() == null) {
             if (Global.noConnection) {
@@ -576,9 +584,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     }
 
     /**
-     * clean - Cleans the channel state and fires stop typing if needed
+     * Clean - Cleans the channel state and fires stop typing if needed
      */
-    void clean() {
+    public void clean() {
         if (this.lastKeyStroke != null) {
             Date now = new Date();
             long diff = now.getTime() - this.lastKeyStroke.getTime();
@@ -592,7 +600,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
      * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
      * Call this on every keystroke
      */
-    void keystroke() {
+    public void keystroke() {
         Date now = new Date();
         long diff;
         if (this.lastKeyStroke == null)
@@ -614,7 +622,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     /**
      * stopTyping - Sets last typing to null and sends the typing.stop event
      */
-    void stopTyping() {
+    public void stopTyping() {
         this.lastTypingEvent = null;
         this.isTyping = false;
         Global.eventFunction.sendEvent(Event.typing_stop);
@@ -718,6 +726,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         // Clean RecyclerView
     }
 
+    /**
+     * Hide thread view
+     */
     public void onClickCloseThread(View v) {
         threadBinding.setShowThread(false);
         cleanEditView();
@@ -884,14 +895,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                     else msg += user.getName() + ", ";
                 }
             }
-            Log.d(TAG, "Deliever Indicator 2");
         } else {
             if (message.isDelivered()) {
                 msg = "Delivered";
-                Log.d(TAG, "Deliever Indicator 3");
             } else {
                 msg = "sending...";
-                Log.d(TAG, "Deliever Indicator 4");
             }
         }
         Utils.showMessage(this, msg);
@@ -899,6 +907,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     // endregion
 
     // WebSocket Listener
+
+    /**
+     * Handle server response
+     *
+     * @param response Server response
+     */
     @Override
     public void handleWSResponse(Object response) {
         Global.noConnection = false;
@@ -926,6 +940,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         }
     }
 
+    /**
+     * Handle server response failures.
+     *
+     * @param errMsg  Error message
+     * @param errCode Error code
+     */
     @Override
     public void onFailed(String errMsg, int errCode) {
         Global.noConnection = true;
@@ -937,6 +957,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     }
 
     // Event Listener
+
+    /**
+     * Event Handle
+     *
+     * @param event Event for Server response
+     */
     @Override
     public void handleEvent(final Event event) {
         this.runOnUiThread(() -> {
@@ -984,6 +1010,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Log.d(TAG, "New Event: " + eventStr);
     }
 
+    /**
+     * Handles reconnection
+     *
+     * @param disconnect Event for Server response
+     */
     @Override
     public void handleReconnection(boolean disconnect) {
         binding.setNoConnection(disconnect);
@@ -1161,7 +1192,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         mAdapter.notifyItemChanged(channelMessages.size());
     }
 
-    void messageReadEvent(Event event) {
+    private void messageReadEvent(Event event) {
         Global.eventFunction.readMessage(channelResponse, event);
         if (!channelResponse.getLastMessage().isIncoming()) {
             mAdapter.notifyItemChanged(channelMessages.size() - 1);
@@ -1173,7 +1204,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Pagination
 
-    boolean isCalling;
+    private boolean isCalling;
 
     private void loadMore() {
         if (isNoHistory() || isCalling) return;
@@ -1253,26 +1284,44 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Attachment
 
+    /**
+     * Show view for attachment
+     */
     public void onClickAttachmentViewOpen(View v) {
         sendFileFunction.onClickAttachmentViewOpen(v);
     }
 
+    /**
+     * Hide view for attachment
+     */
     public void onClickAttachmentViewClose(View v) {
         sendFileFunction.onClickAttachmentViewClose(v);
     }
 
+    /**
+     * Show view for image and video attachment
+     */
     public void onClickSelectMediaViewOpen(View v) {
         sendFileFunction.onClickSelectMediaViewOpen(v);
     }
 
+    /**
+     * Hide view for image and video attachment
+     */
     public void onClickSelectMediaViewClose(View v) {
         sendFileFunction.onClickSelectMediaViewClose(v);
     }
 
+    /**
+     * Show view for file attachment
+     */
     public void onClickSelectFileViewOpen(View v) {
         sendFileFunction.onClickSelectFileViewOpen(v);
     }
 
+    /**
+     * Open camera view
+     */
     public void onClickTakePicture(View v) {
         sendFileFunction.onClickAttachmentViewClose(v);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1339,6 +1388,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     // end region
 
     // region Permission
+
+    /**
+     * Permission check
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {

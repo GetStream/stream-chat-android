@@ -47,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
+/**
+ * An Activity of user list.
+ */
 public class UsersActivity extends AppCompatActivity {
 
     private static final String TAG = UsersActivity.class.getSimpleName();
@@ -158,7 +160,10 @@ public class UsersActivity extends AppCompatActivity {
     // endregion
 
     // region New Chat
-    private void createNewChat() {
+    /**
+     * Start private chat
+     * */
+    public void createNewChat() {
         adapter.groupChatMode = false;
         adapter.notifyDataSetChanged();
         binding.clGroup.setVisibility(View.GONE);
@@ -387,6 +392,9 @@ public class UsersActivity extends AppCompatActivity {
         return json;
     }
 
+    /**
+     * Start group chat
+     * */
     public void onClickCreateGroupChat(View view) {
         getChannel(groupUsers);
     }

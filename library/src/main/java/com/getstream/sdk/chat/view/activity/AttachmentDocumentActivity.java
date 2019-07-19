@@ -13,7 +13,9 @@ import android.widget.ProgressBar;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.Constant;
 
-
+/**
+ * An Activity showing attachments such as PDF and Office documents.
+ * */
 public class AttachmentDocumentActivity extends AppCompatActivity{
 
     WebView webView;
@@ -32,7 +34,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity{
     private void init() {
         Intent intent = getIntent();
         String filePath = intent.getStringExtra(Constant.TAG_ATTACH_FILE_PATH);
-        loadOffice(filePath);
+        loadDocument(filePath);
     }
 
     private void configUIs() {
@@ -45,8 +47,11 @@ public class AttachmentDocumentActivity extends AppCompatActivity{
         webView.setWebViewClient(new AppWebViewClients());
     }
 
-
-    private void loadOffice(String url) {
+    /**
+     * Load document as url
+     * @param url document url
+     * */
+    public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
         webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
     }
