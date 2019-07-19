@@ -959,7 +959,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     // Event Listener
 
     /**
-     * Event Handle
+     * Handle Event
      *
      * @param event Event for Server response
      */
@@ -1011,7 +1011,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     }
 
     /**
-     * Handles reconnection
+     * Handle reconnection
      *
      * @param disconnect Event for Server response
      */

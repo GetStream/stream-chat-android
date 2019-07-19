@@ -1,12 +1,12 @@
 package com.getstream.sdk.chat.enums;
 
 public enum ReactionEmoji {
-    like("a"),
-    love("a"),
-    haha("a"),
-    wow("a"),
-    sad("a"),
-    angry("a");
+    like("👍"),
+    love("❤"),
+    haha("😂"),
+    wow("😲"),
+    sad("😔"),
+    angry("😠");
 
     private String value;
 
