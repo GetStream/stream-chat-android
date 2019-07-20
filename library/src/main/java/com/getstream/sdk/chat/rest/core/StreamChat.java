@@ -50,7 +50,7 @@ public class StreamChat {
         }
     }
 
-    // Dev, Hardcoded, Guest Token
+    // Dev, Guest Token
     public void setUser(User user, Token token) throws Exception {
         this.user = user;
         switch (token) {
@@ -67,6 +67,17 @@ public class StreamChat {
                 break;
         }
         Log.d(TAG, "TOKEN: " + this.userToken);
+        if (!TextUtils.isEmpty(this.userToken)) {
+            setUpWebSocket();
+        }
+    }
+    // Harded Code token
+    public void setUser(User user, String token) throws Exception {
+        if (TextUtils.isEmpty(token)) {
+            throw new Exception("Token must be non-null");
+        }
+        this.user = user;
+        this.userToken = token;
         if (!TextUtils.isEmpty(this.userToken)) {
             setUpWebSocket();
         }
@@ -93,7 +104,7 @@ public class StreamChat {
     }
 
     // region Customize Components
-    public void setChannel(String channelType, String channelId, String channelName, String channelImage, HashMap<String, Object>additionalFields) {
+    public void setChannel(String channelType, String channelId, String channelName, String channelImage, HashMap<String, Object> additionalFields) {
         if (channelId == null) {
             this.channel = null;
             return;

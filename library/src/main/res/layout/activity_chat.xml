@@ -63,7 +63,6 @@
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/round_thread_close"
                     android:gravity="center"
-                    android:onClick="onClickBackFinish"
                     android:text="‹"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"

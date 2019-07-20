@@ -61,7 +61,7 @@ public class WebSocketService extends WebSocketListener {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 3 : Constant.HEALTH_CHECK_INTERVAL;
+                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 2 : Constant.HEALTH_CHECK_INTERVAL;
                 mHandler.postDelayed(mHealthChecker, interval);
             }
         }

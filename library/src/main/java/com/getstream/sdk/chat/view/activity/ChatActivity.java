@@ -220,6 +220,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Global.eventFunction.setEventHandler(this);
         // Permission Check
         PermissionChecker.permissionCheck(this, null);
+        binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
     boolean lockRVScrollListener = false;
@@ -381,12 +382,14 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
         Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+            Log.d(TAG, "Channel Connected");
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
             channelResponse = response;
             Gson gson = new Gson();
+
             Log.d(TAG, "Channel Response: " + gson.toJson(response));
 
             init();
@@ -471,12 +474,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         });
     }
 
-    /**
-     * Finish this channel
-     */
-    public void onClickBackFinish(View v) {
-        finish();
-    }
     // endregion
 
     // region Message
@@ -1342,11 +1339,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Map<String, Object> messages = new HashMap<>();
             messages.put("limit", Constant.DEFAULT_LIMIT);
             Map<String, Object> data = new HashMap<>();
-            Log.d(TAG, "Channel Connecting...");
+            Log.d(TAG, "Channel Connecting1...");
 
             ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
             Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+                Log.d(TAG, "Channel Connected");
                 binding.setShowMainProgressbar(false);
                 if (!response.getMessages().isEmpty())
                     Global.setStartDay(response.getMessages(), null);
