@@ -43,7 +43,7 @@ public class User {
     @Expose
     private Boolean online;
 
-    private Map<String, Object>additionalFields;
+    private Map<String, Object> extraData;
 
     public String getCreated_at() {
         return created_at;
@@ -114,17 +114,17 @@ public class User {
     * Constructor
     * @param id User id
     * @param name User name
-    * @param additionalFields Custom user fields
+    * @param extraData Custom user fields
     * */
-    public User(String id, String name, Map<String,Object> additionalFields) {
+    public User(String id, String name, Map<String,Object> extraData) {
         this.id = id;
         this.name = name;
         this.online = false;
-        this.additionalFields = additionalFields;
+        this.extraData = extraData;
     }
 
-    public Map<String, Object> getAdditionalFields() {
-        return additionalFields;
+    public Map<String, Object> getExtraData() {
+        return extraData;
     }
 
     public boolean isMe(){

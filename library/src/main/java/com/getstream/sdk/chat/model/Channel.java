@@ -50,7 +50,7 @@ public class Channel{
     @Expose
     private int example;
 
-    private Map<String, Object> additionalFields;
+    private Map<String, Object> extraData;
 
 
     public String getId() {
@@ -137,26 +137,23 @@ public class Channel{
 
     }
 
-    public Map<String, Object> getAdditionalFields() {
-        return additionalFields;
+    public Map<String, Object> getExtraData() {
+        return extraData;
     }
 
-    public void setAdditionalFields(Map<String, Object> additionalFields) {
-        this.additionalFields = additionalFields;
-    }
     /**
      * Constructor
      * @param id Channel id
      * @param name Channel name
      * @param image Channel image
-     * @param additionalFields Custom channel fields
+     * @param extraData Custom channel fields
      * */
-    public Channel(String type, String id, String name, String image, Map<String, Object>additionalFields){
+    public Channel(String type, String id, String name, String image, Map<String, Object>extraData){
         this.type = type;
         this.id = id;
         this.name = name;
         this.imageURL = image;
-        this.additionalFields = additionalFields;
+        this.extraData = extraData;
     }
 
     public String getInitials() {

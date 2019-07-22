@@ -80,13 +80,16 @@ public class Message {
     private Map<String, String> command_info;
 
     // Additional Params
-    private Map<String, Object> costomFields;
+    private Map<String, Object> extraData;
+
+
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
     private String created, edited, deleted;
     private String date, time;
     private boolean isDelivered = false;
+
     public String getCreated() {
         return created;
     }

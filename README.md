@@ -53,7 +53,7 @@ StreamChat streamChat = new StreamChat("API KEY");
 - **Initialize User**
 
 ~~~java
-User user = new User("USER ID", "USER NAME", "USER IMAGE");
+User user = new User("USER ID", "USER NAME", EXTRA_DATA); // EXTRA_DATA : HashMap
 ~~~
 
 - **Set User**
@@ -74,10 +74,7 @@ Adding chat is simple as the library comes with a built-in **ChatActivity** of l
  Java
 ~~~java
 // Setting Channel
-Channel channel = new Channel();
-channel.setId(channelId);
-channel.setName(<Channel Name>);
-channel.setImageURL(<Channel Image>);
+Channel channel = new Channel("CHANNEL TYPE", "CHANNEL ID", "CHANNEL NAME", "CHANNEL IMAGE", EXTRA_DATA); // EXTRA_DATA : HashMap
 streamChat.setChannel(channel);
  
 // Start ChatActivity
@@ -88,12 +85,9 @@ startActivity(i);
  Kotlin 
 ~~~kotlin
 // Setting Channel
-val channel = Channel()
-channel.id = channelId
-channel.name = <Channel Name>
-channel.imageURL = <Channel Image>
+val channel = Channel("CHANNEL TYPE", "CHANNEL ID", "CHANNEL NAME", "CHANNEL IMAGE", EXTRA_DATA) // EXTRA_DATA : HashMap
 streamChat.setChannel(channel)
- 
+
 // Start ChatActivity
 val i = Intent(this, ChatActivity::class.java)
 startActivity(i)

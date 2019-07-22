@@ -369,10 +369,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
         // Additional Field
         Map<String, Object> data = new HashMap<>();
-        if (channel_.getAdditionalFields() != null) {
-            Set<String> keys = channel_.getAdditionalFields().keySet();
+        if (channel_.getExtraData() != null) {
+            Set<String> keys = channel_.getExtraData().keySet();
             for (String key : keys) {
-                Object value = channel_.getAdditionalFields().get(key);
+                Object value = channel_.getExtraData().get(key);
                 if (value != null)
                     data.put(key, value);
             }

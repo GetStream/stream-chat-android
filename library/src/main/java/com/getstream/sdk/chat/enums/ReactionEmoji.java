@@ -7,7 +7,6 @@ public enum ReactionEmoji {
     wow("😲"),
     sad("😔"),
     angry("😠");
-
     private String value;
 
     ReactionEmoji(final String value) {

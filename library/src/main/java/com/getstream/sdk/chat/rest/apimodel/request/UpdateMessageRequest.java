@@ -30,7 +30,7 @@ public class UpdateMessageRequest {
         this.message.remove("html");
         this.message.remove("command");
         // Custom Keys
-        this.message.remove("costomFields");
+        this.message.remove("extraData");
         this.message.remove("isStartDay");
         this.message.remove("isYesterday");
         this.message.remove("isToday");

@@ -245,5 +245,4 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
         return channels_;
     }
-
 }

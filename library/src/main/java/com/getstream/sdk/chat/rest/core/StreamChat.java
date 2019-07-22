@@ -104,21 +104,6 @@ public class StreamChat {
     }
 
     // region Customize Components
-    public void setChannel(String channelType, String channelId, String channelName, String channelImage, HashMap<String, Object> additionalFields) {
-        if (channelId == null) {
-            this.channel = null;
-            return;
-        }
-
-        Channel channel_ = new Channel();
-        channel_.setType(channelType);
-        channel_.setId(channelId);
-        channel_.setName(channelName);
-        channel_.setImageURL(channelImage);
-
-        this.channel = channel_;
-    }
-
     public void setChannel(Channel channel) {
         this.channel = channel;
     }
@@ -131,16 +116,16 @@ public class StreamChat {
     private void setUpWebSocket() {
         Map<String, Object> jsonParameter = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
-        if (this.getUser().getAdditionalFields() == null) {
+        if (this.getUser().getExtraData() == null) {
             map.put("id", this.user.getId());
             map.put("name", this.user.getName());
             map.put("image", this.user.getImage());
             jsonParameter.put("user_details", map);
         } else {
-            this.user.getAdditionalFields().put("id", this.user.getId());
-            this.user.getAdditionalFields().put("name", this.user.getName());
-            this.user.getAdditionalFields().put("image", this.user.getImage());
-            jsonParameter.put("user_details", this.user.getAdditionalFields());
+            this.user.getExtraData().put("id", this.user.getId());
+            this.user.getExtraData().put("name", this.user.getName());
+            this.user.getExtraData().put("image", this.user.getImage());
+            jsonParameter.put("user_details", this.user.getExtraData());
         }
         jsonParameter.put("user_id", this.user.getId());
         jsonParameter.put("user_token", this.userToken);
