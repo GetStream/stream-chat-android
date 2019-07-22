@@ -59,8 +59,7 @@ User user = new User("USER ID", "USER NAME", EXTRA_DATA); // EXTRA_DATA : HashMa
 - **Set User**
 
 ~~~java
-String userToken = streamChat.createUserToken("USER ID");
-streamChat.setUser(user, userToken);
+streamChat.setUser(user, "USER TOKEN");
 ~~~
 
 - **Adding Single Conversation Screen**
