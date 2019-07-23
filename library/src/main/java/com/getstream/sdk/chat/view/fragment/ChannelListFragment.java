@@ -101,7 +101,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding.setViewModel(mViewModel);
         init();
         configUIs();
-//        setStreamChat();
         getChannels();
         PermissionChecker.permissionCheck(getActivity(), this);
         return binding.getRoot();
@@ -170,14 +169,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
-//    private void setStreamChat() {
-//        if (Global.noConnection) {
-//            Utils.showMessage(getContext(), "No internet connection!");
-//            return;
-//        }
-//        Global.webSocketService.setWSResponseHandler(this);
-//        binding.setShowMainProgressbar(true);
-//    }
+
     private void configUIs() {
         FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
         frameLayout.setFitsSystemWindows(true);
@@ -229,7 +221,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     private void setAfterFirstConnection(Event event) {
         // Initialize Channels
-        init();
         Global.channels = new ArrayList<>();
         // Set Current User
         if (event.getMe() != null)
@@ -241,8 +232,17 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         initLoadingChannels();
         getChannels();
+        try{
+            getDeviceToken();
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d(TAG, "Failed adding device token");
+        }
         // get and save Device TokenService
-        getDeviceToken();
+//        new Handler().postDelayed(()->{
+//            getActivity().runOnUiThread(()->getDeviceToken());
+//            },4000);
+
     }
 
     private void initLoadingChannels() {
@@ -467,6 +467,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             Log.d(TAG, "device TokenService: " + token);
             return;
         }
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener((@NonNull Task<InstanceIdResult> task) -> {
                     if (!task.isSuccessful()) {
