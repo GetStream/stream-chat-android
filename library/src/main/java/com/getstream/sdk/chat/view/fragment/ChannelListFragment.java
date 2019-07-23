@@ -254,6 +254,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
      * Getting channels
      */
     public void getChannels() {
+        if (TextUtils.isEmpty(Global.streamChat.getClientID())) return;
         Log.d(TAG, "getChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
