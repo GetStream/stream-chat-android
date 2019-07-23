@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,25 +23,41 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private List<Message> messageList;
     private boolean isThread;
     private Context context;
+    private String className;
+    private int itemLayoutId;
 
-    public MessageListItemAdapter(Context context, ChannelResponse channelResponse, @NonNull List<Message> messageList, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+
+
+    public MessageListItemAdapter(Context context, ChannelResponse channelResponse, @NonNull List<Message> messageList,
+                                  boolean isThread, String className, int itemLayoutId,
+                                  View.OnClickListener clickListener, View.OnLongClickListener longClickListener
+                                  ) {
         this.context = context;
         this.channelResponse = channelResponse;
         this.messageList = messageList;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
         this.isThread = isThread;
+        this.className = className;
+        this.itemLayoutId = itemLayoutId;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.list_item_message, parent, false);
-        RecyclerView.ViewHolder viewHolder = new MessageListItemViewHolder(view);
-        return viewHolder;
+        try {
+            Class tempClass = Class.forName(className);
+            Class[] cArg = new Class[2];
+            cArg[0] = int.class;
+            cArg[1] = ViewGroup.class;
+            Object obj = tempClass.getDeclaredConstructor(cArg).newInstance(itemLayoutId, parent);
+            if (obj instanceof BaseMessageListItemViewHolder) {
+                return ((BaseMessageListItemViewHolder) obj);
+            }
+        } catch (Exception e) {
 
+        }
+        return new MessageListItemViewHolder(R.layout.list_item_message, parent);
     }
 
 

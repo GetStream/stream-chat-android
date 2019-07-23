@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,7 +45,7 @@ import ru.noties.markwon.ext.latex.JLatexMathPlugin;
 import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin;
 import ru.noties.markwon.image.ImagesPlugin;
 
-public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
+public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // region LifeCycle
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
@@ -95,8 +96,8 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
     private Context context;
     private Message message;
 
-    public MessageListItemViewHolder(View itemView) {
-        super(itemView);
+    public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
+        super(resId, viewGroup);
         cl_message = itemView.findViewById(R.id.cl_message);
         ll_typingusers = itemView.findViewById(R.id.ll_typing_indicator);
 
@@ -160,6 +161,7 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
         rv_reaction.setLayoutManager(mLayoutManager);
     }
 
+    @Override
     public void bind(Context context, ChannelResponse channelResponse, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         // set binding
         this.context = context;
@@ -172,7 +174,7 @@ public class MessageListItemViewHolder extends RecyclerView.ViewHolder {
         if (position < messageList.size())
             this.message = messageList.get(position);
 
-        isThreadHeader = (isThread && clickListener == null && longClickListener == null);
+        isThreadHeader = (isThread && this.clickListener == null && longClickListener == null);
 
         // Configure UIs
 

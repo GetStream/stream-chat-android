@@ -23,6 +23,7 @@ import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.adapter.BaseMessageListItemViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
 import com.getstream.sdk.chat.databinding.ActivityChatBinding;
@@ -90,7 +91,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private Channel channel;
     private List<Message> channelMessages, threadMessages;
 
-    private RecyclerView.LayoutManager mLayoutManager, mLayoutManager_thread;
+    private RecyclerView.LayoutManager mLayoutManager, mLayoutManager_thread, mLayoutManager_thread_header;
     private MessageListItemAdapter mAdapter, mThreadAdapter;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
@@ -101,6 +102,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private SendFileFunction sendFileFunction;
 
     private boolean singleConversation;
+
+    // Customised MessageItem Layout ID and ViewHolder Class Name
+    int messageItemLayoutId = R.layout.list_item_message;
+    String messageItemViewHolderName = MessageListItemViewHolder.class.getName();
 
     // region LifeCycle
     @Override
@@ -116,7 +121,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             configUIs();
         } else {
             Global.webSocketService.setWSResponseHandler(this);
-            if (!TextUtils.isEmpty(Global.streamChat.getClientID())) {
+            if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
+                binding.setShowMainProgressbar(true);
+            } else {
                 getChannel();
             }
         }
@@ -177,6 +184,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         }
         if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
             onClickSelectMediaViewClose(null);
+            return;
+        }
+        if (isThreadMode()) {
+            onClickCloseThread(null);
             return;
         }
         super.onBackPressed();
@@ -258,6 +269,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         // Message RecyclerView
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         mLayoutManager.scrollToPosition(channelMessages.size());
         binding.rvMessage.setLayoutManager(mLayoutManager);
@@ -420,11 +432,13 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     }
 
     void setRecyclerViewAdapder() {
-        mAdapter = new MessageListItemAdapter(this, this.channelResponse, messages(), isThreadMode(), (View v) -> {
-            Object object = v.getTag();
-            Log.d(TAG, "onClick Attach : " + object);
-            messageItemClickListener(object);
-        }, (View v) -> {
+        mAdapter = new MessageListItemAdapter(this, this.channelResponse, messages(),
+                isThreadMode(), messageItemViewHolderName, messageItemLayoutId,
+                (View v) -> {
+                    Object object = v.getTag();
+                    Log.d(TAG, "onClick Attach : " + object);
+                    messageItemClickListener(object);
+                }, (View v) -> {
             try {
                 messageItemLongClickListener(v.getTag());
             } catch (Exception e) {
@@ -699,8 +713,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
         thread_parentMessage = message;
         threadMessages = new ArrayList<>();
-        MessageListItemViewHolder viewHolder = new MessageListItemViewHolder((View) threadBinding.clMessageParent);
-        viewHolder.bind(this, this.channelResponse, channelMessages, position, true, null, null);
+
+        threadBinding.rvHeader.setLayoutManager(mLayoutManager_thread_header);
+        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(this, this.channelResponse, Arrays.asList(thread_parentMessage), isThreadMode(), messageItemViewHolderName, messageItemLayoutId, null, null);
+        threadBinding.rvHeader.setAdapter(mThreadHeaderAdapter);
 
         if (message.getReplyCount() == 0) {
             setThreadAdapter();
@@ -737,7 +753,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             mLayoutManager_thread.scrollToPosition(threadMessages.size() - 1);
 
         threadBinding.rvThread.setLayoutManager(mLayoutManager_thread);
-        mThreadAdapter = new MessageListItemAdapter(this, this.channelResponse, threadMessages, isThreadMode(), (View v) -> {
+        mThreadAdapter = new MessageListItemAdapter(this, this.channelResponse, threadMessages, isThreadMode(), messageItemViewHolderName, messageItemLayoutId, (View v) -> {
             Object object = v.getTag();
             messageItemClickListener(object);
         }, (View v) -> {
@@ -929,11 +945,17 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         if (!event.getType().equals(Event.health_check))
             Log.d(TAG, "Connection Response : " + json);
 
-        if (Global.eventFunction != null)
-            Global.eventFunction.handleReceiveEvent(event);
+        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
+        Global.eventFunction.handleReceiveEvent(event);
 
         if (!TextUtils.isEmpty(event.getConnection_id()) && TextUtils.isEmpty(Global.streamChat.getClientID())) {
-            Global.eventFunction.handleReconnect(Global.noConnection);
+            if (!TextUtils.isEmpty(event.getConnection_id())) {
+                String connectionId = event.getConnection_id();
+                Global.streamChat.setClientID(connectionId);
+                Log.d(TAG, "Connection ID: " + connectionId);
+            }
+//            Global.eventFunction.handleReconnect(Global.noConnection);
+            getChannel();
         }
     }
 
