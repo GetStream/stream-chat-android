@@ -232,17 +232,14 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         initLoadingChannels();
         getChannels();
+
+        // get and save Device TokenService
         try{
             getDeviceToken();
         }catch (Exception e){
             e.printStackTrace();
             Log.d(TAG, "Failed adding device token");
         }
-        // get and save Device TokenService
-//        new Handler().postDelayed(()->{
-//            getActivity().runOnUiThread(()->getDeviceToken());
-//            },4000);
-
     }
 
     private void initLoadingChannels() {

@@ -23,9 +23,7 @@ import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.adapter.BaseMessageListItemViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
-import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
 import com.getstream.sdk.chat.databinding.ActivityChatBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.function.AttachmentFunction;
@@ -104,8 +102,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private boolean singleConversation;
 
     // Customised MessageItem Layout ID and ViewHolder Class Name
-    int messageItemLayoutId = R.layout.list_item_message;
-    String messageItemViewHolderName = MessageListItemViewHolder.class.getName();
+//    private int messageItemLayoutId = R.layout.list_item_message;
+//    private String messageItemViewHolderName = MessageListItemViewHolder.class.getName();
+    private int messageItemLayoutId;
+    private String messageItemViewHolderName;
 
     // region LifeCycle
     @Override
@@ -231,12 +231,13 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Global.eventFunction.setEventHandler(this);
         // Permission Check
         PermissionChecker.permissionCheck(this, null);
-        binding.tvBack.setOnClickListener((View v) -> finish());
+//        binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
     boolean lockRVScrollListener = false;
 
-    void configUIs() {
+    private void configUIs() {
+        confirmCustomMessageItem();
         // Message Composer
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
@@ -301,6 +302,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         configHeaderView();
+    }
+
+    private void confirmCustomMessageItem() {
+        messageItemLayoutId = Global.component.messageItemView.getMessageItemLayoutId();
+        messageItemViewHolderName = Global.component.messageItemView.getMessageItemViewHolderName();
     }
 
     private void configHeaderView() {
@@ -431,7 +437,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             messages().get(messages().size() - 1).setDelivered(true);
     }
 
-    void setRecyclerViewAdapder() {
+    private void setRecyclerViewAdapder() {
         mAdapter = new MessageListItemAdapter(this, this.channelResponse, messages(),
                 isThreadMode(), messageItemViewHolderName, messageItemLayoutId,
                 (View v) -> {

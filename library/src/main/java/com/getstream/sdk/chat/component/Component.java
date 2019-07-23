@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.component;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.enums.ReadIndicator;
 
@@ -13,7 +15,7 @@ public class Component{
 
     public Channel channel = new Channel();
     public User user = new User();
-
+    public MessageItemView messageItemView = new MessageItemView();
     /**
      * A class to customize Channels preview and Filtering & Ordering Channels
      */
@@ -130,6 +132,70 @@ public class Component{
          */
         public void setSortOptions(Map<String, Object> sortOptions) {
             this.sortOptions = sortOptions;
+        }
+    }
+
+    public class AvatarView{
+        private float radius;
+        private float cornerRadius;
+
+        public float getRadius() {
+            return radius;
+        }
+
+        public void setRadius(float radius) {
+            this.radius = radius;
+        }
+
+        public float getCornerRadius() {
+            return cornerRadius;
+        }
+
+        public void setCornerRadius(float cornerRadius) {
+            this.cornerRadius = cornerRadius;
+        }
+    }
+
+    public class MessageItemView{
+
+        private int messageItemLayoutId = R.layout.list_item_message; // Default
+        private String messageItemViewHolderName = MessageListItemViewHolder.class.getName(); // Default
+
+        public int getMessageItemLayoutId() {
+            return messageItemLayoutId;
+        }
+
+        public void setMessageItemLayoutId(int messageItemLayoutId) {
+            this.messageItemLayoutId = messageItemLayoutId;
+        }
+
+        public String getMessageItemViewHolderName() {
+            return messageItemViewHolderName;
+        }
+
+        public void setMessageItemViewHolderName(String messageItemViewHolderName) {
+            this.messageItemViewHolderName = messageItemViewHolderName;
+        }
+    }
+
+    public class ChannelPreview{
+        private int channelItemLayoutId = R.layout.list_item_message; // Default
+        private String channelItemViewHolderName = MessageListItemViewHolder.class.getName(); // Default
+
+        public int getChannelItemLayoutId() {
+            return channelItemLayoutId;
+        }
+
+        public void setChannelItemLayoutId(int channelItemLayoutId) {
+            this.channelItemLayoutId = channelItemLayoutId;
+        }
+
+        public String getChannelItemViewHolderName() {
+            return channelItemViewHolderName;
+        }
+
+        public void setChannelItemViewHolderName(String channelItemViewHolderName) {
+            this.channelItemViewHolderName = channelItemViewHolderName;
         }
     }
 }

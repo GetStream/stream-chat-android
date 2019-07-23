@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * A channel
  */
-public class Channel{
+public class Channel {
     @SerializedName("id")
     @Expose
     private String id;
@@ -133,7 +133,7 @@ public class Channel{
         this.example = example;
     }
 
-    public Channel(){
+    public Channel() {
 
     }
 
@@ -143,12 +143,14 @@ public class Channel{
 
     /**
      * Constructor
-     * @param id Channel id
-     * @param name Channel name
-     * @param image Channel image
+     *
+     * @param type        Channel type
+     * @param id        Channel id
+     * @param name      Channel name
+     * @param image     Channel image
      * @param extraData Custom channel fields
-     * */
-    public Channel(String type, String id, String name, String image, Map<String, Object>extraData){
+     */
+    public Channel(String type, String id, String name, String image, Map<String, Object> extraData) {
         this.type = type;
         this.id = id;
         this.name = name;
@@ -156,9 +158,22 @@ public class Channel{
         this.extraData = extraData;
     }
 
+    /**
+     * Constructor
+     *
+     * @param type      Channel type
+     * @param id        Channel id
+     * @param extraData Custom channel fields
+     */
+    public Channel(String type, String id, Map<String, Object> extraData) {
+        this.type = type;
+        this.id = id;
+        this.extraData = extraData;
+    }
+
     public String getInitials() {
         String name = this.name;
-        if (name == null){
+        if (name == null) {
             this.name = "";
             return "";
         }
@@ -170,8 +185,10 @@ public class Channel{
         } catch (Exception e) {
         }
 
-        if (!StringUtility.isNullOrEmpty(firstName) && StringUtility.isNullOrEmpty(lastName)) return firstName.substring(0, 1).toUpperCase();
-        if (StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName)) return lastName.substring(0, 1).toUpperCase();
+        if (!StringUtility.isNullOrEmpty(firstName) && StringUtility.isNullOrEmpty(lastName))
+            return firstName.substring(0, 1).toUpperCase();
+        if (StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
+            return lastName.substring(0, 1).toUpperCase();
 
         if (!StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();

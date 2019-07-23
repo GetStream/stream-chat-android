@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -55,7 +56,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 return ((BaseMessageListItemViewHolder) obj);
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return new MessageListItemViewHolder(R.layout.list_item_message, parent);
     }
@@ -63,7 +64,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((MessageListItemViewHolder) holder).bind(this.context, this.channelResponse, messageList, position, isThread, clickListener, longClickListener);
+        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelResponse, messageList, position, isThread, clickListener, longClickListener);
 
     }
 
