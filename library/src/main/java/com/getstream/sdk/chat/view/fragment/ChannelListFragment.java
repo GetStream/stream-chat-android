@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /**
  * A Fragment for Channels preview.
  */
@@ -98,10 +99,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding = FragmentChannelListBinding.inflate(inflater, container, false);
         mViewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         binding.setViewModel(mViewModel);
-        Log.d(TAG, "onCreateView");
         init();
         configUIs();
-        setStreamChat();
+//        setStreamChat();
         getChannels();
         PermissionChecker.permissionCheck(getActivity(), this);
         return binding.getRoot();
@@ -170,7 +170,14 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
-
+//    private void setStreamChat() {
+//        if (Global.noConnection) {
+//            Utils.showMessage(getContext(), "No internet connection!");
+//            return;
+//        }
+//        Global.webSocketService.setWSResponseHandler(this);
+//        binding.setShowMainProgressbar(true);
+//    }
     private void configUIs() {
         FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
         frameLayout.setFitsSystemWindows(true);
@@ -218,17 +225,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         });
     }
 
-    private void setStreamChat() {
-        if (Global.noConnection) {
-            Utils.showMessage(getContext(), "No internet connection!");
-            return;
-        }
-        Global.webSocketService.setWSResponseHandler(this);
-        binding.setShowMainProgressbar(true);
-    }
+
 
     private void setAfterFirstConnection(Event event) {
         // Initialize Channels
+        init();
         Global.channels = new ArrayList<>();
         // Set Current User
         if (event.getMe() != null)
@@ -250,6 +251,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     boolean isCalling;
+
     /**
      * Getting channels
      */
@@ -331,17 +333,18 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         // Filter option
         filter_conditions.put("type", "messaging");
-        if (component.channel.getFilterOptions().size() == 1) {
+
+        if (component.channel.getFilterOptions() != null && component.channel.getFilterOptions().size() == 1) {
             FilterOption filterOption = component.channel.getFilterOptions().get(0);
 
             // Convert from FilterQuery to String
-            Log.d(TAG,"FilterOption Value: " + filterOption.getValue());
+            Log.d(TAG, "FilterOption Value: " + filterOption.getValue());
             Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
 
             Map<String, Object> mapFilterValue_ = new HashMap<>();
             Set keys = mapFilterValue.keySet();
-            for(Object key: keys){
-                mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+            for (Object key : keys) {
+                mapFilterValue_.put(((FilterQuery) key).get(), mapFilterValue.get(key));
             }
 
             filter_conditions.put(filterOption.getKey(), mapFilterValue_);
@@ -352,16 +355,16 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
                 for (FilterOption filterOption : component.channel.getFilterOptions()) {
                     // Convert from FilterQuery to String
-                    if (filterOption.getValue().getClass().equals(String.class)){
+                    if (filterOption.getValue().getClass().equals(String.class)) {
                         Map<String, Object> map = new HashMap<>();
                         map.put(filterOption.getKey(), filterOption.getValue());
                         filterOptions.add(map);
-                    }else{
+                    } else {
                         Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
                         Map<String, Object> mapFilterValue_ = new HashMap<>();
                         Set keys = mapFilterValue.keySet();
-                        for(Object key: keys){
-                            mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
+                        for (Object key : keys) {
+                            mapFilterValue_.put(((FilterQuery) key).get(), mapFilterValue.get(key));
                         }
                         Map<String, Object> map = new HashMap<>();
                         map.put(filterOption.getKey(), mapFilterValue_);
@@ -370,9 +373,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 }
                 filter_conditions.put(component.channel.getQuery().get(), filterOptions);
             } else {
-                Utils.showMessage(getActivity(), "You must set filter query!");
+//                Utils.showMessage(getActivity(), "You must set filter query!");
             }
         }
+
 
         // Sort Option
         if (component.channel.getSortOptions() != null) {
@@ -385,7 +389,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
 
         payload.put("filter_conditions", filter_conditions);
-        Log.d(TAG,"filter_conditions: " + payload);
+        Log.d(TAG, "filter_conditions: " + payload);
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
@@ -557,6 +561,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Permission
+
     /**
      * Permission check
      */
