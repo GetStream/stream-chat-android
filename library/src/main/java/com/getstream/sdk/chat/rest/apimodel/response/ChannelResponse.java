@@ -68,7 +68,23 @@ public class ChannelResponse {
         }
         return lastMessage;
     }
-
+    public Message getOpponentLastMessage() {
+        Message lastMessage = null;
+        try {
+            List<Message> messages = getMessages();
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                Message message = messages.get(i);
+                if (TextUtils.isEmpty(message.getDeleted_at()) && !message.getUser().isMe()) {
+                    lastMessage = message;
+                    break;
+                }
+            }
+            Global.setStartDay(Arrays.asList(lastMessage), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lastMessage;
+    }
     public User getLastReadUser() {
         if (this.reads == null || this.reads.isEmpty()) return null;
         User lastReadUser = null;
@@ -90,7 +106,7 @@ public class ChannelResponse {
         return lastReadUser;
     }
 
-    public int getUnreadMessageCount(){
+    public int getUnreadMessageCount() {
         int unreadMessageCount = 0;
         if (this.reads == null || this.reads.isEmpty()) return unreadMessageCount;
 
@@ -100,7 +116,7 @@ public class ChannelResponse {
             Message message = messages.get(i);
             if (!TextUtils.isEmpty(message.getDeleted_at())) continue;
             if (!Global.readMessage(lastReadDate, message.getCreated_at()))
-                unreadMessageCount ++;
+                unreadMessageCount++;
         }
         return unreadMessageCount;
     }

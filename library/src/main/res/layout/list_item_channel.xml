@@ -83,6 +83,7 @@
             android:layout_height="10dp"
             android:background="@drawable/circle_channel_initials"
             android:gravity="center"
+            android:textColor="@color/black"
             android:textSize="5sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/iv_indicator"

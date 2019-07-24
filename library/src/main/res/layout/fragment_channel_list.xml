@@ -73,6 +73,7 @@
                 android:id="@+id/tv_send"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:layout_marginStart="4dp"
                 android:background="@drawable/sendicon"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_send_back"
                 app:layout_constraintEnd_toEndOf="@+id/tv_send_back"

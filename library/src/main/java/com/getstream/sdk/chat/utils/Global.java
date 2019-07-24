@@ -190,7 +190,13 @@ public class Global {
 
         Date dateTwo = new Date();
         long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
-        String differTime = "last active: " + TimeElapsed(timeDiff) + " ago";
+        String timeElapsed = TimeElapsed(timeDiff);
+        String differTime = "";
+        if (timeElapsed.contains("Just now"))
+            differTime  =  "Active: " + timeElapsed;
+        else
+            differTime  =  "Active: " + timeElapsed + " ago";
+
         return differTime;
     }
 

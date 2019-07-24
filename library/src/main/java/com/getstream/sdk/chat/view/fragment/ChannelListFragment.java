@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -171,10 +172,22 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configUIs() {
-        FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
-        frameLayout.setFitsSystemWindows(true);
+        // Fits SystemWindows
+        try {
+            FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
+            frameLayout.setFitsSystemWindows(true);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        binding.clHeader.setVisibility(View.VISIBLE);
+        // hides Action Bar
+        try {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        binding.clHeader.setVisibility(component.channelPreview.isShowSearchBar() ? View.VISIBLE : View.GONE);
         binding.listChannels.setVisibility(View.VISIBLE);
         configChannelListView();
         binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -218,7 +231,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
 
-
     private void setAfterFirstConnection(Event event) {
         // Initialize Channels
         Global.channels = new ArrayList<>();
@@ -234,9 +246,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         getChannels();
 
         // get and save Device TokenService
-        try{
+        try {
             getDeviceToken();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Log.d(TAG, "Failed adding device token");
         }

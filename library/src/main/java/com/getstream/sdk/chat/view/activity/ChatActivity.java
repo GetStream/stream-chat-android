@@ -96,14 +96,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private boolean noHistory, noHistoryThread;
     // Functions
     private MessageFunction messageFunction;
-    // private EventFunction eventFunction;
     private SendFileFunction sendFileFunction;
 
     private boolean singleConversation;
 
     // Customised MessageItem Layout ID and ViewHolder Class Name
-//    private int messageItemLayoutId = R.layout.list_item_message;
-//    private String messageItemViewHolderName = MessageListItemViewHolder.class.getName();
     private int messageItemLayoutId;
     private String messageItemViewHolderName;
 
@@ -164,8 +161,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                         Bitmap bitmap = (Bitmap) object;
                         Uri uri = Utils.getUriFromBitmap(this, bitmap);
                         sendFileFunction.progressCapturedMedia(this, uri, true);
-                    } else {
-                        Log.d(TAG, "No Captured Image");
                     }
                 } catch (Exception e) {
                     Uri uri = data.getData();
@@ -195,7 +190,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     // endregion
 
     // region Init
-    void init() {
+    private void init() {
         try {
             Fresco.initialize(getApplicationContext());
         } catch (Exception e) {
@@ -207,7 +202,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         if (b != null) {
             channelId = (String) b.get(Constant.TAG_CHANNEL_RESPONSE_ID);
         }
-        Log.d(TAG, "Channel ID: " + channelId);
         if (channelId != null) {
             channelResponse = Global.getChannelResponseById(channelId);
         }
@@ -231,12 +225,16 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Global.eventFunction.setEventHandler(this);
         // Permission Check
         PermissionChecker.permissionCheck(this, null);
-//        binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
     boolean lockRVScrollListener = false;
 
     private void configUIs() {
+        // Hides Action Bar
+//        try {
+//            getSupportActionBar().hide();
+//        }catch (Exception e){}
+
         confirmCustomMessageItem();
         // Message Composer
         binding.setActiveMessageComposer(false);
@@ -348,21 +346,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         binding.tvChannelName.setText(channelName);
 
         // Last Active
-        String lastActive = null;
-        User opponent = Global.getOpponentUser(channelResponse);
-        if (opponent != null) {
-            if (!TextUtils.isEmpty(Global.differentTime(opponent.getLast_active()))) {
-                lastActive = Global.differentTime(opponent.getLast_active());
-            }
-        }
-        if (TextUtils.isEmpty(lastActive)) {
-            binding.tvActive.setVisibility(View.GONE);
-        } else {
-            binding.tvActive.setVisibility(View.VISIBLE);
-            binding.tvActive.setText(lastActive);
-        }
+        Message lastMessage = channelResponse.getOpponentLastMessage();
+        configHeaderLastActive(lastMessage);
         // Online Mark
-
         try {
             if (Global.getOpponentUser(channelResponse) == null)
                 binding.ivActiveMark.setVisibility(View.GONE);
@@ -375,6 +361,26 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             }
         } catch (Exception e) {
             binding.ivActiveMark.setVisibility(View.GONE);
+        }
+
+        binding.tvBack.setVisibility(singleConversation ? View.INVISIBLE : View.VISIBLE);
+        binding.tvBack.setOnClickListener((View v) -> finish());
+    }
+
+    private void configHeaderLastActive(Message message){
+        String lastActive = null;
+
+        if (message != null) {
+            if (!TextUtils.isEmpty(Global.differentTime(message.getCreated_at()))) {
+                lastActive = Global.differentTime(message.getCreated_at());
+            }
+        }
+
+        if (TextUtils.isEmpty(lastActive)) {
+            binding.tvActive.setVisibility(View.GONE);
+        } else {
+            binding.tvActive.setVisibility(View.VISIBLE);
+            binding.tvActive.setText(lastActive);
         }
     }
 
@@ -431,7 +437,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         return isThreadMode() ? noHistoryThread : noHistory;
     }
 
-    void configDelivered() {
+    private void configDelivered() {
         if (messages() == null || messages().isEmpty()) return;
         if (!messages().get(messages().size() - 1).isIncoming())
             messages().get(messages().size() - 1).setDelivered(true);
@@ -442,7 +448,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                 isThreadMode(), messageItemViewHolderName, messageItemLayoutId,
                 (View v) -> {
                     Object object = v.getTag();
-                    Log.d(TAG, "onClick Attach : " + object);
                     messageItemClickListener(object);
                 }, (View v) -> {
             try {
@@ -468,7 +473,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     private void setScrollDownHideKeyboard(RecyclerView recyclerView) {
         fVPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        Log.d(TAG, "fVPosition: " + fVPosition);
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -529,7 +533,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
                 @Override
                 public void onFailed(String errMsg, int errCode) {
-                    Log.d(TAG, "Failed Send message: " + errMsg);
+                    Log.d(TAG, "Failed Sending message: " + errMsg);
                 }
             });
             initSendMessage();
@@ -646,26 +650,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Log.d(TAG, "typing.stop");
     }
 
-
-    void sendTypeInidcator() {
-        if (isThreadMode()) return;
-        if (!isTyping) {
-            Log.d(TAG, "typing.start");
-            Global.eventFunction.sendEvent(Event.typing_start);
-            isTyping = true;
-        }
-    }
-
-    private void stopTypingEvent() {
-        new Handler().postDelayed(() -> {
-            if (isTyping) {
-                Global.eventFunction.sendEvent(Event.typing_stop);
-                isTyping = false;
-                Log.d(TAG, "typing.stop");
-            }
-        }, 2000);
-    }
-
     // refresh Current Typing users in this channel
     private Handler clearTyingUserHandler = new Handler();
     Runnable runnableTypingClear = new Runnable() {
@@ -712,8 +696,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Thread
     private Message thread_parentMessage = null;
+    private boolean isCallingThread = false;
 
-    private void configThread(@NonNull Message message, int position) {
+    private void configThread(@NonNull Message message) {
+
         mViewModel.setReplyCount(message.getReplyCount());
         cleanEditView();
 
@@ -729,6 +715,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             threadBinding.setShowThread(true);
         } else {
             binding.setShowMainProgressbar(true);
+
+            if (isCallingThread) return;
+            isCallingThread = true;
             Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
                 Global.setStartDay(threadMessages, null);
@@ -736,10 +725,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                 threadBinding.setShowThread(true);
                 binding.setShowMainProgressbar(false);
                 if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
+                isCallingThread = false;
             }, (String errMsg, int errCode) -> {
                 Utils.showMessage(ChatActivity.this, errMsg);
                 thread_parentMessage = null;
                 binding.setShowMainProgressbar(false);
+                isCallingThread = false;
             });
         }
         // Clean RecyclerView
@@ -806,8 +797,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Message message = messages().get(tag.position);
             switch (tag.type) {
                 case Constant.TAG_MOREACTION_REPLY:
-                    configThread(channelMessages.get(tag.position), tag.position);
-                    Log.d(TAG, "Click Reply : " + tag.position);
+                    configThread(channelMessages.get(tag.position));
                     break;
                 case Constant.TAG_ACTION_SEND:
                 case Constant.TAG_ACTION_SHUFFLE:
@@ -818,15 +808,14 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                         map.put("image_action", ModelType.action_shuffle);
 
                     SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-                    RestController.SendMessageCallback callback = (MessageResponse response) -> {
+
+                    Global.mRestController.sendAction(message.getId(), request, (MessageResponse response) -> {
                         handleAction(message);
                         response.getMessage().setDelivered(true);
                         handleAction(response.getMessage());
-                    };
-                    Global.mRestController.sendAction(message.getId(), request, callback, (String errMsg, int errCode) -> {
+                    }, (String errMsg, int errCode) -> {
                         Log.d(TAG, errMsg);
                     });
-                    Log.d(TAG, "Click ACTION_SEND : " + tag.position);
                     break;
                 case Constant.TAG_ACTION_CANCEL:
                     handleAction(messages().get(tag.position));
@@ -842,7 +831,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                     }
                     int originY = recyclerView().getChildAt(childIndex).getBottom();
                     ReactionFunction.showReactionDialog(this, message, originY);
-                    Log.d(TAG, "Origin Y-" + originY);
                     break;
                 case Constant.TAG_MESSAGE_RESEND:
                     if (Global.noConnection) {
@@ -892,7 +880,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                     break;
                 case Constant.TAG_MOREACTION_REPLY:
                     if (!isThreadMode())
-                        configThread(message, position);
+                        configThread(message);
                     break;
                 default:
                     break;
@@ -1241,7 +1229,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
                 binding.setShowLoadMoreProgressbar(false);
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
-                Log.d(TAG, "new Message Count: " + newMessages.size());
                 if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
 
                 // Set Date Time
@@ -1263,7 +1250,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Global.mRestController.getReplies(thread_parentMessage.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), threadMessages.get(0).getId(), (GetRepliesResponse response) -> {
                 binding.setShowMainProgressbar(false);
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
-                Log.d(TAG, "new Message Count: " + newMessages.size());
                 if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
 
                 Global.setStartDay(newMessages, null);
@@ -1367,8 +1353,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             Map<String, Object> messages = new HashMap<>();
             messages.put("limit", Constant.DEFAULT_LIMIT);
             Map<String, Object> data = new HashMap<>();
-            Log.d(TAG, "Channel Connecting1...");
-
             ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
             Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {

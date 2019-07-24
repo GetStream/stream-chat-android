@@ -16,6 +16,7 @@ public class Component{
     public Channel channel = new Channel();
     public User user = new User();
     public MessageItemView messageItemView = new MessageItemView();
+    public ChannelPreview channelPreview = new ChannelPreview();
     /**
      * A class to customize Channels preview and Filtering & Ordering Channels
      */
@@ -25,7 +26,7 @@ public class Component{
         private List<FilterOption> filterOptions;
         private FilterQuery query;
         private Map<String, Object> sortOptions;
-        private ReadIndicator readIndicator = ReadIndicator.UNREAD_COUNT;
+        private ReadIndicator readIndicator = ReadIndicator.LAST_READ_USER;
         /**
          * Getter Method for show/hide of read indicator
          * @return  True if readindicator is showing
@@ -179,8 +180,9 @@ public class Component{
     }
 
     public class ChannelPreview{
-        private int channelItemLayoutId = R.layout.list_item_message; // Default
-        private String channelItemViewHolderName = MessageListItemViewHolder.class.getName(); // Default
+        private boolean showSearchBar = false;
+        private int channelItemLayoutId = R.layout.list_item_channel; // Default
+        private String channelItemViewHolderName;// = ChannelListItemViewHolder.class.getName(); // Default
 
         public int getChannelItemLayoutId() {
             return channelItemLayoutId;
@@ -196,6 +198,14 @@ public class Component{
 
         public void setChannelItemViewHolderName(String channelItemViewHolderName) {
             this.channelItemViewHolderName = channelItemViewHolderName;
+        }
+
+        public boolean isShowSearchBar() {
+            return showSearchBar;
+        }
+
+        public void setShowSearchBar(boolean showSearchBar) {
+            this.showSearchBar = showSearchBar;
         }
     }
 }
