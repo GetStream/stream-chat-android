@@ -22,7 +22,6 @@ public class ConnectionChecker {
                 if (Global.noConnection) {
                     Global.channels = new ArrayList<>();
                     if (Global.streamChat != null) Global.streamChat.setClientID(null);
-                    if (Global.eventFunction != null) Global.eventFunction.handleReconnect(Global.noConnection);
                 }
             } finally {
                 connectionCheckHandler.postDelayed(runnableConnectionCheck, 1000 * 3);

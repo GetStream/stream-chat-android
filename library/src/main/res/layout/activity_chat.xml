@@ -59,8 +59,8 @@
                     style="@style/text"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginEnd="20dp"
                     android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
                     android:background="@drawable/round_thread_close"
                     android:gravity="center"
                     android:text="‹"
@@ -121,8 +121,8 @@
                     android:id="@+id/iv_active_mark"
                     android:layout_width="7dp"
                     android:layout_height="7dp"
-                    android:visibility="gone"
                     android:background="@drawable/circle_user_online"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"
                     app:layout_constraintStart_toEndOf="@+id/iv_header_avatar"
                     app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />
@@ -140,6 +140,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header"
             tools:listitem="@layout/list_item_message" />
+
+        <TextView
+            android:id="@+id/tv_new_message"
+            style="@style/text_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/round_action_send"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="New Messages!"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+            app:layout_constraintEnd_toEndOf="@+id/ll_composer"
+            app:layout_constraintStart_toStartOf="@+id/ll_composer" />
 
         <include
             android:id="@+id/cl_thread"

@@ -31,7 +31,6 @@ import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
-import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.ModelType;
@@ -77,7 +76,7 @@ import java.util.Set;
 /**
  * An Activity of a channel.
  */
-public class ChatActivity extends AppCompatActivity implements EventHandler, WSResponseHandler {
+public class ChatActivity extends AppCompatActivity implements WSResponseHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
 
@@ -89,7 +88,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private Channel channel;
     private List<Message> channelMessages, threadMessages;
 
-    private RecyclerView.LayoutManager mLayoutManager, mLayoutManager_thread, mLayoutManager_thread_header;
+    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
     private MessageListItemAdapter mAdapter, mThreadAdapter;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
@@ -99,7 +101,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
     private SendFileFunction sendFileFunction;
 
     private boolean singleConversation;
-
+    private boolean isShowLastMessage;
     // Customised MessageItem Layout ID and ViewHolder Class Name
     private int messageItemLayoutId;
     private String messageItemViewHolderName;
@@ -110,14 +112,14 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
-
+        Global.webSocketService.setWSResponseHandler(this);
         singleConversation = (Global.streamChat.getChannel() != null);
         if (!singleConversation) {
             init();
             configDelivered();
             configUIs();
         } else {
-            Global.webSocketService.setWSResponseHandler(this);
+
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
                 binding.setShowMainProgressbar(true);
             } else {
@@ -131,7 +133,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         super.onResume();
         if (Global.eventFunction != null) {
             Global.eventFunction.setChannel(this.channel);
-            Global.eventFunction.setEventHandler(this);
         }
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
@@ -143,10 +144,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Global.streamChat.setChannel(null);
 
         if (Global.eventFunction != null) {
-            Global.eventFunction.setEventHandler(null);
             Global.eventFunction.setChannel(null);
         }
-
+        Global.webSocketService.removeWSResponseHandler(this);
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
     }
@@ -218,11 +218,9 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
-
         if (Global.eventFunction == null)
             Global.eventFunction = new EventFunction();
         Global.eventFunction.setChannel(this.channel);
-        Global.eventFunction.setEventHandler(this);
         // Permission Check
         PermissionChecker.permissionCheck(this, null);
     }
@@ -231,10 +229,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     private void configUIs() {
         // Hides Action Bar
-//        try {
-//            getSupportActionBar().hide();
-//        }catch (Exception e){}
-
+        try {
+            getSupportActionBar().hide();
+        } catch (Exception e) {
+        }
+        // custom MessageItemView
         confirmCustomMessageItem();
         // Message Composer
         binding.setActiveMessageComposer(false);
@@ -264,11 +263,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                                       int before, int count) {
             }
         });
-
-        // Message RecyclerView
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         mLayoutManager.scrollToPosition(channelMessages.size());
         binding.rvMessage.setLayoutManager(mLayoutManager);
@@ -300,6 +294,12 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         configHeaderView();
+        binding.tvNewMessage.setVisibility(View.GONE);
+        binding.tvNewMessage.setOnClickListener((View v)->{
+            scrollPosition = 0;
+            recyclerView().scrollToPosition(messages().size());
+            binding.tvNewMessage.setVisibility(View.GONE);
+        });
     }
 
     private void confirmCustomMessageItem() {
@@ -367,9 +367,10 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
-    private void configHeaderLastActive(Message message){
-        String lastActive = null;
+    private void configHeaderLastActive(Message message) {
+        if (message.getUser().isMe()) return;
 
+        String lastActive = null;
         if (message != null) {
             if (!TextUtils.isEmpty(Global.differentTime(message.getCreated_at()))) {
                 lastActive = Global.differentTime(message.getCreated_at());
@@ -484,12 +485,20 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                 super.onScrolled(recyclerView, dx, dy);
                 if (lockRVScrollListener) return;
                 int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+                if (!isThreadMode()){
+                    if (currentLastVisible >= messages().size() -1) isShowLastMessage = true;
+                    else isShowLastMessage = false;
+                }
 
                 if (currentFirstVisible < fVPosition) {
                     Utils.hideSoftKeyboard(ChatActivity.this);
                     binding.etMessage.clearFocus();
                     if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
+                    if (currentLastVisible >= messages().size() -1) binding.tvNewMessage.setVisibility(View.GONE);
+
                 }
+
                 new Handler().postDelayed(() -> {
                     lVPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 }, 500);
@@ -652,7 +661,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // refresh Current Typing users in this channel
     private Handler clearTyingUserHandler = new Handler();
-    Runnable runnableTypingClear = new Runnable() {
+    private Runnable runnableTypingClear = new Runnable() {
         @Override
         public void run() {
             try {
@@ -669,11 +678,11 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         }
     };
 
-    void startTypingClearRepeatingTask() {
+    private void startTypingClearRepeatingTask() {
         runnableTypingClear.run();
     }
 
-    void stopTypingClearRepeatingTask() {
+    private void stopTypingClearRepeatingTask() {
         clearTyingUserHandler.removeCallbacks(runnableTypingClear);
     }
     // endregion
@@ -743,6 +752,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         threadBinding.setShowThread(false);
         cleanEditView();
         setScrollDownHideKeyboard(binding.rvMessage);
+        isCallingThread = false;
     }
 
     private void setThreadAdapter() {
@@ -787,6 +797,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
     // region Message Item Touch Listener
     private void messageItemClickListener(Object object) {
+        if (isCallingThread) return;
         if (object.getClass().equals(SelectAttachmentModel.class)) {
             new AttachmentFunction().progressAttachment((SelectAttachmentModel) object, this);
             return;
@@ -950,7 +961,20 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
             }
 //            Global.eventFunction.handleReconnect(Global.noConnection);
             getChannel();
+            return;
         }
+
+        String channelId = null;
+        try {
+            String[] array = event.getCid().split(":");
+            channelId = array[1];
+        } catch (Exception e) {
+        }
+
+        if (channelId == null) return;
+        Log.d(TAG, "channelId : " + channelId);
+        if (channel.getId().equals(channelId))
+            handleEvent(event);
     }
 
     /**
@@ -964,8 +988,6 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Global.noConnection = true;
         Global.streamChat.setClientID(null);
         binding.setNoConnection(true);
-        if (Global.eventFunction != null)
-            Global.eventFunction.handleReconnect(Global.noConnection);
         binding.setShowMainProgressbar(false);
     }
 
@@ -976,7 +998,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
      *
      * @param event Event for Server response
      */
-    @Override
+//    @Override
     public void handleEvent(final Event event) {
         this.runOnUiThread(() -> {
             switch (event.getType()) {
@@ -1023,18 +1045,18 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
         Log.d(TAG, "New Event: " + eventStr);
     }
 
-    /**
-     * Handle reconnection
-     *
-     * @param disconnect Event for Server response
-     */
-    @Override
-    public void handleReconnection(boolean disconnect) {
-        binding.setNoConnection(disconnect);
-        if (!disconnect) {
-            reconnectionHandler();
-        }
-    }
+//    /**
+//     * Handle reconnection
+//     *
+//     * @param disconnect Event for Server response
+//     */
+//    @Override
+//    public void handleReconnection(boolean disconnect) {
+//        binding.setNoConnection(disconnect);
+//        if (!disconnect) {
+//            reconnectionHandler();
+//        }
+//    }
 
     private void messageEvent(Event event) {
         Message message = event.getMessage();
@@ -1042,6 +1064,7 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
 
         switch (event.getType()) {
             case Event.message_new:
+                configHeaderLastActive(message);
                 Global.setStartDay(Arrays.asList(message), getLastMessage());
                 switch (message.getType()) {
                     case ModelType.message_regular:
@@ -1051,7 +1074,13 @@ public class ChatActivity extends AppCompatActivity implements EventHandler, WSR
                         } catch (Exception e) {
                         }
                         Global.eventFunction.newMessage(channelResponse, message);
-                        scrollPosition = 0;
+
+                        if (message.isIncoming() && !isShowLastMessage){
+                            scrollPosition = -1;
+                            binding.tvNewMessage.setVisibility(View.VISIBLE);
+                        }else{
+                            scrollPosition = 0;
+                        }
                         mViewModel.setChannelMessages(channelMessages);
                         messageReadMark();
                         break;

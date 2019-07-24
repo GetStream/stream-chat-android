@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.getstream.sdk.chat.interfaces.EventHandler;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -23,14 +22,6 @@ public class EventFunction {
 
     private final String TAG = EventFunction.class.getSimpleName();
 
-    private EventHandler eventHandler;
-
-    public void setEventHandler(EventHandler eventHandler) {
-        if (this.eventHandler != null) {
-            this.eventHandler = null;
-        }
-        this.eventHandler = eventHandler;
-    }
 
     private Channel channel;
 
@@ -120,20 +111,13 @@ public class EventFunction {
         }
         if (this.channel != null) {
             Log.d(TAG, "Current Channel ID: " + this.channel.getId());
-            if (this.channel.getId().equals(channelId) && this.eventHandler != null) {
-                this.eventHandler.handleEvent(event);
-                Log.d(TAG, "GoTo Current Channel: " + channelId);
+            if (this.channel.getId().equals(channelId)) {
                 return;
             }
         } else {
             Log.d(TAG, "Current Channel Null");
         }
         handlerReceiveEvent(channel_, event);
-    }
-
-    public void handleReconnect(boolean disconnect) {
-        if (this.eventHandler != null)
-            this.eventHandler.handleReconnection(disconnect);
     }
 
     private void handlerReceiveEvent(ChannelResponse channelResponse, Event event) {
@@ -220,7 +204,6 @@ public class EventFunction {
 
 
     public void newMessage(ChannelResponse channelResponse, Message message) {
-        Log.d(TAG, "new Message");
         Global.setStartDay(Arrays.asList(message), channelResponse.getLastMessage());
         channelResponse.getMessages().add(message);
         Global.channels.remove(channelResponse);

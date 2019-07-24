@@ -124,6 +124,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             e.printStackTrace();
         }
     }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Global.webSocketService.removeWSResponseHandler(this);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -300,7 +306,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         for (int i = 0; i < response.getChannels().size(); i++)
             Global.channels.add(response.getChannels().get(i));
 
-        if (isReconnecting) Global.eventFunction.handleReconnect(Global.noConnection);
+//        if (isReconnecting) Global.eventFunction.handleReconnect(Global.noConnection);
 
         adapter.notifyDataSetChanged();
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
@@ -347,7 +353,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             FilterOption filterOption = component.channel.getFilterOptions().get(0);
 
             // Convert from FilterQuery to String
-            Log.d(TAG, "FilterOption Value: " + filterOption.getValue());
             Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
 
             Map<String, Object> mapFilterValue_ = new HashMap<>();
@@ -398,7 +403,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
 
         payload.put("filter_conditions", filter_conditions);
-        Log.d(TAG, "filter_conditions: " + payload);
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
@@ -564,7 +568,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Global.noConnection = true;
         Global.streamChat.setClientID(null);
         binding.setNoConnection(true);
-        Global.eventFunction.handleReconnect(Global.noConnection);
+//        Global.eventFunction.handleReconnect(Global.noConnection);
         binding.setShowMainProgressbar(false);
     }
 

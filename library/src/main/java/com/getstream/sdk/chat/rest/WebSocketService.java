@@ -12,6 +12,9 @@ import com.getstream.sdk.chat.utils.Global;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -23,7 +26,7 @@ public class WebSocketService extends WebSocketListener {
 
     private final String TAG = WebSocketService.class.getSimpleName();
 
-    private WSResponseHandler webSocketListener;
+    private List<WSResponseHandler> webSocketListeners;
     public String wsURL;
     private OkHttpClient client;
     private Request request;
@@ -31,10 +34,16 @@ public class WebSocketService extends WebSocketListener {
     private WebSocket webSocket;
 
     public void setWSResponseHandler(WSResponseHandler responseHandler) {
-        if (webSocketListener != null) {
-            webSocketListener = null;
+        if (webSocketListeners == null) webSocketListeners =  new ArrayList<>();
+        if (!webSocketListeners.contains(responseHandler)) {
+            webSocketListeners.add(responseHandler);
         }
-        webSocketListener = responseHandler;
+    }
+    public void removeWSResponseHandler(WSResponseHandler responseHandler) {
+        if (webSocketListeners == null || webSocketListeners.isEmpty()) return;
+        if (webSocketListeners.contains(responseHandler)) {
+            webSocketListeners.remove(responseHandler);
+        }
     }
 
     public void connect() {
@@ -88,7 +97,7 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d(TAG, "WebSocket Response : " + text);
-            if (webSocketListener != null)
+            for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.handleWSResponse(text);
 
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
@@ -111,7 +120,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
-            if (webSocketListener != null)
+            for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.handleWSResponse(bytes);
             Log.d(TAG, "Receiving bytes : " + bytes.hex());
         }
@@ -128,7 +137,7 @@ public class WebSocketService extends WebSocketListener {
 
             try {
                 if (t.getMessage().contains("Connection reset by peer")) {
-                    if (webSocketListener != null)
+                    for (WSResponseHandler webSocketListener : webSocketListeners)
                         webSocketListener.onFailed(t.getMessage(), t.hashCode());
 
                     client.dispatcher().cancelAll();// to cancel all requests
