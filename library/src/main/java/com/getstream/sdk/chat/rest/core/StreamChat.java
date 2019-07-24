@@ -115,18 +115,12 @@ public class StreamChat {
     // end region
     private void setUpWebSocket() {
         Map<String, Object> jsonParameter = new HashMap<>();
-        Map<String, Object> map = new HashMap<>();
-        if (this.getUser().getExtraData() == null) {
-            map.put("id", this.user.getId());
-            map.put("name", this.user.getName());
-            map.put("image", this.user.getImage());
-            jsonParameter.put("user_details", map);
-        } else {
-            this.user.getExtraData().put("id", this.user.getId());
-            this.user.getExtraData().put("name", this.user.getName());
-            this.user.getExtraData().put("image", this.user.getImage());
-            jsonParameter.put("user_details", this.user.getExtraData());
-        }
+
+        this.getUser().getExtraData().put("id", this.getUser().getId());
+        this.getUser().getExtraData().put("name", this.getUser().getName());
+        this.getUser().getExtraData().put("image", this.getUser().getImage());
+        jsonParameter.put("user_details", this.user.getExtraData());
+
         jsonParameter.put("user_id", this.user.getId());
         jsonParameter.put("user_token", this.userToken);
         jsonParameter.put("server_determines_connection_id", true);

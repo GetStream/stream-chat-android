@@ -5,7 +5,8 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Map;
+import java.util.HashMap;
+
 /**
  * A user
  */
@@ -43,7 +44,7 @@ public class User {
     @Expose
     private Boolean online;
 
-    private Map<String, Object> extraData;
+    private HashMap<String, Object> extraData;
 
     public String getCreated_at() {
         return created_at;
@@ -115,15 +116,23 @@ public class User {
     * @param id User id
     * @param name User name
     * @param extraData Custom user fields
+     *                  if present keys called id or name will be not be stored
+     *                  if an image field is present, its string representation will be treated as an image URL
     * */
-    public User(String id, String name, Map<String,Object> extraData) {
+    public User(String id, String name, HashMap<String,Object> extraData) {
         this.id = id;
         this.name = name;
         this.online = false;
-        this.extraData = extraData;
+        this.extraData = new HashMap<>(extraData);
+        Object image = this.extraData.remove("image");
+        if (image != null) {
+            this.image = image.toString();
+        }
+        this.extraData.remove("id");
+        this.extraData.remove("name");
     }
 
-    public Map<String, Object> getExtraData() {
+    public HashMap<String, Object> getExtraData() {
         return extraData;
     }
 
