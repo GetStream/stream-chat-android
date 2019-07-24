@@ -22,7 +22,7 @@ public class RetrofitClient {
     public static final String BASE_URL = Global.baseURL.url(BaseURL.Scheme.https);
     private static Retrofit retrofit = null;
 
-    public static Retrofit getAuthrizedClient() {
+    public static Retrofit getAuthorizedClient() {
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
