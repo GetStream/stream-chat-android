@@ -79,32 +79,31 @@ import java.util.Set;
 public class ChatActivity extends AppCompatActivity implements WSResponseHandler {
 
     private final String TAG = ChatActivity.class.getSimpleName();
-
+    // ViewModel & Binding
     ChatActivityViewModel mViewModel;
     ActivityChatBinding binding;
     ViewThreadBinding threadBinding;
-
+    // Arguments for Channel
     private ChannelResponse channelResponse;
     private Channel channel;
     private List<Message> channelMessages, threadMessages;
-
+    // Adapter & LayoutManager
+    private MessageListItemAdapter mAdapter, mThreadAdapter;
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
-    private MessageListItemAdapter mAdapter, mThreadAdapter;
+   // Functions
+    private MessageFunction messageFunction;
+    private SendFileFunction sendFileFunction;
+    // Customization MessageItemView
+    private int messageItemLayoutId;
+    private String messageItemViewHolderName;
+    // Misc
+    private boolean singleConversation;
+    private boolean isShowLastMessage;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
     private boolean noHistory, noHistoryThread;
-    // Functions
-    private MessageFunction messageFunction;
-    private SendFileFunction sendFileFunction;
-
-    private boolean singleConversation;
-    private boolean isShowLastMessage;
-    // Customised MessageItem Layout ID and ViewHolder Class Name
-    private int messageItemLayoutId;
-    private String messageItemViewHolderName;
 
     // region LifeCycle
     @Override
@@ -225,7 +224,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         PermissionChecker.permissionCheck(this, null);
     }
 
-    boolean lockRVScrollListener = false;
+    private boolean lockRVScrollListener = false;
 
     private void configUIs() {
         // Hides Action Bar

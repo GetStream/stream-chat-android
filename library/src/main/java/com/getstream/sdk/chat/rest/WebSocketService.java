@@ -133,15 +133,18 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            Log.d(TAG, "Error: " + t.getMessage());
+            for (WSResponseHandler webSocketListener : webSocketListeners)
+                webSocketListener.onFailed(t.getMessage(), t.hashCode());
 
+            client.dispatcher().cancelAll();// to cancel all requests
             try {
-                if (t.getMessage().contains("Connection reset by peer")) {
-                    for (WSResponseHandler webSocketListener : webSocketListeners)
-                        webSocketListener.onFailed(t.getMessage(), t.hashCode());
-
-                    client.dispatcher().cancelAll();// to cancel all requests
-                }
+//                if (t.getMessage().contains("Connection reset by peer")) {
+//                    for (WSResponseHandler webSocketListener : webSocketListeners)
+//                        webSocketListener.onFailed(t.getMessage(), t.hashCode());
+//
+//                    client.dispatcher().cancelAll();// to cancel all requests
+//                }
+                Log.d(TAG, "Error: " + t.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             }
