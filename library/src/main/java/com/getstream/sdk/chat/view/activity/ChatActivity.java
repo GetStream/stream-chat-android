@@ -1315,7 +1315,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         RestController.EventCallback callback = (EventResponse response) -> {
 
         };
-        Global.mRestController.readMark(channel.getId(), request, callback, (String errMsg, int errCode) -> {
+        Global.mRestController.markRead(channel.getId(), request, callback, (String errMsg, int errCode) -> {
             Utils.showMessage(ChatActivity.this, errMsg);
         });
     }

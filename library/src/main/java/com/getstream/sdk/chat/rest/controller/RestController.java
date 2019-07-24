@@ -42,7 +42,7 @@ public class RestController {
     APIService mService;
 
     public RestController() {
-        mService = RetrofitClient.getAuthrizedClient().create(APIService.class);
+        mService = RetrofitClient.getAuthorizedClient().create(APIService.class);
         Log.d(TAG, mService.toString());
     }
 
@@ -215,7 +215,7 @@ public class RestController {
      *
      * @return {Promise} Description
      */
-    public void readMark(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
+    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
 
         mService.readMark(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), readRequest).enqueue(new Callback<EventResponse>() {
             @Override
