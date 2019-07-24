@@ -114,22 +114,25 @@ public class User {
     /**
     * Constructor
     * @param id User id
-    * @param name User name
-    * @param extraData Custom user fields
-     *                  if present keys called id or name will be not be stored
-     *                  if an image field is present, its string representation will be treated as an image URL
+    * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
     * */
-    public User(String id, String name, HashMap<String,Object> extraData) {
+    public User(String id, HashMap<String,Object> extraData) {
         this.id = id;
-        this.name = name;
         this.online = false;
         this.extraData = new HashMap<>(extraData);
+
+        // since name and image are very common fields, we are going to promote them as
         Object image = this.extraData.remove("image");
         if (image != null) {
             this.image = image.toString();
         }
+
+        Object name = this.extraData.remove("name");
+        if (name != null) {
+            this.name = name.toString();
+        }
+
         this.extraData.remove("id");
-        this.extraData.remove("name");
     }
 
     public HashMap<String, Object> getExtraData() {

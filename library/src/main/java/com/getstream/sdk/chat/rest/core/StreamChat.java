@@ -112,19 +112,23 @@ public class StreamChat {
         return channel;
     }
 
-    // end region
-    private void setUpWebSocket() {
-        Map<String, Object> jsonParameter = new HashMap<>();
+    private JSONObject buildUserDetailJSON(){
+        HashMap<String, Object> jsonParameter = new HashMap<>();
+        HashMap<String, Object> userDetails = new HashMap<>(this.getUser().getExtraData());
 
-        this.getUser().getExtraData().put("id", this.getUser().getId());
-        this.getUser().getExtraData().put("name", this.getUser().getName());
-        this.getUser().getExtraData().put("image", this.getUser().getImage());
-        jsonParameter.put("user_details", this.user.getExtraData());
+        userDetails.put("id", this.getUser().getId());
+        userDetails.put("name", this.getUser().getName());
+        userDetails.put("image", this.getUser().getImage());
 
+        jsonParameter.put("user_details", userDetails);
         jsonParameter.put("user_id", this.user.getId());
         jsonParameter.put("user_token", this.userToken);
         jsonParameter.put("server_determines_connection_id", true);
-        JSONObject json = new JSONObject(jsonParameter);
+        return new JSONObject(jsonParameter);
+    }
+    // end region
+    private void setUpWebSocket() {
+        JSONObject json = this.buildUserDetailJSON();
         String wsURL = Global.baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
                 + this.apiKey + "&authorization=" + this.userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
