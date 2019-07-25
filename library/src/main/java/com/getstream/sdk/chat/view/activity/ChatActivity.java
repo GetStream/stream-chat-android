@@ -23,7 +23,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
@@ -43,7 +42,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.model.MessageTagModel;
-import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
@@ -65,9 +63,6 @@ import com.getstream.sdk.chat.viewmodel.ChatActivityViewModelFactory;
 import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -330,8 +325,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         // Avatar
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvChannelInitial.setText(channel.getInitials());
-            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImageURL());
-            if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImage());
+            if (StringUtility.isValidImageUrl(channel.getImage())) {
                 binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
                 binding.tvChannelInitial.setVisibility(View.INVISIBLE);
             } else {

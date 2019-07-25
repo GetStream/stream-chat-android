@@ -31,21 +31,18 @@ public class URLSessionService {
     }
 
     public void setupURLSession(Channel channel_) {
-//        String channelId = "general";
-//        String channelName = "The water cooler";
-//        String channelImage = "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80";
-
         String channelId = channel_.getId();
-        String channelName = channel_.getName();
-        String channelImage = channel_.getImageURL();
 
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, channelName, channelImage, null);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", channel_.getName());
+        extraData.put("image", channel_.getImage());
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, extraData);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
         data.put("name", channel.getName());
-        data.put("image", channel.getImageURL());
+        data.put("image", channel.getImage());
         data.put("members", Arrays.asList(Global.streamChat.getUser().getId()));
 
         Log.d(TAG, "Channel Connecting...");

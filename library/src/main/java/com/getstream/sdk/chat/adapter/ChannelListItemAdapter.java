@@ -128,8 +128,8 @@ public class ChannelListItemAdapter extends BaseAdapter {
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvInitials.setText(channel.getInitials());
             binding.tvName.setText(channel.getName());
-            Utils.circleImageLoad(binding.ivAvatar, channel.getImageURL());
-            if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+            Utils.circleImageLoad(binding.ivAvatar, channel.getImage());
+            if (StringUtility.isValidImageUrl(channel.getImage())) {
                 binding.ivAvatar.setVisibility(View.VISIBLE);
                 binding.tvInitials.setVisibility(View.INVISIBLE);
             } else {
