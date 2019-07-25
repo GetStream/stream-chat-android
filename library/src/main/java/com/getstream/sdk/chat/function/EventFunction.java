@@ -25,11 +25,10 @@ public class EventFunction {
 
     private Channel channel;
 
+    public Channel getChannel() {
+        return channel;
+    }
     public void setChannel(@Nullable Channel channel) {
-        if (channel != null)
-            Log.d(TAG, "New Channel: " + channel.getId());
-        else
-            Log.d(TAG, "New Channel Null");
         this.channel = channel;
     }
 
@@ -87,7 +86,6 @@ public class EventFunction {
 
     // region Receive
     public void handleReceiveEvent(Event event) {
-        if (event.getType().equals(Event.health_check)) return;
         String channelId = null;
         try {
             String[] array = event.getCid().split(":");

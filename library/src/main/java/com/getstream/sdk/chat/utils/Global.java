@@ -40,7 +40,7 @@ import java.util.TimeZone;
 
 public class Global {
 
-    private static final String TAG = Global.class.getCanonicalName();
+    private static final String TAG = Global.class.getSimpleName();
 
     public static StreamChat streamChat;
     public static BaseURL baseURL = new BaseURL(Location.US_EAST);
@@ -104,9 +104,9 @@ public class Global {
         DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, locale);
         DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", locale);
 
-        Log.d(TAG, "Date: " + message.getCreated_at());
-        Log.d(TAG, "Calendar.DATE: " + now.get(Calendar.DATE));
-        Log.d(TAG, "Calendar.WEEK_OF_YEAR: " + now.get(Calendar.WEEK_OF_YEAR));
+//        Log.d(TAG, "Date: " + message.getCreated_at());
+//        Log.d(TAG, "Calendar.DATE: " + now.get(Calendar.DATE));
+//        Log.d(TAG, "Calendar.WEEK_OF_YEAR: " + now.get(Calendar.WEEK_OF_YEAR));
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
             message.setDate("Today");
@@ -162,7 +162,6 @@ public class Global {
         if (response.getReads() == null || response.getReads().isEmpty()) return null;
         List<User> users = new ArrayList<>();
 
-        Log.d(TAG, "Read Users: " + response.getReads().size());
         for (int i = response.getReads().size() - 1; i >= 0; i--) {
             ChannelUserRead read = response.getReads().get(i);
             if (readMessage(read.getLast_read(), message.getCreated_at())) {
@@ -247,7 +246,10 @@ public class Global {
         boolean isContain = false;
         for (ChannelResponse response1 : channels) {
             if (response1.getChannel().getId().equals(response.getChannel().getId())) {
+                channels.remove(response1);
+                channels.add(response);
                 isContain = true;
+                Log.d(TAG, "Contain channel:" + response.getChannel().getId());
                 break;
             }
         }
@@ -256,11 +258,9 @@ public class Global {
     }
 
     public static void deleteChannelResponse(ChannelResponse response) {
-        boolean isContain = false;
         for (ChannelResponse response1 : channels) {
             if (response1.getChannel().getId().equals(response.getChannel().getId())) {
                 channels.remove(response1);
-                isContain = true;
                 break;
             }
         }

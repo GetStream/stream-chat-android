@@ -30,7 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
@@ -69,6 +68,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import okio.ByteString;
+
 /**
  * A Fragment for Channels preview.
  */
@@ -80,7 +81,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private FragmentChannelListBinding binding;
     private ChannelListItemAdapter adapter;
 
-    public Component component;
     public int containerResId;
     public StreamChat streamChat;
 
@@ -117,19 +117,18 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "OnResume");
         try {
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         Global.webSocketService.removeWSResponseHandler(this);
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -162,17 +161,16 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     // region Private Functions
     private void init() {
         Global.webSocketService.setWSResponseHandler(this);
-        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
+        Global.channels = new ArrayList<>();
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        if (component == null) component = new Component();
-        Global.component = component;
+
         connectionCheck();
+
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
-        Global.channels = new ArrayList<>();
 
 //        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
@@ -182,7 +180,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         try {
             FrameLayout frameLayout = getActivity().findViewById(this.containerResId);
             frameLayout.setFitsSystemWindows(true);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -193,7 +191,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             e.printStackTrace();
         }
 
-        binding.clHeader.setVisibility(component.channelPreview.isShowSearchBar() ? View.VISIBLE : View.GONE);
+        binding.clHeader.setVisibility(Global.component.channelPreview.isShowSearchBar() ? View.VISIBLE : View.GONE);
         binding.listChannels.setVisibility(View.VISIBLE);
         configChannelListView();
         binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -237,16 +235,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
 
-    private void setAfterFirstConnection(Event event) {
+    private void setAfterFirstConnection() {
         // Initialize Channels
         Global.channels = new ArrayList<>();
-        // Set Current User
-        if (event.getMe() != null)
-            Global.streamChat.setUser(event.getMe());
-        // Set New Connection ID
-        String connectionId = event.getConnection_id();
-        Global.streamChat.setClientID(connectionId);
-        Log.d(TAG, "Client ID : " + connectionId);
 
         initLoadingChannels();
         getChannels();
@@ -287,38 +278,46 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void progressNewChannels(GetChannelsResponse response) {
+        Log.d(TAG, "channels connected");
         binding.setShowMainProgressbar(false);
         isCalling = false;
-        if (response.getChannels().isEmpty()) {
+        if (response.getChannels() == null || response.getChannels().isEmpty()) {
             if (Global.channels == null || Global.channels.isEmpty())
                 Utils.showMessage(getContext(), "There is no any active Channel(s)!");
             return;
         }
 
         if (Global.channels == null) Global.channels = new ArrayList<>();
-        boolean isReconnecting = false;
         if (Global.channels.isEmpty()) {
             configChannelListView();
             binding.setNoConnection(false);
-            isReconnecting = true;
+            Intent broadcast = new Intent();
+            broadcast.setAction("BROADCAST_ACTION");
+            broadcast.addCategory(Intent.CATEGORY_DEFAULT);
+            getContext().sendBroadcast(broadcast);
         }
 
-        for (int i = 0; i < response.getChannels().size(); i++)
-            Global.channels.add(response.getChannels().get(i));
-
-//        if (isReconnecting) Global.eventFunction.handleReconnect(Global.noConnection);
+        for (int i = 0; i < response.getChannels().size(); i++) {
+            ChannelResponse channelResponse = response.getChannels().get(i);
+//            if (Global.eventFunction.getChannel() != null && Global.eventFunction.getChannel().getId().equals(channelResponse.getChannel().getId())) {
+//                Log.d(TAG, "continue channel:" + channelResponse.getChannel().getId());
+//                continue;
+//            }
+            Global.channels.add(channelResponse);
+        }
 
         adapter.notifyDataSetChanged();
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
     }
 
     private void getChannel(Channel channel, boolean goChat) {
+        Log.d(TAG, "Channel Connecting...");
         binding.setShowMainProgressbar(true);
         channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
-        Log.d(TAG, "Channel Connecting...");
+
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
@@ -349,8 +348,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         // Filter option
         filter_conditions.put("type", "messaging");
 
-        if (component.channel.getFilterOptions() != null && component.channel.getFilterOptions().size() == 1) {
-            FilterOption filterOption = component.channel.getFilterOptions().get(0);
+        if (Global.component.channel.getFilterOptions() != null && Global.component.channel.getFilterOptions().size() == 1) {
+            FilterOption filterOption = Global.component.channel.getFilterOptions().get(0);
 
             // Convert from FilterQuery to String
             Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
@@ -363,11 +362,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
             filter_conditions.put(filterOption.getKey(), mapFilterValue_);
         } else {
-            if (component.channel.getQuery() != null) {
+            if (Global.component.channel.getQuery() != null) {
 
                 List<Map<String, Object>> filterOptions = new ArrayList<>();
 
-                for (FilterOption filterOption : component.channel.getFilterOptions()) {
+                for (FilterOption filterOption : Global.component.channel.getFilterOptions()) {
                     // Convert from FilterQuery to String
                     if (filterOption.getValue().getClass().equals(String.class)) {
                         Map<String, Object> map = new HashMap<>();
@@ -385,7 +384,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                         filterOptions.add(map);
                     }
                 }
-                filter_conditions.put(component.channel.getQuery().get(), filterOptions);
+                filter_conditions.put(Global.component.channel.getQuery().get(), filterOptions);
             } else {
 //                Utils.showMessage(getActivity(), "You must set filter query!");
             }
@@ -393,8 +392,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
 
         // Sort Option
-        if (component.channel.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(component.channel.getSortOptions()));
+        if (Global.component.channel.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Global.component.channel.getSortOptions()));
         } else {
             Map<String, Object> sort = new HashMap<>();
             sort.put("field", "last_message_at");
@@ -439,14 +438,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    Log.d(TAG, "Deleting Channel ID: " + channelId);
                     ChannelResponse response_ = Global.getChannelResponseById(channelId);
                     Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
                         Utils.showMessage(getContext(), "Deleted successfully!");
                         Global.channels.remove(response_);
                         adapter.notifyDataSetChanged();
                     }, (String errMsg, int errCode) -> {
-                        Log.d(TAG, "Failed Deleting: " + errMsg);
                         Utils.showMessage(getContext(), errMsg);
                     });
                     alertDialog.dismiss();
@@ -465,8 +462,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         Intent intent = new Intent(getContext(), ChatActivity.class);
         intent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());
         getActivity().startActivity(intent);
-        Log.d(TAG, "Channel ID:" + response.getChannel().getId());
-        Log.d(TAG, "Event Function:" + Global.eventFunction);
     }
 
     private void navigateUserList() {
@@ -477,7 +472,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private void getDeviceToken() {
         String token = pref.getString("TokenService", null);
         if (token != null) {
-            Log.d(TAG, "device TokenService: " + token);
+            Log.d(TAG, "device Token: " + token);
             return;
         }
 
@@ -513,48 +508,40 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     /**
      * Handle server response
      *
-     * @param response Server response
+     * @param event Server response
      */
     @Override
-    public void handleWSResponse(Object response) {
-        Global.noConnection = false;
-        if (response.getClass().equals(String.class)) {
-            // Checking No connection
-            JSONObject json = null;
-            try {
-                json = new JSONObject(response.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            if (json == null) return;
+    public void handleEventWSResponse(Event event) {
+        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
+        Global.eventFunction.handleReceiveEvent(event);
 
-            Event event = Parser.parseEvent(json);
-            if (!event.getType().equals(Event.health_check))
-                Log.d(TAG, "Connection Response : " + json);
-
-            if (!TextUtils.isEmpty(event.getConnection_id()) && TextUtils.isEmpty(Global.streamChat.getClientID())) {
-                setAfterFirstConnection(event);
-                return;
-            }
-            Global.eventFunction.handleReceiveEvent(event);
-
-            if (event.getType().equals(Event.notification_added_to_channel)) {
+        switch (event.getType()) {
+            case Event.message_new:
+            case Event.message_read:
+            case Event.channel_deleted:
+            case Event.channel_updated:
+                if (activity != null)
+                    activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
+                break;
+            case Event.notification_added_to_channel:
                 Channel channel_ = event.getChannel();
                 getChannel(channel_, false);
-            }
-            switch (event.getType()) {
-                case Event.message_new:
-                case Event.message_read:
-                case Event.channel_deleted:
-                case Event.channel_updated:
-                    Log.d(TAG, event.getType());
-                    if (activity != null) {
-                        Log.d(TAG, event.getType());
-                        activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
-                    }
-                    break;
-            }
+                break;
+            default:
+                break;
         }
+        Log.d(TAG, "New Event: " + new Gson().toJson(event));
+    }
+
+    @Override
+    public void handleByteStringWSResponse(ByteString byteString) {
+
+    }
+
+    @Override
+    public void handleConnection() {
+        Log.d(TAG, "Reconnection!");
+        setAfterFirstConnection();
     }
 
     /**
@@ -565,10 +552,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
      */
     @Override
     public void onFailed(String errMsg, int errCode) {
-        Global.noConnection = true;
-        Global.streamChat.setClientID(null);
         binding.setNoConnection(true);
-//        Global.eventFunction.handleReconnect(Global.noConnection);
         binding.setShowMainProgressbar(false);
     }
 

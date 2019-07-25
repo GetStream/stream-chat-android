@@ -1,7 +1,10 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
@@ -20,6 +23,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
@@ -73,16 +77,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import okio.ByteString;
+
 /**
  * An Activity of a channel.
  */
 public class ChatActivity extends AppCompatActivity implements WSResponseHandler {
 
-    private final String TAG = ChatActivity.class.getSimpleName();
+    final String TAG = ChatActivity.class.getSimpleName();
     // ViewModel & Binding
-    ChatActivityViewModel mViewModel;
-    ActivityChatBinding binding;
-    ViewThreadBinding threadBinding;
+    private ChatActivityViewModel mViewModel;
+    private ActivityChatBinding binding;
+    private ViewThreadBinding threadBinding;
     // Arguments for Channel
     private ChannelResponse channelResponse;
     private Channel channel;
@@ -92,7 +98,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-   // Functions
+    // Functions
     private MessageFunction messageFunction;
     private SendFileFunction sendFileFunction;
     // Customization MessageItemView
@@ -113,16 +119,15 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         Global.webSocketService.setWSResponseHandler(this);
         singleConversation = (Global.streamChat.getChannel() != null);
+        init();
         if (!singleConversation) {
-            init();
             configDelivered();
             configUIs();
         } else {
-
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
                 binding.setShowMainProgressbar(true);
             } else {
-                getChannel();
+                getChannel(Global.streamChat.getChannel());
             }
         }
     }
@@ -130,24 +135,37 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     @Override
     public void onResume() {
         super.onResume();
-        if (Global.eventFunction != null) {
-            Global.eventFunction.setChannel(this.channel);
-        }
+
+        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
+        Global.eventFunction.setChannel(this.channel);
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("BROADCAST_ACTION");
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(receiver, filter);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Global.streamChat.setChannel(null);
-
-        if (Global.eventFunction != null) {
-            Global.eventFunction.setChannel(null);
-        }
         Global.webSocketService.removeWSResponseHandler(this);
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
+
+        try {
+            unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("Receiver not registered")) {
+                // Ignore this exception. This is exactly what is desired
+                Log.w(TAG, "Tried to unregister the reciver when it's not registered");
+            } else {
+                // unexpected, re-throw
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -190,25 +208,31 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     // region Init
     private void init() {
+        // Permission Check
+        PermissionChecker.permissionCheck(this, null);
         try {
             Fresco.initialize(getApplicationContext());
         } catch (Exception e) {
         }
 
-        // set viewModel
         String channelId = null;
         Bundle b = getIntent().getExtras();
-        if (b != null) {
+        if (b != null)
             channelId = (String) b.get(Constant.TAG_CHANNEL_RESPONSE_ID);
-        }
-        if (channelId != null) {
-            channelResponse = Global.getChannelResponseById(channelId);
-        }
 
+        threadBinding = binding.clThread;
+        if (channelResponse == null && channelId != null)
+            channelResponse = Global.getChannelResponseById(channelId);
+        else {
+            return;
+        }
+        initReconnection();
+    }
+
+    private void initReconnection() {
         ChatActivityViewModelFactory factory = new ChatActivityViewModelFactory(channelResponse);
         mViewModel = ViewModelProviders.of(this, factory).get(ChatActivityViewModel.class);
         binding.setViewModel(mViewModel);
-        threadBinding = binding.clThread;
         threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
@@ -217,11 +241,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
-        if (Global.eventFunction == null)
-            Global.eventFunction = new EventFunction();
         Global.eventFunction.setChannel(this.channel);
-        // Permission Check
-        PermissionChecker.permissionCheck(this, null);
     }
 
     private boolean lockRVScrollListener = false;
@@ -294,7 +314,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         configHeaderView();
         binding.tvNewMessage.setVisibility(View.GONE);
-        binding.tvNewMessage.setOnClickListener((View v)->{
+        binding.tvNewMessage.setOnClickListener((View v) -> {
             scrollPosition = 0;
             recyclerView().scrollToPosition(messages().size());
             binding.tvNewMessage.setVisibility(View.GONE);
@@ -384,19 +404,19 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void getChannel() {
-        Channel channel_ = Global.streamChat.getChannel();
+    private void getChannel(Channel channel) {
+
         binding.setShowMainProgressbar(true);
-        channel_.setType(ModelType.channel_messaging);
+        channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
 
         // Additional Field
         Map<String, Object> data = new HashMap<>();
-        if (channel_.getExtraData() != null) {
-            Set<String> keys = channel_.getExtraData().keySet();
+        if (channel.getExtraData() != null) {
+            Set<String> keys = channel.getExtraData().keySet();
             for (String key : keys) {
-                Object value = channel_.getExtraData().get(key);
+                Object value = channel.getExtraData().get(key);
                 if (value != null)
                     data.put(key, value);
             }
@@ -405,20 +425,24 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
-        Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
             Log.d(TAG, "Channel Connected");
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
             channelResponse = response;
-            Gson gson = new Gson();
-
-            Log.d(TAG, "Channel Response: " + gson.toJson(response));
-
-            init();
+            initReconnection();
+            // Check Ephemeral Messages
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
+                for (int i = 0; i < ephemeralMessages.size(); i++) {
+                    channelMessages.add(ephemeralMessages.get(i));
+                }
+            }
             configDelivered();
             configUIs();
+
         }, (String errMsg, int errCode) -> {
             binding.setShowMainProgressbar(false);
             Log.d(TAG, "Failed Connect Channel : " + errMsg);
@@ -485,8 +509,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 if (lockRVScrollListener) return;
                 int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
-                if (!isThreadMode()){
-                    if (currentLastVisible >= messages().size() -1) isShowLastMessage = true;
+                if (!isThreadMode()) {
+                    if (currentLastVisible >= messages().size() - 1) isShowLastMessage = true;
                     else isShowLastMessage = false;
                 }
 
@@ -494,7 +518,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Utils.hideSoftKeyboard(ChatActivity.this);
                     binding.etMessage.clearFocus();
                     if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
-                    if (currentLastVisible >= messages().size() -1) binding.tvNewMessage.setVisibility(View.GONE);
+                    if (currentLastVisible >= messages().size() - 1)
+                        binding.tvNewMessage.setVisibility(View.GONE);
 
                 }
 
@@ -794,6 +819,247 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     // region Listener
 
+    // region WebSocket Listener
+
+    /**
+     * Handle server response
+     *
+     * @param event Server response
+     */
+    @Override
+    public void handleEventWSResponse(Event event) {
+        if (Global.eventFunction == null)
+            Global.eventFunction = new EventFunction();
+        Global.eventFunction.handleReceiveEvent(event);
+
+        String channelId = null;
+        try {
+            String[] array = event.getCid().split(":");
+            channelId = array[1];
+        } catch (Exception e) {
+        }
+        if (channelId == null || channel == null) return;
+
+        if (channel.getId().equals(channelId))
+            handleEvent(event);
+
+        Log.d(TAG, "New Event: " + new Gson().toJson(event));
+    }
+
+    @Override
+    public void handleByteStringWSResponse(ByteString byteString) {
+
+    }
+
+    @Override
+    public void handleConnection() {
+        Log.d(TAG, "Connected Websocket!");
+        if (singleConversation && Global.streamChat.getChannel() != null)
+            getChannel(Global.streamChat.getChannel());
+    }
+
+    /**
+     * Handle server response failures.
+     *
+     * @param errMsg  Error message
+     * @param errCode Error code
+     */
+    @Override
+    public void onFailed(String errMsg, int errCode) {
+        binding.setNoConnection(true);
+        binding.setShowMainProgressbar(false);
+    }
+
+    // Event Listener
+
+    /**
+     * Handle Event
+     *
+     * @param event Event for Server response
+     */
+//    @Override
+    public void handleEvent(final Event event) {
+        this.runOnUiThread(() -> {
+            switch (event.getType()) {
+                case Event.health_check:
+                    break;
+                case Event.message_new:
+                case Event.message_updated:
+                case Event.message_deleted:
+                    messageEvent(event);
+                    break;
+                case Event.message_read:
+                    messageReadEvent(event);
+                    break;
+                case Event.typing_start:
+                case Event.typing_stop:
+                    footerEvent(event);
+                    break;
+                case Event.user_updated:
+                    break;
+                case Event.user_presence_changed:
+                    break;
+                case Event.user_watching_start:
+                    break;
+                case Event.user_watching_stop:
+                    break;
+                case Event.reaction_new:
+                case Event.reaction_deleted:
+                    reactionEvent(event);
+                    break;
+                case Event.channel_updated:
+                case Event.channel_deleted:
+                    Global.eventFunction.handleChannelEvent(channelResponse, event);
+                    if (event.getType().equals(Event.channel_deleted)) {
+                        Utils.showMessage(this, "Channel Owner just removed this channel!");
+                        finish();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private void messageEvent(Event event) {
+        Message message = event.getMessage();
+        if (message == null) return;
+
+        switch (event.getType()) {
+            case Event.message_new:
+                configHeaderLastActive(message);
+                Global.setStartDay(Arrays.asList(message), getLastMessage());
+                switch (message.getType()) {
+                    case ModelType.message_regular:
+                        if (!message.isIncoming()) message.setDelivered(true);
+                        try {
+                            channelMessages.remove(ephemeralMessage);
+                        } catch (Exception e) {
+                        }
+                        Global.eventFunction.newMessage(channelResponse, message);
+
+                        if (message.isIncoming() && !isShowLastMessage) {
+                            scrollPosition = -1;
+                            binding.tvNewMessage.setVisibility(View.VISIBLE);
+                        } else {
+                            scrollPosition = 0;
+                        }
+                        mViewModel.setChannelMessages(channelMessages);
+                        messageReadMark();
+                        break;
+                    case ModelType.message_ephemeral:
+                    case ModelType.message_error:
+                        boolean isContain = false;
+                        Global.setEphemeralMessage(channel.getId(), message);
+                        for (int i = messages().size() - 1; i >= 0; i--) {
+                            Message message1 = messages().get(i);
+                            if (message1.getId().equals(message.getId())) {
+                                messages().remove(message1);
+                                isContain = true;
+                                break;
+                            }
+                        }
+                        if (!isContain) messages().add(message);
+                        scrollPosition = 0;
+                        if (isThreadMode()) {
+                            mThreadAdapter.notifyDataSetChanged();
+                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                        } else {
+                            mViewModel.setChannelMessages(messages());
+                        }
+                        break;
+                    case ModelType.message_reply:
+                        if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
+                            threadMessages.add(message);
+                            mThreadAdapter.notifyDataSetChanged();
+                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                        }
+                        break;
+                    case ModelType.message_system:
+                        break;
+                    default:
+                        break;
+                }
+
+                break;
+            case Event.message_updated:
+                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId())) {
+                    mViewModel.setReplyCount(message.getReplyCount());
+                }
+            case Event.message_deleted:
+                int changedIndex_ = 0;
+                if (message.getType().equals(ModelType.message_reply)) {
+                    if (!isThreadMode()) return;
+                    for (int i = 0; i < threadMessages.size(); i++) {
+                        if (message.getId().equals(threadMessages.get(i).getId())) {
+                            if (event.getType().equals(Event.message_deleted))
+                                message.setText(Constant.MESSAGE_DELETED);
+                            changedIndex_ = i;
+                            threadMessages.set(i, message);
+                            break;
+                        }
+                    }
+                    final int changedIndex = changedIndex_;
+                    mThreadAdapter.notifyItemChanged(changedIndex);
+                } else {
+                    for (int i = 0; i < channelMessages.size(); i++) {
+                        if (message.getId().equals(channelMessages.get(i).getId())) {
+                            if (event.getType().equals(Event.message_deleted))
+                                message.setText(Constant.MESSAGE_DELETED);
+                            changedIndex_ = i;
+                            channelMessages.set(i, message);
+                            break;
+                        }
+                    }
+                    final int changedIndex = changedIndex_;
+                    scrollPosition = -1;
+                    mViewModel.setChannelMessages(channelMessages);
+                    mAdapter.notifyItemChanged(changedIndex);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void reactionEvent(Event event) {
+        Message message = event.getMessage();
+        if (message == null) return;
+        int changedIndex_ = 0;
+        if (message.getType().equals(ModelType.message_regular)) {
+            for (int i = 0; i < channelMessages.size(); i++) {
+                if (message.getId().equals(channelMessages.get(i).getId())) {
+                    changedIndex_ = i;
+                    channelMessages.set(i, message);
+                    break;
+                }
+            }
+            final int changedIndex = changedIndex_;
+            this.runOnUiThread(() -> {
+                scrollPosition = -1;
+                mViewModel.setChannelMessages(channelMessages);
+                mAdapter.notifyItemChanged(changedIndex);
+            });
+        } else if (message.getType().equals(ModelType.message_reply)) {
+            if (thread_parentMessage == null) return;
+            if (!message.getParent_id().equals(thread_parentMessage.getId())) return;
+
+            for (int i = 0; i < threadMessages.size(); i++) {
+                if (message.getId().equals(threadMessages.get(i).getId())) {
+                    changedIndex_ = i;
+                    threadMessages.set(i, message);
+                    break;
+                }
+            }
+            final int changedIndex = changedIndex_;
+            this.runOnUiThread(() -> {
+                mThreadAdapter.notifyItemChanged(changedIndex);
+            });
+        }
+    }
+
+    // endregion
+
     // region Message Item Touch Listener
     private void messageItemClickListener(Object object) {
         if (isCallingThread) return;
@@ -922,277 +1188,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Utils.showMessage(this, msg);
     }
     // endregion
-
-    // WebSocket Listener
-
-    /**
-     * Handle server response
-     *
-     * @param response Server response
-     */
-    @Override
-    public void handleWSResponse(Object response) {
-        Global.noConnection = false;
-
-        if (!response.getClass().equals(String.class)) return;
-
-        // Checking No connection
-        JSONObject json = null;
-        try {
-            json = new JSONObject(response.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        if (json == null) return;
-
-        Event event = Parser.parseEvent(json);
-        if (!event.getType().equals(Event.health_check))
-            Log.d(TAG, "Connection Response : " + json);
-
-        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
-        Global.eventFunction.handleReceiveEvent(event);
-
-        if (!TextUtils.isEmpty(event.getConnection_id()) && TextUtils.isEmpty(Global.streamChat.getClientID())) {
-            if (!TextUtils.isEmpty(event.getConnection_id())) {
-                String connectionId = event.getConnection_id();
-                Global.streamChat.setClientID(connectionId);
-                Log.d(TAG, "Connection ID: " + connectionId);
-            }
-//            Global.eventFunction.handleReconnect(Global.noConnection);
-            getChannel();
-            return;
-        }
-
-        String channelId = null;
-        try {
-            String[] array = event.getCid().split(":");
-            channelId = array[1];
-        } catch (Exception e) {
-        }
-
-        if (channelId == null) return;
-        Log.d(TAG, "channelId : " + channelId);
-        if (channel.getId().equals(channelId))
-            handleEvent(event);
-    }
-
-    /**
-     * Handle server response failures.
-     *
-     * @param errMsg  Error message
-     * @param errCode Error code
-     */
-    @Override
-    public void onFailed(String errMsg, int errCode) {
-        Global.noConnection = true;
-        Global.streamChat.setClientID(null);
-        binding.setNoConnection(true);
-        binding.setShowMainProgressbar(false);
-    }
-
-    // Event Listener
-
-    /**
-     * Handle Event
-     *
-     * @param event Event for Server response
-     */
-//    @Override
-    public void handleEvent(final Event event) {
-        this.runOnUiThread(() -> {
-            switch (event.getType()) {
-                case Event.health_check:
-                    break;
-                case Event.message_new:
-                case Event.message_updated:
-                case Event.message_deleted:
-                    messageEvent(event);
-                    break;
-                case Event.message_read:
-                    messageReadEvent(event);
-                    break;
-                case Event.typing_start:
-                case Event.typing_stop:
-                    footerEvent(event);
-                    break;
-                case Event.user_updated:
-                    break;
-                case Event.user_presence_changed:
-                    break;
-                case Event.user_watching_start:
-                    break;
-                case Event.user_watching_stop:
-                    break;
-                case Event.reaction_new:
-                case Event.reaction_deleted:
-                    reactionEvent(event);
-                    break;
-                case Event.channel_updated:
-                case Event.channel_deleted:
-                    Global.eventFunction.handleChannelEvent(channelResponse, event);
-                    if (event.getType().equals(Event.channel_deleted)) {
-                        Utils.showMessage(this, "Channel Owner just removed this channel!");
-                        finish();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-        Gson gson = new Gson();
-        String eventStr = gson.toJson(event);
-        Log.d(TAG, "New Event: " + eventStr);
-    }
-
-//    /**
-//     * Handle reconnection
-//     *
-//     * @param disconnect Event for Server response
-//     */
-//    @Override
-//    public void handleReconnection(boolean disconnect) {
-//        binding.setNoConnection(disconnect);
-//        if (!disconnect) {
-//            reconnectionHandler();
-//        }
-//    }
-
-    private void messageEvent(Event event) {
-        Message message = event.getMessage();
-        if (message == null) return;
-
-        switch (event.getType()) {
-            case Event.message_new:
-                configHeaderLastActive(message);
-                Global.setStartDay(Arrays.asList(message), getLastMessage());
-                switch (message.getType()) {
-                    case ModelType.message_regular:
-                        if (!message.isIncoming()) message.setDelivered(true);
-                        try {
-                            channelMessages.remove(ephemeralMessage);
-                        } catch (Exception e) {
-                        }
-                        Global.eventFunction.newMessage(channelResponse, message);
-
-                        if (message.isIncoming() && !isShowLastMessage){
-                            scrollPosition = -1;
-                            binding.tvNewMessage.setVisibility(View.VISIBLE);
-                        }else{
-                            scrollPosition = 0;
-                        }
-                        mViewModel.setChannelMessages(channelMessages);
-                        messageReadMark();
-                        break;
-                    case ModelType.message_ephemeral:
-                    case ModelType.message_error:
-                        boolean isContain = false;
-                        Global.setEphemeralMessage(channel.getId(), message);
-                        for (int i = messages().size() - 1; i >= 0; i--) {
-                            Message message1 = messages().get(i);
-                            if (message1.getId().equals(message.getId())) {
-                                messages().remove(message1);
-                                isContain = true;
-                                break;
-                            }
-                        }
-                        if (!isContain) messages().add(message);
-                        scrollPosition = 0;
-                        if (isThreadMode()) {
-                            mThreadAdapter.notifyDataSetChanged();
-                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                        } else {
-                            mViewModel.setChannelMessages(messages());
-                        }
-                        break;
-                    case ModelType.message_reply:
-                        if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
-                            threadMessages.add(message);
-                            mThreadAdapter.notifyDataSetChanged();
-                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                        }
-                        break;
-                    case ModelType.message_system:
-                        break;
-                    default:
-                        break;
-                }
-
-                break;
-            case Event.message_updated:
-                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId())) {
-                    mViewModel.setReplyCount(message.getReplyCount());
-                }
-            case Event.message_deleted:
-                int changedIndex_ = 0;
-                if (message.getType().equals(ModelType.message_reply)) {
-                    if (!isThreadMode()) return;
-                    for (int i = 0; i < threadMessages.size(); i++) {
-                        if (message.getId().equals(threadMessages.get(i).getId())) {
-                            if (event.getType().equals(Event.message_deleted))
-                                message.setText(Constant.MESSAGE_DELETED);
-                            changedIndex_ = i;
-                            threadMessages.set(i, message);
-                            break;
-                        }
-                    }
-                    final int changedIndex = changedIndex_;
-                    mThreadAdapter.notifyItemChanged(changedIndex);
-                } else {
-                    for (int i = 0; i < channelMessages.size(); i++) {
-                        if (message.getId().equals(channelMessages.get(i).getId())) {
-                            if (event.getType().equals(Event.message_deleted))
-                                message.setText(Constant.MESSAGE_DELETED);
-                            changedIndex_ = i;
-                            channelMessages.set(i, message);
-                            break;
-                        }
-                    }
-                    final int changedIndex = changedIndex_;
-                    scrollPosition = -1;
-                    mViewModel.setChannelMessages(channelMessages);
-                    mAdapter.notifyItemChanged(changedIndex);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void reactionEvent(Event event) {
-        Message message = event.getMessage();
-        if (message == null) return;
-        int changedIndex_ = 0;
-        if (message.getType().equals(ModelType.message_regular)) {
-            for (int i = 0; i < channelMessages.size(); i++) {
-                if (message.getId().equals(channelMessages.get(i).getId())) {
-                    changedIndex_ = i;
-                    channelMessages.set(i, message);
-                    break;
-                }
-            }
-            final int changedIndex = changedIndex_;
-            this.runOnUiThread(() -> {
-                scrollPosition = -1;
-                mViewModel.setChannelMessages(channelMessages);
-                mAdapter.notifyItemChanged(changedIndex);
-            });
-        } else if (message.getType().equals(ModelType.message_reply)) {
-            if (thread_parentMessage == null) return;
-            if (!message.getParent_id().equals(thread_parentMessage.getId())) return;
-
-            for (int i = 0; i < threadMessages.size(); i++) {
-                if (message.getId().equals(threadMessages.get(i).getId())) {
-                    changedIndex_ = i;
-                    threadMessages.set(i, message);
-                    break;
-                }
-            }
-            final int changedIndex = changedIndex_;
-            this.runOnUiThread(() -> {
-                mThreadAdapter.notifyItemChanged(changedIndex);
-            });
-        }
-    }
 
     // region Footer Event
 
@@ -1372,58 +1367,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     // endregion
 
-    // region Reconnection
-    private void reconnectionHandler() {
-        if (singleConversation) {
-            Channel channel_ = Global.streamChat.getChannel();
-            binding.setShowMainProgressbar(true);
-            channel_.setType(ModelType.channel_messaging);
-            Map<String, Object> messages = new HashMap<>();
-            messages.put("limit", Constant.DEFAULT_LIMIT);
-            Map<String, Object> data = new HashMap<>();
-            ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-            Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
-                Log.d(TAG, "Channel Connected");
-                binding.setShowMainProgressbar(false);
-                if (!response.getMessages().isEmpty())
-                    Global.setStartDay(response.getMessages(), null);
-                Global.addChannelResponse(response);
-                channelResponse = response;
-                Gson gson = new Gson();
-                Log.d(TAG, "Channel Response: " + gson.toJson(response));
-
-                init();
-                List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
-                if (ephemeralMessages != null && !ephemeralMessages.isEmpty())
-                    for (int i = 0; i < ephemeralMessages.size(); i++) {
-                        channelMessages.add(ephemeralMessages.get(i));
-                    }
-
-                setRecyclerViewAdapder();
-            }, (String errMsg, int errCode) -> {
-                binding.setShowMainProgressbar(false);
-                Log.d(TAG, "Failed Connect Channel : " + errMsg);
-            });
-            return;
-        }
-        for (ChannelResponse response : Global.channels) {
-            if (response.getChannel().getId().equals(channel.getId())) {
-                channelResponse = response;
-                init();
-                List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
-                if (ephemeralMessages != null && !ephemeralMessages.isEmpty())
-                    for (int i = 0; i < ephemeralMessages.size(); i++) {
-                        channelMessages.add(ephemeralMessages.get(i));
-                    }
-
-                setRecyclerViewAdapder();
-                Log.d(TAG, "Refresh reconnection!");
-                break;
-            }
-        }
-    }
-    // end region
 
     // region Permission
 
@@ -1443,5 +1386,23 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             if (!granted) PermissionChecker.showRationalDialog(this, null);
         }
     }
+
     // endregion
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Reconnection!");
+            // Check Ephemeral Messages
+            channelResponse = Global.getChannelResponseById(channel.getId());
+            initReconnection();
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
+                for (int i = 0; i < ephemeralMessages.size(); i++) {
+                    channelMessages.add(ephemeralMessages.get(i));
+                }
+            }
+            configDelivered();
+            configUIs();
+        }
+    };
 }

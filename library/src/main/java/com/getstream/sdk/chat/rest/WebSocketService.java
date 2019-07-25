@@ -27,7 +27,7 @@ public class WebSocketService extends WebSocketListener {
     private final String TAG = WebSocketService.class.getSimpleName();
 
     private List<WSResponseHandler> webSocketListeners;
-    public String wsURL;
+    private String wsURL;
     private OkHttpClient client;
     private Request request;
     private EchoWebSocketListener listener;
@@ -54,6 +54,14 @@ public class WebSocketService extends WebSocketListener {
         webSocket = client.newWebSocket(request, listener);
         Log.d(TAG, "WebSocket Connecting...");
         client.dispatcher().executorService().shutdown();
+    }
+
+    public String getWsURL() {
+        return wsURL;
+    }
+
+    public void setWsURL(String wsURL) {
+        this.wsURL = wsURL;
     }
 
     // region Health Check
@@ -90,6 +98,7 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(TAG, "WebSocket Connected : " + response);
+            Global.noConnection = false;
             stopRepeatingTask();
             startRepeatingTask();
         }
@@ -97,31 +106,40 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             Log.d(TAG, "WebSocket Response : " + text);
-            for (WSResponseHandler webSocketListener : webSocketListeners)
-                webSocketListener.handleWSResponse(text);
+            JSONObject json = null;
+            try {
+                json = new JSONObject(text);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (json == null) return;
+
+            Event event = Parser.parseEvent(json);
+            if (event == null) return;
 
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
-                JSONObject json = null;
-                try {
-                    json = new JSONObject(text);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (json == null) return;
-
-                Event event = Parser.parseEvent(json);
+                Global.noConnection = false;
                 if (!TextUtils.isEmpty(event.getConnection_id())) {
                     String connectionId = event.getConnection_id();
+
+                    if (event.getMe() != null)
+                        Global.streamChat.setUser(event.getMe());
+
                     Global.streamChat.setClientID(connectionId);
-                    Log.d(TAG, "Connection ID: " + connectionId);
+
+                    for (WSResponseHandler webSocketListener : webSocketListeners)
+                        webSocketListener.handleConnection();
                 }
+            }else{
+                for (WSResponseHandler webSocketListener : webSocketListeners)
+                    webSocketListener.handleEventWSResponse(event);
             }
         }
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
             for (WSResponseHandler webSocketListener : webSocketListeners)
-                webSocketListener.handleWSResponse(bytes);
+                webSocketListener.handleByteStringWSResponse(bytes);
             Log.d(TAG, "Receiving bytes : " + bytes.hex());
         }
 
@@ -133,21 +151,18 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            try {
+                Log.d(TAG, "Error: " + t.getMessage());
+            } catch (Exception e) {e.printStackTrace();}
+
+            client.dispatcher().cancelAll();
+
+            Global.noConnection = true;
+            Global.streamChat.setClientID(null);
+
             for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.onFailed(t.getMessage(), t.hashCode());
 
-            client.dispatcher().cancelAll();// to cancel all requests
-            try {
-//                if (t.getMessage().contains("Connection reset by peer")) {
-//                    for (WSResponseHandler webSocketListener : webSocketListeners)
-//                        webSocketListener.onFailed(t.getMessage(), t.hashCode());
-//
-//                    client.dispatcher().cancelAll();// to cancel all requests
-//                }
-                Log.d(TAG, "Error: " + t.getMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
 }

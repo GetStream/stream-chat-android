@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.core;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.User;
@@ -87,6 +88,10 @@ public class StreamChat {
         return user;
     }
 
+    public void setComponent(Component component) {
+        Global.component = component;
+    }
+
     public String getApiKey() {
         return apiKey;
     }
@@ -132,7 +137,7 @@ public class StreamChat {
         String wsURL = Global.baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
                 + this.apiKey + "&authorization=" + this.userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
-        Global.webSocketService.wsURL = wsURL;
+        Global.webSocketService.setWsURL(wsURL);
         Global.webSocketService.connect();
     }
 }
