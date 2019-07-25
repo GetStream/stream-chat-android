@@ -65,6 +65,7 @@
                     android:gravity="center"
                     android:text="‹"
                     android:textSize="20sp"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -144,7 +145,6 @@
         <TextView
             android:id="@+id/tv_new_message"
             style="@style/text_s"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
@@ -154,6 +154,7 @@
             android:paddingEnd="8dp"
             android:text="New Messages!"
             android:textColor="@color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/ll_composer"
             app:layout_constraintEnd_toEndOf="@+id/ll_composer"
             app:layout_constraintStart_toStartOf="@+id/ll_composer" />

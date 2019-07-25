@@ -388,10 +388,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private void configHeaderLastActive(@Nullable Message message) {
         if (message == null || message.getUser().isMe()) {
-            binding.tvActive.setVisibility(View.GONE);
             return;
         }
-
+        binding.tvActive.setVisibility(View.GONE);
         String lastActive = null;
         if (message != null) {
             if (!TextUtils.isEmpty(Global.differentTime(message.getCreated_at()))) {
