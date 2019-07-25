@@ -2,6 +2,9 @@ package com.getstream.sdk.chat.enums;
 
 import java.util.List;
 
+/**
+ * Filters a set of static methods to build a filter object
+ **/
 public class Filters {
 
     static public FilterObject and(FilterObject... filters) {

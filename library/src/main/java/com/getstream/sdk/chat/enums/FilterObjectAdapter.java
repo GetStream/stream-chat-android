@@ -8,6 +8,10 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
+
+/**
+ * FilterObjectAdapter makes it easier to serialize this to JSON via gson
+**/
 class FilterObjectAdapter extends TypeAdapter<FilterObject> {
     @Override
     public void write(JsonWriter out, FilterObject value) throws IOException {
@@ -17,6 +21,6 @@ class FilterObjectAdapter extends TypeAdapter<FilterObject> {
 
     @Override
     public FilterObject read(JsonReader in) throws IOException {
-        return null;
+        throw new IOException("not supported");
     }
 }

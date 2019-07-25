@@ -6,9 +6,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * FilterObject holds the filtering data
+ *
+ * If you need to serialize this to JSON make sure to either use gson or serialize the result of
+ * getData()
+ **/
 @JsonAdapter(FilterObjectAdapter.class)
 public class FilterObject {
-    
+
     public HashMap<String, Object> getData() {
         HashMap<String, Object> data = new HashMap<>();
         for (Map.Entry<String, Object> set: this.data.entrySet()) {
