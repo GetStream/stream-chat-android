@@ -24,11 +24,9 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
-import com.getstream.sdk.chat.component.FilterOption;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
@@ -46,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+
 /**
  * An Activity of user list.
  */
@@ -270,31 +268,15 @@ public class UsersActivity extends AppCompatActivity {
         }
 
         binding.setShowMainProgressbar(true);
-        String channelId;
-        if (isPrivateChannel) {
-            channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
-        } else {
-            String memberIds = "";
-            for (User user : users) {
-                memberIds += user.getId() + "-";
-            }
-            channelId = memberIds + getRandomHexString();
-        }
-
-
-        Log.d(TAG, "Channel ID: " + channelId);
-        /**
-         * Add additional fields - you can add additional info of user
-         * @param {HashMap} additionalFields User Additional fields
-         */
-
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, isPrivateChannel ? null : binding.tvGroupName.getText().toString(), null, null);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("members", users);
+        Channel channel = new Channel(ModelType.channel_messaging, null, extraData);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
         data.put("name", channel.getName());
-        data.put("image", channel.getImageURL());
+        data.put("image", channel.getImage());
 
         List<String> members = new ArrayList<>();
         members.add(Global.streamChat.getUser().getId());
@@ -303,9 +285,6 @@ public class UsersActivity extends AppCompatActivity {
         }
         data.put("members", members);
         data.put("group","sports");
-//        if (Component.Channel.invitation) {
-//            data.put("invites", Arrays.asList(user.getId()));
-//        }
 
         Log.d(TAG, "Channel Connecting...");
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
@@ -325,51 +304,7 @@ public class UsersActivity extends AppCompatActivity {
         Map<String, Object> payload = new HashMap<>();
 
         // Filter options
-        Map<String, Object> filter_conditions = new HashMap<>();
-        if (Global.component.user.getFilterOptions() != null)
-            if (Global.component.user.getFilterOptions().size() == 1){
-                FilterOption filterOption = Global.component.user.getFilterOptions().get(0);
-                Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
-
-                Map<String, Object> mapFilterValue_ = new HashMap<>();
-                Set keys = mapFilterValue.keySet();
-                for(Object key: keys){
-                    mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
-                }
-                filter_conditions.put(filterOption.getKey(), mapFilterValue_);
-            }else{
-                if (Global.component.user.getQuery() != null) {
-
-                    List<Map<String, Object>> filterOptions = new ArrayList<>();
-
-                    for (FilterOption filterOption : Global.component.user.getFilterOptions()) {
-                        // Convert from FilterQuery to String
-                        Log.d(TAG,"FilterOption Value: " + filterOption.getValue());
-                        if (filterOption.getValue().getClass().equals(String.class)){
-                            Map<String, Object> map = new HashMap<>();
-                            map.put(filterOption.getKey(), filterOption.getValue());
-                            filterOptions.add(map);
-                        }else{
-                            Map<FilterQuery, Object> mapFilterValue = (Map<FilterQuery, Object>) filterOption.getValue();
-                            Map<String, Object> mapFilterValue_ = new HashMap<>();
-                            Set keys = mapFilterValue.keySet();
-                            for(Object key: keys){
-                                mapFilterValue_.put(((FilterQuery)key).get(),mapFilterValue.get(key));
-                            }
-                            Map<String, Object> map = new HashMap<>();
-                            map.put(filterOption.getKey(), mapFilterValue_);
-                            filterOptions.add(map);
-                        }
-
-                    }
-                    filter_conditions.put(Global.component.user.getQuery().get(), filterOptions);
-                } else {
-                    Utils.showMessage(this, "You must set filter query!");
-                }
-            }
-
-
-        payload.put("filter_conditions", filter_conditions);
+        payload.put("filter_conditions", Global.component.user.getFilter());
 
         // Sort options
         if (Global.component.user.getSortOptions() != null) {
@@ -380,7 +315,6 @@ public class UsersActivity extends AppCompatActivity {
             sort.put("direction", -1);
             payload.put("sort", Collections.singletonList(sort));
         }
-
 
         if (users.size() > 0)
             payload.put("offset", users.size());

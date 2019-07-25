@@ -2,10 +2,9 @@ package com.getstream.sdk.chat.component;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
-import com.getstream.sdk.chat.enums.FilterQuery;
+import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.ReadIndicator;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,8 +22,12 @@ public class Component{
     public class Channel{
         private boolean invitation = true;
         private boolean showReadIndicator = true;
-        private List<FilterOption> filterOptions;
-        private FilterQuery query;
+
+        public FilterObject getFilter() {
+            return _filter;
+        }
+
+        private FilterObject _filter;
         private Map<String, Object> sortOptions;
         private ReadIndicator readIndicator = ReadIndicator.LAST_READ_USER;
         /**
@@ -65,24 +68,13 @@ public class Component{
             this.invitation = invitation;
         }
 
-        public List<FilterOption> getFilterOptions() {
-            return filterOptions;
-        }
         /**
          * Setter Method for Channels filter option
-         * @param query FilterQuery for query operator
-         * @param filterOptions Query syntax
+         * @param filter FilterQuery for query operator
          */
-        public void setFilterOptions(FilterQuery query, List<FilterOption> filterOptions) {
-            this.query = query;
-            this.filterOptions = filterOptions;
+        public void filter(FilterObject filter) {
+            this._filter = filter;
         }
-
-
-        public FilterQuery getQuery() {
-            return query;
-        }
-
 
         public Map<String, Object> getSortOptions() {
             return sortOptions;
@@ -101,27 +93,21 @@ public class Component{
      */
     public class User {
 
-        private List<FilterOption> filterOptions;
-        private FilterQuery query;
+        private FilterObject _filter;
         private Map<String, Object> sortOptions;
 
-        public List<FilterOption> getFilterOptions() {
-            return filterOptions;
+        public FilterObject getFilter() {
+            return _filter;
         }
 
         /**
          * Setter Method for Users filter option
-         * @param query FilterQuery for query operator
-         * @param filterOptions Query syntax
+         * @param filter FilterQuery for query operator
          */
-        public void setFilterOptions(FilterQuery query, List<FilterOption> filterOptions) {
-            this.filterOptions = filterOptions;
-            this.query = query;
+        public void filter(FilterObject filter) {
+            this._filter = filter;
         }
 
-        public FilterQuery getQuery() {
-            return query;
-        }
 
         public Map<String, Object> getSortOptions() {
             return sortOptions;
