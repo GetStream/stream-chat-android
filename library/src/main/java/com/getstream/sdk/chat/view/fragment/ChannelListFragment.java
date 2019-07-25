@@ -348,7 +348,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             payload.put("sort", Collections.singletonList(sort));
         }
 
-        payload.put("filter_conditions", Global.component.channel.getFilter());
+        if(Global.component.channel.getFilter() != null){
+            payload.put("filter_conditions", Global.component.channel.getFilter().getData());
+        }
+
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
         if (Global.channels.size() > 0)
             payload.put("offset", Global.channels.size());

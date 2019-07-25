@@ -7,6 +7,7 @@ import java.util.HashMap;
 @JsonAdapter(FilterObjectAdapter.class)
 public class FilterObject {
 
+    // TODO: deep-clone this
     public HashMap<String, Object> getData() {
         return data;
     }
