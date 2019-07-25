@@ -32,13 +32,11 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
-import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
@@ -61,13 +59,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import okio.ByteString;
 
-import static com.getstream.sdk.chat.enums.Filters.eq;
 
 /**
  * A Fragment for Channels preview.
@@ -349,7 +344,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
 
         if(Global.component.channel.getFilter() != null){
-            payload.put("filter_conditions", Global.component.channel.getFilter().getData());
+            payload.put("filter_conditions", Collections.singletonList(Global.component.channel.getFilter().getData()));
         }
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
