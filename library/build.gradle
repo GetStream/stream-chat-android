@@ -61,6 +61,10 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
+
+//    testImplementation 'junit:junit:4.12'
+//    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+//    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     // JWT TOKEN
 //    implementation 'io.jsonwebtoken:jjwt-api:0.10.5'
 //    implementation 'io.jsonwebtoken:jjwt-impl:0.10.5'

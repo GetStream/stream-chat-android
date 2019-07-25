@@ -23,7 +23,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
@@ -43,7 +42,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.model.MessageTagModel;
-import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
@@ -65,9 +63,6 @@ import com.getstream.sdk.chat.viewmodel.ChatActivityViewModelFactory;
 import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -450,6 +445,24 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Reconnection!");
+            // Check Ephemeral Messages
+            channelResponse = Global.getChannelResponseById(channel.getId());
+            initReconnection();
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
+                for (int i = 0; i < ephemeralMessages.size(); i++) {
+                    channelMessages.add(ephemeralMessages.get(i));
+                }
+            }
+            configDelivered();
+            configUIs();
+        }
+    };
 
     private List<Message> messages() {
         return isThreadMode() ? threadMessages : channelMessages;
@@ -1390,21 +1403,4 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     // endregion
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Reconnection!");
-            // Check Ephemeral Messages
-            channelResponse = Global.getChannelResponseById(channel.getId());
-            initReconnection();
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
-            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
-                for (int i = 0; i < ephemeralMessages.size(); i++) {
-                    channelMessages.add(ephemeralMessages.get(i));
-                }
-            }
-            configDelivered();
-            configUIs();
-        }
-    };
 }
