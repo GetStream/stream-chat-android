@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,11 +45,7 @@ public class Channel {
 
     @SerializedName("image")
     @Expose
-    private String imageURL;
-
-    @SerializedName("example")
-    @Expose
-    private int example;
+    private String image;
 
     private Map<String, Object> extraData;
 
@@ -85,12 +82,8 @@ public class Channel {
         return name;
     }
 
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public int getExample() {
-        return example;
+    public String getImage() {
+        return image;
     }
 
     public void setId(String id) {
@@ -125,12 +118,8 @@ public class Channel {
         this.name = name;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
-    public void setExample(int example) {
-        this.example = example;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Channel() {
@@ -144,17 +133,25 @@ public class Channel {
     /**
      * Constructor
      *
-     * @param type        Channel type
+     * @param type      Channel type
      * @param id        Channel id
-     * @param name      Channel name
-     * @param image     Channel image
      * @param extraData Custom channel fields
      */
-    public Channel(String type, String id, String name, String image, Map<String, Object> extraData) {
+    public Channel(String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
-        this.name = name;
-        this.imageURL = image;
+
+        // since name and image are very common fields, we are going to promote them as
+        Object image = this.extraData.remove("image");
+        if (image != null) {
+            this.image = image.toString();
+        }
+
+        Object name = this.extraData.remove("name");
+        if (name != null) {
+            this.name = name.toString();
+        }
+
         this.extraData = extraData;
     }
 

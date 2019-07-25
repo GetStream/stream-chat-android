@@ -325,8 +325,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         // Avatar
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvChannelInitial.setText(channel.getInitials());
-            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImageURL());
-            if (StringUtility.isValidImageUrl(channel.getImageURL())) {
+            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImage());
+            if (StringUtility.isValidImageUrl(channel.getImage())) {
                 binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
                 binding.tvChannelInitial.setVisibility(View.INVISIBLE);
             } else {
