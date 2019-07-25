@@ -2,13 +2,31 @@ package com.getstream.sdk.chat.enums;
 
 import com.google.gson.annotations.JsonAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 @JsonAdapter(FilterObjectAdapter.class)
 public class FilterObject {
-
-    // TODO: deep-clone this
+    
     public HashMap<String, Object> getData() {
+        HashMap<String, Object> data = new HashMap<>();
+        for (Map.Entry<String, Object> set: this.data.entrySet()) {
+            if (set.getValue() instanceof FilterObject) {
+                data.put(set.getKey(), ((FilterObject) set.getValue()).getData());
+                continue;
+            }
+            if (set.getValue() instanceof FilterObject[]){
+                ArrayList<HashMap<String, Object>> listOfMaps = new ArrayList<>();
+                FilterObject[] values = (FilterObject[]) set.getValue();
+                for (FilterObject subVal: values) {
+                    listOfMaps.add(subVal.getData());
+                }
+                data.put(set.getKey(), listOfMaps);
+                continue;
+            }
+            data.put(set.getKey(), set.getValue());
+        }
         return data;
     }
 

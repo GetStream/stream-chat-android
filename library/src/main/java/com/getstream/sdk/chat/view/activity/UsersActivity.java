@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
@@ -45,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
+
 /**
  * An Activity of user list.
  */

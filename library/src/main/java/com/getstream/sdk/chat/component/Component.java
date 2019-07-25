@@ -3,10 +3,8 @@ package com.getstream.sdk.chat.component;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.FilterQuery;
 import com.getstream.sdk.chat.enums.ReadIndicator;
 
-import java.util.List;
 import java.util.Map;
 
 /**

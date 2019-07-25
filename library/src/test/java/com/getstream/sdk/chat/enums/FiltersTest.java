@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Filter;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -22,8 +23,9 @@ class FiltersTest {
 
     @org.junit.jupiter.api.Test
     void andTest() {
+        FilterObject filter = and(eq("name", "max"), eq("name", "tommaso"));
         String json = new Gson().toJson(
-                and(eq("name", "max"), eq("name", "tommaso"))
+                filter.getData()
         );
         assertEquals("{\"$and\":[{\"name\":\"max\"},{\"name\":\"tommaso\"}]}", json);
     }
