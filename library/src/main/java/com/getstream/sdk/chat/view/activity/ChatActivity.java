@@ -386,8 +386,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
-    private void configHeaderLastActive(Message message) {
-        if (message.getUser().isMe()) return;
+    private void configHeaderLastActive(@Nullable Message message) {
+        if (message == null || message.getUser().isMe()) {
+            binding.tvActive.setVisibility(View.GONE);
+            return;
+        }
 
         String lastActive = null;
         if (message != null) {

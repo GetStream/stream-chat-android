@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.apimodel.response;
 
 import android.text.TextUtils;
 
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
@@ -57,7 +58,7 @@ public class ChannelResponse {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeleted_at())) {
+                if (TextUtils.isEmpty(message.getDeleted_at()) && message.getType().equals(ModelType.message_regular)) {
                     lastMessage = message;
                     break;
                 }

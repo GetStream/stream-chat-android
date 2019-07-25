@@ -39,13 +39,11 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.enums.FilterQuery;
-import com.getstream.sdk.chat.rest.Parser;
 import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
-import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -58,7 +56,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -82,7 +79,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private ChannelListItemAdapter adapter;
 
     public int containerResId;
-    public StreamChat streamChat;
 
     private boolean isLastPage = false;
     private SharedPreferences pref;
