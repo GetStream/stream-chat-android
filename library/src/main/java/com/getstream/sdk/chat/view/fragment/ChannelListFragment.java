@@ -130,6 +130,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     public void onDestroy() {
         super.onDestroy();
         Global.webSocketService.removeWSResponseHandler(this);
+        getContext().unregisterReceiver(receiver);
     }
 
     @Override

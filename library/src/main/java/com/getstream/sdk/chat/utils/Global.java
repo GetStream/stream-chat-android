@@ -192,9 +192,9 @@ public class Global {
         String timeElapsed = TimeElapsed(timeDiff);
         String differTime = "";
         if (timeElapsed.contains("Just now"))
-            differTime  =  "Active: " + timeElapsed;
+            differTime = "Active: " + timeElapsed;
         else
-            differTime  =  "Active: " + timeElapsed + " ago";
+            differTime = "Active: " + timeElapsed + " ago";
 
         return differTime;
     }
@@ -305,13 +305,35 @@ public class Global {
         ephemeralMessage.put(channelId, messages);
     }
 
-    public static List<Message> getEphemeralMessages(String channelId) {
-        return ephemeralMessage.get(channelId);
-    }
-    public static void removeEphemeralMessage(String channelId, String messageId) {
+    public static List<Message> getEphemeralMessages(String channelId, String parentId) {
+        List<Message> ephemeralMessages = ephemeralMessage.get(channelId);
+        if (ephemeralMessages == null) return null;
 
-        ephemeralMessage.get(channelId);
+        List<Message> messages = new ArrayList<>();
+        if (parentId == null) {
+            for (Message message : ephemeralMessages) {
+                if (message.getParent_id() == null)
+                    messages.add(message);
+            }
+        } else {
+            for (Message message : ephemeralMessages) {
+                if (message.getParent_id().equals(parentId))
+                    messages.add(message);
+            }
+        }
+        return messages;
     }
+
+    public static void removeEphemeralMessage(String channelId, String messageId) {
+        List<Message> messages = ephemeralMessage.get(channelId);
+        for (Message message : messages) {
+            if (message.getId().equals(messageId)) {
+                messages.remove(message);
+                break;
+            }
+        }
+    }
+
     public static String getMentionedText(Message message) {
         if (message == null) return null;
         String text = message.getText();

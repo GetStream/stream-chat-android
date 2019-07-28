@@ -59,7 +59,7 @@
                     style="@style/text"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/round_thread_close"
                     android:gravity="center"
@@ -537,7 +537,6 @@
                         android:id="@+id/tv_send"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:onClick="onClickSendMessage"
                         app:isGone="@{!activeMessageSend}" />
                 </FrameLayout>
             </LinearLayout>

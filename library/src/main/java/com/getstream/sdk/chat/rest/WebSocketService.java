@@ -156,7 +156,7 @@ public class WebSocketService extends WebSocketListener {
             }
 
             clearWSClient();
-
+            if (webSocketListeners == null) return;
             for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.onFailed(t.getMessage(), t.hashCode());
 

@@ -36,6 +36,7 @@ import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.Channel;
@@ -316,6 +317,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             recyclerView().scrollToPosition(messages().size());
             binding.tvNewMessage.setVisibility(View.GONE);
         });
+        binding.tvSend.setOnClickListener((View v) -> sendMessage());
     }
 
     private void confirmCustomMessageItem() {
@@ -433,7 +435,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             channelResponse = response;
             initReconnection();
             // Check Ephemeral Messages
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), getThreadParentId());
             if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
                 for (int i = 0; i < ephemeralMessages.size(); i++) {
                     channelMessages.add(ephemeralMessages.get(i));
@@ -532,56 +534,71 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     // endregion
 
-    // region Message
+    // region Send Message
     private Message ephemeralMessage = null;
 
     /**
      * Send Message - Send a message to this channel
      */
-    public void onClickSendMessage(View v) {
+    public void sendMessage() {
         if (binding.etMessage.getTag() == null) {
-            if (Global.noConnection) {
-                sendOfflineMessage();
-                return;
-            }
-            if (!isThreadMode()) {
-                ephemeralMessage = createOfflineMessage(false);
-                handleAction(ephemeralMessage);
-            }
-            messageFunction.sendMessage(binding.etMessage.getText().toString(), thread_parentMessage, sendFileFunction.getSelectedAttachments(), new MessageSendListener() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    if (!isThreadMode()) {
-                        if (Global.isCommandMessage(response.getMessage()) || response.getMessage().getType().equals(ModelType.message_error)) {
-                            channelMessages.remove(ephemeralMessage);
-                            response.getMessage().setDelivered(true);
-                        } else {
-                            ephemeralMessage.setId(response.getMessage().getId());
-                        }
-                    }
-                    handleAction(response.getMessage());
-                    Log.d(TAG, "Delivered Message");
-                }
-
-                @Override
-                public void onFailed(String errMsg, int errCode) {
-                    Log.d(TAG, "Failed Sending message: " + errMsg);
-                }
-            });
-            initSendMessage();
+            sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), false);
         } else
-            messageFunction.updateMessage(binding.etMessage.getText().toString(), (Message) binding.etMessage.getTag(), sendFileFunction.getSelectedAttachments(), new MessageSendListener() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    initSendMessage();
-                    binding.etMessage.setTag(null);
-                }
+            updateMessage();
+    }
 
-                @Override
-                public void onFailed(String errMsg, int errCode) {
+    public void sendNewMessage(String text, List<Attachment> attachments, boolean isResend) {
+        if (Global.noConnection) {
+            sendOfflineMessage();
+            return;
+        }
+        if (!isResend) {
+            ephemeralMessage = createOfflineMessage(false);
+            handleAction(ephemeralMessage);
+        }
+        messageFunction.sendMessage(text,
+                thread_parentMessage,
+                attachments,
+                new MessageSendListener() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        progressSendMessage(response.getMessage(), isResend);
+                    }
 
-                }
-            });
+                    @Override
+                    public void onFailed(String errMsg, int errCode) {
+                        Log.d(TAG, "Failed Sending message: " + errMsg);
+                    }
+                });
+        initSendMessage();
+    }
+
+    public void updateMessage() {
+        messageFunction.updateMessage(binding.etMessage.getText().toString(),
+                (Message) binding.etMessage.getTag(),
+                sendFileFunction.getSelectedAttachments(),
+                new MessageSendListener() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        initSendMessage();
+                        response.getMessage().setDelivered(true);
+                        binding.etMessage.setTag(null);
+                    }
+
+                    @Override
+                    public void onFailed(String errMsg, int errCode) {
+
+                    }
+                });
+    }
+
+    public void resendMessage(Message message) {
+        if (Global.noConnection) {
+            Utils.showMessage(this, "No internet connection!");
+            return;
+        }
+        handleAction(message);
+        sendNewMessage(message.getText(), null, true);
     }
 
     public void sendGiphy(String type, Message message) {
@@ -599,6 +616,26 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }, (String errMsg, int errCode) -> {
             Log.d(TAG, errMsg);
         });
+    }
+
+    public void progressSendMessage(Message message, boolean isResend) {
+        //                    if (!isThreadMode()) {
+        if (isResend) {
+            Global.removeEphemeralMessage(channel.getId(), message.getId());
+            initSendMessage();
+//                            handleAction(response.getMessage());
+        } else {
+            if (Global.isCommandMessage(message) ||
+                    message.getType().equals(ModelType.message_error)) {
+                channelMessages.remove(ephemeralMessage);
+                message.setDelivered(true);
+            } else {
+                ephemeralMessage.setId(message.getId());
+            }
+//                    }
+            handleAction(message);
+            Log.d(TAG, "Delivered Message");
+        }
     }
 
     private void initSendMessage() {
@@ -621,7 +658,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Global.setStartDay(Arrays.asList(message), getLastMessage());
         message.setUser(Global.streamChat.getUser());
         if (isThreadMode())
-            message.setParent_id(thread_parentMessage.getId());
+            message.setParent_id(getThreadParentId());
         if (isOffle)
             Global.setEphemeralMessage(channel.getId(), message);
         return message;
@@ -629,6 +666,113 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private Message getLastMessage() {
         return messages().isEmpty() ? null : messages().get(messages().size() - 1);
+    }
+
+    private String getThreadParentId() {
+        String parentId = null;
+        if (thread_parentMessage != null)
+            parentId = thread_parentMessage.getId();
+        return parentId;
+    }
+    // endregion
+
+    // region Message Item Touch Action
+    private void messageItemClickListener(Object object) {
+        if (isCallingThread) return;
+        if (object.getClass().equals(SelectAttachmentModel.class)) {
+            new AttachmentFunction().progressAttachment((SelectAttachmentModel) object, this);
+            return;
+        }
+
+        if (object.getClass().equals(MessageTagModel.class)) {
+            MessageTagModel tag = (MessageTagModel) object;
+            Message message = messages().get(tag.position);
+            switch (tag.type) {
+                case Constant.TAG_MOREACTION_REPLY:
+                    configThread(channelMessages.get(tag.position));
+                    break;
+                case Constant.TAG_ACTION_SEND:
+                case Constant.TAG_ACTION_SHUFFLE:
+                    sendGiphy(tag.type, message);
+                    break;
+                case Constant.TAG_ACTION_CANCEL:
+                    handleAction(messages().get(tag.position));
+                    break;
+                case Constant.TAG_MESSAGE_REACTION:
+                    int firstListItemPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findFirstVisibleItemPosition();
+                    final int lastListItemPosition = firstListItemPosition + recyclerView().getChildCount() - 1;
+                    int childIndex;
+                    if (tag.position < firstListItemPosition || tag.position > lastListItemPosition) {
+                        childIndex = tag.position;
+                    } else {
+                        childIndex = tag.position - firstListItemPosition;
+                    }
+                    int originY = recyclerView().getChildAt(childIndex).getBottom();
+                    ReactionFunction.showReactionDialog(this, message, originY);
+                    break;
+                case Constant.TAG_MESSAGE_RESEND:
+                    resendMessage(message);
+                    break;
+                case Constant.TAG_MESSAGE_INVALID_COMMAND:
+                    handleAction(message);
+                    binding.etMessage.setText("/");
+                    break;
+                case Constant.TAG_MESSAGE_CHECK_DELIVERED:
+                    showAlertReadUsers(message);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void messageItemLongClickListener(Object object) {
+        final int position = Integer.parseInt(object.toString());
+        final Message message = messages().get(position);
+        ReactionFunction.showMoreActionDialog(this, message, (View v) -> {
+            String type = (String) v.getTag();
+            switch (type) {
+                case Constant.TAG_MOREACTION_EDIT:
+                    binding.etMessage.setTag(message);
+                    binding.etMessage.setText(message.getText());
+                    binding.etMessage.requestFocus();
+                    binding.etMessage.setSelection(binding.etMessage.getText().length());
+                    break;
+                case Constant.TAG_MOREACTION_DELETE:
+                    messageFunction.deleteMessage(binding.etMessage, message);
+                    break;
+                case Constant.TAG_MOREACTION_REPLY:
+                    if (!isThreadMode())
+                        configThread(message);
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private void showAlertReadUsers(Message message) {
+        List<User> readUsers = Global.getReadUsers(channelResponse, message);
+        if (readUsers == null) return;
+        String msg = "";
+        if (readUsers.size() > 0) {
+            if (readUsers.size() == 1) msg = readUsers.get(0).getName();
+            else {
+                for (int i = 0; i < readUsers.size(); i++) {
+                    User user = readUsers.get(i);
+                    if (i == readUsers.size() - 2) msg += user.getName() + " and ";
+                    else if (i == readUsers.size() - 1) msg += user.getName();
+                    else msg += user.getName() + ", ";
+                }
+            }
+        } else {
+            if (message.isDelivered()) {
+                msg = "Delivered";
+            } else {
+                msg = "sending...";
+            }
+        }
+        Utils.showMessage(this, msg);
     }
     // endregion
 
@@ -900,7 +1044,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Global.setStartDay(channelResponse.getMessages(), null);
                     initReconnection();
                     // Check Ephemeral Messages
-                    List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+                    List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), getThreadParentId());
                     if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
                         for (int i = 0; i < ephemeralMessages.size(); i++) {
                             channelMessages.add(ephemeralMessages.get(i));
@@ -997,12 +1141,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private void newMessage(Message message) {
         configHeaderLastActive(message);
         Global.setStartDay(Arrays.asList(message), getLastMessage());
+
         switch (message.getType()) {
             case ModelType.message_regular:
                 if (!message.isIncoming())
                     message.setDelivered(true);
 
-                channelMessages.remove(ephemeralMessage);
+                messages().remove(ephemeralMessage);
                 Global.eventFunction.newMessage(channelResponse, message);
 
                 if (message.isIncoming() && !isShowLastMessage) {
@@ -1036,6 +1181,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 break;
             case ModelType.message_reply:
                 if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
+                    messages().remove(ephemeralMessage);
                     threadMessages.add(message);
                     mThreadAdapter.notifyDataSetChanged();
                     threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
@@ -1046,10 +1192,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             default:
                 break;
         }
-
     }
 
     private void updateOrDeleteMessage(Event event, Message message) {
+        if (!message.isIncoming())
+            message.setDelivered(true);
         int changedIndex_ = 0;
         if (message.getType().equals(ModelType.message_reply)) {
             if (!isThreadMode()) return;
@@ -1117,121 +1264,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    // endregion
-
-    // region Message Item Touch Listener
-    private void messageItemClickListener(Object object) {
-        if (isCallingThread) return;
-        if (object.getClass().equals(SelectAttachmentModel.class)) {
-            new AttachmentFunction().progressAttachment((SelectAttachmentModel) object, this);
-            return;
-        }
-
-        if (object.getClass().equals(MessageTagModel.class)) {
-            MessageTagModel tag = (MessageTagModel) object;
-            Message message = messages().get(tag.position);
-            switch (tag.type) {
-                case Constant.TAG_MOREACTION_REPLY:
-                    configThread(channelMessages.get(tag.position));
-                    break;
-                case Constant.TAG_ACTION_SEND:
-                case Constant.TAG_ACTION_SHUFFLE:
-                    sendGiphy(tag.type, message);
-                    break;
-                case Constant.TAG_ACTION_CANCEL:
-                    handleAction(messages().get(tag.position));
-                    break;
-                case Constant.TAG_MESSAGE_REACTION:
-                    int firstListItemPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findFirstVisibleItemPosition();
-                    final int lastListItemPosition = firstListItemPosition + recyclerView().getChildCount() - 1;
-                    int childIndex;
-                    if (tag.position < firstListItemPosition || tag.position > lastListItemPosition) {
-                        childIndex = tag.position;
-                    } else {
-                        childIndex = tag.position - firstListItemPosition;
-                    }
-                    int originY = recyclerView().getChildAt(childIndex).getBottom();
-                    ReactionFunction.showReactionDialog(this, message, originY);
-                    break;
-                case Constant.TAG_MESSAGE_RESEND:
-                    if (Global.noConnection) {
-                        Utils.showMessage(this, "No internet connection!");
-                        break;
-                    }
-                    handleAction(message);
-                    messageFunction.sendMessage(message.getText(), isThreadMode() ? thread_parentMessage : null, null, new MessageSendListener() {
-                        @Override
-                        public void onSuccess(MessageResponse response) {
-                            initSendMessage();
-                        }
-
-                        @Override
-                        public void onFailed(String errMsg, int errCode) {
-                            initSendMessage();
-                        }
-                    });
-                    break;
-                case Constant.TAG_MESSAGE_INVALID_COMMAND:
-                    handleAction(message);
-                    binding.etMessage.setText("/");
-                    break;
-                case Constant.TAG_MESSAGE_CHECK_DELIVERED:
-                    showAlertReadUsers(message);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void messageItemLongClickListener(Object object) {
-        final int position = Integer.parseInt(object.toString());
-        final Message message = messages().get(position);
-        ReactionFunction.showMoreActionDialog(this, message, (View v) -> {
-            String type = (String) v.getTag();
-            switch (type) {
-                case Constant.TAG_MOREACTION_EDIT:
-                    binding.etMessage.setTag(message);
-                    binding.etMessage.setText(message.getText());
-                    binding.etMessage.requestFocus();
-                    binding.etMessage.setSelection(binding.etMessage.getText().length());
-                    break;
-                case Constant.TAG_MOREACTION_DELETE:
-                    messageFunction.deleteMessage(binding.etMessage, message);
-                    break;
-                case Constant.TAG_MOREACTION_REPLY:
-                    if (!isThreadMode())
-                        configThread(message);
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-
-    private void showAlertReadUsers(Message message) {
-        List<User> readUsers = Global.getReadUsers(channelResponse, message);
-        if (readUsers == null) return;
-        String msg = "";
-        if (readUsers.size() > 0) {
-            if (readUsers.size() == 1) msg = readUsers.get(0).getName();
-            else {
-                for (int i = 0; i < readUsers.size(); i++) {
-                    User user = readUsers.get(i);
-                    if (i == readUsers.size() - 2) msg += user.getName() + " and ";
-                    else if (i == readUsers.size() - 1) msg += user.getName();
-                    else msg += user.getName() + ", ";
-                }
-            }
-        } else {
-            if (message.isDelivered()) {
-                msg = "Delivered";
-            } else {
-                msg = "sending...";
-            }
-        }
-        Utils.showMessage(this, msg);
-    }
     // endregion
 
     // region Footer Event
