@@ -308,7 +308,10 @@ public class Global {
     public static List<Message> getEphemeralMessages(String channelId) {
         return ephemeralMessage.get(channelId);
     }
+    public static void removeEphemeralMessage(String channelId, String messageId) {
 
+        ephemeralMessage.get(channelId);
+    }
     public static String getMentionedText(Message message) {
         if (message == null) return null;
         String text = message.getText();

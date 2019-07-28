@@ -3,14 +3,15 @@ package com.getstream.sdk.chat.view.fragment;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -42,6 +43,7 @@ import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
+import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -93,6 +95,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding = FragmentChannelListBinding.inflate(inflater, container, false);
         mViewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         binding.setViewModel(mViewModel);
+
         init();
         configUIs();
         getChannels();
@@ -104,7 +107,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-        // TODO: Use the ViewModel
     }
 
     @Override
@@ -115,6 +117,13 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constant.BC_RECONNECT_CHANNEL);
+        filter.addAction(Constant.BC_CONNECTION_OFF);
+        filter.addAction(Constant.BC_CONNECTION_ON);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        getContext().registerReceiver(receiver, filter);
     }
 
     @Override
@@ -159,13 +168,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
-        connectionCheck();
+        ConnectionChecker.connectionCheck(getContext().getApplicationContext());
+//        connectionCheck();
 
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
-
-//        ConnectionChecker.startConnectionCheckRepeatingTask(getContext());
     }
 
     private void configUIs() {
@@ -198,7 +205,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
                 if (mLastFirstVisibleItem < firstVisibleItem) {
-                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
                     if (view.getLastVisiblePosition() == Global.channels.size() - 1)
                         getChannels();
                 }
@@ -209,7 +215,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             }
         });
 
-        binding.tvSend.setOnClickListener((View view) -> navigateUserList());
+        binding.tvSend.setOnClickListener((View view) -> {
+            navigateUserList();
+            binding.tvSend.setEnabled(false);
+            new Handler().postDelayed(() -> binding.tvSend.setEnabled(true), 1000);
+        });
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
@@ -225,8 +235,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                                       int before, int count) {
             }
         });
+        binding.etSearch.clearFocus();
     }
-
 
     private void setAfterFirstConnection() {
         // Initialize Channels
@@ -285,7 +295,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             configChannelListView();
             binding.setNoConnection(false);
             Intent broadcast = new Intent();
-            broadcast.setAction("BROADCAST_ACTION");
+            broadcast.setAction(Constant.BC_RECONNECT_CHANNEL);
             broadcast.addCategory(Intent.CATEGORY_DEFAULT);
             getContext().sendBroadcast(broadcast);
         }
@@ -343,7 +353,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             payload.put("sort", Collections.singletonList(sort));
         }
 
-        if(Global.component.channel.getFilter() != null){
+        if (Global.component.channel.getFilter() != null) {
             payload.put("filter_conditions", Global.component.channel.getFilter().getData());
         }
 
@@ -362,11 +372,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         adapter = new ChannelListItemAdapter(getContext(), Global.channels, (View view) -> {
             String channelId = view.getTag().toString();
             ChannelResponse response = Global.getChannelResponseById(channelId);
-            if (Global.channels.isEmpty())
-                Utils.showMessage(getContext(), "No internet connection!");
-            else if (response != null)
-                navigationChannelDetail(response);
-
+            navigationChannelDetail(response);
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -442,6 +448,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             Log.d(TAG, "Failed ADD Device! " + errMsg);
         });
     }
+
     //endregion
 
     // region Listners
@@ -517,14 +524,34 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             if (!granted) PermissionChecker.showRationalDialog(getContext(), this);
         }
     }
-    // endregion
 
+    // endregion
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Check Ephemeral Messages
+            switch (intent.getAction()) {
+                case Constant.BC_RECONNECT_CHANNEL:
+                    Log.d(TAG, "Reconnection!");
+                    break;
+                case Constant.BC_CONNECTION_OFF:
+                    binding.setNoConnection(true);
+                    Log.d(TAG, "Connection Off");
+                    break;
+                case Constant.BC_CONNECTION_ON:
+                    Log.d(TAG, "Connection On");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     // region Connection Check
-    private void connectionCheck() {
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(getContext().CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        Global.noConnection = !(activeNetwork != null && activeNetwork.isConnectedOrConnecting());
-        Log.d(TAG, "Connection: " + !Global.noConnection);
-    }
+//    private void connectionCheck() {
+//        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(getContext().CONNECTIVITY_SERVICE);
+//        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+//        Global.noConnection = !(activeNetwork != null && activeNetwork.isConnectedOrConnecting());
+//        ConnectionChecker.startConnectionCheckRepeatingTask(getContext().getApplicationContext());
+//    }
     // endregion
 }

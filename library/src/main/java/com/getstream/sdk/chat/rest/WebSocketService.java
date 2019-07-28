@@ -34,11 +34,12 @@ public class WebSocketService extends WebSocketListener {
     private WebSocket webSocket;
 
     public void setWSResponseHandler(WSResponseHandler responseHandler) {
-        if (webSocketListeners == null) webSocketListeners =  new ArrayList<>();
+        if (webSocketListeners == null) webSocketListeners = new ArrayList<>();
         if (!webSocketListeners.contains(responseHandler)) {
             webSocketListeners.add(responseHandler);
         }
     }
+
     public void removeWSResponseHandler(WSResponseHandler responseHandler) {
         if (webSocketListeners == null || webSocketListeners.isEmpty()) return;
         if (webSocketListeners.contains(responseHandler)) {
@@ -56,10 +57,6 @@ public class WebSocketService extends WebSocketListener {
         client.dispatcher().executorService().shutdown();
     }
 
-    public String getWsURL() {
-        return wsURL;
-    }
-
     public void setWsURL(String wsURL) {
         this.wsURL = wsURL;
     }
@@ -71,6 +68,7 @@ public class WebSocketService extends WebSocketListener {
         public void run() {
             try {
                 if (Global.noConnection) {
+                    clearWSClient();
                     connect();
                 } else {
                     webSocket.send("");
@@ -78,17 +76,17 @@ public class WebSocketService extends WebSocketListener {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 2 : Constant.HEALTH_CHECK_INTERVAL;
+                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 3 : Constant.HEALTH_CHECK_INTERVAL;
                 mHandler.postDelayed(mHealthChecker, interval);
             }
         }
     };
 
-    void startRepeatingTask() {
+    private void startRepeatingTask() {
         mHealthChecker.run();
     }
 
-    void stopRepeatingTask() {
+    private void stopRepeatingTask() {
         mHandler.removeCallbacks(mHealthChecker);
     }
 
@@ -99,7 +97,7 @@ public class WebSocketService extends WebSocketListener {
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(TAG, "WebSocket Connected : " + response);
             Global.noConnection = false;
-            stopRepeatingTask();
+//            stopRepeatingTask();
             startRepeatingTask();
         }
 
@@ -130,7 +128,7 @@ public class WebSocketService extends WebSocketListener {
                     for (WSResponseHandler webSocketListener : webSocketListeners)
                         webSocketListener.handleConnection();
                 }
-            }else{
+            } else {
                 for (WSResponseHandler webSocketListener : webSocketListeners)
                     webSocketListener.handleEventWSResponse(event);
             }
@@ -153,16 +151,24 @@ public class WebSocketService extends WebSocketListener {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             try {
                 Log.d(TAG, "Error: " + t.getMessage());
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            client.dispatcher().cancelAll();
-
-            Global.noConnection = true;
-            Global.streamChat.setClientID(null);
+            clearWSClient();
 
             for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.onFailed(t.getMessage(), t.hashCode());
 
         }
+    }
+
+    public void clearWSClient() {
+        try {
+            client.dispatcher().cancelAll();
+        } catch (Exception e) {
+        }
+        Global.noConnection = true;
+        Global.streamChat.setClientID(null);
     }
 }

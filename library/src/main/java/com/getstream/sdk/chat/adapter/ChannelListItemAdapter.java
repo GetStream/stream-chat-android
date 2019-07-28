@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,6 +103,8 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
 
         binding.tvClick.setOnClickListener(view -> {
+            binding.tvClick.setEnabled(false);
+            new Handler().postDelayed(() -> binding.tvClick.setEnabled(true), 1000);
             view.setTag(channelResponse.getChannel().getId());
             binding.tvClick.setBackgroundColor(context.getResources().getColor(R.color.mesage_border));
             this.clickListener.onClick(view);

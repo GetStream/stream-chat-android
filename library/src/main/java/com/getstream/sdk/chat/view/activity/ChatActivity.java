@@ -137,7 +137,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         startTypingClearRepeatingTask();
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction("BROADCAST_ACTION");
+        filter.addAction(Constant.BC_RECONNECT_CHANNEL);
+        filter.addAction(Constant.BC_CONNECTION_OFF);
+        filter.addAction(Constant.BC_CONNECTION_ON);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(receiver, filter);
     }
@@ -335,8 +337,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
         } else {
             User opponent = Global.getOpponentUser(channelResponse);
-            binding.tvChannelInitial.setText(opponent.getUserInitials());
             if (opponent != null) {
+                binding.tvChannelInitial.setText(opponent.getUserInitials());
                 Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
                 binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
@@ -445,24 +447,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
     }
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Reconnection!");
-            // Check Ephemeral Messages
-            channelResponse = Global.getChannelResponseById(channel.getId());
-            initReconnection();
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
-            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
-                for (int i = 0; i < ephemeralMessages.size(); i++) {
-                    channelMessages.add(ephemeralMessages.get(i));
-                }
-            }
-            configDelivered();
-            configUIs();
-        }
-    };
 
     private List<Message> messages() {
         return isThreadMode() ? threadMessages : channelMessages;
@@ -600,6 +584,23 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             });
     }
 
+    public void sendGiphy(String type, Message message) {
+        Map<String, String> map = new HashMap<>();
+        if (type.equals(Constant.TAG_ACTION_SEND))
+            map.put("image_action", ModelType.action_send);
+        else
+            map.put("image_action", ModelType.action_shuffle);
+
+        SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
+        Global.mRestController.sendAction(message.getId(), request, (MessageResponse response) -> {
+            handleAction(message);
+            response.getMessage().setDelivered(true);
+            handleAction(response.getMessage());
+        }, (String errMsg, int errCode) -> {
+            Log.d(TAG, errMsg);
+        });
+    }
+
     private void initSendMessage() {
         binding.etMessage.setText("");
         sendFileFunction.initSendMessage();
@@ -619,6 +620,10 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         message.setCreated_at(Global.convertDateToString(new Date()));
         Global.setStartDay(Arrays.asList(message), getLastMessage());
         message.setUser(Global.streamChat.getUser());
+        if (isThreadMode())
+            message.setParent_id(thread_parentMessage.getId());
+        if (isOffle)
+            Global.setEphemeralMessage(channel.getId(), message);
         return message;
     }
 
@@ -885,6 +890,40 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.setShowMainProgressbar(false);
     }
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Constant.BC_RECONNECT_CHANNEL:
+                    Log.d(TAG, "Reconnection!");
+                    channelResponse = Global.getChannelResponseById(channel.getId());
+                    Global.setStartDay(channelResponse.getMessages(), null);
+                    initReconnection();
+                    // Check Ephemeral Messages
+                    List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId());
+                    if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
+                        for (int i = 0; i < ephemeralMessages.size(); i++) {
+                            channelMessages.add(ephemeralMessages.get(i));
+                        }
+                    }
+                    runOnUiThread(() -> {
+                        configDelivered();
+                        configUIs();
+                    });
+
+                    break;
+                case Constant.BC_CONNECTION_OFF:
+                    binding.setNoConnection(true);
+                    Log.d(TAG, "Connection Off");
+                    break;
+                case Constant.BC_CONNECTION_ON:
+                    Log.d(TAG, "Connection On");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     // Event Listener
 
     /**
@@ -894,7 +933,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
      */
 //    @Override
     public void handleEvent(final Event event) {
-        this.runOnUiThread(() -> {
+        runOnUiThread(() -> {
             switch (event.getType()) {
                 case Event.health_check:
                     break;
@@ -942,98 +981,103 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         switch (event.getType()) {
             case Event.message_new:
-                configHeaderLastActive(message);
-                Global.setStartDay(Arrays.asList(message), getLastMessage());
-                switch (message.getType()) {
-                    case ModelType.message_regular:
-                        if (!message.isIncoming()) message.setDelivered(true);
-                        try {
-                            channelMessages.remove(ephemeralMessage);
-                        } catch (Exception e) {
-                        }
-                        Global.eventFunction.newMessage(channelResponse, message);
-
-                        if (message.isIncoming() && !isShowLastMessage) {
-                            scrollPosition = -1;
-                            binding.tvNewMessage.setVisibility(View.VISIBLE);
-                        } else {
-                            scrollPosition = 0;
-                        }
-                        mViewModel.setChannelMessages(channelMessages);
-                        messageReadMark();
-                        break;
-                    case ModelType.message_ephemeral:
-                    case ModelType.message_error:
-                        boolean isContain = false;
-                        Global.setEphemeralMessage(channel.getId(), message);
-                        for (int i = messages().size() - 1; i >= 0; i--) {
-                            Message message1 = messages().get(i);
-                            if (message1.getId().equals(message.getId())) {
-                                messages().remove(message1);
-                                isContain = true;
-                                break;
-                            }
-                        }
-                        if (!isContain) messages().add(message);
-                        scrollPosition = 0;
-                        if (isThreadMode()) {
-                            mThreadAdapter.notifyDataSetChanged();
-                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                        } else {
-                            mViewModel.setChannelMessages(messages());
-                        }
-                        break;
-                    case ModelType.message_reply:
-                        if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
-                            threadMessages.add(message);
-                            mThreadAdapter.notifyDataSetChanged();
-                            threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                        }
-                        break;
-                    case ModelType.message_system:
-                        break;
-                    default:
-                        break;
-                }
-
+                newMessage(message);
                 break;
             case Event.message_updated:
-                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId())) {
+                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
                     mViewModel.setReplyCount(message.getReplyCount());
-                }
             case Event.message_deleted:
-                int changedIndex_ = 0;
-                if (message.getType().equals(ModelType.message_reply)) {
-                    if (!isThreadMode()) return;
-                    for (int i = 0; i < threadMessages.size(); i++) {
-                        if (message.getId().equals(threadMessages.get(i).getId())) {
-                            if (event.getType().equals(Event.message_deleted))
-                                message.setText(Constant.MESSAGE_DELETED);
-                            changedIndex_ = i;
-                            threadMessages.set(i, message);
-                            break;
-                        }
-                    }
-                    final int changedIndex = changedIndex_;
-                    mThreadAdapter.notifyItemChanged(changedIndex);
-                } else {
-                    for (int i = 0; i < channelMessages.size(); i++) {
-                        if (message.getId().equals(channelMessages.get(i).getId())) {
-                            if (event.getType().equals(Event.message_deleted))
-                                message.setText(Constant.MESSAGE_DELETED);
-                            changedIndex_ = i;
-                            channelMessages.set(i, message);
-                            break;
-                        }
-                    }
-                    final int changedIndex = changedIndex_;
-                    scrollPosition = -1;
-                    mViewModel.setChannelMessages(channelMessages);
-                    mAdapter.notifyItemChanged(changedIndex);
-                }
+                updateOrDeleteMessage(event, message);
                 break;
             default:
                 break;
+        }
+    }
+
+    private void newMessage(Message message) {
+        configHeaderLastActive(message);
+        Global.setStartDay(Arrays.asList(message), getLastMessage());
+        switch (message.getType()) {
+            case ModelType.message_regular:
+                if (!message.isIncoming())
+                    message.setDelivered(true);
+
+                channelMessages.remove(ephemeralMessage);
+                Global.eventFunction.newMessage(channelResponse, message);
+
+                if (message.isIncoming() && !isShowLastMessage) {
+                    scrollPosition = -1;
+                    binding.tvNewMessage.setVisibility(View.VISIBLE);
+                } else {
+                    scrollPosition = 0;
+                }
+                mViewModel.setChannelMessages(channelMessages);
+                messageReadMark();
+                break;
+            case ModelType.message_ephemeral:
+            case ModelType.message_error:
+                boolean isContain = false;
+                for (int i = messages().size() - 1; i >= 0; i--) {
+                    Message message1 = messages().get(i);
+                    if (message1.getId().equals(message.getId())) {
+                        messages().remove(message1);
+                        isContain = true;
+                        break;
+                    }
+                }
+                if (!isContain) messages().add(message);
+                scrollPosition = 0;
+                if (isThreadMode()) {
+                    mThreadAdapter.notifyDataSetChanged();
+                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                } else {
+                    mViewModel.setChannelMessages(messages());
+                }
+                break;
+            case ModelType.message_reply:
+                if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
+                    threadMessages.add(message);
+                    mThreadAdapter.notifyDataSetChanged();
+                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                }
+                break;
+            case ModelType.message_system:
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void updateOrDeleteMessage(Event event, Message message) {
+        int changedIndex_ = 0;
+        if (message.getType().equals(ModelType.message_reply)) {
+            if (!isThreadMode()) return;
+            for (int i = 0; i < threadMessages.size(); i++) {
+                if (message.getId().equals(threadMessages.get(i).getId())) {
+                    if (event.getType().equals(Event.message_deleted))
+                        message.setText(Constant.MESSAGE_DELETED);
+                    changedIndex_ = i;
+                    threadMessages.set(i, message);
+                    break;
+                }
+            }
+            final int changedIndex = changedIndex_;
+            mThreadAdapter.notifyItemChanged(changedIndex);
+        } else {
+            for (int i = 0; i < channelMessages.size(); i++) {
+                if (message.getId().equals(channelMessages.get(i).getId())) {
+                    if (event.getType().equals(Event.message_deleted))
+                        message.setText(Constant.MESSAGE_DELETED);
+                    changedIndex_ = i;
+                    channelMessages.set(i, message);
+                    break;
+                }
+            }
+            final int changedIndex = changedIndex_;
+            scrollPosition = -1;
+            mViewModel.setChannelMessages(channelMessages);
+            mAdapter.notifyItemChanged(changedIndex);
         }
     }
 
@@ -1092,21 +1136,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     break;
                 case Constant.TAG_ACTION_SEND:
                 case Constant.TAG_ACTION_SHUFFLE:
-                    Map<String, String> map = new HashMap<>();
-                    if (tag.type.equals(Constant.TAG_ACTION_SEND))
-                        map.put("image_action", ModelType.action_send);
-                    else
-                        map.put("image_action", ModelType.action_shuffle);
-
-                    SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-
-                    Global.mRestController.sendAction(message.getId(), request, (MessageResponse response) -> {
-                        handleAction(message);
-                        response.getMessage().setDelivered(true);
-                        handleAction(response.getMessage());
-                    }, (String errMsg, int errCode) -> {
-                        Log.d(TAG, errMsg);
-                    });
+                    sendGiphy(tag.type, message);
                     break;
                 case Constant.TAG_ACTION_CANCEL:
                     handleAction(messages().get(tag.position));
@@ -1401,6 +1431,5 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             if (!granted) PermissionChecker.showRationalDialog(this, null);
         }
     }
-
     // endregion
 }

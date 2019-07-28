@@ -625,8 +625,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         Glide.with(context)
                 .load(attachUrl)
                 .into(iv_media_thumb);
-
-        tv_media_title.setText(attachments.get(0).getTitle());
+        if (!message.getType().equals(ModelType.message_ephemeral))
+            tv_media_title.setText(attachments.get(0).getTitle());
         tv_media_des.setText(attachments.get(0).getText());
 
         if (StringUtility.isNullOrEmpty(attachments.get(0).getText()))

@@ -25,6 +25,10 @@ public final class Constant {
     public static final String TAG_ATTACH_FILE_PATH = "TAG_ATTACH_FILE_PATH";
 
     public static final String TAG_CHANNEL_RESPONSE_ID = "TAG_CHANNEL_RESPONSE_ID";
+    // Broad Cast
+    public static final String BC_RECONNECT_CHANNEL = "BC_RECONNECT_CHANNEL";
+    public static final String BC_CONNECTION_OFF = "BC_CONNECTION_OFF";
+    public static final String BC_CONNECTION_ON = "BC_CONNECTION_ON";
     // pagination
     public static final int CHANNEL_LIMIT = 30;
     public static final int CHANNEL_MESSAGE_LIMIT = 25;
