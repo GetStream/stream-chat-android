@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
@@ -59,13 +60,14 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private final ListItemAttachedMediaBinding binding;
+
         public MyViewHolder(ListItemAttachedMediaBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
-            if (attachment.config.getFilePath() != null){
+            if (attachment.config.getFilePath() != null) {
                 File file = new File(attachment.config.getFilePath());
                 if (file.exists()) {
                     Uri imageUri = Uri.fromFile(file);
@@ -76,11 +78,22 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 } else {
                     Log.d(TAG, "File No Exist");
                 }
-            }else if (!TextUtils.isEmpty(attachment.getImageURL())){
+            } else if (!TextUtils.isEmpty(attachment.getImageURL())) {
                 attachment.config.setUploaded(true);
                 Glide.with(context)
                         .load(attachment.getImageURL())
                         .into(binding.ivMedia);
+            } else {
+                try {
+                    if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||
+                            attachment.getMime_type().equals(ModelType.attach_mime_mp4)) {
+                        attachment.config.setUploaded(true);
+                        binding.ivMedia.setImageResource(R.drawable.file_mov);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
 
 

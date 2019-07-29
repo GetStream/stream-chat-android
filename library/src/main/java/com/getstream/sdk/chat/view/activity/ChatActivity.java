@@ -334,6 +334,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
+        binding.tvCloseEdit.setOnClickListener(this::closeEditMessage);
     }
 
     private void confirmCustomMessageItem() {
@@ -690,6 +691,38 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         return messages().isEmpty() ? null : messages().get(messages().size() - 1);
     }
 
+    // Edit
+    private void editMessage(Message message) {
+        binding.etMessage.setTag(message);
+        if (!TextUtils.isEmpty(message.getText())) {
+            binding.etMessage.setText(message.getText());
+            binding.etMessage.requestFocus();
+            binding.etMessage.setSelection(binding.etMessage.getText().length());
+        }
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                String fileType = message.getAttachments().get(0).getMime_type();
+                if (fileType.equals(ModelType.attach_mime_mov) ||
+                        fileType.equals(ModelType.attach_mime_mp4)) {
+                    sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+                } else {
+                    sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
+                }
+            } else {
+                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+            }
+        }
+        binding.clEditMessage.setVisibility(View.VISIBLE);
+        binding.ivBackAttachment.setVisibility(View.VISIBLE);
+    }
+
+    private void closeEditMessage(View view) {
+        binding.clEditMessage.setVisibility(View.GONE);
+        initSendMessage();
+        binding.etMessage.clearFocus();
+        binding.etMessage.setTag(null);
+    }
+
     // endregion
 
     // region Message Item Touch Action
@@ -800,21 +833,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Utils.showMessage(this, msg);
     }
 
-    private void editMessage(Message message) {
-        binding.etMessage.setTag(message);
-        if (!TextUtils.isEmpty(message.getText())) {
-            binding.etMessage.setText(message.getText());
-            binding.etMessage.requestFocus();
-            binding.etMessage.setSelection(binding.etMessage.getText().length());
-        }
-        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
-                sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
-            } else {
-                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
-            }
-        }
-    }
+
     // endregion
 
     // region Typing Indicator

@@ -198,7 +198,7 @@ public class SendFileFunction {
                 binding.rvMedia.setAdapter(mediaAttachmentAdapter);
                 binding.progressBarFileLoader.setVisibility(View.GONE);
                 // edit
-                if (editAttachments != null){
+                if (editAttachments != null) {
                     binding.rvComposer.setVisibility(View.VISIBLE);
                     setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
                 }
@@ -223,7 +223,7 @@ public class SendFileFunction {
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
                 // edit
-                if (editAttachments != null){
+                if (editAttachments != null) {
                     binding.lvComposer.setVisibility(View.VISIBLE);
                     setSelectedFileAttachmentListAdapter(attachments);
                 }
