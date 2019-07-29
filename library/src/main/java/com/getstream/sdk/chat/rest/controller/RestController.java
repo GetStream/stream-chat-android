@@ -166,9 +166,17 @@ public class RestController {
      * @param {object} message object, id needs to be specified
      * @return {object} Response that includes the message
      */
-    public void updateMessage(@NonNull String messageId, @NonNull UpdateMessageRequest request, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+    public void updateMessage(@NonNull String messageId,
+                              @NonNull UpdateMessageRequest request,
+                              final SendMessageCallback sendMessageCallback,
+                              final ErrCallback errCallback) {
 
-        mService.updateMessage(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<MessageResponse>() {
+        mService.updateMessage(messageId,
+                Global.streamChat.getApiKey(),
+                Global.streamChat.getUser().getId(),
+                Global.streamChat.getClientID(),
+                request).enqueue(new Callback<MessageResponse>() {
+
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -245,7 +253,7 @@ public class RestController {
      * @return {type} A channelResponse with a list of messages
      */
     public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback, final ErrCallback errCallback) {
-        if (TextUtils.isEmpty(firstId)){
+        if (TextUtils.isEmpty(firstId)) {
             mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
@@ -261,7 +269,7 @@ public class RestController {
                     errCallback.onError(t.getLocalizedMessage(), -1);
                 }
             });
-        }else{
+        } else {
             mService.getRepliesMore(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {

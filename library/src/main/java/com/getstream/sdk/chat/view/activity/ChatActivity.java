@@ -555,17 +555,20 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             ephemeralMessage = createEphemeralMessage(false);
             handleAction(ephemeralMessage);
         }
+        binding.tvSend.setEnabled(false);
         messageFunction.sendMessage(text,
                 thread_parentMessage,
                 attachments,
                 new MessageSendListener() {
                     @Override
                     public void onSuccess(MessageResponse response) {
+                        binding.tvSend.setEnabled(true);
                         progressSendMessage(response.getMessage(), resendMessageId);
                     }
 
                     @Override
                     public void onFailed(String errMsg, int errCode) {
+                        binding.tvSend.setEnabled(true);
                         Log.d(TAG, "Failed Sending message: " + errMsg);
                     }
                 });
@@ -573,6 +576,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     public void updateMessage() {
+        if (Global.noConnection) {
+            Utils.showMessage(this, "No internet connection!");
+            return;
+        }
+        binding.tvSend.setEnabled(false);
         messageFunction.updateMessage(binding.etMessage.getText().toString(),
                 (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
@@ -582,11 +590,12 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                         initSendMessage();
                         response.getMessage().setDelivered(true);
                         binding.etMessage.setTag(null);
+                        binding.tvSend.setEnabled(true);
                     }
 
                     @Override
                     public void onFailed(String errMsg, int errCode) {
-
+                        binding.tvSend.setEnabled(true);
                     }
                 });
     }
@@ -719,6 +728,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private void messageItemLongClickListener(Object object) {
         final int position = Integer.parseInt(object.toString());
         final Message message = messages().get(position);
+
         ReactionFunction.showMoreActionDialog(this, message, (View v) -> {
             String type = (String) v.getTag();
             switch (type) {
@@ -729,7 +739,19 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     binding.etMessage.setSelection(binding.etMessage.getText().length());
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
-                    messageFunction.deleteMessage(binding.etMessage, message);
+                    messageFunction.deleteMessage(binding.etMessage,
+                            message,
+                            new MessageSendListener() {
+                                @Override
+                                public void onSuccess(MessageResponse response) {
+                                    Utils.showMessage(ChatActivity.this, "Deleted Successfully");
+                                }
+
+                                @Override
+                                public void onFailed(String errMsg, int errCode) {
+                                    Log.d(TAG, "Failed DeleteMessage : " + errMsg);
+                                }
+                            });
                     break;
                 case Constant.TAG_MOREACTION_REPLY:
                     if (!isThreadMode())
