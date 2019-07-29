@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentFunction {
+
     private final String TAG = AttachmentFunction.class.getSimpleName();
 
     public void progressAttachment(SelectAttachmentModel model, Activity activity) {

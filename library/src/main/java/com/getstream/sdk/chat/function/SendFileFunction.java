@@ -70,6 +70,7 @@ public class SendFileFunction {
     // region Attachment
 
     public void onClickAttachmentViewOpen(View v) {
+        if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
         openAnimationView(binding.clAddFile);
         fadeAnimationView(binding.ivBackAttachment, true);
     }
@@ -228,7 +229,6 @@ public class SendFileFunction {
                 binding.progressBarFileLoader.setVisibility(View.GONE);
             });
         }
-
     }
 
     private void updateComposerViewBySelectedMedia(ArrayList<Attachment> attachments, Attachment attachment) {
@@ -511,7 +511,7 @@ public class SendFileFunction {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         for (int i = 0; i < channelResponse.getChannel().getConfig().getCommands().size(); i++) {
-            Command command =  channelResponse.getChannel().getConfig().getCommands().get(i);
+            Command command = channelResponse.getChannel().getConfig().getCommands().get(i);
             if (command.getName().contains(string))
                 commands.add(command);
         }

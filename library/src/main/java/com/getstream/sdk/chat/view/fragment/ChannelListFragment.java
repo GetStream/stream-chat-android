@@ -218,8 +218,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         binding.tvSend.setOnClickListener((View view) -> {
             navigateUserList();
-            binding.tvSend.setEnabled(false);
-            new Handler().postDelayed(() -> binding.tvSend.setEnabled(true), 1000);
+            Utils.setButtonDelayEnable(view);
         });
 
         binding.etSearch.addTextChangedListener(new TextWatcher() {

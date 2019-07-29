@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -78,5 +79,10 @@ public class Utils {
         int height = metrics.heightPixels;
 
         return height;
+    }
+
+    public static void setButtonDelayEnable(View v){
+        v.setEnabled(false);
+        new Handler().postDelayed(() -> v.setEnabled(true), 1000);
     }
 }

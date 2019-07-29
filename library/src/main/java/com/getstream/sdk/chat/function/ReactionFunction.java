@@ -14,12 +14,11 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
 public class ReactionFunction {
 
-    public static void showReactionDialog(Context context, Message message, int originY){
+    public static void showReactionDialog(Context context, Message message, int originY) {
         final Dialog dialog = new Dialog(context); // Context, this, etc.
         dialog.setContentView(R.layout.dialog_reaction);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -28,11 +27,8 @@ public class ReactionFunction {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, Global.mRestController, true, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, true, (View v) -> {
+            dialog.dismiss();
         });
         rv_reaction.setAdapter(reactionAdapter);
 
@@ -42,34 +38,30 @@ public class ReactionFunction {
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.x = 0;
         int screenHeight = Utils.getScreenResolution(context);
-        wlp.y = originY - screenHeight/2;
+        wlp.y = originY - screenHeight / 2;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
     }
 
-    public static void showMoreActionDialog(Context context, final Message message, final View.OnClickListener clickListener){
+    public static void showMoreActionDialog(Context context,
+                                            final Message message,
+                                            final View.OnClickListener clickListener) {
         final Dialog dialog = new Dialog(context);
         if (message.isIncoming())
             dialog.setContentView(R.layout.dialog_moreaction_incoming);
-        else{
+        else {
             dialog.setContentView(R.layout.dialog_moreaction_outgoing);
             TextView tv_edit = dialog.findViewById(R.id.tv_edit);
             TextView tv_delete = dialog.findViewById(R.id.tv_delete);
-            tv_edit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setTag(Constant.TAG_MOREACTION_EDIT);
-                    clickListener.onClick(v);
-                    dialog.dismiss();
-                }
+            tv_edit.setOnClickListener((View v) -> {
+                v.setTag(Constant.TAG_MOREACTION_EDIT);
+                clickListener.onClick(v);
+                dialog.dismiss();
             });
-            tv_delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    v.setTag(Constant.TAG_MOREACTION_DELETE);
-                    clickListener.onClick(v);
-                    dialog.dismiss();
-                }
+            tv_delete.setOnClickListener((View v) -> {
+                v.setTag(Constant.TAG_MOREACTION_DELETE);
+                clickListener.onClick(v);
+                dialog.dismiss();
             });
         }
 
@@ -80,27 +72,18 @@ public class ReactionFunction {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, Global.mRestController,false, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, false, (View v) -> {
+            dialog.dismiss();
         });
         rv_reaction.setAdapter(reactionAdapter);
 
-        tv_reply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                v.setTag(Constant.TAG_MOREACTION_REPLY);
-                clickListener.onClick(v);
-                dialog.dismiss();
-            }
+        tv_reply.setOnClickListener((View v) -> {
+            v.setTag(Constant.TAG_MOREACTION_REPLY);
+            clickListener.onClick(v);
+            dialog.dismiss();
         });
-        tv_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
+        tv_cancel.setOnClickListener((View v) -> {
+            dialog.dismiss();
         });
 
         dialog.show();

@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.apimodel.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
@@ -31,15 +30,15 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
     private Context context;
     private Message message;
-    private RestController mRestController;
     private View.OnClickListener clickListener;
     private boolean showAvatar;
     private List<String> types = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
 
-    public ReactionDialogAdapter(Context context, Message message, RestController mRestController, boolean showAvatar, View.OnClickListener clickListener) {
+    public ReactionDialogAdapter(Context context, Message message,
+                                 boolean showAvatar,
+                                 View.OnClickListener clickListener) {
         this.context = context;
         this.message = message;
-        this.mRestController = mRestController;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
     }
@@ -81,6 +80,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                     break;
                 }
             }
+
             if (user != null && showAvatar) {
                 String intials = user.getUserInitials();
                 holder.tv_initials.setVisibility(View.VISIBLE);
@@ -138,37 +138,22 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private void sendReaction(final View view, String type) {
             ReactionRequest request = new ReactionRequest(type);
-            RestController.SendMessageCallback callback = new RestController.SendMessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.d(TAG, "Reaction Send!");
-                    clickListener.onClick(view);
-                }
-            };
-            mRestController.sendReaction(message.getId(), request, callback, new RestController.ErrCallback() {
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.d(TAG, "Send Reaction Failed!" + errMsg);
-                    clickListener.onClick(view);
-                }
+            Global.mRestController.sendReaction(message.getId(), request, (MessageResponse response) -> {
+                Log.d(TAG, "Reaction Send!");
+                clickListener.onClick(view);
+            }, (String errMsg, int errCode) -> {
+                Log.d(TAG, "Send Reaction Failed!" + errMsg);
+                clickListener.onClick(view);
             });
         }
 
         private void deleteReaction(final View view, String type) {
-            RestController.SendMessageCallback callback = new RestController.SendMessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.d(TAG, "Reaction Deleted!");
-                    clickListener.onClick(view);
-
-                }
-            };
-            mRestController.deleteReaction(message.getId(), type, callback, new RestController.ErrCallback() {
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.d(TAG, "Send Reaction Failed!");
-                    clickListener.onClick(view);
-                }
+            Global.mRestController.deleteReaction(message.getId(), type, (MessageResponse response) -> {
+                Log.d(TAG, "Reaction Deleted!");
+                clickListener.onClick(view);
+            }, (String errMsg, int errCode) -> {
+                Log.d(TAG, "Send Reaction Failed!");
+                clickListener.onClick(view);
             });
         }
     }

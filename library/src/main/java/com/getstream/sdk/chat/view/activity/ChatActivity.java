@@ -188,11 +188,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     @Override
     public void onBackPressed() {
         if (binding.clAddFile.getVisibility() == View.VISIBLE) {
-            onClickAttachmentViewClose(null);
+            sendFileFunction.onClickAttachmentViewClose(null);
             return;
         }
         if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
-            onClickSelectMediaViewClose(null);
+            sendFileFunction.onClickSelectMediaViewClose(null);
             return;
         }
         if (isThreadMode()) {
@@ -267,7 +267,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 sendFileFunction.checkCommand(text);
                 if (text.length() > 0) {
                     keystroke();
-//                    sendTypeInidcator();
                 }
             }
 
@@ -301,6 +300,16 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
                 });
 
+        // Header View
+        configHeaderView();
+        // Bottom View
+        binding.tvNewMessage.setVisibility(View.GONE);
+        binding.tvNewMessage.setOnClickListener((View v) -> {
+            scrollPosition = 0;
+            recyclerView().scrollToPosition(messages().size());
+            binding.tvNewMessage.setVisibility(View.GONE);
+        });
+        binding.tvSend.setOnClickListener(v -> sendMessage());
         // File Attachment
         binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
@@ -309,14 +318,21 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        configHeaderView();
-        binding.tvNewMessage.setVisibility(View.GONE);
-        binding.tvNewMessage.setOnClickListener((View v) -> {
-            scrollPosition = 0;
-            recyclerView().scrollToPosition(messages().size());
-            binding.tvNewMessage.setVisibility(View.GONE);
+        binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
+        binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
+        binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
+        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v));
+        binding.llCamera.setOnClickListener(v -> {
+            Utils.setButtonDelayEnable(v);
+            sendFileFunction.onClickAttachmentViewClose(v);
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
+            startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.tvSend.setOnClickListener((View v) -> sendMessage());
+        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v));
+        binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
     private void confirmCustomMessageItem() {
@@ -1431,58 +1447,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     // endregion
-
-    // region Attachment
-
-    /**
-     * Show view for attachment
-     */
-    public void onClickAttachmentViewOpen(View v) {
-        sendFileFunction.onClickAttachmentViewOpen(v);
-    }
-
-    /**
-     * Hide view for attachment
-     */
-    public void onClickAttachmentViewClose(View v) {
-        sendFileFunction.onClickAttachmentViewClose(v);
-    }
-
-    /**
-     * Show view for image and video attachment
-     */
-    public void onClickSelectMediaViewOpen(View v) {
-        sendFileFunction.onClickSelectMediaViewOpen(v);
-    }
-
-    /**
-     * Hide view for image and video attachment
-     */
-    public void onClickSelectMediaViewClose(View v) {
-        sendFileFunction.onClickSelectMediaViewClose(v);
-    }
-
-    /**
-     * Show view for file attachment
-     */
-    public void onClickSelectFileViewOpen(View v) {
-        sendFileFunction.onClickSelectFileViewOpen(v);
-    }
-
-    /**
-     * Open camera view
-     */
-    public void onClickTakePicture(View v) {
-        sendFileFunction.onClickAttachmentViewClose(v);
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-        startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
-    }
-
-    // endregion
-
 
     // region Permission
 

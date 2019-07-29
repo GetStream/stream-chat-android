@@ -103,8 +103,7 @@ public class ChannelListItemAdapter extends BaseAdapter {
         }
 
         binding.tvClick.setOnClickListener(view -> {
-            binding.tvClick.setEnabled(false);
-            new Handler().postDelayed(() -> binding.tvClick.setEnabled(true), 1000);
+            Utils.setButtonDelayEnable(view);
             view.setTag(channelResponse.getChannel().getId());
             binding.tvClick.setBackgroundColor(context.getResources().getColor(R.color.mesage_border));
             this.clickListener.onClick(view);
