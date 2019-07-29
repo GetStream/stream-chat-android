@@ -48,7 +48,8 @@ public class SendFileFunction {
 
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    List<Attachment> selectedAttachments = null;
+    public List<Attachment> selectedAttachments = null;
+
 
     CommandListItemAdapter commandListItemAdapter = null;
     List<Object> commands = null;
@@ -138,7 +139,6 @@ public class SendFileFunction {
                 }
             });
         });
-
     }
 
     public void fadeAnimationView(View view, boolean isFadeIn) {
@@ -177,28 +177,19 @@ public class SendFileFunction {
         });
     }
 
-    // endregion
+    private void configSelectAttachView(boolean isMedia, List<Attachment> editAttachments) {
+        if (editAttachments != null) {
+            selectedAttachments = editAttachments;
+            fadeAnimationView(binding.ivBackAttachment, true);
+        } else {
+            selectedAttachments = new ArrayList<>();
+        }
 
-    // region Media
-
-    public void onClickSelectMediaViewOpen(View v) {
-        initLoadAttachemtView();
-        binding.tvSelectMediaBack.setVisibility(View.VISIBLE);
-        AsyncTask.execute(() -> configSelectAttachView(true));
-    }
-
-    public void onClickSelectMediaViewClose(View v) {
-        closeAnimationView(binding.clSelectPhoto);
-        fadeAnimationView(binding.ivBackAttachment, false);
-    }
-
-    private void configSelectAttachView(boolean isMedia) {
-        selectedAttachments = new ArrayList<>();
         binding.setIsAttachFile(!isMedia);
         if (isMedia) {
-            ArrayList<Attachment> attachments = Global.getAllShownImagesPath(activity);
+            List<Attachment> attachments = Global.getAllShownImagesPath(activity);
             activity.runOnUiThread(() -> {
-                mediaAttachmentAdapter = new MediaAttachmentAdapter(activity, attachments, (int position) -> {
+                mediaAttachmentAdapter = new MediaAttachmentAdapter(activity, attachments, position -> {
                     Attachment attachment = attachments.get(position);
                     attachment.config.setSelected(!attachment.config.isSelected());
                     mediaAttachmentAdapter.notifyItemChanged(position);
@@ -206,8 +197,12 @@ public class SendFileFunction {
                 });
                 binding.rvMedia.setAdapter(mediaAttachmentAdapter);
                 binding.progressBarFileLoader.setVisibility(View.GONE);
+                // edit
+                if (editAttachments != null){
+                    binding.rvComposer.setVisibility(View.VISIBLE);
+                    setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
+                }
             });
-
         } else {
             Global.attachments = new ArrayList<>();
             List<Attachment> attachments = Global.Search_Dir(Environment.getExternalStorageDirectory());
@@ -227,11 +222,31 @@ public class SendFileFunction {
                     Utils.showMessage(activity, "There is no file");
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
+                // edit
+                if (editAttachments != null){
+                    binding.lvComposer.setVisibility(View.VISIBLE);
+                    setSelectedFileAttachmentListAdapter(attachments);
+                }
             });
         }
     }
 
-    private void updateComposerViewBySelectedMedia(ArrayList<Attachment> attachments, Attachment attachment) {
+    // endregion
+
+    // region Media
+
+    public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
+        initLoadAttachemtView();
+        binding.tvSelectMediaBack.setVisibility(View.VISIBLE);
+        AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
+    }
+
+    public void onClickSelectMediaViewClose(View v) {
+        closeAnimationView(binding.clSelectPhoto);
+        fadeAnimationView(binding.ivBackAttachment, false);
+    }
+
+    private void updateComposerViewBySelectedMedia(List<Attachment> attachments, Attachment attachment) {
         binding.rvComposer.setVisibility(View.VISIBLE);
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
@@ -259,7 +274,19 @@ public class SendFileFunction {
         } else
             selectedAttachments.remove(attachment);
 
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(activity, 1, LinearLayoutManager.HORIZONTAL, false));
+        setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
+
+
+        if (selectedAttachments.size() > 0) {
+            binding.setActiveMessageComposer(true);
+            binding.setActiveMessageSend(true);
+        } else if (binding.etMessage.getText().toString().length() == 0) {
+            binding.setActiveMessageComposer(false);
+            binding.setActiveMessageSend(false);
+        }
+    }
+
+    private void setSelectedMediaAttachmentRecyclerViewAdapter(final List<Attachment> attachments) {
         selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(activity, selectedAttachments, (int position) -> {
             Attachment attachment1 = selectedAttachments.get(position);
             attachment1.config.setSelected(false);
@@ -284,15 +311,7 @@ public class SendFileFunction {
             }
         });
         binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
-        if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageComposer(true);
-            binding.setActiveMessageSend(true);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            binding.setActiveMessageComposer(false);
-            binding.setActiveMessageSend(false);
-        }
     }
-
     // endregion
 
     // region File
@@ -300,10 +319,10 @@ public class SendFileFunction {
     AttachmentListAdapter fileAttachmentAdapter = null;
     AttachmentListAdapter selectedFileAttachmentAdapter = null;
 
-    public void onClickSelectFileViewOpen(View v) {
+    public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
         binding.tvSelectMediaBack.setVisibility(View.VISIBLE);
-        AsyncTask.execute(() -> configSelectAttachView(false));
+        AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
     }
 
     private void updateComposerViewBySelectedFile(List<Attachment> attachments, Attachment attachment) {
@@ -324,6 +343,18 @@ public class SendFileFunction {
         } else
             selectedAttachments.remove(attachment);
 
+        setSelectedFileAttachmentListAdapter(attachments);
+
+        if (selectedAttachments.size() > 0) {
+            binding.setActiveMessageComposer(true);
+            binding.setActiveMessageSend(true);
+        } else if (binding.etMessage.getText().toString().length() == 0) {
+            binding.setActiveMessageComposer(false);
+            binding.setActiveMessageSend(false);
+        }
+    }
+
+    private void setSelectedFileAttachmentListAdapter(final List<Attachment> attachments) {
         selectedFileAttachmentAdapter = new AttachmentListAdapter(activity, selectedAttachments, true, false);
         binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
         binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
@@ -346,14 +377,6 @@ public class SendFileFunction {
                 binding.setActiveMessageSend(false);
             }
         });
-
-        if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageComposer(true);
-            binding.setActiveMessageSend(true);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            binding.setActiveMessageComposer(false);
-            binding.setActiveMessageSend(false);
-        }
     }
 
     private void sendFile(Attachment attachment, boolean isImage, final RestController.SendFileCallback fileCallback) {

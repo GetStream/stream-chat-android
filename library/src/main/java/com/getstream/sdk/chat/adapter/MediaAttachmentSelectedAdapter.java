@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,21 +65,24 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
-            File file = new File(attachment.config.getFilePath());
-            Gson gson = new Gson();
-            String json = gson.toJson(attachment);
-            Log.d(TAG, "Selected Attachment: " + json);
-            if (file.exists()) {
-
-                Uri imageUri = Uri.fromFile(file);
+            if (attachment.config.getFilePath() != null){
+                File file = new File(attachment.config.getFilePath());
+                if (file.exists()) {
+                    Uri imageUri = Uri.fromFile(file);
+                    Glide.with(context)
+                            .load(imageUri)
+                            .into(binding.ivMedia);
+                    Log.d(TAG, "File Exist: " + imageUri);
+                } else {
+                    Log.d(TAG, "File No Exist");
+                }
+            }else if (!TextUtils.isEmpty(attachment.getImageURL())){
+                attachment.config.setUploaded(true);
                 Glide.with(context)
-                        .load(imageUri)
+                        .load(attachment.getImageURL())
                         .into(binding.ivMedia);
-                Log.d(TAG, "File Exist: " + imageUri);
-
-            } else {
-                Log.d(TAG, "File No Exist");
             }
+
 
             if (attachment.getType().equals(ModelType.attach_file)) {
                 String videoLength;

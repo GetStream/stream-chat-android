@@ -313,6 +313,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         // File Attachment
         binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
         int spanCount = 4;  // 4 columns
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
@@ -321,7 +322,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
         binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
-        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v));
+        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
             sendFileFunction.onClickAttachmentViewClose(v);
@@ -331,7 +332,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v));
+        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
@@ -801,11 +802,17 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private void editMessage(Message message) {
         binding.etMessage.setTag(message);
-        binding.etMessage.setText(message.getText());
-        binding.etMessage.requestFocus();
-        binding.etMessage.setSelection(binding.etMessage.getText().length());
+        if (!TextUtils.isEmpty(message.getText())) {
+            binding.etMessage.setText(message.getText());
+            binding.etMessage.requestFocus();
+            binding.etMessage.setSelection(binding.etMessage.getText().length());
+        }
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-
+            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
+            } else {
+                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+            }
         }
     }
     // endregion
