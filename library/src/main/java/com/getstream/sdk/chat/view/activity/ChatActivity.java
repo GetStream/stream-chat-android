@@ -557,8 +557,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
         binding.tvSend.setEnabled(false);
         messageFunction.sendMessage(text,
-                thread_parentMessage,
                 attachments,
+                isThreadMode() ? thread_parentMessage.getId() : null,
                 new MessageSendListener() {
                     @Override
                     public void onSuccess(MessageResponse response) {
@@ -733,14 +733,10 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             String type = (String) v.getTag();
             switch (type) {
                 case Constant.TAG_MOREACTION_EDIT:
-                    binding.etMessage.setTag(message);
-                    binding.etMessage.setText(message.getText());
-                    binding.etMessage.requestFocus();
-                    binding.etMessage.setSelection(binding.etMessage.getText().length());
+                    editMessage(message);
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
-                    messageFunction.deleteMessage(binding.etMessage,
-                            message,
+                    messageFunction.deleteMessage(message,
                             new MessageSendListener() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
@@ -785,6 +781,16 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
         }
         Utils.showMessage(this, msg);
+    }
+
+    private void editMessage(Message message) {
+        binding.etMessage.setTag(message);
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.requestFocus();
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+
+        }
     }
     // endregion
 
@@ -1349,6 +1355,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
             Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
+
                 binding.setShowLoadMoreProgressbar(false);
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
                 if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
@@ -1356,40 +1363,50 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 // Set Date Time
                 Global.setStartDay(newMessages, null);
                 // Add new to current Message List
-                for (int i = newMessages.size() - 1; i > -1; i--) {
+                for (int i = newMessages.size() - 1; i > -1; i--)
                     channelMessages.add(0, newMessages.get(i));
-                }
+
                 scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
                 mViewModel.setChannelMessages(channelMessages);
                 isCalling = false;
+
             }, (String errMsg, int errCode) -> {
+
                 Utils.showMessage(ChatActivity.this, errMsg);
                 isCalling = false;
                 binding.setShowLoadMoreProgressbar(false);
+
             });
         } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(thread_parentMessage.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), threadMessages.get(0).getId(), (GetRepliesResponse response) -> {
-                binding.setShowMainProgressbar(false);
-                List<Message> newMessages = new ArrayList<>(response.getMessages());
-                if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
+            Global.mRestController.getReplies(thread_parentMessage.getId(),
+                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
+                    threadMessages.get(0).getId(),
+                    (GetRepliesResponse response) -> {
 
-                Global.setStartDay(newMessages, null);
-                // Add new to current Message List
-                for (int i = newMessages.size() - 1; i > -1; i--) {
-                    threadMessages.add(0, newMessages.get(i));
-                }
-                int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                mThreadAdapter.notifyDataSetChanged();
-                recyclerView().scrollToPosition(scrollPosition);
-                isCalling = false;
-            }, (String errMsg, int errCode) -> {
-                Utils.showMessage(ChatActivity.this, errMsg);
-                isCalling = false;
-                binding.setShowMainProgressbar(false);
-            });
+                        binding.setShowMainProgressbar(false);
+                        List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+                            noHistoryThread = true;
+
+                        Global.setStartDay(newMessages, null);
+                        // Add new to current Message List
+                        for (int i = newMessages.size() - 1; i > -1; i--) {
+                            threadMessages.add(0, newMessages.get(i));
+                        }
+                        int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                        mThreadAdapter.notifyDataSetChanged();
+                        recyclerView().scrollToPosition(scrollPosition);
+                        isCalling = false;
+
+                    }, (String errMsg, int errCode) -> {
+
+                        Utils.showMessage(ChatActivity.this, errMsg);
+                        isCalling = false;
+                        binding.setShowMainProgressbar(false);
+
+                    });
         }
-
     }
 
     // endregion

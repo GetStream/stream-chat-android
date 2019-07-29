@@ -317,6 +317,7 @@ public class Global {
             }
         } else {
             for (Message message : ephemeralMessages) {
+                if (message.getParent_id() == null) continue;
                 if (message.getParent_id().equals(parentId))
                     messages.add(message);
             }
@@ -325,11 +326,11 @@ public class Global {
     }
 
     public static void removeEphemeralMessage(String channelId, String messageId) {
-        Log.d(TAG,"remove MessageId: " + messageId);
+        Log.d(TAG, "remove MessageId: " + messageId);
         List<Message> messages = ephemeralMessage.get(channelId);
         for (Message message : messages) {
             if (message.getId().equals(messageId)) {
-                Log.d(TAG,"Message Removed!");
+                Log.d(TAG, "Message Removed!");
                 messages.remove(message);
                 break;
             }
