@@ -51,7 +51,6 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -90,7 +89,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private Channel channel;
     private List<Message> channelMessages, threadMessages;
     // Adapter & LayoutManager
-    private MessageListItemAdapter mAdapter, mThreadAdapter;
+    private MessageListItemAdapter mChannelMessageAdapter, mThreadAdapter;
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -285,7 +284,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.rvMessage.setLayoutManager(mLayoutManager);
 
         setScrollDownHideKeyboard(binding.rvMessage);
-        setRecyclerViewAdapder();
+        setChannelMessageRecyclerViewAdapder();
 
         KeyboardVisibilityEvent.setEventListener(
                 this, (boolean isOpen) -> {
@@ -435,7 +434,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             channelResponse = response;
             initReconnection();
             // Check Ephemeral Messages
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), getThreadParentId());
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
             if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
                 for (int i = 0; i < ephemeralMessages.size(); i++) {
                     channelMessages.add(ephemeralMessages.get(i));
@@ -468,9 +467,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             messages().get(messages().size() - 1).setDelivered(true);
     }
 
-    private void setRecyclerViewAdapder() {
-        mAdapter = new MessageListItemAdapter(this, this.channelResponse, messages(),
-                isThreadMode(), messageItemViewHolderName, messageItemLayoutId,
+    private void setChannelMessageRecyclerViewAdapder() {
+        mChannelMessageAdapter = new MessageListItemAdapter(this, this.channelResponse, channelMessages,
+                false, messageItemViewHolderName, messageItemLayoutId,
                 (View v) -> {
                     Object object = v.getTag();
                     messageItemClickListener(object);
@@ -481,19 +480,19 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
             return true;
         });
-        recyclerView().setAdapter(mAdapter);
+        binding.rvMessage.setAdapter(mChannelMessageAdapter);
         mViewModel.getChannelMessages().observe(this, (@Nullable List<Message> users) -> {
             if (scrollPosition == -1) return;
 
-            mAdapter.notifyDataSetChanged();
+            mChannelMessageAdapter.notifyDataSetChanged();
             if (scrollPosition > 0) {
-                recyclerView().scrollToPosition(scrollPosition);
+                binding.rvMessage.scrollToPosition(scrollPosition);
                 scrollPosition = 0;
                 return;
             }
-            recyclerView().scrollToPosition(messages().size());
+            binding.rvMessage.scrollToPosition(channelMessages.size());
         });
-        mViewModel.setChannelMessages(messages());
+        mViewModel.setChannelMessages(channelMessages);
     }
 
     private void setScrollDownHideKeyboard(RecyclerView recyclerView) {
@@ -542,18 +541,18 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
      */
     public void sendMessage() {
         if (binding.etMessage.getTag() == null) {
-            sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), false);
+            sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
         } else
             updateMessage();
     }
 
-    public void sendNewMessage(String text, List<Attachment> attachments, boolean isResend) {
+    public void sendNewMessage(String text, List<Attachment> attachments, String resendMessageId) {
         if (Global.noConnection) {
             sendOfflineMessage();
             return;
         }
-        if (!isResend) {
-            ephemeralMessage = createOfflineMessage(false);
+        if (resendMessageId == null) {
+            ephemeralMessage = createEphemeralMessage(false);
             handleAction(ephemeralMessage);
         }
         messageFunction.sendMessage(text,
@@ -562,7 +561,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 new MessageSendListener() {
                     @Override
                     public void onSuccess(MessageResponse response) {
-                        progressSendMessage(response.getMessage(), isResend);
+                        progressSendMessage(response.getMessage(), resendMessageId);
                     }
 
                     @Override
@@ -598,7 +597,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             return;
         }
         handleAction(message);
-        sendNewMessage(message.getText(), null, true);
+        sendNewMessage(message.getText(), null, message.getId());
     }
 
     public void sendGiphy(String type, Message message) {
@@ -618,12 +617,10 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         });
     }
 
-    public void progressSendMessage(Message message, boolean isResend) {
-        //                    if (!isThreadMode()) {
-        if (isResend) {
-            Global.removeEphemeralMessage(channel.getId(), message.getId());
+    public void progressSendMessage(Message message, String resendMessageId) {
+        if (resendMessageId != null) {
+            Global.removeEphemeralMessage(channel.getId(), resendMessageId);
             initSendMessage();
-//                            handleAction(response.getMessage());
         } else {
             if (Global.isCommandMessage(message) ||
                     message.getType().equals(ModelType.message_error)) {
@@ -632,7 +629,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             } else {
                 ephemeralMessage.setId(message.getId());
             }
-//                    }
+
             handleAction(message);
             Log.d(TAG, "Delivered Message");
         }
@@ -644,12 +641,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     private void sendOfflineMessage() {
-        Message message = createOfflineMessage(true);
-        handleAction(message);
+        handleAction(createEphemeralMessage(true));
         initSendMessage();
     }
 
-    private Message createOfflineMessage(boolean isOffle) {
+    private Message createEphemeralMessage(boolean isOffle) {
         Message message = new Message();
         message.setId(Global.convertDateToString(new Date()));
         message.setText(binding.etMessage.getText().toString());
@@ -658,7 +654,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Global.setStartDay(Arrays.asList(message), getLastMessage());
         message.setUser(Global.streamChat.getUser());
         if (isThreadMode())
-            message.setParent_id(getThreadParentId());
+            message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
             Global.setEphemeralMessage(channel.getId(), message);
         return message;
@@ -668,12 +664,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         return messages().isEmpty() ? null : messages().get(messages().size() - 1);
     }
 
-    private String getThreadParentId() {
-        String parentId = null;
-        if (thread_parentMessage != null)
-            parentId = thread_parentMessage.getId();
-        return parentId;
-    }
     // endregion
 
     // region Message Item Touch Action
@@ -855,7 +845,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             try {
                 Global.typingUsers = new ArrayList<>();
                 try {
-                    mAdapter.notifyItemChanged(channelMessages.size());
+                    mChannelMessageAdapter.notifyItemChanged(channelMessages.size());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -917,6 +907,14 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             isCallingThread = true;
             Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
+
+                List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+                if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
+                    for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
+                        threadMessages.add(ephemeralThreadMessages.get(i));
+                    }
+                }
+
                 Global.setStartDay(threadMessages, null);
                 setThreadAdapter();
                 threadBinding.setShowThread(true);
@@ -1044,15 +1042,17 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Global.setStartDay(channelResponse.getMessages(), null);
                     initReconnection();
                     // Check Ephemeral Messages
-                    List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), getThreadParentId());
-                    if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
-                        for (int i = 0; i < ephemeralMessages.size(); i++) {
-                            channelMessages.add(ephemeralMessages.get(i));
+                    List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
+                    if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
+                        for (int i = 0; i < ephemeralMainMessages.size(); i++) {
+                            channelMessages.add(ephemeralMainMessages.get(i));
                         }
                     }
                     runOnUiThread(() -> {
                         configDelivered();
                         configUIs();
+                        if (isThreadMode())
+                            configThread(thread_parentMessage);
                     });
 
                     break;
@@ -1125,20 +1125,20 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         switch (event.getType()) {
             case Event.message_new:
-                newMessage(message);
+                newMessageEvent(message);
                 break;
             case Event.message_updated:
                 if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
                     mViewModel.setReplyCount(message.getReplyCount());
             case Event.message_deleted:
-                updateOrDeleteMessage(event, message);
+                updateOrDeleteMessageEvent(event, message);
                 break;
             default:
                 break;
         }
     }
 
-    private void newMessage(Message message) {
+    private void newMessageEvent(Message message) {
         configHeaderLastActive(message);
         Global.setStartDay(Arrays.asList(message), getLastMessage());
 
@@ -1194,7 +1194,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void updateOrDeleteMessage(Event event, Message message) {
+    private void updateOrDeleteMessageEvent(Event event, Message message) {
         if (!message.isIncoming())
             message.setDelivered(true);
         int changedIndex_ = 0;
@@ -1224,7 +1224,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             final int changedIndex = changedIndex_;
             scrollPosition = -1;
             mViewModel.setChannelMessages(channelMessages);
-            mAdapter.notifyItemChanged(changedIndex);
+            mChannelMessageAdapter.notifyItemChanged(changedIndex);
         }
     }
 
@@ -1244,7 +1244,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             this.runOnUiThread(() -> {
                 scrollPosition = -1;
                 mViewModel.setChannelMessages(channelMessages);
-                mAdapter.notifyItemChanged(changedIndex);
+                mChannelMessageAdapter.notifyItemChanged(changedIndex);
             });
         } else if (message.getType().equals(ModelType.message_reply)) {
             if (thread_parentMessage == null) return;
@@ -1302,13 +1302,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             default:
                 break;
         }
-        mAdapter.notifyItemChanged(channelMessages.size());
+        mChannelMessageAdapter.notifyItemChanged(channelMessages.size());
     }
 
     private void messageReadEvent(Event event) {
         Global.eventFunction.readMessage(channelResponse, event);
         if (!channelResponse.getLastMessage().isIncoming()) {
-            mAdapter.notifyItemChanged(channelMessages.size() - 1);
+            mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
         }
     }
     // endregion
@@ -1376,17 +1376,17 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private void checkReadMark() {
         if (channelResponse.getLastMessage() == null) return;
-        if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true), channelResponse.getLastMessage().getCreated_at())) {
+        if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
+                channelResponse.getLastMessage().getCreated_at())) {
             messageReadMark();
         }
     }
 
     private void messageReadMark() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
-        RestController.EventCallback callback = (EventResponse response) -> {
+        Global.mRestController.markRead(channel.getId(), request, (EventResponse response) -> {
 
-        };
-        Global.mRestController.markRead(channel.getId(), request, callback, (String errMsg, int errCode) -> {
+        }, (String errMsg, int errCode) -> {
             Utils.showMessage(ChatActivity.this, errMsg);
         });
     }

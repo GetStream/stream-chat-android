@@ -325,9 +325,11 @@ public class Global {
     }
 
     public static void removeEphemeralMessage(String channelId, String messageId) {
+        Log.d(TAG,"remove MessageId: " + messageId);
         List<Message> messages = ephemeralMessage.get(channelId);
         for (Message message : messages) {
             if (message.getId().equals(messageId)) {
+                Log.d(TAG,"Message Removed!");
                 messages.remove(message);
                 break;
             }
