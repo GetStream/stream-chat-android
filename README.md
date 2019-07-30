@@ -46,20 +46,38 @@ dependencies {
 
 - **Initialize Client**
 
+ Java
 ~~~java
 StreamChat streamChat = new StreamChat("API KEY");
 ~~~
 
+ Kotlin
+~~~
+val streamChat = StreamChat(API_KEY)
+~~~
+
 - **Initialize User**
 
+ Java
 ~~~java
 User user = new User("USER ID", "USER NAME", EXTRA_DATA); // EXTRA_DATA : HashMap
 ~~~
 
+ Kotlin
+~~~
+val user = User(USER_ID, extraData)
+~~~
+
 - **Set User**
 
+ Java
 ~~~java
 streamChat.setUser(user, "USER TOKEN");
+~~~
+
+ Kotlin
+~~~
+streamChat.setUser(user, "USER TOKEN")
 ~~~
 
 - **Adding Single Conversation Screen**
@@ -73,7 +91,7 @@ Adding chat is simple as the library comes with a built-in **ChatActivity** of l
  Java
 ~~~java
 // Setting Channel
-Channel channel = new Channel("CHANNEL TYPE", "CHANNEL ID", "CHANNEL NAME", "CHANNEL IMAGE", EXTRA_DATA); // EXTRA_DATA : HashMap
+Channel channel = new Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA); // EXTRA_DATA : HashMap
 streamChat.setChannel(channel);
  
 // Start ChatActivity
@@ -84,8 +102,8 @@ startActivity(i);
  Kotlin 
 ~~~kotlin
 // Setting Channel
-val channel = Channel("CHANNEL TYPE", "CHANNEL ID", "CHANNEL NAME", "CHANNEL IMAGE", EXTRA_DATA) // EXTRA_DATA : HashMap
-streamChat.setChannel(channel)
+val channel = Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA) // EXTRA_DATA : HashMap
+streamChat.channel = channel
 
 // Start ChatActivity
 val i = Intent(this, ChatActivity::class.java)
@@ -108,30 +126,24 @@ We can add **ChannelListFragment** of library in any Activity or Fragment direct
 
  Java
 ~~~java
-private void addChannelListFragment(StreamChat streamChat) {
-   ChannelListFragment fragment = new ChannelListFragment(); 
-   fragment.containerResId = R.id.container;
-   fragment.streamChat = streamChat;
-   FragmentManager fragmentManager = getSupportFragmentManager();
-   FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-   fragmentTransaction.replace(R.id.container, fragment);
-   fragmentTransaction.addToBackStack(null);
-   fragmentTransaction.commit();
-}
+ChannelListFragment fragment = new ChannelListFragment(); 
+fragment.containerResId = R.id.container;  
+FragmentManager fragmentManager = getSupportFragmentManager();
+FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+fragmentTransaction.replace(R.id.container, fragment);
+fragmentTransaction.addToBackStack(null);
+fragmentTransaction.commit();
 ~~~
 
  Kotlin
 ~~~kotlin
-fun addChannelListFragment(streamChat: StreamChat) {
-   val fragment = ChannelListFragment()
-   fragment.containerResId = R.id.container
-   fragment.streamChat = streamChat
-   val fragmentManager = supportFragmentManager
-   val fragmentTransaction = fragmentManager.beginTransaction()
-   fragmentTransaction.replace(R.id.container, fragment)
-   fragmentTransaction.addToBackStack(null)
-   fragmentTransaction.commit()
-}
+val fragment = ChannelListFragment()
+fragment.containerResId = R.id.container  
+val fragmentManager = supportFragmentManager
+val fragmentTransaction = fragmentManager.beginTransaction()
+fragmentTransaction.replace(R.id.container, fragment)
+fragmentTransaction.addToBackStack(null)
+fragmentTransaction.commit()
 ~~~
 
 ## Customize
