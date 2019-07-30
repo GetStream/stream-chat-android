@@ -124,11 +124,12 @@ public class WebSocketService extends WebSocketListener {
                         Global.streamChat.setUser(event.getMe());
 
                     Global.streamChat.setClientID(connectionId);
-
+                    if (webSocketListeners == null) return;
                     for (WSResponseHandler webSocketListener : webSocketListeners)
                         webSocketListener.handleConnection();
                 }
             } else {
+                if (webSocketListeners == null) return;
                 for (WSResponseHandler webSocketListener : webSocketListeners)
                     webSocketListener.handleEventWSResponse(event);
             }
@@ -136,6 +137,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
+            if (webSocketListeners == null) return;
             for (WSResponseHandler webSocketListener : webSocketListeners)
                 webSocketListener.handleByteStringWSResponse(bytes);
             Log.d(TAG, "Receiving bytes : " + bytes.hex());

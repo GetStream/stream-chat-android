@@ -140,7 +140,7 @@ public class Channel {
     public Channel(String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
-
+        this.extraData = new HashMap<>(extraData);
         // since name and image are very common fields, we are going to promote them as
         Object image = this.extraData.remove("image");
         if (image != null) {
@@ -151,21 +151,7 @@ public class Channel {
         if (name != null) {
             this.name = name.toString();
         }
-
-        this.extraData = extraData;
-    }
-
-    /**
-     * Constructor
-     *
-     * @param type      Channel type
-     * @param id        Channel id
-     * @param extraData Custom channel fields
-     */
-    public Channel(String type, String id, Map<String, Object> extraData) {
-        this.type = type;
-        this.id = id;
-        this.extraData = extraData;
+        this.extraData.remove("id");
     }
 
     public String getInitials() {
