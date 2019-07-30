@@ -349,20 +349,6 @@ public class Global {
         return text;
     }
 
-    public static List<String> getMentionedUserIDs(ChannelResponse response, String text) {
-        if (TextUtils.isEmpty(text)) return null;
-
-        List<String> mentionedUserIDs = new ArrayList<>();
-        if (response.getMembers() != null && !response.getMembers().isEmpty()) {
-            for (Member member : response.getMembers()) {
-                String userName = member.getUser().getName();
-                if (text.contains("@" + userName)) {
-                    mentionedUserIDs.add(member.getUser().getId());
-                }
-            }
-        }
-        return mentionedUserIDs;
-    }
     // entregion
 
     // region Attachment

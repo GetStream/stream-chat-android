@@ -29,17 +29,22 @@ public class MessageFunction {
                             @Nullable List<Attachment> attachments,
                             @Nullable String parentId,
                             final MessageSendListener sendListener) {
-        SendMessageRequest request = new SendMessageRequest(this.channelResponse, text, attachments, parentId, false);
+
+        List<String> mentionedUserIDs = channelResponse.getMentionedUserIDs(text);
+        SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
         Global.mRestController.sendMessage(channelResponse.getChannel().getId(), request,
                 (MessageResponse response) -> sendListener.onSuccess(response),
                 (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
     }
 
-    public void updateMessage(@NonNull Message message,
+    public void updateMessage(String text,
+                              @NonNull Message message,
                               @Nullable List<Attachment> attachments,
                               final MessageSendListener sendListener) {
         if (message == null) return;
-        UpdateMessageRequest request = new UpdateMessageRequest(message,attachments);
+        List<String> mentionedUserIDs = channelResponse.getMentionedUserIDs(text);
+        message.setText(text);
+        UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
 
         Global.mRestController.updateMessage(message.getId(), request,
                 (MessageResponse response) -> sendListener.onSuccess(response),

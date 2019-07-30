@@ -488,7 +488,10 @@ public class SendFileFunction {
             setCommandsMentionUsers(text);
             if (!commands.isEmpty() && binding.clCommand.getVisibility() != View.VISIBLE)
                 openCommandView();
-            commandListItemAdapter.notifyDataSetChanged();
+
+            if (commandListItemAdapter != null)
+                commandListItemAdapter.notifyDataSetChanged();
+
             if (commands.isEmpty())
                 closeCommandView();
         }

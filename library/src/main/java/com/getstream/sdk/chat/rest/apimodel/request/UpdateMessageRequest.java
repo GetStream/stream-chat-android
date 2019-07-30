@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest.apimodel.request;
 
-import android.util.Log;
-
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Message;
 import com.getstream.sdk.chat.model.ModelType;
@@ -19,7 +17,7 @@ public class UpdateMessageRequest {
     @Expose
     Map<String, Object> message;
 
-    public UpdateMessageRequest(Message message, List<Attachment> attachments) {
+    public UpdateMessageRequest(Message message, List<Attachment> attachments, List<String> mentionedUserIDs) {
         Gson gson = new Gson();
         String json = gson.toJson(message);
         Map<String, Object> map = new HashMap<>();
@@ -41,6 +39,10 @@ public class UpdateMessageRequest {
             }
             this.message.put("attachments", attachmentMaps);
         }
+
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            this.message.put("mentioned_users", mentionedUserIDs);
+
 
         this.message.remove("id");
         this.message.remove("latest_reactions");

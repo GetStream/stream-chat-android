@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -177,6 +178,21 @@ public class ChannelResponse {
             channelUserRead.setLast_read(readDate);
             this.reads.add(channelUserRead);
         }
+    }
+
+    public List<String> getMentionedUserIDs(String text) {
+        if (TextUtils.isEmpty(text)) return null;
+
+        List<String> mentionedUserIDs = new ArrayList<>();
+        if (getMembers() != null && !getMembers().isEmpty()) {
+            for (Member member : getMembers()) {
+                String userName = member.getUser().getName();
+                if (text.contains("@" + userName)) {
+                    mentionedUserIDs.add(member.getUser().getId());
+                }
+            }
+        }
+        return mentionedUserIDs;
     }
 }
 

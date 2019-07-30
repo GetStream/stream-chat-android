@@ -187,16 +187,24 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     @Override
     public void onBackPressed() {
+        // Close if File Attach View is opened.
         if (binding.clAddFile.getVisibility() == View.VISIBLE) {
             sendFileFunction.onClickAttachmentViewClose(null);
             return;
         }
+        // Close if Selecting Photo View is opened.
         if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
             sendFileFunction.onClickSelectMediaViewClose(null);
             return;
         }
+        // Close if Thread View is opened.
         if (isThreadMode()) {
             onClickCloseThread(null);
+            return;
+        }
+        // Cancel if editing message.
+        if (binding.etMessage.getTag() != null) {
+            cancelEditMessage();
             return;
         }
         super.onBackPressed();
@@ -601,7 +609,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             return;
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.updateMessage((Message) binding.etMessage.getTag(),
+        messageFunction.updateMessage(binding.etMessage.getText().toString(),
+                (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
                 new MessageSendListener() {
                     @Override
@@ -715,7 +724,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void closeEditMessage(View view) {
+    private void cancelEditMessage() {
         initSendMessage();
         binding.etMessage.clearFocus();
         binding.etMessage.setTag(null);
