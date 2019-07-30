@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -254,28 +252,25 @@ public class SendFileFunction {
 
             this.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), (FileSendResponse response) -> {
                 File file = new File(attachment.config.getFilePath());
-                if (response != null) {
-                    if (attachment.getType().equals(ModelType.attach_image)) {
-                        attachment.setImageURL(response.getFileUrl());
-                        attachment.setFallback(file.getName());
-                    } else {
-                        attachment.setTitle(file.getName());
-                        long size = file.length();
-                        attachment.setFile_size((int) size);
-                        attachment.setAssetURL(response.getFileUrl());
-                    }
-                    attachment.config.setUploaded(true);
-                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+                if (attachment.getType().equals(ModelType.attach_image)) {
+                    attachment.setImageURL(response.getFileUrl());
+                    attachment.setFallback(file.getName());
                 } else {
-                    attachment.config.setSelected(false);
-                    updateComposerViewBySelectedMedia(attachments, attachment);
+                    attachment.setTitle(file.getName());
+                    long size = file.length();
+                    attachment.setFile_size((int) size);
+                    attachment.setAssetURL(response.getFileUrl());
                 }
+                attachment.config.setUploaded(true);
+                selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+            }, (String errMsg, int errCode) -> {
+                attachment.config.setSelected(false);
+                updateComposerViewBySelectedMedia(attachments, attachment);
             });
         } else
             selectedAttachments.remove(attachment);
 
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
-
 
         if (selectedAttachments.size() > 0) {
             binding.setActiveMessageComposer(true);
@@ -331,14 +326,12 @@ public class SendFileFunction {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             this.sendFile(attachment, false, (FileSendResponse response) -> {
-                if (response != null) {
-                    attachment.setAssetURL(response.getFileUrl());
-                    attachment.config.setUploaded(true);
-                    selectedFileAttachmentAdapter.notifyDataSetChanged();
-                } else {
-                    attachment.config.setSelected(false);
-                    updateComposerViewBySelectedFile(attachments, attachment);
-                }
+                attachment.setAssetURL(response.getFileUrl());
+                attachment.config.setUploaded(true);
+                selectedFileAttachmentAdapter.notifyDataSetChanged();
+            }, (String errMsg, int errCode) -> {
+                attachment.config.setSelected(false);
+                updateComposerViewBySelectedFile(attachments, attachment);
             });
         } else
             selectedAttachments.remove(attachment);
@@ -379,7 +372,9 @@ public class SendFileFunction {
         });
     }
 
-    private void sendFile(Attachment attachment, boolean isImage, final RestController.SendFileCallback fileCallback) {
+    private void sendFile(Attachment attachment, boolean isImage,
+                          RestController.SendFileCallback fileCallback,
+                          RestController.ErrCallback errCallback) {
         Log.d(TAG, "sendFile");
         File file = new File(attachment.config.getFilePath());
         binding.setActiveMessageSend(false);
@@ -393,14 +388,14 @@ public class SendFileFunction {
             Global.mRestController.sendImage(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) -> {
                 Log.d(TAG, "Send image Error:" + errMsg);
                 Utils.showMessage(this.activity, "Failed upload image!");
-                fileCallback.onSuccess(null);
+                errCallback.onError(errMsg, errCode);
                 binding.setActiveMessageSend(true);
             });
         } else {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
             Global.mRestController.sendFile(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) -> {
-                fileCallback.onSuccess(null);
+                errCallback.onError(errMsg, errCode);
                 Log.d(TAG, "Send file Error:" + errMsg);
                 Utils.showMessage(this.activity, "Failed upload file!");
                 binding.setActiveMessageSend(true);
@@ -446,7 +441,7 @@ public class SendFileFunction {
         }
     }
 
-    void convertAttachment(File file, Cursor cursor, boolean isImage) {
+    private void convertAttachment(File file, Cursor cursor, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
         attachment.config.setSelected(true);

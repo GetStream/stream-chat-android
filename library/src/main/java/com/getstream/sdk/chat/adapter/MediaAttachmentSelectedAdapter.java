@@ -74,12 +74,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     Glide.with(context)
                             .load(imageUri)
                             .into(binding.ivMedia);
-                    Log.d(TAG, "File Exist: " + imageUri);
-                } else {
-                    Log.d(TAG, "File No Exist");
                 }
             } else if (!TextUtils.isEmpty(attachment.getImageURL())) {
-                attachment.config.setUploaded(true);
                 Glide.with(context)
                         .load(attachment.getImageURL())
                         .into(binding.ivMedia);
@@ -87,15 +83,12 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 try {
                     if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||
                             attachment.getMime_type().equals(ModelType.attach_mime_mp4)) {
-                        attachment.config.setUploaded(true);
-                        binding.ivMedia.setImageResource(R.drawable.file_mov);
+                        binding.ivMedia.setImageResource(R.drawable.videoplay);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
-
 
             if (attachment.getType().equals(ModelType.attach_file)) {
                 String videoLength;

@@ -35,6 +35,7 @@ public class PaginationRequest {
         Gson gson = new Gson();
         String json = gson.toJson(channel);
         this.channel = (Map<String, Object>) gson.fromJson(json, Map.class);
+
         this.channel.remove("id");
         this.channel.remove("cid");
         this.channel.remove("type");

@@ -116,7 +116,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         singleConversation = (Global.streamChat.getChannel() != null);
         init();
         if (!singleConversation) {
-            configDelivered();
+            setDeliverLastMessage();
             configUIs();
         } else {
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
@@ -251,65 +251,72 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private boolean lockRVScrollListener = false;
 
-    private void configUIs() {
-        // Hides Action Bar
-        try {
-            getSupportActionBar().hide();
-        } catch (Exception e) {
+    private void getChannel(Channel channel) {
+
+        binding.setShowMainProgressbar(true);
+        channel.setType(ModelType.channel_messaging);
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("limit", Constant.DEFAULT_LIMIT);
+
+        // Additional Field
+        Map<String, Object> data = new HashMap<>();
+        if (channel.getExtraData() != null) {
+            Set<String> keys = channel.getExtraData().keySet();
+            for (String key : keys) {
+                Object value = channel.getExtraData().get(key);
+                if (value != null)
+                    data.put(key, value);
+            }
         }
-        // custom MessageItemView
-        confirmCustomMessageItem();
-        // Message Composer
-        binding.setActiveMessageComposer(false);
-        binding.setActiveMessageSend(false);
-        binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(Global.noConnection);
-        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
-            binding.setActiveMessageComposer(hasFocus);
-            lockRVScrollListener = hasFocus;
-        });
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                String text = binding.etMessage.getText().toString();
-                binding.setActiveMessageSend(!(text.length() == 0));
-                sendFileFunction.checkCommand(text);
-                if (text.length() > 0) {
-                    keystroke();
+        Log.d(TAG, "Channel Connecting...");
+
+        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+
+        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
+            Log.d(TAG, "Channel Connected");
+            binding.setShowMainProgressbar(false);
+            if (!response.getMessages().isEmpty())
+                Global.setStartDay(response.getMessages(), null);
+            Global.addChannelResponse(response);
+            channelResponse = response;
+            initReconnection();
+            // Check Ephemeral Messages
+            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
+                for (int i = 0; i < ephemeralMessages.size(); i++) {
+                    channelMessages.add(ephemeralMessages.get(i));
                 }
             }
+            setDeliverLastMessage();
+            configUIs();
 
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-            }
+        }, (String errMsg, int errCode) -> {
+            binding.setShowMainProgressbar(false);
+            Log.d(TAG, "Failed Connect Channel : " + errMsg);
         });
+    }
 
-        mLayoutManager.scrollToPosition(channelMessages.size());
-        binding.rvMessage.setLayoutManager(mLayoutManager);
+    private List<Message> messages() {
+        return isThreadMode() ? threadMessages : channelMessages;
+    }
 
-        setScrollDownHideKeyboard(binding.rvMessage);
-        setChannelMessageRecyclerViewAdapder();
+    private RecyclerView recyclerView() {
+        return isThreadMode() ? threadBinding.rvThread : binding.rvMessage;
+    }
 
-        KeyboardVisibilityEvent.setEventListener(
-                this, (boolean isOpen) -> {
-                    if (!isOpen) {
-                        binding.etMessage.clearFocus();
-                    } else {
-                        lockRVScrollListener = true;
-                        new Handler().postDelayed(() -> {
-                            lockRVScrollListener = false;
-                        }, 500);
-                    }
-                    if (lVPosition > messages().size() - 2)
-                        recyclerView().scrollToPosition(lVPosition);
+    private boolean isNoHistory() {
+        return isThreadMode() ? noHistoryThread : noHistory;
+    }
 
-                });
+    // endregion
 
-        // Header View
-        configHeaderView();
+    // region Config UIs
+    private void configUIs() {
+        configActionBar(); // Hides Action Bar
+        configHeaderView(); // Header View
+        configCustomMessageItem(); // custom MessageItemView
+        configMessageInputView(); // Message Input box
+        configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
         binding.tvNewMessage.setVisibility(View.GONE);
         binding.tvNewMessage.setOnClickListener((View v) -> {
@@ -317,37 +324,18 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             recyclerView().scrollToPosition(messages().size());
             binding.tvNewMessage.setVisibility(View.GONE);
         });
-        binding.tvSend.setOnClickListener(v -> sendMessage());
         // File Attachment
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
-        binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
-        int spanCount = 4;  // 4 columns
-        int spacing = 2;    // 1 px
-        boolean includeEdge = false;
-        binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
-        binding.ivBackAttachment.setOnClickListener(v -> {
-            if (binding.etMessage.getTag() != null) return;
-            sendFileFunction.onClickAttachmentViewClose(v);
-        });
-        binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
-        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
-        binding.llCamera.setOnClickListener(v -> {
-            Utils.setButtonDelayEnable(v);
-            sendFileFunction.onClickAttachmentViewClose(v);
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-            startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
-        });
-        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
-        binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
+        configAttachmentUIs();
     }
 
-    private void confirmCustomMessageItem() {
+    private void configActionBar(){
+        try {
+            getSupportActionBar().hide();
+        } catch (Exception e) {
+        }
+    }
+
+    private void configCustomMessageItem() {
         messageItemLayoutId = Global.component.messageItemView.getMessageItemLayoutId();
         messageItemViewHolderName = Global.component.messageItemView.getMessageItemViewHolderName();
     }
@@ -412,6 +400,57 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
+    private void configMessageInputView(){
+        binding.setActiveMessageComposer(false);
+        binding.setActiveMessageSend(false);
+        binding.setShowLoadMoreProgressbar(false);
+        binding.setNoConnection(Global.noConnection);
+        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
+            binding.setActiveMessageComposer(hasFocus);
+            lockRVScrollListener = hasFocus;
+        });
+        binding.etMessage.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                String text = binding.etMessage.getText().toString();
+                binding.setActiveMessageSend(!(text.length() == 0));
+                sendFileFunction.checkCommand(text);
+                if (text.length() > 0) {
+                    keystroke();
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+            }
+        });
+        KeyboardVisibilityEvent.setEventListener(
+                this, (boolean isOpen) -> {
+                    if (!isOpen) {
+                        binding.etMessage.clearFocus();
+                    } else {
+                        lockRVScrollListener = true;
+                        new Handler().postDelayed(() -> {
+                            lockRVScrollListener = false;
+                        }, 500);
+                    }
+                    if (lVPosition > messages().size() - 2)
+                        recyclerView().scrollToPosition(lVPosition);
+
+                });
+        binding.tvSend.setOnClickListener(this::sendMessage);
+    }
+
+    private void configMessageRecyclerView(){
+        mLayoutManager.scrollToPosition(channelMessages.size());
+        binding.rvMessage.setLayoutManager(mLayoutManager);
+        setScrollDownHideKeyboard(binding.rvMessage);
+        setChannelMessageRecyclerViewAdapder();
+    }
+
     private void configHeaderLastActive(@Nullable Message message) {
         if (message == null || message.getUser().isMe()) {
             return;
@@ -432,67 +471,30 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void getChannel(Channel channel) {
+    private void configAttachmentUIs(){
+        binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
+        binding.rvMedia.hasFixedSize();
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
+        int spanCount = 4;  // 4 columns
+        int spacing = 2;    // 1 px
+        boolean includeEdge = false;
+        binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        binding.setShowMainProgressbar(true);
-        channel.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-
-        // Additional Field
-        Map<String, Object> data = new HashMap<>();
-        if (channel.getExtraData() != null) {
-            Set<String> keys = channel.getExtraData().keySet();
-            for (String key : keys) {
-                Object value = channel.getExtraData().get(key);
-                if (value != null)
-                    data.put(key, value);
-            }
-        }
-        Log.d(TAG, "Channel Connecting...");
-
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
-            Log.d(TAG, "Channel Connected");
-            binding.setShowMainProgressbar(false);
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            Global.addChannelResponse(response);
-            channelResponse = response;
-            initReconnection();
-            // Check Ephemeral Messages
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
-            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
-                for (int i = 0; i < ephemeralMessages.size(); i++) {
-                    channelMessages.add(ephemeralMessages.get(i));
-                }
-            }
-            configDelivered();
-            configUIs();
-
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+        binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
+        binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
+        binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
+        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
+        binding.llCamera.setOnClickListener(v -> {
+            Utils.setButtonDelayEnable(v);
+            sendFileFunction.onClickAttachmentViewClose(v);
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
+            startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-    }
-
-    private List<Message> messages() {
-        return isThreadMode() ? threadMessages : channelMessages;
-    }
-
-    private RecyclerView recyclerView() {
-        return isThreadMode() ? threadBinding.rvThread : binding.rvMessage;
-    }
-
-    private boolean isNoHistory() {
-        return isThreadMode() ? noHistoryThread : noHistory;
-    }
-
-    private void configDelivered() {
-        if (messages() == null || messages().isEmpty()) return;
-        if (!messages().get(messages().size() - 1).isIncoming())
-            messages().get(messages().size() - 1).setDelivered(true);
+        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
+        binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
     private void setChannelMessageRecyclerViewAdapder() {
@@ -567,7 +569,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     /**
      * Send Message - Send a message to this channel
      */
-    public void sendMessage() {
+    public void sendMessage(View view) {
         if (binding.etMessage.getTag() == null) {
             sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
         } else
@@ -668,8 +670,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
 
             handleAction(message);
-            Log.d(TAG, "Delivered Message");
         }
+    }
+
+    private void setDeliverLastMessage() {
+        if (messages() == null || messages().isEmpty()) return;
+        if (!messages().get(messages().size() - 1).isIncoming())
+            messages().get(messages().size() - 1).setDelivered(true);
     }
 
     private void initSendMessage() {
@@ -710,6 +717,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             binding.etMessage.setSelection(binding.etMessage.getText().length());
         }
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            for (Attachment attachment: message.getAttachments())
+                attachment.config.setUploaded(true);
+
             if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
                 String fileType = message.getAttachments().get(0).getMime_type();
                 if (fileType.equals(ModelType.attach_mime_mov) ||
@@ -1127,7 +1137,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                         }
                     }
                     runOnUiThread(() -> {
-                        configDelivered();
+                        setDeliverLastMessage();
                         configUIs();
                         if (isThreadMode())
                             configThread(thread_parentMessage);
