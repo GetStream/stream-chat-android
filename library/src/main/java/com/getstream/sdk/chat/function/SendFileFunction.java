@@ -128,8 +128,8 @@ public class SendFileFunction {
                 public void onAnimationEnd(Animation animation) {
                     view.setVisibility(View.GONE);
                     view.clearAnimation();
-                    if (view.equals(binding.clSelectPhoto))
-                        binding.tvSelectMediaBack.setVisibility(View.GONE);
+                    if (view.equals(binding.clSelectPhoto) || view.equals(binding.clCommand))
+                        binding.tvInputboxBack.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -235,7 +235,7 @@ public class SendFileFunction {
 
     public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvSelectMediaBack.setVisibility(View.VISIBLE);
+        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
     }
 
@@ -316,7 +316,7 @@ public class SendFileFunction {
 
     public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvSelectMediaBack.setVisibility(View.VISIBLE);
+        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
     }
 
@@ -461,6 +461,7 @@ public class SendFileFunction {
     private void openCommandView() {
         openAnimationView(binding.clCommand);
         fadeAnimationView(binding.ivBackAttachment, true);
+        binding.tvInputboxBack.setVisibility(View.VISIBLE);
     }
 
     private void closeCommandView() {
@@ -492,9 +493,8 @@ public class SendFileFunction {
         }
     }
 
-    public void onClickCommandViewOpen(boolean isCommand) {
+    private void onClickCommandViewOpen(boolean isCommand) {
         if (isCommand) {
-//            setGlobalCommands();
             setCommands("");
         } else {
             setMentionUsers("");
@@ -548,5 +548,9 @@ public class SendFileFunction {
                 commands.add(user);
         }
     }
+    // endregion
+
+    // region Mention
+
     // endregion
 }

@@ -241,6 +241,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
+        checkEphemeralMessages();
         messageFunction = new MessageFunction(this.channelResponse);
         sendFileFunction = new SendFileFunction(this, binding, channelResponse);
         checkReadMark();
@@ -249,21 +250,32 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Global.eventFunction.setChannel(this.channel);
     }
 
+    private void checkEphemeralMessages() {
+        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
+        if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
+            for (int i = 0; i < ephemeralMainMessages.size(); i++) {
+                Message message = ephemeralMainMessages.get(i);
+                if (channelMessages.contains(message)) continue;
+                channelMessages.add(message);
+            }
+        }
+    }
+
     private boolean lockRVScrollListener = false;
 
-    private void getChannel(Channel channel) {
+    private void getChannel(Channel channel_) {
 
         binding.setShowMainProgressbar(true);
-        channel.setType(ModelType.channel_messaging);
+        channel_.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
 
         // Additional Field
         Map<String, Object> data = new HashMap<>();
-        if (channel.getExtraData() != null) {
-            Set<String> keys = channel.getExtraData().keySet();
+        if (channel_.getExtraData() != null) {
+            Set<String> keys = channel_.getExtraData().keySet();
             for (String key : keys) {
-                Object value = channel.getExtraData().get(key);
+                Object value = channel_.getExtraData().get(key);
                 if (value != null)
                     data.put(key, value);
             }
@@ -272,7 +284,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
-        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
+        Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
             Log.d(TAG, "Channel Connected");
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
@@ -280,13 +292,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             Global.addChannelResponse(response);
             channelResponse = response;
             initReconnection();
-            // Check Ephemeral Messages
-            List<Message> ephemeralMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
-            if (ephemeralMessages != null && !ephemeralMessages.isEmpty()) {
-                for (int i = 0; i < ephemeralMessages.size(); i++) {
-                    channelMessages.add(ephemeralMessages.get(i));
-                }
-            }
             setDeliverLastMessage();
             configUIs();
 
@@ -318,17 +323,17 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         configMessageInputView(); // Message Input box
         configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
-        binding.tvNewMessage.setVisibility(View.GONE);
-        binding.tvNewMessage.setOnClickListener((View v) -> {
-            scrollPosition = 0;
-            recyclerView().scrollToPosition(messages().size());
-            binding.tvNewMessage.setVisibility(View.GONE);
-        });
+//        binding.tvNewMessage.setVisibility(View.GONE);
+//        binding.tvNewMessage.setOnClickListener((View v) -> {
+//            scrollPosition = 0;
+//            recyclerView().scrollToPosition(messages().size());
+//            binding.tvNewMessage.setVisibility(View.GONE);
+//        });
         // File Attachment
         configAttachmentUIs();
     }
 
-    private void configActionBar(){
+    private void configActionBar() {
         try {
             getSupportActionBar().hide();
         } catch (Exception e) {
@@ -400,7 +405,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
-    private void configMessageInputView(){
+    private void configMessageInputView() {
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
         binding.setShowLoadMoreProgressbar(false);
@@ -444,7 +449,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.tvSend.setOnClickListener(this::sendMessage);
     }
 
-    private void configMessageRecyclerView(){
+    private void configMessageRecyclerView() {
         mLayoutManager.scrollToPosition(channelMessages.size());
         binding.rvMessage.setLayoutManager(mLayoutManager);
         setScrollDownHideKeyboard(binding.rvMessage);
@@ -471,7 +476,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void configAttachmentUIs(){
+    private void configAttachmentUIs() {
         binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
@@ -548,9 +553,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Utils.hideSoftKeyboard(ChatActivity.this);
                     binding.etMessage.clearFocus();
                     if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
-                    if (currentLastVisible >= messages().size() - 1)
-                        binding.tvNewMessage.setVisibility(View.GONE);
-
+//                    if (currentLastVisible >= messages().size() - 1)
+//                        binding.tvNewMessage.setVisibility(View.GONE);
                 }
 
                 new Handler().postDelayed(() -> {
@@ -717,7 +721,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             binding.etMessage.setSelection(binding.etMessage.getText().length());
         }
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            for (Attachment attachment: message.getAttachments())
+            for (Attachment attachment : message.getAttachments())
                 attachment.config.setUploaded(true);
 
             if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
@@ -1130,12 +1134,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Global.setStartDay(channelResponse.getMessages(), null);
                     initReconnection();
                     // Check Ephemeral Messages
-                    List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
-                    if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
-                        for (int i = 0; i < ephemeralMainMessages.size(); i++) {
-                            channelMessages.add(ephemeralMainMessages.get(i));
-                        }
-                    }
+                    checkEphemeralMessages();
+
                     runOnUiThread(() -> {
                         setDeliverLastMessage();
                         configUIs();
@@ -1240,7 +1240,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
                 if (message.isIncoming() && !isShowLastMessage) {
                     scrollPosition = -1;
-                    binding.tvNewMessage.setVisibility(View.VISIBLE);
+//                    binding.tvNewMessage.setVisibility(View.VISIBLE);
                 } else {
                     scrollPosition = 0;
                 }

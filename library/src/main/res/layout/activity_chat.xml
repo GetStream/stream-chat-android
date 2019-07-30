@@ -142,22 +142,22 @@
             app:layout_constraintTop_toBottomOf="@+id/header"
             tools:listitem="@layout/list_item_message" />
 
-        <TextView
-            android:id="@+id/tv_new_message"
-            style="@style/text_s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/round_action_send"
-            android:gravity="center"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="New Messages!"
-            android:textColor="@color/white"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
-            app:layout_constraintEnd_toEndOf="@+id/ll_composer"
-            app:layout_constraintStart_toStartOf="@+id/ll_composer" />
+        <!--<TextView-->
+        <!--android:id="@+id/tv_new_message"-->
+        <!--style="@style/text_s"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="5dp"-->
+        <!--android:background="@drawable/round_action_send"-->
+        <!--android:gravity="center"-->
+        <!--android:paddingStart="8dp"-->
+        <!--android:paddingEnd="8dp"-->
+        <!--android:text="New Messages!"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/ll_composer"-->
+        <!--app:layout_constraintEnd_toEndOf="@+id/ll_composer"-->
+        <!--app:layout_constraintStart_toStartOf="@+id/ll_composer" />-->
 
         <include
             android:id="@+id/cl_thread"
@@ -404,7 +404,7 @@
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -427,26 +427,38 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_command_title"
                 app:layout_constraintTop_toTopOf="@+id/tv_command_title" />
 
-            <ListView
-                android:id="@+id/lv_command"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="80dp"
-                android:divider="@null"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_command_title"
-                tools:listitem="@layout/list_item_command" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_command_title">
+
+                <ListView
+                    android:id="@+id/lv_command"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@null"
+                    tools:listitem="@layout/list_item_command" />
+
+                <ListView
+                    android:id="@+id/lv_mention"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@null"
+                    tools:listitem="@layout/list_item_mention" />
+            </FrameLayout>
+
 
         </android.support.constraint.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_select_media_back"
+            android:id="@+id/tv_inputbox_back"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/white"
+            android:background="@color/chat_theme"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ll_composer" />
