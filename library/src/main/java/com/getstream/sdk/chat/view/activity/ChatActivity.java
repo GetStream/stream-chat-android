@@ -320,7 +320,10 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
-        binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
+        binding.ivBackAttachment.setOnClickListener(v -> {
+            if (binding.etMessage.getTag() != null) return;
+            sendFileFunction.onClickAttachmentViewClose(v);
+        });
         binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
         binding.llCamera.setOnClickListener(v -> {
@@ -334,7 +337,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
-        binding.tvCloseEdit.setOnClickListener(this::closeEditMessage);
     }
 
     private void confirmCustomMessageItem() {
@@ -599,8 +601,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             return;
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.updateMessage(binding.etMessage.getText().toString(),
-                (Message) binding.etMessage.getTag(),
+        messageFunction.updateMessage((Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
                 new MessageSendListener() {
                     @Override
@@ -694,9 +695,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     // Edit
     private void editMessage(Message message) {
         binding.etMessage.setTag(message);
+        binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
             binding.etMessage.setText(message.getText());
-            binding.etMessage.requestFocus();
             binding.etMessage.setSelection(binding.etMessage.getText().length());
         }
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
@@ -712,15 +713,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
             }
         }
-        binding.clEditMessage.setVisibility(View.VISIBLE);
-        binding.ivBackAttachment.setVisibility(View.VISIBLE);
     }
 
     private void closeEditMessage(View view) {
-        binding.clEditMessage.setVisibility(View.GONE);
         initSendMessage();
         binding.etMessage.clearFocus();
         binding.etMessage.setTag(null);
+        sendFileFunction.fadeAnimationView(binding.ivBackAttachment, false);
     }
 
     // endregion

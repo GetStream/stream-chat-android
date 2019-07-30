@@ -48,7 +48,7 @@ public class SendFileFunction {
 
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    public List<Attachment> selectedAttachments = null;
+    private List<Attachment> selectedAttachments = null;
 
 
     CommandListItemAdapter commandListItemAdapter = null;

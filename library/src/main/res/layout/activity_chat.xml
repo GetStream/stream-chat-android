@@ -451,43 +451,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ll_composer" />
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/cl_edit_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_thread_toolbar"
-            android:paddingStart="20dp"
-            android:paddingBottom="90dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <TextView
-                android:id="@+id/textView1"
-                style="@style/text_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Edit message"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_close_edit"
-                style="@style/text"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="20dp"
-                android:background="@drawable/round_thread_close"
-                android:gravity="center"
-                android:text="×"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView1" />
-        </android.support.constraint.ConstraintLayout>
-
         <LinearLayout
             android:id="@+id/ll_composer"
             android:layout_width="match_parent"

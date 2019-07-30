@@ -35,13 +35,11 @@ public class MessageFunction {
                 (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
     }
 
-    public void updateMessage(String text,
-                              Message message,
+    public void updateMessage(@NonNull Message message,
                               @Nullable List<Attachment> attachments,
                               final MessageSendListener sendListener) {
         if (message == null) return;
-        message.setText(text);
-        UpdateMessageRequest request = new UpdateMessageRequest(message);
+        UpdateMessageRequest request = new UpdateMessageRequest(message,attachments);
 
         Global.mRestController.updateMessage(message.getId(), request,
                 (MessageResponse response) -> sendListener.onSuccess(response),
