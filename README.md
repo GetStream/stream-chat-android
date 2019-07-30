@@ -60,7 +60,7 @@ val streamChat = StreamChat(API_KEY)
 
  Java
 ~~~java
-User user = new User("USER ID", "USER NAME", EXTRA_DATA); // EXTRA_DATA : HashMap
+User user = new User("USER ID", EXTRA_DATA); // EXTRA_DATA : HashMap
 ~~~
 
  Kotlin
