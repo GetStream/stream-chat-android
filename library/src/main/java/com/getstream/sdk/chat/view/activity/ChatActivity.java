@@ -51,6 +51,7 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
+import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -119,6 +120,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             setDeliverLastMessage();
             configUIs();
         } else {
+            ConnectionChecker.connectionCheck(getApplicationContext());
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
                 binding.setShowMainProgressbar(true);
             } else {

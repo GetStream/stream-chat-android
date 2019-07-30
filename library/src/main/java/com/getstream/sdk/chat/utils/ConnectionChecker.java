@@ -50,6 +50,7 @@ public class ConnectionChecker {
     };
 
     private static void startConnectionCheckRepeatingTask(Context context) {
+        stopConnectionCheckRepeatingTask();
         ConnectionChecker.context = context;
         connectivityManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
         runnableConnectionCheck.run();
