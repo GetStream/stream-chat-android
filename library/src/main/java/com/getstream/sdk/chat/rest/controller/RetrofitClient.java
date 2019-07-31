@@ -5,9 +5,6 @@ import android.util.Log;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.utils.Global;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -41,7 +38,6 @@ public class RetrofitClient {
                             .addHeader("Accept-Encoding", "application/gzip")
                             .build();
                     Response response = chain.proceed(request);
-                    Log.d(TAG, "Return Correct channelResponse");
                     return response;
                 })
                 .build();
@@ -53,7 +49,6 @@ public class RetrofitClient {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        Log.d(TAG, "Return bad channelResponse");
         return retrofit;
     }
 }
