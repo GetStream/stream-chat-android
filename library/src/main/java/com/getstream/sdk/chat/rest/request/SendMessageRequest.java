@@ -1,6 +1,4 @@
-package com.getstream.sdk.chat.rest.apimodel.request;
-
-import android.util.Log;
+package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;

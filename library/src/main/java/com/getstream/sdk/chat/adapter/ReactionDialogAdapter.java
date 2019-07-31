@@ -10,12 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
-import com.getstream.sdk.chat.model.Message;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.apimodel.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
+import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;

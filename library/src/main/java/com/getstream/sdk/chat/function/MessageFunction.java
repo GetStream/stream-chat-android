@@ -6,12 +6,11 @@ import android.support.annotation.Nullable;
 
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Message;
-import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
-import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;

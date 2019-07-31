@@ -6,7 +6,7 @@ import android.util.Log;
 import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.model.TokenService;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.rest.BaseURL;

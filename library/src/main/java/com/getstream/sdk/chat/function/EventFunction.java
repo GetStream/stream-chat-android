@@ -7,10 +7,10 @@ import android.util.Log;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.Message;
-import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 

@@ -1,12 +1,12 @@
-package com.getstream.sdk.chat.rest.apimodel.response;
+package com.getstream.sdk.chat.rest.response;
 
 import android.text.TextUtils;
 
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
-import com.getstream.sdk.chat.model.Message;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
