@@ -7,7 +7,7 @@
 
         <variable
             name="user"
-            type="com.getstream.sdk.chat.model.User" />
+            type="com.getstream.sdk.chat.rest.User" />
     </data>
 
     <android.support.constraint.ConstraintLayout

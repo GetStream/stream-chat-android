@@ -1,5 +1,7 @@
-package com.getstream.sdk.chat.model;
+package com.getstream.sdk.chat.rest;
 
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

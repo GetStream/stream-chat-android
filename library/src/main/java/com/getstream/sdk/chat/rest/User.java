@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.model;
+package com.getstream.sdk.chat.rest;
 
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;

@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.interfaces;
 
-import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 
 public interface MessageSendListener {
     void onSuccess(MessageResponse response);

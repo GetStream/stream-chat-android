@@ -1,11 +1,9 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.View;
 
-import com.getstream.sdk.chat.model.Message;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 
 import java.util.List;
 

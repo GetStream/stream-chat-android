@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemGroupUserBinding;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;

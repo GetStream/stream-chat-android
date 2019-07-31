@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 
 public class ChatActivityViewModelFactory implements ViewModelProvider.Factory {
     private ChannelResponse channelResponse;
