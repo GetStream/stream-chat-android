@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.rest;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

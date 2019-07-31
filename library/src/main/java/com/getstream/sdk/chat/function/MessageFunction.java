@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;
@@ -21,11 +20,10 @@ public class MessageFunction {
     private final String TAG = MessageFunction.class.getSimpleName();
 
     private ChannelResponse channelResponse;
-    private Context context;
 
-    public MessageFunction(ChannelResponse channelResponse, Context context) {
+
+    public MessageFunction(ChannelResponse channelResponse) {
         this.channelResponse = channelResponse;
-        this.context = context;
     }
 
     // region Message

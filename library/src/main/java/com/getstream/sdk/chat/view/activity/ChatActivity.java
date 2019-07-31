@@ -238,7 +238,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
         checkEphemeralMessages();
-        messageFunction = new MessageFunction(this.channelResponse, this);
+        messageFunction = new MessageFunction(this.channelResponse);
         sendFileFunction = new SendFileFunction(this, binding, channelResponse);
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
