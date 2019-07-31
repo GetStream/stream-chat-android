@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.function;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -10,6 +11,7 @@ import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;
@@ -19,9 +21,11 @@ public class MessageFunction {
     private final String TAG = MessageFunction.class.getSimpleName();
 
     private ChannelResponse channelResponse;
+    private Context context;
 
-    public MessageFunction(ChannelResponse channelResponse) {
+    public MessageFunction(ChannelResponse channelResponse, Context context) {
         this.channelResponse = channelResponse;
+        this.context = context;
     }
 
     // region Message
@@ -29,7 +33,6 @@ public class MessageFunction {
                             @Nullable List<Attachment> attachments,
                             @Nullable String parentId,
                             final MessageSendListener sendListener) {
-
         List<String> mentionedUserIDs = channelResponse.getMentionedUserIDs(text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
         Global.mRestController.sendMessage(channelResponse.getChannel().getId(), request,

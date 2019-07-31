@@ -3,11 +3,9 @@ package com.getstream.sdk.chat.view.fragment;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -42,7 +40,6 @@ import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
-import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -116,20 +113,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constant.BC_RECONNECT_CHANNEL);
-        filter.addAction(Constant.BC_CONNECTION_OFF);
-        filter.addAction(Constant.BC_CONNECTION_ON);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        getContext().registerReceiver(receiver, filter);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         Global.webSocketService.removeWSResponseHandler(this);
-        getContext().unregisterReceiver(receiver);
     }
 
     @Override
@@ -153,7 +142,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Activity) {
-            Log.d(TAG, "onAttach");
             activity = (Activity) context;
         }
     }
@@ -162,14 +150,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     // region Private Functions
     private void init() {
-        Global.webSocketService.setWSResponseHandler(this);
+        Global.webSocketService.setWSResponseHandler(this, getContext());
         Global.channels = new ArrayList<>();
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        ConnectionChecker.connectionCheck(getContext().getApplicationContext());
-//        connectionCheck();
 
         pref = getActivity().getApplicationContext().getSharedPreferences("MyPref", 0);
         editor = pref.edit();
@@ -354,6 +340,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         if (Global.component.channel.getFilter() != null) {
             payload.put("filter_conditions", Global.component.channel.getFilter().getData());
+        }else{
+            payload.put("filter_conditions", new HashMap<>());
         }
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
@@ -524,33 +512,5 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
     }
 
-    // endregion
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Check Ephemeral Messages
-            switch (intent.getAction()) {
-                case Constant.BC_RECONNECT_CHANNEL:
-                    Log.d(TAG, "Reconnection!");
-                    break;
-                case Constant.BC_CONNECTION_OFF:
-                    binding.setNoConnection(true);
-                    Log.d(TAG, "Connection Off");
-                    break;
-                case Constant.BC_CONNECTION_ON:
-                    Log.d(TAG, "Connection On");
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-    // region Connection Check
-//    private void connectionCheck() {
-//        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(getContext().CONNECTIVITY_SERVICE);
-//        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-//        Global.noConnection = !(activeNetwork != null && activeNetwork.isConnectedOrConnecting());
-//        ConnectionChecker.startConnectionCheckRepeatingTask(getContext().getApplicationContext());
-//    }
     // endregion
 }

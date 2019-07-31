@@ -29,6 +29,9 @@ public final class Constant {
     public static final String BC_RECONNECT_CHANNEL = "BC_RECONNECT_CHANNEL";
     public static final String BC_CONNECTION_OFF = "BC_CONNECTION_OFF";
     public static final String BC_CONNECTION_ON = "BC_CONNECTION_ON";
+
+    public static final String NO_INTERNET = "No internet connection!";
+    public static final int NO_INTERNET_ERROR_CODE = 10001;
     // pagination
     public static final int CHANNEL_LIMIT = 30;
     public static final int CHANNEL_MESSAGE_LIMIT = 25;

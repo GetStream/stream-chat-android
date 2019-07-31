@@ -49,19 +49,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    style="@style/text_b"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="User list"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
             </android.support.constraint.ConstraintLayout>
 
         </android.support.v7.widget.Toolbar>
+
+        <TextView
+            style="@style/text_b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User list"
+            app:layout_constraintBottom_toBottomOf="@+id/header"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/header" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/cl_group"
@@ -92,12 +92,12 @@
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/round_action_send"
                 android:gravity="center"
+                android:onClick="onClickCreateGroupChat"
                 android:paddingLeft="10dp"
                 android:paddingTop="3dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="3dp"
                 android:text="Done"
-                android:onClick="onClickCreateGroupChat"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

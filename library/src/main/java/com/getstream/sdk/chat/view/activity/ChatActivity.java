@@ -51,7 +51,6 @@ import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
-import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -113,14 +112,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
-        Global.webSocketService.setWSResponseHandler(this);
+        Global.webSocketService.setWSResponseHandler(this, getApplicationContext());
         singleConversation = (Global.streamChat.getChannel() != null);
         init();
         if (!singleConversation) {
             setDeliverLastMessage();
             configUIs();
         } else {
-            ConnectionChecker.connectionCheck(getApplicationContext());
             if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
                 binding.setShowMainProgressbar(true);
             } else {
@@ -140,8 +138,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BC_RECONNECT_CHANNEL);
-        filter.addAction(Constant.BC_CONNECTION_OFF);
-        filter.addAction(Constant.BC_CONNECTION_ON);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(receiver, filter);
     }
@@ -158,10 +154,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             unregisterReceiver(receiver);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("Receiver not registered")) {
-                // Ignore this exception. This is exactly what is desired
                 Log.w(TAG, "Tried to unregister the reciver when it's not registered");
             } else {
-                // unexpected, re-throw
                 throw e;
             }
         }
@@ -244,7 +238,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
         checkEphemeralMessages();
-        messageFunction = new MessageFunction(this.channelResponse);
+        messageFunction = new MessageFunction(this.channelResponse, this);
         sendFileFunction = new SendFileFunction(this, binding, channelResponse);
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
@@ -576,6 +570,10 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
      * Send Message - Send a message to this channel
      */
     public void sendMessage(View view) {
+//        if (Global.noConnection) {
+//            Utils.showMessage(this, Constant.NO_INTERNET);
+//            return;
+//        }
         if (binding.etMessage.getTag() == null) {
             sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
         } else
@@ -605,7 +603,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     @Override
                     public void onFailed(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
-                        Log.d(TAG, "Failed Sending message: " + errMsg);
+                        Utils.showMessage(ChatActivity.this, errMsg);
                     }
                 });
         initSendMessage();
@@ -632,13 +630,14 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     @Override
                     public void onFailed(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
+                        Utils.showMessage(ChatActivity.this, errMsg);
                     }
                 });
     }
 
     public void resendMessage(Message message) {
         if (Global.noConnection) {
-            Utils.showMessage(this, "No internet connection!");
+            Utils.showMessage(this, Constant.NO_INTERNET);
             return;
         }
         handleAction(message);
@@ -1126,38 +1125,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         binding.setShowMainProgressbar(false);
     }
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case Constant.BC_RECONNECT_CHANNEL:
-                    Log.d(TAG, "Reconnection!");
-                    channelResponse = Global.getChannelResponseById(channel.getId());
-                    Global.setStartDay(channelResponse.getMessages(), null);
-                    initReconnection();
-                    // Check Ephemeral Messages
-                    checkEphemeralMessages();
-
-                    runOnUiThread(() -> {
-                        setDeliverLastMessage();
-                        configUIs();
-                        if (isThreadMode())
-                            configThread(thread_parentMessage);
-                    });
-
-                    break;
-                case Constant.BC_CONNECTION_OFF:
-                    binding.setNoConnection(true);
-                    Log.d(TAG, "Connection Off");
-                    break;
-                case Constant.BC_CONNECTION_ON:
-                    Log.d(TAG, "Connection On");
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
     // Event Listener
 
     /**
@@ -1354,6 +1321,27 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (!intent.getAction().equals(Constant.BC_RECONNECT_CHANNEL))
+                return;
+
+            Log.d(TAG, "Reconnection!");
+            channelResponse = Global.getChannelResponseById(channel.getId());
+            Global.setStartDay(channelResponse.getMessages(), null);
+            initReconnection();
+            // Check Ephemeral Messages
+            checkEphemeralMessages();
+
+            runOnUiThread(() -> {
+                setDeliverLastMessage();
+                configUIs();
+                if (isThreadMode())
+                    configThread(thread_parentMessage);
+            });
+        }
+    };
     // endregion
 
     // region Footer Event

@@ -1,13 +1,20 @@
 package com.getstream.sdk.chat.rest;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.utils.ConnectionChecker;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,21 +39,57 @@ public class WebSocketService extends WebSocketListener {
     private Request request;
     private EchoWebSocketListener listener;
     private WebSocket webSocket;
+    private Context context;
 
-    public void setWSResponseHandler(WSResponseHandler responseHandler) {
-        if (webSocketListeners == null) webSocketListeners = new ArrayList<>();
-        if (!webSocketListeners.contains(responseHandler)) {
-            webSocketListeners.add(responseHandler);
+    public void setWSResponseHandler(WSResponseHandler responseHandler, Context context) {
+        if (this.context == null) this.context = context;
+        if (this.webSocketListeners == null) this.webSocketListeners = new ArrayList<>();
+        if (!this.webSocketListeners.contains(responseHandler)) {
+            this.webSocketListeners.add(responseHandler);
         }
+        setBroadCast();
+        ConnectionChecker.startConnectionCheck(this.context);
     }
 
     public void removeWSResponseHandler(WSResponseHandler responseHandler) {
-        if (webSocketListeners == null || webSocketListeners.isEmpty()) return;
-        if (webSocketListeners.contains(responseHandler)) {
-            webSocketListeners.remove(responseHandler);
+        if (this.webSocketListeners == null || this.webSocketListeners.isEmpty()) return;
+        if (this.webSocketListeners.contains(responseHandler)) {
+            this.webSocketListeners.remove(responseHandler);
         }
     }
 
+    private void setBroadCast(){
+        if (filter != null) return;
+
+        filter = new IntentFilter();
+        filter.addAction(Constant.BC_CONNECTION_OFF);
+        filter.addAction(Constant.BC_CONNECTION_ON);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        this.context.registerReceiver(receiver, filter);
+    }
+    IntentFilter filter;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Check Ephemeral Messages
+            switch (intent.getAction()) {
+                case Constant.BC_CONNECTION_OFF:
+                    if (webSocketListeners == null || Global.noConnection) return;
+
+                    Global.noConnection = true;
+                    for (WSResponseHandler webSocketListener : webSocketListeners){
+                        webSocketListener.onFailed(Constant.NO_INTERNET, Constant.NO_INTERNET_ERROR_CODE);
+                    }
+                    Log.d(TAG, "Connection Off");
+                    break;
+                case Constant.BC_CONNECTION_ON:
+                    Log.d(TAG, "Connection On");
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     public void connect() {
         Global.streamChat.setClientID(null);
         client = new OkHttpClient();
@@ -74,9 +117,7 @@ public class WebSocketService extends WebSocketListener {
                     webSocket.send("");
                 }
             } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
-                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 3 : Constant.HEALTH_CHECK_INTERVAL;
+                int interval = Global.noConnection ? Constant.HEALTH_CHECK_INTERVAL / 4 : Constant.HEALTH_CHECK_INTERVAL;
                 mHandler.postDelayed(mHealthChecker, interval);
             }
         }
@@ -159,11 +200,16 @@ public class WebSocketService extends WebSocketListener {
 
             clearWSClient();
             if (webSocketListeners == null) return;
-            for (WSResponseHandler webSocketListener : webSocketListeners)
-                webSocketListener.onFailed(t.getMessage(), t.hashCode());
-
+            for (WSResponseHandler webSocketListener : webSocketListeners){
+                if (t != null){
+                    webSocketListener.onFailed(t.getMessage(), t.hashCode());
+                }else{
+                    webSocketListener.onFailed("Unknown", Constant.NO_INTERNET_ERROR_CODE);
+                }
+            }
         }
     }
+
 
     public void clearWSClient() {
         try {

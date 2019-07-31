@@ -270,7 +270,19 @@ public class UsersActivity extends AppCompatActivity {
         binding.setShowMainProgressbar(true);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("members", users);
-        Channel channel = new Channel(ModelType.channel_messaging, null, extraData);
+
+        String channelId;
+        if (isPrivateChannel){
+            channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
+        }else{
+            String memberIds = "";
+            for (User user : users) {
+                memberIds += user.getId() + "-";
+            }
+            channelId = memberIds + getRandomHexString();
+        }
+
+        Channel channel = new Channel(ModelType.channel_messaging, channelId, extraData);
 
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
@@ -304,8 +316,11 @@ public class UsersActivity extends AppCompatActivity {
         Map<String, Object> payload = new HashMap<>();
 
         // Filter options
-        payload.put("filter_conditions", Global.component.user.getFilter());
-
+        if (Global.component.user.getFilter() != null) {
+            payload.put("filter_conditions", Global.component.user.getFilter().getData());
+        }else{
+            payload.put("filter_conditions", new HashMap<>());
+        }
         // Sort options
         if (Global.component.user.getSortOptions() != null) {
             payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
