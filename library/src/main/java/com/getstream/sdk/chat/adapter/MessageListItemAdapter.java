@@ -4,13 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.Message;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 
 import java.util.List;
 

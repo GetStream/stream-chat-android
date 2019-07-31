@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.rest.apimodel.request;
+package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Pagination;

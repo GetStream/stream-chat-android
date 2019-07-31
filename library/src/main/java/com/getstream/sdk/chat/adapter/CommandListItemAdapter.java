@@ -10,7 +10,7 @@ import android.widget.BaseAdapter;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemCommandBinding;
 import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 
 import java.util.List;
 

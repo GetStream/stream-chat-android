@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.rest.apimodel.response;
+package com.getstream.sdk.chat.rest.response;
 
 import com.getstream.sdk.chat.model.Device;
 import com.google.gson.annotations.Expose;

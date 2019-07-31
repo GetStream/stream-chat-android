@@ -1,8 +1,6 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.model.User;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.Message;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

@@ -1,23 +1,23 @@
 package com.getstream.sdk.chat.rest.controller;
 
-import com.getstream.sdk.chat.rest.apimodel.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.ChannelDetailRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.PaginationRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.apimodel.request.UpdateMessageRequest;
-import com.getstream.sdk.chat.rest.apimodel.response.AddDevicesResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.EventResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.GetChannelsResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.GetDevicesResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.GetUsersResponse;
-import com.getstream.sdk.chat.rest.apimodel.response.MessageResponse;
+import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.rest.request.PaginationRequest;
+import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
+import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.EventResponse;
+import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.response.GetUsersResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 
 import org.json.JSONObject;
 
@@ -40,25 +40,25 @@ public interface APIService {
     Call<GetChannelsResponse> getChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> chatDetail(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> chatDetail(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 
     @DELETE("/channels/messaging/{id}")
     Call<ChannelResponse> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 
     @POST("/channels/messaging/{id}/stop-watching")
-    Call<ChannelResponse> chatStopWatch(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
+    Call<ChannelResponse> chatStopWatch(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> pagination(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body PaginationRequest request);
+    Call<ChannelResponse> pagination(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body PaginationRequest request);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelResponse> acceptInviate(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
+    Call<ChannelResponse> acceptInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelResponse> rejectInviate(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
+    Call<ChannelResponse> rejectInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
     // endregion
 
     // region User
@@ -66,12 +66,12 @@ public interface APIService {
     Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelResponse> addMembers(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body JSONObject body);
+    Call<ChannelResponse> addMembers(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body JSONObject body);
     // endregion
 
     // region Message
     @POST("/channels/messaging/{id}/message")
-    Call<MessageResponse> sendMessage(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
+    Call<MessageResponse> sendMessage(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
 
     @POST("/messages/{id}")
     Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body UpdateMessageRequest request);
@@ -95,18 +95,18 @@ public interface APIService {
     Call<GetRepliesResponse> getRepliesMore(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") String limit, @Query("id_lt") String firstId);
 
     @POST("/channels/messaging/{id}/event")
-    Call<EventResponse> sendEvent(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendEventRequest request);
+    Call<EventResponse> sendEvent(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendEventRequest request);
 
     @POST("/channels/messaging/{id}/read")
-    Call<EventResponse> readMark(@Path("id") String channlId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
+    Call<EventResponse> readMark(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
 
     @Multipart
     @POST("/channels/messaging/{id}/image")
-    Call<FileSendResponse> sendImage(@Path("id") String channlId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<FileSendResponse> sendImage(@Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
     @Multipart
     @POST("/channels/messaging/{id}/file")
-    Call<FileSendResponse> sendFile(@Path("id") String channlId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<FileSendResponse> sendFile(@Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
     // endregion
 
     // region Device

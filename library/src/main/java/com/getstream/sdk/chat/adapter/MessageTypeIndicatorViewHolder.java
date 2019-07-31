@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 

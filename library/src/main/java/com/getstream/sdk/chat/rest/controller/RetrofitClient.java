@@ -32,20 +32,17 @@ public class RetrofitClient {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request()
-                                .newBuilder()
-                                .addHeader("Authorization", Global.streamChat.getUserToken())
-                                .addHeader("Content-Type", "application/json")
-                                .addHeader("stream-auth-type", "jwt")
-                                .addHeader("Accept-Encoding", "application/gzip")
-                                .build();
-                        Response response = chain.proceed(request);
-                        Log.d(TAG, "Return Correct channelResponse");
-                        return response;
-                    }
+                .addInterceptor(chain -> {
+                    Request request = chain.request()
+                            .newBuilder()
+                            .addHeader("Authorization", Global.streamChat.getUserToken())
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("stream-auth-type", "jwt")
+                            .addHeader("Accept-Encoding", "application/gzip")
+                            .build();
+                    Response response = chain.proceed(request);
+                    Log.d(TAG, "Return Correct channelResponse");
+                    return response;
                 })
                 .build();
 

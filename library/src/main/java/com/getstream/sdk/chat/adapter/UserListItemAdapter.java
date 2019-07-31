@@ -6,13 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemUserBinding;
-import com.getstream.sdk.chat.model.User;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 

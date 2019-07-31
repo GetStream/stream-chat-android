@@ -11,7 +11,7 @@
 
         <variable
             name="user"
-            type="com.getstream.sdk.chat.model.User" />
+            type="com.getstream.sdk.chat.rest.User" />
 
         <variable
             name="command"

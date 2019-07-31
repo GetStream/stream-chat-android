@@ -5,9 +5,9 @@ import android.arch.lifecycle.ViewModel;
 import android.databinding.ObservableField;
 import android.text.TextUtils;
 
-import com.getstream.sdk.chat.model.User;
-import com.getstream.sdk.chat.model.Message;
-import com.getstream.sdk.chat.rest.apimodel.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.List;
