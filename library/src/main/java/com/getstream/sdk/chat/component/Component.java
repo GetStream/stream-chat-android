@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.component;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.adapter.ChannelListItemViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.ReadIndicator;
@@ -168,7 +169,7 @@ public class Component{
     public class ChannelPreview{
         private boolean showSearchBar = false;
         private int channelItemLayoutId = R.layout.list_item_channel; // Default
-        private String channelItemViewHolderName;// = ChannelListItemViewHolder.class.getName(); // Default
+        private String channelItemViewHolderName = ChannelListItemViewHolder.class.getName(); // Default
 
         public int getChannelItemLayoutId() {
             return channelItemLayoutId;

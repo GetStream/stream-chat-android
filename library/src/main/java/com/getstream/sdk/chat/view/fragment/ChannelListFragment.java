@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.fragment;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,9 +11,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -32,9 +31,9 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
@@ -78,10 +77,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private boolean isLastPage = false;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
+    private RecyclerView.LayoutManager mLayoutManager;
 
-    public static ChannelListFragment newInstance() {
-        return new ChannelListFragment();
-    }
+    private int channelItemLayoutId;
+    private String channelItemViewHolderName;
 
     // region LifeCycle
     @Override
@@ -177,29 +176,13 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             e.printStackTrace();
         }
 
+        configCustomChannelItemView();
+
         binding.clHeader.setVisibility(Global.component.channelPreview.isShowSearchBar() ? View.VISIBLE : View.GONE);
-        binding.listChannels.setVisibility(View.VISIBLE);
+
         configChannelListView();
-        binding.listChannels.setOnScrollListener(new AbsListView.OnScrollListener() {
-            private int mLastFirstVisibleItem;
+        configChannelRecyclerView();
 
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (mLastFirstVisibleItem < firstVisibleItem) {
-                    if (view.getLastVisiblePosition() == Global.channels.size() - 1)
-                        getChannels();
-                }
-                if (mLastFirstVisibleItem > firstVisibleItem) {
-                    Log.d(TAG, "SCROLLING UP");
-                }
-                mLastFirstVisibleItem = firstVisibleItem;
-            }
-        });
 
         binding.tvSend.setOnClickListener((View view) -> {
             navigateUserList();
@@ -221,6 +204,41 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             }
         });
         binding.etSearch.clearFocus();
+    }
+
+    private void configChannelRecyclerView() {
+        binding.listChannels.setVisibility(View.VISIBLE);
+        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        binding.listChannels.setLayoutManager(mLayoutManager);
+
+        binding.listChannels.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private int mLastFirstVisibleItem;
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+                if (mLastFirstVisibleItem < firstVisibleItem) {
+                    if (currentLastVisible == Global.channels.size() - 1)
+                        getChannels();
+                }
+                if (mLastFirstVisibleItem > firstVisibleItem) {
+                    Log.d(TAG, "SCROLLING UP");
+                }
+                mLastFirstVisibleItem = firstVisibleItem;
+            }
+        });
+    }
+
+    private void configCustomChannelItemView() {
+        channelItemLayoutId = Global.component.channelPreview.getChannelItemLayoutId();
+        channelItemViewHolderName = Global.component.channelPreview.getChannelItemViewHolderName();
     }
 
     private void setAfterFirstConnection() {
@@ -340,7 +358,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         if (Global.component.channel.getFilter() != null) {
             payload.put("filter_conditions", Global.component.channel.getFilter().getData());
-        }else{
+        } else {
             payload.put("filter_conditions", new HashMap<>());
         }
 
@@ -356,7 +374,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), Global.channels, (View view) -> {
+        adapter = new ChannelListItemAdapter(getContext(), Global.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
             ChannelResponse response = Global.getChannelResponseById(channelId);
             navigationChannelDetail(response);

@@ -147,6 +147,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         super.onStop();
         Global.streamChat.setChannel(null);
         Global.webSocketService.removeWSResponseHandler(this);
+        Global.eventFunction.setChannel(null);
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
 
@@ -315,7 +316,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private void configUIs() {
         configActionBar(); // Hides Action Bar
         configHeaderView(); // Header View
-        configCustomMessageItem(); // custom MessageItemView
+        configCustomMessageItemView(); // custom MessageItemView
         configMessageInputView(); // Message Input box
         configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
@@ -336,7 +337,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
     }
 
-    private void configCustomMessageItem() {
+    private void configCustomMessageItemView() {
         messageItemLayoutId = Global.component.messageItemView.getMessageItemLayoutId();
         messageItemViewHolderName = Global.component.messageItemView.getMessageItemViewHolderName();
     }

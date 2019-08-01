@@ -1,19 +1,19 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 
-import java.util.List;
+public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHolder {
 
-public abstract class BaseChannelListItemViewHolder extends View{
-    public BaseChannelListItemViewHolder(Context context) {
-        super(context);
+
+    public BaseChannelListItemViewHolder(int resId, ViewGroup parent) {
+        super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    //    public BaseChannelListItemViewHolder(int resId){
-//        super();
-//    }
-    public abstract void bind(Context context, List<ChannelResponse> channels, View.OnClickListener clickListener, View.OnLongClickListener longClickListener);
+    public abstract void bind(Context context, ChannelResponse channelResponse, int position, View.OnClickListener clickListener, View.OnLongClickListener longClickListener);
 }
