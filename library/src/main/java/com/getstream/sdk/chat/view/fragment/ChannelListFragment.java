@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.function.EventFunction;
@@ -377,7 +380,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         adapter = new ChannelListItemAdapter(getContext(), Global.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
             ChannelResponse response = Global.getChannelResponseById(channelId);
-            navigationChannelDetail(response);
+//            navigationChannelDetail(response);
+            navigationChannelFragment(response);
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -416,6 +420,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         getActivity().startActivity(intent);
     }
 
+    private void navigationChannelFragment(ChannelResponse response){
+        ChannelFragment fragment = new ChannelFragment();
+        fragment.channelIdFromChannelList = response.getChannel().getId();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(containerResId,fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
     private void navigateUserList() {
         Intent intent = new Intent(getContext(), UsersActivity.class);
         startActivityForResult(intent, Constant.USERSLISTACTIVITY_REQUEST);

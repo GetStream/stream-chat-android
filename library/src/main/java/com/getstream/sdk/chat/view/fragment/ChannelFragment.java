@@ -1,20 +1,21 @@
-package com.getstream.sdk.chat.view.activity;
+package com.getstream.sdk.chat.view.fragment;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,12 +23,13 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
-import com.getstream.sdk.chat.databinding.ActivityChatBinding;
+import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.function.AttachmentFunction;
 import com.getstream.sdk.chat.function.EventFunction;
@@ -37,12 +39,13 @@ import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.MessageTagModel;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.SelectAttachmentModel;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
@@ -53,13 +56,12 @@ import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
-import com.getstream.sdk.chat.viewmodel.ChatActivityViewModel;
-import com.getstream.sdk.chat.viewmodel.ChatActivityViewModelFactory;
+import com.getstream.sdk.chat.viewmodel.ChannelFragmentViewModelFactory;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -74,25 +76,25 @@ import java.util.Set;
 
 import okio.ByteString;
 
-/**
- * An Activity of a channel.
- */
-public class ChatActivity extends AppCompatActivity implements WSResponseHandler {
+import static android.app.Activity.RESULT_OK;
+import static com.getstream.sdk.chat.utils.Utils.TAG;
 
-    final String TAG = ChatActivity.class.getSimpleName();
+public class ChannelFragment extends Fragment implements WSResponseHandler {
+
+    private ChannelViewModel mViewModel;
     // ViewModel & Binding
-    private ChatActivityViewModel mViewModel;
-    private ActivityChatBinding binding;
+    private ChannelFragmentBinding binding;
     private ViewThreadBinding threadBinding;
     // Arguments for Channel
+    String channelIdFromChannelList = null;
     private ChannelResponse channelResponse;
     private Channel channel;
     private List<Message> channelMessages, threadMessages;
     // Adapter & LayoutManager
     private MessageListItemAdapter mChannelMessageAdapter, mThreadAdapter;
-    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-    private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-    private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     // Functions
     private MessageFunction messageFunction;
     private SendFileFunction sendFileFunction;
@@ -108,10 +110,20 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     // region LifeCycle
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        init();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        // set binding
+        binding = ChannelFragmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ChannelFragmentViewModelFactory factory = new ChannelFragmentViewModelFactory(channelResponse);
+        mViewModel = ViewModelProviders.of(this, factory).get(ChannelViewModel.class);
+
+        init();
         if (!singleConversation) {
             setDeliverLastMessage();
             configUIs();
@@ -123,7 +135,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
         }
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -136,20 +147,19 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BC_RECONNECT_CHANNEL);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(receiver, filter);
+        getContext().registerReceiver(receiver, filter);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        Global.streamChat.setChannel(null);
+    public void onDestroy() {
+        super.onDestroy();
         Global.webSocketService.removeWSResponseHandler(this);
         Global.eventFunction.setChannel(null);
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
 
         try {
-            unregisterReceiver(receiver);
+            getContext().unregisterReceiver(receiver);
         } catch (IllegalArgumentException e) {
             if (e.getMessage().contains("Receiver not registered")) {
                 Log.w(TAG, "Tried to unregister the reciver when it's not registered");
@@ -158,7 +168,6 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
         }
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -167,67 +176,46 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     Object object = data.getExtras().get("data");
                     if (object.getClass().equals(Bitmap.class)) {
                         Bitmap bitmap = (Bitmap) object;
-                        Uri uri = Utils.getUriFromBitmap(this, bitmap);
-                        sendFileFunction.progressCapturedMedia(this, uri, true);
+                        Uri uri = Utils.getUriFromBitmap(getContext(), bitmap);
+                        sendFileFunction.progressCapturedMedia(getContext(), uri, true);
                     }
                 } catch (Exception e) {
                     Uri uri = data.getData();
                     if (uri == null) return;
-                    sendFileFunction.progressCapturedMedia(this, uri, false);
+                    sendFileFunction.progressCapturedMedia(getContext(), uri, false);
                 }
             }
         }
     }
 
+    private Activity activity;
+
     @Override
-    public void onBackPressed() {
-        // Close if File Attach View is opened.
-        if (binding.clAddFile.getVisibility() == View.VISIBLE) {
-            sendFileFunction.onClickAttachmentViewClose(null);
-            return;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            activity = (Activity) context;
         }
-        // Close if Selecting Photo View is opened.
-        if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
-            sendFileFunction.onClickSelectMediaViewClose(null);
-            return;
-        }
-        // Close if Thread View is opened.
-        if (isThreadMode()) {
-            onClickCloseThread(null);
-            return;
-        }
-        // Cancel if editing message.
-        if (binding.etMessage.getTag() != null) {
-            cancelEditMessage();
-            return;
-        }
-        super.onBackPressed();
     }
-    // endregion
+
+    //endregion
 
     // region Init
     private void init() {
-        // set binding
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         // set WS handler
-        Global.webSocketService.setWSResponseHandler(this, getApplicationContext());
+        Global.webSocketService.setWSResponseHandler(this, getContext());
 
         singleConversation = (Global.streamChat.getChannel() != null);
         // Permission Check
-        PermissionChecker.permissionCheck(this, null);
+        PermissionChecker.permissionCheck(getActivity(), null);
         try {
-            Fresco.initialize(getApplicationContext());
+            Fresco.initialize(getContext().getApplicationContext());
         } catch (Exception e) {
         }
 
-        String channelId = null;
-        Bundle b = getIntent().getExtras();
-        if (b != null)
-            channelId = (String) b.get(Constant.TAG_CHANNEL_RESPONSE_ID);
-
         threadBinding = binding.clThread;
-        if (channelResponse == null && channelId != null)
-            channelResponse = Global.getChannelResponseById(channelId);
+        if (channelResponse == null && channelIdFromChannelList != null)
+            channelResponse = Global.getChannelResponseById(channelIdFromChannelList);
         else {
             return;
         }
@@ -235,15 +223,13 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     private void initReconnection() {
-        ChatActivityViewModelFactory factory = new ChatActivityViewModelFactory(channelResponse);
-        mViewModel = ViewModelProviders.of(this, factory).get(ChatActivityViewModel.class);
         binding.setViewModel(mViewModel);
-//        threadBinding.setViewModel(mViewModel);
+        threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
         checkEphemeralMessages();
         messageFunction = new MessageFunction(this.channelResponse);
-//        sendFileFunction = new SendFileFunction(this, binding, channelResponse);
+        sendFileFunction = new SendFileFunction(getActivity(), binding, channelResponse);
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
@@ -335,8 +321,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     private void configActionBar() {
         try {
-            getSupportActionBar().hide();
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -402,7 +389,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         }
 
         binding.tvBack.setVisibility(singleConversation ? View.INVISIBLE : View.VISIBLE);
-        binding.tvBack.setOnClickListener((View v) -> finish());
+//        binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
     private void configMessageInputView() {
@@ -433,7 +420,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             }
         });
         KeyboardVisibilityEvent.setEventListener(
-                this, (boolean isOpen) -> {
+                getActivity(), (boolean isOpen) -> {
                     if (!isOpen) {
                         binding.etMessage.clearFocus();
                     } else {
@@ -477,9 +464,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     private void configAttachmentUIs() {
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(this, 4, LinearLayoutManager.VERTICAL, false));
+        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
         int spanCount = 4;  // 4 columns
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
@@ -503,7 +490,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     private void setChannelMessageRecyclerViewAdapder() {
-        mChannelMessageAdapter = new MessageListItemAdapter(this, this.channelResponse, channelMessages,
+        mChannelMessageAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, channelMessages,
                 false, messageItemViewHolderName, messageItemLayoutId,
                 (View v) -> {
                     Object object = v.getTag();
@@ -550,7 +537,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 }
 
                 if (currentFirstVisible < fVPosition) {
-                    Utils.hideSoftKeyboard(ChatActivity.this);
+                    Utils.hideSoftKeyboard(getActivity());
                     binding.etMessage.clearFocus();
                     if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
 //                    if (currentLastVisible >= messages().size() - 1)
@@ -607,7 +594,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     @Override
                     public void onFailed(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
-                        Utils.showMessage(ChatActivity.this, errMsg);
+                        Utils.showMessage(getContext(), errMsg);
                     }
                 });
         initSendMessage();
@@ -615,7 +602,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
     public void updateMessage() {
         if (Global.noConnection) {
-            Utils.showMessage(this, "No internet connection!");
+            Utils.showMessage(getContext(), "No internet connection!");
             return;
         }
         binding.tvSend.setEnabled(false);
@@ -634,14 +621,14 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     @Override
                     public void onFailed(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
-                        Utils.showMessage(ChatActivity.this, errMsg);
+                        Utils.showMessage(getContext(), errMsg);
                     }
                 });
     }
 
     public void resendMessage(Message message) {
         if (Global.noConnection) {
-            Utils.showMessage(this, Constant.NO_INTERNET);
+            Utils.showMessage(getContext(), Constant.NO_INTERNET);
             return;
         }
         handleAction(message);
@@ -756,7 +743,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     private void messageItemClickListener(Object object) {
         if (isCallingThread) return;
         if (object.getClass().equals(SelectAttachmentModel.class)) {
-            new AttachmentFunction().progressAttachment((SelectAttachmentModel) object, this);
+            new AttachmentFunction().progressAttachment((SelectAttachmentModel) object, getActivity());
             return;
         }
 
@@ -784,7 +771,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                         childIndex = tag.position - firstListItemPosition;
                     }
                     int originY = recyclerView().getChildAt(childIndex).getBottom();
-                    ReactionFunction.showReactionDialog(this, message, originY);
+                    ReactionFunction.showReactionDialog(getContext(), message, originY);
                     break;
                 case Constant.TAG_MESSAGE_RESEND:
                     resendMessage(message);
@@ -806,7 +793,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         final int position = Integer.parseInt(object.toString());
         final Message message = messages().get(position);
 
-        ReactionFunction.showMoreActionDialog(this, message, (View v) -> {
+        ReactionFunction.showMoreActionDialog(getContext(), message, (View v) -> {
             String type = (String) v.getTag();
             switch (type) {
                 case Constant.TAG_MOREACTION_EDIT:
@@ -817,7 +804,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                             new MessageSendListener() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
-                                    Utils.showMessage(ChatActivity.this, "Deleted Successfully");
+                                    Utils.showMessage(getContext(), "Deleted Successfully");
                                 }
 
                                 @Override
@@ -857,7 +844,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 msg = "sending...";
             }
         }
-        Utils.showMessage(this, msg);
+        Utils.showMessage(getContext(), msg);
     }
 
 
@@ -991,7 +978,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         threadMessages = new ArrayList<>();
 
         threadBinding.rvHeader.setLayoutManager(mLayoutManager_thread_header);
-        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(this, this.channelResponse, Arrays.asList(thread_parentMessage), isThreadMode(), messageItemViewHolderName, messageItemLayoutId, null, null);
+        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, Arrays.asList(thread_parentMessage), isThreadMode(), messageItemViewHolderName, messageItemLayoutId, null, null);
         threadBinding.rvHeader.setAdapter(mThreadHeaderAdapter);
 
         if (message.getReplyCount() == 0) {
@@ -1019,7 +1006,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
                 isCallingThread = false;
             }, (String errMsg, int errCode) -> {
-                Utils.showMessage(ChatActivity.this, errMsg);
+                Utils.showMessage(getContext(), errMsg);
                 thread_parentMessage = null;
                 binding.setShowMainProgressbar(false);
                 isCallingThread = false;
@@ -1043,7 +1030,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             mLayoutManager_thread.scrollToPosition(threadMessages.size() - 1);
 
         threadBinding.rvThread.setLayoutManager(mLayoutManager_thread);
-        mThreadAdapter = new MessageListItemAdapter(this, this.channelResponse, threadMessages, isThreadMode(), messageItemViewHolderName, messageItemLayoutId, (View v) -> {
+        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, threadMessages, isThreadMode(), messageItemViewHolderName, messageItemLayoutId, (View v) -> {
             Object object = v.getTag();
             messageItemClickListener(object);
         }, (View v) -> {
@@ -1072,7 +1059,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         noHistoryThread = false;
         binding.rvMessage.clearOnScrollListeners();
         threadBinding.rvThread.clearOnScrollListeners();
-        Utils.hideSoftKeyboard(this);
+        Utils.hideSoftKeyboard(getActivity());
     }
     // endregion
 
@@ -1138,7 +1125,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
      */
 //    @Override
     public void handleEvent(final Event event) {
-        runOnUiThread(() -> {
+        getActivity().runOnUiThread(() -> {
             switch (event.getType()) {
                 case Event.health_check:
                     break;
@@ -1170,8 +1157,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 case Event.channel_deleted:
                     Global.eventFunction.handleChannelEvent(channelResponse, event);
                     if (event.getType().equals(Event.channel_deleted)) {
-                        Utils.showMessage(this, "Channel Owner just removed this channel!");
-                        finish();
+                        Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
+//                        finish();
                     }
                     break;
                 default:
@@ -1302,7 +1289,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 }
             }
             final int changedIndex = changedIndex_;
-            this.runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 scrollPosition = -1;
                 mViewModel.setChannelMessages(channelMessages);
                 mChannelMessageAdapter.notifyItemChanged(changedIndex);
@@ -1319,7 +1306,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                 }
             }
             final int changedIndex = changedIndex_;
-            this.runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 mThreadAdapter.notifyItemChanged(changedIndex);
             });
         }
@@ -1338,7 +1325,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             // Check Ephemeral Messages
             checkEphemeralMessages();
 
-            runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 setDeliverLastMessage();
                 configUIs();
                 if (isThreadMode())
@@ -1426,7 +1413,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
             }, (String errMsg, int errCode) -> {
 
-                Utils.showMessage(ChatActivity.this, errMsg);
+                Utils.showMessage(getContext(), errMsg);
                 isCalling = false;
                 binding.setShowLoadMoreProgressbar(false);
 
@@ -1455,7 +1442,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
 
                     }, (String errMsg, int errCode) -> {
 
-                        Utils.showMessage(ChatActivity.this, errMsg);
+                        Utils.showMessage(getContext(), errMsg);
                         isCalling = false;
                         binding.setShowMainProgressbar(false);
 
@@ -1480,13 +1467,11 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
         Global.mRestController.markRead(channel.getId(), request, (EventResponse response) -> {
 
         }, (String errMsg, int errCode) -> {
-            Utils.showMessage(ChatActivity.this, errMsg);
+            Utils.showMessage(getContext(), errMsg);
         });
     }
 
     // endregion
-
-    // region Permission
 
     /**
      * Permission check
@@ -1501,8 +1486,9 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
                     granted = false;
                     break;
                 }
-            if (!granted) PermissionChecker.showRationalDialog(this, null);
+            if (!granted) PermissionChecker.showRationalDialog(getContext(), this);
         }
     }
+
     // endregion
 }
