@@ -70,6 +70,7 @@ public class ChannelResponse {
         }
         return lastMessage;
     }
+
     public Message getOpponentLastMessage() {
         Message lastMessage = null;
         try {
@@ -87,6 +88,7 @@ public class ChannelResponse {
         }
         return lastMessage;
     }
+
     public User getLastReadUser() {
         if (this.reads == null || this.reads.isEmpty()) return null;
         User lastReadUser = null;
@@ -116,6 +118,7 @@ public class ChannelResponse {
         if (TextUtils.isEmpty(lastReadDate)) return unreadMessageCount;
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
+            if (!message.isIncoming()) continue;
             if (!TextUtils.isEmpty(message.getDeleted_at())) continue;
             if (!Global.readMessage(lastReadDate, message.getCreated_at()))
                 unreadMessageCount++;
