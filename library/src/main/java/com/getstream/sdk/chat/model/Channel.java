@@ -141,8 +141,13 @@ public class Channel {
     public Channel(String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
-        if (extraData == null) return;
-        this.extraData = new HashMap<>(extraData);
+
+        if (extraData == null) {
+            this.extraData = new HashMap<>();
+        } else {
+            this.extraData = new HashMap<>(extraData);
+        }
+
         // since name and image are very common fields, we are going to promote them as
         Object image = this.extraData.remove("image");
         if (image != null) {
