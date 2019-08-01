@@ -119,6 +119,7 @@ public class User {
     public User(String id, HashMap<String,Object> extraData) {
         this.id = id;
         this.online = false;
+        if (extraData == null) return;
         this.extraData = new HashMap<>(extraData);
 
         // since name and image are very common fields, we are going to promote them as
