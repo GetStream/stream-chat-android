@@ -15,8 +15,8 @@ public class Component{
 
     public Channel channel = new Channel();
     public User user = new User();
-    public MessageItemView messageItemView = new MessageItemView();
-    public ChannelPreview channelPreview = new ChannelPreview();
+    public Message message = new Message();
+
     /**
      * A class to customize Channels preview and Filtering & Ordering Channels
      */
@@ -30,36 +30,6 @@ public class Component{
 
         private FilterObject _filter;
         private Map<String, Object> sortOptions;
-        private ReadIndicator readIndicator = ReadIndicator.LAST_READ_USER;
-        /**
-         * Getter Method for show/hide of read indicator
-         * @return  True if readindicator is showing
-         */
-        public boolean isShowReadIndicator() {
-            return showReadIndicator;
-        }
-        /**
-         * Setter Method for Show/Hide last message read indicator
-         * @param showReadIndicator true : show, false : hide
-         */
-        public void setShowReadIndicator(boolean showReadIndicator) {
-            this.showReadIndicator = showReadIndicator;
-        }
-
-        /**
-         * Getter Method for type of read indicator
-         * @return  last message readIndicator type
-         */
-        public ReadIndicator getReadIndicator() {
-            return readIndicator;
-        }
-        /**
-         * Setter Method for type of read indicator
-         * @param readIndicator ReadIndicator for ReadIndicator type
-         */
-        public void setReadIndicatorType(ReadIndicator readIndicator) {
-            this.readIndicator = readIndicator;
-        }
 
         public boolean isInvitation() {
             return invitation;
@@ -87,6 +57,94 @@ public class Component{
         public void setSortOptions(Map<String, Object> sortOptions) {
             this.sortOptions = sortOptions;
         }
+
+
+        // Custom Channel Preview
+        private int channelItemLayoutId = R.layout.list_item_channel; // Default
+        private String channelItemViewHolderName = ChannelListItemViewHolder.class.getName(); // Default
+
+        /**
+         * Getter Method for Custom Channel Preview Layout
+         * @return  layout Id of Custom channel preview
+         */
+        public int getChannelItemLayoutId() {
+            return channelItemLayoutId;
+        }
+
+        /**
+         * Setter Method for Custom Channel Preview Layout
+         * @param channelItemLayoutId layout Id of Custom channel preview
+         */
+        public void setChannelItemLayoutId(int channelItemLayoutId) {
+            this.channelItemLayoutId = channelItemLayoutId;
+        }
+
+        /**
+         * Getter Method for Custom Channel Preview Item ViewHolder
+         * @return  class name of custom channel preview ItemViewHolder
+         */
+        public String getChannelItemViewHolderName() {
+            return channelItemViewHolderName;
+        }
+
+        /**
+         * Setter Method for Custom Channel Preview Item ViewHolder
+         * @param channelItemViewHolderName class name of custom channel preview ItemViewHolder
+         */
+        public void setChannelItemViewHolderName(String channelItemViewHolderName) {
+            this.channelItemViewHolderName = channelItemViewHolderName;
+        }
+
+        // Show/Hide Search bar
+        private boolean showSearchBar = false;
+
+        /**
+         * Getter Method for show/hide of Search Bar
+         * @return  true if Searchbar is showing
+         */
+        public boolean isShowSearchBar() {
+            return showSearchBar;
+        }
+
+        /**
+         * Setter Method for show/hide of Search Bar
+         * @param showSearchBar true : show, false : hide
+         */
+        public void setShowSearchBar(boolean showSearchBar) {
+            this.showSearchBar = showSearchBar;
+        }
+
+        private ReadIndicator readIndicator = ReadIndicator.LAST_READ_USER;
+        /**
+         * Getter Method for show/hide of read indicator
+         * @return  true if readindicator is showing
+         */
+        public boolean isShowReadIndicator() {
+            return showReadIndicator;
+        }
+        /**
+         * Setter Method for show/hide of read indicator
+         * @param showReadIndicator true : show, false : hide
+         */
+        public void setShowReadIndicator(boolean showReadIndicator) {
+            this.showReadIndicator = showReadIndicator;
+        }
+
+        /**
+         * Getter Method for type of read indicator
+         * @return  last message readIndicator type
+         */
+        public ReadIndicator getReadIndicator() {
+            return readIndicator;
+        }
+        /**
+         * Setter Method for type of read indicator
+         * @param readIndicator ReadIndicator for ReadIndicator type
+         */
+        public void setReadIndicatorType(ReadIndicator readIndicator) {
+            this.readIndicator = readIndicator;
+        }
+
     }
 
     /**
@@ -144,55 +202,42 @@ public class Component{
         }
     }
 
-    public class MessageItemView{
+    public class Message{
 
         private int messageItemLayoutId = R.layout.list_item_message; // Default
         private String messageItemViewHolderName = MessageListItemViewHolder.class.getName(); // Default
 
+        /**
+         * Getter Method for Custom Message Item View Layout
+         * @return  layout Id of custom message item view layout
+         */
         public int getMessageItemLayoutId() {
             return messageItemLayoutId;
         }
 
+        /**
+         * Setter Method for Custom Message Item View Layout
+         * @param messageItemLayoutId layout Id of custom message item view layout
+         */
         public void setMessageItemLayoutId(int messageItemLayoutId) {
             this.messageItemLayoutId = messageItemLayoutId;
         }
 
+        /**
+         * Getter Method for Custom Message Item ViewHolder
+         * @return  class name of custom message ItemViewHolder
+         */
         public String getMessageItemViewHolderName() {
             return messageItemViewHolderName;
         }
 
+        /**
+         * Setter Method for Custom Message Item ViewHolder
+         * @param messageItemViewHolderName class name of custom message ItemViewHolder
+         */
         public void setMessageItemViewHolderName(String messageItemViewHolderName) {
             this.messageItemViewHolderName = messageItemViewHolderName;
         }
     }
 
-    public class ChannelPreview{
-        private boolean showSearchBar = false;
-        private int channelItemLayoutId = R.layout.list_item_channel; // Default
-        private String channelItemViewHolderName = ChannelListItemViewHolder.class.getName(); // Default
-
-        public int getChannelItemLayoutId() {
-            return channelItemLayoutId;
-        }
-
-        public void setChannelItemLayoutId(int channelItemLayoutId) {
-            this.channelItemLayoutId = channelItemLayoutId;
-        }
-
-        public String getChannelItemViewHolderName() {
-            return channelItemViewHolderName;
-        }
-
-        public void setChannelItemViewHolderName(String channelItemViewHolderName) {
-            this.channelItemViewHolderName = channelItemViewHolderName;
-        }
-
-        public boolean isShowSearchBar() {
-            return showSearchBar;
-        }
-
-        public void setShowSearchBar(boolean showSearchBar) {
-            this.showSearchBar = showSearchBar;
-        }
-    }
 }

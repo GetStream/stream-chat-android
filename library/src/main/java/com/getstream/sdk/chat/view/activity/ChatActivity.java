@@ -338,8 +338,8 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
     }
 
     private void configCustomMessageItemView() {
-        messageItemLayoutId = Global.component.messageItemView.getMessageItemLayoutId();
-        messageItemViewHolderName = Global.component.messageItemView.getMessageItemViewHolderName();
+        messageItemLayoutId = Global.component.message.getMessageItemLayoutId();
+        messageItemViewHolderName = Global.component.message.getMessageItemViewHolderName();
     }
 
     private void configHeaderView() {

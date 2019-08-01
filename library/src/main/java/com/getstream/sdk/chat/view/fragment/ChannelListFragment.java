@@ -178,7 +178,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         configCustomChannelItemView();
 
-        binding.clHeader.setVisibility(Global.component.channelPreview.isShowSearchBar() ? View.VISIBLE : View.GONE);
+        binding.clHeader.setVisibility(Global.component.channel.isShowSearchBar() ? View.VISIBLE : View.GONE);
 
         configChannelListView();
         configChannelRecyclerView();
@@ -237,8 +237,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configCustomChannelItemView() {
-        channelItemLayoutId = Global.component.channelPreview.getChannelItemLayoutId();
-        channelItemViewHolderName = Global.component.channelPreview.getChannelItemViewHolderName();
+        channelItemLayoutId = Global.component.channel.getChannelItemLayoutId();
+        channelItemViewHolderName = Global.component.channel.getChannelItemViewHolderName();
     }
 
     private void setAfterFirstConnection() {
