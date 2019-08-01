@@ -15,6 +15,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +79,6 @@ import java.util.Set;
 
 import okio.ByteString;
 
-import static android.app.Activity.RESULT_OK;
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
 public class ChannelFragment extends Fragment implements WSResponseHandler {
@@ -135,6 +137,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             }
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -168,22 +171,21 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             }
         }
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
-                try {
-                    Object object = data.getExtras().get("data");
-                    if (object.getClass().equals(Bitmap.class)) {
-                        Bitmap bitmap = (Bitmap) object;
-                        Uri uri = Utils.getUriFromBitmap(getContext(), bitmap);
-                        sendFileFunction.progressCapturedMedia(getContext(), uri, true);
-                    }
-                } catch (Exception e) {
-                    Uri uri = data.getData();
-                    if (uri == null) return;
-                    sendFileFunction.progressCapturedMedia(getContext(), uri, false);
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
+            try {
+                Object object = data.getExtras().get("data");
+                if (object.getClass().equals(Bitmap.class)) {
+                    Bitmap bitmap = (Bitmap) object;
+                    Uri uri = Utils.getUriFromBitmap(getContext(), bitmap);
+                    sendFileFunction.progressCapturedMedia(getContext(), uri, true);
                 }
+            } catch (Exception e) {
+                Uri uri = data.getData();
+                if (uri == null) return;
+                sendFileFunction.progressCapturedMedia(getContext(), uri, false);
             }
         }
     }
@@ -198,6 +200,49 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         }
     }
 
+    private void onBackPressed() {
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                // Close if File Attach View is opened.
+                if (binding.clAddFile.getVisibility() == View.VISIBLE) {
+                    sendFileFunction.onClickAttachmentViewClose(null);
+                    return true;
+                }
+                // Close if Selecting Photo View is opened.
+                if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
+                    sendFileFunction.onClickSelectMediaViewClose(null);
+                    return true;
+                }
+                // Close if Thread View is opened.
+                if (isThreadMode()) {
+                    onClickCloseThread(null);
+                    return true;
+                }
+                // Cancel if editing message.
+                if (binding.etMessage.getTag() != null) {
+                    cancelEditMessage();
+                    return true;
+                }
+                if (!singleConversation) {
+                    finish();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        });
+    }
+
+    private void finish() {
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction trans = manager.beginTransaction();
+        trans.remove(this);
+        trans.commit();
+        manager.popBackStack();
+//                    getFragmentManager().popBackStack();
+    }
     //endregion
 
     // region Init
@@ -220,6 +265,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             return;
         }
         initReconnection();
+        onBackPressed();
     }
 
     private void initReconnection() {
@@ -389,7 +435,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         }
 
         binding.tvBack.setVisibility(singleConversation ? View.INVISIBLE : View.VISIBLE);
-//        binding.tvBack.setOnClickListener((View v) -> finish());
+        binding.tvBack.setOnClickListener((View v) -> finish());
     }
 
     private void configMessageInputView() {
@@ -1158,7 +1204,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     Global.eventFunction.handleChannelEvent(channelResponse, event);
                     if (event.getType().equals(Event.channel_deleted)) {
                         Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
-//                        finish();
+                        finish();
                     }
                     break;
                 default:

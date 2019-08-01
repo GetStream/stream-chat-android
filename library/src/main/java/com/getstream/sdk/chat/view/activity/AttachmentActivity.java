@@ -164,17 +164,14 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
         String[] array = url.split("v=");
         final String videoId = array[1];
-        youtube_player_view.initialize(new YouTubePlayerInitListener() {
-            @Override
-            public void onInitSuccess(final YouTubePlayer initializedYouTubePlayer) {
-                initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
-                    @Override
-                    public void onReady() {
-                        initializedYouTubePlayer.loadVideo(videoId, 0);
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
-            }
+        youtube_player_view.initialize((final YouTubePlayer initializedYouTubePlayer) -> {
+            initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
+                @Override
+                public void onReady() {
+                    initializedYouTubePlayer.loadVideo(videoId, 0);
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
         }, true);
     }
 
