@@ -177,7 +177,7 @@ public class AudioPlayer {
     /**
      * Retrieves the current left volume
      *
-     * @return the volume for the left setChannel
+     * @return the volume for the left setActiveChannel
      */
     @FloatRange(from = 0.0, to = 1.0)
     public float getVolumeLeft() {
@@ -187,7 +187,7 @@ public class AudioPlayer {
     /**
      * Retrieves the current right volume
      *
-     * @return the volume for the right setChannel
+     * @return the volume for the right setActiveChannel
      */
     @FloatRange(from = 0.0, to = 1.0)
     float getVolumeRight() {

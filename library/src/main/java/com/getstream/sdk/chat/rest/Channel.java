@@ -16,7 +16,7 @@ public class Channel {
         this.type = type;
         this.id = id;
         this.client = client;
-        retrofitClient = this.client.getRetrofitServiceFactory().create(ChannelRetrofit.class);
+//        retrofitClient = this.client.getRetrofitServiceFactory().create(ChannelRetrofit.class);
     }
 
     public Call<MessageResponse> sendMessage(Message message){

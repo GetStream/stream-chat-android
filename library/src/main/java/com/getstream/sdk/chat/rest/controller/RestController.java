@@ -43,13 +43,12 @@ public class RestController {
 
     public RestController() {
         mService = RetrofitClient.getAuthorizedClient().create(APIService.class);
-        Log.d(TAG, mService.toString());
     }
 
     // region Channel
     public void getChannels(@NonNull JSONObject payload, final GetChannelsCallback callback, final ErrCallback errCallback) {
 
-        mService.getChannels(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetChannelsResponse>() {
+        mService.getChannels(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), payload).enqueue(new Callback<GetChannelsResponse>() {
             @Override
             public void onResponse(Call<GetChannelsResponse> call, Response<GetChannelsResponse> response) {
                 if (response.isSuccessful()) {
@@ -68,7 +67,7 @@ public class RestController {
 
     public void channelDetailWithID(@NonNull String channelId, @NonNull ChannelDetailRequest channelDetailRequest, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
 
-        mService.chatDetail(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), channelDetailRequest).enqueue(new Callback<ChannelResponse>() {
+        mService.chatDetail(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), channelDetailRequest).enqueue(new Callback<ChannelResponse>() {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                 if (response.isSuccessful()) {
@@ -93,7 +92,7 @@ public class RestController {
      */
     public void deleteChannel(@NonNull String channelId, final ChannelDetailCallback callback, final ErrCallback errCallback) {
 
-        mService.deleteChannel(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<ChannelResponse>() {
+        mService.deleteChannel(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId()).enqueue(new Callback<ChannelResponse>() {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                 if (response.isSuccessful()) {
@@ -114,7 +113,7 @@ public class RestController {
 
     public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
 
-        mService.pagination(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<ChannelResponse>() {
+        mService.pagination(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), request).enqueue(new Callback<ChannelResponse>() {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                 if (response.isSuccessful()) {
@@ -143,7 +142,7 @@ public class RestController {
      */
     public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
-        mService.sendMessage(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), sendMessageRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendMessage(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -174,7 +173,7 @@ public class RestController {
         mService.updateMessage(messageId,
                 Global.streamChat.getApiKey(),
                 Global.streamChat.getUser().getId(),
-                Global.streamChat.getClientID(),
+                Global.streamChat.getConnectionId(),
                 request).enqueue(new Callback<MessageResponse>() {
 
             @Override
@@ -201,7 +200,7 @@ public class RestController {
      */
     public void deleteMessage(@NonNull String messageId, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
-        mService.deleteMessage(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<MessageResponse>() {
+        mService.deleteMessage(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId()).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -225,7 +224,7 @@ public class RestController {
      */
     public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
 
-        mService.readMark(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), readRequest).enqueue(new Callback<EventResponse>() {
+        mService.readMark(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 if (response.isSuccessful()) {
@@ -254,7 +253,7 @@ public class RestController {
      */
     public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback, final ErrCallback errCallback) {
         if (TextUtils.isEmpty(firstId)) {
-            mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getReplies(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     if (response.isSuccessful()) {
@@ -270,7 +269,7 @@ public class RestController {
                 }
             });
         } else {
-            mService.getRepliesMore(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getRepliesMore(parentId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     if (response.isSuccessful()) {
@@ -302,7 +301,7 @@ public class RestController {
      */
     public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
-        mService.sendReaction(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), reactionRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendReaction(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -329,7 +328,7 @@ public class RestController {
      */
     public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
 
-        mService.deleteReaction(messageId, reactionType, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<MessageResponse>() {
+        mService.deleteReaction(messageId, reactionType, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId()).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -358,7 +357,7 @@ public class RestController {
      */
     public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, final EventCallback callback, final ErrCallback errCallback) {
 
-        mService.sendEvent(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), eventRequest).enqueue(new Callback<EventResponse>() {
+        mService.sendEvent(channelId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 if (response.isSuccessful()) {
@@ -380,7 +379,7 @@ public class RestController {
     // region File
     public void sendImage(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
 
-        mService.sendImage(channelId, part, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<FileSendResponse>() {
+        mService.sendImage(channelId, part, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId()).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 if (response.isSuccessful()) {
@@ -400,7 +399,7 @@ public class RestController {
 
     public void sendFile(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
 
-        mService.sendFile(channelId, part, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID()).enqueue(new Callback<FileSendResponse>() {
+        mService.sendFile(channelId, part, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId()).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 if (response.isSuccessful()) {
@@ -421,7 +420,7 @@ public class RestController {
     // endregion
     public void sendAction(@NonNull String messageId, SendActionRequest request, final SendMessageCallback callback, final ErrCallback errCallback) {
 
-        mService.sendAction(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<MessageResponse>() {
+        mService.sendAction(messageId, Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), request).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
@@ -442,7 +441,7 @@ public class RestController {
     // region User
     public void getUsers(@NonNull JSONObject payload, final GetUsersCallback callback, final ErrCallback errCallback) {
 
-        mService.getUsers(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetUsersResponse>() {
+        mService.getUsers(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), payload).enqueue(new Callback<GetUsersResponse>() {
             @Override
             public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
                 if (response.isSuccessful()) {
@@ -464,7 +463,7 @@ public class RestController {
 
     public void addDevice(final AddDeviceRequest request, final AddDeviceCallback callback, final ErrCallback errCallback) {
 
-        mService.addDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), request).enqueue(new Callback<AddDevicesResponse>() {
+        mService.addDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), request).enqueue(new Callback<AddDevicesResponse>() {
             @Override
             public void onResponse(Call<AddDevicesResponse> call, Response<AddDevicesResponse> response) {
                 callback.onSuccess(response.body());
@@ -478,7 +477,7 @@ public class RestController {
     }
 
     public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback, final ErrCallback errCallback) {
-        mService.getDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getClientID(), payload).enqueue(new Callback<GetDevicesResponse>() {
+        mService.getDevices(Global.streamChat.getApiKey(), Global.streamChat.getUser().getId(), Global.streamChat.getConnectionId(), payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
                 if (response.isSuccessful()) {

@@ -116,7 +116,7 @@ public class ChatActivity extends AppCompatActivity implements WSResponseHandler
             setDeliverLastMessage();
             configUIs();
         } else {
-            if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
+            if (TextUtils.isEmpty(Global.streamChat.getConnectionId())) {
                 binding.setShowMainProgressbar(true);
             } else {
                 getChannel(Global.streamChat.getChannel());

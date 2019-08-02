@@ -3,6 +3,8 @@ package com.getstream.sdk.chat.rest;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QueryOptions;
 import com.getstream.sdk.chat.enums.QuerySort;
+import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.controller.ClientRetrofit;
 import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -14,13 +16,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.ByteString;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Client {
     private ClientRetrofit retrofitClient;
-    protected Retrofit RetrofitServiceFactory;
+
 
     public String getApiKey() {
         return ApiKey;
@@ -34,7 +37,7 @@ public class Client {
 
     public Client(String ApiKey){
         this.ApiKey = ApiKey;
-        this.retrofitClient = this.getRetrofitServiceFactory().create(ClientRetrofit.class);
+
     }
 
     public void setUser(User user, String token){}
@@ -88,37 +91,4 @@ public class Client {
 
     public void getMessage(){}
 
-    public Retrofit getRetrofitServiceFactory() {
-        if (RetrofitServiceFactory != null) {
-            return RetrofitServiceFactory;
-        }
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .addInterceptor(loggingInterceptor)
-                .addInterceptor(chain -> {
-                    Request request = chain.request()
-                            .newBuilder()
-                            .addHeader("Authorization", Global.streamChat.getUserToken())
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("stream-auth-type", "jwt")
-                            .addHeader("Accept-Encoding", "application/gzip")
-                            .build();
-                    Response response = chain.proceed(request);
-                    return response;
-                })
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(this.BaseURL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit;
-    }
 }

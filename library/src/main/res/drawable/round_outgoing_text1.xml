@@ -5,7 +5,7 @@
     <solid android:color="@color/message_background_outgoing" />
     <stroke
         android:width="@dimen/message_stroke_width"
-        android:color="@color/mesage_border" />
+        android:color="@color/message_border" />
     <corners
         android:bottomLeftRadius="@dimen/message_corner_radius1"
         android:bottomRightRadius="@dimen/message_corner_radius2"

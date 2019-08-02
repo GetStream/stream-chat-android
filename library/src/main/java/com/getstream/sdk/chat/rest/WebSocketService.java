@@ -33,14 +33,14 @@ public class WebSocketService extends WebSocketListener {
 
     private List<WSResponseHandler> webSocketListeners;
     private String wsURL;
-    private OkHttpClient client;
+    private OkHttpClient httpClient;
     private Request request;
     private EchoWebSocketListener listener;
     private WebSocket webSocket;
+    private String connectionId;
     private Context context;
 
-    public void setWSResponseHandler(WSResponseHandler responseHandler, Context context) {
-        if (this.context == null) this.context = context;
+    public void setWSResponseHandler(WSResponseHandler responseHandler) {
         if (this.webSocketListeners == null) this.webSocketListeners = new ArrayList<>();
         if (!this.webSocketListeners.contains(responseHandler)) {
             this.webSocketListeners.add(responseHandler);
@@ -56,7 +56,7 @@ public class WebSocketService extends WebSocketListener {
         }
     }
 
-    private void setBroadCast(){
+    private void setBroadCast() {
         if (filter != null) return;
 
         filter = new IntentFilter();
@@ -65,6 +65,7 @@ public class WebSocketService extends WebSocketListener {
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         this.context.registerReceiver(receiver, filter);
     }
+
     IntentFilter filter;
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -75,7 +76,7 @@ public class WebSocketService extends WebSocketListener {
                     if (webSocketListeners == null || Global.noConnection) return;
 
                     Global.noConnection = true;
-                    for (WSResponseHandler webSocketListener : webSocketListeners){
+                    for (WSResponseHandler webSocketListener : webSocketListeners) {
                         webSocketListener.onFailed(Constant.NO_INTERNET, Constant.NO_INTERNET_ERROR_CODE);
                     }
                     Log.d(TAG, "Connection Off");
@@ -88,14 +89,15 @@ public class WebSocketService extends WebSocketListener {
             }
         }
     };
+
     public void connect() {
-        Global.streamChat.setClientID(null);
-        client = new OkHttpClient();
-        request = new Request.Builder().url(this.wsURL).build();
-        listener = new EchoWebSocketListener();
-        webSocket = client.newWebSocket(request, listener);
+        this.connectionId = null;
+        this.httpClient = new OkHttpClient();
+        this.request = new Request.Builder().url(this.wsURL).build();
+        this.listener = new EchoWebSocketListener();
+        this.webSocket = httpClient.newWebSocket(request, listener);
+        this.httpClient.dispatcher().executorService().shutdown();
         Log.d(TAG, "WebSocket Connecting...");
-        client.dispatcher().executorService().shutdown();
     }
 
     public void setWsURL(String wsURL) {
@@ -129,6 +131,7 @@ public class WebSocketService extends WebSocketListener {
         mHandler.removeCallbacks(mHealthChecker);
     }
 
+
     private class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
 
@@ -136,7 +139,6 @@ public class WebSocketService extends WebSocketListener {
         public void onOpen(WebSocket webSocket, Response response) {
             Log.d(TAG, "WebSocket Connected : " + response);
             Global.noConnection = false;
-//            stopRepeatingTask();
             startRepeatingTask();
         }
 
@@ -154,24 +156,10 @@ public class WebSocketService extends WebSocketListener {
             Event event = Parser.parseEvent(json);
             if (event == null) return;
 
-            if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
-                Global.noConnection = false;
-                if (!TextUtils.isEmpty(event.getConnection_id())) {
-                    String connectionId = event.getConnection_id();
+            if (webSocketListeners == null) return;
+            for (WSResponseHandler webSocketListener : webSocketListeners)
+                webSocketListener.handleEventWSResponse(event);
 
-                    if (event.getMe() != null)
-                        Global.streamChat.setUser(event.getMe());
-
-                    Global.streamChat.setClientID(connectionId);
-                    if (webSocketListeners == null) return;
-                    for (WSResponseHandler webSocketListener : webSocketListeners)
-                        webSocketListener.handleConnection();
-                }
-            } else {
-                if (webSocketListeners == null) return;
-                for (WSResponseHandler webSocketListener : webSocketListeners)
-                    webSocketListener.handleEventWSResponse(event);
-            }
         }
 
         @Override
@@ -198,10 +186,10 @@ public class WebSocketService extends WebSocketListener {
 
             clearWSClient();
             if (webSocketListeners == null) return;
-            for (WSResponseHandler webSocketListener : webSocketListeners){
-                if (t != null){
+            for (WSResponseHandler webSocketListener : webSocketListeners) {
+                if (t != null) {
                     webSocketListener.onFailed(t.getMessage(), t.hashCode());
-                }else{
+                } else {
                     webSocketListener.onFailed("Unknown", Constant.NO_INTERNET_ERROR_CODE);
                 }
             }
@@ -211,10 +199,10 @@ public class WebSocketService extends WebSocketListener {
 
     public void clearWSClient() {
         try {
-            client.dispatcher().cancelAll();
+            httpClient.dispatcher().cancelAll();
         } catch (Exception e) {
         }
         Global.noConnection = true;
-        Global.streamChat.setClientID(null);
+        this.connectionId = null;
     }
 }

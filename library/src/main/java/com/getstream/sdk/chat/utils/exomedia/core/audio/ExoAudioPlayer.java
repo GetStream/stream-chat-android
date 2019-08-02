@@ -115,7 +115,7 @@ public class ExoAudioPlayer implements AudioPlayerApi {
 
     @Override
     public void setVolume(@FloatRange(from = 0.0, to = 1.0) float left, @FloatRange(from = 0.0, to = 1.0) float right) {
-        //Averages the volume since the ExoPlayer only takes a single setChannel
+        //Averages the volume since the ExoPlayer only takes a single setActiveChannel
         exoMediaPlayer.setVolume((left + right) / 2);
     }
 

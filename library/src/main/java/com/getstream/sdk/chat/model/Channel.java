@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.model;
 
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;

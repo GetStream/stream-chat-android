@@ -24,7 +24,7 @@
     <color name="message_background_outgoing">#0D000000</color>
     <color name="message_text_incoming">#000000</color>
     <color name="message_text_outgoing">#000000</color>
-    <color name="mesage_border">#14000000</color>
+    <color name="message_border">#14000000</color>
     <color name="message_failed">#1AD0021B</color>
     <color name="user_intials_background">#CCCCA4D6</color>
     <!--Reaction-->

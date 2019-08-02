@@ -49,6 +49,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
@@ -83,8 +84,9 @@ import static com.getstream.sdk.chat.utils.Utils.TAG;
 
 public class ChannelFragment extends Fragment implements WSResponseHandler {
 
-    private ChannelViewModel mViewModel;
+    public StreamChat client;
     // ViewModel & Binding
+    private ChannelViewModel mViewModel;
     private ChannelFragmentBinding binding;
     private ViewThreadBinding threadBinding;
     // Arguments for Channel
@@ -130,10 +132,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             setDeliverLastMessage();
             configUIs();
         } else {
-            if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
+            if (TextUtils.isEmpty(client.connectionId)) {
                 binding.setShowMainProgressbar(true);
             } else {
-                getChannel(Global.streamChat.getChannel());
+                getChannel(client.getActiveChannel());
             }
         }
     }
@@ -144,6 +146,8 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
 
         if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
         Global.eventFunction.setChannel(this.channel);
+
+
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
 
@@ -259,7 +263,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
 
         threadBinding = binding.clThread;
         if (channelResponse == null && channelIdFromChannelList != null)
-            channelResponse = Global.getChannelResponseById(channelIdFromChannelList);
+            channelResponse = client.getChannelResponseById(channelIdFromChannelList);
         else {
             return;
         }
@@ -320,7 +324,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
-            Global.addChannelResponse(response);
+            client.addChannelResponse(response);
             channelResponse = response;
             initReconnection();
             setDeliverLastMessage();
@@ -390,7 +394,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = Global.getOpponentUser(channelResponse);
+            User opponent = client.getOpponentUser(channelResponse);
             if (opponent != null) {
                 binding.tvChannelInitial.setText(opponent.getUserInitials());
                 Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
@@ -699,7 +703,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
 
     public void progressSendMessage(Message message, String resendMessageId) {
         if (resendMessageId != null) {
-            Global.removeEphemeralMessage(channel.getId(), resendMessageId);
+            client.removeEphemeralMessage(channel.getId(), resendMessageId);
             initSendMessage();
         } else {
             if (Global.isCommandMessage(message) ||
@@ -737,11 +741,11 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
         message.setCreated_at(Global.convertDateToString(new Date()));
         Global.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(Global.streamChat.getUser());
+        message.setUser(client.user);
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
-            Global.setEphemeralMessage(channel.getId(), message);
+            client.setEphemeralMessage(channel.getId(), message);
         return message;
     }
 
@@ -869,7 +873,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     }
 
     private void showAlertReadUsers(Message message) {
-        List<User> readUsers = Global.getReadUsers(channelResponse, message);
+        List<User> readUsers = client.getReadUsers(channelResponse, message);
         if (readUsers == null) return;
         String msg = "";
         if (readUsers.size() > 0) {
@@ -1037,7 +1041,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
 
-                List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+                List<Message> ephemeralThreadMessages = client.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
                 if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
                     for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
                         threadMessages.add(ephemeralThreadMessages.get(i));
@@ -1241,7 +1245,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     message.setDelivered(true);
 
                 messages().remove(ephemeralMessage);
-                Global.eventFunction.newMessage(channelResponse, message);
+                client.newMessage(channelResponse, message);
 
                 if (message.isIncoming() && !isShowLastMessage) {
                     scrollPosition = -1;
@@ -1364,7 +1368,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                 return;
 
             Log.d(TAG, "Reconnection!");
-            channelResponse = Global.getChannelResponseById(channel.getId());
+            channelResponse = client.getChannelResponseById(channel.getId());
             Global.setStartDay(channelResponse.getMessages(), null);
             initReconnection();
             // Check Ephemeral Messages
@@ -1385,7 +1389,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     private void footerEvent(Event event) {
         User user = event.getUser();
         if (user == null) return;
-        if (user.getId().equals(Global.streamChat.getUser().getId())) return;
+        if (user.getId().equals(client.user.getId())) return;
 
         switch (event.getType()) {
             case Event.typing_start:
@@ -1420,7 +1424,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     }
 
     private void messageReadEvent(Event event) {
-        Global.eventFunction.readMessage(channelResponse, event);
+        client.readMessage(channelResponse, event);
         if (!channelResponse.getLastMessage().isIncoming()) {
             mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
         }
@@ -1501,7 +1505,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
 
     private void checkReadMark() {
         if (channelResponse.getLastMessage() == null) return;
-        if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
+        if (!client.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
                 channelResponse.getLastMessage().getCreated_at())) {
             messageReadMark();
         }

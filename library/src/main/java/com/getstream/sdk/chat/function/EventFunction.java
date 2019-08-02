@@ -152,7 +152,7 @@ public class EventFunction {
                 handleInvite(channelResponse, event);
                 break;
             case Event.notification_added_to_channel:
-                Global.addChannelResponse(channelResponse);
+//                Global.addChannelResponse(channelResponse);
                 break;
             case Event.channel_updated:
             case Event.channel_deleted:
@@ -233,7 +233,7 @@ public class EventFunction {
     public void handleChannelEvent(ChannelResponse channelResponse, Event event) {
         switch (event.getType()) {
             case Event.channel_deleted:
-                Global.deleteChannelResponse(channelResponse);
+//                Global.deleteChannelResponse(channelResponse);
                 break;
             case Event.channel_updated:
                 break;

@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.function.EventFunction;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
@@ -42,20 +43,17 @@ public class Global {
 
     private static final String TAG = Global.class.getSimpleName();
 
-    public static StreamChat streamChat;
     public static BaseURL baseURL = new BaseURL(Location.US_EAST);
     public static RestController mRestController = new RestController();
     public static SelectAttachmentModel selectAttachmentModel;
 
-    public static WebSocketService webSocketService = new WebSocketService();
-    public static EventFunction eventFunction;
+//    public static EventFunction eventFunction;
 
     public static Component component = new Component();
     public static boolean noConnection = false;
 
-    public static List<ChannelResponse> channels = new ArrayList<>();
+//    public static List<ChannelResponse> channels = new ArrayList<>();
     public static List<User> typingUsers = new ArrayList<>();
-    public static Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
 
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
@@ -76,8 +74,8 @@ public class Global {
         }
     }
 
-    private static final Locale locale = new Locale("en", "US", "POSIX");
-    private static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
+    public static final Locale locale = new Locale("en", "US", "POSIX");
+    public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
@@ -122,54 +120,11 @@ public class Global {
         message.setCreated(dateFormat2.format(date));
     }
 
-    public static boolean readMessage(String lastReadMessageDate, String channelLastMesage) {
-        if (lastReadMessageDate == null) return true;
-
-        messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Date dateUserRead, dateChannelMessage;
-
-        try {
-            dateUserRead = messageDateFormat.parse(lastReadMessageDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            dateChannelMessage = messageDateFormat.parse(channelLastMesage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (dateUserRead.equals(dateChannelMessage) || dateUserRead.after(dateChannelMessage)) {
-            return true;
-        }
-        return false;
-    }
 
     public static String convertDateToString(Date date) {
         messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         String timeStr = messageDateFormat.format(date);
         return timeStr;
-    }
-
-    public static void sortUserReads(List<ChannelUserRead> reads) {
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> {
-            return o1.getLast_read().compareTo(o2.getLast_read());
-        });
-    }
-
-    public static List<User> getReadUsers(ChannelResponse response, Message message) {
-        if (response.getReads() == null || response.getReads().isEmpty()) return null;
-        List<User> users = new ArrayList<>();
-
-        for (int i = response.getReads().size() - 1; i >= 0; i--) {
-            ChannelUserRead read = response.getReads().get(i);
-            if (readMessage(read.getLast_read(), message.getCreated_at())) {
-                if (!users.contains(read.getUser()) && !read.getUser().getId().equals(streamChat.getUser().getId()))
-                    users.add(read.getUser());
-            }
-        }
-        return users;
     }
 
     public static boolean isCommandMessage(Message message) {
@@ -216,140 +171,6 @@ public class Global {
         return elapsed;
     }
     // endregion
-
-    // region Channel
-    public static ChannelResponse getChannelResponseById(String id) {
-        ChannelResponse response_ = null;
-        for (ChannelResponse response : channels) {
-            if (id.equals(response.getChannel().getId())) {
-                response_ = response;
-                break;
-            }
-        }
-        return response_;
-    }
-
-    public static ChannelResponse getPrivateChannel(User user) {
-        String channelId1 = streamChat.getUser().getId() + "-" + user.getId(); // Created by
-        String channelId2 = user.getId() + "-" + streamChat.getUser().getId(); // Invited by
-        ChannelResponse channelResponse = null;
-        for (ChannelResponse response : channels) {
-            if (response.getChannel().getId().equals(channelId1) || response.getChannel().getId().equals(channelId2)) {
-                channelResponse = response;
-                break;
-            }
-        }
-        return channelResponse;
-    }
-
-    public static void addChannelResponse(ChannelResponse response) {
-        boolean isContain = false;
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
-                channels.remove(response1);
-                channels.add(response);
-                isContain = true;
-                Log.d(TAG, "Contain channel:" + response.getChannel().getId());
-                break;
-            }
-        }
-        if (!isContain)
-            channels.add(response);
-    }
-
-    public static void deleteChannelResponse(ChannelResponse response) {
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
-                channels.remove(response1);
-                break;
-            }
-        }
-    }
-
-    public static User getOpponentUser(ChannelResponse channelResponse) {
-        if (channelResponse.getMembers() == null || channelResponse.getMembers().isEmpty())
-            return null;
-        if (channelResponse.getMembers().size() > 2) return null;
-        User opponent = null;
-        try {
-            for (Member member : channelResponse.getMembers()) {
-                if (!member.getUser().getId().equals(streamChat.getUser().getId())) {
-                    opponent = member.getUser();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return opponent;
-    }
-
-    // endregion
-
-    // region Message
-
-    public static void setEphemeralMessage(String channelId, Message message) {
-        List<Message> messages = ephemeralMessage.get(channelId);
-        if (messages == null) messages = new ArrayList<>();
-
-        boolean isContain = false;
-        for (Message message1 : messages) {
-            if (message1.getId().equals(message.getId())) {
-                messages.remove(message1);
-                isContain = true;
-                break;
-            }
-        }
-        if (!isContain)
-            messages.add(message);
-
-        ephemeralMessage.put(channelId, messages);
-    }
-
-    public static List<Message> getEphemeralMessages(String channelId, String parentId) {
-        List<Message> ephemeralMessages = ephemeralMessage.get(channelId);
-        if (ephemeralMessages == null) return null;
-
-        List<Message> messages = new ArrayList<>();
-        if (parentId == null) {
-            for (Message message : ephemeralMessages) {
-                if (message.getParent_id() == null)
-                    messages.add(message);
-            }
-        } else {
-            for (Message message : ephemeralMessages) {
-                if (message.getParent_id() == null) continue;
-                if (message.getParent_id().equals(parentId))
-                    messages.add(message);
-            }
-        }
-        return messages;
-    }
-
-    public static void removeEphemeralMessage(String channelId, String messageId) {
-        Log.d(TAG, "remove MessageId: " + messageId);
-        List<Message> messages = ephemeralMessage.get(channelId);
-        for (Message message : messages) {
-            if (message.getId().equals(messageId)) {
-                Log.d(TAG, "Message Removed!");
-                messages.remove(message);
-                break;
-            }
-        }
-    }
-
-    public static String getMentionedText(Message message) {
-        if (message == null) return null;
-        String text = message.getText();
-        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
-            for (User mentionedUser : message.getMentionedUsers()) {
-                String userName = mentionedUser.getName();
-                text = text.replace("@" + userName, "**" + "@" + userName + "**");
-            }
-        }
-        return text;
-    }
-
-    // entregion
 
     // region Attachment
     public static List<Attachment> attachments = new ArrayList<>();

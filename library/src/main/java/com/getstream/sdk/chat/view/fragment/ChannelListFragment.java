@@ -36,6 +36,7 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
@@ -83,6 +84,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     private int channelItemLayoutId;
     private String channelItemViewHolderName;
 
+    public StreamChat client;
+
     // region LifeCycle
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -125,7 +128,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    navigationChannelFragment(Global.getChannelResponseById(channelId));
+                    navigationChannelFragment(client.getChannelResponseById(channelId));
                 }
             } catch (Exception e) {
             }
@@ -147,7 +150,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     // region Private Functions
     private void init() {
         Global.webSocketService.setWSResponseHandler(this, getContext());
-        Global.channels = new ArrayList<>();
+        client.channels = new ArrayList<>();
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
@@ -222,7 +225,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 if (mLastFirstVisibleItem < firstVisibleItem) {
-                    if (currentLastVisible == Global.channels.size() - 1)
+                    if (currentLastVisible == client.channels.size() - 1)
                         getChannels();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
@@ -240,7 +243,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     private void setAfterFirstConnection() {
         // Initialize Channels
-        Global.channels = new ArrayList<>();
+        client.channels = new ArrayList<>();
 
         initLoadingChannels();
         getChannels();
@@ -265,7 +268,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
      * Getting channels
      */
     public void getChannels() {
-        if (TextUtils.isEmpty(Global.streamChat.getClientID())) return;
+        if (TextUtils.isEmpty(client.connectionId)) return;
         Log.d(TAG, "getChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
@@ -285,13 +288,13 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding.setShowMainProgressbar(false);
         isCalling = false;
         if (response.getChannels() == null || response.getChannels().isEmpty()) {
-            if (Global.channels == null || Global.channels.isEmpty())
+            if (client.channels == null || client.channels.isEmpty())
                 Utils.showMessage(getContext(), "There is no any active Channel(s)!");
             return;
         }
 
-        if (Global.channels == null) Global.channels = new ArrayList<>();
-        if (Global.channels.isEmpty()) {
+        if (client.channels == null) client.channels = new ArrayList<>();
+        if (client.channels.isEmpty()) {
             configChannelListView();
             binding.setNoConnection(false);
             Intent broadcast = new Intent();
@@ -302,7 +305,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         for (int i = 0; i < response.getChannels().size(); i++) {
             ChannelResponse channelResponse = response.getChannels().get(i);
-            Global.channels.add(channelResponse);
+            client.channels.add(channelResponse);
         }
 
         adapter.notifyDataSetChanged();
@@ -324,7 +327,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
-            Global.addChannelResponse(response);
+            client.addChannelResponse(response);
 
             if (getActivity() != null)
                 getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
@@ -358,8 +361,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         }
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
-        if (Global.channels.size() > 0)
-            payload.put("offset", Global.channels.size());
+        if (client.channels.size() > 0)
+            payload.put("offset", client.channels.size());
         payload.put("limit", Constant.CHANNEL_LIMIT);
         payload.put("presence", false);
         payload.put("state", true);
@@ -369,9 +372,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), Global.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
+        adapter = new ChannelListItemAdapter(getContext(), client.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
-            ChannelResponse response = Global.getChannelResponseById(channelId);
+            ChannelResponse response = client.getChannelResponseById(channelId);
             getActivity().runOnUiThread(() -> navigationChannelFragment(response));
         }, (View view) -> {
             String channelId = view.getTag().toString();
@@ -385,10 +388,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    ChannelResponse response_ = Global.getChannelResponseById(channelId);
+                    ChannelResponse response_ = client.getChannelResponseById(channelId);
                     Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
                         Utils.showMessage(getContext(), "Deleted successfully!");
-                        Global.channels.remove(response_);
+                        client.channels.remove(response_);
                         adapter.notifyDataSetChanged();
                     }, (String errMsg, int errCode) -> {
                         Utils.showMessage(getContext(), errMsg);
