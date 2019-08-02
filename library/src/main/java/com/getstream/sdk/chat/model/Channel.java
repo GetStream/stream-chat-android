@@ -119,6 +119,18 @@ public class Channel {
      *
      * @param type      Channel type
      * @param id        Channel id
+     */
+    public Channel(String type, String id) {
+        this.type = type;
+        this.id = id;
+        this.extraData = new HashMap<>();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param type      Channel type
+     * @param id        Channel id
      * @param extraData Custom channel fields
      */
     public Channel(String type, String id, HashMap<String, Object> extraData) {

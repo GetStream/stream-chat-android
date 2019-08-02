@@ -112,6 +112,16 @@ public class User {
     }
 
     /**
+     * Constructor
+     * @param id User id
+     * */
+    public User(String id) {
+        this.id = id;
+        this.online = false;
+        this.extraData = new HashMap<>();
+    }
+
+    /**
     * Constructor
     * @param id User id
     * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
