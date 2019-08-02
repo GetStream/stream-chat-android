@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.ActivityChatBinding;
+import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
@@ -53,10 +54,10 @@ public class SendFileFunction {
     List<Object> commands = null;
 
     Activity activity;
-    ActivityChatBinding binding;
+    ChannelFragmentBinding binding;
     ChannelResponse channelResponse;
 
-    public SendFileFunction(Activity activity, ActivityChatBinding binding, ChannelResponse channelResponse) {
+    public SendFileFunction(Activity activity, ChannelFragmentBinding binding, ChannelResponse channelResponse) {
         this.activity = activity;
         this.binding = binding;
         this.channelResponse = channelResponse;

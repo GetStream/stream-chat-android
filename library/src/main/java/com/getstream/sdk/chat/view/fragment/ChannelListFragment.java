@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +45,6 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.view.activity.ChatActivity;
 import com.getstream.sdk.chat.view.activity.UsersActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.gms.tasks.Task;
@@ -122,13 +123,12 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data); comment this unless you want to pass your result to the activity.
         if (requestCode == Constant.USERSLISTACTIVITY_REQUEST) {
             try {
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    navigationChannelDetail(Global.getChannelResponseById(channelId));
+                    navigationChannelFragment(Global.getChannelResponseById(channelId));
                 }
             } catch (Exception e) {
             }
@@ -312,7 +312,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
     }
 
-    private void getChannel(Channel channel, boolean goChat) {
+    private void getChannel(Channel channel) {
         Log.d(TAG, "Channel Connecting...");
         binding.setShowMainProgressbar(true);
         channel.setType(ModelType.channel_messaging);
@@ -328,12 +328,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             if (!response.getMessages().isEmpty())
                 Global.setStartDay(response.getMessages(), null);
             Global.addChannelResponse(response);
-            if (goChat) {
-                navigationChannelDetail(response);
-            } else {
-                if (getActivity() != null)
-                    getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
-            }
+
+            if (getActivity() != null)
+                getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+
             Gson gson = new Gson();
             Log.d(TAG, "Channel Response: " + gson.toJson(response));
 
@@ -377,7 +375,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         adapter = new ChannelListItemAdapter(getContext(), Global.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
             ChannelResponse response = Global.getChannelResponseById(channelId);
-            navigationChannelDetail(response);
+            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -408,12 +406,14 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         binding.listChannels.setAdapter(adapter);
     }
 
-    private void navigationChannelDetail(ChannelResponse response) {
-        binding.setShowMainProgressbar(false);
-        Global.setStartDay(response.getMessages(), null);
-        Intent intent = new Intent(getContext(), ChatActivity.class);
-        intent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());
-        getActivity().startActivity(intent);
+    private void navigationChannelFragment(ChannelResponse response) {
+        ChannelFragment fragment = new ChannelFragment();
+        fragment.channelIdFromChannelList = response.getChannel().getId();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(containerResId, fragment);
+        fragmentTransaction.addToBackStack("OK");
+        fragmentTransaction.commit();
     }
 
     private void navigateUserList() {
@@ -478,7 +478,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 break;
             case Event.notification_added_to_channel:
                 Channel channel_ = event.getChannel();
-                getChannel(channel_, false);
+                getChannel(channel_);
                 break;
             default:
                 break;

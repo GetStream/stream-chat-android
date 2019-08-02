@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.text.TextUtils;
 import android.view.View;
@@ -81,7 +82,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
             view.setTag(channelResponse.getChannel().getId());
+
             tv_click.setBackgroundColor(context.getResources().getColor(R.color.mesage_border));
+            new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
             this.clickListener.onClick(view);
         });
 
