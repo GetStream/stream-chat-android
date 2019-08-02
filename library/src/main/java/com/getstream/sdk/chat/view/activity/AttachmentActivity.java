@@ -21,7 +21,6 @@ import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerInitListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 
 import java.util.List;
@@ -37,6 +36,7 @@ public class AttachmentActivity extends AppCompatActivity {
     ImageView iv_image;
     ProgressBar progressBar;
 
+    private final String YouTube = "YouTube";
 
     int index;
     List<Attachment> attachments;
@@ -120,7 +120,11 @@ public class AttachmentActivity extends AppCompatActivity {
 
         switch (type) {
             case ModelType.attach_video:
-                playYoutube(url);
+                if(attachment.getAuthor().toLowerCase().equals("youtube")){
+                    playYoutube(url);
+                }else{
+                    loadUrlToWeb(attachment.getAssetURL());
+                }
                 break;
             case ModelType.attach_giphy:
                 showGiphy(url);
