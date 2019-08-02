@@ -108,11 +108,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     @Override
     public void onResume() {
         super.onResume();
-        try {
+        if (adapter != null)
             adapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -410,6 +407,10 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         ChannelFragment fragment = new ChannelFragment();
         fragment.channelIdFromChannelList = response.getChannel().getId();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(() -> {
+            if (adapter != null)
+                adapter.notifyDataSetChanged();
+        });
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(containerResId, fragment);
         fragmentTransaction.addToBackStack("OK");
@@ -529,6 +530,5 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             if (!granted) PermissionChecker.showRationalDialog(getContext(), this);
         }
     }
-
     // endregion
 }

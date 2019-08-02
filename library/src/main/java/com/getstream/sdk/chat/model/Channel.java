@@ -13,39 +13,22 @@ import java.util.Map;
  */
 public class Channel {
     @SerializedName("id")
-    @Expose
     private String id;
-
     @SerializedName("cid")
-    @Expose
     private String cid;
-
     @SerializedName("type")
-    @Expose
     private String type;
-
     @SerializedName("last_message_at")
-    @Expose
     private String lastMessageDate;
-
     @SerializedName("created_by")
-    @Expose
     private User createdByUser;
-
     @SerializedName("frozen")
-    @Expose
     private boolean frozen;
-
     @SerializedName("config")
-    @Expose
     private Config config;
-
     @SerializedName("name")
-    @Expose
     private String name;
-
     @SerializedName("image")
-    @Expose
     private String image;
 
     private Map<String, Object> extraData;

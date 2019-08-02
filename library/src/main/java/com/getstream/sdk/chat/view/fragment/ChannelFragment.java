@@ -241,7 +241,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         trans.remove(this);
         trans.commit();
         manager.popBackStack();
-//                    getFragmentManager().popBackStack();
     }
     //endregion
 
