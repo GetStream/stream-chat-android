@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.component.Component;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
@@ -295,14 +294,7 @@ public class Global {
 
     // region Channel
     public static ChannelResponse getChannelResponseById(String id) {
-        ChannelResponse response_ = null;
-        for (ChannelResponse response : client.channels) {
-            if (id.equals(response.getChannel().getId())) {
-                response_ = response;
-                break;
-            }
-        }
-        return response_;
+        return Global.getChannelResponseById(id);
     }
 
     public static ChannelResponse getPrivateChannel(User user) {
@@ -316,30 +308,6 @@ public class Global {
             }
         }
         return channelResponse;
-    }
-
-    public static void addChannelResponse(ChannelResponse response) {
-        boolean isContain = false;
-        for (ChannelResponse response1 : client.channels) {
-            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
-                client.channels.remove(response1);
-                client.channels.add(response);
-                isContain = true;
-                Log.d(TAG, "Contain channel:" + response.getChannel().getId());
-                break;
-            }
-        }
-        if (!isContain)
-            client.channels.add(response);
-    }
-
-    public static void deleteChannelResponse(Channel channel) {
-        for (ChannelResponse response1 : client.channels) {
-            if (response1.getChannel().getId().equals(channel.getId())) {
-                client.channels.remove(response1);
-                break;
-            }
-        }
     }
 
     public static User getOpponentUser(ChannelResponse channelResponse) {
@@ -359,6 +327,20 @@ public class Global {
         return opponent;
     }
 
+    public static List<String> getMentionedUserIDs(ChannelResponse response, String text) {
+        if (TextUtils.isEmpty(text)) return null;
+
+        List<String> mentionedUserIDs = new ArrayList<>();
+        if (response.getMembers() != null && !response.getMembers().isEmpty()) {
+            for (Member member : response.getMembers()) {
+                String userName = member.getUser().getName();
+                if (text.contains("@" + userName)) {
+                    mentionedUserIDs.add(member.getUser().getId());
+                }
+            }
+        }
+        return mentionedUserIDs;
+    }
     // endregion
 
     // region Message

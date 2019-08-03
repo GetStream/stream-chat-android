@@ -37,10 +37,10 @@ import retrofit2.http.Query;
 public interface APIService {
     // region Channel
     @GET("/channels")
-    Call<GetChannelsResponse> getChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<GetChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> chatDetail(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
 
     @DELETE("/channels/messaging/{id}")
     Call<ChannelResponse> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
@@ -63,7 +63,7 @@ public interface APIService {
 
     // region User
     @GET("/users")
-    Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<GetUsersResponse> queryUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}")
     Call<ChannelResponse> addMembers(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body JSONObject body);

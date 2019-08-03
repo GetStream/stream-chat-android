@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import retrofit2.Call;
 
 public class Client {
-    private ClientRetrofit retrofitClient;
 
 
     public String getApiKey() {
@@ -45,14 +44,7 @@ public class Client {
 
     public void queryUsers(){}
 
-    public Call<GetChannelsResponse> queryChannels(FilterObject filterConditions, QuerySort sort, QueryOptions options) throws JSONException {
-        JSONObject payload = new JSONObject();
-        payload.put("filter_conditions", filterConditions);
-        payload.put("sort", sort);
-        payload.put("user_details", UserData);
-        payload.put("options", options);
-        return this.retrofitClient.queryChannels(ApiKey, UserData.getId(), ConnectionID, payload);
-    }
+
 
     public void addDevice(){}
 

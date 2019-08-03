@@ -180,20 +180,5 @@ public class ChannelResponse {
             this.reads.add(channelUserRead);
         }
     }
-
-    public List<String> getMentionedUserIDs(String text) {
-        if (TextUtils.isEmpty(text)) return null;
-
-        List<String> mentionedUserIDs = new ArrayList<>();
-        if (getMembers() != null && !getMembers().isEmpty()) {
-            for (Member member : getMembers()) {
-                String userName = member.getUser().getName();
-                if (text.contains("@" + userName)) {
-                    mentionedUserIDs.add(member.getUser().getId());
-                }
-            }
-        }
-        return mentionedUserIDs;
-    }
 }
 

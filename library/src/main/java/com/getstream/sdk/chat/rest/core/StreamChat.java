@@ -47,11 +47,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
+import java.util.Set;
 
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -72,6 +71,7 @@ public class StreamChat implements WSResponseHandler {
     private Component component;
     // Client params
     public List<ChannelResponse> channels = new ArrayList<>();
+    public List<User> users = new ArrayList<>();
     public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
     private Channel activeChannel;
 
@@ -81,9 +81,11 @@ public class StreamChat implements WSResponseHandler {
     // Interfaces
     private ChannelListEventHandler channelListEventHandler;
     private ChannelEventHandler channelEventHandler;
+
     public void setChannelListEventHandler(ChannelListEventHandler channelListEventHandler) {
         this.channelListEventHandler = channelListEventHandler;
     }
+
     public void setChannelEventHandler(ChannelEventHandler channelEventHandler) {
         this.channelEventHandler = channelEventHandler;
     }
@@ -94,8 +96,10 @@ public class StreamChat implements WSResponseHandler {
     }
 
     public Component getComponent() {
-        if (this.component == null)
+        if (this.component == null) {
             this.component = new Component();
+            Global.component = this.component;
+        }
         return component;
     }
 
@@ -200,10 +204,267 @@ public class StreamChat implements WSResponseHandler {
     }
     // endregion
 
-    // region Channel
-    public void quertChannels(final GetChannelsCallback callback, final ErrCallback errCallback) {
+    // region handle
+    @Override
+    public void handleEventWSResponse(Event event) {
+        if (TextUtils.isEmpty(connectionId)) {
+            Global.noConnection = false;
+            if (!TextUtils.isEmpty(event.getConnection_id())) {
+                connectionId = event.getConnection_id();
+                if (event.getMe() != null)
+                    setUser(event.getMe());
+            }
+        }
+        handleReceiveEvent(event);
+    }
 
-        mService.getChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<GetChannelsResponse>() {
+    @Override
+    public void handleByteStringWSResponse(ByteString byteString) {
+    }
+
+
+    @Override
+    public void onFailed(String errMsg, int errCode) {
+        this.connectionId = null;
+    }
+
+
+    public void handleReceiveEvent(Event event) {
+
+        if (event.getChannel() == null) return;
+
+        switch (event.getType()) {
+            case Event.notification_added_to_channel:
+            case Event.channel_updated:
+            case Event.channel_deleted:
+                handleChannelEvent(event);
+                break;
+            case Event.message_new:
+            case Event.message_updated:
+            case Event.message_deleted:
+            case Event.message_read:
+                handleMessageEvent(event);
+                break;
+            case Event.reaction_new:
+            case Event.reaction_deleted:
+                handleReactionEvent(event);
+                break;
+            case Event.user_updated:
+            case Event.user_presence_changed:
+            case Event.user_watching_start:
+            case Event.user_watching_stop:
+                handleUserEvent(event);
+                break;
+            case Event.notification_invited:
+            case Event.notification_invite_accepted:
+                handleInvite(event);
+                break;
+            case Event.health_check:
+            case Event.typing_start:
+            case Event.typing_stop:
+                break;
+            default:
+                break;
+        }
+    }
+
+    // region Handle Channel Event
+
+    public void handleChannelEvent(Event event) {
+        switch (event.getType()) {
+            case Event.notification_added_to_channel:
+                queryChannel(event.getChannel());
+                break;
+            case Event.channel_deleted:
+                deleteChannelResponse(event.getChannel());
+                break;
+            case Event.channel_updated:
+                break;
+            default:
+                break;
+        }
+        channelListEventHandler.updateChannels();
+    }
+
+    public void queryChannel(Channel channel) {
+        if (Global.getChannelResponseById(channel.getId()) == null)
+            queryChannel(channel, null, null);
+
+    }
+
+    public void queryChannel(Channel channel, final ChannelDetailCallback callback, ErrCallback errCallback) {
+        channel.setType(ModelType.channel_messaging);
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("limit", Constant.DEFAULT_LIMIT);
+        Map<String, Object> data = new HashMap<>();
+
+        // Additional Field
+        if (channel.getExtraData() != null) {
+            Set<String> keys = channel.getExtraData().keySet();
+            for (String key : keys) {
+                Object value = channel.getExtraData().get(key);
+                if (value != null)
+                    data.put(key, value);
+            }
+        }
+
+        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+
+        mService.queryChannel(channel.getId(), apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
+            @Override
+            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                    if (!response.body().getMessages().isEmpty())
+                        Global.setStartDay(response.body().getMessages(), null);
+                    addChannelResponse(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void addChannelResponse(ChannelResponse response) {
+        boolean isContain = false;
+        for (ChannelResponse response1 : channels) {
+            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
+                channels.remove(response1);
+                channels.add(response);
+                isContain = true;
+                break;
+            }
+        }
+        if (!isContain)
+            channels.add(response);
+    }
+
+    public void deleteChannelResponse(Channel channel) {
+        for (ChannelResponse response1 : channels) {
+            if (response1.getChannel().getId().equals(channel.getId())) {
+                channels.remove(response1);
+                break;
+            }
+        }
+    }
+
+    public ChannelResponse getChannelResponseById(String id) {
+        ChannelResponse response_ = null;
+        for (ChannelResponse response : channels) {
+            if (id.equals(response.getChannel().getId())) {
+                response_ = response;
+                break;
+            }
+        }
+        return response_;
+    }
+
+    // endregion
+
+
+    // region Handle Message Event
+    public void handleMessageEvent(Event event) {
+        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
+        if (channelResponse == null) return;
+        Message message = event.getMessage();
+        if (message == null) return;
+
+        if (!message.getType().equals(ModelType.message_regular)) return;
+
+        switch (event.getType()) {
+            case Event.message_new:
+                newMessageEvent(channelResponse, message);
+                break;
+            case Event.message_updated:
+            case Event.message_deleted:
+                for (int i = 0; i < channelResponse.getMessages().size(); i++) {
+                    if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
+                        // Deleted Message
+                        if (event.getType().equals(Event.message_deleted))
+                            message.setText(Constant.MESSAGE_DELETED);
+
+                        channelResponse.getMessages().set(i, message);
+                        break;
+                    }
+                }
+                break;
+            case Event.message_read:
+                readMessageEvent(channelResponse, event);
+                break;
+            default:
+                break;
+        }
+        channelListEventHandler.updateChannels();
+    }
+
+
+    public void newMessageEvent(ChannelResponse channelResponse, Message message) {
+        Global.setStartDay(Arrays.asList(message), channelResponse.getLastMessage());
+        channelResponse.getMessages().add(message);
+        channels.remove(channelResponse);
+        channels.add(0, channelResponse);
+    }
+
+    public void updateMessageEvent(ChannelResponse channelResponse, Message message) {
+        for (int i = 0; i < channelResponse.getMessages().size(); i++) {
+            if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
+                channelResponse.getMessages().set(i, message);
+                break;
+            }
+        }
+    }
+
+    public void readMessageEvent(ChannelResponse channelResponse, Event event) {
+        channelResponse.setReadDateOfChannelLastMessage(event.getUser(), event.getCreated_at());
+        channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
+    }
+    // endregion
+
+    // region Handle Reaction Event
+    public void handleReactionEvent(Event event) {
+        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
+        if (channelResponse == null) return;
+        Message message = event.getMessage();
+        if (message == null) return;
+
+        if (!message.getType().equals(ModelType.message_regular)) return;
+        updateMessageEvent(channelResponse, message);
+    }
+    // endregion
+
+    // region Handle User Event
+
+    public void handleUserEvent(Event event) {
+        switch (event.getType()) {
+            case Event.user_updated:
+                break;
+            case Event.user_presence_changed:
+                break;
+            case Event.user_watching_start:
+                break;
+            case Event.user_watching_stop:
+                break;
+        }
+    }
+
+    // endregion
+
+    // region Handle Invite
+    public void handleInvite(Event event) {
+
+    }
+    // endregion
+
+    // endregion
+
+    // region Channel
+    public void queryChannels(final GetChannelsCallback callback, final ErrCallback errCallback) {
+        mService.queryChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<GetChannelsResponse>() {
             @Override
             public void onResponse(Call<GetChannelsResponse> call, Response<GetChannelsResponse> response) {
                 if (response.isSuccessful()) {
@@ -297,6 +558,7 @@ public class StreamChat implements WSResponseHandler {
     }
 
     // endregion
+
 
     // region Message
 
@@ -605,12 +867,25 @@ public class StreamChat implements WSResponseHandler {
     }
 
     // region User
-    public void getUsers(@NonNull JSONObject payload, final GetUsersCallback callback, final ErrCallback errCallback) {
+    /**
+     * queryUsers - Query users and watch user presence
+     *
+     * @param {object} filterConditions MongoDB style filter conditions
+     * @param {object} sort             Sort options, for instance {last_active: -1}
+     * @param {object} options          Option object, {presence: true}
+     *
+     * @return {object} User Query Response
+     */
+    public void queryUsers(final GetUsersCallback callback, final ErrCallback errCallback) {
 
-        mService.getUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetUsersResponse>() {
+        mService.queryUsers(apiKey, user.getId(), connectionId, getUserQueryPayload()).enqueue(new Callback<GetUsersResponse>() {
             @Override
             public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
                 if (response.isSuccessful()) {
+                    for (int i = 0; i < response.body().getUsers().size(); i++)
+                        if (!response.body().getUsers().get(i).isMe())
+                            users.add(response.body().getUsers().get(i));
+
                     callback.onSuccess(response.body());
                 } else {
                     handleError(response.errorBody(), response.code(), errCallback);
@@ -623,21 +898,51 @@ public class StreamChat implements WSResponseHandler {
             }
         });
     }
+    private JSONObject getUserQueryPayload() {
+        Map<String, Object> payload = new HashMap<>();
+
+        // Filter options
+        if (Global.component.user.getFilter() != null) {
+            payload.put("filter_conditions", Global.component.user.getFilter().getData());
+        }else{
+            payload.put("filter_conditions", new HashMap<>());
+        }
+        // Sort options
+        if (Global.component.user.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_active");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
+
+        if (users.size() > 0)
+            payload.put("offset", users.size());
+        payload.put("limit", Constant.USER_LIMIT);
+
+        JSONObject json;
+        json = new JSONObject(payload);
+        Log.d(TAG,"Payload: " + json);
+        return json;
+    }
     // endregion
 
     // region Device
 
-    public void addDevice(final AddDeviceRequest request, final AddDeviceCallback callback, final ErrCallback errCallback) {
-
+    public void addDevice(String deviceId, final AddDeviceCallback callback) {
+        AddDeviceRequest request = new AddDeviceRequest(deviceId);
         mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<AddDevicesResponse>() {
             @Override
             public void onResponse(Call<AddDevicesResponse> call, Response<AddDevicesResponse> response) {
-                callback.onSuccess(response.body());
+                if (callback != null)
+                    callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<AddDevicesResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                if (callback != null)
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -668,13 +973,13 @@ public class StreamChat implements WSResponseHandler {
             errCallback.onError("No channelResponse from server", -1);
         }
 
-        String err = "";
+        String err;
         try {
             JSONObject jsonObject = new JSONObject(Utils.readInputStream(errBody.byteStream()));
             err = jsonObject.getString("message");
         } catch (Exception exception) {
             exception.printStackTrace();
-            err = "Error " + String.valueOf(errCode);
+            err = "Error " + errCode;
         }
         errCallback.onError(err, errCode);
     }
@@ -691,6 +996,8 @@ public class StreamChat implements WSResponseHandler {
 
     public interface AddDeviceCallback {
         void onSuccess(AddDevicesResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface GetDevicesCallback {
@@ -720,211 +1027,4 @@ public class StreamChat implements WSResponseHandler {
     public interface ErrCallback {
         void onError(String errMsg, int errCode); // errCode = -1 means that it's failed to connect API.
     }
-
-    // region Handle Event
-    public void handleReceiveEvent(Event event) {
-
-        if (event.getChannel() == null) return;
-
-        switch (event.getType()) {
-            case Event.notification_added_to_channel:
-            case Event.channel_updated:
-            case Event.channel_deleted:
-                handleChannelEvent(event);
-                break;
-            case Event.message_new:
-            case Event.message_updated:
-            case Event.message_deleted:
-            case Event.message_read:
-                handleMessageEvent(event);
-                break;
-            case Event.reaction_new:
-            case Event.reaction_deleted:
-                handleReactionEvent(event);
-                break;
-            case Event.user_updated:
-            case Event.user_presence_changed:
-            case Event.user_watching_start:
-            case Event.user_watching_stop:
-                handleUserEvent(event);
-                break;
-            case Event.notification_invited:
-            case Event.notification_invite_accepted:
-                handleInvite(event);
-                break;
-            case Event.health_check:
-            case Event.typing_start:
-            case Event.typing_stop:
-                break;
-            default:
-                break;
-        }
-    }
-
-    // region Handle Channel Event
-    public void handleChannelEvent(Event event) {
-        switch (event.getType()) {
-            case Event.notification_added_to_channel:
-                queryChannel(event.getChannel());
-                break;
-            case Event.channel_deleted:
-                Global.deleteChannelResponse(event.getChannel());
-                break;
-            case Event.channel_updated:
-                break;
-            default:
-                break;
-        }
-        channelListEventHandler.updateChannels();
-    }
-
-    public void queryChannel(Channel channel, final  ChannelDetailCallback callback, ErrCallback errCallback) {
-        channel.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-        Map<String, Object> data = new HashMap<>();
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-        mService.chatDetail(channel.getId(), apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
-            @Override
-            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-//                    if (!response.getMessages().isEmpty())
-//                        Global.setStartDay(response.getMessages(), null);
-//                    addChannelResponse(response);
-                } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ChannelResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-    // endregion
-
-
-    // region Handle Message Event
-    public void handleMessageEvent(Event event) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
-        if (channelResponse == null) return;
-        Message message = event.getMessage();
-        if (message == null) return;
-
-        if (!message.getType().equals(ModelType.message_regular)) return;
-
-        switch (event.getType()) {
-            case Event.message_new:
-                newMessage(channelResponse, message);
-                break;
-            case Event.message_updated:
-            case Event.message_deleted:
-                for (int i = 0; i < channelResponse.getMessages().size(); i++) {
-                    if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
-                        // Deleted Message
-                        if (event.getType().equals(Event.message_deleted))
-                            message.setText(Constant.MESSAGE_DELETED);
-
-                        channelResponse.getMessages().set(i, message);
-                        break;
-                    }
-                }
-                break;
-            case Event.message_read:
-                readMessage(channelResponse, event);
-            break;
-            default:
-                break;
-        }
-        channelListEventHandler.updateChannels();
-    }
-
-
-    public void newMessage(ChannelResponse channelResponse, Message message) {
-        Global.setStartDay(Arrays.asList(message), channelResponse.getLastMessage());
-        channelResponse.getMessages().add(message);
-        channels.remove(channelResponse);
-        channels.add(0, channelResponse);
-    }
-
-    public void updateMessage(ChannelResponse channelResponse, Message message) {
-        for (int i = 0; i < channelResponse.getMessages().size(); i++) {
-            if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
-                channelResponse.getMessages().set(i, message);
-                break;
-            }
-        }
-    }
-
-    public void readMessage(ChannelResponse channelResponse, Event event) {
-        channelResponse.setReadDateOfChannelLastMessage(event.getUser(), event.getCreated_at());
-        channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
-    }
-    // endregion
-
-    // region Handle Reaction Event
-    public void handleReactionEvent(Event event) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
-        if (channelResponse == null) return;
-        Message message = event.getMessage();
-        if (message == null) return;
-
-        if (!message.getType().equals(ModelType.message_regular)) return;
-        updateMessage(channelResponse, message);
-    }
-    // endregion
-
-    // region Handle User Event
-
-    public void handleUserEvent(Event event){
-        switch (event.getType()){
-            case Event.user_updated:
-                break;
-            case Event.user_presence_changed:
-                break;
-            case Event.user_watching_start:
-                break;
-            case Event.user_watching_stop:
-                break;
-        }
-    }
-
-    // region Handle Invite
-    public void handleInvite(Event event) {
-
-    }
-    // endregion
-
-
-
-
-    @Override
-    public void handleEventWSResponse(Event event) {
-        if (TextUtils.isEmpty(connectionId)) {
-            Global.noConnection = false;
-            if (!TextUtils.isEmpty(event.getConnection_id())) {
-                connectionId = event.getConnection_id();
-                if (event.getMe() != null)
-                    setUser(event.getMe());
-            }
-        }
-        handleReceiveEvent(event);
-    }
-
-    @Override
-    public void handleByteStringWSResponse(ByteString byteString) {
-
-    }
-
-
-    @Override
-    public void onFailed(String errMsg, int errCode) {
-        this.connectionId = null;
-    }
-
-
-
 }

@@ -35,7 +35,6 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.function.AttachmentFunction;
-import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
@@ -97,8 +96,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     // Functions
-    private MessageFunction messageFunction;
     private SendFileFunction sendFileFunction;
+    private ReactionFunction reactionFunction;
     // Customization MessageItemView
     private int messageItemLayoutId;
     private String messageItemViewHolderName;
@@ -272,8 +271,11 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
         checkEphemeralMessages();
-        messageFunction = new MessageFunction(this.channelResponse);
+        channel.setChannelResponse(this.channelResponse);
+
         sendFileFunction = new SendFileFunction(getActivity(), binding, channelResponse);
+        reactionFunction = new ReactionFunction(channel);
+
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
@@ -281,7 +283,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     }
 
     private void checkEphemeralMessages() {
-        List<Message> ephemeralMainMessages = client.getEphemeralMessages(channel.getId(), null);
+        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
         if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
             for (int i = 0; i < ephemeralMainMessages.size(); i++) {
                 Message message = ephemeralMainMessages.get(i);
@@ -296,25 +298,9 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     private void getChannel(Channel channel_) {
 
         binding.setShowMainProgressbar(true);
-        channel_.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-
-        // Additional Field
-        Map<String, Object> data = new HashMap<>();
-        if (channel_.getExtraData() != null) {
-            Set<String> keys = channel_.getExtraData().keySet();
-            for (String key : keys) {
-                Object value = channel_.getExtraData().get(key);
-                if (value != null)
-                    data.put(key, value);
-            }
-        }
         Log.d(TAG, "Channel Connecting...");
 
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-        Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
+        client.queryChannel(channel_, (ChannelResponse response) -> {
             Log.d(TAG, "Channel Connected");
             binding.setShowMainProgressbar(false);
             if (!response.getMessages().isEmpty())
@@ -389,7 +375,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = client.getOpponentUser(channelResponse);
+            User opponent = Global.getOpponentUser(channelResponse);
             if (opponent != null) {
                 binding.tvChannelInitial.setText(opponent.getUserInitials());
                 Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
@@ -406,7 +392,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (!TextUtils.isEmpty(channelResponse.getChannel().getName())) {
             channelName = channelResponse.getChannel().getName();
         } else {
-            User opponent = client.getOpponentUser(channelResponse);
+            User opponent = Global.getOpponentUser(channelResponse);
             if (opponent != null) {
                 channelName = opponent.getName();
             }
@@ -419,10 +405,10 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         configHeaderLastActive(lastMessage);
         // Online Mark
         try {
-            if (client.getOpponentUser(channelResponse) == null)
+            if (Global.getOpponentUser(channelResponse) == null)
                 binding.ivActiveMark.setVisibility(View.GONE);
             else {
-                if (client.getOpponentUser(channelResponse).getOnline()) {
+                if (Global.getOpponentUser(channelResponse).getOnline()) {
                     binding.ivActiveMark.setVisibility(View.VISIBLE);
                 } else {
                     binding.ivActiveMark.setVisibility(View.GONE);
@@ -625,7 +611,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             handleAction(ephemeralMessage);
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.sendMessage(text,
+        channel.sendMessage(text,
                 attachments,
                 isThreadMode() ? thread_parentMessage.getId() : null,
                 new MessageSendListener() {
@@ -650,7 +636,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             return;
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.updateMessage(binding.etMessage.getText().toString(),
+        channel.updateMessage(binding.etMessage.getText().toString(),
                 (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
                 new MessageSendListener() {
@@ -687,7 +673,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             map.put("image_action", ModelType.action_shuffle);
 
         SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-        Global.mRestController.sendAction(message.getId(), request, (MessageResponse response) -> {
+        client.sendAction(message.getId(), request, (MessageResponse response) -> {
             handleAction(message);
             response.getMessage().setDelivered(true);
             handleAction(response.getMessage());
@@ -698,7 +684,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     public void progressSendMessage(Message message, String resendMessageId) {
         if (resendMessageId != null) {
-            client.removeEphemeralMessage(channel.getId(), resendMessageId);
+            Global.removeEphemeralMessage(channel.getId(), resendMessageId);
             initSendMessage();
         } else {
             if (Global.isCommandMessage(message) ||
@@ -740,7 +726,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
-            client.setEphemeralMessage(channel.getId(), message);
+            Global.setEphemeralMessage(channel.getId(), message);
         return message;
     }
 
@@ -815,7 +801,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                         childIndex = tag.position - firstListItemPosition;
                     }
                     int originY = recyclerView().getChildAt(childIndex).getBottom();
-                    ReactionFunction.showReactionDialog(getContext(), message, originY);
+                    reactionFunction.showReactionDialog(getContext(), message, originY);
                     break;
                 case Constant.TAG_MESSAGE_RESEND:
                     resendMessage(message);
@@ -837,14 +823,14 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         final int position = Integer.parseInt(object.toString());
         final Message message = messages().get(position);
 
-        ReactionFunction.showMoreActionDialog(getContext(), message, (View v) -> {
+        reactionFunction.showMoreActionDialog(getContext(), message, (View v) -> {
             String type = (String) v.getTag();
             switch (type) {
                 case Constant.TAG_MOREACTION_EDIT:
                     editMessage(message);
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
-                    messageFunction.deleteMessage(message,
+                    channel.deleteMessage(message,
                             new MessageSendListener() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
@@ -868,7 +854,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     }
 
     private void showAlertReadUsers(Message message) {
-        List<User> readUsers = client.getReadUsers(channelResponse, message);
+        List<User> readUsers = Global.getReadUsers(channelResponse, message);
         if (readUsers == null) return;
         String msg = "";
         if (readUsers.size() > 0) {
@@ -1033,10 +1019,10 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
             if (isCallingThread) return;
             isCallingThread = true;
-            Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
+            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
                 threadMessages = response.getMessages();
 
-                List<Message> ephemeralThreadMessages = client.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+                List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
                 if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
                     for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
                         threadMessages.add(ephemeralThreadMessages.get(i));
@@ -1232,7 +1218,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     message.setDelivered(true);
 
                 messages().remove(ephemeralMessage);
-                client.newMessage(channelResponse, message);
+                client.newMessageEvent(channelResponse, message);
 
                 if (message.isIncoming() && !isShowLastMessage) {
                     scrollPosition = -1;
@@ -1411,7 +1397,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     }
 
     private void messageReadEvent(Event event) {
-        client.readMessage(channelResponse, event);
+        client.readMessageEvent(channelResponse, event);
         if (!channelResponse.getLastMessage().isIncoming()) {
             mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
         }
@@ -1431,7 +1417,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
-            Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
+            client.pagination(channel.getId(), request, (ChannelResponse response) -> {
 
                 binding.setShowLoadMoreProgressbar(false);
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
@@ -1456,7 +1442,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             });
         } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(thread_parentMessage.getId(),
+            client.getReplies(thread_parentMessage.getId(),
                     String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
                     threadMessages.get(0).getId(),
                     (GetRepliesResponse response) -> {
@@ -1492,7 +1478,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     private void checkReadMark() {
         if (channelResponse.getLastMessage() == null) return;
-        if (!client.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
+        if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
                 channelResponse.getLastMessage().getCreated_at())) {
             messageReadMark();
         }
@@ -1500,7 +1486,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     private void messageReadMark() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
-        Global.mRestController.markRead(channel.getId(), request, (EventResponse response) -> {
+        client.markRead(channel.getId(), request, (EventResponse response) -> {
 
         }, (String errMsg, int errCode) -> {
             Utils.showMessage(getContext(), errMsg);

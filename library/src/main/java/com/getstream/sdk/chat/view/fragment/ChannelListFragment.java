@@ -33,6 +33,7 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
 import com.getstream.sdk.chat.utils.Constant;
@@ -111,8 +112,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    //$
-//                    navigationChannelFragment(client.getChannelResponseById(channelId));
+                    navigationChannelFragment(client.getChannelResponseById(channelId));
                 }
             } catch (Exception e) {
             }
@@ -254,11 +254,11 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
      */
     public void getChannels() {
         if (TextUtils.isEmpty(client.connectionId)) return;
-        Log.d(TAG, "quertChannels...");
+        Log.d(TAG, "queryChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.quertChannels(this::progressNewChannels
+        client.queryChannels(this::progressNewChannels
                 , (String errMsg, int errCode) -> {
                     binding.setShowMainProgressbar(false);
                     isCalling = false;
@@ -299,9 +299,8 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     private void configChannelListView() {
         adapter = new ChannelListItemAdapter(getContext(), client.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
-            //$
-//            ChannelResponse response = client.getChannelResponseById(channelId);
-//            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
+            ChannelResponse response = client.getChannelResponseById(channelId);
+            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -314,15 +313,14 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    //$
-//                    ChannelResponse response_ = client.getChannelResponseById(channelId);
-//                    client.deleteChannel(channelId, (ChannelResponse response) -> {
-//                        Utils.showMessage(getContext(), "Deleted successfully!");
-//                        client.channels.remove(response_);
-//                        adapter.notifyDataSetChanged();
-//                    }, (String errMsg, int errCode) -> {
-//                        Utils.showMessage(getContext(), errMsg);
-//                    });
+                    ChannelResponse response_ = client.getChannelResponseById(channelId);
+                    client.deleteChannel(channelId, (ChannelResponse response) -> {
+                        Utils.showMessage(getContext(), "Deleted successfully!");
+                        client.channels.remove(response_);
+                        adapter.notifyDataSetChanged();
+                    }, (String errMsg, int errCode) -> {
+                        Utils.showMessage(getContext(), errMsg);
+                    });
                     alertDialog.dismiss();
                 });
 
@@ -334,17 +332,17 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     }
 
     private void navigationChannelFragment(ChannelResponse response) {
-        ChannelFragment fragment = new ChannelFragment();
-        fragment.channelIdFromChannelList = response.getChannel().getId();
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        fragmentManager.addOnBackStackChangedListener(() -> {
-            if (adapter != null)
-                adapter.notifyDataSetChanged();
-        });
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(containerResId, fragment);
-        fragmentTransaction.addToBackStack("OK");
-        fragmentTransaction.commit();
+//        ChannelFragment fragment = new ChannelFragment();
+//        fragment.channelIdFromChannelList = response.getChannel().getId();
+//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+//        fragmentManager.addOnBackStackChangedListener(() -> {
+//            if (adapter != null)
+//                adapter.notifyDataSetChanged();
+//        });
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.add(containerResId, fragment);
+//        fragmentTransaction.addToBackStack("OK");
+//        fragmentTransaction.commit();
     }
 
     private void navigateUserList() {
@@ -369,7 +367,17 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                     String token_ = task.getResult().getToken();
                     Log.d(TAG, "device TokenService: " + token_);
                     // Save to Server
-                    client.addDevice(token_, new );
+                    client.addDevice(token_, new StreamChat.AddDeviceCallback() {
+                        @Override
+                        public void onSuccess(AddDevicesResponse response) {
+
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+
+                        }
+                    });
                     // Save to Local
                     editor.putString("TokenService", token_);
                     editor.commit();

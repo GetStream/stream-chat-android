@@ -1,11 +1,32 @@
 package com.getstream.sdk.chat.model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 /**
  * A channel
@@ -33,7 +54,7 @@ public class Channel {
 
     private Map<String, Object> extraData;
 
-
+    // region Getter & Setter
     public String getId() {
         return id;
     }
@@ -106,34 +127,44 @@ public class Channel {
         this.image = image;
     }
 
-    public Channel() {
-
-    }
-
     public Map<String, Object> getExtraData() {
         return extraData;
     }
+    // endregion
+
+
+    // region Constructor
+
+    StreamChat client;
+    ChannelResponse channelResponse;
+    static final String TAG = "Channel";
 
     /**
-     * Constructor
+     * constructor - Create a channel
      *
-     * @param type      Channel type
-     * @param id        Channel id
+     * @param client the chat client
+     * @param type  the type of channel
+     * @param id  the id of the chat
+     * @return Returns a new uninitialized channel
      */
-    public Channel(String type, String id) {
+    public Channel(StreamChat client, String type, String id) {
+        this.client = client;
         this.type = type;
         this.id = id;
         this.extraData = new HashMap<>();
     }
 
     /**
-     * Constructor
+     * constructor - Create a channel
      *
-     * @param type      Channel type
-     * @param id        Channel id
-     * @param extraData Custom channel fields
+     * @param type  the type of channel
+     * @param id  the id of the chat
+     * @param extraData any additional custom params
+     *
+     * @return Returns a new uninitialized channel
      */
     public Channel(String type, String id, HashMap<String, Object> extraData) {
+        this.client = client;
         this.type = type;
         this.id = id;
 
@@ -154,6 +185,16 @@ public class Channel {
             this.name = name.toString();
         }
         this.extraData.remove("id");
+    }
+
+    // endregion
+
+    public ChannelResponse getChannelResponse() {
+        return channelResponse;
+    }
+
+    public void setChannelResponse(ChannelResponse channelResponse) {
+        this.channelResponse = channelResponse;
     }
 
     public String getInitials() {
@@ -178,5 +219,78 @@ public class Channel {
         if (!StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         return null;
+    }
+
+    // region Message
+    public void sendMessage(@Nullable String text,
+                            @Nullable List<Attachment> attachments,
+                            @Nullable String parentId,
+                            final MessageSendListener sendListener) {
+        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
+        SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
+        client.sendMessage(this.id, request,
+                (MessageResponse response) -> sendListener.onSuccess(response),
+                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
+    }
+
+    public void updateMessage(String text,
+                              @NonNull Message message,
+                              @Nullable List<Attachment> attachments,
+                              final MessageSendListener sendListener) {
+        if (message == null) return;
+        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
+        message.setText(text);
+        UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
+
+        client.updateMessage(message.getId(), request,
+                (MessageResponse response) -> sendListener.onSuccess(response),
+                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
+    }
+
+    public void deleteMessage(@NonNull Message message,
+                              final MessageSendListener sendListener) {
+        client.deleteMessage(message.getId(),
+                (MessageResponse response) -> sendListener.onSuccess(response),
+                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode)
+        );
+    }
+
+    public void sendFile(Attachment attachment, boolean isImage,
+                          StreamChat.SendFileCallback fileCallback,
+                          StreamChat.ErrCallback errCallback) {
+        Log.d(TAG, "sendFile");
+        File file = new File(attachment.config.getFilePath());
+        StreamChat.SendFileCallback callback = (FileSendResponse response) -> {
+            fileCallback.onSuccess(response);
+        };
+        if (isImage) {
+            RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+            client.sendImage(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) ->
+                    errCallback.onError(errMsg, errCode));
+        } else {
+            RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+            client.sendFile(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) ->
+                    errCallback.onError(errMsg, errCode));
+        }
+    }
+    // endregion
+
+    public void sendReaction(String mesageId, String type, StreamChat.SendMessageCallback callback, StreamChat.ErrCallback errCallback){
+        ReactionRequest request = new ReactionRequest(type);
+        client.sendReaction(mesageId, request, (MessageResponse response) -> {
+            callback.onSuccess(response);
+
+        }, (String errMsg, int errCode) -> {
+            errCallback.onError(errMsg,errCode);
+        });
+    }
+    public void deleteReaction(String mesageId, String type, StreamChat.SendMessageCallback callback, StreamChat.ErrCallback errCallback){
+        client.deleteReaction(mesageId, type, (MessageResponse response) -> {
+            callback.onSuccess(response);
+        }, (String errMsg, int errCode) -> {
+            errCallback.onError(errMsg,errCode);
+        });
     }
 }

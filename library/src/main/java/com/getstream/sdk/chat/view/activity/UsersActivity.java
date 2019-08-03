@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.GetUsersResponse;
 import com.getstream.sdk.chat.utils.Constant;
@@ -47,10 +48,12 @@ import java.util.Random;
 public class UsersActivity extends AppCompatActivity {
 
     private static final String TAG = UsersActivity.class.getSimpleName();
+
+    private StreamChat client;
+
     private ActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
-    private List<User> users = new ArrayList<>();
     private List<User> groupUsers;
     boolean isLastPage = false;
 
@@ -108,7 +111,7 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, users, (View view) -> {
+        adapter = new UserListItemAdapter(this, client.users, (View view) -> {
             User user = (User) view.getTag();
             Log.d(TAG, "User Selected: " + user.getName());
             if (!groupUsers.contains(user)) {
@@ -121,7 +124,7 @@ public class UsersActivity extends AppCompatActivity {
         binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (binding.clGroup.getVisibility() == View.VISIBLE) return;
             if (!Global.noConnection)
-                getChannel(Arrays.asList(users.get(i)));
+                getChannel(Arrays.asList(client.users.get(i)));
             else
                 Utils.showMessage(UsersActivity.this, "No internet connection!");
         });
@@ -141,7 +144,7 @@ public class UsersActivity extends AppCompatActivity {
                                  int visibleItemCount, int totalItemCount) {
                 if (mLastFirstVisibleItem < firstVisibleItem) {
                     Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
-                    if (view.getLastVisiblePosition() == users.size() - 1)
+                    if (view.getLastVisiblePosition() == client.users.size() - 1)
                         getUsers();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
@@ -219,14 +222,16 @@ public class UsersActivity extends AppCompatActivity {
     boolean isCalling;
 
     private void getUsers() {
-        Log.d(TAG, "getUsers");
+        Log.d(TAG, "queryUsers");
         Log.d(TAG, "isLastPage: " + isLastPage);
         Log.d(TAG, "isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
 
-        RestController.GetUsersCallback callback = (GetUsersResponse response) -> {
+        if (client == null)
+            client = Global.client;
+        client.queryUsers((GetUsersResponse response) -> {
             binding.setShowMainProgressbar(false);
             isCalling = false;
             if (response.getUsers().isEmpty()) {
@@ -234,21 +239,12 @@ public class UsersActivity extends AppCompatActivity {
                 return;
             }
 
-            if (users == null) users = new ArrayList<>();
-            boolean isReconnecting = false;
-            if (users.isEmpty()) {
+            if (client.users.isEmpty()) {
                 configChannelListView();
-                isReconnecting = true;
             }
-
-            for (int i = 0; i < response.getUsers().size(); i++)
-                if (!response.getUsers().get(i).isMe())
-                    users.add(response.getUsers().get(i));
-
             adapter.notifyDataSetChanged();
             isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
-        };
-        Global.mRestController.getUsers(getPayload(), callback, (String errMsg, int errCode) -> {
+        }, (String errMsg, int errCode) -> {
             binding.setShowMainProgressbar(false);
             isCalling = false;
             Utils.showMessage(this, errMsg);
@@ -306,35 +302,6 @@ public class UsersActivity extends AppCompatActivity {
 //            binding.setShowMainProgressbar(false);
 //            Utils.showMessage(this, errMsg);
 //        });
-    }
-
-    private JSONObject getPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Filter options
-        if (Global.component.user.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        }else{
-            payload.put("filter_conditions", new HashMap<>());
-        }
-        // Sort options
-        if (Global.component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_active");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
-
-        if (users.size() > 0)
-            payload.put("offset", users.size());
-        payload.put("limit", Constant.USER_LIMIT);
-
-        JSONObject json;
-        json = new JSONObject(payload);
-        Log.d(TAG,"Payload: " + json);
-        return json;
     }
 
     /**

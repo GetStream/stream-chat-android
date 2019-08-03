@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
 import com.getstream.sdk.chat.rest.Message;
@@ -27,14 +28,16 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
     private final String TAG = ReactionDialogAdapter.class.getSimpleName();
 
+    private Channel channel;
     private Message message;
     private View.OnClickListener clickListener;
     private boolean showAvatar;
     private List<String> types = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
 
-    public ReactionDialogAdapter(Message message,
+    public ReactionDialogAdapter(Channel channel, Message message,
                                  boolean showAvatar,
                                  View.OnClickListener clickListener) {
+        this.channel = channel;
         this.message = message;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
@@ -134,18 +137,15 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void sendReaction(final View view, String type) {
-            ReactionRequest request = new ReactionRequest(type);
-            Global.mRestController.sendReaction(message.getId(), request, (MessageResponse response) -> {
-                Log.d(TAG, "Reaction Send!");
+            channel.sendReaction(message.getId(), type, (MessageResponse response) -> {
                 clickListener.onClick(view);
             }, (String errMsg, int errCode) -> {
-                Log.d(TAG, "Send Reaction Failed!" + errMsg);
                 clickListener.onClick(view);
             });
         }
 
         private void deleteReaction(final View view, String type) {
-            Global.mRestController.deleteReaction(message.getId(), type, (MessageResponse response) -> {
+            channel.deleteReaction(message.getId(), type, (MessageResponse response) -> {
                 Log.d(TAG, "Reaction Deleted!");
                 clickListener.onClick(view);
             }, (String errMsg, int errCode) -> {
