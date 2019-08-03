@@ -31,19 +31,11 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
-import com.getstream.sdk.chat.function.EventFunction;
-import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
-import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.activity.UsersActivity;
@@ -51,22 +43,13 @@ import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import okio.ByteString;
-
 
 /**
  * A Fragment for Channels preview.
  */
-public class ChannelListFragment extends Fragment implements WSResponseHandler {
+public class ChannelListFragment extends Fragment implements ChannelListEventHandler {
 
     final String TAG = ChannelListFragment.class.getSimpleName();
 
@@ -118,7 +101,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Global.webSocketService.removeWSResponseHandler(this);
+        client.setChannelListEventHandler(null);
     }
 
     @Override
@@ -128,7 +111,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    navigationChannelFragment(client.getChannelResponseById(channelId));
+                    //$
+//                    navigationChannelFragment(client.getChannelResponseById(channelId));
                 }
             } catch (Exception e) {
             }
@@ -148,8 +132,9 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     //endregion
 
     // region Private Functions
+
     private void init() {
-        Global.webSocketService.setWSResponseHandler(this, getContext());
+        client.setChannelListEventHandler(this);
         client.channels = new ArrayList<>();
         try {
             Fresco.initialize(getContext());
@@ -178,7 +163,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
 
         configCustomChannelItemView();
 
-        binding.clHeader.setVisibility(Global.component.channel.isShowSearchBar() ? View.VISIBLE : View.GONE);
+        binding.clHeader.setVisibility(client.getComponent().channel.isShowSearchBar() ? View.VISIBLE : View.GONE);
 
         configChannelListView();
         configChannelRecyclerView();
@@ -237,8 +222,8 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configCustomChannelItemView() {
-        channelItemLayoutId = Global.component.channel.getChannelItemLayoutId();
-        channelItemViewHolderName = Global.component.channel.getChannelItemViewHolderName();
+        channelItemLayoutId = client.getComponent().channel.getChannelItemLayoutId();
+        channelItemViewHolderName = client.getComponent().channel.getChannelItemViewHolderName();
     }
 
     private void setAfterFirstConnection() {
@@ -269,16 +254,14 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
      */
     public void getChannels() {
         if (TextUtils.isEmpty(client.connectionId)) return;
-        Log.d(TAG, "getChannels...");
+        Log.d(TAG, "quertChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        Global.mRestController.getChannels(getPayload(), this::progressNewChannels
+        client.quertChannels(this::progressNewChannels
                 , (String errMsg, int errCode) -> {
                     binding.setShowMainProgressbar(false);
                     isCalling = false;
-
-//                    Utils.showMessage(getContext(), errMsg);
                     Log.d(TAG, "Failed Get Channels : " + errMsg);
                 });
     }
@@ -312,70 +295,13 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
     }
 
-    private void getChannel(Channel channel) {
-        Log.d(TAG, "Channel Connecting...");
-        binding.setShowMainProgressbar(true);
-        channel.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-        Map<String, Object> data = new HashMap<>();
-
-
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-
-        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
-            binding.setShowMainProgressbar(false);
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            client.addChannelResponse(response);
-
-            if (getActivity() != null)
-                getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
-
-            Gson gson = new Gson();
-            Log.d(TAG, "Channel Response: " + gson.toJson(response));
-
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
-        });
-    }
-
-    private JSONObject getPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Sort Option
-        if (Global.component.channel.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.channel.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_message_at");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
-
-        if (Global.component.channel.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.channel.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
-        }
-
-        payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
-        if (client.channels.size() > 0)
-            payload.put("offset", client.channels.size());
-        payload.put("limit", Constant.CHANNEL_LIMIT);
-        payload.put("presence", false);
-        payload.put("state", true);
-        payload.put("subscribe", true);
-        payload.put("watch", true);
-        return new JSONObject(payload);
-    }
 
     private void configChannelListView() {
         adapter = new ChannelListItemAdapter(getContext(), client.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
             String channelId = view.getTag().toString();
-            ChannelResponse response = client.getChannelResponseById(channelId);
-            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
+            //$
+//            ChannelResponse response = client.getChannelResponseById(channelId);
+//            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -388,14 +314,15 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    ChannelResponse response_ = client.getChannelResponseById(channelId);
-                    Global.mRestController.deleteChannel(channelId, (ChannelResponse response) -> {
-                        Utils.showMessage(getContext(), "Deleted successfully!");
-                        client.channels.remove(response_);
-                        adapter.notifyDataSetChanged();
-                    }, (String errMsg, int errCode) -> {
-                        Utils.showMessage(getContext(), errMsg);
-                    });
+                    //$
+//                    ChannelResponse response_ = client.getChannelResponseById(channelId);
+//                    client.deleteChannel(channelId, (ChannelResponse response) -> {
+//                        Utils.showMessage(getContext(), "Deleted successfully!");
+//                        client.channels.remove(response_);
+//                        adapter.notifyDataSetChanged();
+//                    }, (String errMsg, int errCode) -> {
+//                        Utils.showMessage(getContext(), errMsg);
+//                    });
                     alertDialog.dismiss();
                 });
 
@@ -442,20 +369,11 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
                     String token_ = task.getResult().getToken();
                     Log.d(TAG, "device TokenService: " + token_);
                     // Save to Server
-                    addDevice(token_);
+                    client.addDevice(token_, new );
                     // Save to Local
                     editor.putString("TokenService", token_);
                     editor.commit();
                 });
-    }
-
-    private void addDevice(@NonNull String deviceId) {
-        AddDeviceRequest request = new AddDeviceRequest(deviceId);
-        Global.mRestController.addDevice(request, (AddDevicesResponse response) -> {
-            Log.d(TAG, "ADDED Device!");
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, "Failed ADD Device! " + errMsg);
-        });
     }
 
     //endregion
@@ -465,42 +383,16 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
     /**
      * Handle server response
      *
-     * @param event Server response
      */
     @Override
-    public void handleEventWSResponse(Event event) {
-        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
-        Global.eventFunction.handleReceiveEvent(event);
-
-        switch (event.getType()) {
-            case Event.message_new:
-            case Event.message_read:
-            case Event.channel_deleted:
-            case Event.channel_updated:
-                if (activity != null)
-                    activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
-                break;
-            case Event.notification_added_to_channel:
-                Channel channel_ = event.getChannel();
-                getChannel(channel_);
-                break;
-            default:
-                break;
-        }
-        Log.d(TAG, "New Event: " + new Gson().toJson(event));
-    }
-
-    @Override
-    public void handleByteStringWSResponse(ByteString byteString) {
-
+    public void updateChannels() {
+        activity.runOnUiThread(() -> adapter.notifyDataSetChanged());
     }
 
     @Override
     public void handleConnection() {
-        Log.d(TAG, "Reconnection!");
         setAfterFirstConnection();
     }
-
     /**
      * Handle server response failures.
      *
@@ -508,7 +400,7 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
      * @param errCode Error code
      */
     @Override
-    public void onFailed(String errMsg, int errCode) {
+    public void onConnectionFailed(String errMsg, int errCode) {
         binding.setNoConnection(true);
         binding.setShowMainProgressbar(false);
     }
@@ -533,5 +425,6 @@ public class ChannelListFragment extends Fragment implements WSResponseHandler {
             if (!granted) PermissionChecker.showRationalDialog(getContext(), this);
         }
     }
+
     // endregion
 }

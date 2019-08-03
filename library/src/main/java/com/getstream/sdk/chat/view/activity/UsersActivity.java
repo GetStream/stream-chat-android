@@ -24,13 +24,9 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.GetUsersResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
@@ -273,7 +269,7 @@ public class UsersActivity extends AppCompatActivity {
 //
 //        String channelId;
 //        if (isPrivateChannel){
-//            channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
+//            channelId = Global.client.user.getId() + "-" + users.get(0).getId();
 //        }else{
 //            String memberIds = "";
 //            for (User user : users) {
@@ -291,7 +287,7 @@ public class UsersActivity extends AppCompatActivity {
 //        data.put("image", channel.getImage());
 //
 //        List<String> members = new ArrayList<>();
-//        members.add(Global.streamChat.getUser().getId());
+//        members.add(Global.client.user.getId());
 //        for (User user : users) {
 //            members.add(user.getId());
 //        }

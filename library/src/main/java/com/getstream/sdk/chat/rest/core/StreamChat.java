@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,7 +10,6 @@ import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.rest.Message;
@@ -18,11 +18,29 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
+import com.getstream.sdk.chat.rest.controller.APIService;
+import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.rest.request.PaginationRequest;
+import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
+import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.rest.response.EventResponse;
+import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.response.GetUsersResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONObject;
 
@@ -35,20 +53,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import okio.ByteString;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StreamChat implements WSResponseHandler {
 
     private static final String TAG = StreamChat.class.getSimpleName();
+
     // Main Params
     public String apiKey;
     public User user;
     public String userToken;
     public String connectionId;
+    private Component component;
     // Client params
     public List<ChannelResponse> channels = new ArrayList<>();
     public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
     private Channel activeChannel;
+
+    public APIService mService;
+
+
     // Interfaces
     private ChannelListEventHandler channelListEventHandler;
     private ChannelEventHandler channelEventHandler;
@@ -61,6 +90,18 @@ public class StreamChat implements WSResponseHandler {
 
     public StreamChat(String apiKey) {
         this.apiKey = apiKey;
+        Global.client = this;
+    }
+
+    public Component getComponent() {
+        if (this.component == null)
+            this.component = new Component();
+        return component;
+    }
+
+    public void setComponent(Component component) {
+        this.component = component;
+        Global.component = component;
     }
 
     // region Setup Channel
@@ -128,10 +169,6 @@ public class StreamChat implements WSResponseHandler {
 
     // endregion
 
-    public void setComponent(Component component) {
-        Global.component = component;
-    }
-
     // region Websocket Setup
     private JSONObject buildUserDetailJSON() {
         HashMap<String, Object> jsonParameter = new HashMap<>();
@@ -158,8 +195,531 @@ public class StreamChat implements WSResponseHandler {
         webSocketService.setWsURL(wsURL);
         webSocketService.setWSResponseHandler(this);
         webSocketService.connect();
+
+        mService = RetrofitClient.getAuthorizedClient(userToken).create(APIService.class);
     }
     // endregion
+
+    // region Channel
+    public void quertChannels(final GetChannelsCallback callback, final ErrCallback errCallback) {
+
+        mService.getChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<GetChannelsResponse>() {
+            @Override
+            public void onResponse(Call<GetChannelsResponse> call, Response<GetChannelsResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetChannelsResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    private JSONObject getPayload() {
+        Map<String, Object> payload = new HashMap<>();
+
+        // Sort Option
+        if (component.channel.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(component.channel.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_message_at");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
+
+        if (component.channel.getFilter() != null) {
+            payload.put("filter_conditions", component.channel.getFilter().getData());
+        } else {
+            payload.put("filter_conditions", new HashMap<>());
+        }
+
+        payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
+        if (channels.size() > 0)
+            payload.put("offset", channels.size());
+        payload.put("limit", Constant.CHANNEL_LIMIT);
+        payload.put("presence", false);
+        payload.put("state", true);
+        payload.put("subscribe", true);
+        payload.put("watch", true);
+        return new JSONObject(payload);
+    }
+
+    /**
+     * deleteChannel - Delete the given channel
+     *
+     * @param channelId the Channel id needs to be specified
+     * @return {object} Response that includes the channel
+     */
+    public void deleteChannel(@NonNull String channelId, final ChannelDetailCallback callback, final ErrCallback errCallback) {
+
+        mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelResponse>() {
+            @Override
+            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    Log.d(TAG, "Failed Deleting");
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                Log.d(TAG, "Failed Deleting1");
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
+
+        mService.pagination(channelId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
+            @Override
+            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                if (response.isSuccessful()) {
+                    channelDetailCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    // endregion
+
+    // region Message
+
+    /**
+     * sendMessage - Send a message to this channel
+     *
+     * @param {object} message The Message object
+     * @return {object} The Server Response
+     */
+    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+
+        mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    sendMessageCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * updateMessage - Update the given message
+     *
+     * @param {object} message object, id needs to be specified
+     * @return {object} Response that includes the message
+     */
+    public void updateMessage(@NonNull String messageId,
+                              @NonNull UpdateMessageRequest request,
+                              final SendMessageCallback sendMessageCallback,
+                              final ErrCallback errCallback) {
+
+        mService.updateMessage(messageId,
+                apiKey,
+                user.getId(),
+                connectionId,
+                request).enqueue(new Callback<MessageResponse>() {
+
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    sendMessageCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * deleteMessage - Delete the given message
+     *
+     * @param {string} messageID the message id needs to be specified
+     * @return {object} Response that includes the message
+     */
+    public void deleteMessage(@NonNull String messageId, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+
+        mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    sendMessageCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * markRead - Send the mark read event for this user, only works if the `read_events` setting is enabled
+     *
+     * @return {Promise} Description
+     */
+    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
+
+        mService.readMark(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
+            @Override
+            public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
+                if (response.isSuccessful()) {
+                    eventCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+    // endregion
+
+    // region Thread
+
+    /**
+     * getReplies - List the message replies for a parent message
+     *
+     * @param {type} parent_id The message parent id, ie the top of the thread
+     * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
+     * @return {type} A channelResponse with a list of messages
+     */
+    public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback, final ErrCallback errCallback) {
+        if (TextUtils.isEmpty(firstId)) {
+            mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
+                @Override
+                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        handleError(response.errorBody(), response.code(), errCallback);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
+                    errCallback.onError(t.getLocalizedMessage(), -1);
+                }
+            });
+        } else {
+            mService.getRepliesMore(parentId, apiKey, user.getId(), connectionId, limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
+                @Override
+                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
+                    if (response.isSuccessful()) {
+                        callback.onSuccess(response.body());
+                    } else {
+                        handleError(response.errorBody(), response.code(), errCallback);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
+                    errCallback.onError(t.getLocalizedMessage(), -1);
+                }
+            });
+        }
+
+    }
+    // endregion
+
+    // region Reaction
+
+    /**
+     * sendReaction - Send a reaction about a message
+     *
+     * @param {string} messageID the message id
+     * @param {object} reaction the reaction object for instance {type: 'love'}
+     * @param {string} user_id the id of the user (used only for server side request) default null
+     * @return {object} The Server Response
+     */
+    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+
+        mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    sendMessageCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * deleteReaction - Delete a reaction by user and type
+     *
+     * @param {string} messageID the id of the message from which te remove the reaction
+     * @param {string} reactionType the type of reaction that should be removed
+     * @param {string} user_id the id of the user (used only for server side request) default null
+     * @return {object} The Server Response
+     */
+    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+
+        mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    sendMessageCallback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    // endregion
+
+    // region Event
+
+    /**
+     * sendEvent - Send an event on this channel
+     *
+     * @param {object} event for example {type: 'message.read'}
+     * @return {object} The Server Response
+     */
+    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, final EventCallback callback, final ErrCallback errCallback) {
+
+        mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
+            @Override
+            public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    // endregion
+
+    // region File
+    public void sendImage(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
+
+        mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
+            @Override
+            public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Send File:" + response.body().toString());
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void sendFile(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
+
+        mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
+            @Override
+            public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Send File:" + response.body().toString());
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    // endregion
+    public void sendAction(@NonNull String messageId, SendActionRequest request, final SendMessageCallback callback, final ErrCallback errCallback) {
+
+        mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "Send File:" + response.body().toString());
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    // region User
+    public void getUsers(@NonNull JSONObject payload, final GetUsersCallback callback, final ErrCallback errCallback) {
+
+        mService.getUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetUsersResponse>() {
+            @Override
+            public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetUsersResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+    // endregion
+
+    // region Device
+
+    public void addDevice(final AddDeviceRequest request, final AddDeviceCallback callback, final ErrCallback errCallback) {
+
+        mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<AddDevicesResponse>() {
+            @Override
+            public void onResponse(Call<AddDevicesResponse> call, Response<AddDevicesResponse> response) {
+                callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<AddDevicesResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback, final ErrCallback errCallback) {
+        mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
+            @Override
+            public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+
+    // endregion
+
+    private void handleError(ResponseBody errBody, int errCode, ErrCallback errCallback) {
+        if (errBody == null) {
+            errCallback.onError("No channelResponse from server", -1);
+        }
+
+        String err = "";
+        try {
+            JSONObject jsonObject = new JSONObject(Utils.readInputStream(errBody.byteStream()));
+            err = jsonObject.getString("message");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            err = "Error " + String.valueOf(errCode);
+        }
+        errCallback.onError(err, errCode);
+    }
+
+
+    // region Interface
+    public interface GetChannelsCallback {
+        void onSuccess(GetChannelsResponse response);
+    }
+
+    public interface GetUsersCallback {
+        void onSuccess(GetUsersResponse response);
+    }
+
+    public interface AddDeviceCallback {
+        void onSuccess(AddDevicesResponse response);
+    }
+
+    public interface GetDevicesCallback {
+        void onSuccess(GetDevicesResponse response);
+    }
+
+    public interface ChannelDetailCallback {
+        void onSuccess(ChannelResponse response);
+    }
+
+    public interface EventCallback {
+        void onSuccess(EventResponse response);
+    }
+
+    public interface SendMessageCallback {
+        void onSuccess(MessageResponse response);
+    }
+
+    public interface SendFileCallback {
+        void onSuccess(FileSendResponse response);
+    }
+
+    public interface GetRepliesCallback {
+        void onSuccess(GetRepliesResponse response);
+    }
+
+    public interface ErrCallback {
+        void onError(String errMsg, int errCode); // errCode = -1 means that it's failed to connect API.
+    }
 
     // region Handle Event
     public void handleReceiveEvent(Event event) {
@@ -208,27 +768,40 @@ public class StreamChat implements WSResponseHandler {
                 queryChannel(event.getChannel());
                 break;
             case Event.channel_deleted:
-                deleteChannelResponse(event.getChannel());
+                Global.deleteChannelResponse(event.getChannel());
                 break;
             case Event.channel_updated:
                 break;
             default:
                 break;
         }
+        channelListEventHandler.updateChannels();
     }
-    private void queryChannel(Channel channel) {
+
+    public void queryChannel(Channel channel, final  ChannelDetailCallback callback, ErrCallback errCallback) {
         channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
         Map<String, Object> data = new HashMap<>();
         ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
 
-        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            addChannelResponse(response);
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+        mService.chatDetail(channel.getId(), apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
+            @Override
+            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+//                    if (!response.getMessages().isEmpty())
+//                        Global.setStartDay(response.getMessages(), null);
+//                    addChannelResponse(response);
+                } else {
+                    handleError(response.errorBody(), response.code(), errCallback);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                errCallback.onError(t.getLocalizedMessage(), -1);
+            }
         });
     }
     // endregion
@@ -236,7 +809,7 @@ public class StreamChat implements WSResponseHandler {
 
     // region Handle Message Event
     public void handleMessageEvent(Event event) {
-        ChannelResponse channelResponse = getChannelResponseById(event.getChannel().getId());
+        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
         if (channelResponse == null) return;
         Message message = event.getMessage();
         if (message == null) return;
@@ -266,6 +839,7 @@ public class StreamChat implements WSResponseHandler {
             default:
                 break;
         }
+        channelListEventHandler.updateChannels();
     }
 
 
@@ -293,7 +867,7 @@ public class StreamChat implements WSResponseHandler {
 
     // region Handle Reaction Event
     public void handleReactionEvent(Event event) {
-        ChannelResponse channelResponse = getChannelResponseById(event.getChannel().getId());
+        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
         if (channelResponse == null) return;
         Message message = event.getMessage();
         if (message == null) return;
@@ -351,180 +925,6 @@ public class StreamChat implements WSResponseHandler {
         this.connectionId = null;
     }
 
-    // region Channel
-    public ChannelResponse getChannelResponseById(String id) {
-        ChannelResponse response_ = null;
-        for (ChannelResponse response : channels) {
-            if (id.equals(response.getChannel().getId())) {
-                response_ = response;
-                break;
-            }
-        }
-        return response_;
-    }
 
-    public ChannelResponse getPrivateChannel(User user) {
-        String channelId1 = this.user.getId() + "-" + user.getId(); // Created by
-        String channelId2 = user.getId() + "-" + this.user.getId(); // Invited by
-        ChannelResponse channelResponse = null;
-        for (ChannelResponse response : channels) {
-            if (response.getChannel().getId().equals(channelId1) || response.getChannel().getId().equals(channelId2)) {
-                channelResponse = response;
-                break;
-            }
-        }
-        return channelResponse;
-    }
 
-    public void addChannelResponse(ChannelResponse response) {
-        boolean isContain = false;
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
-                channels.remove(response1);
-                channels.add(response);
-                isContain = true;
-                Log.d(TAG, "Contain channel:" + response.getChannel().getId());
-                break;
-            }
-        }
-        if (!isContain)
-            channels.add(response);
-    }
-
-    public void deleteChannelResponse(Channel channel) {
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(channel.getId())) {
-                channels.remove(response1);
-                break;
-            }
-        }
-    }
-
-    public User getOpponentUser(ChannelResponse channelResponse) {
-        if (channelResponse.getMembers() == null || channelResponse.getMembers().isEmpty())
-            return null;
-        if (channelResponse.getMembers().size() > 2) return null;
-        User opponent = null;
-        try {
-            for (Member member : channelResponse.getMembers()) {
-                if (!member.getUser().getId().equals(this.user.getId())) {
-                    opponent = member.getUser();
-                    break;
-                }
-            }
-        } catch (Exception e) {
-        }
-        return opponent;
-    }
-
-    // endregion
-
-    // region Message
-
-    public void setEphemeralMessage(String channelId, Message message) {
-        List<Message> messages = ephemeralMessage.get(channelId);
-        if (messages == null) messages = new ArrayList<>();
-
-        boolean isContain = false;
-        for (Message message1 : messages) {
-            if (message1.getId().equals(message.getId())) {
-                messages.remove(message1);
-                isContain = true;
-                break;
-            }
-        }
-        if (!isContain)
-            messages.add(message);
-
-        ephemeralMessage.put(channelId, messages);
-    }
-
-    public List<Message> getEphemeralMessages(String channelId, String parentId) {
-        List<Message> ephemeralMessages = ephemeralMessage.get(channelId);
-        if (ephemeralMessages == null) return null;
-
-        List<Message> messages = new ArrayList<>();
-        if (parentId == null) {
-            for (Message message : ephemeralMessages) {
-                if (message.getParent_id() == null)
-                    messages.add(message);
-            }
-        } else {
-            for (Message message : ephemeralMessages) {
-                if (message.getParent_id() == null) continue;
-                if (message.getParent_id().equals(parentId))
-                    messages.add(message);
-            }
-        }
-        return messages;
-    }
-
-    public void removeEphemeralMessage(String channelId, String messageId) {
-        Log.d(TAG, "remove MessageId: " + messageId);
-        List<Message> messages = ephemeralMessage.get(channelId);
-        for (Message message : messages) {
-            if (message.getId().equals(messageId)) {
-                Log.d(TAG, "Message Removed!");
-                messages.remove(message);
-                break;
-            }
-        }
-    }
-
-    public String getMentionedText(Message message) {
-        if (message == null) return null;
-        String text = message.getText();
-        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
-            for (User mentionedUser : message.getMentionedUsers()) {
-                String userName = mentionedUser.getName();
-                text = text.replace("@" + userName, "**" + "@" + userName + "**");
-            }
-        }
-        return text;
-    }
-
-    // endregion
-
-    public void sortUserReads(List<ChannelUserRead> reads) {
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> {
-            return o1.getLast_read().compareTo(o2.getLast_read());
-        });
-    }
-
-    public List<User> getReadUsers(ChannelResponse response, Message message) {
-        if (response.getReads() == null || response.getReads().isEmpty()) return null;
-        List<User> users = new ArrayList<>();
-
-        for (int i = response.getReads().size() - 1; i >= 0; i--) {
-            ChannelUserRead read = response.getReads().get(i);
-            if (readMessage(read.getLast_read(), message.getCreated_at())) {
-                if (!users.contains(read.getUser()) && !read.getUser().getId().equals(this.user.getId()))
-                    users.add(read.getUser());
-            }
-        }
-        return users;
-    }
-    public boolean readMessage(String lastReadMessageDate, String channelLastMesage) {
-        if (lastReadMessageDate == null) return true;
-
-        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        Date dateUserRead, dateChannelMessage;
-
-        try {
-            dateUserRead = Global.messageDateFormat.parse(lastReadMessageDate);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        try {
-            dateChannelMessage = Global.messageDateFormat.parse(channelLastMesage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        if (dateUserRead.equals(dateChannelMessage) || dateUserRead.after(dateChannelMessage)) {
-            return true;
-        }
-        return false;
-    }
 }

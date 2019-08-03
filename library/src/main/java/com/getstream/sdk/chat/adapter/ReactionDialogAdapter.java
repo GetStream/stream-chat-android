@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,16 +27,14 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
     private final String TAG = ReactionDialogAdapter.class.getSimpleName();
 
-    private Context context;
     private Message message;
     private View.OnClickListener clickListener;
     private boolean showAvatar;
     private List<String> types = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
 
-    public ReactionDialogAdapter(Context context, Message message,
+    public ReactionDialogAdapter(Message message,
                                  boolean showAvatar,
                                  View.OnClickListener clickListener) {
-        this.context = context;
         this.message = message;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
@@ -120,7 +117,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
                     try {
-                        if (user.getId().equals(Global.streamChat.getUser().getId())) {
+                        if (user.getId().equals(Global.client.user.getId())) {
                             isReactioned = true;
                             break;
                         }

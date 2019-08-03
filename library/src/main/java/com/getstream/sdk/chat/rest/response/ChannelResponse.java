@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.Global;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -20,19 +19,19 @@ public class ChannelResponse {
     private final String TAG = ChannelResponse.class.getSimpleName();
 
     @SerializedName("channel")
-    @Expose
+    
     private Channel channel;
 
     @SerializedName("messages")
-    @Expose
+    
     private List<Message> messages;
 
     @SerializedName("read")
-    @Expose
+    
     private List<ChannelUserRead> reads;
 
     @SerializedName("members")
-    @Expose
+    
     private List<Member> members;
 
     private boolean isSorted = false;
@@ -99,7 +98,7 @@ public class ChannelResponse {
             }
             for (int i = reads.size() - 1; i >= 0; i--) {
                 ChannelUserRead channelUserRead = reads.get(i);
-                if (!channelUserRead.getUser().getId().equals(Global.streamChat.getUser().getId())) {
+                if (!channelUserRead.getUser().getId().equals(Global.client.user.getId())) {
                     lastReadUser = channelUserRead.getUser();
                     break;
                 }
@@ -138,17 +137,16 @@ public class ChannelResponse {
             for (int i = reads.size() - 1; i >= 0; i--) {
                 ChannelUserRead channelUserRead = reads.get(i);
                 if (isMyRead) {
-                    if (channelUserRead.getUser().getId().equals(Global.streamChat.getUser().getId())) {
+                    if (channelUserRead.getUser().getId().equals(Global.client.user.getId())) {
                         lastReadDate = channelUserRead.getLast_read();
                         break;
                     }
                 } else {
-                    if (!channelUserRead.getUser().getId().equals(Global.streamChat.getUser().getId())) {
+                    if (!channelUserRead.getUser().getId().equals(Global.client.user.getId())) {
                         lastReadDate = channelUserRead.getLast_read();
                         break;
                     }
                 }
-
             }
         } catch (Exception e) {
             e.printStackTrace();

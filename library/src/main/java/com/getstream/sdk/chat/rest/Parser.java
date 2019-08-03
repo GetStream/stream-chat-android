@@ -16,21 +16,4 @@ public class Parser {
 
         return gson.fromJson(mJson, Event.class);
     }
-
-    public static Message parseMessage(JSONObject json){
-        JSONObject json1 = json.optJSONObject("message");
-        JsonParser parser = new JsonParser();
-        JsonElement mJson =  parser.parse(json1.toString());
-        Gson gson = new Gson();
-
-        return gson.fromJson(mJson, Message.class);
-    }
-
-    public static User parseUser(JSONObject json){
-        JSONObject json1 = json.optJSONObject("user");
-        JsonParser parser = new JsonParser();
-        JsonElement mJson =  parser.parse(json1.toString());
-        Gson gson = new Gson();
-        return gson.fromJson(mJson, User.class);
-    }
 }

@@ -35,12 +35,11 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.function.AttachmentFunction;
-import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -78,11 +77,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import okio.ByteString;
-
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
-public class ChannelFragment extends Fragment implements WSResponseHandler {
+public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     public StreamChat client;
     // ViewModel & Binding
@@ -144,9 +141,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     public void onResume() {
         super.onResume();
 
-        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
-        Global.eventFunction.setChannel(this.channel);
-
+        client.setActiveChannel(this.channel);
 
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
@@ -160,8 +155,9 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Global.webSocketService.removeWSResponseHandler(this);
-        Global.eventFunction.setChannel(null);
+        client.setChannelEventHandler(null);
+        client.setActiveChannel(null);
+
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
 
@@ -251,9 +247,8 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     // region Init
     private void init() {
         // set WS handler
-        Global.webSocketService.setWSResponseHandler(this, getContext());
+        client.setChannelEventHandler(this);
 
-        singleConversation = (Global.streamChat.getChannel() != null);
         // Permission Check
         PermissionChecker.permissionCheck(getActivity(), null);
         try {
@@ -282,11 +277,11 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
-        Global.eventFunction.setChannel(channel);
+        client.setActiveChannel(channel);
     }
 
     private void checkEphemeralMessages() {
-        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
+        List<Message> ephemeralMainMessages = client.getEphemeralMessages(channel.getId(), null);
         if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
             for (int i = 0; i < ephemeralMainMessages.size(); i++) {
                 Message message = ephemeralMainMessages.get(i);
@@ -411,7 +406,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         if (!TextUtils.isEmpty(channelResponse.getChannel().getName())) {
             channelName = channelResponse.getChannel().getName();
         } else {
-            User opponent = Global.getOpponentUser(channelResponse);
+            User opponent = client.getOpponentUser(channelResponse);
             if (opponent != null) {
                 channelName = opponent.getName();
             }
@@ -424,10 +419,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         configHeaderLastActive(lastMessage);
         // Online Mark
         try {
-            if (Global.getOpponentUser(channelResponse) == null)
+            if (client.getOpponentUser(channelResponse) == null)
                 binding.ivActiveMark.setVisibility(View.GONE);
             else {
-                if (Global.getOpponentUser(channelResponse).getOnline()) {
+                if (client.getOpponentUser(channelResponse).getOnline()) {
                     binding.ivActiveMark.setVisibility(View.VISIBLE);
                 } else {
                     binding.ivActiveMark.setVisibility(View.GONE);
@@ -955,7 +950,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         // send a typing.start every 2 seconds
         if (diff > 2000) {
             this.lastTypingEvent = new Date();
-            Global.eventFunction.sendEvent(Event.typing_start);
+//            Global.eventFunction.sendEvent(Event.typing_start);
             Log.d(TAG, "typing.start");
         }
     }
@@ -966,7 +961,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     public void stopTyping() {
         this.lastTypingEvent = null;
         this.isTyping = false;
-        Global.eventFunction.sendEvent(Event.typing_stop);
+//        Global.eventFunction.sendEvent(Event.typing_stop);
         Log.d(TAG, "typing.stop");
     }
 
@@ -1122,10 +1117,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
      * @param event Server response
      */
     @Override
-    public void handleEventWSResponse(Event event) {
-        if (Global.eventFunction == null)
-            Global.eventFunction = new EventFunction();
-        Global.eventFunction.handleReceiveEvent(event);
+    public void handleEventResponse(Event event) {
 
         String channelId = null;
         try {
@@ -1141,16 +1133,12 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         Log.d(TAG, "New Event: " + new Gson().toJson(event));
     }
 
-    @Override
-    public void handleByteStringWSResponse(ByteString byteString) {
-
-    }
 
     @Override
     public void handleConnection() {
         Log.d(TAG, "Connected Websocket!");
-        if (singleConversation && Global.streamChat.getChannel() != null)
-            getChannel(Global.streamChat.getChannel());
+        if (singleConversation && client.getActiveChannel() != null)
+            getChannel(client.getActiveChannel());
     }
 
     /**
@@ -1160,7 +1148,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
      * @param errCode Error code
      */
     @Override
-    public void onFailed(String errMsg, int errCode) {
+    public void onConnectionFailed(String errMsg, int errCode) {
         binding.setNoConnection(true);
         binding.setShowMainProgressbar(false);
     }
@@ -1204,7 +1192,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     break;
                 case Event.channel_updated:
                 case Event.channel_deleted:
-                    Global.eventFunction.handleChannelEvent(channelResponse, event);
                     if (event.getType().equals(Event.channel_deleted)) {
                         Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
                         finish();

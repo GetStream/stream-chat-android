@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest.controller;
 
-import android.util.Log;
-
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.utils.Global;
 
@@ -19,7 +17,7 @@ public class RetrofitClient {
     public static final String BASE_URL = Global.baseURL.url(BaseURL.Scheme.https);
     private static Retrofit retrofit = null;
 
-    public static Retrofit getAuthorizedClient() {
+    public static Retrofit getAuthorizedClient(String userToken) {
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -32,7 +30,7 @@ public class RetrofitClient {
                 .addInterceptor(chain -> {
                     Request request = chain.request()
                             .newBuilder()
-                            .addHeader("Authorization", Global.streamChat.getUserToken())
+                            .addHeader("Authorization", userToken)
                             .addHeader("Content-Type", "application/json")
                             .addHeader("stream-auth-type", "jwt")
                             .addHeader("Accept-Encoding", "application/gzip")

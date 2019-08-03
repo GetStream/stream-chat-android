@@ -19,7 +19,7 @@ public class AddDeviceRequest {
 
     public AddDeviceRequest(String deviceId){
         this.id = deviceId;
-        this.user_id = Global.streamChat.getUser().getId();
+        this.user_id = Global.client.user.getId();
         this.push_provider = "firebase";
     }
 }

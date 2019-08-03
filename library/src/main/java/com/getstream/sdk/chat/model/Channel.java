@@ -11,6 +11,7 @@ import java.util.Map;
  * A channel
  */
 public class Channel {
+
     @SerializedName("id")
     private String id;
     @SerializedName("cid")

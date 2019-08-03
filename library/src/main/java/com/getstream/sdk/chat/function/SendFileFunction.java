@@ -20,7 +20,6 @@ import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
-import com.getstream.sdk.chat.databinding.ActivityChatBinding;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.ModelType;
@@ -29,7 +28,6 @@ import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 

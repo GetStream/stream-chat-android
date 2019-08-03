@@ -9,21 +9,18 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.component.Component;
-import com.getstream.sdk.chat.function.EventFunction;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.BaseURL;
-import com.getstream.sdk.chat.rest.WebSocketService;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.rest.controller.RestController;
 import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.enums.Location;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -33,10 +30,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class Global {
@@ -44,12 +39,12 @@ public class Global {
     private static final String TAG = Global.class.getSimpleName();
 
     public static BaseURL baseURL = new BaseURL(Location.US_EAST);
-    public static RestController mRestController = new RestController();
     public static SelectAttachmentModel selectAttachmentModel;
-
+    public static StreamChat client;
+    public static Component component;
 //    public static EventFunction eventFunction;
 
-    public static Component component = new Component();
+
     public static boolean noConnection = false;
 
 //    public static List<ChannelResponse> channels = new ArrayList<>();
@@ -298,6 +293,181 @@ public class Global {
     }
     // endregion
 
+    // region Channel
+    public static ChannelResponse getChannelResponseById(String id) {
+        ChannelResponse response_ = null;
+        for (ChannelResponse response : client.channels) {
+            if (id.equals(response.getChannel().getId())) {
+                response_ = response;
+                break;
+            }
+        }
+        return response_;
+    }
+
+    public static ChannelResponse getPrivateChannel(User user) {
+        String channelId1 = client.user.getId() + "-" + user.getId(); // Created by
+        String channelId2 = user.getId() + "-" + client.user.getId(); // Invited by
+        ChannelResponse channelResponse = null;
+        for (ChannelResponse response : client.channels) {
+            if (response.getChannel().getId().equals(channelId1) || response.getChannel().getId().equals(channelId2)) {
+                channelResponse = response;
+                break;
+            }
+        }
+        return channelResponse;
+    }
+
+    public static void addChannelResponse(ChannelResponse response) {
+        boolean isContain = false;
+        for (ChannelResponse response1 : client.channels) {
+            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
+                client.channels.remove(response1);
+                client.channels.add(response);
+                isContain = true;
+                Log.d(TAG, "Contain channel:" + response.getChannel().getId());
+                break;
+            }
+        }
+        if (!isContain)
+            client.channels.add(response);
+    }
+
+    public static void deleteChannelResponse(Channel channel) {
+        for (ChannelResponse response1 : client.channels) {
+            if (response1.getChannel().getId().equals(channel.getId())) {
+                client.channels.remove(response1);
+                break;
+            }
+        }
+    }
+
+    public static User getOpponentUser(ChannelResponse channelResponse) {
+        if (channelResponse.getMembers() == null || channelResponse.getMembers().isEmpty())
+            return null;
+        if (channelResponse.getMembers().size() > 2) return null;
+        User opponent = null;
+        try {
+            for (Member member : channelResponse.getMembers()) {
+                if (!member.getUser().getId().equals(client.user.getId())) {
+                    opponent = member.getUser();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+        }
+        return opponent;
+    }
+
+    // endregion
+
+    // region Message
+
+    public static void setEphemeralMessage(String channelId, Message message) {
+        List<Message> messages = client.ephemeralMessage.get(channelId);
+        if (messages == null) messages = new ArrayList<>();
+
+        boolean isContain = false;
+        for (Message message1 : messages) {
+            if (message1.getId().equals(message.getId())) {
+                messages.remove(message1);
+                isContain = true;
+                break;
+            }
+        }
+        if (!isContain)
+            messages.add(message);
+
+        client.ephemeralMessage.put(channelId, messages);
+    }
+
+    public static List<Message> getEphemeralMessages(String channelId, String parentId) {
+        List<Message> ephemeralMessages = client.ephemeralMessage.get(channelId);
+        if (ephemeralMessages == null) return null;
+
+        List<Message> messages = new ArrayList<>();
+        if (parentId == null) {
+            for (Message message : ephemeralMessages) {
+                if (message.getParent_id() == null)
+                    messages.add(message);
+            }
+        } else {
+            for (Message message : ephemeralMessages) {
+                if (message.getParent_id() == null) continue;
+                if (message.getParent_id().equals(parentId))
+                    messages.add(message);
+            }
+        }
+        return messages;
+    }
+
+    public static void removeEphemeralMessage(String channelId, String messageId) {
+        Log.d(TAG, "remove MessageId: " + messageId);
+        List<Message> messages = client.ephemeralMessage.get(channelId);
+        for (Message message : messages) {
+            if (message.getId().equals(messageId)) {
+                Log.d(TAG, "Message Removed!");
+                messages.remove(message);
+                break;
+            }
+        }
+    }
+
+    public static String getMentionedText(Message message) {
+        if (message == null) return null;
+        String text = message.getText();
+        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
+            for (User mentionedUser : message.getMentionedUsers()) {
+                String userName = mentionedUser.getName();
+                text = text.replace("@" + userName, "**" + "@" + userName + "**");
+            }
+        }
+        return text;
+    }
+
+    // endregion
+    public static void sortUserReads(List<ChannelUserRead> reads) {
+        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> {
+            return o1.getLast_read().compareTo(o2.getLast_read());
+        });
+    }
+
+    public static List<User> getReadUsers(ChannelResponse response, Message message) {
+        if (response.getReads() == null || response.getReads().isEmpty()) return null;
+        List<User> users = new ArrayList<>();
+
+        for (int i = response.getReads().size() - 1; i >= 0; i--) {
+            ChannelUserRead read = response.getReads().get(i);
+            if (readMessage(read.getLast_read(), message.getCreated_at())) {
+                if (!users.contains(read.getUser()) && !read.getUser().getId().equals(client.user.getId()))
+                    users.add(read.getUser());
+            }
+        }
+        return users;
+    }
+    public static boolean readMessage(String lastReadMessageDate, String channelLastMesage) {
+        if (lastReadMessageDate == null) return true;
+
+        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Date dateUserRead, dateChannelMessage;
+
+        try {
+            dateUserRead = Global.messageDateFormat.parse(lastReadMessageDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        try {
+            dateChannelMessage = Global.messageDateFormat.parse(channelLastMesage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        if (dateUserRead.equals(dateChannelMessage) || dateUserRead.after(dateChannelMessage)) {
+            return true;
+        }
+        return false;
+    }
     // ONLY_FOR_DEBUG
     public static boolean checkMesageGapState = false;
 }
