@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -55,7 +54,8 @@ public class SendFileFunction {
     ChannelResponse channelResponse;
     Channel channel;
 
-    public SendFileFunction(Activity activity, ChannelFragmentBinding binding, ChannelResponse channelResponse) {
+    public SendFileFunction(Channel channel, Activity activity, ChannelFragmentBinding binding, ChannelResponse channelResponse) {
+        this.channel = channel;
         this.activity = activity;
         this.binding = binding;
         this.channelResponse = channelResponse;

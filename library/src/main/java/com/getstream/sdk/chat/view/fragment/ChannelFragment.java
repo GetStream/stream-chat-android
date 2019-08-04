@@ -252,13 +252,13 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         }
 
         threadBinding = binding.clThread;
+        onBackPressed();
         if (channelResponse == null && channelIdFromChannelList != null)
             channelResponse = client.getChannelResponseById(channelIdFromChannelList);
         else {
             return;
         }
         initReconnection();
-        onBackPressed();
     }
 
     private void initReconnection() {
@@ -269,7 +269,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.setChannelResponse(this.channelResponse);
         channel.setClient(client);
 
-        sendFileFunction = new SendFileFunction(getActivity(), binding, channelResponse);
+        sendFileFunction = new SendFileFunction(channel, getActivity(), binding, channelResponse);
         reactionFunction = new ReactionFunction(channel);
 
         checkReadMark();
