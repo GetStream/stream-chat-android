@@ -407,7 +407,11 @@ public class StreamChat implements WSResponseHandler {
         Message message = event.getMessage();
         if (message == null) return;
 
-        if (!message.getType().equals(ModelType.message_regular)) return;
+        if (!message.getType().equals(ModelType.message_regular)){
+            if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+                channelEventHandler.handleEventResponse(event);
+            return;
+        }
 
         switch (event.getType()) {
             case Event.message_new:
@@ -472,7 +476,6 @@ public class StreamChat implements WSResponseHandler {
         Message message = event.getMessage();
         if (message == null) return;
 
-        if (!message.getType().equals(ModelType.message_regular)) return;
         updateMessageEvent(channelResponse, message);
         if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
             channelEventHandler.handleEventResponse(event);
