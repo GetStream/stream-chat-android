@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.rest.request;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
@@ -11,19 +10,15 @@ import java.util.Map;
 
 public class PaginationRequest {
     @SerializedName("messages")
-    @Expose
     Map<String, Object> messages;
 
     @SerializedName("data")
-    @Expose
     Map<String, Object> channel;
 
     @SerializedName("state")
-    @Expose
     boolean state;
 
     @SerializedName("watch")
-    @Expose
     boolean watch;
 
     public PaginationRequest(int limit, String messageId, Channel channel) {
@@ -44,7 +39,8 @@ public class PaginationRequest {
         this.channel.remove("frozen");
         this.channel.remove("config");
         this.channel.remove("example");
-        this.channel.remove("additionalFields");
+        this.channel.remove("extraData");
+
 
         this.state = true;
         this.watch = true;

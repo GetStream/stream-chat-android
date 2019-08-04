@@ -407,7 +407,7 @@ public class StreamChat implements WSResponseHandler {
         Message message = event.getMessage();
         if (message == null) return;
 
-        if (!message.getType().equals(ModelType.message_regular)){
+        if (!message.getType().equals(ModelType.message_regular)) {
             if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
                 channelEventHandler.handleEventResponse(event);
             return;
@@ -1036,4 +1036,59 @@ public class StreamChat implements WSResponseHandler {
 
 
     // endregion
+
+    public void disconnect() {
+    }
+
+    public void setAnonymousUser() {
+    }
+
+    public void setGuestUser() {
+    }
+
+    public void on() {
+    }
+
+    public void off() {
+    }
+
+    public void sendFile() {
+    }
+
+    public void queryUsers() {
+    }
+
+
+    public void addDevice() {
+    }
+
+    public void getDevices() {
+    }
+
+    public void removeDevice() {
+    }
+
+    public void muteUser() {
+    }
+
+    public void unmuteUser() {
+    }
+
+    public void flagMessage() {
+    }
+
+    public void unflagMessage() {
+    }
+
+    public void markAllRead() {
+    }
+
+    public void updateMessage() {
+    }
+
+    public void deleteMessage() {
+    }
+
+    public void getMessage() {
+    }
 }

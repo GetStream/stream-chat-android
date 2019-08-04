@@ -56,7 +56,7 @@ public class Channel {
     @SerializedName("image")
     private String image;
 
-    private Map<String, Object> extraData;
+    private HashMap<String, Object> extraData;
 
     // region Getter & Setter
     public String getId() {
@@ -131,7 +131,7 @@ public class Channel {
         this.image = image;
     }
 
-    public Map<String, Object> getExtraData() {
+    public HashMap<String, Object> getExtraData() {
         return extraData;
     }
     // endregion

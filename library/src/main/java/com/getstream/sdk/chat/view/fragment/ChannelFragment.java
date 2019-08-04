@@ -1356,7 +1356,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         isCalling = true;
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
-            PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
+            Channel channel1 = new Channel(this.channel.getType(), this.channel.getId(),this.channel.getExtraData());
+            PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), channel1);
             client.pagination(channel.getId(), request, new QueryChannelCallback() {
                 @Override
                 public void onSuccess(ChannelResponse response) {
