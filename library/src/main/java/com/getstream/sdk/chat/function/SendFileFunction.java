@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -36,10 +37,6 @@ import com.getstream.sdk.chat.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class SendFileFunction {
 
@@ -252,7 +249,7 @@ public class SendFileFunction {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.setActiveMessageSend(false);
-            channel.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new StreamChat.SendFileCallback() {
+            channel.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.setActiveMessageSend(true);
@@ -336,7 +333,7 @@ public class SendFileFunction {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            channel.sendFile(attachment, false, new StreamChat.SendFileCallback() {
+            channel.sendFile(attachment, false, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     attachment.setAssetURL(response.getFileUrl());

@@ -4,14 +4,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -19,6 +23,7 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +31,8 @@ import java.util.Map;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+
+import static com.getstream.sdk.chat.utils.Utils.TAG;
 
 /**
  * A channel
@@ -223,18 +230,18 @@ public class Channel {
     public void sendMessage(@Nullable String text,
                             @Nullable List<Attachment> attachments,
                             @Nullable String parentId,
-                            final MessageSendListener sendListener) {
+                            SendMessageCallback callback) {
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this.id, request, new StreamChat.SendMessageCallback() {
+        client.sendMessage(this.id, request, new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                sendListener.onSuccess(response);
+                callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                sendListener.onFailed(errMsg, errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -242,48 +249,48 @@ public class Channel {
     public void updateMessage(String text,
                               @NonNull Message message,
                               @Nullable List<Attachment> attachments,
-                              final MessageSendListener sendListener) {
+                              SendMessageCallback callback) {
         if (message == null) return;
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
         message.setText(text);
         UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
 
-        client.updateMessage(message.getId(), request, new StreamChat.SendMessageCallback() {
+        client.updateMessage(message.getId(), request, new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                sendListener.onSuccess(response);
+                callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                sendListener.onFailed(errMsg, errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
     public void deleteMessage(@NonNull Message message,
-                              final MessageSendListener sendListener) {
-        client.deleteMessage(message.getId(), new StreamChat.SendMessageCallback() {
+                              SendMessageCallback callback) {
+        client.deleteMessage(message.getId(), new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                sendListener.onSuccess(response);
+                callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                sendListener.onFailed(errMsg, errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
     public void sendFile(Attachment attachment, boolean isImage,
-                          StreamChat.SendFileCallback fileCallback) {
+                          SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
 
         if (isImage) {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this.channelResponse.getChannel().getId(), part, new StreamChat.SendFileCallback() {
+            client.sendImage(this.channelResponse.getChannel().getId(), part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -297,7 +304,7 @@ public class Channel {
         } else {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this.channelResponse.getChannel().getId(), part, new StreamChat.SendFileCallback() {
+            client.sendFile(this.channelResponse.getChannel().getId(), part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -312,9 +319,9 @@ public class Channel {
     }
     // endregion
 
-    public void sendReaction(String mesageId, String type, StreamChat.SendMessageCallback callback){
+    public void sendReaction(String mesageId, String type, SendMessageCallback callback){
         ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, new StreamChat.SendMessageCallback() {
+        client.sendReaction(mesageId, request, new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -326,10 +333,104 @@ public class Channel {
             }
         });
     }
-    public void deleteReaction(String mesageId, String type, StreamChat.SendMessageCallback callback){
-        client.deleteReaction(mesageId, type, new StreamChat.SendMessageCallback() {
+    public void deleteReaction(String mesageId, String type, SendMessageCallback callback){
+        client.deleteReaction(mesageId, type, new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
+        });
+    }
+    Date lastKeyStroke;
+    Date lastTypingEvent;
+    boolean isTyping = false;
+
+    /**
+     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
+     * Call this on every keystroke
+     */
+    public void keystroke(){
+        if (!getConfig().isTyping_events()) return;
+        Date now = new Date();
+        long diff;
+        if (this.lastKeyStroke == null)
+            diff = 2001;
+        else
+            diff = now.getTime() - this.lastKeyStroke.getTime();
+
+
+        this.lastKeyStroke = now;
+        this.isTyping = true;
+        // send a typing.start every 2 seconds
+        if (diff > 2000) {
+            this.lastTypingEvent = new Date();
+            sendEvent(Event.typing_start, new EventCallback() {
+                @Override
+                public void onSuccess(EventResponse response) {
+
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
+        }
+    }
+
+    /**
+     * stopTyping - Sets last typing to null and sends the typing.stop event
+     */
+    public void stopTyping(){
+        if (!getConfig().isTyping_events()) return;
+        this.lastTypingEvent = null;
+        this.isTyping = false;
+        sendEvent(Event.typing_stop, new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        });
+    }
+
+    /**
+     * Clean - Cleans the channel state and fires stop typing if needed
+     */
+    public void clean() {
+        if (this.lastKeyStroke != null) {
+            Date now = new Date();
+            long diff = now.getTime() - this.lastKeyStroke.getTime();
+            if (diff > 1000 && this.isTyping) {
+                this.stopTyping();
+            }
+        }
+    }
+
+    /**
+     * sendEvent - Send an event on this channel
+     *
+     * @param eventType event for example {type: 'message.read'}
+     *
+     * @return The Server Response
+     */
+    public void sendEvent(String eventType, final EventCallback callback){
+        final Map<String, Object> event = new HashMap<>();
+        event.put("type", eventType);
+        SendEventRequest request = new SendEventRequest(event);
+
+        client.sendEvent(this.id, request, new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
                 callback.onSuccess(response);
             }
 

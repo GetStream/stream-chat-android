@@ -38,7 +38,6 @@ import com.getstream.sdk.chat.function.AttachmentFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
-import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -48,6 +47,10 @@ import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -298,7 +301,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         binding.setShowMainProgressbar(true);
         Log.d(TAG, "Channel Connecting...");
 
-        client.queryChannel(channel_, new StreamChat.QueryChannelCallback() {
+        client.queryChannel(channel_, new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -439,7 +442,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                 binding.setActiveMessageSend(!(text.length() == 0));
                 sendFileFunction.checkCommand(text);
                 if (text.length() > 0) {
-                    keystroke();
+                    channel.keystroke();
                 }
             }
 
@@ -616,7 +619,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.sendMessage(text,
                 attachments,
                 isThreadMode() ? thread_parentMessage.getId() : null,
-                new MessageSendListener() {
+                new SendMessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         binding.tvSend.setEnabled(true);
@@ -624,7 +627,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     }
 
                     @Override
-                    public void onFailed(String errMsg, int errCode) {
+                    public void onError(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -641,7 +644,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.updateMessage(binding.etMessage.getText().toString(),
                 (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
-                new MessageSendListener() {
+                new SendMessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         initSendMessage();
@@ -651,7 +654,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     }
 
                     @Override
-                    public void onFailed(String errMsg, int errCode) {
+                    public void onError(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -675,7 +678,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             map.put("image_action", ModelType.action_shuffle);
 
         SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-        client.sendAction(message.getId(), request, new StreamChat.SendMessageCallback() {
+        client.sendAction(message.getId(), request, new SendMessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 handleAction(message);
@@ -839,14 +842,14 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
                     channel.deleteMessage(message,
-                            new MessageSendListener() {
+                            new SendMessageCallback() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
                                     Utils.showMessage(getContext(), "Deleted Successfully");
                                 }
 
                                 @Override
-                                public void onFailed(String errMsg, int errCode) {
+                                public void onError(String errMsg, int errCode) {
                                     Log.d(TAG, "Failed DeleteMessage : " + errMsg);
                                 }
                             });
@@ -889,15 +892,14 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     // endregion
 
     // region Typing Indicator
-    boolean isTyping = false;
-    Date lastKeyStroke;
-    Date lastTypingEvent;
+
+
     private Handler stopTyingEventHandler = new Handler();
     Runnable runnableTypingStop = new Runnable() {
         @Override
         public void run() {
             try {
-                clean();
+                channel.clean();
             } finally {
                 stopTyingEventHandler.postDelayed(runnableTypingStop, 3000);
             }
@@ -909,55 +911,15 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     }
 
     void stopTypingStopRepeatingTask() {
-        stopTyping();
+        channel.stopTyping();
         stopTyingEventHandler.removeCallbacks(runnableTypingStop);
     }
 
-    /**
-     * Clean - Cleans the channel state and fires stop typing if needed
-     */
-    public void clean() {
-        if (this.lastKeyStroke != null) {
-            Date now = new Date();
-            long diff = now.getTime() - this.lastKeyStroke.getTime();
-            if (diff > 1000 && this.isTyping) {
-                this.stopTyping();
-            }
-        }
-    }
-
-    /**
-     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-     * Call this on every keystroke
-     */
-    public void keystroke() {
-        Date now = new Date();
-        long diff;
-        if (this.lastKeyStroke == null)
-            diff = 2001;
-        else
-            diff = now.getTime() - this.lastKeyStroke.getTime();
 
 
-        this.lastKeyStroke = now;
-        this.isTyping = true;
-        // send a typing.start every 2 seconds
-        if (diff > 2000) {
-            this.lastTypingEvent = new Date();
-//            Global.eventFunction.sendEvent(Event.typing_start);
-            Log.d(TAG, "typing.start");
-        }
-    }
 
-    /**
-     * stopTyping - Sets last typing to null and sends the typing.stop event
-     */
-    public void stopTyping() {
-        this.lastTypingEvent = null;
-        this.isTyping = false;
-//        Global.eventFunction.sendEvent(Event.typing_stop);
-        Log.d(TAG, "typing.stop");
-    }
+
+
 
     // refresh Current Typing users in this channel
     private Handler clearTyingUserHandler = new Handler();
@@ -1027,7 +989,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
             if (isCallingThread) return;
             isCallingThread = true;
-            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, new StreamChat.GetRepliesCallback() {
+            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     threadMessages = response.getMessages();
@@ -1431,7 +1393,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
-            client.pagination(channel.getId(), request, new StreamChat.QueryChannelCallback() {
+            client.pagination(channel.getId(), request, new QueryChannelCallback() {
                 @Override
                 public void onSuccess(ChannelResponse response) {
                     binding.setShowLoadMoreProgressbar(false);
@@ -1460,7 +1422,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             binding.setShowMainProgressbar(true);
             client.getReplies(thread_parentMessage.getId(),
                     String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-                    threadMessages.get(0).getId(), new StreamChat.GetRepliesCallback() {
+                    threadMessages.get(0).getId(), new GetRepliesCallback() {
                         @Override
                         public void onSuccess(GetRepliesResponse response) {
                             binding.setShowMainProgressbar(false);
@@ -1503,7 +1465,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     private void messageReadMark() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
-        client.markRead(channel.getId(), request, new StreamChat.EventCallback() {
+        client.markRead(channel.getId(), request, new EventCallback() {
             @Override
             public void onSuccess(EventResponse response) {
 

@@ -31,6 +31,9 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.AddDeviceCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
@@ -252,7 +255,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.queryChannels(new StreamChat.QueryChannelsCallback() {
+        client.queryChannels(new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -291,7 +294,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
                     ChannelResponse response_ = client.getChannelResponseById(channelId);
-                    client.deleteChannel(channelId, new StreamChat.QueryChannelCallback() {
+                    client.deleteChannel(channelId, new QueryChannelCallback() {
                         @Override
                         public void onSuccess(ChannelResponse response) {
                             Utils.showMessage(getContext(), "Deleted successfully!");
@@ -350,7 +353,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                     String token_ = task.getResult().getToken();
                     Log.d(TAG, "device TokenService: " + token_);
                     // Save to Server
-                    client.addDevice(token_, new StreamChat.AddDeviceCallback() {
+                    client.addDevice(token_, new AddDeviceCallback() {
                         @Override
                         public void onSuccess(AddDevicesResponse response) {
 

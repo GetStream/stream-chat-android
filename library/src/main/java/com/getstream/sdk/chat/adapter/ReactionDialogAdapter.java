@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.enums.ReactionEmoji;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -138,7 +139,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void sendReaction(final View view, String type) {
-            channel.sendReaction(message.getId(), type, new StreamChat.SendMessageCallback() {
+            channel.sendReaction(message.getId(), type, new SendMessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     clickListener.onClick(view);
@@ -152,7 +153,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void deleteReaction(final View view, String type) {
-            channel.deleteReaction(message.getId(), type, new StreamChat.SendMessageCallback() {
+            channel.deleteReaction(message.getId(), type, new SendMessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     clickListener.onClick(view);

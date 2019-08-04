@@ -20,6 +20,15 @@ import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.interfaces.AddDeviceCallback;
+import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -36,11 +45,10 @@ import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.GetUsersResponse;
+import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONObject;
 
@@ -53,7 +61,6 @@ import java.util.Map;
 import java.util.Set;
 
 import okhttp3.MultipartBody;
-import okhttp3.ResponseBody;
 import okio.ByteString;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -473,7 +480,7 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region Channel
-    public void queryChannels(final QueryChannelsCallback callback) {
+    public void queryChannels(final QueryChannelListCallback callback) {
         mService.queryChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
@@ -806,6 +813,7 @@ public class StreamChat implements WSResponseHandler {
         mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
+
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
@@ -894,10 +902,10 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} options          Option object, {presence: true}
      * @return {object} User Query Response
      */
-    public void queryUsers(final GetUsersCallback callback) {
-        mService.queryUsers(apiKey, user.getId(), connectionId, getUserQueryPayload()).enqueue(new Callback<GetUsersResponse>() {
+    public void queryUsers(final QueryUserListCallback callback) {
+        mService.queryUsers(apiKey, user.getId(), connectionId, getUserQueryPayload()).enqueue(new Callback<QueryUserListResponse>() {
             @Override
-            public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
+            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
                 if (response.isSuccessful()) {
                     for (int i = 0; i < response.body().getUsers().size(); i++)
                         if (!response.body().getUsers().get(i).isMe())
@@ -910,7 +918,7 @@ public class StreamChat implements WSResponseHandler {
             }
 
             @Override
-            public void onFailure(Call<GetUsersResponse> call, Throwable t) {
+            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
@@ -985,79 +993,4 @@ public class StreamChat implements WSResponseHandler {
 
 
     // endregion
-
-    private void handleError(ResponseBody errBody, int errCode, ErrCallback errCallback) {
-        if (errBody == null) {
-            errCallback.onError("No channelResponse from server", -1);
-        }
-
-        String err;
-        try {
-            JSONObject jsonObject = new JSONObject(Utils.readInputStream(errBody.byteStream()));
-            err = jsonObject.getString("message");
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            err = "Error " + errCode;
-        }
-        errCallback.onError(err, errCode);
-    }
-
-    // region Interface
-    public interface QueryChannelsCallback {
-        void onSuccess(QueryChannelsResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface GetUsersCallback {
-        void onSuccess(GetUsersResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface AddDeviceCallback {
-        void onSuccess(AddDevicesResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface GetDevicesCallback {
-        void onSuccess(GetDevicesResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface QueryChannelCallback {
-        void onSuccess(ChannelResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface EventCallback {
-        void onSuccess(EventResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface SendMessageCallback {
-        void onSuccess(MessageResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface SendFileCallback {
-        void onSuccess(FileSendResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface GetRepliesCallback {
-        void onSuccess(GetRepliesResponse response);
-
-        void onError(String errMsg, int errCode);
-    }
-
-    public interface ErrCallback {
-        void onError(String errMsg, int errCode); // errCode = -1 means that it's failed to connect API.
-    }
 }

@@ -26,20 +26,16 @@ import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.GetUsersResponse;
+import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -231,9 +227,9 @@ public class UsersActivity extends AppCompatActivity {
 
         if (client == null)
             client = Global.client;
-        client.queryUsers(new StreamChat.GetUsersCallback() {
+        client.queryUsers(new QueryUserListCallback() {
             @Override
-            public void onSuccess(GetUsersResponse response) {
+            public void onSuccess(QueryUserListResponse response) {
                 binding.setShowMainProgressbar(false);
                 isCalling = false;
                 if (response.getUsers().isEmpty()) {
