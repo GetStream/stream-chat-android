@@ -33,9 +33,14 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -227,7 +232,7 @@ public class UsersActivity extends AppCompatActivity {
 
         if (client == null)
             client = Global.client;
-        client.queryUsers(new QueryUserListCallback() {
+        client.queryUsers(getUserQueryPayload(), new QueryUserListCallback() {
             @Override
             public void onSuccess(QueryUserListResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -253,7 +258,34 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
     }
+    private JSONObject getUserQueryPayload() {
+        Map<String, Object> payload = new HashMap<>();
 
+        // Filter options
+        if (Global.component.user.getFilter() != null) {
+            payload.put("filter_conditions", Global.component.user.getFilter().getData());
+        } else {
+            payload.put("filter_conditions", new HashMap<>());
+        }
+        // Sort options
+        if (Global.component.user.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_active");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
+
+        if (client.users.size() > 0)
+            payload.put("offset", client.users.size());
+        payload.put("limit", Constant.USER_LIMIT);
+
+        JSONObject json;
+        json = new JSONObject(payload);
+        Log.d(TAG, "Payload: " + json);
+        return json;
+    }
     private void getChannel(List<User> users) {
 //        boolean isPrivateChannel = users.size() == 1;
 //        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {

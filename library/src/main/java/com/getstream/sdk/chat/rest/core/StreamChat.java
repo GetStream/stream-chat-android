@@ -54,7 +54,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -329,7 +328,7 @@ public class StreamChat implements WSResponseHandler {
             channelListEventHandler.updateChannels();
     }
 
-    public void queryChannel(Channel channel, final QueryChannelCallback callback) {
+    public void queryChannel(Channel channel, QueryChannelCallback callback) {
         channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
@@ -510,8 +509,8 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region Channel
-    public void queryChannels(final QueryChannelListCallback callback) {
-        mService.queryChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<QueryChannelsResponse>() {
+    public void queryChannels(JSONObject payload, QueryChannelListCallback callback) {
+        mService.queryChannels(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                 if (response.isSuccessful()) {
@@ -552,43 +551,13 @@ public class StreamChat implements WSResponseHandler {
         }
     }
 
-    private JSONObject getPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Sort Option
-        if (component.channel.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(component.channel.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_message_at");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
-
-        if (component.channel.getFilter() != null) {
-            payload.put("filter_conditions", component.channel.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
-        }
-
-        payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
-        if (channels.size() > 0)
-            payload.put("offset", channels.size());
-        payload.put("limit", Constant.CHANNEL_LIMIT);
-        payload.put("presence", false);
-        payload.put("state", true);
-        payload.put("subscribe", true);
-        payload.put("watch", true);
-        return new JSONObject(payload);
-    }
-
     /**
      * deleteChannel - Delete the given channel
      *
      * @param channelId the Channel id needs to be specified
      * @return {object} Response that includes the channel
      */
-    public void deleteChannel(@NonNull String channelId, final QueryChannelCallback callback) {
+    public void deleteChannel(@NonNull String channelId, QueryChannelCallback callback) {
 
         mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelResponse>() {
             @Override
@@ -607,7 +576,7 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final QueryChannelCallback callback) {
+    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, QueryChannelCallback callback) {
 
         mService.pagination(channelId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
             @Override
@@ -637,7 +606,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} message The Message object
      * @return {object} The Server Response
      */
-    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, final SendMessageCallback callback) {
+    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, SendMessageCallback callback) {
 
         mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -664,7 +633,7 @@ public class StreamChat implements WSResponseHandler {
      */
     public void updateMessage(@NonNull String messageId,
                               @NonNull UpdateMessageRequest request,
-                              final SendMessageCallback callback) {
+                              SendMessageCallback callback) {
 
         mService.updateMessage(messageId,
                 apiKey,
@@ -694,7 +663,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} messageID the message id needs to be specified
      * @return {object} Response that includes the message
      */
-    public void deleteMessage(@NonNull String messageId, final SendMessageCallback callback) {
+    public void deleteMessage(@NonNull String messageId, SendMessageCallback callback) {
 
         mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -718,7 +687,7 @@ public class StreamChat implements WSResponseHandler {
      *
      * @return {Promise} Description
      */
-    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback callback) {
+    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, EventCallback callback) {
 
         mService.readMark(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
@@ -747,7 +716,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
      * @return {type} A channelResponse with a list of messages
      */
-    public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback) {
+    public void getReplies(@NonNull String parentId, String limit, String firstId, GetRepliesCallback callback) {
         if (TextUtils.isEmpty(firstId)) {
             mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
@@ -795,7 +764,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback callback) {
+    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, SendMessageCallback callback) {
 
         mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -822,7 +791,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback callback) {
+    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, SendMessageCallback callback) {
 
         mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -851,7 +820,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} event for example {type: 'message.read'}
      * @return {object} The Server Response
      */
-    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, final EventCallback callback) {
+    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, EventCallback callback) {
 
         mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
@@ -874,7 +843,7 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region File
-    public void sendImage(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback) {
+    public void sendImage(@NonNull String channelId, MultipartBody.Part part, SendFileCallback callback) {
 
         mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -894,7 +863,7 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    public void sendFile(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback) {
+    public void sendFile(@NonNull String channelId, MultipartBody.Part part, SendFileCallback callback) {
 
         mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -915,7 +884,7 @@ public class StreamChat implements WSResponseHandler {
     }
 
     // endregion
-    public void sendAction(@NonNull String messageId, SendActionRequest request, final SendMessageCallback callback) {
+    public void sendAction(@NonNull String messageId, SendActionRequest request, SendMessageCallback callback) {
 
         mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -945,8 +914,8 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} options          Option object, {presence: true}
      * @return {object} User Query Response
      */
-    public void queryUsers(final QueryUserListCallback callback) {
-        mService.queryUsers(apiKey, user.getId(), connectionId, getUserQueryPayload()).enqueue(new Callback<QueryUserListResponse>() {
+    public void queryUsers(JSONObject payload, QueryUserListCallback callback) {
+        mService.queryUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
                 if (response.isSuccessful()) {
@@ -967,39 +936,11 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    private JSONObject getUserQueryPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Filter options
-        if (Global.component.user.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
-        }
-        // Sort options
-        if (Global.component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_active");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
-
-        if (users.size() > 0)
-            payload.put("offset", users.size());
-        payload.put("limit", Constant.USER_LIMIT);
-
-        JSONObject json;
-        json = new JSONObject(payload);
-        Log.d(TAG, "Payload: " + json);
-        return json;
-    }
     // endregion
 
     // region Device
 
-    public void addDevice(String deviceId, final AddDeviceCallback callback) {
+    public void addDevice(String deviceId, AddDeviceCallback callback) {
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
         mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<AddDevicesResponse>() {
             @Override
@@ -1016,7 +957,7 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback) {
+    public void getDevices(@NonNull Map<String, String> payload, GetDevicesCallback callback) {
         mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {

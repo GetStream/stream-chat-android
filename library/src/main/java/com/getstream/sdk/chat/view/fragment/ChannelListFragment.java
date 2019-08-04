@@ -40,6 +40,7 @@ import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.activity.UsersActivity;
@@ -47,6 +48,12 @@ import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+
+import org.json.JSONObject;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -257,7 +264,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.queryChannels(new QueryChannelListCallback() {
+        client.queryChannels(getPayload(), new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -273,6 +280,35 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 Utils.showMessage(getContext(), errMsg);
             }
         });
+    }
+    private JSONObject getPayload() {
+        Map<String, Object> payload = new HashMap<>();
+
+        // Sort Option
+        if (client.getComponent().channel.getSortOptions() != null) {
+            payload.put("sort", Collections.singletonList(Global.component.channel.getSortOptions()));
+        } else {
+            Map<String, Object> sort = new HashMap<>();
+            sort.put("field", "last_message_at");
+            sort.put("direction", -1);
+            payload.put("sort", Collections.singletonList(sort));
+        }
+
+        if (Global.component.channel.getFilter() != null) {
+            payload.put("filter_conditions", Global.component.channel.getFilter().getData());
+        } else {
+            payload.put("filter_conditions", new HashMap<>());
+        }
+
+        payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
+        if (client.channels.size() > 0)
+            payload.put("offset", client.channels.size());
+        payload.put("limit", Constant.CHANNEL_LIMIT);
+        payload.put("presence", false);
+        payload.put("state", true);
+        payload.put("subscribe", true);
+        payload.put("watch", true);
+        return new JSONObject(payload);
     }
 
     private void configChannelListView() {
