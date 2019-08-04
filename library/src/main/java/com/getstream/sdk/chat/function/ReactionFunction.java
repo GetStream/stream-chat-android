@@ -11,14 +11,19 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
+import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 
 public class ReactionFunction {
+    Channel channel;
+    public ReactionFunction(Channel channel){
+        this.channel = channel;
+    }
 
-    public static void showReactionDialog(Context context, Message message, int originY) {
+    public void showReactionDialog(Context context, Message message, int originY) {
         final Dialog dialog = new Dialog(context); // Context, this, etc.
         dialog.setContentView(R.layout.dialog_reaction);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -27,7 +32,7 @@ public class ReactionFunction {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, true, (View v) -> {
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel,message, true, (View v) -> {
             dialog.dismiss();
         });
         rv_reaction.setAdapter(reactionAdapter);
@@ -43,7 +48,7 @@ public class ReactionFunction {
         window.setAttributes(wlp);
     }
 
-    public static void showMoreActionDialog(Context context,
+    public void showMoreActionDialog(Context context,
                                             final Message message,
                                             final View.OnClickListener clickListener) {
         final Dialog dialog = new Dialog(context);
@@ -72,7 +77,7 @@ public class ReactionFunction {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(context, message, false, (View v) -> {
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message, false, (View v) -> {
             dialog.dismiss();
         });
         rv_reaction.setAdapter(reactionAdapter);

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.fragment;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,12 +34,9 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.function.AttachmentFunction;
-import com.getstream.sdk.chat.function.EventFunction;
-import com.getstream.sdk.chat.function.MessageFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
-import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -49,7 +45,11 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -75,16 +75,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import okio.ByteString;
 
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
-public class ChannelFragment extends Fragment implements WSResponseHandler {
+public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
-    private ChannelViewModel mViewModel;
+    public StreamChat client;
     // ViewModel & Binding
+    private ChannelViewModel mViewModel;
     private ChannelFragmentBinding binding;
     private ViewThreadBinding threadBinding;
     // Arguments for Channel
@@ -98,13 +96,13 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     // Functions
-    private MessageFunction messageFunction;
     private SendFileFunction sendFileFunction;
+    private ReactionFunction reactionFunction;
     // Customization MessageItemView
     private int messageItemLayoutId;
     private String messageItemViewHolderName;
     // Misc
-    private boolean singleConversation;
+    public boolean singleConversation;
     private boolean isShowLastMessage;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
@@ -130,10 +128,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             setDeliverLastMessage();
             configUIs();
         } else {
-            if (TextUtils.isEmpty(Global.streamChat.getClientID())) {
+            if (TextUtils.isEmpty(client.connectionId)) {
                 binding.setShowMainProgressbar(true);
             } else {
-                getChannel(Global.streamChat.getChannel());
+                getChannel(client.getActiveChannel());
             }
         }
     }
@@ -142,8 +140,9 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     public void onResume() {
         super.onResume();
 
-        if (Global.eventFunction == null) Global.eventFunction = new EventFunction();
-        Global.eventFunction.setChannel(this.channel);
+        if (channel != null)
+            client.setActiveChannel(channel);
+
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
 
@@ -156,8 +155,9 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Global.webSocketService.removeWSResponseHandler(this);
-        Global.eventFunction.setChannel(null);
+        client.setChannelEventHandler(null);
+        client.setActiveChannel(null);
+
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
 
@@ -190,14 +190,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         }
     }
 
-    private Activity activity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity) {
-            activity = (Activity) context;
-        }
     }
 
     private void onBackPressed() {
@@ -247,9 +243,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     // region Init
     private void init() {
         // set WS handler
-        Global.webSocketService.setWSResponseHandler(this, getContext());
-
-        singleConversation = (Global.streamChat.getChannel() != null);
+        client.setChannelEventHandler(this);
         // Permission Check
         PermissionChecker.permissionCheck(getActivity(), null);
         try {
@@ -258,13 +252,13 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         }
 
         threadBinding = binding.clThread;
+        onBackPressed();
         if (channelResponse == null && channelIdFromChannelList != null)
-            channelResponse = Global.getChannelResponseById(channelIdFromChannelList);
+            channelResponse = client.getChannelResponseById(channelIdFromChannelList);
         else {
             return;
         }
         initReconnection();
-        onBackPressed();
     }
 
     private void initReconnection() {
@@ -272,24 +266,16 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
-        checkEphemeralMessages();
-        messageFunction = new MessageFunction(this.channelResponse);
-        sendFileFunction = new SendFileFunction(getActivity(), binding, channelResponse);
+        channel.setChannelResponse(this.channelResponse);
+        channel.setClient(client);
+
+        sendFileFunction = new SendFileFunction(channel, getActivity(), binding, channelResponse);
+        reactionFunction = new ReactionFunction(channel);
+
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
-        Global.eventFunction.setChannel(channel);
-    }
-
-    private void checkEphemeralMessages() {
-        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
-        if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
-            for (int i = 0; i < ephemeralMainMessages.size(); i++) {
-                Message message = ephemeralMainMessages.get(i);
-                if (channelMessages.contains(message)) continue;
-                channelMessages.add(message);
-            }
-        }
+        client.setActiveChannel(channel);
     }
 
     private boolean lockRVScrollListener = false;
@@ -297,38 +283,23 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     private void getChannel(Channel channel_) {
 
         binding.setShowMainProgressbar(true);
-        channel_.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-
-        // Additional Field
-        Map<String, Object> data = new HashMap<>();
-        if (channel_.getExtraData() != null) {
-            Set<String> keys = channel_.getExtraData().keySet();
-            for (String key : keys) {
-                Object value = channel_.getExtraData().get(key);
-                if (value != null)
-                    data.put(key, value);
-            }
-        }
         Log.d(TAG, "Channel Connecting...");
 
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+        client.queryChannel(channel_, new QueryChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                binding.setShowMainProgressbar(false);
+                channelResponse = response;
+                initReconnection();
+                setDeliverLastMessage();
+                configUIs();
+            }
 
-        Global.mRestController.channelDetailWithID(channel_.getId(), request, (ChannelResponse response) -> {
-            Log.d(TAG, "Channel Connected");
-            binding.setShowMainProgressbar(false);
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            Global.addChannelResponse(response);
-            channelResponse = response;
-            initReconnection();
-            setDeliverLastMessage();
-            configUIs();
-
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            @Override
+            public void onError(String errMsg, int errCode) {
+                binding.setShowMainProgressbar(false);
+                Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            }
         });
     }
 
@@ -373,8 +344,8 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     }
 
     private void configCustomMessageItemView() {
-        messageItemLayoutId = Global.component.message.getMessageItemLayoutId();
-        messageItemViewHolderName = Global.component.message.getMessageItemViewHolderName();
+        messageItemLayoutId = client.getComponent().message.getMessageItemLayoutId();
+        messageItemViewHolderName = client.getComponent().message.getMessageItemViewHolderName();
     }
 
     private void configHeaderView() {
@@ -452,7 +423,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                 binding.setActiveMessageSend(!(text.length() == 0));
                 sendFileFunction.checkCommand(text);
                 if (text.length() > 0) {
-                    keystroke();
+                    channel.keystroke();
                 }
             }
 
@@ -532,6 +503,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
+        threadBinding.tvClose.setOnClickListener(this::onClickCloseThread);
     }
 
     private void setChannelMessageRecyclerViewAdapder() {
@@ -606,10 +578,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
      * Send Message - Send a message to this channel
      */
     public void sendMessage(View view) {
-//        if (Global.noConnection) {
-//            Utils.showMessage(this, Constant.NO_INTERNET);
-//            return;
-//        }
         if (binding.etMessage.getTag() == null) {
             sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
         } else
@@ -626,10 +594,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             handleAction(ephemeralMessage);
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.sendMessage(text,
+        channel.sendMessage(text,
                 attachments,
                 isThreadMode() ? thread_parentMessage.getId() : null,
-                new MessageSendListener() {
+                new SendMessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         binding.tvSend.setEnabled(true);
@@ -637,7 +605,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     }
 
                     @Override
-                    public void onFailed(String errMsg, int errCode) {
+                    public void onError(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -651,10 +619,10 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             return;
         }
         binding.tvSend.setEnabled(false);
-        messageFunction.updateMessage(binding.etMessage.getText().toString(),
+        channel.updateMessage(binding.etMessage.getText().toString(),
                 (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
-                new MessageSendListener() {
+                new SendMessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         initSendMessage();
@@ -664,7 +632,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     }
 
                     @Override
-                    public void onFailed(String errMsg, int errCode) {
+                    public void onError(String errMsg, int errCode) {
                         binding.tvSend.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -688,12 +656,18 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
             map.put("image_action", ModelType.action_shuffle);
 
         SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-        Global.mRestController.sendAction(message.getId(), request, (MessageResponse response) -> {
-            handleAction(message);
-            response.getMessage().setDelivered(true);
-            handleAction(response.getMessage());
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, errMsg);
+        client.sendAction(message.getId(), request, new SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                handleAction(message);
+                response.getMessage().setDelivered(true);
+                handleAction(response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.d(TAG, errMsg);
+            }
         });
     }
 
@@ -737,7 +711,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
         message.setCreated_at(Global.convertDateToString(new Date()));
         Global.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(Global.streamChat.getUser());
+        message.setUser(client.user);
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
@@ -816,7 +790,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                         childIndex = tag.position - firstListItemPosition;
                     }
                     int originY = recyclerView().getChildAt(childIndex).getBottom();
-                    ReactionFunction.showReactionDialog(getContext(), message, originY);
+                    reactionFunction.showReactionDialog(getContext(), message, originY);
                     break;
                 case Constant.TAG_MESSAGE_RESEND:
                     resendMessage(message);
@@ -838,22 +812,22 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         final int position = Integer.parseInt(object.toString());
         final Message message = messages().get(position);
 
-        ReactionFunction.showMoreActionDialog(getContext(), message, (View v) -> {
+        reactionFunction.showMoreActionDialog(getContext(), message, (View v) -> {
             String type = (String) v.getTag();
             switch (type) {
                 case Constant.TAG_MOREACTION_EDIT:
                     editMessage(message);
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
-                    messageFunction.deleteMessage(message,
-                            new MessageSendListener() {
+                    channel.deleteMessage(message,
+                            new SendMessageCallback() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
                                     Utils.showMessage(getContext(), "Deleted Successfully");
                                 }
 
                                 @Override
-                                public void onFailed(String errMsg, int errCode) {
+                                public void onError(String errMsg, int errCode) {
                                     Log.d(TAG, "Failed DeleteMessage : " + errMsg);
                                 }
                             });
@@ -896,15 +870,15 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     // endregion
 
     // region Typing Indicator
-    boolean isTyping = false;
-    Date lastKeyStroke;
-    Date lastTypingEvent;
+
+
     private Handler stopTyingEventHandler = new Handler();
     Runnable runnableTypingStop = new Runnable() {
         @Override
         public void run() {
             try {
-                clean();
+                if (channel != null)
+                    channel.clean();
             } finally {
                 stopTyingEventHandler.postDelayed(runnableTypingStop, 3000);
             }
@@ -916,54 +890,8 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     }
 
     void stopTypingStopRepeatingTask() {
-        stopTyping();
+        channel.stopTyping();
         stopTyingEventHandler.removeCallbacks(runnableTypingStop);
-    }
-
-    /**
-     * Clean - Cleans the channel state and fires stop typing if needed
-     */
-    public void clean() {
-        if (this.lastKeyStroke != null) {
-            Date now = new Date();
-            long diff = now.getTime() - this.lastKeyStroke.getTime();
-            if (diff > 1000 && this.isTyping) {
-                this.stopTyping();
-            }
-        }
-    }
-
-    /**
-     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-     * Call this on every keystroke
-     */
-    public void keystroke() {
-        Date now = new Date();
-        long diff;
-        if (this.lastKeyStroke == null)
-            diff = 2001;
-        else
-            diff = now.getTime() - this.lastKeyStroke.getTime();
-
-
-        this.lastKeyStroke = now;
-        this.isTyping = true;
-        // send a typing.start every 2 seconds
-        if (diff > 2000) {
-            this.lastTypingEvent = new Date();
-            Global.eventFunction.sendEvent(Event.typing_start);
-            Log.d(TAG, "typing.start");
-        }
-    }
-
-    /**
-     * stopTyping - Sets last typing to null and sends the typing.stop event
-     */
-    public void stopTyping() {
-        this.lastTypingEvent = null;
-        this.isTyping = false;
-        Global.eventFunction.sendEvent(Event.typing_stop);
-        Log.d(TAG, "typing.stop");
     }
 
     // refresh Current Typing users in this channel
@@ -1034,27 +962,33 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
 
             if (isCallingThread) return;
             isCallingThread = true;
-            Global.mRestController.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
-                threadMessages = response.getMessages();
+            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, new GetRepliesCallback() {
+                @Override
+                public void onSuccess(GetRepliesResponse response) {
+                    threadMessages = response.getMessages();
 
-                List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
-                if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
-                    for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
-                        threadMessages.add(ephemeralThreadMessages.get(i));
+                    List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+                    if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
+                        for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
+                            threadMessages.add(ephemeralThreadMessages.get(i));
+                        }
                     }
+
+                    Global.setStartDay(threadMessages, null);
+                    setThreadAdapter();
+                    threadBinding.setShowThread(true);
+                    binding.setShowMainProgressbar(false);
+                    if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
+                    isCallingThread = false;
                 }
 
-                Global.setStartDay(threadMessages, null);
-                setThreadAdapter();
-                threadBinding.setShowThread(true);
-                binding.setShowMainProgressbar(false);
-                if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
-                isCallingThread = false;
-            }, (String errMsg, int errCode) -> {
-                Utils.showMessage(getContext(), errMsg);
-                thread_parentMessage = null;
-                binding.setShowMainProgressbar(false);
-                isCallingThread = false;
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Utils.showMessage(getContext(), errMsg);
+                    thread_parentMessage = null;
+                    binding.setShowMainProgressbar(false);
+                    isCallingThread = false;
+                }
             });
         }
         // Clean RecyclerView
@@ -1063,7 +997,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     /**
      * Hide thread view
      */
-    public void onClickCloseThread(View v) {
+    private void onClickCloseThread(View v) {
         threadBinding.setShowThread(false);
         cleanEditView();
         setScrollDownHideKeyboard(binding.rvMessage);
@@ -1118,11 +1052,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
      * @param event Server response
      */
     @Override
-    public void handleEventWSResponse(Event event) {
-        if (Global.eventFunction == null)
-            Global.eventFunction = new EventFunction();
-        Global.eventFunction.handleReceiveEvent(event);
-
+    public void handleEventResponse(Event event) {
         String channelId = null;
         try {
             String[] array = event.getCid().split(":");
@@ -1137,16 +1067,12 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         Log.d(TAG, "New Event: " + new Gson().toJson(event));
     }
 
-    @Override
-    public void handleByteStringWSResponse(ByteString byteString) {
-
-    }
 
     @Override
     public void handleConnection() {
         Log.d(TAG, "Connected Websocket!");
-        if (singleConversation && Global.streamChat.getChannel() != null)
-            getChannel(Global.streamChat.getChannel());
+        if (singleConversation && client.getActiveChannel() != null)
+            getChannel(client.getActiveChannel());
     }
 
     /**
@@ -1156,7 +1082,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
      * @param errCode Error code
      */
     @Override
-    public void onFailed(String errMsg, int errCode) {
+    public void onConnectionFailed(String errMsg, int errCode) {
         binding.setNoConnection(true);
         binding.setShowMainProgressbar(false);
     }
@@ -1180,7 +1106,9 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     messageEvent(event);
                     break;
                 case Event.message_read:
-                    messageReadEvent(event);
+                    if (!channelResponse.getLastMessage().isIncoming()) {
+                        mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
+                    }
                     break;
                 case Event.typing_start:
                 case Event.typing_stop:
@@ -1200,7 +1128,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     break;
                 case Event.channel_updated:
                 case Event.channel_deleted:
-                    Global.eventFunction.handleChannelEvent(channelResponse, event);
                     if (event.getType().equals(Event.channel_deleted)) {
                         Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
                         finish();
@@ -1241,8 +1168,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     message.setDelivered(true);
 
                 messages().remove(ephemeralMessage);
-                Global.eventFunction.newMessage(channelResponse, message);
-
                 if (message.isIncoming() && !isShowLastMessage) {
                     scrollPosition = -1;
 //                    binding.tvNewMessage.setVisibility(View.VISIBLE);
@@ -1250,7 +1175,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                     scrollPosition = 0;
                 }
                 mViewModel.setChannelMessages(channelMessages);
-                messageReadMark();
+                messageMarkRead();
                 break;
             case ModelType.message_ephemeral:
             case ModelType.message_error:
@@ -1364,13 +1289,11 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
                 return;
 
             Log.d(TAG, "Reconnection!");
-            channelResponse = Global.getChannelResponseById(channel.getId());
+            channelResponse = client.getChannelResponseById(channel.getId());
             Global.setStartDay(channelResponse.getMessages(), null);
             initReconnection();
             // Check Ephemeral Messages
-            checkEphemeralMessages();
-
-            getActivity().runOnUiThread(() -> {
+             getActivity().runOnUiThread(() -> {
                 setDeliverLastMessage();
                 configUIs();
                 if (isThreadMode())
@@ -1385,7 +1308,7 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
     private void footerEvent(Event event) {
         User user = event.getUser();
         if (user == null) return;
-        if (user.getId().equals(Global.streamChat.getUser().getId())) return;
+        if (user.getId().equals(client.user.getId())) return;
 
         switch (event.getType()) {
             case Event.typing_start:
@@ -1419,12 +1342,6 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         mChannelMessageAdapter.notifyItemChanged(channelMessages.size());
     }
 
-    private void messageReadEvent(Event event) {
-        Global.eventFunction.readMessage(channelResponse, event);
-        if (!channelResponse.getLastMessage().isIncoming()) {
-            mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
-        }
-    }
     // endregion
 
     // endregion
@@ -1440,57 +1357,60 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
-            Global.mRestController.pagination(channel.getId(), request, (ChannelResponse response) -> {
+            client.pagination(channel.getId(), request, new QueryChannelCallback() {
+                @Override
+                public void onSuccess(ChannelResponse response) {
+                    binding.setShowLoadMoreProgressbar(false);
+                    List<Message> newMessages = new ArrayList<>(response.getMessages());
+                    if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
 
-                binding.setShowLoadMoreProgressbar(false);
-                List<Message> newMessages = new ArrayList<>(response.getMessages());
-                if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
+                    // Set Date Time
+                    Global.setStartDay(newMessages, null);
+                    // Add new to current Message List
+                    for (int i = newMessages.size() - 1; i > -1; i--)
+                        channelMessages.add(0, newMessages.get(i));
 
-                // Set Date Time
-                Global.setStartDay(newMessages, null);
-                // Add new to current Message List
-                for (int i = newMessages.size() - 1; i > -1; i--)
-                    channelMessages.add(0, newMessages.get(i));
+                    scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                    mViewModel.setChannelMessages(channelMessages);
+                    isCalling = false;
+                }
 
-                scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                mViewModel.setChannelMessages(channelMessages);
-                isCalling = false;
-
-            }, (String errMsg, int errCode) -> {
-
-                Utils.showMessage(getContext(), errMsg);
-                isCalling = false;
-                binding.setShowLoadMoreProgressbar(false);
-
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Utils.showMessage(getContext(), errMsg);
+                    isCalling = false;
+                    binding.setShowLoadMoreProgressbar(false);
+                }
             });
         } else {
             binding.setShowMainProgressbar(true);
-            Global.mRestController.getReplies(thread_parentMessage.getId(),
+            client.getReplies(thread_parentMessage.getId(),
                     String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-                    threadMessages.get(0).getId(),
-                    (GetRepliesResponse response) -> {
+                    threadMessages.get(0).getId(), new GetRepliesCallback() {
+                        @Override
+                        public void onSuccess(GetRepliesResponse response) {
+                            binding.setShowMainProgressbar(false);
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+                                noHistoryThread = true;
 
-                        binding.setShowMainProgressbar(false);
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-                            noHistoryThread = true;
-
-                        Global.setStartDay(newMessages, null);
-                        // Add new to current Message List
-                        for (int i = newMessages.size() - 1; i > -1; i--) {
-                            threadMessages.add(0, newMessages.get(i));
+                            Global.setStartDay(newMessages, null);
+                            // Add new to current Message List
+                            for (int i = newMessages.size() - 1; i > -1; i--) {
+                                threadMessages.add(0, newMessages.get(i));
+                            }
+                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                            mThreadAdapter.notifyDataSetChanged();
+                            recyclerView().scrollToPosition(scrollPosition);
+                            isCalling = false;
                         }
-                        int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                        mThreadAdapter.notifyDataSetChanged();
-                        recyclerView().scrollToPosition(scrollPosition);
-                        isCalling = false;
 
-                    }, (String errMsg, int errCode) -> {
-
-                        Utils.showMessage(getContext(), errMsg);
-                        isCalling = false;
-                        binding.setShowMainProgressbar(false);
-
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            Utils.showMessage(getContext(), errMsg);
+                            isCalling = false;
+                            binding.setShowMainProgressbar(false);
+                        }
                     });
         }
     }
@@ -1503,16 +1423,22 @@ public class ChannelFragment extends Fragment implements WSResponseHandler {
         if (channelResponse.getLastMessage() == null) return;
         if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
                 channelResponse.getLastMessage().getCreated_at())) {
-            messageReadMark();
+            messageMarkRead();
         }
     }
 
-    private void messageReadMark() {
+    private void messageMarkRead() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
-        Global.mRestController.markRead(channel.getId(), request, (EventResponse response) -> {
+        client.markRead(channel.getId(), request, new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
 
-        }, (String errMsg, int errCode) -> {
-            Utils.showMessage(getContext(), errMsg);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Utils.showMessage(getContext(), errMsg);
+            }
         });
     }
 

@@ -54,6 +54,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/tv_close"
                     style="@style/text"
                     android:layout_width="30dp"
                     android:layout_height="30dp"

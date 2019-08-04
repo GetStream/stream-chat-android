@@ -7,6 +7,5 @@ import okio.ByteString;
 public interface WSResponseHandler {
     void handleEventWSResponse(Event event);
     void handleByteStringWSResponse(ByteString byteString);
-    void handleConnection();
     void onFailed(String errMsg, int errCode);
 }

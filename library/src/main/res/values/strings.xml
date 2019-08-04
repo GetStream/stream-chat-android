@@ -10,7 +10,7 @@
     <string name="mention_title">Searching for people</string>
     <string name="you">(you)</string>
     <!-- Menu actions -->
-    <string name="action_create_channel">Create channel</string>
+    <string name="action_create_channel">Create activeChannel</string>
 
     <!-- Message Status -->
     <string name="delete_message">This message was deleted.</string>

@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.rest;
 
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
@@ -13,35 +12,27 @@ import java.util.HashMap;
 
 public class User {
     @SerializedName("id")
-    @Expose
     private String id;
 
     @SerializedName("name")
-    @Expose
     private String name;
 
     @SerializedName("image")
-    @Expose
     private String image;
 
     @SerializedName("role")
-    @Expose
     private String role;
 
     @SerializedName("created_at")
-    @Expose
     private String created_at;
 
     @SerializedName("updated_at")
-    @Expose
     private String updated_at;
 
     @SerializedName("last_active")
-    @Expose
     private String last_active;
 
     @SerializedName("online")
-    @Expose
     private Boolean online;
 
     private HashMap<String, Object> extraData;
@@ -155,7 +146,7 @@ public class User {
     }
 
     public boolean isMe(){
-        return id.equals(Global.streamChat.getUser().getId());
+        return id.equals(Global.client.user.getId());
     }
 
     public String getUserInitials() {

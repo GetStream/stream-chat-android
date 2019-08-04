@@ -82,17 +82,17 @@ streamChat.setUser(user, "USER TOKEN")
 
 - **Adding Single Conversation Screen**
 
-Adding chat is simple as the library comes with a built-in **ChatActivity** of library class which loads messages for a specified channel using the APIs and renders its content.
+Adding chat is simple as the library comes with a built-in **ChatActivity** of library class which loads messages for a specified activeChannel using the APIs and renders its content.
 
-  1. Set specified **channel** object with channel Id, channel name and channel image.
-  2. Set  specified **channel** to **streamChat**.
+  1. Set specified **activeChannel** object with activeChannel Id, activeChannel name and activeChannel image.
+  2. Set  specified **activeChannel** to **streamChat**.
   3. Navigate to **ChatActivity** 
 
  Java
 ~~~java
 // Setting Channel
-Channel channel = new Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA); // EXTRA_DATA : HashMap
-streamChat.setChannel(channel);
+Channel activeChannel = new Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA); // EXTRA_DATA : HashMap
+streamChat.setChannel(activeChannel);
  
 // Start ChatActivity
 Intent i = new Intent(this, ChatActivity.class);
@@ -102,8 +102,8 @@ startActivity(i);
  Kotlin 
 ~~~kotlin
 // Setting Channel
-val channel = Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA) // EXTRA_DATA : HashMap
-streamChat.channel = channel
+val activeChannel = Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA) // EXTRA_DATA : HashMap
+streamChat.activeChannel = activeChannel
 
 // Start ChatActivity
 val i = Intent(this, ChatActivity::class.java)

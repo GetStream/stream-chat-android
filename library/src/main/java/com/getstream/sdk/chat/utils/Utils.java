@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -22,11 +21,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class Utils {

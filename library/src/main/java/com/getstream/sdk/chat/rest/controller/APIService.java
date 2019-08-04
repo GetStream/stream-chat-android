@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.controller;
 
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.request.QueryChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
@@ -13,10 +13,10 @@ import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.GetUsersResponse;
+import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 
 import org.json.JSONObject;
@@ -37,16 +37,16 @@ import retrofit2.http.Query;
 public interface APIService {
     // region Channel
     @GET("/channels")
-    Call<GetChannelsResponse> getChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> chatDetail(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body QueryChannelRequest request);
 
     @DELETE("/channels/messaging/{id}")
     Call<ChannelResponse> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);
+    Call<ChannelResponse> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body QueryChannelRequest request);
 
     @POST("/channels/messaging/{id}/stop-watching")
     Call<ChannelResponse> chatStopWatch(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
@@ -63,7 +63,7 @@ public interface APIService {
 
     // region User
     @GET("/users")
-    Call<GetUsersResponse> getUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<QueryUserListResponse> queryUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}")
     Call<ChannelResponse> addMembers(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body JSONObject body);

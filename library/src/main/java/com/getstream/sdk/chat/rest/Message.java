@@ -295,7 +295,7 @@ public class Message {
 
     public boolean isIncoming() {
         try {
-            return !this.getUser().getId().equals(Global.streamChat.getUser().getId());
+            return !this.getUser().getId().equals(Global.client.user.getId());
         } catch (Exception e) {
         }
         return false;

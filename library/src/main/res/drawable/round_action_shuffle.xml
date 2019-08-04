@@ -5,6 +5,6 @@
     <solid android:color="@color/white" />
     <stroke
         android:width="@dimen/composer_stroke_width"
-        android:color="@color/mesage_border" />
+        android:color="@color/message_border" />
     <corners android:radius="20dp" />
 </shape>

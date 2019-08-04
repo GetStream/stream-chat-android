@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 ;import java.util.List;
 
-public class GetChannelsResponse {
+public class QueryChannelsResponse {
     @SerializedName("channels")
     @Expose
     private List<ChannelResponse> channels;

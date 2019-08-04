@@ -24,25 +24,18 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.GetUsersResponse;
-import com.getstream.sdk.chat.rest.controller.RestController;
+import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -51,10 +44,12 @@ import java.util.Random;
 public class UsersActivity extends AppCompatActivity {
 
     private static final String TAG = UsersActivity.class.getSimpleName();
+
+    private StreamChat client;
+
     private ActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
-    private List<User> users = new ArrayList<>();
     private List<User> groupUsers;
     boolean isLastPage = false;
 
@@ -112,7 +107,7 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, users, (View view) -> {
+        adapter = new UserListItemAdapter(this, client.users, (View view) -> {
             User user = (User) view.getTag();
             Log.d(TAG, "User Selected: " + user.getName());
             if (!groupUsers.contains(user)) {
@@ -125,7 +120,7 @@ public class UsersActivity extends AppCompatActivity {
         binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (binding.clGroup.getVisibility() == View.VISIBLE) return;
             if (!Global.noConnection)
-                getChannel(Arrays.asList(users.get(i)));
+                getChannel(Arrays.asList(client.users.get(i)));
             else
                 Utils.showMessage(UsersActivity.this, "No internet connection!");
         });
@@ -145,7 +140,7 @@ public class UsersActivity extends AppCompatActivity {
                                  int visibleItemCount, int totalItemCount) {
                 if (mLastFirstVisibleItem < firstVisibleItem) {
                     Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
-                    if (view.getLastVisiblePosition() == users.size() - 1)
+                    if (view.getLastVisiblePosition() == client.users.size() - 1)
                         getUsers();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
@@ -223,122 +218,92 @@ public class UsersActivity extends AppCompatActivity {
     boolean isCalling;
 
     private void getUsers() {
-        Log.d(TAG, "getUsers");
+        Log.d(TAG, "queryUsers");
         Log.d(TAG, "isLastPage: " + isLastPage);
         Log.d(TAG, "isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
 
-        RestController.GetUsersCallback callback = (GetUsersResponse response) -> {
-            binding.setShowMainProgressbar(false);
-            isCalling = false;
-            if (response.getUsers().isEmpty()) {
-                Utils.showMessage(this, "There is no any active user(s)!");
-                return;
+        if (client == null)
+            client = Global.client;
+        client.queryUsers(new QueryUserListCallback() {
+            @Override
+            public void onSuccess(QueryUserListResponse response) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                if (response.getUsers().isEmpty()) {
+                    Utils.showMessage(UsersActivity.this, "There is no any active user(s)!");
+                    return;
+                }
+
+                if (client.users.isEmpty()) {
+                    configChannelListView();
+                }
+                adapter.notifyDataSetChanged();
+                isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
             }
 
-            if (users == null) users = new ArrayList<>();
-            boolean isReconnecting = false;
-            if (users.isEmpty()) {
-                configChannelListView();
-                isReconnecting = true;
+            @Override
+            public void onError(String errMsg, int errCode) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                Utils.showMessage(UsersActivity.this, errMsg);
+                Log.d(TAG, "Failed Get Channels : " + errMsg);
             }
-
-            for (int i = 0; i < response.getUsers().size(); i++)
-                if (!response.getUsers().get(i).isMe())
-                    users.add(response.getUsers().get(i));
-
-            adapter.notifyDataSetChanged();
-            isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
-        };
-        Global.mRestController.getUsers(getPayload(), callback, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            isCalling = false;
-            Utils.showMessage(this, errMsg);
-            Log.d(TAG, "Failed Get Channels : " + errMsg);
         });
     }
 
     private void getChannel(List<User> users) {
-        boolean isPrivateChannel = users.size() == 1;
-        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
-            navigateChatActivity(Global.getPrivateChannel(users.get(0)));
-            return;
-        }
-
-        binding.setShowMainProgressbar(true);
-        HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("members", users);
-
-        String channelId;
-        if (isPrivateChannel){
-            channelId = Global.streamChat.getUser().getId() + "-" + users.get(0).getId();
-        }else{
-            String memberIds = "";
-            for (User user : users) {
-                memberIds += user.getId() + "-";
-            }
-            channelId = memberIds + getRandomHexString();
-        }
-
-        Channel channel = new Channel(ModelType.channel_messaging, channelId, extraData);
-
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", channel.getName());
-        data.put("image", channel.getImage());
-
-        List<String> members = new ArrayList<>();
-        members.add(Global.streamChat.getUser().getId());
-        for (User user : users) {
-            members.add(user.getId());
-        }
-        data.put("members", members);
-        data.put("group","sports");
-
-        Log.d(TAG, "Channel Connecting...");
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
-        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            Global.addChannelResponse(response);
-            navigateChatActivity(response);
-            binding.setShowMainProgressbar(false);
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            Utils.showMessage(this, errMsg);
-        });
-    }
-
-    private JSONObject getPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Filter options
-        if (Global.component.user.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        }else{
-            payload.put("filter_conditions", new HashMap<>());
-        }
-        // Sort options
-        if (Global.component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_active");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
-
-        if (users.size() > 0)
-            payload.put("offset", users.size());
-        payload.put("limit", Constant.USER_LIMIT);
-
-        JSONObject json;
-        json = new JSONObject(payload);
-        Log.d(TAG,"Payload: " + json);
-        return json;
+//        boolean isPrivateChannel = users.size() == 1;
+//        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
+//            navigateChatActivity(Global.getPrivateChannel(users.get(0)));
+//            return;
+//        }
+//
+//        binding.setShowMainProgressbar(true);
+//        HashMap<String, Object> extraData = new HashMap<>();
+//        extraData.put("members", users);
+//
+//        String channelId;
+//        if (isPrivateChannel){
+//            channelId = Global.client.user.getId() + "-" + users.get(0).getId();
+//        }else{
+//            String memberIds = "";
+//            for (User user : users) {
+//                memberIds += user.getId() + "-";
+//            }
+//            channelId = memberIds + getRandomHexString();
+//        }
+//
+//        Channel channel = new Channel(ModelType.channel_messaging, channelId, extraData);
+//
+//        Map<String, Object> messages = new HashMap<>();
+//        messages.put("limit", Constant.DEFAULT_LIMIT);
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("name", channel.getName());
+//        data.put("image", channel.getImage());
+//
+//        List<String> members = new ArrayList<>();
+//        members.add(Global.client.user.getId());
+//        for (User user : users) {
+//            members.add(user.getId());
+//        }
+//        data.put("members", members);
+//        data.put("group","sports");
+//
+//        Log.d(TAG, "Channel Connecting...");
+//        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
+//        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
+//            if (!response.getMessages().isEmpty())
+//                Global.setStartDay(response.getMessages(), null);
+//            Global.addChannelResponse(response);
+//            navigateChatActivity(response);
+//            binding.setShowMainProgressbar(false);
+//        }, (String errMsg, int errCode) -> {
+//            binding.setShowMainProgressbar(false);
+//            Utils.showMessage(this, errMsg);
+//        });
     }
 
     /**
