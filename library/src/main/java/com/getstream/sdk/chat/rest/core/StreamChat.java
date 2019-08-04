@@ -21,7 +21,7 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
+import com.getstream.sdk.chat.rest.request.QueryChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
@@ -214,7 +214,8 @@ public class StreamChat implements WSResponseHandler {
                 if (event.getMe() != null)
                     setUser(event.getMe());
             }
-            channelListEventHandler.handleConnection();
+            if (channelListEventHandler != null)
+                channelListEventHandler.handleConnection();
         }
         handleReceiveEvent(event);
     }
@@ -227,8 +228,11 @@ public class StreamChat implements WSResponseHandler {
     @Override
     public void onFailed(String errMsg, int errCode) {
         this.connectionId = null;
+        if (channelListEventHandler != null)
+            channelListEventHandler.onConnectionFailed(errMsg, errCode);
+        if (channelEventHandler != null)
+            channelEventHandler.onConnectionFailed(errMsg, errCode);
     }
-
 
     public void handleReceiveEvent(Event event) {
         String channelId = null;
@@ -244,7 +248,7 @@ public class StreamChat implements WSResponseHandler {
             case Event.notification_added_to_channel:
             case Event.channel_updated:
             case Event.channel_deleted:
-                handleChannelEvent(event);
+                handleChannelEvent(event, channelId);
                 break;
             case Event.message_new:
             case Event.message_updated:
@@ -277,10 +281,22 @@ public class StreamChat implements WSResponseHandler {
 
     // region Handle Channel Event
 
-    public void handleChannelEvent(Event event) {
+    public void handleChannelEvent(Event event, String channelId) {
         switch (event.getType()) {
             case Event.notification_added_to_channel:
-                queryChannel(event.getChannel());
+                if (Global.getChannelResponseById(channelId) == null) {
+                    queryChannel(event.getChannel(), new QueryChannelCallback() {
+                        @Override
+                        public void onSuccess(ChannelResponse response) {
+                            channelListEventHandler.updateChannels();
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+
+                        }
+                    });
+                }
                 break;
             case Event.channel_deleted:
                 deleteChannelResponse(event.getChannel());
@@ -293,13 +309,7 @@ public class StreamChat implements WSResponseHandler {
         channelListEventHandler.updateChannels();
     }
 
-    public void queryChannel(Channel channel) {
-        if (Global.getChannelResponseById(channel.getId()) == null)
-            queryChannel(channel, null, null);
-
-    }
-
-    public void queryChannel(Channel channel, final ChannelDetailCallback callback, ErrCallback errCallback) {
+    public void queryChannel(Channel channel, final QueryChannelCallback callback) {
         channel.setType(ModelType.channel_messaging);
         Map<String, Object> messages = new HashMap<>();
         messages.put("limit", Constant.DEFAULT_LIMIT);
@@ -315,7 +325,7 @@ public class StreamChat implements WSResponseHandler {
             }
         }
 
-        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
 
         mService.queryChannel(channel.getId(), apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
             @Override
@@ -326,13 +336,13 @@ public class StreamChat implements WSResponseHandler {
                         Global.setStartDay(response.body().getMessages(), null);
                     addChannelResponse(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ChannelResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -470,7 +480,7 @@ public class StreamChat implements WSResponseHandler {
                 if (response.isSuccessful()) {
                     if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
                         callback.onError("There is no any active Channel(s)!", -1);
-                    else{
+                    else {
                         if (channels == null) {
                             channels = new ArrayList<>();
                         }
@@ -528,7 +538,7 @@ public class StreamChat implements WSResponseHandler {
      * @param channelId the Channel id needs to be specified
      * @return {object} Response that includes the channel
      */
-    public void deleteChannel(@NonNull String channelId, final ChannelDetailCallback callback, final ErrCallback errCallback) {
+    public void deleteChannel(@NonNull String channelId, final QueryChannelCallback callback) {
 
         mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelResponse>() {
             @Override
@@ -536,34 +546,32 @@ public class StreamChat implements WSResponseHandler {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
-                    Log.d(TAG, "Failed Deleting");
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                Log.d(TAG, "Failed Deleting1");
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
-    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final ChannelDetailCallback channelDetailCallback, final ErrCallback errCallback) {
+    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, final QueryChannelCallback callback) {
 
         mService.pagination(channelId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                 if (response.isSuccessful()) {
-                    channelDetailCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ChannelResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -579,21 +587,21 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} message The Message object
      * @return {object} The Server Response
      */
-    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, final SendMessageCallback callback) {
 
         mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    sendMessageCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -606,8 +614,7 @@ public class StreamChat implements WSResponseHandler {
      */
     public void updateMessage(@NonNull String messageId,
                               @NonNull UpdateMessageRequest request,
-                              final SendMessageCallback sendMessageCallback,
-                              final ErrCallback errCallback) {
+                              final SendMessageCallback callback) {
 
         mService.updateMessage(messageId,
                 apiKey,
@@ -618,15 +625,15 @@ public class StreamChat implements WSResponseHandler {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    sendMessageCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -637,21 +644,21 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} messageID the message id needs to be specified
      * @return {object} Response that includes the message
      */
-    public void deleteMessage(@NonNull String messageId, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+    public void deleteMessage(@NonNull String messageId, final SendMessageCallback callback) {
 
         mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    sendMessageCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -661,21 +668,21 @@ public class StreamChat implements WSResponseHandler {
      *
      * @return {Promise} Description
      */
-    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback eventCallback, final ErrCallback errCallback) {
+    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, final EventCallback callback) {
 
         mService.readMark(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 if (response.isSuccessful()) {
-                    eventCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -690,7 +697,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
      * @return {type} A channelResponse with a list of messages
      */
-    public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback, final ErrCallback errCallback) {
+    public void getReplies(@NonNull String parentId, String limit, String firstId, final GetRepliesCallback callback) {
         if (TextUtils.isEmpty(firstId)) {
             mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
@@ -698,13 +705,13 @@ public class StreamChat implements WSResponseHandler {
                     if (response.isSuccessful()) {
                         callback.onSuccess(response.body());
                     } else {
-                        handleError(response.errorBody(), response.code(), errCallback);
+                        callback.onError(response.message(), response.code());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    errCallback.onError(t.getLocalizedMessage(), -1);
+                    callback.onError(t.getLocalizedMessage(), -1);
                 }
             });
         } else {
@@ -714,13 +721,13 @@ public class StreamChat implements WSResponseHandler {
                     if (response.isSuccessful()) {
                         callback.onSuccess(response.body());
                     } else {
-                        handleError(response.errorBody(), response.code(), errCallback);
+                        callback.onError(response.message(), response.code());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    errCallback.onError(t.getLocalizedMessage(), -1);
+                    callback.onError(t.getLocalizedMessage(), -1);
                 }
             });
         }
@@ -738,21 +745,21 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, final SendMessageCallback callback) {
 
         mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    sendMessageCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -765,21 +772,21 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback sendMessageCallback, final ErrCallback errCallback) {
+    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, final SendMessageCallback callback) {
 
         mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.isSuccessful()) {
-                    sendMessageCallback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -794,7 +801,7 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} event for example {type: 'message.read'}
      * @return {object} The Server Response
      */
-    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, final EventCallback callback, final ErrCallback errCallback) {
+    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, final EventCallback callback) {
 
         mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
@@ -802,13 +809,13 @@ public class StreamChat implements WSResponseHandler {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -816,7 +823,7 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region File
-    public void sendImage(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
+    public void sendImage(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback) {
 
         mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -825,18 +832,18 @@ public class StreamChat implements WSResponseHandler {
                     Log.d(TAG, "Send File:" + response.body().toString());
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
-    public void sendFile(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback, final ErrCallback errCallback) {
+    public void sendFile(@NonNull String channelId, MultipartBody.Part part, final SendFileCallback callback) {
 
         mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -845,19 +852,19 @@ public class StreamChat implements WSResponseHandler {
                     Log.d(TAG, "Send File:" + response.body().toString());
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
     // endregion
-    public void sendAction(@NonNull String messageId, SendActionRequest request, final SendMessageCallback callback, final ErrCallback errCallback) {
+    public void sendAction(@NonNull String messageId, SendActionRequest request, final SendMessageCallback callback) {
 
         mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -866,29 +873,28 @@ public class StreamChat implements WSResponseHandler {
                     Log.d(TAG, "Send File:" + response.body().toString());
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
     // region User
+
     /**
      * queryUsers - Query users and watch user presence
      *
      * @param {object} filterConditions MongoDB style filter conditions
      * @param {object} sort             Sort options, for instance {last_active: -1}
      * @param {object} options          Option object, {presence: true}
-     *
      * @return {object} User Query Response
      */
-    public void queryUsers(final GetUsersCallback callback, final ErrCallback errCallback) {
-
+    public void queryUsers(final GetUsersCallback callback) {
         mService.queryUsers(apiKey, user.getId(), connectionId, getUserQueryPayload()).enqueue(new Callback<GetUsersResponse>() {
             @Override
             public void onResponse(Call<GetUsersResponse> call, Response<GetUsersResponse> response) {
@@ -899,23 +905,24 @@ public class StreamChat implements WSResponseHandler {
 
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<GetUsersResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
+
     private JSONObject getUserQueryPayload() {
         Map<String, Object> payload = new HashMap<>();
 
         // Filter options
         if (Global.component.user.getFilter() != null) {
             payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        }else{
+        } else {
             payload.put("filter_conditions", new HashMap<>());
         }
         // Sort options
@@ -934,7 +941,7 @@ public class StreamChat implements WSResponseHandler {
 
         JSONObject json;
         json = new JSONObject(payload);
-        Log.d(TAG,"Payload: " + json);
+        Log.d(TAG, "Payload: " + json);
         return json;
     }
     // endregion
@@ -958,20 +965,20 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback, final ErrCallback errCallback) {
+    public void getDevices(@NonNull Map<String, String> payload, final GetDevicesCallback callback) {
         mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
                 if (response.isSuccessful()) {
                     callback.onSuccess(response.body());
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError(response.message(), response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -998,11 +1005,14 @@ public class StreamChat implements WSResponseHandler {
     // region Interface
     public interface QueryChannelsCallback {
         void onSuccess(QueryChannelsResponse response);
+
         void onError(String errMsg, int errCode);
     }
 
     public interface GetUsersCallback {
         void onSuccess(GetUsersResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface AddDeviceCallback {
@@ -1013,26 +1023,38 @@ public class StreamChat implements WSResponseHandler {
 
     public interface GetDevicesCallback {
         void onSuccess(GetDevicesResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
-    public interface ChannelDetailCallback {
+    public interface QueryChannelCallback {
         void onSuccess(ChannelResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface EventCallback {
         void onSuccess(EventResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface SendMessageCallback {
         void onSuccess(MessageResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface SendFileCallback {
         void onSuccess(FileSendResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface GetRepliesCallback {
         void onSuccess(GetRepliesResponse response);
+
+        void onError(String errMsg, int errCode);
     }
 
     public interface ErrCallback {

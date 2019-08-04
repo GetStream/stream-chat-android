@@ -226,9 +226,17 @@ public class Channel {
                             final MessageSendListener sendListener) {
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this.id, request,
-                (MessageResponse response) -> sendListener.onSuccess(response),
-                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
+        client.sendMessage(this.id, request, new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                sendListener.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                sendListener.onFailed(errMsg, errCode);
+            }
+        });
     }
 
     public void updateMessage(String text,
@@ -240,55 +248,95 @@ public class Channel {
         message.setText(text);
         UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
 
-        client.updateMessage(message.getId(), request,
-                (MessageResponse response) -> sendListener.onSuccess(response),
-                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode));
+        client.updateMessage(message.getId(), request, new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                sendListener.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                sendListener.onFailed(errMsg, errCode);
+            }
+        });
     }
 
     public void deleteMessage(@NonNull Message message,
                               final MessageSendListener sendListener) {
-        client.deleteMessage(message.getId(),
-                (MessageResponse response) -> sendListener.onSuccess(response),
-                (String errMsg, int errCode) -> sendListener.onFailed(errMsg, errCode)
-        );
+        client.deleteMessage(message.getId(), new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                sendListener.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                sendListener.onFailed(errMsg, errCode);
+            }
+        });
     }
 
     public void sendFile(Attachment attachment, boolean isImage,
-                          StreamChat.SendFileCallback fileCallback,
-                          StreamChat.ErrCallback errCallback) {
-        Log.d(TAG, "sendFile");
+                          StreamChat.SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
-        StreamChat.SendFileCallback callback = (FileSendResponse response) -> {
-            fileCallback.onSuccess(response);
-        };
+
         if (isImage) {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) ->
-                    errCallback.onError(errMsg, errCode));
+            client.sendImage(this.channelResponse.getChannel().getId(), part, new StreamChat.SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    fileCallback.onSuccess(response);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    fileCallback.onError(errMsg, errCode);
+                }
+            });
         } else {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) ->
-                    errCallback.onError(errMsg, errCode));
+            client.sendFile(this.channelResponse.getChannel().getId(), part, new StreamChat.SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    fileCallback.onSuccess(response);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    fileCallback.onError(errMsg, errCode);
+                }
+            });
         }
     }
     // endregion
 
-    public void sendReaction(String mesageId, String type, StreamChat.SendMessageCallback callback, StreamChat.ErrCallback errCallback){
+    public void sendReaction(String mesageId, String type, StreamChat.SendMessageCallback callback){
         ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, (MessageResponse response) -> {
-            callback.onSuccess(response);
+        client.sendReaction(mesageId, request, new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
 
-        }, (String errMsg, int errCode) -> {
-            errCallback.onError(errMsg,errCode);
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
         });
     }
-    public void deleteReaction(String mesageId, String type, StreamChat.SendMessageCallback callback, StreamChat.ErrCallback errCallback){
-        client.deleteReaction(mesageId, type, (MessageResponse response) -> {
-            callback.onSuccess(response);
-        }, (String errMsg, int errCode) -> {
-            errCallback.onError(errMsg,errCode);
+    public void deleteReaction(String mesageId, String type, StreamChat.SendMessageCallback callback){
+        client.deleteReaction(mesageId, type, new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
         });
     }
 }

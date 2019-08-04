@@ -48,7 +48,6 @@ import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.StreamChat;
-import com.getstream.sdk.chat.rest.request.ChannelDetailRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -74,7 +73,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
@@ -300,20 +298,24 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         binding.setShowMainProgressbar(true);
         Log.d(TAG, "Channel Connecting...");
 
-        client.queryChannel(channel_, (ChannelResponse response) -> {
-            Log.d(TAG, "Channel Connected");
-            binding.setShowMainProgressbar(false);
-            if (!response.getMessages().isEmpty())
-                Global.setStartDay(response.getMessages(), null);
-            client.addChannelResponse(response);
-            channelResponse = response;
-            initReconnection();
-            setDeliverLastMessage();
-            configUIs();
+        client.queryChannel(channel_, new StreamChat.QueryChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                binding.setShowMainProgressbar(false);
+                if (!response.getMessages().isEmpty())
+                    Global.setStartDay(response.getMessages(), null);
+                client.addChannelResponse(response);
+                channelResponse = response;
+                initReconnection();
+                setDeliverLastMessage();
+                configUIs();
+            }
 
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            @Override
+            public void onError(String errMsg, int errCode) {
+                binding.setShowMainProgressbar(false);
+                Log.d(TAG, "Failed Connect Channel : " + errMsg);
+            }
         });
     }
 
@@ -673,12 +675,18 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             map.put("image_action", ModelType.action_shuffle);
 
         SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-        client.sendAction(message.getId(), request, (MessageResponse response) -> {
-            handleAction(message);
-            response.getMessage().setDelivered(true);
-            handleAction(response.getMessage());
-        }, (String errMsg, int errCode) -> {
-            Log.d(TAG, errMsg);
+        client.sendAction(message.getId(), request, new StreamChat.SendMessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                handleAction(message);
+                response.getMessage().setDelivered(true);
+                handleAction(response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.d(TAG, errMsg);
+            }
         });
     }
 
@@ -1019,27 +1027,33 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
             if (isCallingThread) return;
             isCallingThread = true;
-            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, (GetRepliesResponse response) -> {
-                threadMessages = response.getMessages();
+            client.getReplies(message.getId(), String.valueOf(Constant.THREAD_MESSAGE_LIMIT), null, new StreamChat.GetRepliesCallback() {
+                @Override
+                public void onSuccess(GetRepliesResponse response) {
+                    threadMessages = response.getMessages();
 
-                List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
-                if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
-                    for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
-                        threadMessages.add(ephemeralThreadMessages.get(i));
+                    List<Message> ephemeralThreadMessages = Global.getEphemeralMessages(channel.getId(), thread_parentMessage.getId());
+                    if (ephemeralThreadMessages != null && !ephemeralThreadMessages.isEmpty()) {
+                        for (int i = 0; i < ephemeralThreadMessages.size(); i++) {
+                            threadMessages.add(ephemeralThreadMessages.get(i));
+                        }
                     }
+
+                    Global.setStartDay(threadMessages, null);
+                    setThreadAdapter();
+                    threadBinding.setShowThread(true);
+                    binding.setShowMainProgressbar(false);
+                    if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
+                    isCallingThread = false;
                 }
 
-                Global.setStartDay(threadMessages, null);
-                setThreadAdapter();
-                threadBinding.setShowThread(true);
-                binding.setShowMainProgressbar(false);
-                if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
-                isCallingThread = false;
-            }, (String errMsg, int errCode) -> {
-                Utils.showMessage(getContext(), errMsg);
-                thread_parentMessage = null;
-                binding.setShowMainProgressbar(false);
-                isCallingThread = false;
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Utils.showMessage(getContext(), errMsg);
+                    thread_parentMessage = null;
+                    binding.setShowMainProgressbar(false);
+                    isCallingThread = false;
+                }
             });
         }
         // Clean RecyclerView
@@ -1417,57 +1431,60 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), this.channel);
-            client.pagination(channel.getId(), request, (ChannelResponse response) -> {
+            client.pagination(channel.getId(), request, new StreamChat.QueryChannelCallback() {
+                @Override
+                public void onSuccess(ChannelResponse response) {
+                    binding.setShowLoadMoreProgressbar(false);
+                    List<Message> newMessages = new ArrayList<>(response.getMessages());
+                    if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
 
-                binding.setShowLoadMoreProgressbar(false);
-                List<Message> newMessages = new ArrayList<>(response.getMessages());
-                if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
+                    // Set Date Time
+                    Global.setStartDay(newMessages, null);
+                    // Add new to current Message List
+                    for (int i = newMessages.size() - 1; i > -1; i--)
+                        channelMessages.add(0, newMessages.get(i));
 
-                // Set Date Time
-                Global.setStartDay(newMessages, null);
-                // Add new to current Message List
-                for (int i = newMessages.size() - 1; i > -1; i--)
-                    channelMessages.add(0, newMessages.get(i));
+                    scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                    mViewModel.setChannelMessages(channelMessages);
+                    isCalling = false;
+                }
 
-                scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                mViewModel.setChannelMessages(channelMessages);
-                isCalling = false;
-
-            }, (String errMsg, int errCode) -> {
-
-                Utils.showMessage(getContext(), errMsg);
-                isCalling = false;
-                binding.setShowLoadMoreProgressbar(false);
-
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Utils.showMessage(getContext(), errMsg);
+                    isCalling = false;
+                    binding.setShowLoadMoreProgressbar(false);
+                }
             });
         } else {
             binding.setShowMainProgressbar(true);
             client.getReplies(thread_parentMessage.getId(),
                     String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-                    threadMessages.get(0).getId(),
-                    (GetRepliesResponse response) -> {
+                    threadMessages.get(0).getId(), new StreamChat.GetRepliesCallback() {
+                        @Override
+                        public void onSuccess(GetRepliesResponse response) {
+                            binding.setShowMainProgressbar(false);
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+                                noHistoryThread = true;
 
-                        binding.setShowMainProgressbar(false);
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-                            noHistoryThread = true;
-
-                        Global.setStartDay(newMessages, null);
-                        // Add new to current Message List
-                        for (int i = newMessages.size() - 1; i > -1; i--) {
-                            threadMessages.add(0, newMessages.get(i));
+                            Global.setStartDay(newMessages, null);
+                            // Add new to current Message List
+                            for (int i = newMessages.size() - 1; i > -1; i--) {
+                                threadMessages.add(0, newMessages.get(i));
+                            }
+                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                            mThreadAdapter.notifyDataSetChanged();
+                            recyclerView().scrollToPosition(scrollPosition);
+                            isCalling = false;
                         }
-                        int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                        mThreadAdapter.notifyDataSetChanged();
-                        recyclerView().scrollToPosition(scrollPosition);
-                        isCalling = false;
 
-                    }, (String errMsg, int errCode) -> {
-
-                        Utils.showMessage(getContext(), errMsg);
-                        isCalling = false;
-                        binding.setShowMainProgressbar(false);
-
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            Utils.showMessage(getContext(), errMsg);
+                            isCalling = false;
+                            binding.setShowMainProgressbar(false);
+                        }
                     });
         }
     }
@@ -1486,10 +1503,16 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     private void messageReadMark() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
-        client.markRead(channel.getId(), request, (EventResponse response) -> {
+        client.markRead(channel.getId(), request, new StreamChat.EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
 
-        }, (String errMsg, int errCode) -> {
-            Utils.showMessage(getContext(), errMsg);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Utils.showMessage(getContext(), errMsg);
+            }
         });
     }
 

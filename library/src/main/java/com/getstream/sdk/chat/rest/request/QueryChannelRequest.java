@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Map;
 
-public class ChannelDetailRequest {
+public class QueryChannelRequest {
     @SerializedName("messages")
     Map<String, Object> messages;
     @SerializedName("data")
@@ -17,7 +17,7 @@ public class ChannelDetailRequest {
     @SerializedName("subscribe")
     boolean subscribe;
 
-    public ChannelDetailRequest(Map messages, Map data, boolean state, boolean watch) {
+    public QueryChannelRequest(Map messages, Map data, boolean state, boolean watch) {
         this.messages = messages;
         this.data = data;
         this.state = state;

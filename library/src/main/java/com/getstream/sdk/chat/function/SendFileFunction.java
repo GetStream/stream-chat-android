@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -251,25 +252,31 @@ public class SendFileFunction {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.setActiveMessageSend(false);
-            channel.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), (FileSendResponse response) -> {
-                binding.setActiveMessageSend(true);
-                File file = new File(attachment.config.getFilePath());
-                if (attachment.getType().equals(ModelType.attach_image)) {
-                    attachment.setImageURL(response.getFileUrl());
-                    attachment.setFallback(file.getName());
-                } else {
-                    attachment.setTitle(file.getName());
-                    long size = file.length();
-                    attachment.setFile_size((int) size);
-                    attachment.setAssetURL(response.getFileUrl());
+            channel.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new StreamChat.SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    binding.setActiveMessageSend(true);
+                    File file = new File(attachment.config.getFilePath());
+                    if (attachment.getType().equals(ModelType.attach_image)) {
+                        attachment.setImageURL(response.getFileUrl());
+                        attachment.setFallback(file.getName());
+                    } else {
+                        attachment.setTitle(file.getName());
+                        long size = file.length();
+                        attachment.setFile_size((int) size);
+                        attachment.setAssetURL(response.getFileUrl());
+                    }
+                    attachment.config.setUploaded(true);
+                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
                 }
-                attachment.config.setUploaded(true);
-                selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
-            }, (String errMsg, int errCode) -> {
-                binding.setActiveMessageSend(true);
-                attachment.config.setSelected(false);
-                Utils.showMessage(this.activity, "Failed upload image!");
-                updateComposerViewBySelectedMedia(attachments, attachment);
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    binding.setActiveMessageSend(true);
+                    attachment.config.setSelected(false);
+                    Utils.showMessage(activity, "Failed upload image!");
+                    updateComposerViewBySelectedMedia(attachments, attachment);
+                }
             });
         } else
             selectedAttachments.remove(attachment);
@@ -329,13 +336,19 @@ public class SendFileFunction {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            channel.sendFile(attachment, false, (FileSendResponse response) -> {
-                attachment.setAssetURL(response.getFileUrl());
-                attachment.config.setUploaded(true);
-                selectedFileAttachmentAdapter.notifyDataSetChanged();
-            }, (String errMsg, int errCode) -> {
-                attachment.config.setSelected(false);
-                updateComposerViewBySelectedFile(attachments, attachment);
+            channel.sendFile(attachment, false, new StreamChat.SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    attachment.setAssetURL(response.getFileUrl());
+                    attachment.config.setUploaded(true);
+                    selectedFileAttachmentAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    attachment.config.setSelected(false);
+                    updateComposerViewBySelectedFile(attachments, attachment);
+                }
             });
         } else
             selectedAttachments.remove(attachment);

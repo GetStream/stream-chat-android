@@ -78,7 +78,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
         init();
         configUIs();
-        getChannels();
+        queryChannels();
         PermissionChecker.permissionCheck(getActivity(), this);
         return binding.getRoot();
     }
@@ -207,7 +207,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 if (mLastFirstVisibleItem < firstVisibleItem) {
                     if (currentLastVisible == client.channels.size() - 1)
-                        getChannels();
+                        queryChannels();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
                     Log.d(TAG, "SCROLLING UP");
@@ -226,7 +226,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         // Initialize Channels
         client.channels.clear();
         initLoadingChannels();
-        getChannels();
+        queryChannels();
 
         // get and save Device TokenService
         try {
@@ -247,7 +247,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     /**
      * Getting channels
      */
-    public void getChannels() {
+    public void queryChannels() {
         if (TextUtils.isEmpty(client.connectionId)) return;
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
@@ -270,25 +270,6 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         });
     }
 
-    private void progressNewChannels(QueryChannelsResponse response) {
-//        if (client.channels.isEmpty()) {
-//            configChannelListView();
-//            binding.setNoConnection(false);
-//            Intent broadcast = new Intent();
-//            broadcast.setAction(Constant.BC_RECONNECT_CHANNEL);
-//            broadcast.addCategory(Intent.CATEGORY_DEFAULT);
-//            getContext().sendBroadcast(broadcast);
-//        }
-//
-//        for (int i = 0; i < response.getChannels().size(); i++) {
-//            ChannelResponse channelResponse = response.getChannels().get(i);
-//            client.channels.add(channelResponse);
-//        }
-        adapter.notifyDataSetChanged();
-        isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
-    }
-
-
     private void configChannelListView() {
         adapter = new ChannelListItemAdapter(getContext(), client.channels,
                 channelItemViewHolderName, channelItemLayoutId, (View view) -> {
@@ -310,12 +291,18 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
                     ChannelResponse response_ = client.getChannelResponseById(channelId);
-                    client.deleteChannel(channelId, (ChannelResponse response) -> {
-                        Utils.showMessage(getContext(), "Deleted successfully!");
-                        client.channels.remove(response_);
-                        adapter.notifyDataSetChanged();
-                    }, (String errMsg, int errCode) -> {
-                        Utils.showMessage(getContext(), errMsg);
+                    client.deleteChannel(channelId, new StreamChat.QueryChannelCallback() {
+                        @Override
+                        public void onSuccess(ChannelResponse response) {
+                            Utils.showMessage(getContext(), "Deleted successfully!");
+                            client.channels.remove(response_);
+                            adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            Utils.showMessage(getContext(), errMsg);
+                        }
                     });
                     alertDialog.dismiss();
                 });
@@ -395,6 +382,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     @Override
     public void handleConnection() {
         setAfterFirstConnection();
+        binding.setNoConnection(false);
     }
 
     /**

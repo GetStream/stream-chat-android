@@ -231,24 +231,30 @@ public class UsersActivity extends AppCompatActivity {
 
         if (client == null)
             client = Global.client;
-        client.queryUsers((GetUsersResponse response) -> {
-            binding.setShowMainProgressbar(false);
-            isCalling = false;
-            if (response.getUsers().isEmpty()) {
-                Utils.showMessage(this, "There is no any active user(s)!");
-                return;
+        client.queryUsers(new StreamChat.GetUsersCallback() {
+            @Override
+            public void onSuccess(GetUsersResponse response) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                if (response.getUsers().isEmpty()) {
+                    Utils.showMessage(UsersActivity.this, "There is no any active user(s)!");
+                    return;
+                }
+
+                if (client.users.isEmpty()) {
+                    configChannelListView();
+                }
+                adapter.notifyDataSetChanged();
+                isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
             }
 
-            if (client.users.isEmpty()) {
-                configChannelListView();
+            @Override
+            public void onError(String errMsg, int errCode) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                Utils.showMessage(UsersActivity.this, errMsg);
+                Log.d(TAG, "Failed Get Channels : " + errMsg);
             }
-            adapter.notifyDataSetChanged();
-            isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
-        }, (String errMsg, int errCode) -> {
-            binding.setShowMainProgressbar(false);
-            isCalling = false;
-            Utils.showMessage(this, errMsg);
-            Log.d(TAG, "Failed Get Channels : " + errMsg);
         });
     }
 
@@ -291,7 +297,7 @@ public class UsersActivity extends AppCompatActivity {
 //        data.put("group","sports");
 //
 //        Log.d(TAG, "Channel Connecting...");
-//        ChannelDetailRequest request = new ChannelDetailRequest(messages, data, true, true);
+//        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
 //        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
 //            if (!response.getMessages().isEmpty())
 //                Global.setStartDay(response.getMessages(), null);

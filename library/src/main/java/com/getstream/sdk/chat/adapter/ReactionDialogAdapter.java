@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -137,20 +138,30 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void sendReaction(final View view, String type) {
-            channel.sendReaction(message.getId(), type, (MessageResponse response) -> {
-                clickListener.onClick(view);
-            }, (String errMsg, int errCode) -> {
-                clickListener.onClick(view);
+            channel.sendReaction(message.getId(), type, new StreamChat.SendMessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    clickListener.onClick(view);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    clickListener.onClick(view);
+                }
             });
         }
 
         private void deleteReaction(final View view, String type) {
-            channel.deleteReaction(message.getId(), type, (MessageResponse response) -> {
-                Log.d(TAG, "Reaction Deleted!");
-                clickListener.onClick(view);
-            }, (String errMsg, int errCode) -> {
-                Log.d(TAG, "Send Reaction Failed!");
-                clickListener.onClick(view);
+            channel.deleteReaction(message.getId(), type, new StreamChat.SendMessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    clickListener.onClick(view);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    clickListener.onClick(view);
+                }
             });
         }
     }
