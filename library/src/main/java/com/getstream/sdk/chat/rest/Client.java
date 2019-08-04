@@ -1,15 +1,5 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.QueryOptions;
-import com.getstream.sdk.chat.enums.QuerySort;
-import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import retrofit2.Call;
-
 public class Client {
 
 

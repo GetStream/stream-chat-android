@@ -294,7 +294,14 @@ public class Global {
 
     // region Channel
     public static ChannelResponse getChannelResponseById(String id) {
-        return Global.getChannelResponseById(id);
+        ChannelResponse response_ = null;
+        for (ChannelResponse response : client.channels) {
+            if (id.equals(response.getChannel().getId())) {
+                response_ = response;
+                break;
+            }
+        }
+        return response_;
     }
 
     public static ChannelResponse getPrivateChannel(User user) {

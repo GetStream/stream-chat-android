@@ -25,7 +25,9 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private int itemLayoutId;
     private View.OnLongClickListener longClickListener;
 
-    public ChannelListItemAdapter(Context context, List<ChannelResponse> channels, String className, int itemLayoutId, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public ChannelListItemAdapter(Context context, List<ChannelResponse> channels,
+                                  String className, int itemLayoutId,
+                                  View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         this.context = context;
         this.channels = channels;
         this.clickListener = clickListener;

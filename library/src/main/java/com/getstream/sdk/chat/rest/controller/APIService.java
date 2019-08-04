@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.GetUsersResponse;
@@ -37,7 +37,7 @@ import retrofit2.http.Query;
 public interface APIService {
     // region Channel
     @GET("/channels")
-    Call<GetChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}/query")
     Call<ChannelResponse> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelDetailRequest request);

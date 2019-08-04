@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,7 +33,7 @@ import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
@@ -45,7 +43,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-import java.util.ArrayList;
 
 /**
  * A Fragment for Channels preview.
@@ -135,7 +132,6 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void init() {
         client.setChannelListEventHandler(this);
-        client.channels = new ArrayList<>();
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
@@ -228,8 +224,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void setAfterFirstConnection() {
         // Initialize Channels
-        client.channels = new ArrayList<>();
-
+        client.channels.clear();
         initLoadingChannels();
         getChannels();
 
@@ -254,53 +249,54 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
      */
     public void getChannels() {
         if (TextUtils.isEmpty(client.connectionId)) return;
-        Log.d(TAG, "queryChannels...");
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.queryChannels(this::progressNewChannels
-                , (String errMsg, int errCode) -> {
-                    binding.setShowMainProgressbar(false);
-                    isCalling = false;
-                    Log.d(TAG, "Failed Get Channels : " + errMsg);
-                });
+        client.queryChannels(new StreamChat.QueryChannelsCallback() {
+            @Override
+            public void onSuccess(QueryChannelsResponse response) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                getActivity().runOnUiThread(() -> adapter.notifyDataSetChanged());
+                isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                binding.setShowMainProgressbar(false);
+                isCalling = false;
+                Utils.showMessage(getContext(), errMsg);
+            }
+        });
     }
 
-    private void progressNewChannels(GetChannelsResponse response) {
-        Log.d(TAG, "channels connected");
-        binding.setShowMainProgressbar(false);
-        isCalling = false;
-        if (response.getChannels() == null || response.getChannels().isEmpty()) {
-            if (client.channels == null || client.channels.isEmpty())
-                Utils.showMessage(getContext(), "There is no any active Channel(s)!");
-            return;
-        }
-
-        if (client.channels == null) client.channels = new ArrayList<>();
-        if (client.channels.isEmpty()) {
-            configChannelListView();
-            binding.setNoConnection(false);
-            Intent broadcast = new Intent();
-            broadcast.setAction(Constant.BC_RECONNECT_CHANNEL);
-            broadcast.addCategory(Intent.CATEGORY_DEFAULT);
-            getContext().sendBroadcast(broadcast);
-        }
-
-        for (int i = 0; i < response.getChannels().size(); i++) {
-            ChannelResponse channelResponse = response.getChannels().get(i);
-            client.channels.add(channelResponse);
-        }
-
+    private void progressNewChannels(QueryChannelsResponse response) {
+//        if (client.channels.isEmpty()) {
+//            configChannelListView();
+//            binding.setNoConnection(false);
+//            Intent broadcast = new Intent();
+//            broadcast.setAction(Constant.BC_RECONNECT_CHANNEL);
+//            broadcast.addCategory(Intent.CATEGORY_DEFAULT);
+//            getContext().sendBroadcast(broadcast);
+//        }
+//
+//        for (int i = 0; i < response.getChannels().size(); i++) {
+//            ChannelResponse channelResponse = response.getChannels().get(i);
+//            client.channels.add(channelResponse);
+//        }
         adapter.notifyDataSetChanged();
         isLastPage = (response.getChannels().size() < Constant.CHANNEL_LIMIT);
     }
 
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), client.channels, channelItemViewHolderName, channelItemLayoutId, (View view) -> {
+        adapter = new ChannelListItemAdapter(getContext(), client.channels,
+                channelItemViewHolderName, channelItemLayoutId, (View view) -> {
+
             String channelId = view.getTag().toString();
             ChannelResponse response = client.getChannelResponseById(channelId);
             getActivity().runOnUiThread(() -> navigationChannelFragment(response));
+
         }, (View view) -> {
             String channelId = view.getTag().toString();
             final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
@@ -390,7 +386,6 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     /**
      * Handle server response
-     *
      */
     @Override
     public void updateChannels() {
@@ -401,6 +396,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     public void handleConnection() {
         setAfterFirstConnection();
     }
+
     /**
      * Handle server response failures.
      *

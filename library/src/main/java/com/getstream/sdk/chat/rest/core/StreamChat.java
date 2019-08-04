@@ -33,7 +33,7 @@ import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.response.GetChannelsResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.GetUsersResponse;
@@ -239,7 +239,6 @@ public class StreamChat implements WSResponseHandler {
         }
 
         if (channelId == null) return;
-//        if (event.getChannel() == null) return;
 
         switch (event.getType()) {
             case Event.notification_added_to_channel:
@@ -251,7 +250,7 @@ public class StreamChat implements WSResponseHandler {
             case Event.message_updated:
             case Event.message_deleted:
             case Event.message_read:
-                handleMessageEvent(event);
+                handleMessageEvent(event, channelId);
                 break;
             case Event.reaction_new:
             case Event.reaction_deleted:
@@ -362,22 +361,15 @@ public class StreamChat implements WSResponseHandler {
     }
 
     public ChannelResponse getChannelResponseById(String id) {
-        ChannelResponse response_ = null;
-        for (ChannelResponse response : channels) {
-            if (id.equals(response.getChannel().getId())) {
-                response_ = response;
-                break;
-            }
-        }
-        return response_;
+        return Global.getChannelResponseById(id);
     }
 
     // endregion
 
 
     // region Handle Message Event
-    public void handleMessageEvent(Event event) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
+    public void handleMessageEvent(Event event, String channelId) {
+        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
         if (channelResponse == null) return;
         Message message = event.getMessage();
         if (message == null) return;
@@ -471,20 +463,31 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region Channel
-    public void queryChannels(final GetChannelsCallback callback, final ErrCallback errCallback) {
-        mService.queryChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<GetChannelsResponse>() {
+    public void queryChannels(final QueryChannelsCallback callback) {
+        mService.queryChannels(apiKey, user.getId(), connectionId, getPayload()).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
-            public void onResponse(Call<GetChannelsResponse> call, Response<GetChannelsResponse> response) {
+            public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
+                    if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
+                        callback.onError("There is no any active Channel(s)!", -1);
+                    else{
+                        if (channels == null) {
+                            channels = new ArrayList<>();
+                        }
+                        for (int i = 0; i < response.body().getChannels().size(); i++) {
+                            ChannelResponse channelResponse = response.body().getChannels().get(i);
+                            channels.add(channelResponse);
+                        }
+                        callback.onSuccess(response.body());
+                    }
                 } else {
-                    handleError(response.errorBody(), response.code(), errCallback);
+                    callback.onError("There is no any active Channel(s)!", -1);
                 }
             }
 
             @Override
-            public void onFailure(Call<GetChannelsResponse> call, Throwable t) {
-                errCallback.onError(t.getLocalizedMessage(), -1);
+            public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -992,10 +995,10 @@ public class StreamChat implements WSResponseHandler {
         errCallback.onError(err, errCode);
     }
 
-
     // region Interface
-    public interface GetChannelsCallback {
-        void onSuccess(GetChannelsResponse response);
+    public interface QueryChannelsCallback {
+        void onSuccess(QueryChannelsResponse response);
+        void onError(String errMsg, int errCode);
     }
 
     public interface GetUsersCallback {
