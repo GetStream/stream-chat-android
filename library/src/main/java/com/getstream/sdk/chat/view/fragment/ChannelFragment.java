@@ -978,7 +978,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     setThreadAdapter();
                     threadBinding.setShowThread(true);
                     binding.setShowMainProgressbar(false);
-                    if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT) noHistoryThread = true;
+                    if (threadMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+                        noHistoryThread = true;
                     isCallingThread = false;
                 }
 
@@ -1073,6 +1074,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         Log.d(TAG, "Connected Websocket!");
         if (singleConversation && client.getActiveChannel() != null)
             getChannel(client.getActiveChannel());
+
     }
 
     /**
@@ -1293,7 +1295,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             Global.setStartDay(channelResponse.getMessages(), null);
             initReconnection();
             // Check Ephemeral Messages
-             getActivity().runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 setDeliverLastMessage();
                 configUIs();
                 if (isThreadMode())
@@ -1356,7 +1358,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         isCalling = true;
         if (!isThreadMode()) {
             binding.setShowLoadMoreProgressbar(true);
-            Channel channel1 = new Channel(this.channel.getType(), this.channel.getId(),this.channel.getExtraData());
+            Channel channel1 = new Channel(this.channel.getType(), this.channel.getId(), this.channel.getExtraData());
             PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), channel1);
             client.pagination(channel.getId(), request, new QueryChannelCallback() {
                 @Override

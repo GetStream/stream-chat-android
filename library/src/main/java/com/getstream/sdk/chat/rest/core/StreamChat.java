@@ -20,7 +20,7 @@ import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
-import com.getstream.sdk.chat.rest.interfaces.AddDeviceCallback;
+import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
@@ -38,7 +38,7 @@ import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
-import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
+import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -940,23 +940,38 @@ public class StreamChat implements WSResponseHandler {
 
     // region Device
 
-    public void addDevice(String deviceId, AddDeviceCallback callback) {
+    /**
+     * addDevice - Adds a push device for a user.
+     *
+     * @param {string} id the device id
+     * @param {string} push_provider the push provider (apn or firebase)
+     * @param {string} [userID] the user id (defaults to current user)
+     *
+     */
+    public void addDevice(String deviceId, DeviceCallback callback) {
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
-        mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<AddDevicesResponse>() {
+        mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<DevicesResponse>() {
             @Override
-            public void onResponse(Call<AddDevicesResponse> call, Response<AddDevicesResponse> response) {
+            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
                 if (callback != null)
                     callback.onSuccess(response.body());
             }
 
             @Override
-            public void onFailure(Call<AddDevicesResponse> call, Throwable t) {
+            public void onFailure(Call<DevicesResponse> call, Throwable t) {
                 if (callback != null)
                     callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
+    /**
+     * getDevices - Returns the devices associated with a current user
+     *
+     * @param {string} [userID] User ID. Only works on serversidex
+     *
+     * @return {devices} Array of devices
+     */
     public void getDevices(@NonNull Map<String, String> payload, GetDevicesCallback callback) {
         mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
@@ -975,6 +990,31 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
+    /**
+     * removeDevice - Removes the device with the given id. Clientside users can only delete their own devices
+     *
+     * @param {string} id The device id
+     * @param {string} [userID] The user id. Only specify this for serverside requests
+     *
+     */
+    public void removeDevice(String deviceId, DeviceCallback callback){
+        mService.deleteDevice(deviceId, apiKey, user.getId(), connectionId).enqueue(new Callback<DevicesResponse>() {
+            @Override
+            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
 
     // endregion
 
@@ -983,7 +1023,13 @@ public class StreamChat implements WSResponseHandler {
 
     public void setAnonymousUser() {
     }
-
+    /**
+     * setGuestUser - Setup a temporary guest user
+     *
+     * @param {object} user Data about this user. IE {name: "john"}
+     *
+     * @return {promise} Returns a promise that resolves when the connection is setup
+     */
     public void setGuestUser() {
     }
 
@@ -999,14 +1045,6 @@ public class StreamChat implements WSResponseHandler {
     }
 
 
-    public void addDevice() {
-    }
-
-    public void getDevices() {
-    }
-
-    public void removeDevice() {
-    }
 
     public void muteUser() {
     }

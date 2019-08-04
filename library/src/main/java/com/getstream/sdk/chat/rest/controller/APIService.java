@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
-import com.getstream.sdk.chat.rest.response.AddDevicesResponse;
+import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -114,7 +115,9 @@ public interface APIService {
     Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map body);
 
     @POST("devices")
-    Call<AddDevicesResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
+    Call<DevicesResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
 
+    @DELETE("/devices")
+    Call<DevicesResponse> deleteDevice(@Query("id") String deviceId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
     // endregion
 }
