@@ -139,7 +139,6 @@ public class WebSocketService extends WebSocketListener {
                 e.printStackTrace();
             }
             if (json == null) return;
-
             Event event = Parser.parseEvent(json);
             if (event == null) return;
 

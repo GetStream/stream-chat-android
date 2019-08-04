@@ -349,7 +349,9 @@ public class StreamChat implements WSResponseHandler {
                     callback.onSuccess(response.body());
                     if (!response.body().getMessages().isEmpty())
                         Global.setStartDay(response.body().getMessages(), null);
-                    addChannelResponse(response.body());
+                    ChannelResponse channelResponse = response.body();
+                    checkEphemeralMessages(channelResponse);
+                    addChannelResponse(channelResponse);
                 } else {
                     callback.onError(response.message(), response.code());
                 }
@@ -507,6 +509,7 @@ public class StreamChat implements WSResponseHandler {
                         }
                         for (int i = 0; i < response.body().getChannels().size(); i++) {
                             ChannelResponse channelResponse = response.body().getChannels().get(i);
+                            checkEphemeralMessages(channelResponse);
                             channels.add(channelResponse);
                         }
                         callback.onSuccess(response.body());
@@ -521,6 +524,17 @@ public class StreamChat implements WSResponseHandler {
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
+    }
+
+    private void checkEphemeralMessages(ChannelResponse response) {
+        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(response.getChannel().getId(), null);
+        if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
+            for (int i = 0; i < ephemeralMainMessages.size(); i++) {
+                Message message = ephemeralMainMessages.get(i);
+                if (response.getMessages().contains(message)) continue;
+                response.getMessages().add(message);
+            }
+        }
     }
 
     private JSONObject getPayload() {

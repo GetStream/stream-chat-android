@@ -102,7 +102,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     private int messageItemLayoutId;
     private String messageItemViewHolderName;
     // Misc
-    private boolean singleConversation;
+    public boolean singleConversation;
     private boolean isShowLastMessage;
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;

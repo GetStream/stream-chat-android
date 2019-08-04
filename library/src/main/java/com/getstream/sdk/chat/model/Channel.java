@@ -166,7 +166,8 @@ public class Channel {
      *
      * @return Returns a new uninitialized channel
      */
-    public Channel(String type, String id, HashMap<String, Object> extraData) {
+    public Channel(StreamChat client,String type, String id, HashMap<String, Object> extraData) {
+        this.client = client;
         this.type = type;
         this.id = id;
 
@@ -197,6 +198,14 @@ public class Channel {
 
     public void setChannelResponse(ChannelResponse channelResponse) {
         this.channelResponse = channelResponse;
+    }
+
+    public StreamChat getClient() {
+        return client;
+    }
+
+    public void setClient(StreamChat client) {
+        this.client = client;
     }
 
     public String getInitials() {
