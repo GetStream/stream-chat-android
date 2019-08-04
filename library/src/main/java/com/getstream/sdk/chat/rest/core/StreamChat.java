@@ -214,6 +214,7 @@ public class StreamChat implements WSResponseHandler {
                 if (event.getMe() != null)
                     setUser(event.getMe());
             }
+            channelListEventHandler.handleConnection();
         }
         handleReceiveEvent(event);
     }
@@ -230,8 +231,15 @@ public class StreamChat implements WSResponseHandler {
 
 
     public void handleReceiveEvent(Event event) {
+        String channelId = null;
+        try {
+            String[] array = event.getCid().split(":");
+            channelId = array[1];
+        } catch (Exception e) {
+        }
 
-        if (event.getChannel() == null) return;
+        if (channelId == null) return;
+//        if (event.getChannel() == null) return;
 
         switch (event.getType()) {
             case Event.notification_added_to_channel:

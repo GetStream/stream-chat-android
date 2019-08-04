@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
@@ -131,7 +130,6 @@ public class Channel {
         return extraData;
     }
     // endregion
-
 
     // region Constructor
 
