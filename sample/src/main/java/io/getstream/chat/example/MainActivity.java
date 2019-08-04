@@ -1,4 +1,4 @@
-package io.getstream.chat.sdk;
+package io.getstream.chat.example;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.FragmentManager;

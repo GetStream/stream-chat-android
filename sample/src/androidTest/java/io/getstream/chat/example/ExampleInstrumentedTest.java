@@ -1,4 +1,4 @@
-package io.getstream.chat.sdk;
+package io.getstream.chat.example;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
