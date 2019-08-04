@@ -32,8 +32,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-import static com.getstream.sdk.chat.utils.Utils.TAG;
-
 /**
  * A channel
  */
@@ -169,7 +167,6 @@ public class Channel {
      * @return Returns a new uninitialized channel
      */
     public Channel(String type, String id, HashMap<String, Object> extraData) {
-        this.client = client;
         this.type = type;
         this.id = id;
 
@@ -319,6 +316,15 @@ public class Channel {
     }
     // endregion
 
+    /**
+     * sendReaction - Send a reaction about a message
+     *
+     * @param {string} messageID the message id
+     * @param {object} reaction the reaction object for instance {type: 'love'}
+     * @param {string} user_id the id of the user (used only for server side request) default null
+     *
+     * @return {object} The Server Response
+     */
     public void sendReaction(String mesageId, String type, SendMessageCallback callback){
         ReactionRequest request = new ReactionRequest(type);
         client.sendReaction(mesageId, request, new SendMessageCallback() {
@@ -333,6 +339,16 @@ public class Channel {
             }
         });
     }
+
+    /**
+     * deleteReaction - Delete a reaction by user and type
+     *
+     * @param {string} messageID the id of the message from which te remove the reaction
+     * @param {string} reactionType the type of reaction that should be removed
+     * @param {string} user_id the id of the user (used only for server side request) default null
+     *
+     * @return {object} The Server Response
+     */
     public void deleteReaction(String mesageId, String type, SendMessageCallback callback){
         client.deleteReaction(mesageId, type, new SendMessageCallback() {
             @Override

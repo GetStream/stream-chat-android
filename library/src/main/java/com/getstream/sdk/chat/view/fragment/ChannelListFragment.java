@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -318,17 +320,17 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     }
 
     private void navigationChannelFragment(ChannelResponse response) {
-//        ChannelFragment fragment = new ChannelFragment();
-//        fragment.channelIdFromChannelList = response.getChannel().getId();
-//        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-//        fragmentManager.addOnBackStackChangedListener(() -> {
-//            if (adapter != null)
-//                adapter.notifyDataSetChanged();
-//        });
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.add(containerResId, fragment);
-//        fragmentTransaction.addToBackStack("OK");
-//        fragmentTransaction.commit();
+        ChannelFragment fragment = new ChannelFragment();
+        fragment.channelIdFromChannelList = response.getChannel().getId();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        fragmentManager.addOnBackStackChangedListener(() -> {
+            if (adapter != null)
+                adapter.notifyDataSetChanged();
+        });
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(containerResId, fragment);
+        fragmentTransaction.addToBackStack("OK");
+        fragmentTransaction.commit();
     }
 
     private void navigateUserList() {

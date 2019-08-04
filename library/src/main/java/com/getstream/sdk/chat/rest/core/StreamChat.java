@@ -235,6 +235,7 @@ public class StreamChat implements WSResponseHandler {
     @Override
     public void onFailed(String errMsg, int errCode) {
         this.connectionId = null;
+
         if (channelListEventHandler != null)
             channelListEventHandler.onConnectionFailed(errMsg, errCode);
         if (channelEventHandler != null)
@@ -265,21 +266,24 @@ public class StreamChat implements WSResponseHandler {
                 break;
             case Event.reaction_new:
             case Event.reaction_deleted:
-                handleReactionEvent(event);
+                handleReactionEvent(event, channelId);
                 break;
             case Event.user_updated:
             case Event.user_presence_changed:
             case Event.user_watching_start:
             case Event.user_watching_stop:
-                handleUserEvent(event);
+                handleUserEvent(event, channelId);
                 break;
             case Event.notification_invited:
             case Event.notification_invite_accepted:
                 handleInvite(event);
                 break;
             case Event.health_check:
+                break;
             case Event.typing_start:
             case Event.typing_stop:
+                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+                    channelEventHandler.handleEventResponse(event);
                 break;
             default:
                 break;
@@ -307,8 +311,12 @@ public class StreamChat implements WSResponseHandler {
                 break;
             case Event.channel_deleted:
                 deleteChannelResponse(event.getChannel());
+                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+                    channelEventHandler.handleEventResponse(event);
                 break;
             case Event.channel_updated:
+                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+                    channelEventHandler.handleEventResponse(event);
                 break;
             default:
                 break;
@@ -417,6 +425,8 @@ public class StreamChat implements WSResponseHandler {
                 break;
         }
         channelListEventHandler.updateChannels();
+        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+            channelEventHandler.handleEventResponse(event);
     }
 
 
@@ -443,7 +453,7 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region Handle Reaction Event
-    public void handleReactionEvent(Event event) {
+    public void handleReactionEvent(Event event, String channelId) {
         ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
         if (channelResponse == null) return;
         Message message = event.getMessage();
@@ -451,12 +461,14 @@ public class StreamChat implements WSResponseHandler {
 
         if (!message.getType().equals(ModelType.message_regular)) return;
         updateMessageEvent(channelResponse, message);
+        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+            channelEventHandler.handleEventResponse(event);
     }
     // endregion
 
     // region Handle User Event
 
-    public void handleUserEvent(Event event) {
+    public void handleUserEvent(Event event, String channelId) {
         switch (event.getType()) {
             case Event.user_updated:
                 break;
@@ -467,6 +479,8 @@ public class StreamChat implements WSResponseHandler {
             case Event.user_watching_stop:
                 break;
         }
+        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+            channelEventHandler.handleEventResponse(event);
     }
 
     // endregion

@@ -18,19 +18,15 @@ public class ChannelResponse {
     private final String TAG = ChannelResponse.class.getSimpleName();
 
     @SerializedName("channel")
-    
     private Channel channel;
 
     @SerializedName("messages")
-    
     private List<Message> messages;
 
     @SerializedName("read")
-    
     private List<ChannelUserRead> reads;
 
     @SerializedName("members")
-    
     private List<Member> members;
 
     private boolean isSorted = false;

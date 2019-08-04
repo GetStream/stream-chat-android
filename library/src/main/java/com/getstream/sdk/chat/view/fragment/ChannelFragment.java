@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.fragment;
 
-import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -190,14 +189,10 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         }
     }
 
-    private Activity activity;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity) {
-            activity = (Activity) context;
-        }
     }
 
     private void onBackPressed() {
@@ -247,6 +242,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     // region Init
     private void init() {
         // set WS handler
+        if (client == null)
+            client = Global.client;
         client.setChannelEventHandler(this);
 
         // Permission Check
@@ -596,10 +593,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
      * Send Message - Send a message to this channel
      */
     public void sendMessage(View view) {
-//        if (Global.noConnection) {
-//            Utils.showMessage(this, Constant.NO_INTERNET);
-//            return;
-//        }
         if (binding.etMessage.getTag() == null) {
             sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
         } else
@@ -1080,7 +1073,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
      */
     @Override
     public void handleEventResponse(Event event) {
-
         String channelId = null;
         try {
             String[] array = event.getCid().split(":");
@@ -1194,8 +1186,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     message.setDelivered(true);
 
                 messages().remove(ephemeralMessage);
-                client.newMessageEvent(channelResponse, message);
-
                 if (message.isIncoming() && !isShowLastMessage) {
                     scrollPosition = -1;
 //                    binding.tvNewMessage.setVisibility(View.VISIBLE);
@@ -1203,7 +1193,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     scrollPosition = 0;
                 }
                 mViewModel.setChannelMessages(channelMessages);
-                messageReadMark();
+                messageMarkRead();
                 break;
             case ModelType.message_ephemeral:
             case ModelType.message_error:
@@ -1459,11 +1449,11 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (channelResponse.getLastMessage() == null) return;
         if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
                 channelResponse.getLastMessage().getCreated_at())) {
-            messageReadMark();
+            messageMarkRead();
         }
     }
 
-    private void messageReadMark() {
+    private void messageMarkRead() {
         MarkReadRequest request = new MarkReadRequest(channelMessages.get(channelMessages.size() - 1).getId());
         client.markRead(channel.getId(), request, new EventCallback() {
             @Override
