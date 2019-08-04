@@ -991,10 +991,9 @@ public class StreamChat implements WSResponseHandler {
     }
 
     public void off() {
+
     }
 
-    public void sendFile() {
-    }
 
     public void queryUsers() {
     }

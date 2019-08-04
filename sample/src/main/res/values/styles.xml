@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="StreamChat.Themes.Dark">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--&lt;!&ndash;// change activeChannel avatar size&ndash;&gt;-->
+    <!--<style name="channel_preview_avatar">-->
+        <!--<item name="android:layout_width">60dp</item>-->
+        <!--<item name="android:layout_height">60dp</item>-->
+    <!--</style>-->
+    <!--&lt;!&ndash;// change activeChannel initials text font & color&ndash;&gt;-->
+    <!--<style name="channel_preview_initials">-->
+        <!--<item name="android:textSize">20sp</item>-->
+        <!--<item name="android:textColor">@color/colorPrimaryDark</item>-->
+        <!--<item name="android:textStyle">bold|italic</item>-->
+    <!--</style>-->
+    <!--&lt;!&ndash;// change activeChannel name text font size & color&ndash;&gt;-->
+    <!--<style name="channel_preview_channel_name">-->
+        <!--<item name="android:textSize">18sp</item>-->
+        <!--<item name="android:textColor">@color/black</item>-->
+    <!--</style>-->
+    <!--&lt;!&ndash;// change activeChannel last message text font size & color&ndash;&gt;-->
+    <!--<style name="channel_preview_channel_last_message">-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="android:textColor">@color/gray_dark</item>-->
+    <!--</style>-->
+    <!--&lt;!&ndash;// change activeChannel last message sent date text font size & color&ndash;&gt;-->
+    <!--<style name="channel_preview_channel_last_message_date">-->
+        <!--<item name="android:textSize">14sp</item>-->
+        <!--<item name="android:textColor">@color/gray_dark</item>-->
+    <!--</style>-->
+    <!--&lt;!&ndash;// change activeChannel unread message count text font size & color&ndash;&gt;-->
+    <!--<style name="channel_preview_channel_unread_indicator">-->
+        <!--<item name="android:textSize">11sp</item>-->
+        <!--<item name="android:textStyle">bold</item>-->
+        <!--<item name="android:textColor">@android:color/holo_red_dark</item>-->
+    <!--</style>-->
+
+</resources>
