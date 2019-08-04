@@ -140,7 +140,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     public void onResume() {
         super.onResume();
 
-        client.setActiveChannel(this.channel);
+        if (channel != null)
+            client.setActiveChannel(channel);
 
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
@@ -242,10 +243,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     // region Init
     private void init() {
         // set WS handler
-        if (client == null)
-            client = Global.client;
         client.setChannelEventHandler(this);
-
         // Permission Check
         PermissionChecker.permissionCheck(getActivity(), null);
         try {
@@ -268,8 +266,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         threadBinding.setViewModel(mViewModel);
         channel = channelResponse.getChannel();
         channelMessages = channelResponse.getMessages();
-        checkEphemeralMessages();
         channel.setChannelResponse(this.channelResponse);
+        channel.setClient(client);
 
         sendFileFunction = new SendFileFunction(getActivity(), binding, channelResponse);
         reactionFunction = new ReactionFunction(channel);
@@ -278,17 +276,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
         client.setActiveChannel(channel);
-    }
-
-    private void checkEphemeralMessages() {
-        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(channel.getId(), null);
-        if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
-            for (int i = 0; i < ephemeralMainMessages.size(); i++) {
-                Message message = ephemeralMainMessages.get(i);
-                if (channelMessages.contains(message)) continue;
-                channelMessages.add(message);
-            }
-        }
     }
 
     private boolean lockRVScrollListener = false;
@@ -302,9 +289,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             @Override
             public void onSuccess(ChannelResponse response) {
                 binding.setShowMainProgressbar(false);
-                if (!response.getMessages().isEmpty())
-                    Global.setStartDay(response.getMessages(), null);
-                client.addChannelResponse(response);
                 channelResponse = response;
                 initReconnection();
                 setDeliverLastMessage();
@@ -360,8 +344,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     }
 
     private void configCustomMessageItemView() {
-        messageItemLayoutId = Global.component.message.getMessageItemLayoutId();
-        messageItemViewHolderName = Global.component.message.getMessageItemViewHolderName();
+        messageItemLayoutId = client.getComponent().message.getMessageItemLayoutId();
+        messageItemViewHolderName = client.getComponent().message.getMessageItemViewHolderName();
     }
 
     private void configHeaderView() {
@@ -519,6 +503,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
+        threadBinding.tvClose.setOnClickListener(this::onClickCloseThread);
     }
 
     private void setChannelMessageRecyclerViewAdapder() {
@@ -892,7 +877,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         @Override
         public void run() {
             try {
-                channel.clean();
+                if (channel != null)
+                    channel.clean();
             } finally {
                 stopTyingEventHandler.postDelayed(runnableTypingStop, 3000);
             }
@@ -907,12 +893,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.stopTyping();
         stopTyingEventHandler.removeCallbacks(runnableTypingStop);
     }
-
-
-
-
-
-
 
     // refresh Current Typing users in this channel
     private Handler clearTyingUserHandler = new Handler();
@@ -1017,7 +997,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     /**
      * Hide thread view
      */
-    public void onClickCloseThread(View v) {
+    private void onClickCloseThread(View v) {
         threadBinding.setShowThread(false);
         cleanEditView();
         setScrollDownHideKeyboard(binding.rvMessage);
@@ -1126,7 +1106,9 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     messageEvent(event);
                     break;
                 case Event.message_read:
-                    messageReadEvent(event);
+                    if (!channelResponse.getLastMessage().isIncoming()) {
+                        mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
+                    }
                     break;
                 case Event.typing_start:
                 case Event.typing_stop:
@@ -1311,9 +1293,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             Global.setStartDay(channelResponse.getMessages(), null);
             initReconnection();
             // Check Ephemeral Messages
-            checkEphemeralMessages();
-
-            getActivity().runOnUiThread(() -> {
+             getActivity().runOnUiThread(() -> {
                 setDeliverLastMessage();
                 configUIs();
                 if (isThreadMode())
@@ -1362,12 +1342,6 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         mChannelMessageAdapter.notifyItemChanged(channelMessages.size());
     }
 
-    private void messageReadEvent(Event event) {
-        client.readMessageEvent(channelResponse, event);
-        if (!channelResponse.getLastMessage().isIncoming()) {
-            mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
-        }
-    }
     // endregion
 
     // endregion

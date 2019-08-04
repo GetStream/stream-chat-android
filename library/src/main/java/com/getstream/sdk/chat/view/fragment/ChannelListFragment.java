@@ -321,6 +321,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void navigationChannelFragment(ChannelResponse response) {
         ChannelFragment fragment = new ChannelFragment();
+        fragment.client = client;
         fragment.channelIdFromChannelList = response.getChannel().getId();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.addOnBackStackChangedListener(() -> {

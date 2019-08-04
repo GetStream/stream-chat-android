@@ -145,13 +145,11 @@ public class Channel {
     /**
      * constructor - Create a channel
      *
-     * @param client the chat client
      * @param type  the type of channel
      * @param id  the id of the chat
      * @return Returns a new uninitialized channel
      */
-    public Channel(StreamChat client, String type, String id) {
-        this.client = client;
+    public Channel(String type, String id) {
         this.type = type;
         this.id = id;
         this.extraData = new HashMap<>();
@@ -166,8 +164,7 @@ public class Channel {
      *
      * @return Returns a new uninitialized channel
      */
-    public Channel(StreamChat client,String type, String id, HashMap<String, Object> extraData) {
-        this.client = client;
+    public Channel(String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
 

@@ -223,6 +223,8 @@ public class StreamChat implements WSResponseHandler {
             }
             if (channelListEventHandler != null)
                 channelListEventHandler.handleConnection();
+            if (channelEventHandler != null)
+                channelEventHandler.handleConnection();
         }
         handleReceiveEvent(event);
     }
@@ -261,8 +263,10 @@ public class StreamChat implements WSResponseHandler {
             case Event.message_new:
             case Event.message_updated:
             case Event.message_deleted:
-            case Event.message_read:
                 handleMessageEvent(event, channelId);
+                break;
+            case Event.message_read:
+                readMessageEvent(event, channelId);
                 break;
             case Event.reaction_new:
             case Event.reaction_deleted:
@@ -299,12 +303,12 @@ public class StreamChat implements WSResponseHandler {
                     queryChannel(event.getChannel(), new QueryChannelCallback() {
                         @Override
                         public void onSuccess(ChannelResponse response) {
-                            channelListEventHandler.updateChannels();
+                            if (channelListEventHandler != null)
+                                channelListEventHandler.updateChannels();
                         }
 
                         @Override
                         public void onError(String errMsg, int errCode) {
-
                         }
                     });
                 }
@@ -321,7 +325,8 @@ public class StreamChat implements WSResponseHandler {
             default:
                 break;
         }
-        channelListEventHandler.updateChannels();
+        if (channelListEventHandler != null)
+            channelListEventHandler.updateChannels();
     }
 
     public void queryChannel(Channel channel, final QueryChannelCallback callback) {
@@ -346,12 +351,13 @@ public class StreamChat implements WSResponseHandler {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                 if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                    if (!response.body().getMessages().isEmpty())
-                        Global.setStartDay(response.body().getMessages(), null);
                     ChannelResponse channelResponse = response.body();
                     checkEphemeralMessages(channelResponse);
+                    if (!channelResponse.getMessages().isEmpty())
+                        Global.setStartDay(channelResponse.getMessages(), null);
+
                     addChannelResponse(channelResponse);
+                    callback.onSuccess(channelResponse);
                 } else {
                     callback.onError(response.message(), response.code());
                 }
@@ -420,13 +426,11 @@ public class StreamChat implements WSResponseHandler {
                     }
                 }
                 break;
-            case Event.message_read:
-                readMessageEvent(channelResponse, event);
-                break;
             default:
                 break;
         }
-        channelListEventHandler.updateChannels();
+        if (channelListEventHandler != null)
+            channelListEventHandler.updateChannels();
         if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
             channelEventHandler.handleEventResponse(event);
     }
@@ -448,15 +452,22 @@ public class StreamChat implements WSResponseHandler {
         }
     }
 
-    public void readMessageEvent(ChannelResponse channelResponse, Event event) {
+    public void readMessageEvent(Event event, String channelId) {
+        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
+        if (channelResponse == null) return;
+
         channelResponse.setReadDateOfChannelLastMessage(event.getUser(), event.getCreated_at());
         channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
+        if (channelListEventHandler != null)
+            channelListEventHandler.updateChannels();
+        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
+            channelEventHandler.handleEventResponse(event);
     }
     // endregion
 
     // region Handle Reaction Event
     public void handleReactionEvent(Event event, String channelId) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(event.getChannel().getId());
+        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
         if (channelResponse == null) return;
         Message message = event.getMessage();
         if (message == null) return;
@@ -527,6 +538,7 @@ public class StreamChat implements WSResponseHandler {
     }
 
     private void checkEphemeralMessages(ChannelResponse response) {
+        if (response == null) return;
         List<Message> ephemeralMainMessages = Global.getEphemeralMessages(response.getChannel().getId(), null);
         if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
             for (int i = 0; i < ephemeralMainMessages.size(); i++) {
