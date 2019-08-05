@@ -25,7 +25,7 @@ import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
@@ -50,7 +50,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private static final String TAG = UsersActivity.class.getSimpleName();
 
-    private StreamChat client;
+    private Client client;
 
     private ActivityUsersBinding binding;
     private UserListItemAdapter adapter;

@@ -1,0 +1,59 @@
+package com.getstream.sdk.chat.enums;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public enum EventType {
+    USER_PRESENCE_CHANGED("user.presence.changed"),
+    USER_WATCHING_START("user.watching.start"),
+    USER_WATCHING_STOP("user.watching.stop"),
+    USER_UPDATED("user.updated"),
+    TYPING_START("typing.start"),
+    TYPING_STOP("typing.stop"),
+    MESSAGE_NEW("message.new"),
+    MESSAGE_UPDATED("message.updated"),
+    MESSAGE_DELETED("message.deleted"),
+    MESSAGE_READ("message.read"),
+    MESSAGE_REACTION("message.reaction"),
+    REACTION_NEW("reaction.new"),
+    REACTION_DELETED("reaction.deleted"),
+    MEMBER_ADDED("member.added"),
+    MEMBER_REMOVED("member.removed"),
+    CHANNEL_UPDATED("channel.updated"),
+    CHANNEL_DELETED("channel.deleted"),
+    HEALTH_CHECK("health.check"),
+    CONNECTION_CHANGED("connection.changed"),
+    CONNECTION_RECOVERED("connection.recovered"),
+    NOTIFICATION_MESSAGE_NEW("notification.message_new"),
+    NOTIFICATION_MARK_READ("notification.mark_read"),
+    NOTIFICATION_INVITED("notification.invited"),
+    NOTIFICATION_INVITE_ACCEPTED("notification.invite_accepted"),
+    NOTIFICATION_ADDED_TO_CHANNEL("notification.added_to_channel"),
+    NOTIFICATION_REMOVED_FROM_CHANNEL("notification.removed_from_channel"),
+    UNKNOWN("");
+
+    public final String label;
+    private static final Map<String, EventType> lookup = new HashMap<>();
+
+    static {
+        for (EventType d : EventType.values()) {
+            if (d == EventType.UNKNOWN) {
+                continue;
+            }
+            lookup.put(d.label, d);
+        }
+    }
+
+    public static EventType findByString(String value){
+        EventType eventType = EventType.lookup.get(value);
+        if (eventType == null) {
+            return UNKNOWN;
+        }
+        return eventType;
+    }
+
+    EventType(String label) {
+        this.label = label;
+    }
+
+}

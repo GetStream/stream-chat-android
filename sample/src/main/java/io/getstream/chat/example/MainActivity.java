@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.view.fragment.ChannelFragment;
 import com.getstream.sdk.chat.view.fragment.ChannelListFragment;
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        StreamChat client = new StreamChat(API_KEY);
+        Client client = new Client(API_KEY);
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("niceName", "Test Nicename");
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
     // region SetStreamChat
 
-    private void setStreamChatUser(StreamChat client, User user, Token token) throws Exception {
+    private void setStreamChatUser(Client client, User user, Token token) throws Exception {
         switch (token) {
             case SERVERSIDE:
                 client.setUser(user, new TokenProvider() {
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
     // region Open Stream Chat
 
-    public void multiConversation(StreamChat client) {
+    public void multiConversation(Client client) {
 
         // Customize Commponets and Filter&Order feature
         Component component = new Component();
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void singleConversation(StreamChat client) {
+    private void singleConversation(Client client) {
 
         HashMap<String, Object> extraData = new HashMap<>();
         List<String> members = new ArrayList<>();

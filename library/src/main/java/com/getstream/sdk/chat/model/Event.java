@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.model;
 
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
@@ -15,6 +16,14 @@ public class Event {
     @SerializedName("cid")
     @Expose
     private String cid;
+
+    @SerializedName("client_id")
+    @Expose
+    private String clientId;
+
+    @SerializedName("user_id")
+    @Expose
+    private String userId;
 
     @SerializedName("type")
     @Expose
@@ -56,6 +65,15 @@ public class Event {
     @Expose
     private String created_at;
 
+    private boolean online;
+
+    public Event() {}
+
+    public Event(boolean online) {
+        this.online = online;
+        setType(EventType.CONNECTION_CHANGED);
+    }
+
     public String getConnection_id() {
         return connection_id;
     }
@@ -68,8 +86,12 @@ public class Event {
         this.type = type;
     }
 
-    public String getType() {
-        return type;
+    public void setType(EventType type) {
+        this.type = type.label;
+    }
+
+    public EventType getType() {
+        return EventType.findByString(type);
     }
 
     public User getUser() {
@@ -112,30 +134,23 @@ public class Event {
         return created_at;
     }
 
-    public static final String user_presence_changed                = "user.presence.changed";
-    public static final String user_watching_start                  = "user.watching.start";
-    public static final String user_watching_stop                   = "user.watching.stop";
-    public static final String user_updated                         = "user.updated";
-    public static final String typing_start                         = "typing.start";
-    public static final String typing_stop                          = "typing.stop";
-    public static final String message_new                          = "message.new";
-    public static final String message_updated                      = "message.updated";
-    public static final String message_deleted                      = "message.deleted";
-    public static final String message_read                         = "message.read";
-    public static final String message_reaction                     = "message.reaction";
-    public static final String reaction_new                         = "reaction.new";
-    public static final String reaction_deleted                     = "reaction.deleted";
-    public static final String member_added                         = "member.added";
-    public static final String member_removed                       = "member.removed";
-    public static final String channel_updated                      = "channel.updated";
-    public static final String channel_deleted                      = "channel.deleted";
-    public static final String health_check                         = "health.check";
-    public static final String connection_changed                   = "connection.changed";
-    public static final String connection_recovered                 = "connection.recovered";
-    public static final String notification_message_new             = "notification.message_new";
-    public static final String notification_mark_read               = "notification.mark_read";
-    public static final String notification_invited                 = "notification.invited";
-    public static final String notification_invite_accepted         = "notification.invite_accepted";
-    public static final String notification_added_to_channel        = "notification.added_to_channel";
-    public static final String notification_removed_from_channel    = "notification.removed_from_channel";
+    public Boolean getOnline() {
+        return online;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

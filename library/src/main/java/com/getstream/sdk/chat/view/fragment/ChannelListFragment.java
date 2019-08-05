@@ -32,7 +32,7 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
@@ -77,7 +77,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     private int channelItemLayoutId;
     private String channelItemViewHolderName;
 
-    public StreamChat client;
+    public Client client;
 
     // region LifeCycle
     @Override

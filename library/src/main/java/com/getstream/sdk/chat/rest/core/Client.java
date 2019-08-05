@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.component.Component;
-import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
@@ -58,47 +58,53 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import okhttp3.MultipartBody;
-import okio.ByteString;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class StreamChat implements WSResponseHandler {
 
-    private static final String TAG = StreamChat.class.getSimpleName();
+//TODO: rename this into Client
+//TODO: split this into two classes, Client and Channel
+public class Client implements WSResponseHandler {
+
+    private static final String TAG = Client.class.getSimpleName();
 
     // Main Params
-    public String apiKey;
+    private String apiKey;
     public User user;
-    public String userToken;
+    private String userToken;
     public String connectionId;
 
     private Component component;
     // Client params
     public List<ChannelResponse> channels = new ArrayList<>();
     public List<User> users = new ArrayList<>();
-    public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channeal ID, Value: ephemeralMessages
+    public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channel ID, Value: ephemeralMessages
     private Channel activeChannel;
 
-    public APIService mService;
+    private APIService mService;
 
+    private List<ChatEventHandler> eventSubscribers;
+    private Map<Number, ChatEventHandler> eventSubscribersBy;
+    private int subscribersSeq;
+
+    private WebSocketService WSConn;
 
     // Interfaces
     private ChannelListEventHandler channelListEventHandler;
-    private ChannelEventHandler channelEventHandler;
 
     public void setChannelListEventHandler(ChannelListEventHandler channelListEventHandler) {
         this.channelListEventHandler = channelListEventHandler;
     }
 
-    public void setChannelEventHandler(ChannelEventHandler channelEventHandler) {
-        this.channelEventHandler = channelEventHandler;
-    }
-
-    public StreamChat(String apiKey) {
+    public Client(String apiKey) {
         this.apiKey = apiKey;
+        eventSubscribers = new ArrayList<>();
+        eventSubscribersBy = new HashMap<>();
         Global.client = this;
     }
 
@@ -166,7 +172,7 @@ public class StreamChat implements WSResponseHandler {
         }
     }
 
-    // Harded Code token
+    // Hardcoded Code token
     public void setUser(User user, String token) throws Exception {
         if (TextUtils.isEmpty(token)) {
             throw new Exception("Token must be non-null");
@@ -179,6 +185,24 @@ public class StreamChat implements WSResponseHandler {
     }
 
     // endregion
+
+    public final int addEventHandler(ChatEventHandler handler) {
+        int id = ++subscribersSeq;
+        eventSubscribers.add(handler);
+        eventSubscribersBy.put(id, handler);
+        return id;
+    }
+
+    public final void removeEventHandler(Number handlerId) {
+        ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
+        eventSubscribers.remove(handler);
+    }
+
+    private void publishEvents(Event event){
+        for (ChatEventHandler handler: eventSubscribers) {
+            handler.dispatchEvent(event);
+        }
+    }
 
     // region Websocket Setup
     private JSONObject buildUserDetailJSON() {
@@ -196,53 +220,54 @@ public class StreamChat implements WSResponseHandler {
         return new JSONObject(jsonParameter);
     }
 
+    // TODO: kill Global baseURL
+    // TODO: protect this from multiple calls
     private void setUpWebSocket() {
-        JSONObject json = this.buildUserDetailJSON();
+        JSONObject json = buildUserDetailJSON();
         String wsURL = Global.baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
-                + this.apiKey + "&authorization=" + this.userToken + "&stream-auth-type=" + "jwt";
+                + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
 
-        WebSocketService webSocketService = new WebSocketService();
-        webSocketService.setWsURL(wsURL);
-        webSocketService.setWSResponseHandler(this);
-        webSocketService.connect();
+
+        WSConn = new WebSocketService(wsURL, "TODO", user.getId(), this);
+        WSConn.connect();
 
         mService = RetrofitClient.getAuthorizedClient(userToken).create(APIService.class);
     }
     // endregion
 
-    // region handle
-    @Override
-    public void handleEventWSResponse(Event event) {
-        if (TextUtils.isEmpty(connectionId)) {
-            Global.noConnection = false;
-            if (!TextUtils.isEmpty(event.getConnection_id())) {
-                connectionId = event.getConnection_id();
-                if (event.getMe() != null)
-                    setUser(event.getMe());
-            }
-            if (channelListEventHandler != null)
-                channelListEventHandler.handleConnection();
-            if (channelEventHandler != null)
-                channelEventHandler.handleConnection();
-        }
-        handleReceiveEvent(event);
-    }
 
     @Override
-    public void handleByteStringWSResponse(ByteString byteString) {
-    }
-
-
-    @Override
-    public void onFailed(String errMsg, int errCode) {
-        this.connectionId = null;
-
+    public void handleWSConnectReply(Event event){
+        Global.noConnection = false;
+        connectionId = event.getConnection_id();
+        if (event.getMe() != null)
+            setUser(event.getMe());
         if (channelListEventHandler != null)
-            channelListEventHandler.onConnectionFailed(errMsg, errCode);
-        if (channelEventHandler != null)
-            channelEventHandler.onConnectionFailed(errMsg, errCode);
+            channelListEventHandler.handleConnection();
     }
+
+    @Override
+    public void handleWSEvent(Event event) {
+        handleReceiveEvent(event); //legacy code
+        publishEvents(event);
+    }
+
+    @Override
+    public void handleWSRecover(){
+        //TODO: do the reconnection
+    }
+
+//    @Override
+//    public void onFailed(String errMsg, int errCode) {
+//        this.connectionId = null;
+//
+//        if (channelListEventHandler != null)
+//            channelListEventHandler.onConnectionFailed(errMsg, errCode);
+//
+//        Event wentOffline = new Event(false);
+//        publishEvents(wentOffline);
+//    }
 
     public void handleReceiveEvent(Event event) {
         String channelId = null;
@@ -255,39 +280,22 @@ public class StreamChat implements WSResponseHandler {
         if (channelId == null) return;
 
         switch (event.getType()) {
-            case Event.notification_added_to_channel:
-            case Event.channel_updated:
-            case Event.channel_deleted:
+            case NOTIFICATION_ADDED_TO_CHANNEL:
+            case CHANNEL_UPDATED:
+            case CHANNEL_DELETED:
                 handleChannelEvent(event, channelId);
                 break;
-            case Event.message_new:
-            case Event.message_updated:
-            case Event.message_deleted:
+            case MESSAGE_NEW:
+            case MESSAGE_UPDATED:
+            case MESSAGE_DELETED:
                 handleMessageEvent(event, channelId);
                 break;
-            case Event.message_read:
+            case MESSAGE_READ:
                 readMessageEvent(event, channelId);
                 break;
-            case Event.reaction_new:
-            case Event.reaction_deleted:
+            case REACTION_NEW:
+            case REACTION_DELETED:
                 handleReactionEvent(event, channelId);
-                break;
-            case Event.user_updated:
-            case Event.user_presence_changed:
-            case Event.user_watching_start:
-            case Event.user_watching_stop:
-                handleUserEvent(event, channelId);
-                break;
-            case Event.notification_invited:
-            case Event.notification_invite_accepted:
-                handleInvite(event);
-                break;
-            case Event.health_check:
-                break;
-            case Event.typing_start:
-            case Event.typing_stop:
-                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-                    channelEventHandler.handleEventResponse(event);
                 break;
             default:
                 break;
@@ -298,7 +306,7 @@ public class StreamChat implements WSResponseHandler {
 
     public void handleChannelEvent(Event event, String channelId) {
         switch (event.getType()) {
-            case Event.notification_added_to_channel:
+            case NOTIFICATION_ADDED_TO_CHANNEL:
                 if (Global.getChannelResponseById(channelId) == null) {
                     queryChannel(event.getChannel(), new QueryChannelCallback() {
                         @Override
@@ -313,14 +321,8 @@ public class StreamChat implements WSResponseHandler {
                     });
                 }
                 break;
-            case Event.channel_deleted:
+            case CHANNEL_DELETED:
                 deleteChannelResponse(event.getChannel());
-                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-                    channelEventHandler.handleEventResponse(event);
-                break;
-            case Event.channel_updated:
-                if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-                    channelEventHandler.handleEventResponse(event);
                 break;
             default:
                 break;
@@ -407,22 +409,16 @@ public class StreamChat implements WSResponseHandler {
         Message message = event.getMessage();
         if (message == null) return;
 
-        if (!message.getType().equals(ModelType.message_regular)) {
-            if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-                channelEventHandler.handleEventResponse(event);
-            return;
-        }
-
         switch (event.getType()) {
-            case Event.message_new:
+            case MESSAGE_NEW:
                 newMessageEvent(channelResponse, message);
                 break;
-            case Event.message_updated:
-            case Event.message_deleted:
+            case MESSAGE_UPDATED:
+            case MESSAGE_DELETED:
                 for (int i = 0; i < channelResponse.getMessages().size(); i++) {
                     if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
                         // Deleted Message
-                        if (event.getType().equals(Event.message_deleted))
+                        if (event.getType().equals(EventType.MESSAGE_DELETED))
                             message.setText(Constant.MESSAGE_DELETED);
 
                         channelResponse.getMessages().set(i, message);
@@ -435,8 +431,6 @@ public class StreamChat implements WSResponseHandler {
         }
         if (channelListEventHandler != null)
             channelListEventHandler.updateChannels();
-        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-            channelEventHandler.handleEventResponse(event);
     }
 
 
@@ -464,8 +458,6 @@ public class StreamChat implements WSResponseHandler {
         channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
         if (channelListEventHandler != null)
             channelListEventHandler.updateChannels();
-        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-            channelEventHandler.handleEventResponse(event);
     }
     // endregion
 
@@ -477,36 +469,7 @@ public class StreamChat implements WSResponseHandler {
         if (message == null) return;
 
         updateMessageEvent(channelResponse, message);
-        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-            channelEventHandler.handleEventResponse(event);
     }
-    // endregion
-
-    // region Handle User Event
-
-    public void handleUserEvent(Event event, String channelId) {
-        switch (event.getType()) {
-            case Event.user_updated:
-                break;
-            case Event.user_presence_changed:
-                break;
-            case Event.user_watching_start:
-                break;
-            case Event.user_watching_stop:
-                break;
-        }
-        if (channelEventHandler != null && activeChannel != null && activeChannel.getId().equals(channelId))
-            channelEventHandler.handleEventResponse(event);
-    }
-
-    // endregion
-
-    // region Handle Invite
-    public void handleInvite(Event event) {
-
-    }
-    // endregion
-
     // endregion
 
     // region Channel

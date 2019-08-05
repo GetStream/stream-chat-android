@@ -33,10 +33,10 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.function.AttachmentFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
-import com.getstream.sdk.chat.interfaces.ChannelEventHandler;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -45,7 +45,8 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.ChatEventHandler;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
@@ -65,7 +66,6 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelFragmentViewModelFactory;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
@@ -78,9 +78,9 @@ import java.util.Map;
 
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
-public class ChannelFragment extends Fragment implements ChannelEventHandler {
+public class ChannelFragment extends Fragment {
 
-    public StreamChat client;
+    public Client client;
     // ViewModel & Binding
     private ChannelViewModel mViewModel;
     private ChannelFragmentBinding binding;
@@ -107,6 +107,72 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     private int scrollPosition = 0;
     private static int fVPosition, lVPosition;
     private boolean noHistory, noHistoryThread;
+
+    private int subscriptionId;
+
+    public void unsubscribe(){
+        client.removeEventHandler(subscriptionId);
+        subscriptionId = 0;
+    }
+
+    // TODO: racey
+    public void subscribe(){
+        if (subscriptionId != 0) {
+            return;
+        }
+
+        // TODO: review safety here (ie. clone event to avoid null exception)
+        subscriptionId = client.addEventHandler(new ChatEventHandler(){
+            public void onTypingStart(Event event) {
+                getActivity().runOnUiThread(() -> footerEvent(event));
+            }
+            public void onTypingStop(Event event) {
+                getActivity().runOnUiThread(() -> footerEvent(event));
+            }
+            public void onMessageNew(Event event) {
+                getActivity().runOnUiThread(() -> messageEvent(event));
+            }
+            public void onMessageUpdated(Event event) {
+                getActivity().runOnUiThread(() -> messageEvent(event));
+            }
+            public void onMessageDeleted(Event event) {
+                getActivity().runOnUiThread(() -> messageEvent(event));
+            }
+            public void onMessageRead(Event event) {
+                getActivity().runOnUiThread(() -> {
+                    if (!channelResponse.getLastMessage().isIncoming()) {
+                        mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
+                    }
+                });
+            }
+            public void onReactionNew(Event event) {
+                getActivity().runOnUiThread(() -> reactionEvent(event));
+            }
+            public void onReactionDeleted(Event event) {
+                getActivity().runOnUiThread(() -> reactionEvent(event));
+            }
+            public void onChannelDeleted(Event event) {
+                getActivity().runOnUiThread(() -> {
+                    Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
+                    finish();
+                });
+            }
+
+            @Override
+            public void onConnectionChanged(Event event) {
+                getActivity().runOnUiThread(() -> {
+                    if (event.getOnline()) {
+                        if (singleConversation && client.getActiveChannel() != null)
+                            getChannel(client.getActiveChannel());
+                    } else {
+                        binding.setNoConnection(true);
+                        binding.setShowMainProgressbar(false);
+                    }
+                });
+            }
+        });
+    }
+
 
     // region LifeCycle
     @Override
@@ -140,6 +206,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     public void onResume() {
         super.onResume();
 
+        subscribe();
+
         if (channel != null)
             client.setActiveChannel(channel);
 
@@ -155,7 +223,9 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        client.setChannelEventHandler(null);
+
+        unsubscribe();
+
         client.setActiveChannel(null);
 
         stopTypingStopRepeatingTask();
@@ -243,7 +313,8 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
     // region Init
     private void init() {
         // set WS handler
-        client.setChannelEventHandler(this);
+        subscribe();
+
         // Permission Check
         PermissionChecker.permissionCheck(getActivity(), null);
         try {
@@ -928,9 +999,9 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             case ModelType.message_ephemeral:
             case ModelType.message_error:
                 Event event = new Event();
-                event.setType(Event.message_new);
+                event.setType(EventType.MESSAGE_NEW);
                 event.setMessage(message);
-                handleEvent(event);
+                messageEvent(event);
                 break;
             default:
                 break;
@@ -1045,114 +1116,20 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
 
     // region Listener
 
-    // region WebSocket Listener
-
-    /**
-     * Handle server response
-     *
-     * @param event Server response
-     */
-    @Override
-    public void handleEventResponse(Event event) {
-        String channelId = null;
-        try {
-            String[] array = event.getCid().split(":");
-            channelId = array[1];
-        } catch (Exception e) {
-        }
-        if (channelId == null || channel == null) return;
-
-        if (channel.getId().equals(channelId))
-            handleEvent(event);
-
-        Log.d(TAG, "New Event: " + new Gson().toJson(event));
-    }
-
-
-    @Override
-    public void handleConnection() {
-        Log.d(TAG, "Connected Websocket!");
-        if (singleConversation && client.getActiveChannel() != null)
-            getChannel(client.getActiveChannel());
-
-    }
-
-    /**
-     * Handle server response failures.
-     *
-     * @param errMsg  Error message
-     * @param errCode Error code
-     */
-    @Override
-    public void onConnectionFailed(String errMsg, int errCode) {
-        binding.setNoConnection(true);
-        binding.setShowMainProgressbar(false);
-    }
-
     // Event Listener
-
-    /**
-     * Handle Event
-     *
-     * @param event Event for Server response
-     */
-//    @Override
-    public void handleEvent(final Event event) {
-        getActivity().runOnUiThread(() -> {
-            switch (event.getType()) {
-                case Event.health_check:
-                    break;
-                case Event.message_new:
-                case Event.message_updated:
-                case Event.message_deleted:
-                    messageEvent(event);
-                    break;
-                case Event.message_read:
-                    if (!channelResponse.getLastMessage().isIncoming()) {
-                        mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
-                    }
-                    break;
-                case Event.typing_start:
-                case Event.typing_stop:
-                    footerEvent(event);
-                    break;
-                case Event.user_updated:
-                    break;
-                case Event.user_presence_changed:
-                    break;
-                case Event.user_watching_start:
-                    break;
-                case Event.user_watching_stop:
-                    break;
-                case Event.reaction_new:
-                case Event.reaction_deleted:
-                    reactionEvent(event);
-                    break;
-                case Event.channel_updated:
-                case Event.channel_deleted:
-                    if (event.getType().equals(Event.channel_deleted)) {
-                        Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
-                        finish();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
 
     private void messageEvent(Event event) {
         Message message = event.getMessage();
         if (message == null) return;
 
         switch (event.getType()) {
-            case Event.message_new:
+            case MESSAGE_NEW:
                 newMessageEvent(message);
                 break;
-            case Event.message_updated:
+            case MESSAGE_UPDATED:
                 if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
                     mViewModel.setReplyCount(message.getReplyCount());
-            case Event.message_deleted:
+            case MESSAGE_DELETED:
                 updateOrDeleteMessageEvent(event, message);
                 break;
             default:
@@ -1222,7 +1199,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             if (!isThreadMode()) return;
             for (int i = 0; i < threadMessages.size(); i++) {
                 if (message.getId().equals(threadMessages.get(i).getId())) {
-                    if (event.getType().equals(Event.message_deleted))
+                    if (event.getType().equals(EventType.MESSAGE_DELETED))
                         message.setText(Constant.MESSAGE_DELETED);
                     changedIndex_ = i;
                     threadMessages.set(i, message);
@@ -1234,7 +1211,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         } else {
             for (int i = 0; i < channelMessages.size(); i++) {
                 if (message.getId().equals(channelMessages.get(i).getId())) {
-                    if (event.getType().equals(Event.message_deleted))
+                    if (event.getType().equals(EventType.MESSAGE_DELETED))
                         message.setText(Constant.MESSAGE_DELETED);
                     changedIndex_ = i;
                     channelMessages.set(i, message);
@@ -1313,7 +1290,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         if (user.getId().equals(client.user.getId())) return;
 
         switch (event.getType()) {
-            case Event.typing_start:
+            case TYPING_START:
                 boolean isAdded = false; // If user already exits in typingUsers
                 for (int i = 0; i < Global.typingUsers.size(); i++) {
                     User user1 = Global.typingUsers.get(i);
@@ -1326,7 +1303,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     Global.typingUsers.add(user);
 
                 break;
-            case Event.typing_stop:
+            case TYPING_STOP:
                 int index1 = -1; // If user already exits in typingUsers
                 for (int i = 0; i < Global.typingUsers.size(); i++) {
                     User user1 = Global.typingUsers.get(i);

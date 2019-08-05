@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.BaseURL;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.enums.Location;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
@@ -39,7 +39,7 @@ public class Global {
 
     public static BaseURL baseURL = new BaseURL(Location.US_EAST);
     public static SelectAttachmentModel selectAttachmentModel;
-    public static StreamChat client;
+    public static Client client;
     public static Component component;
 //    public static EventFunction eventFunction;
 

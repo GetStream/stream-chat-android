@@ -3,9 +3,10 @@ package com.getstream.sdk.chat.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -137,7 +138,7 @@ public class Channel {
 
     // region Constructor
 
-    StreamChat client;
+    Client client;
     ChannelResponse channelResponse;
     static final String TAG = "Channel";
 
@@ -196,11 +197,11 @@ public class Channel {
         this.channelResponse = channelResponse;
     }
 
-    public StreamChat getClient() {
+    public Client getClient() {
         return client;
     }
 
-    public void setClient(StreamChat client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 
@@ -390,7 +391,7 @@ public class Channel {
         // send a typing.start every 2 seconds
         if (diff > 2000) {
             this.lastTypingEvent = new Date();
-            sendEvent(Event.typing_start, new EventCallback() {
+            sendEvent(EventType.TYPING_START, new EventCallback() {
                 @Override
                 public void onSuccess(EventResponse response) {
 
@@ -411,7 +412,7 @@ public class Channel {
         if (!getConfig().isTyping_events()) return;
         this.lastTypingEvent = null;
         this.isTyping = false;
-        sendEvent(Event.typing_stop, new EventCallback() {
+        sendEvent(EventType.TYPING_STOP, new EventCallback() {
             @Override
             public void onSuccess(EventResponse response) {
 
@@ -444,7 +445,8 @@ public class Channel {
      *
      * @return The Server Response
      */
-    public void sendEvent(String eventType, final EventCallback callback){
+    // TODO: check this function
+    public void sendEvent(EventType eventType, final EventCallback callback){
         final Map<String, Object> event = new HashMap<>();
         event.put("type", eventType);
         SendEventRequest request = new SendEventRequest(event);
