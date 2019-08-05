@@ -28,7 +28,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -74,6 +74,7 @@ public class StreamChat implements WSResponseHandler {
     public User user;
     public String userToken;
     public String connectionId;
+
     private Component component;
     // Client params
     public List<ChannelResponse> channels = new ArrayList<>();
@@ -577,7 +578,6 @@ public class StreamChat implements WSResponseHandler {
     }
 
     public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, QueryChannelCallback callback) {
-
         mService.pagination(channelId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
             @Override
             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
@@ -606,7 +606,9 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} message The Message object
      * @return {object} The Server Response
      */
-    public void sendMessage(@NonNull String channelId, @NonNull SendMessageRequest sendMessageRequest, SendMessageCallback callback) {
+    public void sendMessage(@NonNull String channelId,
+                            @NonNull SendMessageRequest sendMessageRequest,
+                            MessageCallback callback) {
 
         mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -633,7 +635,7 @@ public class StreamChat implements WSResponseHandler {
      */
     public void updateMessage(@NonNull String messageId,
                               @NonNull UpdateMessageRequest request,
-                              SendMessageCallback callback) {
+                              MessageCallback callback) {
 
         mService.updateMessage(messageId,
                 apiKey,
@@ -657,13 +659,34 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
+    public void getMessage(@NonNull String messageId,
+                           MessageCallback callback) {
+
+        mService.getMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
     /**
      * deleteMessage - Delete the given message
      *
      * @param {string} messageID the message id needs to be specified
      * @return {object} Response that includes the message
      */
-    public void deleteMessage(@NonNull String messageId, SendMessageCallback callback) {
+    public void deleteMessage(@NonNull String messageId,
+                              MessageCallback callback) {
 
         mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -687,9 +710,36 @@ public class StreamChat implements WSResponseHandler {
      *
      * @return {Promise} Description
      */
-    public void markRead(@NonNull String channelId, MarkReadRequest readRequest, EventCallback callback) {
+    public void markRead(@NonNull String channelId,
+                         MarkReadRequest readRequest,
+                         EventCallback callback) {
 
-        mService.readMark(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
+        mService.markRead(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
+            @Override
+            public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EventResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * markAllRead - marks all channels for this user as read
+     *
+     * @return {Promise} Description
+     */
+    public void markAllRead(MarkReadRequest readRequest,
+                            EventCallback callback) {
+
+        mService.markAllRead(apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 if (response.isSuccessful()) {
@@ -716,7 +766,11 @@ public class StreamChat implements WSResponseHandler {
      * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
      * @return {type} A channelResponse with a list of messages
      */
-    public void getReplies(@NonNull String parentId, String limit, String firstId, GetRepliesCallback callback) {
+    public void getReplies(@NonNull String parentId,
+                           String limit,
+                           String firstId,
+                           GetRepliesCallback callback) {
+
         if (TextUtils.isEmpty(firstId)) {
             mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
@@ -764,7 +818,9 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(@NonNull String messageId, @NonNull ReactionRequest reactionRequest, SendMessageCallback callback) {
+    public void sendReaction(@NonNull String messageId,
+                             @NonNull ReactionRequest reactionRequest,
+                             MessageCallback callback) {
 
         mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -791,7 +847,9 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(@NonNull String messageId, @NonNull String reactionType, SendMessageCallback callback) {
+    public void deleteReaction(@NonNull String messageId,
+                               @NonNull String reactionType,
+                               MessageCallback callback) {
 
         mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -820,7 +878,9 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} event for example {type: 'message.read'}
      * @return {object} The Server Response
      */
-    public void sendEvent(@NonNull String channelId, @NonNull SendEventRequest eventRequest, EventCallback callback) {
+    public void sendEvent(@NonNull String channelId,
+                          @NonNull SendEventRequest eventRequest,
+                          EventCallback callback) {
 
         mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
@@ -843,7 +903,9 @@ public class StreamChat implements WSResponseHandler {
     // endregion
 
     // region File
-    public void sendImage(@NonNull String channelId, MultipartBody.Part part, SendFileCallback callback) {
+    public void sendImage(@NonNull String channelId,
+                          MultipartBody.Part part,
+                          SendFileCallback callback) {
 
         mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -863,7 +925,9 @@ public class StreamChat implements WSResponseHandler {
         });
     }
 
-    public void sendFile(@NonNull String channelId, MultipartBody.Part part, SendFileCallback callback) {
+    public void sendFile(@NonNull String channelId,
+                         MultipartBody.Part part,
+                         SendFileCallback callback) {
 
         mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
@@ -884,7 +948,9 @@ public class StreamChat implements WSResponseHandler {
     }
 
     // endregion
-    public void sendAction(@NonNull String messageId, SendActionRequest request, SendMessageCallback callback) {
+    public void sendAction(@NonNull String messageId,
+                           @NonNull SendActionRequest request,
+                           MessageCallback callback) {
 
         mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -914,7 +980,9 @@ public class StreamChat implements WSResponseHandler {
      * @param {object} options          Option object, {presence: true}
      * @return {object} User Query Response
      */
-    public void queryUsers(JSONObject payload, QueryUserListCallback callback) {
+    public void queryUsers(@NonNull JSONObject payload,
+                           QueryUserListCallback callback) {
+
         mService.queryUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
@@ -946,9 +1014,10 @@ public class StreamChat implements WSResponseHandler {
      * @param {string} id the device id
      * @param {string} push_provider the push provider (apn or firebase)
      * @param {string} [userID] the user id (defaults to current user)
-     *
      */
-    public void addDevice(String deviceId, DeviceCallback callback) {
+    public void addDevice(@NonNull String deviceId,
+                          DeviceCallback callback) {
+
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
         mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<DevicesResponse>() {
             @Override
@@ -969,10 +1038,11 @@ public class StreamChat implements WSResponseHandler {
      * getDevices - Returns the devices associated with a current user
      *
      * @param {string} [userID] User ID. Only works on serversidex
-     *
      * @return {devices} Array of devices
      */
-    public void getDevices(@NonNull Map<String, String> payload, GetDevicesCallback callback) {
+    public void getDevices(@NonNull Map<String, String> payload,
+                           GetDevicesCallback callback) {
+
         mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
@@ -995,9 +1065,10 @@ public class StreamChat implements WSResponseHandler {
      *
      * @param {string} id The device id
      * @param {string} [userID] The user id. Only specify this for serverside requests
-     *
      */
-    public void removeDevice(String deviceId, DeviceCallback callback){
+    public void removeDevice(@NonNull String deviceId,
+                             DeviceCallback callback) {
+
         mService.deleteDevice(deviceId, apiKey, user.getId(), connectionId).enqueue(new Callback<DevicesResponse>() {
             @Override
             public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
@@ -1023,11 +1094,11 @@ public class StreamChat implements WSResponseHandler {
 
     public void setAnonymousUser() {
     }
+
     /**
      * setGuestUser - Setup a temporary guest user
      *
      * @param {object} user Data about this user. IE {name: "john"}
-     *
      * @return {promise} Returns a promise that resolves when the connection is setup
      */
     public void setGuestUser() {
@@ -1041,11 +1112,6 @@ public class StreamChat implements WSResponseHandler {
     }
 
 
-    public void queryUsers() {
-    }
-
-
-
     public void muteUser() {
     }
 
@@ -1056,17 +1122,5 @@ public class StreamChat implements WSResponseHandler {
     }
 
     public void unflagMessage() {
-    }
-
-    public void markAllRead() {
-    }
-
-    public void updateMessage() {
-    }
-
-    public void deleteMessage() {
-    }
-
-    public void getMessage() {
     }
 }

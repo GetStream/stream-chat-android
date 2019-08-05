@@ -2,14 +2,13 @@ package com.getstream.sdk.chat.model;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
@@ -233,10 +232,10 @@ public class Channel {
     public void sendMessage(@Nullable String text,
                             @Nullable List<Attachment> attachments,
                             @Nullable String parentId,
-                            SendMessageCallback callback) {
+                            MessageCallback callback) {
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this.id, request, new SendMessageCallback() {
+        client.sendMessage(this.id, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -252,13 +251,13 @@ public class Channel {
     public void updateMessage(String text,
                               @NonNull Message message,
                               @Nullable List<Attachment> attachments,
-                              SendMessageCallback callback) {
+                              MessageCallback callback) {
         if (message == null) return;
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelResponse, text);
         message.setText(text);
         UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
 
-        client.updateMessage(message.getId(), request, new SendMessageCallback() {
+        client.updateMessage(message.getId(), request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -272,8 +271,8 @@ public class Channel {
     }
 
     public void deleteMessage(@NonNull Message message,
-                              SendMessageCallback callback) {
-        client.deleteMessage(message.getId(), new SendMessageCallback() {
+                              MessageCallback callback) {
+        client.deleteMessage(message.getId(), new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -331,9 +330,9 @@ public class Channel {
      *
      * @return {object} The Server Response
      */
-    public void sendReaction(String mesageId, String type, SendMessageCallback callback){
+    public void sendReaction(String mesageId, String type, MessageCallback callback){
         ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, new SendMessageCallback() {
+        client.sendReaction(mesageId, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -355,8 +354,8 @@ public class Channel {
      *
      * @return {object} The Server Response
      */
-    public void deleteReaction(String mesageId, String type, SendMessageCallback callback){
-        client.deleteReaction(mesageId, type, new SendMessageCallback() {
+    public void deleteReaction(String mesageId, String type, MessageCallback callback){
+        client.deleteReaction(mesageId, type, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);

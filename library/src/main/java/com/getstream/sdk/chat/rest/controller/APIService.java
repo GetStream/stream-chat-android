@@ -77,6 +77,9 @@ public interface APIService {
     @POST("/messages/{id}")
     Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body UpdateMessageRequest request);
 
+    @GET("/messages/{id}")
+    Call<MessageResponse> getMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+
     @POST("/messages/{id}/action")
     Call<MessageResponse> sendAction(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendActionRequest request);
 
@@ -99,7 +102,10 @@ public interface APIService {
     Call<EventResponse> sendEvent(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendEventRequest request);
 
     @POST("/channels/messaging/{id}/read")
-    Call<EventResponse> readMark(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
+    Call<EventResponse> markRead(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
+
+    @POST("/channels/read")
+    Call<EventResponse> markAllRead(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
 
     @Multipart
     @POST("/channels/messaging/{id}/image")

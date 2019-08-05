@@ -17,7 +17,8 @@ public class MarkReadRequest {
         Map<String, String> user = new HashMap<>();
         user.put("id", Global.client.user.getId());
         map.put("user", user);
-        map.put("message_id", messageId);
+        if (messageId != null)
+            map.put("message_id", messageId);
         this.event = map;
     }
 }

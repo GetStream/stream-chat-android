@@ -49,7 +49,7 @@ import com.getstream.sdk.chat.rest.core.StreamChat;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendMessageCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -597,7 +597,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.sendMessage(text,
                 attachments,
                 isThreadMode() ? thread_parentMessage.getId() : null,
-                new SendMessageCallback() {
+                new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         binding.tvSend.setEnabled(true);
@@ -622,7 +622,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
         channel.updateMessage(binding.etMessage.getText().toString(),
                 (Message) binding.etMessage.getTag(),
                 sendFileFunction.getSelectedAttachments(),
-                new SendMessageCallback() {
+                new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         initSendMessage();
@@ -656,7 +656,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
             map.put("image_action", ModelType.action_shuffle);
 
         SendActionRequest request = new SendActionRequest(channel.getId(), message.getId(), ModelType.channel_messaging, map);
-        client.sendAction(message.getId(), request, new SendMessageCallback() {
+        client.sendAction(message.getId(), request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 handleAction(message);
@@ -820,7 +820,7 @@ public class ChannelFragment extends Fragment implements ChannelEventHandler {
                     break;
                 case Constant.TAG_MOREACTION_DELETE:
                     channel.deleteMessage(message,
-                            new SendMessageCallback() {
+                            new MessageCallback() {
                                 @Override
                                 public void onSuccess(MessageResponse response) {
                                     Utils.showMessage(getContext(), "Deleted Successfully");
