@@ -28,6 +28,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String className;
     private int itemLayoutId;
 
+
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList,
                                   boolean isThread, String className, int itemLayoutId,
                                   View.OnClickListener clickListener, View.OnLongClickListener longClickListener
@@ -59,9 +60,9 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 return ((BaseMessageListItemViewHolder) obj);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
-        return new MessageListItemViewHolder(R.layout.list_item_message, parent);
+        return new MessageListItemViewHolder(R.layout.list_item_message, parent, style);
     }
 
 
