@@ -78,7 +78,7 @@ public class CCFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String message, String title) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, MainActivityOld.class);
         intent.putExtra("notification", true);
         intent.putExtra("title", title);
         intent.putExtra("message", message);

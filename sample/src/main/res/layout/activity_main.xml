@@ -1,17 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:stream="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="viewModel"
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel2" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="io.getstream.chat.example.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/container"
+    <com.getstream.sdk.chat.view.ChannelHeaderToolbar
+        android:id="@+id/cht_header"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/mlv_messageList"
+        android:background="#2F3036" android:layout_height="wrap_content"
+        android:layout_width="match_parent" />
+
+    <com.getstream.sdk.chat.view.MessageListView android:id="@+id/mlv_messageList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/message_input"
+        app:layout_constraintTop_toBottomOf="@+id/cht_header"
+        app:layout_constraintStart_toEndOf="@+id/cht_header"
+        app:layout_constraintEnd_toStartOf="@+id/message_input"
+        android:background="#F3F5F8"
+        stream:messageTextColorMine="#FFFFFF"
+        stream:messageBubbleDrawableMine="@drawable/message_bubble_mine"
+        stream:messageTextColorTheirs="#1BB76E"
+        stream:messageBubbleDrawableTheirs="@drawable/message_bubble_theirs"
+        tools:listitem="@layout/list_item_message" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="unused"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="6dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@{viewModel.channelState.test}"
+        app:layout_constraintRight_toRightOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="6dp"
+        android:layout_marginTop="16dp"
+        />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:isGone="@{!viewModel.loading}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:isGone="@{!viewModel.loadingMore}"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <com.getstream.sdk.chat.view.MessageInputView
+        android:id="@+id/message_input"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:background="@color/chat_theme"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/mlv_messageList"
+        app:layout_constraintEnd_toEndOf="parent"
+        stream:inputHint="what a fun day"
+
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

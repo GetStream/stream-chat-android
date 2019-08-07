@@ -186,10 +186,7 @@ public class Client implements WSResponseHandler {
     }
 
     // Hardcoded Code token
-    public void setUser(User user, String token) throws Exception {
-        if (TextUtils.isEmpty(token)) {
-            throw new Exception("Token must be non-null");
-        }
+    public void setUser(User user, @NonNull String token) {
         this.user = user;
         this.userToken = token;
         connect();

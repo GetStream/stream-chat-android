@@ -64,8 +64,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    implementation ('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true;
     }
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
