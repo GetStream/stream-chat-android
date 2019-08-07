@@ -100,9 +100,9 @@ public class ChannelFragment extends Fragment {
     private List<Message> channelMessages, threadMessages;
     // Adapter & LayoutManager
     private MessageListItemAdapter mChannelMessageAdapter, mThreadAdapter;
-    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-    private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-    private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+    private RecyclerView.LayoutManager mLayoutManager_thread_header = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
     // Functions
     private SendFileFunction sendFileFunction;
     private ReactionFunction reactionFunction;
@@ -330,7 +330,6 @@ public class ChannelFragment extends Fragment {
         channelMessages = channelState.getMessages();
         channel.setChannelState(this.channelState);
 
-        sendFileFunction = new SendFileFunction(channel, getActivity(), binding, channelState);
         reactionFunction = new ReactionFunction(channel);
 
         checkReadMark();
@@ -367,7 +366,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private RecyclerView recyclerView() {
-        return isThreadMode() ? threadBinding.rvThread : binding.rvMessage;
+        return isThreadMode() ? threadBinding.rvThread : binding.mlvMessageList;
     }
 
     private boolean isNoHistory() {
@@ -695,7 +694,7 @@ public class ChannelFragment extends Fragment {
                     break;
                 case Constant.TAG_MESSAGE_INVALID_COMMAND:
                     handleAction(message);
-                    binding.etMessage.setText("/");
+                    //binding.etMessage.setText("/");
                     break;
                 case Constant.TAG_MESSAGE_CHECK_DELIVERED:
                     showAlertReadUsers(message);
@@ -930,7 +929,6 @@ public class ChannelFragment extends Fragment {
     }
 
     private void newMessageEvent(Message message) {
-        configHeaderLastActive(message);
         Message.setStartDay(Arrays.asList(message), getLastMessage());
 
         switch (message.getType()) {
