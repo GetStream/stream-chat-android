@@ -18,8 +18,8 @@ package com.getstream.sdk.chat.utils.exomedia.core.renderer;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.google.android.exoplayer2.Renderer;

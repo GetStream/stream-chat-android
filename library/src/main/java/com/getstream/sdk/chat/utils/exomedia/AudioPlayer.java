@@ -19,9 +19,9 @@ package com.getstream.sdk.chat.utils.exomedia;
 import android.content.Context;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.AudioPlayerApi;

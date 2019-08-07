@@ -2,9 +2,8 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ListItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.List;

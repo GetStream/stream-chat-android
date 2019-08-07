@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.databinding.BindingAdapter;
+import androidx.databinding.BindingAdapter;
 
 import android.graphics.Bitmap;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;

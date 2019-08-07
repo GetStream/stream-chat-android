@@ -16,8 +16,8 @@
 
 package com.getstream.sdk.chat.utils.exomedia.ui.widget;
 
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 
 /**
  * An Interface that represents the core VideoControl functionality that

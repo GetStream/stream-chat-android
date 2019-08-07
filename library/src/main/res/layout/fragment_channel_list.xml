@@ -18,13 +18,13 @@
             type="boolean" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/channel_theme"
         tools:context=".view.fragment.ChannelListFragment">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_header"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -79,9 +79,9 @@
                 app:layout_constraintEnd_toEndOf="@+id/tv_send_back"
                 app:layout_constraintStart_toStartOf="@+id/tv_send_back"
                 app:layout_constraintTop_toTopOf="@+id/tv_send_back" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_channels"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -115,5 +115,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

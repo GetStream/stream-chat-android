@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.view.activity;
 
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;

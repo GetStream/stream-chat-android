@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.viewmodel;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 public class ChannelListViewModel extends ViewModel {
     // TODO: Implement the ViewModel

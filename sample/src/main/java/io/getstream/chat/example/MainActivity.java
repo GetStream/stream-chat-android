@@ -1,8 +1,8 @@
 package io.getstream.chat.example;
 
-import android.support.v7.app.AppCompatActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.getstream.sdk.chat.StreamChat;
@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.component.Component;
 
 import com.getstream.sdk.chat.enums.ReadIndicator;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;

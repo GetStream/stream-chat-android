@@ -24,11 +24,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.Size;
-import android.support.v4.util.ArrayMap;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.Size;
+import androidx.collection.ArrayMap;
 import android.util.Log;
 import android.view.Surface;
 

@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 public class StringUtility {

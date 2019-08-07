@@ -10,7 +10,7 @@
             type="com.getstream.sdk.chat.rest.User" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp">
@@ -62,5 +62,5 @@
             app:layout_constraintStart_toEndOf="@+id/tv_command"
             app:layout_constraintTop_toTopOf="@+id/tv_command" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
