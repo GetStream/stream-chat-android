@@ -415,4 +415,13 @@ public class Message {
     public boolean isIncoming() {
         return !this.getUser().getId().equals(StreamChat.getInstance().getUserId());
     }
+
+
+    public boolean isTheirs() {
+        return this.isIncoming();
+    }
+
+    public boolean isMine() {
+        return !this.isIncoming();
+    }
 }
