@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="MessageItemView">
-        <attr name="messageId" format="string" />
-        <attr name="exampleDimension" format="dimension" />
-        <attr name="exampleColor" format="color" />
-        <attr name="exampleDrawable" format="color|reference" />
+    <declare-styleable name="MessageInputView">
+        <attr name="inputHint" format="string"/>
+    </declare-styleable>
+    <declare-styleable name="MessageListView">
+        <attr name="messageTextColorMine" format="color"/>
+        <attr name="messageTextColorTheirs" format="color"/>
+        <attr name="messageBubbleDrawableMine" format="reference"/>
+        <attr name="messageBubbleDrawableTheirs" format="reference"/>
     </declare-styleable>
     <declare-styleable name="ShaderImageView">
         <attr name="siSquare" format="boolean" />

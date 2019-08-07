@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="lastActive"
+            type="String" />
+    </data>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:background="@drawable/toolbarback"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="PrivateResource">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tv_back"
+                style="@style/text"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center"
+                android:text="‹"
+                android:textColor="#FFF"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_header_avatar"
+                app:layout_constraintStart_toEndOf="@+id/tv_back"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_channel_name"
+                    style="@style/text_b"
+                    android:text="ChannelName"
+                    android:textColor="#FFF"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/tv_active"
+                    style="@style/text_s"
+                    android:text="@{lastActive}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_channel_initial"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/circle_channel_initials"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_header_avatar"
+                app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"
+                app:layout_constraintStart_toStartOf="@+id/iv_header_avatar"
+                app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />
+
+            <ImageView
+                android:id="@+id/iv_header_avatar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_active_mark"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:background="@drawable/circle_user_online"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"
+                app:layout_constraintStart_toEndOf="@+id/iv_header_avatar"
+                app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+</layout>
