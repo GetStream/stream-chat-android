@@ -233,9 +233,6 @@ public class ChannelFragment extends Fragment {
 
         subscribeToChannelEvents();
 
-        startTypingStopRepeatingTask();
-        startTypingClearRepeatingTask();
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constant.BC_RECONNECT_CHANNEL);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -247,9 +244,6 @@ public class ChannelFragment extends Fragment {
         super.onDestroy();
 
         unsubscribeFromChannelEvents();
-
-        stopTypingStopRepeatingTask();
-        stopTypingClearRepeatingTask();
 
         try {
             getContext().unregisterReceiver(receiver);
@@ -292,25 +286,25 @@ public class ChannelFragment extends Fragment {
         getView().setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                 // Close if File Attach View is opened.
-                if (binding.clAddFile.getVisibility() == View.VISIBLE) {
-                    sendFileFunction.onClickAttachmentViewClose(null);
-                    return true;
-                }
-                // Close if Selecting Photo View is opened.
-                if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
-                    sendFileFunction.onClickSelectMediaViewClose(null);
-                    return true;
-                }
+//                if (binding.clAddFile.getVisibility() == View.VISIBLE) {
+//                    sendFileFunction.onClickAttachmentViewClose(null);
+//                    return true;
+//                }
+//                // Close if Selecting Photo View is opened.
+//                if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
+//                    sendFileFunction.onClickSelectMediaViewClose(null);
+//                    return true;
+//                }
                 // Close if Thread View is opened.
                 if (isThreadMode()) {
                     onClickCloseThread(null);
                     return true;
                 }
                 // Cancel if editing message.
-                if (binding.etMessage.getTag() != null) {
-                    cancelEditMessage();
-                    return true;
-                }
+//                if (binding.etMessage.getTag() != null) {
+//                    cancelEditMessage();
+//                    return true;
+//                }
                 if (!singleConversation) {
                     finish();
                     return true;
@@ -385,9 +379,7 @@ public class ChannelFragment extends Fragment {
     // region Config UIs
     private void configUIs() {
         configActionBar(); // Hides Action Bar
-        configHeaderView(); // Header View
         configCustomMessageItemView(); // custom MessageItemView
-        configMessageInputView(); // Message Input box
         configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
 //        binding.tvNewMessage.setVisibility(View.GONE);
@@ -397,7 +389,6 @@ public class ChannelFragment extends Fragment {
 //            binding.tvNewMessage.setVisibility(View.GONE);
 //        });
         // File Attachment
-        configAttachmentUIs();
     }
 
     private void configActionBar() {
@@ -413,163 +404,14 @@ public class ChannelFragment extends Fragment {
         messageItemViewHolderName = client.getComponent().message.getMessageItemViewHolderName();
     }
 
-    private void configHeaderView() {
-        // Avatar
-        if (!TextUtils.isEmpty(channel.getName())) {
-            binding.tvChannelInitial.setText(channel.getInitials());
-            Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImage());
-            if (StringUtility.isValidImageUrl(channel.getImage())) {
-                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
-                binding.tvChannelInitial.setVisibility(View.INVISIBLE);
-            } else {
-                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-            }
-        } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                binding.tvChannelInitial.setText(opponent.getUserInitials());
-                Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
-            } else {
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
-            }
-        }
-        // Channel name
-        String channelName = "";
-
-        if (!TextUtils.isEmpty(channelState.getChannel().getName())) {
-            channelName = channelState.getChannel().getName();
-        } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                channelName = opponent.getName();
-            }
-        }
-
-        binding.tvChannelName.setText(channelName);
-
-        // Last Active
-        Message lastMessage = channelState.getLastMessageFromOtherUser();
-        configHeaderLastActive(lastMessage);
-        // Online Mark
-        try {
-            if (Global.getOpponentUser(channelState) == null)
-                binding.ivActiveMark.setVisibility(View.GONE);
-            else {
-                if (Global.getOpponentUser(channelState).getOnline()) {
-                    binding.ivActiveMark.setVisibility(View.VISIBLE);
-                } else {
-                    binding.ivActiveMark.setVisibility(View.GONE);
-                }
-            }
-        } catch (Exception e) {
-            binding.ivActiveMark.setVisibility(View.GONE);
-        }
-
-        binding.tvBack.setVisibility(singleConversation ? View.INVISIBLE : View.VISIBLE);
-        binding.tvBack.setOnClickListener((View v) -> finish());
-    }
-
-    private void configMessageInputView() {
-        binding.setActiveMessageComposer(false);
-        binding.setActiveMessageSend(false);
-        binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(!client.isConnected());
-        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
-            binding.setActiveMessageComposer(hasFocus);
-            lockRVScrollListener = hasFocus;
-        });
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                String text = binding.etMessage.getText().toString();
-                binding.setActiveMessageSend(!(text.length() == 0));
-                sendFileFunction.checkCommand(text);
-                if (text.length() > 0) {
-                    channel.keystroke();
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-            }
-        });
-        KeyboardVisibilityEvent.setEventListener(
-                getActivity(), (boolean isOpen) -> {
-                    if (!isOpen) {
-                        binding.etMessage.clearFocus();
-                    } else {
-                        lockRVScrollListener = true;
-                        new Handler().postDelayed(() -> {
-                            lockRVScrollListener = false;
-                        }, 500);
-                    }
-                    if (lVPosition > messages().size() - 2)
-                        recyclerView().scrollToPosition(lVPosition);
-
-                });
-        binding.tvSend.setOnClickListener(this::sendMessage);
-    }
 
     private void configMessageRecyclerView() {
         mLayoutManager.scrollToPosition(channelMessages.size());
-        binding.rvMessage.setLayoutManager(mLayoutManager);
-        setScrollDownHideKeyboard(binding.rvMessage);
+        binding.mlvMessageList.setLayoutManager(mLayoutManager);
+        setScrollDownHideKeyboard(binding.mlvMessageList);
         setChannelMessageRecyclerViewAdapder();
     }
 
-    private void configHeaderLastActive(@Nullable Message message) {
-        if (message == null || message.getUser().isMe()) {
-            return;
-        }
-        binding.tvActive.setVisibility(View.GONE);
-        String lastActive = null;
-        if (message != null) {
-            if (!TextUtils.isEmpty(Message.differentTime(message.getCreatedAt()))) {
-                lastActive = Message.differentTime(message.getCreatedAt());
-            }
-        }
-
-        if (TextUtils.isEmpty(lastActive)) {
-            binding.tvActive.setVisibility(View.GONE);
-        } else {
-            binding.tvActive.setVisibility(View.VISIBLE);
-            binding.tvActive.setText(lastActive);
-        }
-    }
-
-    private void configAttachmentUIs() {
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
-        binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
-        int spanCount = 4;  // 4 columns
-        int spacing = 2;    // 1 px
-        boolean includeEdge = false;
-        binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
-        binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
-        binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
-        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
-        binding.llCamera.setOnClickListener(v -> {
-            Utils.setButtonDelayEnable(v);
-            sendFileFunction.onClickAttachmentViewClose(v);
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-            startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
-        });
-        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
-        binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
-        threadBinding.tvClose.setOnClickListener(this::onClickCloseThread);
-    }
 
     private void setChannelMessageRecyclerViewAdapder() {
         mChannelMessageAdapter = new MessageListItemAdapter(getContext(), channelState, channelMessages,
@@ -584,17 +426,17 @@ public class ChannelFragment extends Fragment {
             }
             return true;
         });
-        binding.rvMessage.setAdapter(mChannelMessageAdapter);
+        binding.mlvMessageList.setAdapterWithStyle(mChannelMessageAdapter);
         mViewModel.getChannelMessages().observe(this, (@Nullable List<Message> users) -> {
             if (scrollPosition == -1) return;
 
             mChannelMessageAdapter.notifyDataSetChanged();
             if (scrollPosition > 0) {
-                binding.rvMessage.scrollToPosition(scrollPosition);
+                binding.mlvMessageList.scrollToPosition(scrollPosition);
                 scrollPosition = 0;
                 return;
             }
-            binding.rvMessage.scrollToPosition(channelMessages.size());
+            binding.mlvMessageList.scrollToPosition(channelMessages.size());
         });
         mViewModel.setChannelMessages(channelMessages);
     }
@@ -620,7 +462,7 @@ public class ChannelFragment extends Fragment {
 
                 if (currentFirstVisible < fVPosition) {
                     Utils.hideSoftKeyboard(getActivity());
-                    binding.etMessage.clearFocus();
+                    binding.messageInput.clearFocus();
                     if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
 //                    if (currentLastVisible >= messages().size() - 1)
 //                        binding.tvNewMessage.setVisibility(View.GONE);
@@ -642,11 +484,12 @@ public class ChannelFragment extends Fragment {
     /**
      * Send Message - Send a message to this channel
      */
-    public void sendMessage(View view) {
-        if (binding.etMessage.getTag() == null) {
-            sendNewMessage(binding.etMessage.getText().toString(), sendFileFunction.getSelectedAttachments(), null);
-        } else
-            updateMessage();
+    public void sendMessage(String messageText) {
+        if (binding.messageInput.IsEditing()) {
+            updateMessage(binding.messageInput.getMessageText());
+        } else {
+            sendNewMessage(messageText, binding.messageInput.GetAttachments(), null);
+        }
     }
 
     public void sendNewMessage(String text, List<Attachment> attachments, String resendMessageId) {
@@ -658,47 +501,45 @@ public class ChannelFragment extends Fragment {
             ephemeralMessage = createEphemeralMessage(false);
             handleAction(ephemeralMessage);
         }
-        binding.tvSend.setEnabled(false);
+        binding.messageInput.setEnabled(false);
         channel.sendMessage(text,
                 attachments,
                 isThreadMode() ? thread_parentMessage.getId() : null,
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
-                        binding.tvSend.setEnabled(true);
+                        binding.messageInput.setEnabled(true);
                         progressSendMessage(response.getMessage(), resendMessageId);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        binding.tvSend.setEnabled(true);
+                        binding.messageInput.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
                 });
-        initSendMessage();
     }
 
-    public void updateMessage() {
+    public void updateMessage(String messageText) {
         if (!client.isConnected()) {
             Utils.showMessage(getContext(), "No internet connection!");
             return;
         }
-        binding.tvSend.setEnabled(false);
-        channel.updateMessage(binding.etMessage.getText().toString(),
-                (Message) binding.etMessage.getTag(),
+        binding.messageInput.setEnabled(false);
+        channel.updateMessage(binding.messageInput.getMessageText(),
+                (Message) binding.messageInput.GetEditMessage(),
                 sendFileFunction.getSelectedAttachments(),
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
-                        initSendMessage();
                         response.getMessage().setDelivered(true);
-                        binding.etMessage.setTag(null);
-                        binding.tvSend.setEnabled(true);
+                        binding.messageInput.CancelEditMessage();
+                        binding.messageInput.setEnabled(true);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        binding.tvSend.setEnabled(true);
+                        binding.messageInput.setEnabled(true);
                         Utils.showMessage(getContext(), errMsg);
                     }
                 });
@@ -739,7 +580,7 @@ public class ChannelFragment extends Fragment {
     public void progressSendMessage(Message message, String resendMessageId) {
         if (resendMessageId != null) {
             Global.removeEphemeralMessage(channel.getId(), resendMessageId);
-            initSendMessage();
+            //initSendMessage();
         } else {
             if (Message.isCommandMessage(message) ||
                     message.getType().equals(ModelType.message_error)) {
@@ -759,24 +600,18 @@ public class ChannelFragment extends Fragment {
             messages().get(messages().size() - 1).setDelivered(true);
     }
 
-    private void initSendMessage() {
-        binding.etMessage.setText("");
-        sendFileFunction.initSendMessage();
-    }
-
     private void sendOfflineMessage() {
         handleAction(createEphemeralMessage(true));
-        initSendMessage();
     }
 
     private Message createEphemeralMessage(boolean isOffle) {
         Message message = new Message();
-        message.setId(Message.convertDateToString(new Date()));
-        message.setText(binding.etMessage.getText().toString());
+        message.setId(Global.convertDateToString(new Date()));
+        message.setText(binding.messageInput.getMessageText());
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
-        message.setCreated_at(Message.convertDateToString(new Date()));
-        Message.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(client.getUser());
+        message.setCreated_at(Global.convertDateToString(new Date()));
+        Global.setStartDay(Arrays.asList(message), getLastMessage());
+        message.setUser(Global.streamChat.getUser());
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
@@ -790,11 +625,12 @@ public class ChannelFragment extends Fragment {
 
     // Edit
     private void editMessage(Message message) {
-        binding.etMessage.setTag(message);
-        binding.etMessage.requestFocus();
+        binding.messageInput.EditMessage(message);
+        binding.messageInput.requestInputFocus();
         if (!TextUtils.isEmpty(message.getText())) {
-            binding.etMessage.setText(message.getText());
-            binding.etMessage.setSelection(binding.etMessage.getText().length());
+            // TODO: figure out what this does...
+//            binding.etMessage.setText(message.getText());
+//            binding.etMessage.setSelection(binding.etMessage.getText().length());
         }
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             for (Attachment attachment : message.getAttachments())
@@ -815,10 +651,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void cancelEditMessage() {
-        initSendMessage();
-        binding.etMessage.clearFocus();
-        binding.etMessage.setTag(null);
-        sendFileFunction.fadeAnimationView(binding.ivBackAttachment, false);
+        binding.messageInput.CancelEditMessage();
     }
 
     // endregion
@@ -932,32 +765,7 @@ public class ChannelFragment extends Fragment {
     }
 
 
-    // endregion
 
-    // region Typing Indicator
-
-
-    private Handler stopTyingEventHandler = new Handler();
-    Runnable runnableTypingStop = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                if (channel != null)
-                    channel.clean();
-            } finally {
-                stopTyingEventHandler.postDelayed(runnableTypingStop, 3000);
-            }
-        }
-    };
-
-    void startTypingStopRepeatingTask() {
-        runnableTypingStop.run();
-    }
-
-    void stopTypingStopRepeatingTask() {
-        channel.stopTyping();
-        stopTyingEventHandler.removeCallbacks(runnableTypingStop);
-    }
 
     // refresh Current Typing users in this channel
     private Handler clearTyingUserHandler = new Handler();
@@ -978,13 +786,6 @@ public class ChannelFragment extends Fragment {
         }
     };
 
-    private void startTypingClearRepeatingTask() {
-        runnableTypingClear.run();
-    }
-
-    private void stopTypingClearRepeatingTask() {
-        clearTyingUserHandler.removeCallbacks(runnableTypingClear);
-    }
     // endregion
 
     // region Action
@@ -1066,7 +867,7 @@ public class ChannelFragment extends Fragment {
     private void onClickCloseThread(View v) {
         threadBinding.setShowThread(false);
         cleanEditView();
-        setScrollDownHideKeyboard(binding.rvMessage);
+        setScrollDownHideKeyboard(binding.mlvMessageList);
         isCallingThread = false;
     }
 
@@ -1095,19 +896,16 @@ public class ChannelFragment extends Fragment {
     }
 
     private void cleanEditView() {
-        binding.etMessage.setTag(null);
-        binding.etMessage.setText("");
+        binding.messageInput.CancelEditMessage();
         thread_parentMessage = null;
         threadMessages = null;
         lVPosition = 0;
         fVPosition = 0;
         noHistoryThread = false;
-        binding.rvMessage.clearOnScrollListeners();
+        binding.mlvMessageList.clearOnScrollListeners();
         threadBinding.rvThread.clearOnScrollListeners();
-        Utils.hideSoftKeyboard(getActivity());
+        Utils.hideSoftKeyboard(this);
     }
-    // endregion
-
     // region Listener
 
     // Event Listener
@@ -1375,7 +1173,7 @@ public class ChannelFragment extends Fragment {
                         for (int i = newMessages.size() - 1; i > -1; i--)
                             channelMessages.add(0, newMessages.get(i));
 
-                        scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                        scrollPosition = ((LinearLayoutManager) binding.mlvMessageList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
                         mViewModel.setChannelMessages(channelMessages);
                         isCalling = false;
                     }

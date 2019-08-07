@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private View.OnLongClickListener longClickListener;
     private List<Message> messageList;
     private boolean isThread;
+    private MessageListViewStyle style;
     private Context context;
     private String className;
     private int itemLayoutId;
@@ -38,6 +40,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.isThread = isThread;
         this.className = className;
         this.itemLayoutId = itemLayoutId;
+    }
+
+    public void setStyle(MessageListViewStyle s) {
+        style = s;
     }
 
     @Override
