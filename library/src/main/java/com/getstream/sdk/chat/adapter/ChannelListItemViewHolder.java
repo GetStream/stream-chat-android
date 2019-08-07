@@ -197,12 +197,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     private void configLastMessageDate(ChannelState channelState, Message lastMessage) {
-        if (Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()), lastMessage.getCreatedAt())) {
-            tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.NORMAL);
-            tv_last_message.setTextColor(context.getResources().getColor(R.color.gray_dark));
-        } else {
-            tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.BOLD);
-            tv_last_message.setTextColor(context.getResources().getColor(R.color.black));
-        }
+//        if (Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()), lastMessage.getCreatedAt())) {
+//            tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.NORMAL);
+//            tv_last_message.setTextColor(context.getResources().getColor(R.color.gray_dark));
+//        } else {
+//            tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.BOLD);
+//            tv_last_message.setTextColor(context.getResources().getColor(R.color.black));
+//        }
     }
 }

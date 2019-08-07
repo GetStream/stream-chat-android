@@ -4,6 +4,8 @@ import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class ChannelUserRead {
     @SerializedName("user")
     @Expose
@@ -11,13 +13,13 @@ public class ChannelUserRead {
 
     @SerializedName("last_read")
     @Expose
-    private String last_read;
+    private Date last_read;
 
     public User getUser() {
         return user;
     }
 
-    public String getLast_read() {
+    public Date getLast_read() {
         return last_read;
     }
 
@@ -25,7 +27,7 @@ public class ChannelUserRead {
         this.user = user;
     }
 
-    public void setLast_read(String last_read) {
+    public void setLast_read(Date last_read) {
         this.last_read = last_read;
     }
 }

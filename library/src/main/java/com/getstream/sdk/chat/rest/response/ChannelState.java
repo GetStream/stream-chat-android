@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class ChannelState {
@@ -192,21 +193,21 @@ public class ChannelState {
         int unreadMessageCount = 0;
         if (this.reads == null || this.reads.isEmpty()) return unreadMessageCount;
 
-        String lastReadDate = getReadDateOfChannelLastMessage(userId);
-        if (TextUtils.isEmpty(lastReadDate)) return unreadMessageCount;
+        Date lastReadDate = getReadDateOfChannelLastMessage(userId);
+        if (lastReadDate == null) return unreadMessageCount;
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
             if (!TextUtils.isEmpty(message.getDeletedAt())) continue;
-            if (!Global.readMessage(lastReadDate, message.getCreatedAt()))
-                unreadMessageCount++;
+//            if (!Global.readMessage(lastReadDate, message.getCreatedAt()))
+//                unreadMessageCount++;
         }
         return unreadMessageCount;
     }
 
-    public String getReadDateOfChannelLastMessage(String userId) {
+    public Date getReadDateOfChannelLastMessage(String userId) {
         if (this.reads == null || this.reads.isEmpty()) return null;
-        String lastReadDate = null;
+        Date lastReadDate = null;
         sortUserReads(this.reads);
 
         try {
@@ -224,7 +225,7 @@ public class ChannelState {
         return lastReadDate;
     }
 
-    public void setReadDateOfChannelLastMessage(User user, String readDate) {
+    public void setReadDateOfChannelLastMessage(User user, Date readDate) {
         if (this.reads == null || this.reads.isEmpty()) return;
         boolean isNotSet = true;
         for (ChannelUserRead userLastRead : this.reads) {
