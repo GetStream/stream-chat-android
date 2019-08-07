@@ -49,7 +49,6 @@ import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
-import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
@@ -532,8 +531,8 @@ public class ChannelFragment extends Fragment {
         binding.tvActive.setVisibility(View.GONE);
         String lastActive = null;
         if (message != null) {
-            if (!TextUtils.isEmpty(Message.differentTime(message.getCreated_at()))) {
-                lastActive = Message.differentTime(message.getCreated_at());
+            if (!TextUtils.isEmpty(Message.differentTime(message.getCreatedAt()))) {
+                lastActive = Message.differentTime(message.getCreatedAt());
             }
         }
 
@@ -1172,7 +1171,7 @@ public class ChannelFragment extends Fragment {
                 }
                 break;
             case ModelType.message_reply:
-                if (isThreadMode() && message.getParent_id().equals(thread_parentMessage.getId())) {
+                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
                     messages().remove(ephemeralMessage);
                     threadMessages.add(message);
                     mThreadAdapter.notifyDataSetChanged();
@@ -1240,7 +1239,7 @@ public class ChannelFragment extends Fragment {
             });
         } else if (message.getType().equals(ModelType.message_reply)) {
             if (thread_parentMessage == null) return;
-            if (!message.getParent_id().equals(thread_parentMessage.getId())) return;
+            if (!message.getParentId().equals(thread_parentMessage.getId())) return;
 
             for (int i = 0; i < threadMessages.size(); i++) {
                 if (message.getId().equals(threadMessages.get(i).getId())) {
@@ -1398,7 +1397,7 @@ public class ChannelFragment extends Fragment {
     private void checkReadMark() {
         if (channelState.getLastMessage() == null) return;
         if (!Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()),
-                channelState.getLastMessage().getCreated_at())) {
+                channelState.getLastMessage().getCreatedAt())) {
             messageMarkRead();
         }
     }

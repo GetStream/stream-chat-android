@@ -80,7 +80,7 @@ public class ChannelState {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeleted_at()) && message.getType().equals(ModelType.message_regular)) {
+                if (TextUtils.isEmpty(message.getDeletedAt()) && message.getType().equals(ModelType.message_regular)) {
                     lastMessage = message;
                     break;
                 }
@@ -98,7 +98,7 @@ public class ChannelState {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeleted_at()) && !message.getUser().isMe()) {
+                if (TextUtils.isEmpty(message.getDeletedAt()) && !message.getUser().isMe()) {
                     lastMessage = message;
                     break;
                 }
@@ -132,7 +132,7 @@ public class ChannelState {
 //        return lastReadUser;
     }
 
-    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreated_at().compareTo(b.getCreated_at());
+    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
 
     public void addOrUpdateMessage(Message newMessage){
         for (int i = messages.size() - 1; i >= 0; i--) {
@@ -148,7 +148,7 @@ public class ChannelState {
     public void addMessagesSorted(List<Message> messages){
         int initialSize = messages.size();
         for (Message m : messages) {
-            if(m.getParent_id() == null) {
+            if(m.getParentId() == null) {
                 addOrUpdateMessage(m);
             }
         }
@@ -197,8 +197,8 @@ public class ChannelState {
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
-            if (!TextUtils.isEmpty(message.getDeleted_at())) continue;
-            if (!Global.readMessage(lastReadDate, message.getCreated_at()))
+            if (!TextUtils.isEmpty(message.getDeletedAt())) continue;
+            if (!Global.readMessage(lastReadDate, message.getCreatedAt()))
                 unreadMessageCount++;
         }
         return unreadMessageCount;

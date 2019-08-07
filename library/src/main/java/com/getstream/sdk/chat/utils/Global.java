@@ -232,13 +232,13 @@ public class Global {
 //        List<Message> messages = new ArrayList<>();
 //        if (parentId == null) {
 //            for (Message message : ephemeralMessages) {
-//                if (message.getParent_id() == null)
+//                if (message.getParentId() == null)
 //                    messages.add(message);
 //            }
 //        } else {
 //            for (Message message : ephemeralMessages) {
-//                if (message.getParent_id() == null) continue;
-//                if (message.getParent_id().equals(parentId))
+//                if (message.getParentId() == null) continue;
+//                if (message.getParentId().equals(parentId))
 //                    messages.add(message);
 //            }
 //        }

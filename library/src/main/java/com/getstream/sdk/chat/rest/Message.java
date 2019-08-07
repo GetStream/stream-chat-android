@@ -65,11 +65,11 @@ public class Message {
 
     @SerializedName("updated_at")
     @Expose
-    private String updated_at;
+    private String updatedAt;
 
     @SerializedName("deleted_at")
     @Expose
-    private String deleted_at;
+    private String deletedAt;
 
     @SerializedName("mentioned_users")
     @Expose
@@ -81,7 +81,7 @@ public class Message {
 
     @SerializedName("parent_id")
     @Expose
-    private String parent_id;
+    private String parentId;
 
     @SerializedName("command")
     @Expose
@@ -89,7 +89,7 @@ public class Message {
 
     @SerializedName("command_info")
     @Expose
-    private Map<String, String> command_info;
+    private Map<String, String> commandInfo;
 
     // Additional Params
     private Map<String, Object> extraData;
@@ -124,7 +124,7 @@ public class Message {
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
         Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String sendDate = message.getCreated_at();
+        String sendDate = message.getCreatedAt();
 
         Date date = null;
         try {
@@ -376,24 +376,24 @@ public class Message {
         this.created_at = created_at;
     }
 
-    public String getCreated_at() {
+    public String getCreatedAt() {
         return created_at;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    public String getDeleted_at() {
-        return deleted_at;
+    public String getDeletedAt() {
+        return deletedAt;
     }
 
-    public String getParent_id() {
-        return parent_id;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setParent_id(String parent_id) {
-        this.parent_id = parent_id;
+    public void setParent_id(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getCommand() {
@@ -404,12 +404,12 @@ public class Message {
         this.command = command;
     }
 
-    public Map<String, String> getCommand_info() {
-        return command_info;
+    public Map<String, String> getCommandInfo() {
+        return commandInfo;
     }
 
-    public void setCommand_info(Map<String, String> command_info) {
-        this.command_info = command_info;
+    public void setCommandInfo(Map<String, String> commandInfo) {
+        this.commandInfo = commandInfo;
     }
 
     public boolean isIncoming() {
