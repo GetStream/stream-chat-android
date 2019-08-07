@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
@@ -107,9 +108,7 @@ public class User {
      * @param id User id
      * */
     public User(String id) {
-        this.id = id;
-        this.online = false;
-        this.extraData = new HashMap<>();
+        this(id, new HashMap<>());
     }
 
     /**
@@ -146,7 +145,7 @@ public class User {
     }
 
     public boolean isMe(){
-        return id.equals(Global.client.user.getId());
+        return id.equals(StreamChat.getInstance().getUserId());
     }
 
     public String getUserInitials() {

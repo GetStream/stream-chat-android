@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.component.Component;
 
 import com.getstream.sdk.chat.enums.ReadIndicator;
@@ -40,8 +41,6 @@ import static com.getstream.sdk.chat.enums.Filters.or;
 
 public class MainActivity extends AppCompatActivity {
 
-    final String API_KEY = "qk4nn7rpcn75";
-
     final String USER_NAME = "Broken waterfall";
     final String USER_ID = "broken-waterfall-5";
     final String USER_IMAGE = "https://bit.ly/2u9Vc0r";
@@ -55,8 +54,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Client client = new Client(API_KEY);
-
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("niceName", "Test Nicename");
         extraData.put("name", USER_NAME);
@@ -64,17 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
         User user = new User(USER_ID, extraData);
 
+        Client client = StreamChat.getInstance();
+
         try {
             setStreamChatUser(client, user, Token.HARDCODED);
-
-            if (isSingleConversation)
-                singleConversation(client);
-            else
-                multiConversation(client);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        if (isSingleConversation)
+            singleConversation();
+        else
+            multiConversation(client);
 
     }
 
@@ -211,8 +209,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    private void singleConversation(Client client) {
-
+    private void singleConversation() {
         HashMap<String, Object> extraData = new HashMap<>();
         List<String> members = new ArrayList<>();
         members.add(USER_ID);
@@ -220,14 +217,12 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("members", members);
         extraData.put("group", "sports");
 
-        Channel channel = new Channel("message", "general", extraData);
-
-        // Setting Channel
-        client.setActiveChannel(channel);
-
         ChannelFragment fragment = new ChannelFragment();
+        fragment.channelType = "message";
+        fragment.channelID = "general";
+        fragment.channelExtraData = extraData;
         fragment.singleConversation = true;
-        fragment.client = client;
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, fragment);

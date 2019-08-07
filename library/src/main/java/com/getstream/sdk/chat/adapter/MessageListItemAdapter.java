@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
 
-    private ChannelResponse channelResponse;
+    private ChannelState channelState;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
     private List<Message> messageList;
@@ -26,12 +26,12 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String className;
     private int itemLayoutId;
 
-    public MessageListItemAdapter(Context context, ChannelResponse channelResponse, @NonNull List<Message> messageList,
+    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList,
                                   boolean isThread, String className, int itemLayoutId,
                                   View.OnClickListener clickListener, View.OnLongClickListener longClickListener
                                   ) {
         this.context = context;
-        this.channelResponse = channelResponse;
+        this.channelState = channelState;
         this.messageList = messageList;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
@@ -61,7 +61,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelResponse, messageList, position, isThread, clickListener, longClickListener);
+        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelState, messageList, position, isThread, clickListener, longClickListener);
 
     }
 

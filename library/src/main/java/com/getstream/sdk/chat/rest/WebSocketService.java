@@ -85,9 +85,8 @@ public class WebSocketService extends WebSocketListener {
         this.consecutiveFailures = 0;
     }
 
-    public WebSocketService(String wsURL, String clientID, String userID, WSResponseHandler webSocketListener) {
+    public WebSocketService(String wsURL, String userID, WSResponseHandler webSocketListener) {
         this.wsURL = wsURL;
-        this.clientID = clientID;
         this.userID = userID;
         this.webSocketListener = webSocketListener;
     }
@@ -105,7 +104,6 @@ public class WebSocketService extends WebSocketListener {
         setConnecting(true);
         resetConsecutiveFailures();
         setupWS();
-        startMonitor();
     }
 
     // TODO: check previous state and clean up if needed
@@ -124,7 +122,7 @@ public class WebSocketService extends WebSocketListener {
         if (healthy && !isHealthy()) {
             setHealthy(true);
             Event wentOnline = new Event(true);
-            webSocketListener.handleWSEvent(wentOnline);
+            webSocketListener.onWSEvent(wentOnline);
         }
         if (!healthy && isHealthy()) {
             setHealthy(false);
@@ -154,7 +152,7 @@ public class WebSocketService extends WebSocketListener {
         public void run() {
             if (!isHealthy()) {
                 Event wentOffline = new Event(false);
-                webSocketListener.handleWSEvent(wentOffline);
+                webSocketListener.onWSEvent(wentOffline);
             }
         }
     };
@@ -210,25 +208,25 @@ public class WebSocketService extends WebSocketListener {
 
     private void setConnectionResolved() {
         this.connectionResolved = true;
+        startMonitor();
     }
 
     private class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
 
         @Override
-        public void onOpen(WebSocket webSocket, Response response) {
+        public synchronized void onOpen(WebSocket webSocket, Response response) {
             setHealth(true);
             setConnecting(false);
             resetConsecutiveFailures();
             if (wsId > 1) {
-                webSocketListener.handleWSRecover();
+                webSocketListener.connectionRecovered();
             }
             Log.d(TAG, "WebSocket Connected : " + response);
-            Global.noConnection = false;
         }
 
         @Override
-        public void onMessage(WebSocket webSocket, String text) {
+        public synchronized void onMessage(WebSocket webSocket, String text) {
             Log.d(TAG, "WebSocket Response : " + text);
             JSONObject json;
 
@@ -239,19 +237,21 @@ public class WebSocketService extends WebSocketListener {
                 return;
             }
 
+            Log.d(TAG, "parsing json now");
             Event event = Parser.parseEvent(json);
+            Log.d(TAG, "set last event time now");
             setLastEvent(new Date());
 
             if (isConnectionResolved()) {
-                webSocketListener.handleWSConnectReply(event);
+                webSocketListener.onWSEvent(event);
             } else {
                 setConnectionResolved();
-                webSocketListener.handleWSEvent(event);
+                webSocketListener.connectionResolved(event);
             }
         }
 
         @Override
-        public void onClosing(WebSocket webSocket, int code, String reason) {
+        public synchronized void onClosing(WebSocket webSocket, int code, String reason) {
             Log.d(TAG, "Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
@@ -286,6 +286,5 @@ public class WebSocketService extends WebSocketListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Global.noConnection = true;
     }
 }

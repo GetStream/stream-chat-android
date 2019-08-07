@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 public class Event {
     @SerializedName("connection_id")
     @Expose
-    private String connection_id;
+    private String connectionId;
 
     @SerializedName("cid")
     @Expose
@@ -55,15 +55,15 @@ public class Event {
 
     @SerializedName("total_unread_count")
     @Expose
-    private int total_unread_count;
+    private int totalUnreadCount;
 
     @SerializedName("watcher_count")
     @Expose
-    private int watcher_count;
+    private int watcherCount;
 
     @SerializedName("created_at")
     @Expose
-    private String created_at;
+    private String createdAt;
 
     private boolean online;
 
@@ -74,8 +74,12 @@ public class Event {
         setType(EventType.CONNECTION_CHANGED);
     }
 
-    public String getConnection_id() {
-        return connection_id;
+    public String getConnectionId() {
+        return connectionId;
+    }
+
+    public boolean isChannelEvent(){
+        return cid != null && !cid.equals("*");
     }
 
     public String getCid() {
@@ -122,16 +126,16 @@ public class Event {
         return channel;
     }
 
-    public int getTotal_unread_count() {
-        return total_unread_count;
+    public int getTotalUnreadCount() {
+        return totalUnreadCount;
     }
 
-    public int getWatcher_count() {
-        return watcher_count;
+    public int getWatcherCount() {
+        return watcherCount;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
     public Boolean getOnline() {

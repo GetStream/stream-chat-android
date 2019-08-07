@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
@@ -120,7 +121,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
                     try {
-                        if (user.getId().equals(Global.client.user.getId())) {
+                        if (user.getId().equals(StreamChat.getInstance().getUserId())) {
                             isReactioned = true;
                             break;
                         }

@@ -30,13 +30,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.function.AttachmentFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -45,6 +48,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
@@ -52,9 +56,9 @@ import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.PaginationRequest;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
@@ -80,15 +84,20 @@ import static com.getstream.sdk.chat.utils.Utils.TAG;
 
 public class ChannelFragment extends Fragment {
 
-    public Client client;
+    private Client client;
+    public String channelType;
+    public String channelID;
+    public HashMap<String, Object> channelExtraData;
+
+    private Channel channel;
+
     // ViewModel & Binding
     private ChannelViewModel mViewModel;
     private ChannelFragmentBinding binding;
     private ViewThreadBinding threadBinding;
     // Arguments for Channel
     String channelIdFromChannelList = null;
-    private ChannelResponse channelResponse;
-    private Channel channel;
+    private ChannelState channelState;
     private List<Message> channelMessages, threadMessages;
     // Adapter & LayoutManager
     private MessageListItemAdapter mChannelMessageAdapter, mThreadAdapter;
@@ -108,76 +117,71 @@ public class ChannelFragment extends Fragment {
     private static int fVPosition, lVPosition;
     private boolean noHistory, noHistoryThread;
 
-    private int subscriptionId;
+    private int channelSubscriptionId;
 
-    public void unsubscribe(){
-        client.removeEventHandler(subscriptionId);
-        subscriptionId = 0;
+    public void unsubscribeFromChannelEvents(){
+        channel.removeEventHandler(channelSubscriptionId);
+        channelSubscriptionId = 0;
     }
 
-    // TODO: racey
-    public void subscribe(){
-        if (subscriptionId != 0) {
+    public void subscribeToChannelEvents(){
+        if (channelSubscriptionId != 0) {
             return;
         }
 
-        // TODO: review safety here (ie. clone event to avoid null exception)
-        subscriptionId = client.addEventHandler(new ChatEventHandler(){
+        channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler(){
+            @Override
             public void onTypingStart(Event event) {
-                getActivity().runOnUiThread(() -> footerEvent(event));
+                footerEvent(event);
             }
+            @Override
             public void onTypingStop(Event event) {
-                getActivity().runOnUiThread(() -> footerEvent(event));
+                footerEvent(event);
             }
+            @Override
             public void onMessageNew(Event event) {
-                getActivity().runOnUiThread(() -> messageEvent(event));
+                messageEvent(event);
             }
+            @Override
             public void onMessageUpdated(Event event) {
-                getActivity().runOnUiThread(() -> messageEvent(event));
+                messageEvent(event);
             }
+            @Override
             public void onMessageDeleted(Event event) {
-                getActivity().runOnUiThread(() -> messageEvent(event));
+                messageEvent(event);
             }
+            @Override
             public void onMessageRead(Event event) {
-                getActivity().runOnUiThread(() -> {
-                    if (!channelResponse.getLastMessage().isIncoming()) {
-                        mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
-                    }
-                });
+                if (!channelState.getLastMessage().isIncoming()) {
+                    mChannelMessageAdapter.notifyItemChanged(channelMessages.size() - 1);
+                }
             }
+            @Override
             public void onReactionNew(Event event) {
-                getActivity().runOnUiThread(() -> reactionEvent(event));
+                reactionEvent(event);
             }
+            @Override
             public void onReactionDeleted(Event event) {
-                getActivity().runOnUiThread(() -> reactionEvent(event));
+               reactionEvent(event);
             }
+            @Override
             public void onChannelDeleted(Event event) {
                 getActivity().runOnUiThread(() -> {
                     Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
                     finish();
                 });
             }
-
-            @Override
-            public void onConnectionChanged(Event event) {
-                getActivity().runOnUiThread(() -> {
-                    if (event.getOnline()) {
-                        if (singleConversation && client.getActiveChannel() != null)
-                            getChannel(client.getActiveChannel());
-                    } else {
-                        binding.setNoConnection(true);
-                        binding.setShowMainProgressbar(false);
-                    }
-                });
-            }
         });
     }
-
 
     // region LifeCycle
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+        client = StreamChat.getInstance();
+        channel = client.channel(channelType, channelID, channelExtraData);
+
         // set binding
         binding = ChannelFragmentBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -186,19 +190,38 @@ public class ChannelFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ChannelFragmentViewModelFactory factory = new ChannelFragmentViewModelFactory(channelResponse);
+        ChannelFragmentViewModelFactory factory = new ChannelFragmentViewModelFactory(channelState);
         mViewModel = ViewModelProviders.of(this, factory).get(ChannelViewModel.class);
 
-        init();
-        if (!singleConversation) {
+        // set WS handler
+        subscribeToChannelEvents();
+
+        // Permission Check
+        PermissionChecker.permissionCheck(getActivity(), null);
+        try {
+            Fresco.initialize(getContext().getApplicationContext());
+        } catch (Exception e) {
+        }
+
+        threadBinding = binding.clThread;
+        onBackPressed();
+
+        if (singleConversation) {
+            binding.setShowMainProgressbar(true);
+            client.waitForConnection(new ClientConnectionCallback() {
+                @Override
+                public void onSuccess() {
+                    getChannel();
+                }
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    binding.setShowMainProgressbar(false);
+                }
+            });
+        } else {
+            initReconnection();
             setDeliverLastMessage();
             configUIs();
-        } else {
-            if (TextUtils.isEmpty(client.connectionId)) {
-                binding.setShowMainProgressbar(true);
-            } else {
-                getChannel(client.getActiveChannel());
-            }
         }
     }
 
@@ -206,10 +229,10 @@ public class ChannelFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        subscribe();
+        client = StreamChat.getInstance();
+        channel = client.channel(channelType, channelID);
 
-        if (channel != null)
-            client.setActiveChannel(channel);
+        subscribeToChannelEvents();
 
         startTypingStopRepeatingTask();
         startTypingClearRepeatingTask();
@@ -224,9 +247,7 @@ public class ChannelFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
 
-        unsubscribe();
-
-        client.setActiveChannel(null);
+        unsubscribeFromChannelEvents();
 
         stopTypingStopRepeatingTask();
         stopTypingClearRepeatingTask();
@@ -310,57 +331,31 @@ public class ChannelFragment extends Fragment {
     }
     //endregion
 
-    // region Init
-    private void init() {
-        // set WS handler
-        subscribe();
-
-        // Permission Check
-        PermissionChecker.permissionCheck(getActivity(), null);
-        try {
-            Fresco.initialize(getContext().getApplicationContext());
-        } catch (Exception e) {
-        }
-
-        threadBinding = binding.clThread;
-        onBackPressed();
-        if (channelResponse == null && channelIdFromChannelList != null)
-            channelResponse = client.getChannelResponseById(channelIdFromChannelList);
-        else {
-            return;
-        }
-        initReconnection();
-    }
-
     private void initReconnection() {
         binding.setViewModel(mViewModel);
         threadBinding.setViewModel(mViewModel);
-        channel = channelResponse.getChannel();
-        channelMessages = channelResponse.getMessages();
-        channel.setChannelResponse(this.channelResponse);
-        channel.setClient(client);
+        channelMessages = channelState.getMessages();
+        channel.setChannelState(this.channelState);
 
-        sendFileFunction = new SendFileFunction(channel, getActivity(), binding, channelResponse);
+        sendFileFunction = new SendFileFunction(channel, getActivity(), binding, channelState);
         reactionFunction = new ReactionFunction(channel);
 
         checkReadMark();
         noHistory = channelMessages.size() < Constant.CHANNEL_MESSAGE_LIMIT;
         noHistoryThread = false;
-        client.setActiveChannel(channel);
     }
 
     private boolean lockRVScrollListener = false;
 
-    private void getChannel(Channel channel_) {
-
+    private void getChannel() {
         binding.setShowMainProgressbar(true);
         Log.d(TAG, "Channel Connecting...");
 
-        client.queryChannel(channel_, new QueryChannelCallback() {
+        channel.query(new QueryChannelCallback() {
             @Override
-            public void onSuccess(ChannelResponse response) {
+            public void onSuccess(ChannelState response) {
                 binding.setShowMainProgressbar(false);
-                channelResponse = response;
+                channelState = response;
                 initReconnection();
                 setDeliverLastMessage();
                 configUIs();
@@ -432,7 +427,7 @@ public class ChannelFragment extends Fragment {
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = Global.getOpponentUser(channelResponse);
+            User opponent = Global.getOpponentUser(channelState);
             if (opponent != null) {
                 binding.tvChannelInitial.setText(opponent.getUserInitials());
                 Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
@@ -446,10 +441,10 @@ public class ChannelFragment extends Fragment {
         // Channel name
         String channelName = "";
 
-        if (!TextUtils.isEmpty(channelResponse.getChannel().getName())) {
-            channelName = channelResponse.getChannel().getName();
+        if (!TextUtils.isEmpty(channelState.getChannel().getName())) {
+            channelName = channelState.getChannel().getName();
         } else {
-            User opponent = Global.getOpponentUser(channelResponse);
+            User opponent = Global.getOpponentUser(channelState);
             if (opponent != null) {
                 channelName = opponent.getName();
             }
@@ -458,14 +453,14 @@ public class ChannelFragment extends Fragment {
         binding.tvChannelName.setText(channelName);
 
         // Last Active
-        Message lastMessage = channelResponse.getOpponentLastMessage();
+        Message lastMessage = channelState.getLastMessageFromOtherUser();
         configHeaderLastActive(lastMessage);
         // Online Mark
         try {
-            if (Global.getOpponentUser(channelResponse) == null)
+            if (Global.getOpponentUser(channelState) == null)
                 binding.ivActiveMark.setVisibility(View.GONE);
             else {
-                if (Global.getOpponentUser(channelResponse).getOnline()) {
+                if (Global.getOpponentUser(channelState).getOnline()) {
                     binding.ivActiveMark.setVisibility(View.VISIBLE);
                 } else {
                     binding.ivActiveMark.setVisibility(View.GONE);
@@ -483,7 +478,7 @@ public class ChannelFragment extends Fragment {
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
         binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(Global.noConnection);
+        binding.setNoConnection(!client.isConnected());
         binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             binding.setActiveMessageComposer(hasFocus);
             lockRVScrollListener = hasFocus;
@@ -537,8 +532,8 @@ public class ChannelFragment extends Fragment {
         binding.tvActive.setVisibility(View.GONE);
         String lastActive = null;
         if (message != null) {
-            if (!TextUtils.isEmpty(Global.differentTime(message.getCreated_at()))) {
-                lastActive = Global.differentTime(message.getCreated_at());
+            if (!TextUtils.isEmpty(Message.differentTime(message.getCreated_at()))) {
+                lastActive = Message.differentTime(message.getCreated_at());
             }
         }
 
@@ -578,7 +573,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void setChannelMessageRecyclerViewAdapder() {
-        mChannelMessageAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, channelMessages,
+        mChannelMessageAdapter = new MessageListItemAdapter(getContext(), channelState, channelMessages,
                 false, messageItemViewHolderName, messageItemLayoutId,
                 (View v) -> {
                     Object object = v.getTag();
@@ -656,7 +651,7 @@ public class ChannelFragment extends Fragment {
     }
 
     public void sendNewMessage(String text, List<Attachment> attachments, String resendMessageId) {
-        if (Global.noConnection) {
+        if (!client.isConnected()) {
             sendOfflineMessage();
             return;
         }
@@ -685,7 +680,7 @@ public class ChannelFragment extends Fragment {
     }
 
     public void updateMessage() {
-        if (Global.noConnection) {
+        if (!client.isConnected()) {
             Utils.showMessage(getContext(), "No internet connection!");
             return;
         }
@@ -711,7 +706,7 @@ public class ChannelFragment extends Fragment {
     }
 
     public void resendMessage(Message message) {
-        if (Global.noConnection) {
+        if (!client.isConnected()) {
             Utils.showMessage(getContext(), Constant.NO_INTERNET);
             return;
         }
@@ -747,7 +742,7 @@ public class ChannelFragment extends Fragment {
             Global.removeEphemeralMessage(channel.getId(), resendMessageId);
             initSendMessage();
         } else {
-            if (Global.isCommandMessage(message) ||
+            if (Message.isCommandMessage(message) ||
                     message.getType().equals(ModelType.message_error)) {
                 channelMessages.remove(ephemeralMessage);
                 message.setDelivered(true);
@@ -777,12 +772,12 @@ public class ChannelFragment extends Fragment {
 
     private Message createEphemeralMessage(boolean isOffle) {
         Message message = new Message();
-        message.setId(Global.convertDateToString(new Date()));
+        message.setId(Message.convertDateToString(new Date()));
         message.setText(binding.etMessage.getText().toString());
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
-        message.setCreated_at(Global.convertDateToString(new Date()));
-        Global.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(client.user);
+        message.setCreated_at(Message.convertDateToString(new Date()));
+        Message.setStartDay(Arrays.asList(message), getLastMessage());
+        message.setUser(client.getUser());
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
@@ -914,7 +909,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void showAlertReadUsers(Message message) {
-        List<User> readUsers = Global.getReadUsers(channelResponse, message);
+        List<User> readUsers = Global.getReadUsers(channelState, message);
         if (readUsers == null) return;
         String msg = "";
         if (readUsers.size() > 0) {
@@ -1022,7 +1017,7 @@ public class ChannelFragment extends Fragment {
         threadMessages = new ArrayList<>();
 
         threadBinding.rvHeader.setLayoutManager(mLayoutManager_thread_header);
-        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, Arrays.asList(thread_parentMessage), isThreadMode(), messageItemViewHolderName, messageItemLayoutId, null, null);
+        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelState, Arrays.asList(thread_parentMessage), isThreadMode(), messageItemViewHolderName, messageItemLayoutId, null, null);
         threadBinding.rvHeader.setAdapter(mThreadHeaderAdapter);
 
         if (message.getReplyCount() == 0) {
@@ -1045,7 +1040,7 @@ public class ChannelFragment extends Fragment {
                         }
                     }
 
-                    Global.setStartDay(threadMessages, null);
+                    Message.setStartDay(threadMessages, null);
                     setThreadAdapter();
                     threadBinding.setShowThread(true);
                     binding.setShowMainProgressbar(false);
@@ -1081,7 +1076,7 @@ public class ChannelFragment extends Fragment {
             mLayoutManager_thread.scrollToPosition(threadMessages.size() - 1);
 
         threadBinding.rvThread.setLayoutManager(mLayoutManager_thread);
-        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelResponse, threadMessages, isThreadMode(), messageItemViewHolderName, messageItemLayoutId, (View v) -> {
+        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelState, threadMessages, isThreadMode(), messageItemViewHolderName, messageItemLayoutId, (View v) -> {
             Object object = v.getTag();
             messageItemClickListener(object);
         }, (View v) -> {
@@ -1139,7 +1134,7 @@ public class ChannelFragment extends Fragment {
 
     private void newMessageEvent(Message message) {
         configHeaderLastActive(message);
-        Global.setStartDay(Arrays.asList(message), getLastMessage());
+        Message.setStartDay(Arrays.asList(message), getLastMessage());
 
         switch (message.getType()) {
             case ModelType.message_regular:
@@ -1268,8 +1263,8 @@ public class ChannelFragment extends Fragment {
                 return;
 
             Log.d(TAG, "Reconnection!");
-            channelResponse = client.getChannelResponseById(channel.getId());
-            Global.setStartDay(channelResponse.getMessages(), null);
+            channelState = client.getChannelByCid(channel.getCid()).getChannelState();
+            Message.setStartDay(channelState.getMessages(), null);
             initReconnection();
             // Check Ephemeral Messages
             getActivity().runOnUiThread(() -> {
@@ -1287,7 +1282,7 @@ public class ChannelFragment extends Fragment {
     private void footerEvent(Event event) {
         User user = event.getUser();
         if (user == null) return;
-        if (user.getId().equals(client.user.getId())) return;
+        if (user.getId().equals(client.getUserId())) return;
 
         switch (event.getType()) {
             case TYPING_START:
@@ -1333,65 +1328,66 @@ public class ChannelFragment extends Fragment {
         if (isNoHistory() || isCalling) return;
         Log.d(TAG, "Next pagination...");
         isCalling = true;
-        if (!isThreadMode()) {
-            binding.setShowLoadMoreProgressbar(true);
-            Channel channel1 = new Channel(this.channel.getType(), this.channel.getId(), this.channel.getExtraData());
-            PaginationRequest request = new PaginationRequest(Constant.DEFAULT_LIMIT, channelMessages.get(0).getId(), channel1);
-            client.pagination(channel.getId(), request, new QueryChannelCallback() {
-                @Override
-                public void onSuccess(ChannelResponse response) {
-                    binding.setShowLoadMoreProgressbar(false);
-                    List<Message> newMessages = new ArrayList<>(response.getMessages());
-                    if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
-
-                    // Set Date Time
-                    Global.setStartDay(newMessages, null);
-                    // Add new to current Message List
-                    for (int i = newMessages.size() - 1; i > -1; i--)
-                        channelMessages.add(0, newMessages.get(i));
-
-                    scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                    mViewModel.setChannelMessages(channelMessages);
-                    isCalling = false;
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Utils.showMessage(getContext(), errMsg);
-                    isCalling = false;
-                    binding.setShowLoadMoreProgressbar(false);
-                }
-            });
-        } else {
+        if (isThreadMode()) {
             binding.setShowMainProgressbar(true);
             client.getReplies(thread_parentMessage.getId(),
-                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-                    threadMessages.get(0).getId(), new GetRepliesCallback() {
-                        @Override
-                        public void onSuccess(GetRepliesResponse response) {
-                            binding.setShowMainProgressbar(false);
-                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-                                noHistoryThread = true;
+                String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
+                threadMessages.get(0).getId(), new GetRepliesCallback() {
+                    @Override
+                    public void onSuccess(GetRepliesResponse response) {
+                        binding.setShowMainProgressbar(false);
+                        List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+                            noHistoryThread = true;
 
-                            Global.setStartDay(newMessages, null);
-                            // Add new to current Message List
-                            for (int i = newMessages.size() - 1; i > -1; i--) {
-                                threadMessages.add(0, newMessages.get(i));
-                            }
-                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                            mThreadAdapter.notifyDataSetChanged();
-                            recyclerView().scrollToPosition(scrollPosition);
-                            isCalling = false;
+                        Message.setStartDay(newMessages, null);
+                        // Add new to current Message List
+                        for (int i = newMessages.size() - 1; i > -1; i--) {
+                            threadMessages.add(0, newMessages.get(i));
                         }
+                        int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                        mThreadAdapter.notifyDataSetChanged();
+                        recyclerView().scrollToPosition(scrollPosition);
+                        isCalling = false;
+                    }
 
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            Utils.showMessage(getContext(), errMsg);
-                            isCalling = false;
-                            binding.setShowMainProgressbar(false);
-                        }
-                    });
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Utils.showMessage(getContext(), errMsg);
+                        isCalling = false;
+                        binding.setShowMainProgressbar(false);
+                    }
+                }
+            );
+        } else {
+            binding.setShowLoadMoreProgressbar(true);
+            channel.query(
+                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
+                new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        binding.setShowLoadMoreProgressbar(false);
+                        List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
+
+                        // Set Date Time
+                        Message.setStartDay(newMessages, null);
+                        // Add new to current Message List
+                        for (int i = newMessages.size() - 1; i > -1; i--)
+                            channelMessages.add(0, newMessages.get(i));
+
+                        scrollPosition = ((LinearLayoutManager) binding.rvMessage.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+                        mViewModel.setChannelMessages(channelMessages);
+                        isCalling = false;
+                    }
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Utils.showMessage(getContext(), errMsg);
+                        isCalling = false;
+                        binding.setShowLoadMoreProgressbar(false);
+                    }
+                }
+            );
         }
     }
 
@@ -1400,9 +1396,9 @@ public class ChannelFragment extends Fragment {
     // region Check Message Read
 
     private void checkReadMark() {
-        if (channelResponse.getLastMessage() == null) return;
-        if (!Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true),
-                channelResponse.getLastMessage().getCreated_at())) {
+        if (channelState.getLastMessage() == null) return;
+        if (!Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()),
+                channelState.getLastMessage().getCreated_at())) {
             messageMarkRead();
         }
     }

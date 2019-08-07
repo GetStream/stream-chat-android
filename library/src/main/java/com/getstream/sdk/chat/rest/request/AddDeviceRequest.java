@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.request;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -19,7 +20,7 @@ public class AddDeviceRequest {
 
     public AddDeviceRequest(String deviceId){
         this.id = deviceId;
-        this.user_id = Global.client.user.getId();
+        this.user_id = StreamChat.getInstance().getUserId();
         this.push_provider = "firebase";
     }
 }

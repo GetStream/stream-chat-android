@@ -36,8 +36,8 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
@@ -121,7 +121,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    navigationChannelFragment(client.getChannelResponseById(channelId));
+                    navigationChannelFragment(client.getChannelByCid(channelId).getChannelState());
                 }
             } catch (Exception e) {
             }
@@ -218,7 +218,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 if (mLastFirstVisibleItem < firstVisibleItem) {
-                    if (currentLastVisible == client.channels.size() - 1)
+                    if (currentLastVisible == client.activeChannels.size() - 1)
                         queryChannels();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
@@ -236,7 +236,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void setAfterFirstConnection() {
         // Initialize Channels
-        client.channels.clear();
+        client.activeChannels.clear();
         initLoadingChannels();
         queryChannels();
 
@@ -301,8 +301,8 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         }
 
         payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
-        if (client.channels.size() > 0)
-            payload.put("offset", client.channels.size());
+        if (client.activeChannels.size() > 0)
+            payload.put("offset", client.activeChannels.size());
         payload.put("limit", Constant.CHANNEL_LIMIT);
         payload.put("presence", false);
         payload.put("state", true);
@@ -312,11 +312,11 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     }
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), client.channels,
+        adapter = new ChannelListItemAdapter(getContext(), client.activeChannels,
                 channelItemViewHolderName, channelItemLayoutId, (View view) -> {
 
             String channelId = view.getTag().toString();
-            ChannelResponse response = client.getChannelResponseById(channelId);
+            ChannelState response = client.getChannelByCid(channelId).getChannelState();
             getActivity().runOnUiThread(() -> navigationChannelFragment(response));
 
         }, (View view) -> {
@@ -331,12 +331,12 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    ChannelResponse response_ = client.getChannelResponseById(channelId);
+                    ChannelState response_ = client.getChannelByCid(channelId).getChannelState();
                     client.deleteChannel(channelId, new QueryChannelCallback() {
                         @Override
-                        public void onSuccess(ChannelResponse response) {
+                        public void onSuccess(ChannelState response) {
                             Utils.showMessage(getContext(), "Deleted successfully!");
-                            client.channels.remove(response_);
+                            client.activeChannels.remove(response_);
                             adapter.notifyDataSetChanged();
                         }
 
@@ -355,9 +355,8 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         binding.listChannels.setAdapter(adapter);
     }
 
-    private void navigationChannelFragment(ChannelResponse response) {
+    private void navigationChannelFragment(ChannelState response) {
         ChannelFragment fragment = new ChannelFragment();
-        fragment.client = client;
         fragment.channelIdFromChannelList = response.getChannel().getId();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.addOnBackStackChangedListener(() -> {

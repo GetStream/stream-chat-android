@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Global;
 
 import java.util.ArrayList;
@@ -18,14 +18,14 @@ import java.util.List;
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private List<ChannelResponse> channels;
+    private List<Channel> channels;
     public String filter;
     private View.OnClickListener clickListener;
     private String className;
     private int itemLayoutId;
     private View.OnLongClickListener longClickListener;
 
-    public ChannelListItemAdapter(Context context, List<ChannelResponse> channels,
+    public ChannelListItemAdapter(Context context, List<Channel> channels,
                                   String className, int itemLayoutId,
                                   View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         this.context = context;
@@ -56,8 +56,8 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ChannelResponse channelResponse = filterChannels(filter).get(position);
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelResponse, position, clickListener, longClickListener);
+        ChannelState channelState = filterChannels(filter).get(position);
+        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, clickListener, longClickListener);
     }
 
     @Override
@@ -66,22 +66,28 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
 
-    private List<ChannelResponse> filterChannels(String channelName) {
+    private List<ChannelState> filterChannels(String channelName) {
 
-        if (TextUtils.isEmpty(channelName)) return this.channels;
+        List<ChannelState> channels_ = new ArrayList<>();
 
-        List<ChannelResponse> channels_ = new ArrayList<>();
+        if (TextUtils.isEmpty(channelName)) {
+            for (int i = 0; i < this.channels.size(); i++) {
+                Channel channel = this.channels.get(i);
+                channels_.add(channel.getChannelState());
+            }
+        }
+
         for (int i = 0; i < this.channels.size(); i++) {
-            ChannelResponse response = this.channels.get(i);
-            Channel channel = response.getChannel();
+            Channel channel = this.channels.get(i);
+            ChannelState state = channel.getChannelState();
             if (TextUtils.isEmpty(channel.getName())) {
-                User opponent = Global.getOpponentUser(response);
+                User opponent = Global.getOpponentUser(state);
                 if (opponent != null && opponent.getName().toLowerCase().contains(channelName.toLowerCase())) {
-                    channels_.add(response);
+                    channels_.add(state);
                 }
             } else {
                 if (channel.getName().toLowerCase().contains(channelName.toLowerCase())) {
-                    channels_.add(response);
+                    channels_.add(state);
                 }
             }
         }

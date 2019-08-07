@@ -8,9 +8,9 @@ import com.google.gson.annotations.SerializedName;
 public class QueryChannelsResponse {
     @SerializedName("channels")
     @Expose
-    private List<ChannelResponse> channels;
+    private List<ChannelState> channels;
 
-    public List<ChannelResponse> getChannels() {
+    public List<ChannelState> getChannels() {
         return channels;
     }
 }

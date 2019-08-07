@@ -28,7 +28,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
@@ -51,14 +51,14 @@ public class SendFileFunction {
 
     Activity activity;
     ChannelFragmentBinding binding;
-    ChannelResponse channelResponse;
+    ChannelState channelState;
     Channel channel;
 
-    public SendFileFunction(Channel channel, Activity activity, ChannelFragmentBinding binding, ChannelResponse channelResponse) {
+    public SendFileFunction(Channel channel, Activity activity, ChannelFragmentBinding binding, ChannelState channelState) {
         this.channel = channel;
         this.activity = activity;
         this.binding = binding;
-        this.channelResponse = channelResponse;
+        this.channelState = channelState;
     }
 
     public List<Attachment> getSelectedAttachments() {
@@ -515,8 +515,8 @@ public class SendFileFunction {
     private void setCommands(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channelResponse.getChannel().getConfig().getCommands().size(); i++) {
-            Command command = channelResponse.getChannel().getConfig().getCommands().get(i);
+        for (int i = 0; i < channelState.getChannel().getConfig().getCommands().size(); i++) {
+            Command command = channelState.getChannel().getConfig().getCommands().get(i);
             if (command.getName().contains(string))
                 commands.add(command);
         }
@@ -525,8 +525,8 @@ public class SendFileFunction {
     private void setMentionUsers(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channelResponse.getMembers().size(); i++) {
-            Member member = channelResponse.getMembers().get(i);
+        for (int i = 0; i < channelState.getMembers().size(); i++) {
+            Member member = channelState.getMembers().get(i);
             User user = member.getUser();
             if (user.getName().contains(string))
                 commands.add(user);

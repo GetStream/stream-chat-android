@@ -1,11 +1,9 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.enums.Location;
-
 public class BaseURL {
     private String urlString;
-    public BaseURL(Location location){
-        urlString = "//chat" + (location == null ? "" : "-") + location.get() + ".stream-io-api.com/";
+    public BaseURL(String location){
+        urlString = "//chat" + (location == null ? "" : "-") + location + ".stream-io-api.com/";
     }
     public String url(Scheme scheme){
         return scheme.get() + (":") + urlString;

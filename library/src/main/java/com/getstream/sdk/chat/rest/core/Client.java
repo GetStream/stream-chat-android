@@ -5,12 +5,12 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.getstream.sdk.chat.component.Component;
-import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
+import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -30,16 +30,14 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.QueryChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.PaginationRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
@@ -47,19 +45,14 @@ import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -67,24 +60,50 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-//TODO: rename this into Client
-//TODO: split this into two classes, Client and Channel
 public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
 
+    public String getApiKey() {
+        return apiKey;
+    }
+
     // Main Params
     private String apiKey;
-    public User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    private User user;
     private String userToken;
+
+    public String getUserId() {
+        return user.getId();
+    }
+
+    public String getConnectionId() {
+        return connectionId;
+    }
+
     public String connectionId;
 
     private Component component;
     // Client params
-    public List<ChannelResponse> channels = new ArrayList<>();
+    public List<Channel> activeChannels = new ArrayList<>();
     public List<User> users = new ArrayList<>();
     public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channel ID, Value: ephemeralMessages
-    private Channel activeChannel;
+
+    public APIService getApiService() {
+        return mService;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    private boolean connected;
+    private List<ClientConnectionCallback> connectionWaiters;
 
     private APIService mService;
 
@@ -92,7 +111,10 @@ public class Client implements WSResponseHandler {
     private Map<Number, ChatEventHandler> eventSubscribersBy;
     private int subscribersSeq;
 
+    private Map<String, Config> channelTypeConfigs;
+
     private WebSocketService WSConn;
+    private ApiClientOptions options;
 
     // Interfaces
     private ChannelListEventHandler channelListEventHandler;
@@ -102,10 +124,16 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey) {
+        this(apiKey, new ApiClientOptions());
+    }
+
+    public Client(String apiKey, ApiClientOptions options) {
         this.apiKey = apiKey;
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
-        Global.client = this;
+        connectionWaiters = new ArrayList<>();
+        channelTypeConfigs = new HashMap<>();
+        this.options = options;
     }
 
     public Component getComponent() {
@@ -121,28 +149,13 @@ public class Client implements WSResponseHandler {
         Global.component = component;
     }
 
-    // region Setup Channel
-    public void setActiveChannel(Channel activeChannel) {
-        this.activeChannel = activeChannel;
-    }
-
-    public Channel getActiveChannel() {
-        return activeChannel;
-    }
-    // endregion
-
-    // region Setup User
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     // Server-side Token
     public void setUser(User user, final TokenProvider provider) {
         try {
             this.user = user;
             provider.onResult((String token) -> {
                 userToken = token;
-                setUpWebSocket();
+                connect();
             });
         } catch (Exception e) {
             provider.onError(e.getLocalizedMessage());
@@ -168,7 +181,7 @@ public class Client implements WSResponseHandler {
         }
         Log.d(TAG, "TOKEN: " + this.userToken);
         if (!TextUtils.isEmpty(this.userToken)) {
-            setUpWebSocket();
+            connect();
         }
     }
 
@@ -179,32 +192,31 @@ public class Client implements WSResponseHandler {
         }
         this.user = user;
         this.userToken = token;
-        if (!TextUtils.isEmpty(this.userToken)) {
-            setUpWebSocket();
-        }
+        connect();
     }
 
     // endregion
 
-    public final int addEventHandler(ChatEventHandler handler) {
+    public final synchronized int addEventHandler(ChatEventHandler handler) {
         int id = ++subscribersSeq;
         eventSubscribers.add(handler);
         eventSubscribersBy.put(id, handler);
         return id;
     }
 
-    public final void removeEventHandler(Number handlerId) {
+    public final synchronized void removeEventHandler(Number handlerId) {
         ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
         eventSubscribers.remove(handler);
     }
 
-    private void publishEvents(Event event){
-        for (ChatEventHandler handler: eventSubscribers) {
-            handler.dispatchEvent(event);
+    public void waitForConnection(ClientConnectionCallback callback){
+        if (connected) {
+            callback.onSuccess();
+        } else {
+            connectionWaiters.add(callback);
         }
     }
 
-    // region Websocket Setup
     private JSONObject buildUserDetailJSON() {
         HashMap<String, Object> jsonParameter = new HashMap<>();
         HashMap<String, Object> userDetails = new HashMap<>(user.getExtraData());
@@ -220,256 +232,88 @@ public class Client implements WSResponseHandler {
         return new JSONObject(jsonParameter);
     }
 
-    // TODO: kill Global baseURL
-    // TODO: protect this from multiple calls
-    private void setUpWebSocket() {
+    private synchronized void connect() {
+        BaseURL baseURL = new BaseURL(options.getLocation());
+
         JSONObject json = buildUserDetailJSON();
-        String wsURL = Global.baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
+        String wsURL = baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
                 + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
 
+        setupEventHandling();
 
-        WSConn = new WebSocketService(wsURL, "TODO", user.getId(), this);
+        mService = RetrofitClient.getAuthorizedClient(baseURL.url(BaseURL.Scheme.https), userToken).create(APIService.class);
+        WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
-
-        mService = RetrofitClient.getAuthorizedClient(userToken).create(APIService.class);
     }
-    // endregion
 
+    public Channel channel(String type, String id){
+        return new Channel(this, type, id);
+    }
+
+    public Channel channel(String type, String id, HashMap<String, Object> extraData){
+        return new Channel(this, type, id, extraData);
+    }
 
     @Override
-    public void handleWSConnectReply(Event event){
-        Global.noConnection = false;
-        connectionId = event.getConnection_id();
+    public void connectionResolved(Event event){
+        connectionId = event.getConnectionId();
         if (event.getMe() != null)
-            setUser(event.getMe());
-        if (channelListEventHandler != null)
-            channelListEventHandler.handleConnection();
+            user = event.getMe();
+
+        connected = true;
+        for (ClientConnectionCallback waiter: connectionWaiters) {
+            waiter.onSuccess();
+        }
+        connectionWaiters.clear();
     }
 
     @Override
-    public void handleWSEvent(Event event) {
-        handleReceiveEvent(event); //legacy code
-        publishEvents(event);
+    public void onWSEvent(Event event) {
+        for (ChatEventHandler handler: eventSubscribers) {
+            handler.dispatchEvent(event);
+        }
+
+        if (event.isChannelEvent()){
+            Channel channel = getChannelByCid(event.getCid());
+            if (channel != null) {
+                channel.handleChannelEvent(event);
+            }
+        }
     }
 
     @Override
-    public void handleWSRecover(){
-        //TODO: do the reconnection
+    public void connectionRecovered() {
+        connected = true;
+        //TODO: add reconnection magic here
     }
 
-//    @Override
-//    public void onFailed(String errMsg, int errCode) {
-//        this.connectionId = null;
-//
-//        if (channelListEventHandler != null)
-//            channelListEventHandler.onConnectionFailed(errMsg, errCode);
-//
-//        Event wentOffline = new Event(false);
-//        publishEvents(wentOffline);
-//    }
+    public synchronized void addChannelConfig(String channelType, Config config) {
+        channelTypeConfigs.put(channelType, config);
+    }
 
-    public void handleReceiveEvent(Event event) {
-        String channelId = null;
-        try {
-            String[] array = event.getCid().split(":");
-            channelId = array[1];
-        } catch (Exception e) {
-        }
+    public synchronized Config getChannelConfig(String channelType) {
+        return channelTypeConfigs.get(channelType);
+    }
 
-        if (channelId == null) return;
+    public synchronized void addToActiveChannels(Channel channel){
+        Log.d(TAG, "adding channel cid to active channels: " + channel.getCid());
 
-        switch (event.getType()) {
-            case NOTIFICATION_ADDED_TO_CHANNEL:
-            case CHANNEL_UPDATED:
-            case CHANNEL_DELETED:
-                handleChannelEvent(event, channelId);
-                break;
-            case MESSAGE_NEW:
-            case MESSAGE_UPDATED:
-            case MESSAGE_DELETED:
-                handleMessageEvent(event, channelId);
-                break;
-            case MESSAGE_READ:
-                readMessageEvent(event, channelId);
-                break;
-            case REACTION_NEW:
-            case REACTION_DELETED:
-                handleReactionEvent(event, channelId);
-                break;
-            default:
-                break;
+        if (getChannelByCid(channel.getCid()) == null){
+            activeChannels.add(channel);
         }
     }
 
-    // region Handle Channel Event
-
-    public void handleChannelEvent(Event event, String channelId) {
-        switch (event.getType()) {
-            case NOTIFICATION_ADDED_TO_CHANNEL:
-                if (Global.getChannelResponseById(channelId) == null) {
-                    queryChannel(event.getChannel(), new QueryChannelCallback() {
-                        @Override
-                        public void onSuccess(ChannelResponse response) {
-                            if (channelListEventHandler != null)
-                                channelListEventHandler.updateChannels();
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                        }
-                    });
-                }
-                break;
-            case CHANNEL_DELETED:
-                deleteChannelResponse(event.getChannel());
-                break;
-            default:
-                break;
-        }
-        if (channelListEventHandler != null)
-            channelListEventHandler.updateChannels();
-    }
-
-    public void queryChannel(Channel channel, QueryChannelCallback callback) {
-        channel.setType(ModelType.channel_messaging);
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
-        Map<String, Object> data = new HashMap<>();
-
-        // Additional Field
-        if (channel.getExtraData() != null) {
-            Set<String> keys = channel.getExtraData().keySet();
-            for (String key : keys) {
-                Object value = channel.getExtraData().get(key);
-                if (value != null)
-                    data.put(key, value);
+    public Channel getChannelByCid(String cid) {
+        Log.d(TAG, "getChannelByCid: " + cid);
+        for (Channel channel : activeChannels) {
+            if (cid.equals(channel.getCid())) {
+                return channel;
             }
         }
-
-        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
-
-        mService.queryChannel(channel.getId(), apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
-            @Override
-            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
-                if (response.isSuccessful()) {
-                    ChannelResponse channelResponse = response.body();
-                    checkEphemeralMessages(channelResponse);
-                    if (!channelResponse.getMessages().isEmpty())
-                        Global.setStartDay(channelResponse.getMessages(), null);
-
-                    addChannelResponse(channelResponse);
-                    callback.onSuccess(channelResponse);
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ChannelResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
+        return null;
     }
 
-    public void addChannelResponse(ChannelResponse response) {
-        boolean isContain = false;
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(response.getChannel().getId())) {
-                channels.remove(response1);
-                channels.add(response);
-                isContain = true;
-                break;
-            }
-        }
-        if (!isContain)
-            channels.add(response);
-    }
-
-    public void deleteChannelResponse(Channel channel) {
-        for (ChannelResponse response1 : channels) {
-            if (response1.getChannel().getId().equals(channel.getId())) {
-                channels.remove(response1);
-                break;
-            }
-        }
-    }
-
-    public ChannelResponse getChannelResponseById(String id) {
-        return Global.getChannelResponseById(id);
-    }
-
-    // endregion
-
-
-    // region Handle Message Event
-    public void handleMessageEvent(Event event, String channelId) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
-        if (channelResponse == null) return;
-        Message message = event.getMessage();
-        if (message == null) return;
-
-        switch (event.getType()) {
-            case MESSAGE_NEW:
-                newMessageEvent(channelResponse, message);
-                break;
-            case MESSAGE_UPDATED:
-            case MESSAGE_DELETED:
-                for (int i = 0; i < channelResponse.getMessages().size(); i++) {
-                    if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
-                        // Deleted Message
-                        if (event.getType().equals(EventType.MESSAGE_DELETED))
-                            message.setText(Constant.MESSAGE_DELETED);
-
-                        channelResponse.getMessages().set(i, message);
-                        break;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-        if (channelListEventHandler != null)
-            channelListEventHandler.updateChannels();
-    }
-
-
-    public void newMessageEvent(ChannelResponse channelResponse, Message message) {
-        Global.setStartDay(Arrays.asList(message), channelResponse.getLastMessage());
-        channelResponse.getMessages().add(message);
-        channels.remove(channelResponse);
-        channels.add(0, channelResponse);
-    }
-
-    public void updateMessageEvent(ChannelResponse channelResponse, Message message) {
-        for (int i = 0; i < channelResponse.getMessages().size(); i++) {
-            if (message.getId().equals(channelResponse.getMessages().get(i).getId())) {
-                channelResponse.getMessages().set(i, message);
-                break;
-            }
-        }
-    }
-
-    public void readMessageEvent(Event event, String channelId) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
-        if (channelResponse == null) return;
-
-        channelResponse.setReadDateOfChannelLastMessage(event.getUser(), event.getCreated_at());
-        channelResponse.getChannel().setLastMessageDate(event.getCreated_at());
-        if (channelListEventHandler != null)
-            channelListEventHandler.updateChannels();
-    }
-    // endregion
-
-    // region Handle Reaction Event
-    public void handleReactionEvent(Event event, String channelId) {
-        ChannelResponse channelResponse = Global.getChannelResponseById(channelId);
-        if (channelResponse == null) return;
-        Message message = event.getMessage();
-        if (message == null) return;
-
-        updateMessageEvent(channelResponse, message);
-    }
     // endregion
 
     // region Channel
@@ -477,22 +321,18 @@ public class Client implements WSResponseHandler {
         mService.queryChannels(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                if (response.isSuccessful()) {
-                    if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
-                        callback.onError("There is no any active Channel(s)!", -1);
-                    else {
-                        if (channels == null) {
-                            channels = new ArrayList<>();
-                        }
-                        for (int i = 0; i < response.body().getChannels().size(); i++) {
-                            ChannelResponse channelResponse = response.body().getChannels().get(i);
-                            checkEphemeralMessages(channelResponse);
-                            channels.add(channelResponse);
-                        }
-                        callback.onSuccess(response.body());
-                    }
-                } else {
+                if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
                     callback.onError("There is no any active Channel(s)!", -1);
+                else {
+                    for (int i = 0; i < response.body().getChannels().size(); i++) {
+                        ChannelState channelState = response.body().getChannels().get(i);
+                        Channel channelData = channelState.getChannel();
+                        Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
+                        checkEphemeralMessages(channelState);
+                        channel.setChannelState(channelState);
+                        addToActiveChannels(channel);
+                    }
+                    callback.onSuccess(response.body());
                 }
             }
 
@@ -503,7 +343,7 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    private void checkEphemeralMessages(ChannelResponse response) {
+    private void checkEphemeralMessages(ChannelState response) {
         if (response == null) return;
         List<Message> ephemeralMainMessages = Global.getEphemeralMessages(response.getChannel().getId(), null);
         if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
@@ -523,14 +363,10 @@ public class Client implements WSResponseHandler {
      */
     public void deleteChannel(@NonNull String channelId, QueryChannelCallback callback) {
 
-        mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelResponse>() {
+        mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelState>() {
             @Override
-            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -539,27 +375,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-    public void pagination(@NonNull String channelId, @NonNull PaginationRequest request, QueryChannelCallback callback) {
-        mService.pagination(channelId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<ChannelResponse>() {
-            @Override
-            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ChannelResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    // endregion
-
 
     // region Message
 
@@ -576,11 +391,7 @@ public class Client implements WSResponseHandler {
         mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -608,11 +419,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -628,11 +435,7 @@ public class Client implements WSResponseHandler {
         mService.getMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -654,11 +457,7 @@ public class Client implements WSResponseHandler {
         mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -680,11 +479,7 @@ public class Client implements WSResponseHandler {
         mService.markRead(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -705,11 +500,7 @@ public class Client implements WSResponseHandler {
         mService.markAllRead(apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -738,11 +529,7 @@ public class Client implements WSResponseHandler {
             mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
-                    if (response.isSuccessful()) {
-                        callback.onSuccess(response.body());
-                    } else {
-                        callback.onError(response.message(), response.code());
-                    }
+                    callback.onSuccess(response.body());
                 }
 
                 @Override
@@ -754,11 +541,7 @@ public class Client implements WSResponseHandler {
             mService.getRepliesMore(parentId, apiKey, user.getId(), connectionId, limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
-                    if (response.isSuccessful()) {
-                        callback.onSuccess(response.body());
-                    } else {
-                        callback.onError(response.message(), response.code());
-                    }
+                    callback.onSuccess(response.body());
                 }
 
                 @Override
@@ -788,11 +571,7 @@ public class Client implements WSResponseHandler {
         mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -817,11 +596,7 @@ public class Client implements WSResponseHandler {
         mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -848,12 +623,7 @@ public class Client implements WSResponseHandler {
         mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
-
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -873,12 +643,7 @@ public class Client implements WSResponseHandler {
         mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Send File:" + response.body().toString());
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -895,12 +660,7 @@ public class Client implements WSResponseHandler {
         mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Send File:" + response.body().toString());
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -918,12 +678,7 @@ public class Client implements WSResponseHandler {
         mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.isSuccessful()) {
-                    Log.d(TAG, "Send File:" + response.body().toString());
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -949,15 +704,11 @@ public class Client implements WSResponseHandler {
         mService.queryUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                if (response.isSuccessful()) {
-                    for (int i = 0; i < response.body().getUsers().size(); i++)
-                        if (!response.body().getUsers().get(i).isMe())
-                            users.add(response.body().getUsers().get(i));
+                for (int i = 0; i < response.body().getUsers().size(); i++)
+                    if (!response.body().getUsers().get(i).isMe())
+                        users.add(response.body().getUsers().get(i));
 
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -968,6 +719,73 @@ public class Client implements WSResponseHandler {
     }
 
     // endregion
+    public void setupEventHandling(){
+        addEventHandler(new ChatEventHandler(){
+            private void notifyChannelsSubscribers() {
+                // TODO: kill this
+                if (channelListEventHandler != null)
+                    channelListEventHandler.updateChannels();
+            }
+            private void updateChannelMessage(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                channel.handleMessageUpdatedOrDeleted(event);
+                notifyChannelsSubscribers();
+            }
+            @Override
+            public void onTypingStart(Event event) {
+            }
+            @Override
+            public void onTypingStop(Event event) {
+            }
+            @Override
+            public void onMessageNew(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                channel.handleNewMessage(event);
+                activeChannels.remove(channel);
+                activeChannels.add(0, channel);
+                notifyChannelsSubscribers();
+            }
+            @Override
+            public void onMessageUpdated(Event event) {
+                this.updateChannelMessage(event);
+            }
+            @Override
+            public void onMessageDeleted(Event event) {
+                this.updateChannelMessage(event);
+            }
+            @Override
+            public void onMessageRead(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                channel.handleReadEvent(event);
+            }
+            @Override
+            public void onReactionNew(Event event) {
+                this.updateChannelMessage(event);
+            }
+            @Override
+            public void onReactionDeleted(Event event) {
+                this.updateChannelMessage(event);
+            }
+            @Override
+            public void onChannelUpdated(Event event){
+                Channel channel = getChannelByCid(event.getCid());
+                channel.handleNewMessage(event);
+                activeChannels.remove(channel);
+                activeChannels.add(0, channel);
+                notifyChannelsSubscribers();
+            }
+            @Override
+            public void onChannelDeleted(Event event) {
+                //TODO: remove channel from client activeChannels
+            }
+            @Override
+            public void onConnectionChanged(Event event) {
+                if (!event.getOnline()) {
+                    connected = false;
+                }
+            }
+        });
+    }
 
     // region Device
 
@@ -985,14 +803,12 @@ public class Client implements WSResponseHandler {
         mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<DevicesResponse>() {
             @Override
             public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                if (callback != null)
-                    callback.onSuccess(response.body());
+                callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                if (callback != null)
-                    callback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -1009,11 +825,7 @@ public class Client implements WSResponseHandler {
         mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override
@@ -1035,12 +847,7 @@ public class Client implements WSResponseHandler {
         mService.deleteDevice(deviceId, apiKey, user.getId(), connectionId).enqueue(new Callback<DevicesResponse>() {
             @Override
             public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-
-                    callback.onError(response.message(), response.code());
-                }
+                callback.onSuccess(response.body());
             }
 
             @Override

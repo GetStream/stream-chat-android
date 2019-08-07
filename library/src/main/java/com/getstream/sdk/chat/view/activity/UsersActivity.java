@@ -21,13 +21,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
@@ -124,7 +125,7 @@ public class UsersActivity extends AppCompatActivity {
         });
         binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (binding.clGroup.getVisibility() == View.VISIBLE) return;
-            if (!Global.noConnection)
+            if (client.isConnected())
                 getChannel(Arrays.asList(client.users.get(i)));
             else
                 Utils.showMessage(UsersActivity.this, "No internet connection!");
@@ -231,7 +232,7 @@ public class UsersActivity extends AppCompatActivity {
         isCalling = true;
 
         if (client == null)
-            client = Global.client;
+            client = StreamChat.getInstance();
         client.queryUsers(getUserQueryPayload(), new QueryUserListCallback() {
             @Override
             public void onSuccess(QueryUserListResponse response) {
@@ -326,7 +327,7 @@ public class UsersActivity extends AppCompatActivity {
 //
 //        Log.d(TAG, "Channel Connecting...");
 //        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
-//        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelResponse response) -> {
+//        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelState response) -> {
 //            if (!response.getMessages().isEmpty())
 //                Global.setStartDay(response.getMessages(), null);
 //            Global.addChannelResponse(response);
@@ -355,7 +356,7 @@ public class UsersActivity extends AppCompatActivity {
     }
     // endregion
 
-    private void navigateChatActivity(ChannelResponse response) {
+    private void navigateChatActivity(ChannelState response) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result", true);
         returnIntent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());

@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.adapter.BaseChannelListItemViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 
 public class CustomChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public TextView tv_initials, tv_last_message;
@@ -23,13 +23,13 @@ public class CustomChannelListItemViewHolder extends BaseChannelListItemViewHold
     }
 
     @Override
-    public void bind(Context context, ChannelResponse channelResponse,
+    public void bind(Context context, ChannelState channelState,
                      int position, View.OnClickListener clickListener,
                      View.OnLongClickListener longClickListener) {
         // bind data
-        Channel channel = channelResponse.getChannel();
+        Channel channel = channelState.getChannel();
         tv_initials.setText(channel.getInitials());
-        Message lastMessage = channelResponse.getLastMessage();
+        Message lastMessage = channelState.getLastMessage();
         if (TextUtils.isEmpty(lastMessage.getText())) {
             if (!lastMessage.getAttachments().isEmpty()) {
                 Attachment attachment = lastMessage.getAttachments().get(0);

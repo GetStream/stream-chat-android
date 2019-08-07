@@ -27,7 +27,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.MessageTagModel;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -86,7 +86,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private ChannelResponse channelResponse;
+    private ChannelState channelState;
     private List<Message> messageList;
     private int position;
     private boolean isThread;
@@ -162,10 +162,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelResponse channelResponse, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         // set binding
         this.context = context;
-        this.channelResponse = channelResponse;
+        this.channelState = channelState;
         this.messageList = messageList;
         this.position = position;
         this.isThread = isThread;
@@ -231,7 +231,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configDelieveredIndicator() {
         if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
             view_read_indicator.setVisibility(View.VISIBLE);
-            List<User> readUsers = Global.getReadUsers(channelResponse, message);
+            List<User> readUsers = Global.getReadUsers(channelState, message);
             if (readUsers == null || !TextUtils.isEmpty(message.getDeleted_at()) || message.getType().equals(ModelType.message_error)) {
                 view_read_indicator.setVisibility(View.GONE);
                 Log.d(TAG, "Deliever Indicator 1");
@@ -242,8 +242,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 cv_indicator_avatar.setVisibility(View.VISIBLE);
                 tv_indicator_initials.setVisibility(View.VISIBLE);
                 cv_indicator_avatar.setBackgroundResource(0);
-                Utils.circleImageLoad(cv_indicator_avatar, channelResponse.getLastReadUser().getImage());
-                tv_indicator_initials.setText(channelResponse.getLastReadUser().getUserInitials());
+                Utils.circleImageLoad(cv_indicator_avatar, channelState.getLastReader().getImage());
+                tv_indicator_initials.setText(channelState.getLastReader().getUserInitials());
 
                 if (readUsers.size() > 1) {
                     tv_read_count.setVisibility(View.VISIBLE);
@@ -333,7 +333,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 tv_username.setVisibility(View.GONE);
 
             tv_initials.setText(message.getUser().getUserInitials());
-            if (message.getDate() == null) Global.setStartDay(Arrays.asList(message), null);
+            if (message.getDate() == null) Message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());
             else

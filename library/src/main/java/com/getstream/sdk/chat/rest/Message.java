@@ -1,13 +1,23 @@
 package com.getstream.sdk.chat.rest;
 
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
+
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A message
@@ -91,6 +101,115 @@ public class Message {
     private String created, edited, deleted;
     private String date, time;
     private boolean isDelivered = false;
+
+    // region Set Date and Time
+    public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
+        if (messages == null) return;
+        if (messages.size() == 0) return;
+
+        Message preMessage = (preMessage0 != null) ? preMessage0 : messages.get(0);
+        setFormattedDate(preMessage);
+        int startIndex = (preMessage0 != null) ? 0 : 1;
+        for (int i = startIndex; i < messages.size(); i++) {
+            if (i != startIndex) {
+                preMessage = messages.get(i - 1);
+            }
+
+            Message message = messages.get(i);
+            setFormattedDate(message);
+            message.setStartDay(!message.getDate().equals(preMessage.getDate()));
+        }
+    }
+
+    private static void setFormattedDate(Message message) {
+        if (message == null || message.getDate() != null) return;
+        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String sendDate = message.getCreated_at();
+
+        Date date = null;
+        try {
+            date = Global.messageDateFormat.parse(sendDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(date.getTime());
+
+        Calendar now = Calendar.getInstance();
+
+        final String timeFormatString = "h:mm aa";
+        final String dateTimeFormatString = "EEEE";
+
+        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Global.locale);
+        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Global.locale);
+        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Global.locale);
+
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            message.setToday(true);
+            message.setDate("Today");
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
+            message.setYesterday(true);
+            message.setDate("Yesterday");
+        } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
+            message.setDate(dateFormat1.format(date));
+        } else {
+            message.setDate(dateFormat2.format(date));
+        }
+        message.setTime(timeFormat.format(date));
+        message.setCreated(dateFormat2.format(date));
+    }
+
+    public static String convertDateToString(Date date) {
+        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String timeStr = Global.messageDateFormat.format(date);
+        return timeStr;
+    }
+
+    public static boolean isCommandMessage(Message message) {
+        return message.getText().startsWith("/");
+    }
+
+    // Passed Time
+    public static String differentTime(String dateStr) {
+        if (TextUtils.isEmpty(dateStr)) return null;
+        Date lastActiveDate = null;
+        try {
+            lastActiveDate = Global.messageDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Date dateTwo = new Date();
+        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
+        String timeElapsed = TimeElapsed(timeDiff);
+        String differTime = "";
+        if (timeElapsed.contains("Just now"))
+            differTime = "Active: " + timeElapsed;
+        else
+            differTime = "Active: " + timeElapsed + " ago";
+
+        return differTime;
+    }
+
+    public static String TimeElapsed(long seconds) {
+        String elapsed;
+        if (seconds < 60) {
+            elapsed = "Just now";
+        } else if (seconds < 60 * 60) {
+            int minutes = (int) (seconds / 60);
+            elapsed = String.valueOf(minutes) + " " + ((minutes > 1) ? "mins" : "min");
+        } else if (seconds < 24 * 60 * 60) {
+            int hours = (int) (seconds / (60 * 60));
+            elapsed = String.valueOf(hours) + " " + ((hours > 1) ? "hours" : "hour");
+        } else {
+            int days = (int) (seconds / (24 * 60 * 60));
+            elapsed = String.valueOf(days) + " " + ((days > 1) ? "days" : "day");
+        }
+        return elapsed;
+    }
 
     public String getCreated() {
         return created;
@@ -294,10 +413,6 @@ public class Message {
     }
 
     public boolean isIncoming() {
-        try {
-            return !this.getUser().getId().equals(Global.client.user.getId());
-        } catch (Exception e) {
-        }
-        return false;
+        return !this.getUser().getId().equals(StreamChat.getInstance().getUserId());
     }
 }

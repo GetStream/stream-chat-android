@@ -12,12 +12,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ReadIndicator;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
@@ -55,7 +56,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelResponse channelResponse, int position,
+    public void bind(Context context, ChannelState channelState, int position,
                      View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
 
         this.context = context;
@@ -68,13 +69,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                     .usePlugin(StrikethroughPlugin.create())
                     .build();
 
-        Message lastMessage = channelResponse.getLastMessage();
+        Message lastMessage = channelState.getLastMessage();
         configUIs(position);
-        configChannelInfo(channelResponse);
-        configIndicatorUserInfo(channelResponse);
+        configChannelInfo(channelState);
+        configIndicatorUserInfo(channelState);
         if (lastMessage != null) {
             configMessageDate(lastMessage);
-            configLastMessageDate(channelResponse, lastMessage);
+            configLastMessageDate(channelState, lastMessage);
         } else {
             tv_last_message.setText("");
             tv_date.setText("");
@@ -82,7 +83,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
-            view.setTag(channelResponse.getChannel().getId());
+            view.setTag(channelState.getChannel().getId());
 
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
             new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
@@ -90,7 +91,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         });
 
         tv_click.setOnLongClickListener(view -> {
-            view.setTag(channelResponse.getChannel().getId());
+            view.setTag(channelState.getChannel().getId());
             this.longClickListener.onLongClick(view);
             return true;
         });
@@ -104,8 +105,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             cl_root.setBackgroundResource(0);
     }
 
-    private void configChannelInfo(ChannelResponse channelResponse) {
-        Channel channel = channelResponse.getChannel();
+    private void configChannelInfo(ChannelState channelState) {
+        Channel channel = channelState.getChannel();
         if (!TextUtils.isEmpty(channel.getName())) {
             tv_initials.setText(channel.getInitials());
             tv_name.setText(channel.getName());
@@ -118,7 +119,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 tv_initials.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = Global.getOpponentUser(channelResponse);
+            User opponent = Global.getOpponentUser(channelState);
             if (opponent != null) {
                 tv_initials.setText(opponent.getUserInitials());
                 Utils.circleImageLoad(iv_avatar, opponent.getImage());
@@ -132,7 +133,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
     }
 
-    private void configIndicatorUserInfo(ChannelResponse channelResponse) {
+    private void configIndicatorUserInfo(ChannelState channelState) {
         if (!Global.component.channel.isShowReadIndicator()) {
             tv_indicator_initials.setVisibility(View.INVISIBLE);
             iv_indicator.setVisibility(View.INVISIBLE);
@@ -143,8 +144,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             tv_indicator_initials.setVisibility(View.VISIBLE);
             tv_unread.setVisibility(View.GONE);
 
-            User lastReadUser = channelResponse.getLastReadUser();
-            Message lastMessage = channelResponse.getLastMessage();
+            User lastReadUser = channelState.getLastReader();
+            Message lastMessage = channelState.getLastMessage();
             if (lastMessage == null) {
                 tv_indicator_initials.setVisibility(View.INVISIBLE);
                 iv_indicator.setVisibility(View.INVISIBLE);
@@ -166,7 +167,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             iv_indicator.setVisibility(View.GONE);
             tv_indicator_initials.setVisibility(View.GONE);
             tv_unread.setVisibility(View.VISIBLE);
-            int unreadMessageCount = channelResponse.getUnreadMessageCount();
+            int unreadMessageCount = channelState.getUnreadMessageCount(StreamChat.getInstance().getUserId());
             if (unreadMessageCount == 0) {
                 tv_unread.setVisibility(View.GONE);
                 return;
@@ -195,8 +196,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     }
 
-    private void configLastMessageDate(ChannelResponse channelResponse, Message lastMessage) {
-        if (Global.readMessage(channelResponse.getReadDateOfChannelLastMessage(true), lastMessage.getCreated_at())) {
+    private void configLastMessageDate(ChannelState channelState, Message lastMessage) {
+        if (Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()), lastMessage.getCreated_at())) {
             tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.NORMAL);
             tv_last_message.setTextColor(context.getResources().getColor(R.color.gray_dark));
         } else {
