@@ -4,6 +4,8 @@ import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 /**
  * A member
  */
@@ -18,11 +20,11 @@ public class Member {
 
     @SerializedName("created_at")
     @Expose
-    private String created_at;
+    private Date createdAt;
 
     @SerializedName("updated_at")
     @Expose
-    private String updated_at;
+    private Date updatedAt;
 
     @SerializedName("invited")
     @Expose
@@ -30,7 +32,7 @@ public class Member {
 
     @SerializedName("invite_accepted_at")
     @Expose
-    private String invite_accepted_at;
+    private Date inviteAcceptedAt;
 
 
     public void setUser(User user) {
@@ -49,20 +51,20 @@ public class Member {
         return role;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
     public boolean isInvited() {
@@ -73,11 +75,11 @@ public class Member {
         this.invited = invited;
     }
 
-    public String getInvite_accepted_at() {
-        return invite_accepted_at;
+    public Date getInviteAcceptedAt() {
+        return inviteAcceptedAt;
     }
 
-    public void setInvite_accepted_at(String invite_accepted_at) {
-        this.invite_accepted_at = invite_accepted_at;
+    public void setInviteAcceptedAt(Date inviteAcceptedAt) {
+        this.inviteAcceptedAt = inviteAcceptedAt;
     }
 }

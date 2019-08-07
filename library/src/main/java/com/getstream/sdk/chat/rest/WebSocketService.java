@@ -6,11 +6,8 @@ import android.util.Log;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -228,18 +225,8 @@ public class WebSocketService extends WebSocketListener {
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
             Log.d(TAG, "WebSocket Response : " + text);
-            JSONObject json;
 
-            try {
-                json = new JSONObject(text);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            Log.d(TAG, "parsing json now");
-            Event event = Parser.parseEvent(json);
-            Log.d(TAG, "set last event time now");
+            Event event = GsonConverter.Gson().fromJson(text, Event.class);
             setLastEvent(new Date());
 
             if (isConnectionResolved()) {

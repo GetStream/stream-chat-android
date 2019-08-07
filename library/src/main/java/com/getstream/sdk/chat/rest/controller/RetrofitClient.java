@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.controller;
 
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+
 import java.io.IOException;
 
 import okhttp3.OkHttpClient;
@@ -45,7 +47,7 @@ public class RetrofitClient {
             retrofit = new Retrofit.Builder()
                     .baseUrl(baseURL)
                     .client(client)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
                     .build();
         }
         return retrofit;

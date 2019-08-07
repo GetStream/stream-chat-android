@@ -54,7 +54,7 @@ public class Channel {
     @SerializedName("type")
     private String type;
     @SerializedName("last_message_at")
-    private String lastMessageDate;
+    private Date lastMessageDate;
     @SerializedName("created_by")
     private User createdByUser;
     @SerializedName("frozen")
@@ -84,7 +84,7 @@ public class Channel {
         return type;
     }
 
-    public String getLastMessageDate() {
+    public Date getLastMessageDate() {
         return lastMessageDate;
     }
 
@@ -116,7 +116,7 @@ public class Channel {
         this.type = type;
     }
 
-    public void setLastMessageDate(String lastMessageDate) {
+    public void setLastMessageDate(Date lastMessageDate) {
         this.lastMessageDate = lastMessageDate;
     }
 

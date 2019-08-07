@@ -5,6 +5,9 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+
 /**
  * An event
  */
@@ -63,7 +66,7 @@ public class Event {
 
     @SerializedName("created_at")
     @Expose
-    private String createdAt;
+    private Date createdAt;
 
     private boolean online;
 
@@ -134,7 +137,7 @@ public class Event {
         return watcherCount;
     }
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 
