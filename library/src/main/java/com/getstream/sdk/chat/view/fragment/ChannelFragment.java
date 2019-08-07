@@ -67,6 +67,7 @@ import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelFragmentViewModelFactory;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -379,6 +380,7 @@ public class ChannelFragment extends Fragment {
     private void configUIs() {
         configActionBar(); // Hides Action Bar
         configCustomMessageItemView(); // custom MessageItemView
+        configMessageInputView();
         configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
 //        binding.tvNewMessage.setVisibility(View.GONE);
@@ -542,6 +544,56 @@ public class ChannelFragment extends Fragment {
                         Utils.showMessage(getContext(), errMsg);
                     }
                 });
+    }
+
+    private void configMessageInputView() {
+
+        binding.setShowLoadMoreProgressbar(false);
+        binding.setNoConnection(Global.noConnection);
+        binding.messageInput.setOnFocusChangeListener((View view, boolean hasFocus) -> {
+            lockRVScrollListener = hasFocus;
+        });
+
+        // TODO: move this
+        KeyboardVisibilityEvent.setEventListener(
+                this, (boolean isOpen) -> {
+                    if (!isOpen) {
+                        binding.messageInput.clearFocus();
+                    } else {
+                        lockRVScrollListener = true;
+                        new Handler().postDelayed(() -> {
+                            lockRVScrollListener = false;
+                        }, 500);
+                    }
+                    if (lVPosition > messages().size() - 2)
+                        recyclerView().scrollToPosition(lVPosition);
+
+                });
+
+        ChannelFragment a = this;
+
+        binding.messageInput.setOnSendMessageListener(new MessageInputView.SendMessageListener() {
+            @Override
+            public void onSendMessage(String input) {
+                // TODO send the message
+                Log.i(TAG, "actually sending a message, epic");
+                a.sendMessage(input);
+            }
+        });
+
+        binding.messageInput.setTypingListener(new MessageInputView.TypingListener() {
+            @Override
+            public void onKeystroke() {
+                // TODO: forward to the client
+                Log.i(TAG, "i entered a letter, awesome");
+            }
+
+            @Override
+            public void onStopTyping() {
+                // TODO:  forward to the client
+                Log.i(TAG, "stop typing");
+            }
+        });
     }
 
     public void resendMessage(Message message) {
