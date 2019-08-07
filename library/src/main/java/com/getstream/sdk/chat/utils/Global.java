@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -110,7 +112,7 @@ public class Global {
         return attachments;
     }
 
-    public static ArrayList<Attachment> getAllShownImagesPath(Activity context) {
+    public static ArrayList<Attachment> getAllShownImagesPath(Context context) {
         String[] columns = {MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,
@@ -129,7 +131,9 @@ public class Global {
         Uri queryUri = MediaStore.Files.getContentUri("external");
 
         @SuppressWarnings("deprecation")
-        Cursor imagecursor = context.managedQuery(queryUri,
+        ContentResolver mContentResolver = context.getContentResolver();
+
+        Cursor imagecursor = mContentResolver.query(queryUri,
                 columns,
                 selection,
                 null, // Selection args (none).

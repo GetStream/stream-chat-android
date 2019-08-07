@@ -549,14 +549,14 @@ public class ChannelFragment extends Fragment {
     private void configMessageInputView() {
 
         binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(Global.noConnection);
+        binding.setNoConnection(!StreamChat.getInstance().isConnected());
         binding.messageInput.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             lockRVScrollListener = hasFocus;
         });
 
         // TODO: move this
         KeyboardVisibilityEvent.setEventListener(
-                this, (boolean isOpen) -> {
+                getActivity(), (boolean isOpen) -> {
                     if (!isOpen) {
                         binding.messageInput.clearFocus();
                     } else {
@@ -657,12 +657,12 @@ public class ChannelFragment extends Fragment {
 
     private Message createEphemeralMessage(boolean isOffle) {
         Message message = new Message();
-        message.setId(Global.convertDateToString(new Date()));
+        message.setId(message.convertDateToString(new Date()));
         message.setText(binding.messageInput.getMessageText());
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
-        message.setCreated_at(Global.convertDateToString(new Date()));
-        Global.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(Global.streamChat.getUser());
+        message.setCreated_at(message.convertDateToString(new Date()));
+        message.setStartDay(Arrays.asList(message), getLastMessage());
+        message.setUser(StreamChat.getInstance().getUser());
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)
@@ -955,7 +955,7 @@ public class ChannelFragment extends Fragment {
         noHistoryThread = false;
         binding.mlvMessageList.clearOnScrollListeners();
         threadBinding.rvThread.clearOnScrollListeners();
-        Utils.hideSoftKeyboard(this);
+        Utils.hideSoftKeyboard(getActivity());
     }
     // region Listener
 

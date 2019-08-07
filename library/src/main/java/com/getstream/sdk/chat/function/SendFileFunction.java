@@ -26,6 +26,8 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
@@ -52,7 +54,7 @@ public class SendFileFunction {
 
     Context context;
     ViewMessageInputBinding binding;
-    ChannelResponse channelResponse;
+    ChannelState channelResponse;
 
     public SendFileFunction(Context context, ViewMessageInputBinding binding) {
         this.context = context;
@@ -180,22 +182,31 @@ public class SendFileFunction {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
 
-            this.sendFile(attachment, attachment.getType().equals(ModelType.attach_image), (FileSendResponse response) -> {
-                File file = new File(attachment.config.getFilePath());
-                if (attachment.getType().equals(ModelType.attach_image)) {
-                    attachment.setImageURL(response.getFileUrl());
-                    attachment.setFallback(file.getName());
-                } else {
-                    attachment.setTitle(file.getName());
-                    long size = file.length();
-                    attachment.setFile_size((int) size);
-                    attachment.setAssetURL(response.getFileUrl());
+            channelResponse.getChannel().sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    binding.setActiveMessageSend(true);
+                    File file = new File(attachment.config.getFilePath());
+                    if (attachment.getType().equals(ModelType.attach_image)) {
+                        attachment.setImageURL(response.getFileUrl());
+                        attachment.setFallback(file.getName());
+                    } else {
+                        attachment.setTitle(file.getName());
+                        long size = file.length();
+                        attachment.setFile_size((int) size);
+                        attachment.setAssetURL(response.getFileUrl());
+                    }
+                    attachment.config.setUploaded(true);
+                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
                 }
-                attachment.config.setUploaded(true);
-                selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
-            }, (String errMsg, int errCode) -> {
-                attachment.config.setSelected(false);
-                updateComposerViewBySelectedMedia(attachments, attachment);
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    binding.setActiveMessageSend(true);
+                    attachment.config.setSelected(false);
+                    Utils.showMessage(context, "Failed upload image!");
+                    updateComposerViewBySelectedMedia(attachments, attachment);
+                }
             });
         } else
             selectedAttachments.remove(attachment);
@@ -255,13 +266,19 @@ public class SendFileFunction {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            this.sendFile(attachment, false, (FileSendResponse response) -> {
-                attachment.setAssetURL(response.getFileUrl());
-                attachment.config.setUploaded(true);
-                selectedFileAttachmentAdapter.notifyDataSetChanged();
-            }, (String errMsg, int errCode) -> {
-                attachment.config.setSelected(false);
-                updateComposerViewBySelectedFile(attachments, attachment);
+            channelResponse.getChannel().sendFile(attachment, false, new SendFileCallback() {
+                @Override
+                public void onSuccess(FileSendResponse response) {
+                    attachment.setAssetURL(response.getFileUrl());
+                    attachment.config.setUploaded(true);
+                    selectedFileAttachmentAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    attachment.config.setSelected(false);
+                    updateComposerViewBySelectedFile(attachments, attachment);
+                }
             });
         } else
             selectedAttachments.remove(attachment);
@@ -300,37 +317,6 @@ public class SendFileFunction {
                 binding.setActiveMessageSend(false);
             }
         });
-    }
-
-    private void sendFile(Attachment attachment, boolean isImage,
-                          RestController.SendFileCallback fileCallback,
-                          RestController.ErrCallback errCallback) {
-        Log.d(TAG, "sendFile");
-        File file = new File(attachment.config.getFilePath());
-        binding.setActiveMessageSend(false);
-        RestController.SendFileCallback callback = (FileSendResponse response) -> {
-            fileCallback.onSuccess(response);
-            binding.setActiveMessageSend(true);
-        };
-        if (isImage) {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            Global.mRestController.sendImage(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) -> {
-                Log.d(TAG, "Send image Error:" + errMsg);
-                Utils.showMessage(this.context, "Failed upload image!");
-                errCallback.onError(errMsg, errCode);
-                binding.setActiveMessageSend(true);
-            });
-        } else {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            Global.mRestController.sendFile(this.channelResponse.getChannel().getId(), part, callback, (String errMsg, int errCode) -> {
-                errCallback.onError(errMsg, errCode);
-                Log.d(TAG, "Send file Error:" + errMsg);
-                Utils.showMessage(this.context, "Failed upload file!");
-                binding.setActiveMessageSend(true);
-            });
-        }
     }
 
     public void initSendMessage() {
