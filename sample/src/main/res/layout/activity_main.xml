@@ -62,7 +62,7 @@
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:isGone="@{!viewModel.loading}"
+        app:isGone="@{!safeUnbox(viewModel.loading)}"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +71,7 @@
     <ProgressBar
         android:layout_width="25dp"
         android:layout_height="25dp"
-        app:isGone="@{!viewModel.loadingMore}"
+        app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header" />

@@ -6,12 +6,26 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
+import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.getstream.sdk.chat.utils.Utils.TAG;
 
@@ -34,13 +48,16 @@ public class ChannelViewModel2 extends AndroidViewModel {
     // TODO: Thread
     // TODO: Editing
     //
+    public MutableLiveData<Boolean> endOfPagination;
 
     public ChannelViewModel2(@NonNull Application application) {
         super(application);
-        loading = new MutableLiveData<Boolean>(true);
-        loadingMore = new MutableLiveData<Boolean>(false);
-        failed = new MutableLiveData<Boolean>(false);
-        online = new MutableLiveData<Boolean>(true);
+        loading = new MutableLiveData<>(true);
+        loadingMore = new MutableLiveData<>(false);
+        failed = new MutableLiveData<>(false);
+        online = new MutableLiveData<>(true);
+        endOfPagination = new MutableLiveData<>(false);
+
     }
 
 
@@ -64,8 +81,12 @@ public class ChannelViewModel2 extends AndroidViewModel {
             @Override
             public void onSuccess(ChannelState response) {
                 m.loading.postValue(false);
+                m.loading.setValue(false);
                 m.channelState = response;
-                Log.d(TAG, "channelState loaded");
+                List<Message> newMessages = new ArrayList<>(response.getMessages());
+                if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
+
+                Log.d(TAG, "channelState loaded" + newMessages.size());
             }
 
             @Override
@@ -74,5 +95,142 @@ public class ChannelViewModel2 extends AndroidViewModel {
                 Log.d(TAG, "Failed Connect Channel : " + errMsg);
             }
         });
+    }
+
+    private void messageEvent(Event event) {
+        Message message = event.getMessage();
+        if (message == null) return;
+
+        switch (event.getType()) {
+            case MESSAGE_NEW:
+                //newMessageEvent(message);
+                break;
+            case MESSAGE_UPDATED:
+//                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
+//                    mViewModel.setReplyCount(message.getReplyCount());
+            case MESSAGE_DELETED:
+                //updateOrDeleteMessageEvent(event, message);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void newMessageEvent(Message message) {
+        Message.setStartDay(Arrays.asList(message), getLastMessage());
+
+        switch (message.getType()) {
+            case ModelType.message_regular:
+                if (!message.isIncoming())
+                    message.setDelivered(true);
+
+                messages().remove(ephemeralMessage);
+                if (message.isIncoming() && !isShowLastMessage) {
+                    scrollPosition = -1;
+//                    binding.tvNewMessage.setVisibility(View.VISIBLE);
+                } else {
+                    scrollPosition = 0;
+                }
+                mViewModel.setChannelMessages(channelMessages);
+                messageMarkRead();
+                break;
+            case ModelType.message_ephemeral:
+            case ModelType.message_error:
+                boolean isContain = false;
+                for (int i = messages().size() - 1; i >= 0; i--) {
+                    Message message1 = messages().get(i);
+                    if (message1.getId().equals(message.getId())) {
+                        messages().remove(message1);
+                        isContain = true;
+                        break;
+                    }
+                }
+                if (!isContain) messages().add(message);
+                scrollPosition = 0;
+                if (isThreadMode()) {
+                    mThreadAdapter.notifyDataSetChanged();
+                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                } else {
+                    mViewModel.setChannelMessages(messages());
+                }
+                break;
+            case ModelType.message_reply:
+                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
+                    messages().remove(ephemeralMessage);
+                    threadMessages.add(message);
+                    mThreadAdapter.notifyDataSetChanged();
+                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+                }
+                break;
+            case ModelType.message_system:
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void loadMore() {
+        Log.d(TAG, "Next pagination...");
+        loadingMore.setValue(true);
+
+        channel.query(
+                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
+                new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        loadingMore.setValue(false);
+                        List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
+
+                        // Set Date Time
+                        Message.setStartDay(newMessages, null);
+                        // Add new to current Message List and maintain the scroll position..
+                        // TODO...
+                    }
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        loadingMore.setValue(false);
+                        // TODO: can't keep context here, need a callback? Utils.showMessage(getContext(), errMsg);
+                    }
+                }
+        );
+
+        // TODO: Handle thread...
+
+        //if (isThreadMode()) {
+//            binding.setShowMainProgressbar(true);
+//            client.getReplies(thread_parentMessage.getId(),
+//                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
+//                    threadMessages.get(0).getId(), new GetRepliesCallback() {
+//                        @Override
+//                        public void onSuccess(GetRepliesResponse response) {
+//                            binding.setShowMainProgressbar(false);
+//                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+//                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+//                                noHistoryThread = true;
+//
+//                            Message.setStartDay(newMessages, null);
+//                            // Add new to current Message List
+//                            for (int i = newMessages.size() - 1; i > -1; i--) {
+//                                threadMessages.add(0, newMessages.get(i));
+//                            }
+//                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+//                            mThreadAdapter.notifyDataSetChanged();
+//                            recyclerView().scrollToPosition(scrollPosition);
+//                            isCalling = false;
+//                        }
+//
+//                        @Override
+//                        public void onError(String errMsg, int errCode) {
+//                            Utils.showMessage(getContext(), errMsg);
+//                            isCalling = false;
+//                            binding.setShowMainProgressbar(false);
+//                        }
+//                    }
+//            );
+       // } else {
+
+
+       // }
     }
 }

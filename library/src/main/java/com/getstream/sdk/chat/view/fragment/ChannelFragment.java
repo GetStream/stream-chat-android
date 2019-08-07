@@ -207,11 +207,10 @@ public class ChannelFragment extends Fragment {
         onBackPressed();
 
         if (singleConversation) {
-            binding.setShowMainProgressbar(true);
             client.waitForConnection(new ClientConnectionCallback() {
                 @Override
                 public void onSuccess() {
-                    getChannel();
+                    //getChannel();
                 }
                 @Override
                 public void onError(String errMsg, int errCode) {
@@ -340,27 +339,6 @@ public class ChannelFragment extends Fragment {
 
     private boolean lockRVScrollListener = false;
 
-    private void getChannel() {
-        binding.setShowMainProgressbar(true);
-        Log.d(TAG, "Channel Connecting...");
-
-        channel.query(new QueryChannelCallback() {
-            @Override
-            public void onSuccess(ChannelState response) {
-                binding.setShowMainProgressbar(false);
-                channelState = response;
-                initReconnection();
-                setDeliverLastMessage();
-                configUIs();
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                binding.setShowMainProgressbar(false);
-                Log.d(TAG, "Failed Connect Channel : " + errMsg);
-            }
-        });
-    }
 
     private List<Message> messages() {
         return isThreadMode() ? threadMessages : channelMessages;
@@ -464,9 +442,8 @@ public class ChannelFragment extends Fragment {
                 if (currentFirstVisible < fVPosition) {
                     Utils.hideSoftKeyboard(getActivity());
                     binding.messageInput.clearFocus();
-                    if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
-//                    if (currentLastVisible >= messages().size() - 1)
-//                        binding.tvNewMessage.setVisibility(View.GONE);
+                    //if (currentFirstVisible == 0 && !isNoHistory()) loadMore();
+
                 }
 
                 new Handler().postDelayed(() -> {
@@ -961,77 +938,9 @@ public class ChannelFragment extends Fragment {
 
     // Event Listener
 
-    private void messageEvent(Event event) {
-        Message message = event.getMessage();
-        if (message == null) return;
 
-        switch (event.getType()) {
-            case MESSAGE_NEW:
-                newMessageEvent(message);
-                break;
-            case MESSAGE_UPDATED:
-                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
-                    mViewModel.setReplyCount(message.getReplyCount());
-            case MESSAGE_DELETED:
-                updateOrDeleteMessageEvent(event, message);
-                break;
-            default:
-                break;
-        }
-    }
 
-    private void newMessageEvent(Message message) {
-        Message.setStartDay(Arrays.asList(message), getLastMessage());
 
-        switch (message.getType()) {
-            case ModelType.message_regular:
-                if (!message.isIncoming())
-                    message.setDelivered(true);
-
-                messages().remove(ephemeralMessage);
-                if (message.isIncoming() && !isShowLastMessage) {
-                    scrollPosition = -1;
-//                    binding.tvNewMessage.setVisibility(View.VISIBLE);
-                } else {
-                    scrollPosition = 0;
-                }
-                mViewModel.setChannelMessages(channelMessages);
-                messageMarkRead();
-                break;
-            case ModelType.message_ephemeral:
-            case ModelType.message_error:
-                boolean isContain = false;
-                for (int i = messages().size() - 1; i >= 0; i--) {
-                    Message message1 = messages().get(i);
-                    if (message1.getId().equals(message.getId())) {
-                        messages().remove(message1);
-                        isContain = true;
-                        break;
-                    }
-                }
-                if (!isContain) messages().add(message);
-                scrollPosition = 0;
-                if (isThreadMode()) {
-                    mThreadAdapter.notifyDataSetChanged();
-                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                } else {
-                    mViewModel.setChannelMessages(messages());
-                }
-                break;
-            case ModelType.message_reply:
-                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
-                    messages().remove(ephemeralMessage);
-                    threadMessages.add(message);
-                    mThreadAdapter.notifyDataSetChanged();
-                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                }
-                break;
-            case ModelType.message_system:
-                break;
-            default:
-                break;
-        }
-    }
 
     private void updateOrDeleteMessageEvent(Event event, Message message) {
         if (!message.isIncoming())
@@ -1169,74 +1078,8 @@ public class ChannelFragment extends Fragment {
 
     // region Pagination
 
-    private boolean isCalling;
 
-    private void loadMore() {
-        if (isNoHistory() || isCalling) return;
-        Log.d(TAG, "Next pagination...");
-        isCalling = true;
-        if (isThreadMode()) {
-            binding.setShowMainProgressbar(true);
-            client.getReplies(thread_parentMessage.getId(),
-                String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-                threadMessages.get(0).getId(), new GetRepliesCallback() {
-                    @Override
-                    public void onSuccess(GetRepliesResponse response) {
-                        binding.setShowMainProgressbar(false);
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-                            noHistoryThread = true;
 
-                        Message.setStartDay(newMessages, null);
-                        // Add new to current Message List
-                        for (int i = newMessages.size() - 1; i > -1; i--) {
-                            threadMessages.add(0, newMessages.get(i));
-                        }
-                        int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                        mThreadAdapter.notifyDataSetChanged();
-                        recyclerView().scrollToPosition(scrollPosition);
-                        isCalling = false;
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        Utils.showMessage(getContext(), errMsg);
-                        isCalling = false;
-                        binding.setShowMainProgressbar(false);
-                    }
-                }
-            );
-        } else {
-            binding.setShowLoadMoreProgressbar(true);
-            channel.query(
-                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
-                new QueryChannelCallback() {
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        binding.setShowLoadMoreProgressbar(false);
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        if (newMessages.size() < Constant.DEFAULT_LIMIT) noHistory = true;
-
-                        // Set Date Time
-                        Message.setStartDay(newMessages, null);
-                        // Add new to current Message List
-                        for (int i = newMessages.size() - 1; i > -1; i--)
-                            channelMessages.add(0, newMessages.get(i));
-
-                        scrollPosition = ((LinearLayoutManager) binding.mlvMessageList.getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-                        mViewModel.setChannelMessages(channelMessages);
-                        isCalling = false;
-                    }
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        Utils.showMessage(getContext(), errMsg);
-                        isCalling = false;
-                        binding.setShowLoadMoreProgressbar(false);
-                    }
-                }
-            );
-        }
-    }
 
     // endregion
 
