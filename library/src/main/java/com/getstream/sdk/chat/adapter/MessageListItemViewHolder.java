@@ -7,6 +7,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +37,7 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +49,14 @@ import ru.noties.markwon.ext.latex.JLatexMathPlugin;
 import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin;
 import ru.noties.markwon.image.ImagesPlugin;
 
+
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // region LifeCycle
+    /**
+     * TODO:
+     * - use data binding
+     * - handle the logic of my message vs their messages once instead of 100 times
+     */
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
     private ConstraintLayout cl_message, headerView;
@@ -95,9 +105,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private View.OnLongClickListener longClickListener;
     private Context context;
     private Message message;
+    private MessageListViewStyle style;
 
-    public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
+    public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         super(resId, viewGroup);
+        // TODO: This should use data bindings
+        style = s;
         cl_message = itemView.findViewById(R.id.cl_message);
         ll_typingusers = itemView.findViewById(R.id.ll_typing_indicator);
 
@@ -333,7 +346,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 tv_username.setVisibility(View.GONE);
 
             tv_initials.setText(message.getUser().getUserInitials());
-            if (message.getDate() == null) Message.setStartDay(Arrays.asList(message), null);
+            if (message.getDate() == null) message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());
             else
@@ -419,27 +432,23 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (StringUtility.isEmoji(message.getText()))
             tv_text.setBackgroundResource(0); // Check Emoji Text
         else {
-            int background;
-            if (containerStyleOne(position)) {
-                if (message.isIncoming())
-                    background = (message.getAttachments() == null || message.getAttachments().isEmpty()) ? R.drawable.round_incoming_text1 : R.drawable.round_incoming_text2;
-                else {
-                    background = (message.getAttachments() == null || message.getAttachments().isEmpty()) ? R.drawable.round_outgoing_text1 : R.drawable.round_outgoing_text2;
-                }
+            Drawable background;
 
+            if (message.isIncoming()) {
+                //color = style.getMessageBubbleColorOther();
+                background = style.getMessageBubbleDrawableTheirs();
             } else {
-                if (message.isIncoming())
-                    background = R.drawable.round_incoming_text2;
-                else
-                    background = R.drawable.round_outgoing_text2;
+                //color = style.getMessageBubbleColorMine();
+                background = style.getMessageBubbleDrawableMine();
             }
-            tv_text.setBackgroundResource(background);
+            tv_text.setBackground(background);
         }
         // Set Color
-        if (message.isIncoming()) {
-            tv_text.setTextColor(context.getResources().getColor(R.color.message_text_incoming));
+        if (message.isMine()) {
+            tv_text.setTextColor(style.getMessageTextColorMine());
+
         } else {
-            tv_text.setTextColor(context.getResources().getColor(R.color.message_text_outgoing));
+            tv_text.setTextColor(style.getMessageTextColorTheirs());
         }
 
         // Set Click Listener
@@ -646,35 +655,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configAttachViewBackground(View view) {
-        int background;
+        Drawable background;
         if (message.isIncoming()) {
-            if (containerStyleOne(position)) {
-                if (view.equals(lv_attachment_file)) {
-                    if (cl_attachment_media.getVisibility() == View.VISIBLE) {
-                        background = R.drawable.round_incoming_text2;
-                    } else {
-                        background = R.drawable.round_incoming_text1;
-                    }
-                } else
-                    background = R.drawable.round_incoming_text1;
-            } else {
-                background = R.drawable.round_incoming_text2;
-            }
+            background = style.getMessageBubbleDrawableTheirs();
         } else {
-            if (containerStyleOne(position)) {
-                if (view.equals(lv_attachment_file)) {
-                    if (cl_attachment_media.getVisibility() == View.VISIBLE) {
-                        background = R.drawable.round_outgoing_text2;
-                    } else {
-                        background = R.drawable.round_outgoing_text1;
-                    }
-                } else
-                    background = R.drawable.round_outgoing_text1;
-            } else {
-                background = R.drawable.round_outgoing_text2;
-            }
+            background = style.getMessageBubbleDrawableMine();
         }
-        view.setBackgroundResource(background);
+        view.setBackground(background);
     }
 
     private void configImageThumbBackground(Attachment attachment) {
