@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 import java.util.HashMap;
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         // Or do we pass the channel object.... interesting...
         binding.messageInput.setViewModel(viewModel);
         binding.mlvMessageList.setViewModel(viewModel);
+
+
 
 
 

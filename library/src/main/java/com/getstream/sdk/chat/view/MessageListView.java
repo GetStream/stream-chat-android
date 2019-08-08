@@ -55,12 +55,28 @@ public class MessageListView extends RecyclerView {
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
         c.addEventHandler(new ChatChannelEventHandler() {
+            // TODO
+            // - onLoadMore event
+            // - onMessageNew should fire before API call is completed (or have a different event for that)
+            // - perhaps onMessageLocalNew
             @Override
             public void onMessageNew(Event event) {
                 Log.i(TAG, "MessageListView received onMessageNew event");
                 // forward to the adapter
                 adapter.addNewMessage(event.getMessage());
             }
+//            @Override
+//            public void onMessageUpdated(Event event) {
+//                Log.i(TAG, "MessageListView received onMessageNew event");
+//                // forward to the adapter
+//                adapter.addNewMessage(event.getMessage());
+//            }
+//            @Override
+//            public void onMessageDeleted(Event event) {
+//                Log.i(TAG, "MessageListView received onMessageNew event");
+//                // forward to the adapter
+//                adapter.addNewMessage(event.getMessage());
+//            }
 //            @Override
 //            public void onLoadMore(Event event) {
 //                Log.i(TAG, "MessageListView received onLoadMore event");
