@@ -89,7 +89,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ChannelListItemViewHolder(R.layout.list_item_channel, parent);
+        return new ChannelListItemViewHolder(R.layout.list_item_channel, parent, style);
     }
 
     @Override

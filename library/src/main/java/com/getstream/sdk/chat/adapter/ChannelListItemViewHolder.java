@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.ChannelListView;
 
 import ru.noties.markwon.Markwon;
 import ru.noties.markwon.core.CorePlugin;
@@ -39,8 +40,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private Markwon markwon;
     private View.OnClickListener clickListener;
     private View.OnLongClickListener longClickListener;
+    private ChannelListView.Style style;
     
-    public ChannelListItemViewHolder(int resId, ViewGroup parent) {
+    public ChannelListItemViewHolder(int resId, ViewGroup parent, ChannelListView.Style style) {
         super(resId, parent);
 
         cl_root = itemView.findViewById(R.id.cl_root);
@@ -53,6 +55,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         iv_avatar = itemView.findViewById(R.id.iv_avatar);
         iv_indicator = itemView.findViewById(R.id.iv_indicator);
         tv_unread = itemView.findViewById(R.id.tv_unread);
+        this.style = style;
     }
 
     @Override
