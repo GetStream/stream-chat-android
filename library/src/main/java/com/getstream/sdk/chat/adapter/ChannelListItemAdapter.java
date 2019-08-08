@@ -11,18 +11,21 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.view.ChannelListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private final String TAG = ChannelListItemAdapter.class.getSimpleName();
     private Context context;
     private List<Channel> channels;
     public String filter;
     private View.OnClickListener clickListener;
     private String className;
     private int itemLayoutId;
+    private ChannelListView.Style style;
     private View.OnLongClickListener longClickListener;
 
     public ChannelListItemAdapter(Context context, List<Channel> channels,
@@ -35,6 +38,18 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.className = className;
         this.itemLayoutId = itemLayoutId;
     }
+
+    public ChannelListItemAdapter(Context context, int itemLayoutId) {
+        this.context = context;
+        this.channels = new ArrayList<Channel>();
+        this.className = className;
+        this.itemLayoutId = itemLayoutId;
+    }
+
+    public void setStyle(ChannelListView.Style s) {
+        style = s;
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,

@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="ChannelListView">
+        <attr name="avatarWidth" format="dimension|reference"/>
+        <attr name="avatarHeight" format="dimension|reference"/>
+        <attr name="titleTextColor" format="color|reference"/>
+        <attr name="titleTextStyle">
+            <flag name="normal" value="0"/>
+            <flag name="bold" value="1"/>
+        </attr>
+        <attr name="unreadTitleTextColor" format="color|reference"/>
+        <attr name="unreadTitleTextStyle">
+            <flag name="normal" value="0"/>
+            <flag name="bold" value="1"/>
+        </attr>
+        <attr name="dateTextColor" format="color|reference"/>
+        <attr name="dateTextSize" format="dimension|reference"/>
+    </declare-styleable>
     <declare-styleable name="MessageInputView">
         <attr name="inputHint" format="string"/>
     </declare-styleable>

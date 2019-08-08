@@ -5,14 +5,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
-
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 import java.util.HashMap;
 
@@ -36,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
         return client;
     }
 
+    protected void queryChannels(Client c) {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize a websocket connection to Stream and setup the channel
         Client c = configureStreamClient();
 
+
         // we're using data binding in this example
         ActivityMainBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_main);
@@ -51,8 +52,10 @@ public class MainActivity extends AppCompatActivity {
         // most the business logic of the chat is handled in the view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
 
-        // TODO: do we pass the view model, do we get the viewModel...
-        // Or do we pass the channel object.... interesting...
+        //query = c.queryChannels().filterMembers(USER_ID)
+        //viewModel.setChannelQuery(query)
+
+
         binding.channelList.setViewModel(viewModel);
 
         // set the viewModel data for the layout

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <dimen name="stream_channel_avatar_height">40dp</dimen>
+    <dimen name="stream_channel_avatar_width">40dp</dimen>
+    <dimen name="stream_channel_preview_name">14sp</dimen>
+    <dimen name="stream_channel_preview_date">11sp</dimen>
+
     <!--Message Composer-->
     <dimen name="composer_stroke_width">2dp</dimen>
     <dimen name="composer_corner_radius">10dp</dimen>
