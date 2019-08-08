@@ -2,7 +2,6 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -15,25 +14,20 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import static com.getstream.sdk.chat.enums.Filters.in;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
-import static com.getstream.sdk.chat.enums.Filters.eq;
+import static com.getstream.sdk.chat.enums.Filters.in;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    final String USER_ID = "broken-waterfall-5";
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
-
+    final String USER_ID = "broken-waterfall-5";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
     private ChannelListViewModel viewModel;
 
     protected Client configureStreamClient() {
