@@ -319,6 +319,7 @@ public class Client implements WSResponseHandler {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                 if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
+                    // TODO: this is expected, how is this an error? should just return an empty list
                     callback.onError("There is no any active Channel(s)!", -1);
                 else {
                     for (int i = 0; i < response.body().getChannels().size(); i++) {
@@ -335,6 +336,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
+                Log.e(TAG, "shit hit the fan");
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
