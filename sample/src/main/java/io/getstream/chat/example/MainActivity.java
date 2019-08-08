@@ -1,6 +1,8 @@
 package io.getstream.chat.example;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     final String USER_ID = "broken-waterfall-5";
     final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
+    public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
+    public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
 
     private ChannelListViewModel viewModel;
 
@@ -65,10 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         binding.channelList.setViewModel(viewModel);
+        MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(new ChannelListView.ChannelClickListener() {
             @Override
             public void onClick(Channel channel) {
-                // TODO: open the channel activity
+                // open the channel activity
+                Intent intent = new Intent(parent, ChannelActivity.class);
+                intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
+                intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
+                startActivity(intent);
             }
         });
         binding.channelList.setOnUserClickListener(new ChannelListView.UserClickListener() {

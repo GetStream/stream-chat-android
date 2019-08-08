@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 public class ChannelHeaderToolbar extends RelativeLayout {
 
@@ -23,6 +24,9 @@ public class ChannelHeaderToolbar extends RelativeLayout {
 
     // binding for this view
     private ToolbarChannelHeaderBinding binding;
+
+    // our connection to the channel scope
+    private ChannelViewModel2 modelView;
 
     public ChannelHeaderToolbar(Context context) {
         super(context);
@@ -37,6 +41,10 @@ public class ChannelHeaderToolbar extends RelativeLayout {
     public ChannelHeaderToolbar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         binding = initBinding(context);
+    }
+
+    public void setViewModel(ChannelViewModel2 model) {
+        this.modelView = model;
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
