@@ -50,6 +50,29 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         style = s;
     }
 
+    public void deleteChannel(Channel channel) {
+        int index = 0;
+        for (Channel c : channels) {
+            if (c.getCid() == channel.getCid()) {
+                channels.remove(index);
+                notifyItemChanged(index);
+            }
+            index += 1;
+        }
+    }
+
+    public void upsertChannel(Channel channel) {
+        // try to remove
+        this.deleteChannel(channel);
+        // always add to the top of the list...
+        channels.add(0, channel);
+    }
+
+    public void addChannels(List<Channel> channelList) {
+        channels.addAll(channels.size(), channelList);
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,

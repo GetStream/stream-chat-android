@@ -61,23 +61,24 @@ public class ChannelListView extends RecyclerView {
 
         // listen to events
         client.addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onChannelLoaded(Event event) {
-                // TODO: new channel, add to adapter
-            }
+            // TODO: actually support this
+//            @Override
+//            public void onChannelLoaded(Event event) {
+//                adapter.addChannels(event.getChannels());
+//            }
             @Override
             public void onNotificationMessageNew(Event event) {
-                // TODO: new channel, add to adapter
+                adapter.upsertChannel(event.getChannel());
             }
 
             @Override
             public void onChannelDeleted(Event event) {
-                // TODO: new channel, add to adapter
+                adapter.deleteChannel(event.getChannel());
             }
 
             @Override
             public void onChannelUpdated(Event event) {
-                // TODO: new channel, add to adapter
+                adapter.upsertChannel(event.getChannel());
             }
         });
 

@@ -1,13 +1,16 @@
 package io.getstream.chat.example;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.os.Bundle;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.HashMap;
@@ -40,10 +43,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // initialize a websocket connection to Stream and setup the channel
         Client c = configureStreamClient();
-
 
         // we're using data binding in this example
         ActivityMainBinding binding =
@@ -51,15 +52,26 @@ public class MainActivity extends AppCompatActivity {
 
         // most the business logic of the chat is handled in the view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-
+        // set the viewModel data for the layout
+        binding.setViewModel(viewModel);
         //query = c.queryChannels().filterMembers(USER_ID)
         //viewModel.setChannelQuery(query)
 
 
         binding.channelList.setViewModel(viewModel);
+        binding.channelList.setOnChannelClickListener(new ChannelListView.ChannelClickListener() {
+            @Override
+            public void onClick(Channel channel) {
+                // TODO: open the channel activity
+            }
+        });
+        binding.channelList.setOnUserClickListener(new ChannelListView.UserClickListener() {
+            @Override
+            public void onClick(User user) {
+                // TODO: open your user profile
+            }
+        });
 
-        // set the viewModel data for the layout
-        binding.setViewModel(viewModel);
 
     }
 }
