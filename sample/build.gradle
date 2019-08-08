@@ -53,6 +53,7 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:okhttp:3.8.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation 'ru.noties.markwon:core:3.0.0'
     implementation 'ru.noties.markwon:ext-strikethrough:3.0.0'

@@ -4,14 +4,16 @@
         <attr name="avatarWidth" format="dimension|reference"/>
         <attr name="avatarHeight" format="dimension|reference"/>
         <attr name="titleTextColor" format="color|reference"/>
-        <attr name="titleTextStyle">
+        <attr name="titleTextStyleChannel">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
+            <flag name="italic" value="2"/>
         </attr>
         <attr name="unreadTitleTextColor" format="color|reference"/>
         <attr name="unreadTitleTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
+            <flag name="italic" value="2"/>
         </attr>
         <attr name="dateTextColor" format="color|reference"/>
         <attr name="dateTextSize" format="dimension|reference"/>

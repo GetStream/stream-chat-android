@@ -28,7 +28,6 @@
 
         <ImageView
             android:id="@+id/iv_avatar"
-            style="@style/channel_preview_avatar"
             android:layout_margin="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +35,6 @@
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/channel_preview_channel_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -69,7 +67,6 @@
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/channel_preview_channel_last_message_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"

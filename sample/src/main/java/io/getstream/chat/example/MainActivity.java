@@ -7,15 +7,23 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import static com.getstream.sdk.chat.enums.Filters.in;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
+
+import static com.getstream.sdk.chat.enums.Filters.and;
+import static com.getstream.sdk.chat.enums.Filters.eq;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,10 +43,6 @@ public class MainActivity extends AppCompatActivity {
         return client;
     }
 
-    protected void queryChannels(Client c) {
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the layout
         binding.setViewModel(viewModel);
-        //query = c.queryChannels().filterMembers(USER_ID)
-        //viewModel.setChannelQuery(query)
+
+
+        FilterObject filter = in("members", USER_ID);
+        viewModel.setChannelFilter(filter);
 
 
         binding.channelList.setViewModel(viewModel);

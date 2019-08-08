@@ -84,7 +84,7 @@ public class ChannelListView extends RecyclerView {
 
         // setup the default adapter
 
-        adapter = new ChannelListItemAdapter(getContext(), style.getLayoutID());
+        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
     }
 
     public void setOnUserClickListener(UserClickListener userClickListener) {
@@ -105,9 +105,6 @@ public class ChannelListView extends RecyclerView {
         super.setAdapter(adapter);
         adapter.setStyle(style);
 
-        // 1. listen to the scroll
-        // 2. call viewHolder.loadMore when at the top
-        // 3. with the result of loadMore call adapter.addOldMessages()
         int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -117,7 +114,7 @@ public class ChannelListView extends RecyclerView {
                 super.onScrolled(recyclerView, dx, dy);
                 int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 if (currentFirstVisible < fVPosition) {
-                    //viewModel.loadMore();
+                    viewModel.loadMore();
                 }
             }
         });
@@ -154,7 +151,7 @@ public class ChannelListView extends RecyclerView {
             unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_unreadTitleTextColor, c.getResources().getColor(R.color.stream_channel_preview_last_message));
             dateTextColor = a.getColor(R.styleable.ChannelListView_dateTextColor, c.getResources().getColor(R.color.stream_channel_preview_date));
 
-            titleTextStyle =a.getInt(R.styleable.ChannelListView_titleTextStyle, Typeface.NORMAL);
+            titleTextStyle =a.getInt(R.styleable.ChannelListView_titleTextStyleChannel, Typeface.NORMAL);
             unreadTitleTextStyle =a.getInt(R.styleable.ChannelListView_unreadTitleTextStyle, Typeface.NORMAL);
 
             a.recycle();
