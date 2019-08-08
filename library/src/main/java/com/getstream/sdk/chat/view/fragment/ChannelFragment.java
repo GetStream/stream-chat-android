@@ -138,18 +138,18 @@ public class ChannelFragment extends Fragment {
             public void onTypingStop(Event event) {
                 footerEvent(event);
             }
-            @Override
-            public void onMessageNew(Event event) {
-                messageEvent(event);
-            }
-            @Override
-            public void onMessageUpdated(Event event) {
-                messageEvent(event);
-            }
-            @Override
-            public void onMessageDeleted(Event event) {
-                messageEvent(event);
-            }
+//            @Override
+//            public void onMessageNew(Event event) {
+//                messageEvent(event);
+//            }
+//            @Override
+//            public void onMessageUpdated(Event event) {
+//                messageEvent(event);
+//            }
+//            @Override
+//            public void onMessageDeleted(Event event) {
+//                messageEvent(event);
+//            }
             @Override
             public void onMessageRead(Event event) {
                 if (!channelState.getLastMessage().isIncoming()) {
@@ -168,7 +168,6 @@ public class ChannelFragment extends Fragment {
             public void onChannelDeleted(Event event) {
                 getActivity().runOnUiThread(() -> {
                     Utils.showMessage(getContext(), "Channel Owner just removed this channel!");
-                    finish();
                 });
             }
         });
@@ -306,7 +305,7 @@ public class ChannelFragment extends Fragment {
 //                    return true;
 //                }
                 if (!singleConversation) {
-                    finish();
+                    //finish();
                     return true;
                 }
                 return false;
@@ -315,14 +314,6 @@ public class ChannelFragment extends Fragment {
         });
     }
 
-    private void finish() {
-        FragmentManager manager = getActivity().getSupportFragmentManager();
-        FragmentTransaction trans = manager.beginTransaction();
-        trans.remove(this);
-        trans.commit();
-        manager.popBackStack();
-    }
-    //endregion
 
     private void initReconnection() {
         binding.setViewModel(mViewModel);
@@ -357,7 +348,6 @@ public class ChannelFragment extends Fragment {
     // region Config UIs
     private void configUIs() {
         configActionBar(); // Hides Action Bar
-        configCustomMessageItemView(); // custom MessageItemView
         configMessageInputView();
         configMessageRecyclerView(); // Message RecyclerView
         // Bottom View
@@ -376,11 +366,6 @@ public class ChannelFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private void configCustomMessageItemView() {
-        messageItemLayoutId = client.getComponent().message.getMessageItemLayoutId();
-        messageItemViewHolderName = client.getComponent().message.getMessageItemViewHolderName();
     }
 
 
@@ -824,7 +809,7 @@ public class ChannelFragment extends Fragment {
                 Event event = new Event();
                 event.setType(EventType.MESSAGE_NEW);
                 event.setMessage(message);
-                messageEvent(event);
+                //messageEvent(event);
                 break;
             default:
                 break;

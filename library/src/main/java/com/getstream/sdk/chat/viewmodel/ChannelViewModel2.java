@@ -47,7 +47,7 @@ public class ChannelViewModel2 extends AndroidViewModel {
 
     // TODO: Thread
     // TODO: Editing
-    //
+    // TODO: Event handler
     public MutableLiveData<Boolean> endOfPagination;
 
     public ChannelViewModel2(@NonNull Application application) {
@@ -116,58 +116,58 @@ public class ChannelViewModel2 extends AndroidViewModel {
         }
     }
 
-    private void newMessageEvent(Message message) {
-        Message.setStartDay(Arrays.asList(message), getLastMessage());
-
-        switch (message.getType()) {
-            case ModelType.message_regular:
-                if (!message.isIncoming())
-                    message.setDelivered(true);
-
-                messages().remove(ephemeralMessage);
-                if (message.isIncoming() && !isShowLastMessage) {
-                    scrollPosition = -1;
-//                    binding.tvNewMessage.setVisibility(View.VISIBLE);
-                } else {
-                    scrollPosition = 0;
-                }
-                mViewModel.setChannelMessages(channelMessages);
-                messageMarkRead();
-                break;
-            case ModelType.message_ephemeral:
-            case ModelType.message_error:
-                boolean isContain = false;
-                for (int i = messages().size() - 1; i >= 0; i--) {
-                    Message message1 = messages().get(i);
-                    if (message1.getId().equals(message.getId())) {
-                        messages().remove(message1);
-                        isContain = true;
-                        break;
-                    }
-                }
-                if (!isContain) messages().add(message);
-                scrollPosition = 0;
-                if (isThreadMode()) {
-                    mThreadAdapter.notifyDataSetChanged();
-                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                } else {
-                    mViewModel.setChannelMessages(messages());
-                }
-                break;
-            case ModelType.message_reply:
-                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
-                    messages().remove(ephemeralMessage);
-                    threadMessages.add(message);
-                    mThreadAdapter.notifyDataSetChanged();
-                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-                }
-                break;
-            case ModelType.message_system:
-                break;
-            default:
-                break;
-        }
-    }
+//    private void newMessageEvent(Message message) {
+//        Message.setStartDay(Arrays.asList(message), getLastMessage());
+//
+//        switch (message.getType()) {
+//            case ModelType.message_regular:
+//                if (!message.isIncoming())
+//                    message.setDelivered(true);
+//
+//                messages().remove(ephemeralMessage);
+//                if (message.isIncoming() && !isShowLastMessage) {
+//                    scrollPosition = -1;
+////                    binding.tvNewMessage.setVisibility(View.VISIBLE);
+//                } else {
+//                    scrollPosition = 0;
+//                }
+//                mViewModel.setChannelMessages(channelMessages);
+//                messageMarkRead();
+//                break;
+//            case ModelType.message_ephemeral:
+//            case ModelType.message_error:
+//                boolean isContain = false;
+//                for (int i = messages().size() - 1; i >= 0; i--) {
+//                    Message message1 = messages().get(i);
+//                    if (message1.getId().equals(message.getId())) {
+//                        messages().remove(message1);
+//                        isContain = true;
+//                        break;
+//                    }
+//                }
+//                if (!isContain) messages().add(message);
+//                scrollPosition = 0;
+//                if (isThreadMode()) {
+//                    mThreadAdapter.notifyDataSetChanged();
+//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+//                } else {
+//                    mViewModel.setChannelMessages(messages());
+//                }
+//                break;
+//            case ModelType.message_reply:
+//                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
+//                    messages().remove(ephemeralMessage);
+//                    threadMessages.add(message);
+//                    mThreadAdapter.notifyDataSetChanged();
+//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
+//                }
+//                break;
+//            case ModelType.message_system:
+//                break;
+//            default:
+//                break;
+//        }
+//    }
 
     private void loadMore() {
         Log.d(TAG, "Next pagination...");
