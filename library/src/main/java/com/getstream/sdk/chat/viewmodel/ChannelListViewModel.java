@@ -68,6 +68,7 @@ public class ChannelListViewModel extends AndroidViewModel {
         sort.put("direction", -1);
 
         payload.put("sort", Collections.singletonList(sort));
+        payload.put("message_limit", 20);
         payload.put("limit", 20);
         payload.put("offset", 0);
 

@@ -318,10 +318,8 @@ public class Client implements WSResponseHandler {
         mService.queryChannels(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                if (response.body().getChannels() == null || response.body().getChannels().isEmpty())
-                    // TODO: this is expected, how is this an error? should just return an empty list
-                    callback.onError("There is no any active Channel(s)!", -1);
-                else {
+
+                if (response.isSuccessful()) {
                     for (int i = 0; i < response.body().getChannels().size(); i++) {
                         ChannelState channelState = response.body().getChannels().get(i);
                         Channel channelData = channelState.getChannel();
@@ -331,6 +329,8 @@ public class Client implements WSResponseHandler {
                         addToActiveChannels(channel);
                     }
                     callback.onSuccess(response.body());
+                } else {
+                    callback.onError("Non 200 status code" + response.body().toString(), -1);
                 }
             }
 
