@@ -8,12 +8,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 
@@ -31,7 +29,7 @@ public class MessageListView extends RecyclerView {
     private MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
-    private ChannelViewModel2 modelView;
+    private ChannelViewModel2 viewModel;
     public MessageListView(Context context) {
         super(context);
     }
@@ -51,10 +49,10 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
-    public void setViewModel(ChannelViewModel2 model) {
-        this.modelView = model;
+    public void setViewModel(ChannelViewModel2 viewModel) {
+        this.viewModel = viewModel;
 
-        Channel c = this.modelView.getChannel();
+        Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
         c.addEventHandler(new ChatChannelEventHandler() {
             @Override
@@ -63,6 +61,12 @@ public class MessageListView extends RecyclerView {
                 // forward to the adapter
                 adapter.addNewMessage(event.getMessage());
             }
+//            @Override
+//            public void onLoadMore(Event event) {
+//                Log.i(TAG, "MessageListView received onLoadMore event");
+//                // forward to the adapter
+//                adapter.addOldMessages(event.getMessages());
+//            }
 
         });
     }
@@ -77,8 +81,6 @@ public class MessageListView extends RecyclerView {
         // 3. with the result of loadMore call adapter.addOldMessages()
         int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
 
-
-
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -86,11 +88,8 @@ public class MessageListView extends RecyclerView {
                 super.onScrolled(recyclerView, dx, dy);
                 int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 if (currentFirstVisible < fVPosition) {
-                    // viewModel.loadMore()
-                    // TODO: ensure we only load once
-                    // adapter.addOldMessages()
+                    viewModel.loadMore();
                 }
-                // TODO: block new message scroll down if we're scrolled up..
             }
         });
 

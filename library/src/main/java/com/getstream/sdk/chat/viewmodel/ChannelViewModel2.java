@@ -212,8 +212,10 @@ public class ChannelViewModel2 extends AndroidViewModel implements MessageInputV
 //                });
 //    }
 
-    private void loadMore() {
-        Log.d(TAG, "Next pagination...");
+    public void loadMore() {
+        Log.d(TAG, "ViewModel loadMore called");
+        if (loadingMore.getValue()) return;
+
         loadingMore.setValue(true);
 
         channel.query(
@@ -224,16 +226,10 @@ public class ChannelViewModel2 extends AndroidViewModel implements MessageInputV
                         loadingMore.setValue(false);
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
                         if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
-
-                        // Set Date Time
-                        Message.setStartDay(newMessages, null);
-                        // Add new to current Message List and maintain the scroll position..
-                        // TODO...
                     }
                     @Override
                     public void onError(String errMsg, int errCode) {
                         loadingMore.setValue(false);
-                        // TODO: can't keep context here, need a callback? Utils.showMessage(getContext(), errMsg);
                     }
                 }
         );
