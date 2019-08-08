@@ -243,6 +243,11 @@ public class Client implements WSResponseHandler {
         WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
     }
+    public Channel channel(String cid){
+        String[] parts = cid.split(":", 2);
+        return new Channel(this, parts[0], parts[1]);
+    }
+
 
     public Channel channel(String type, String id){
         return new Channel(this, type, id);

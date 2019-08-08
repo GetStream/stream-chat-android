@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -25,7 +26,7 @@ import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
-public class ChannelListView extends RecyclerView {
+public class ChannelListView extends RecyclerView implements View.OnClickListener {
     final String TAG = ChannelListView.class.getSimpleName();
 
     private Style style;
@@ -83,8 +84,11 @@ public class ChannelListView extends RecyclerView {
         });
 
         // setup the default adapter
-
         adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
+        this.setAdapterWithStyle(adapter);
+
+        // connect the viewHolder on click listener...
+        adapter.SetOnClickListener(this);
     }
 
     public void setOnUserClickListener(UserClickListener userClickListener) {
@@ -105,7 +109,10 @@ public class ChannelListView extends RecyclerView {
         super.setAdapter(adapter);
         adapter.setStyle(style);
 
-        int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
+        int fVPosition = 0;
+
+        // TODO: make this work if the layout isn't up and running yet
+        //int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -119,6 +126,26 @@ public class ChannelListView extends RecyclerView {
             }
         });
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        // TODO: determine what the user clicked.. and forward to user or channel on click listener...s
+        int id = v.getId();
+        Log.i(TAG, "click click on a channel");
+        String channelCID = v.getTag().toString();
+
+        if (id == R.id.iv_avatar) {
+            if (this.userClickListener != null) {
+                // TODO get the user somehow
+                // this.userClickListener.onClick();
+            }
+        } else {
+            if (this.channelClickListener != null) {
+                Channel channel = StreamChat.getInstance().channel(channelCID);
+                this.channelClickListener.onClick(channel);
+            }
+        }
     }
 
 

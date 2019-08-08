@@ -86,7 +86,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
-            view.setTag(channelState.getChannel().getId());
+            view.setTag(channelState.getChannel().getCid());
 
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
             new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
@@ -94,7 +94,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         });
 
         tv_click.setOnLongClickListener(view -> {
-            view.setTag(channelState.getChannel().getId());
+            view.setTag(channelState.getChannel().getCid());
             this.longClickListener.onLongClick(view);
             return true;
         });

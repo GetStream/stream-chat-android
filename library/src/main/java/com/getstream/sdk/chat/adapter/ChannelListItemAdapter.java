@@ -46,6 +46,12 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.itemLayoutId = itemLayoutId;
     }
 
+    public void SetOnClickListener(View.OnClickListener l ) {
+        clickListener = l;
+    }
+
+
+
     public void setStyle(ChannelListView.Style s) {
         style = s;
     }
