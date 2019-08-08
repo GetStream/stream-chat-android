@@ -321,6 +321,23 @@ public class Channel {
             }
         });
     }
+    // region Message
+    public void sendMessage(Message message,
+                            MessageCallback callback) {
+        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelState, message.getText());
+        SendMessageRequest request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
+        client.sendMessage(this.id, request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
 
     public void updateMessage(String text,
                               @NonNull Message message,

@@ -10,18 +10,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.enums.Pagination;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +40,7 @@ import static com.getstream.sdk.chat.utils.Utils.TAG;
 * - load more data
 * -
  */
-public class ChannelViewModel2 extends AndroidViewModel {
+public class ChannelViewModel2 extends AndroidViewModel implements MessageInputView.SendMessageListener {
     private final String TAG = ChannelViewModel2.class.getSimpleName();
 
     public MutableLiveData<Boolean> loading;
@@ -61,6 +66,8 @@ public class ChannelViewModel2 extends AndroidViewModel {
     }
 
 
+
+
     public Channel getChannel() {
         return channel;
     }
@@ -68,6 +75,14 @@ public class ChannelViewModel2 extends AndroidViewModel {
     public void setChannel(Channel channel) {
         this.channel = channel;
         this.loadChannelState();
+        // TODO: set the adapter
+        this.channel.addEventHandler(new ChatChannelEventHandler(){
+            @Override
+            public void onMessageNew(Event event) {
+                messageEvent(event);
+                // update the adapter
+            }
+        });
     }
 
     private void loadChannelState() {
@@ -169,6 +184,34 @@ public class ChannelViewModel2 extends AndroidViewModel {
 //        }
 //    }
 
+//    public void sendNewMessage(Message message) {
+//        if (offline) {
+//            //sendOfflineMessage();
+//            return;
+//        }
+//        if (resendMessageId == null) {
+//            ephemeralMessage = createEphemeralMessage(false);
+//            handleAction(ephemeralMessage);
+//        }
+//        binding.messageInput.setEnabled(false);
+//        channel.sendMessage(text,
+//                attachments,
+//                isThreadMode() ? thread_parentMessage.getId() : null,
+//                new MessageCallback() {
+//                    @Override
+//                    public void onSuccess(MessageResponse response) {
+//                        binding.messageInput.setEnabled(true);
+//                        progressSendMessage(response.getMessage(), resendMessageId);
+//                    }
+//
+//                    @Override
+//                    public void onError(String errMsg, int errCode) {
+//                        binding.messageInput.setEnabled(true);
+//                        Utils.showMessage(getContext(), errMsg);
+//                    }
+//                });
+//    }
+
     private void loadMore() {
         Log.d(TAG, "Next pagination...");
         loadingMore.setValue(true);
@@ -232,5 +275,31 @@ public class ChannelViewModel2 extends AndroidViewModel {
 
 
        // }
+    }
+
+    @Override
+    public void onSendMessage(Message message) {
+        Log.i(TAG, "onSendMessage handler called at viewmodel level");
+        channel.sendMessage(message,
+            new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    Message responseMessage = response.getMessage();
+                    Log.i(TAG, "onSuccess event for sending the message");
+                    // somehow we need to reach the adapter... (but the viewmodel can't know about the adapter)
+                    // - livedata.observe is one way
+                    // - the adapter listening to an event from the viewmodel or client is another
+                    // -- new message event
+                    // -- updated message event
+                    // -- deleted message event
+                    // -- load more event
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    //binding.messageInput.setEnabled(true);
+                }
+        });
+
     }
 }

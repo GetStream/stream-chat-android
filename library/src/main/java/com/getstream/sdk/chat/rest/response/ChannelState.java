@@ -43,15 +43,12 @@ public class ChannelState {
     @SerializedName("watcher_count")
     private int watcherCount;
 
-    public MutableLiveData<String> test;
-
     public ChannelState() {
         channel = null;
         messages = new ArrayList<>();
         reads = new ArrayList<>();
         members = new ArrayList<>();
         Log.i(TAG, "ChannelState constructor... ");
-        test = new MutableLiveData<String>("hi");
     }
 
     // endregion

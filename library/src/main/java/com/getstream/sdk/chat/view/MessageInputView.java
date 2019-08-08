@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,9 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
      */
 
     final String TAG = MessageInputView.class.getSimpleName();
+
+    // our connection to the channel scope
+    private ChannelViewModel2 modelView;
 
     // binding for this view
     private ViewMessageInputBinding binding;
@@ -106,6 +110,12 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
         return binding;
+    }
+
+    public void setViewModel(ChannelViewModel2 model) {
+        this.modelView = model;
+
+        this.setOnSendMessageListener(model);
     }
 
     public List<Attachment> GetAttachments() {
@@ -230,9 +240,13 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
         //binding.setActiveMessageComposer(hasFocus);
     }
 
+
+
     private void onSendMessage(String input) {
+        Message m = new Message();
+        m.setText(input);
         if (sendMessageListener != null) {
-            sendMessageListener.onSendMessage(input);
+            sendMessageListener.onSendMessage(m);
         }
     }
 
@@ -266,7 +280,7 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
      * Used for listening to the sendMessage event
      */
     public interface SendMessageListener {
-        void onSendMessage(String input);
+        void onSendMessage(Message message);
     }
 
     /**

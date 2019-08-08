@@ -2,11 +2,19 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
+import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 
 /**
@@ -18,7 +26,12 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
 public class MessageListView extends RecyclerView {
+    final String TAG = MessageListView.class.getSimpleName();
+
     private MessageListViewStyle style;
+    private MessageListItemAdapter adapter;
+    // our connection to the channel scope
+    private ChannelViewModel2 modelView;
     public MessageListView(Context context) {
         super(context);
     }
@@ -38,10 +51,49 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
+    public void setViewModel(ChannelViewModel2 model) {
+        this.modelView = model;
+
+        Channel c = this.modelView.getChannel();
+        Log.i(TAG, "MessageListView is attaching a listener on the channel object");
+        c.addEventHandler(new ChatChannelEventHandler() {
+            @Override
+            public void onMessageNew(Event event) {
+                Log.i(TAG, "MessageListView received onMessageNew event");
+                // forward to the adapter
+                adapter.addNewMessage(event.getMessage());
+            }
+
+        });
+    }
+
     // set the adapter and apply the style.
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
         super.setAdapter(adapter);
         adapter.setStyle(style);
+
+        // 1. listen to the scroll
+        // 2. call viewHolder.loadMore when at the top
+        // 3. with the result of loadMore call adapter.addOldMessages()
+        int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
+
+
+
+        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                if (currentFirstVisible < fVPosition) {
+                    // viewModel.loadMore()
+                    // TODO: ensure we only load once
+                    // adapter.addOldMessages()
+                }
+                // TODO: block new message scroll down if we're scrolled up..
+            }
+        });
+
     }
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {

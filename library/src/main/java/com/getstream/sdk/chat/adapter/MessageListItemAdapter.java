@@ -4,6 +4,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,6 +14,8 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -45,6 +49,26 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setStyle(MessageListViewStyle s) {
         style = s;
+    }
+
+
+
+    public void addNewMessage(Message message) {
+        Log.i(TAG, "MessageListItem adapter addNewMessage called");
+        int position = messageList.size();
+        messageList.add(position, message);
+        notifyItemInserted(position);
+
+        // TODO: scroll to the bottom if the user isn't currently scrolling up. if the user is scrolling up set a new message indicator
+
+    }
+
+
+    public boolean addOldMessages(List<Message> messages) {
+        Log.i(TAG, "MessageListItem adapter addOldMessages");
+        messageList.addAll(0, messages);
+        // TODO: scroll to maintain the original scroll position
+        return false;
     }
 
     @Override

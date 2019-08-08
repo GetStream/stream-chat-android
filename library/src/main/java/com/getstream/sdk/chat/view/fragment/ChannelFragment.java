@@ -536,10 +536,10 @@ public class ChannelFragment extends Fragment {
 
         binding.messageInput.setOnSendMessageListener(new MessageInputView.SendMessageListener() {
             @Override
-            public void onSendMessage(String input) {
+            public void onSendMessage(Message message) {
                 // TODO send the message
                 Log.i(TAG, "actually sending a message, epic");
-                a.sendMessage(input);
+                a.sendMessage(message.getText());
             }
         });
 

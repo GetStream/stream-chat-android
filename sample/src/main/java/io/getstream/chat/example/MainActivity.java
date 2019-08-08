@@ -50,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         viewModel.setChannel(channel);
         // TODO: do we pass the view model, do we get the viewModel...
         // Or do we pass the channel object.... interesting...
-        // binding.chtHeader.setViewModel(viewModel);
+        binding.messageInput.setViewModel(viewModel);
+        binding.mlvMessageList.setViewModel(viewModel);
 
 
 
