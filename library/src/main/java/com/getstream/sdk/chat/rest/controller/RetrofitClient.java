@@ -25,7 +25,8 @@ public class RetrofitClient {
                     Request request = chain.request();
                     Response response = chain.proceed(request);
                     if (!response.isSuccessful()) {
-                        throw new IOException(response.body().toString());
+                        String message = response.body().string();
+                        throw new IOException(message);
                     }
                     return response;
                 })

@@ -37,25 +37,25 @@ import retrofit2.http.Query;
 public interface APIService {
     // region Channel
     @GET("/channels")
-    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Query("payload") JSONObject payload);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelState> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelQueryRequest request);
+    Call<ChannelState> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
     @DELETE("/channels/messaging/{id}")
-    Call<ChannelState> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<ChannelState> deleteChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID);
 
     @POST("/channels/messaging/{id}/query")
-    Call<ChannelState> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body ChannelQueryRequest request);
+    Call<ChannelState> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
     @POST("/channels/messaging/{id}/stop-watching")
-    Call<ChannelState> chatStopWatch(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
+    Call<ChannelState> chatStopWatch(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, String> body);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelState> acceptInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
+    Call<ChannelState> acceptInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);
 
     @POST("/channels/messaging/{id}")
-    Call<ChannelState> rejectInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, Object> body);
+    Call<ChannelState> rejectInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);
     // endregion
 
     // region User

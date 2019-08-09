@@ -233,7 +233,7 @@ public class Channel {
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess() {
-                        client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getConnectionId(), request).enqueue(new Callback<ChannelState>() {
+                        client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 ChannelState state = response.body();

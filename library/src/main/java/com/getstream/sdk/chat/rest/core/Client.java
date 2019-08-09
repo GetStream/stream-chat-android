@@ -82,11 +82,11 @@ public class Client implements WSResponseHandler {
         return user.getId();
     }
 
-    public String getConnectionId() {
-        return connectionId;
+    public String getClientID() {
+        return clientID;
     }
 
-    public String connectionId;
+    public String clientID;
 
     private Component component;
     // Client params
@@ -259,7 +259,7 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void connectionResolved(Event event){
-        connectionId = event.getConnectionId();
+        clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
@@ -320,7 +320,8 @@ public class Client implements WSResponseHandler {
 
     // region Channel
     public void queryChannels(JSONObject payload, QueryChannelListCallback callback) {
-        mService.queryChannels(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryChannelsResponse>() {
+        String userID = user.getId();
+        mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
@@ -367,7 +368,7 @@ public class Client implements WSResponseHandler {
      */
     public void deleteChannel(@NonNull String channelId, QueryChannelCallback callback) {
 
-        mService.deleteChannel(channelId, apiKey, user.getId(), connectionId).enqueue(new Callback<ChannelState>() {
+        mService.deleteChannel(channelId, apiKey, user.getId(), clientID).enqueue(new Callback<ChannelState>() {
             @Override
             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                 callback.onSuccess(response.body());
@@ -392,7 +393,7 @@ public class Client implements WSResponseHandler {
                             @NonNull SendMessageRequest sendMessageRequest,
                             MessageCallback callback) {
 
-        mService.sendMessage(channelId, apiKey, user.getId(), connectionId, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendMessage(channelId, apiKey, user.getId(), clientID, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -418,7 +419,7 @@ public class Client implements WSResponseHandler {
         mService.updateMessage(messageId,
                 apiKey,
                 user.getId(),
-                connectionId,
+                clientID,
                 request).enqueue(new Callback<MessageResponse>() {
 
             @Override
@@ -436,7 +437,7 @@ public class Client implements WSResponseHandler {
     public void getMessage(@NonNull String messageId,
                            MessageCallback callback) {
 
-        mService.getMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+        mService.getMessage(messageId, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -458,7 +459,7 @@ public class Client implements WSResponseHandler {
     public void deleteMessage(@NonNull String messageId,
                               MessageCallback callback) {
 
-        mService.deleteMessage(messageId, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+        mService.deleteMessage(messageId, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -480,7 +481,7 @@ public class Client implements WSResponseHandler {
                          MarkReadRequest readRequest,
                          EventCallback callback) {
 
-        mService.markRead(channelId, apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
+        mService.markRead(channelId, apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -501,7 +502,7 @@ public class Client implements WSResponseHandler {
     public void markAllRead(MarkReadRequest readRequest,
                             EventCallback callback) {
 
-        mService.markAllRead(apiKey, user.getId(), connectionId, readRequest).enqueue(new Callback<EventResponse>() {
+        mService.markAllRead(apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -530,7 +531,7 @@ public class Client implements WSResponseHandler {
                            GetRepliesCallback callback) {
 
         if (TextUtils.isEmpty(firstId)) {
-            mService.getReplies(parentId, apiKey, user.getId(), connectionId, limit).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     callback.onSuccess(response.body());
@@ -542,7 +543,7 @@ public class Client implements WSResponseHandler {
                 }
             });
         } else {
-            mService.getRepliesMore(parentId, apiKey, user.getId(), connectionId, limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getRepliesMore(parentId, apiKey, user.getId(), clientID, limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     callback.onSuccess(response.body());
@@ -572,7 +573,7 @@ public class Client implements WSResponseHandler {
                              @NonNull ReactionRequest reactionRequest,
                              MessageCallback callback) {
 
-        mService.sendReaction(messageId, apiKey, user.getId(), connectionId, reactionRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendReaction(messageId, apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -597,7 +598,7 @@ public class Client implements WSResponseHandler {
                                @NonNull String reactionType,
                                MessageCallback callback) {
 
-        mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), connectionId).enqueue(new Callback<MessageResponse>() {
+        mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -624,7 +625,7 @@ public class Client implements WSResponseHandler {
                           @NonNull SendEventRequest eventRequest,
                           EventCallback callback) {
 
-        mService.sendEvent(channelId, apiKey, user.getId(), connectionId, eventRequest).enqueue(new Callback<EventResponse>() {
+        mService.sendEvent(channelId, apiKey, user.getId(), clientID, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -644,7 +645,7 @@ public class Client implements WSResponseHandler {
                           MultipartBody.Part part,
                           SendFileCallback callback) {
 
-        mService.sendImage(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
+        mService.sendImage(channelId, part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 callback.onSuccess(response.body());
@@ -661,7 +662,7 @@ public class Client implements WSResponseHandler {
                          MultipartBody.Part part,
                          SendFileCallback callback) {
 
-        mService.sendFile(channelId, part, apiKey, user.getId(), connectionId).enqueue(new Callback<FileSendResponse>() {
+        mService.sendFile(channelId, part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 callback.onSuccess(response.body());
@@ -679,7 +680,7 @@ public class Client implements WSResponseHandler {
                            @NonNull SendActionRequest request,
                            MessageCallback callback) {
 
-        mService.sendAction(messageId, apiKey, user.getId(), connectionId, request).enqueue(new Callback<MessageResponse>() {
+        mService.sendAction(messageId, apiKey, user.getId(), clientID, request).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -705,7 +706,7 @@ public class Client implements WSResponseHandler {
     public void queryUsers(@NonNull JSONObject payload,
                            QueryUserListCallback callback) {
 
-        mService.queryUsers(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<QueryUserListResponse>() {
+        mService.queryUsers(apiKey, user.getId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
                 for (int i = 0; i < response.body().getUsers().size(); i++)
@@ -804,7 +805,7 @@ public class Client implements WSResponseHandler {
                           DeviceCallback callback) {
 
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
-        mService.addDevices(apiKey, user.getId(), connectionId, request).enqueue(new Callback<DevicesResponse>() {
+        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
             @Override
             public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
                 callback.onSuccess(response.body());
@@ -826,7 +827,7 @@ public class Client implements WSResponseHandler {
     public void getDevices(@NonNull Map<String, String> payload,
                            GetDevicesCallback callback) {
 
-        mService.getDevices(apiKey, user.getId(), connectionId, payload).enqueue(new Callback<GetDevicesResponse>() {
+        mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
             @Override
             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
                 callback.onSuccess(response.body());
@@ -848,7 +849,7 @@ public class Client implements WSResponseHandler {
     public void removeDevice(@NonNull String deviceId,
                              DeviceCallback callback) {
 
-        mService.deleteDevice(deviceId, apiKey, user.getId(), connectionId).enqueue(new Callback<DevicesResponse>() {
+        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
             @Override
             public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
                 callback.onSuccess(response.body());

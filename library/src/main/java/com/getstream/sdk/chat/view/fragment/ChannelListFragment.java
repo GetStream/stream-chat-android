@@ -260,7 +260,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
      * Getting channels
      */
     public void queryChannels() {
-        if (TextUtils.isEmpty(client.connectionId)) return;
+        if (TextUtils.isEmpty(client.clientID)) return;
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
