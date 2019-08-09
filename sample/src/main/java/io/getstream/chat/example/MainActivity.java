@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_main);
 
+        // Specify the current activity as the lifecycle owner.
+        binding.setLifecycleOwner(this);
+
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout

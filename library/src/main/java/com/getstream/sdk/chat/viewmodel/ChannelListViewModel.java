@@ -64,12 +64,13 @@ public class ChannelListViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSucces for loading the channels");
+                loading.postValue(false);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels" + errMsg);
-
+                loading.postValue(false);
             }
         });
     }
