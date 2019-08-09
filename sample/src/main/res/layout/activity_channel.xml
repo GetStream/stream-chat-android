@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel2" />
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -15,20 +15,20 @@
         tools:context="io.getstream.chat.example.MainActivity">
 
         <com.getstream.sdk.chat.view.ChannelHeaderToolbar
-            android:id="@+id/cht_header"
+            android:id="@+id/channelHeader"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/mlv_messageList"
+            app:layout_constraintEnd_toStartOf="@+id/messageList"
             android:background="#2F3036" android:layout_height="wrap_content"
             android:layout_width="match_parent" />
 
-        <com.getstream.sdk.chat.view.MessageListView android:id="@+id/mlv_messageList"
+        <com.getstream.sdk.chat.view.MessageListView android:id="@+id/messageList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toTopOf="@+id/message_input"
-            app:layout_constraintTop_toBottomOf="@+id/cht_header"
-            app:layout_constraintStart_toEndOf="@+id/cht_header"
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader"
+            app:layout_constraintStart_toEndOf="@+id/channelHeader"
             app:layout_constraintEnd_toStartOf="@+id/message_input"
             android:background="#F3F5F8"
             stream:messageTextColorMine="#FFFFFF"
@@ -85,7 +85,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/mlv_messageList"
+            app:layout_constraintStart_toEndOf="@+id/messageList"
             app:layout_constraintEnd_toEndOf="parent"
             stream:inputHint="what a fun day"
 

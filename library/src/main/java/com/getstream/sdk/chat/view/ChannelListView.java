@@ -14,17 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
-import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
 
 public class ChannelListView extends RecyclerView implements View.OnClickListener {
     final String TAG = ChannelListView.class.getSimpleName();

@@ -22,7 +22,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
     final String TAG = MessageInputView.class.getSimpleName();
 
     // our connection to the channel scope
-    private ChannelViewModel2 modelView;
+    private ChannelViewModel modelView;
 
     // binding for this view
     private ViewMessageInputBinding binding;
@@ -112,7 +112,7 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
         return binding;
     }
 
-    public void setViewModel(ChannelViewModel2 model) {
+    public void setViewModel(ChannelViewModel model) {
         this.modelView = model;
 
         this.setOnSendMessageListener(model);

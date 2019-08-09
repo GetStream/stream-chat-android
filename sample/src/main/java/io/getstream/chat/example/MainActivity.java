@@ -22,14 +22,19 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 import static com.getstream.sdk.chat.enums.Filters.in;
 
 
+/**
+ * This activity shows a list of channels
+ */
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final String USER_ID = "broken-waterfall-5";
+    // User token is typically provided by your server when the user authenticates
     final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
     private ChannelListViewModel viewModel;
 
+    // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance();
         HashMap<String, Object> extraData = new HashMap<>();
@@ -45,24 +50,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // initialize a websocket connection to Stream and setup the channel
-        Client c = configureStreamClient();
+        // setup the client
+        configureStreamClient();
 
         // we're using data binding in this example
         ActivityMainBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        // most the business logic of the chat is handled in the view model
+        // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-        // set the viewModel data for the layout
+        // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
+        binding.channelList.setViewModel(viewModel);
 
-
+        // query all channels where the current user is a member
         FilterObject filter = in("members", USER_ID);
         viewModel.setChannelFilter(filter);
 
-
-        binding.channelList.setViewModel(viewModel);
+        // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(new ChannelListView.ChannelClickListener() {
             @Override

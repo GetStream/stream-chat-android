@@ -2,21 +2,15 @@ package com.getstream.sdk.chat.view;
 
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.databinding.ToolbarChannelHeaderBinding;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 public class ChannelHeaderToolbar extends RelativeLayout {
 
@@ -26,7 +20,7 @@ public class ChannelHeaderToolbar extends RelativeLayout {
     private ToolbarChannelHeaderBinding binding;
 
     // our connection to the channel scope
-    private ChannelViewModel2 modelView;
+    private ChannelViewModel modelView;
 
     public ChannelHeaderToolbar(Context context) {
         super(context);
@@ -43,7 +37,7 @@ public class ChannelHeaderToolbar extends RelativeLayout {
         binding = initBinding(context);
     }
 
-    public void setViewModel(ChannelViewModel2 model) {
+    public void setViewModel(ChannelViewModel model) {
         this.modelView = model;
     }
 

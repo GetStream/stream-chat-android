@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModelOld" />
 
         <variable
             name="showMainProgressbar"

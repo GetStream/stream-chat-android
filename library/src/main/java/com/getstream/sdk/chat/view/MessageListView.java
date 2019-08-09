@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel2;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 
 /**
@@ -29,7 +29,7 @@ public class MessageListView extends RecyclerView {
     private MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
-    private ChannelViewModel2 viewModel;
+    private ChannelViewModel viewModel;
     public MessageListView(Context context) {
         super(context);
     }
@@ -49,7 +49,7 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
-    public void setViewModel(ChannelViewModel2 viewModel) {
+    public void setViewModel(ChannelViewModel viewModel) {
         this.viewModel = viewModel;
 
         Channel c = this.viewModel.getChannel();

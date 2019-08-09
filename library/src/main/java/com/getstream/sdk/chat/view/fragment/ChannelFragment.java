@@ -10,19 +10,15 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.text.Editable;
+
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,7 +31,6 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 import com.getstream.sdk.chat.databinding.ViewThreadBinding;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.function.AttachmentFunction;
 import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.function.SendFileFunction;
@@ -52,10 +47,8 @@ import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
@@ -63,13 +56,11 @@ import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelFragmentViewModelFactory;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModelOld;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
@@ -92,7 +83,7 @@ public class ChannelFragment extends Fragment {
     private Channel channel;
 
     // ViewModel & Binding
-    private ChannelViewModel mViewModel;
+    private ChannelViewModelOld mViewModel;
     private ChannelFragmentBinding binding;
     private ViewThreadBinding threadBinding;
     // Arguments for Channel
@@ -190,7 +181,7 @@ public class ChannelFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ChannelFragmentViewModelFactory factory = new ChannelFragmentViewModelFactory(channelState);
-        mViewModel = ViewModelProviders.of(this, factory).get(ChannelViewModel.class);
+        mViewModel = ViewModelProviders.of(this, factory).get(ChannelViewModelOld.class);
 
         // set WS handler
         subscribeToChannelEvents();
