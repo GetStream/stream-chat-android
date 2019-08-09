@@ -324,20 +324,15 @@ public class Client implements WSResponseHandler {
         mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-
-                if (response.isSuccessful()) {
-                    for (int i = 0; i < response.body().getChannels().size(); i++) {
-                        ChannelState channelState = response.body().getChannels().get(i);
-                        Channel channelData = channelState.getChannel();
-                        Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
-                        checkEphemeralMessages(channelState);
-                        channel.setChannelState(channelState);
-                        addToActiveChannels(channel);
-                    }
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError("Non 200 status code" + response.body().toString(), -1);
+                for (int i = 0; i < response.body().getChannels().size(); i++) {
+                    ChannelState channelState = response.body().getChannels().get(i);
+                    Channel channelData = channelState.getChannel();
+                    Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
+                    checkEphemeralMessages(channelState);
+                    channel.setChannelState(channelState);
+                    addToActiveChannels(channel);
                 }
+                callback.onSuccess(response.body());
             }
 
             @Override
