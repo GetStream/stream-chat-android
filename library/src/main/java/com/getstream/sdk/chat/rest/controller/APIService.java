@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.controller;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
@@ -37,7 +38,7 @@ import retrofit2.http.Query;
 public interface APIService {
     // region Channel
     @GET("/channels")
-    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Query("payload") JSONObject payload);
+    Call<QueryChannelsResponse> queryChannels(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Query("payload") String payload);
 
     @POST("/channels/messaging/{id}/query")
     Call<ChannelState> queryChannel(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);

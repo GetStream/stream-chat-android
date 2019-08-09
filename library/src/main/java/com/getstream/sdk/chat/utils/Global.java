@@ -137,7 +137,7 @@ public class Global {
                 columns,
                 selection,
                 null, // Selection args (none).
-                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // Sort order.
+                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // QuerySort order.
         );
 
         int image_column_index = imagecursor.getColumnIndex(MediaStore.Files.FileColumns._ID);

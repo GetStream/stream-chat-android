@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
@@ -31,6 +32,7 @@ import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
@@ -299,15 +301,12 @@ public class Client implements WSResponseHandler {
     }
 
     public synchronized void addToActiveChannels(Channel channel){
-        Log.d(TAG, "adding channel cid to active channels: " + channel.getCid());
-
         if (getChannelByCid(channel.getCid()) == null){
             activeChannels.add(channel);
         }
     }
 
     public Channel getChannelByCid(String cid) {
-        Log.d(TAG, "getChannelByCid: " + cid);
         for (Channel channel : activeChannels) {
             if (cid.equals(channel.getCid())) {
                 return channel;
@@ -319,8 +318,10 @@ public class Client implements WSResponseHandler {
     // endregion
 
     // region Channel
-    public void queryChannels(JSONObject payload, QueryChannelListCallback callback) {
+    public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
         String userID = user.getId();
+        String payload = GsonConverter.Gson().toJson(request);
+
         mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
             @Override
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
@@ -337,7 +338,6 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
-                Log.e(TAG, "shit hit the fan");
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
@@ -694,7 +694,7 @@ public class Client implements WSResponseHandler {
      * queryUsers - Query users and watch user presence
      *
      * @param {object} filterConditions MongoDB style filter conditions
-     * @param {object} sort             Sort options, for instance {last_active: -1}
+     * @param {object} sort             QuerySort options, for instance {last_active: -1}
      * @param {object} options          Option object, {presence: true}
      * @return {object} User Query Response
      */

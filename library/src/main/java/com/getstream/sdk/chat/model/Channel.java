@@ -228,7 +228,6 @@ public class Channel {
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
-        Log.d(TAG, "query a channel now");
         client.waitForConnection(
                 new ClientConnectionCallback() {
                     @Override

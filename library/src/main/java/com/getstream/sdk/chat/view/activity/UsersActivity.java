@@ -268,7 +268,7 @@ public class UsersActivity extends AppCompatActivity {
         } else {
             payload.put("filter_conditions", new HashMap<>());
         }
-        // Sort options
+        // QuerySort options
         if (Global.component.user.getSortOptions() != null) {
             payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
         } else {

@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * FilterObjectAdapter makes it easier to serialize this to JSON via gson
 **/
-class FilterObjectAdapter extends TypeAdapter<FilterObject> {
+public class FilterObjectAdapter extends TypeAdapter<FilterObject> {
     @Override
     public void write(JsonWriter out, FilterObject value) throws IOException {
         TypeAdapter adapter = new Gson().getAdapter(HashMap.class);

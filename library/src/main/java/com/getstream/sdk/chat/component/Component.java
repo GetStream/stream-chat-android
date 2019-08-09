@@ -52,7 +52,7 @@ public class Component{
         }
         /**
          * Setter Method for Channels sort option
-         * @param sortOptions Sort Syntax for channels
+         * @param sortOptions QuerySort Syntax for channels
          */
         public void setSortOptions(Map<String, Object> sortOptions) {
             this.sortOptions = sortOptions;
@@ -174,7 +174,7 @@ public class Component{
 
         /**
          * Setter Method for Users sort option
-         * @param sortOptions Sort Syntax for channels
+         * @param sortOptions QuerySort Syntax for channels
          */
         public void setSortOptions(Map<String, Object> sortOptions) {
             this.sortOptions = sortOptions;

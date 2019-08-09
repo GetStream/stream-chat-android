@@ -38,6 +38,10 @@ public class FilterObject {
 
     private HashMap<String, Object> data;
 
+    public FilterObject() {
+        this.data = new HashMap<>();
+    }
+
     public FilterObject(HashMap<String, Object> data) {
         this.data = data;
     }

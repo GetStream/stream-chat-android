@@ -31,11 +31,14 @@ import android.widget.Toast;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
+import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
@@ -264,7 +267,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.queryChannels(getPayload(), new QueryChannelListCallback() {
+        client.queryChannels(getQueryChannelsRequestPayload(), new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -281,34 +284,23 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
             }
         });
     }
-    private JSONObject getPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Sort Option
-        if (client.getComponent().channel.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.channel.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_message_at");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
+    
+    private QueryChannelsRequest getQueryChannelsRequestPayload() {
+        QuerySort sort = new QuerySort().desc("last_message_at");
+        FilterObject filter = new FilterObject();
 
         if (Global.component.channel.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.channel.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
+            filter = Global.component.channel.getFilter();
         }
 
-        payload.put("message_limit", Constant.CHANNEL_MESSAGE_LIMIT);
+        QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
+                .withMessageLimit(Constant.CHANNEL_MESSAGE_LIMIT)
+                .withLimit(Constant.CHANNEL_LIMIT);
+
         if (client.activeChannels.size() > 0)
-            payload.put("offset", client.activeChannels.size());
-        payload.put("limit", Constant.CHANNEL_LIMIT);
-        payload.put("presence", false);
-        payload.put("state", true);
-        payload.put("subscribe", true);
-        payload.put("watch", true);
-        return new JSONObject(payload);
+            request.withOffset(client.activeChannels.size());
+
+        return request;
     }
 
     private void configChannelListView() {
