@@ -1,22 +1,12 @@
 package com.getstream.sdk.chat.view.fragment;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -28,13 +18,23 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.databinding.FragmentChannelListBinding;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
@@ -51,12 +51,6 @@ import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-
-import org.json.JSONObject;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -79,8 +73,6 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private int channelItemLayoutId;
     private String channelItemViewHolderName;
-
-    public Client client;
 
     // region LifeCycle
     @Override
@@ -114,7 +106,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     @Override
     public void onDestroy() {
         super.onDestroy();
-        client.setChannelListEventHandler(null);
+        mViewModel.client().setChannelListEventHandler(null);
     }
 
     @Override
@@ -124,7 +116,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 boolean result = data.getBooleanExtra("result", false);
                 if (result) {
                     String channelId = data.getStringExtra(Constant.TAG_CHANNEL_RESPONSE_ID);
-                    navigationChannelFragment(client.getChannelByCid(channelId).getChannelState());
+                    navigationChannelFragment(mViewModel.client().getChannelByCid(channelId).getChannelState());
                 }
             } catch (Exception e) {
             }
@@ -146,7 +138,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     // region Private Functions
 
     private void init() {
-        client.setChannelListEventHandler(this);
+        mViewModel.client().setChannelListEventHandler(this);
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
@@ -174,7 +166,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
         configCustomChannelItemView();
 
-        binding.clHeader.setVisibility(client.getComponent().channel.isShowSearchBar() ? View.VISIBLE : View.GONE);
+        binding.clHeader.setVisibility(mViewModel.client().getComponent().channel.isShowSearchBar() ? View.VISIBLE : View.GONE);
 
         configChannelListView();
         configChannelRecyclerView();
@@ -221,7 +213,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 int firstVisibleItem = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
                 int currentLastVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
                 if (mLastFirstVisibleItem < firstVisibleItem) {
-                    if (currentLastVisible == client.activeChannels.size() - 1)
+                    if (currentLastVisible == mViewModel.client().activeChannels.size() - 1)
                         queryChannels();
                 }
                 if (mLastFirstVisibleItem > firstVisibleItem) {
@@ -233,13 +225,13 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     }
 
     private void configCustomChannelItemView() {
-        channelItemLayoutId = client.getComponent().channel.getChannelItemLayoutId();
-        channelItemViewHolderName = client.getComponent().channel.getChannelItemViewHolderName();
+        channelItemLayoutId = mViewModel.client().getComponent().channel.getChannelItemLayoutId();
+        channelItemViewHolderName = mViewModel.client().getComponent().channel.getChannelItemViewHolderName();
     }
 
     private void setAfterFirstConnection() {
         // Initialize Channels
-        client.activeChannels.clear();
+        mViewModel.client().activeChannels.clear();
         initLoadingChannels();
         queryChannels();
 
@@ -263,11 +255,11 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
      * Getting channels
      */
     public void queryChannels() {
-        if (TextUtils.isEmpty(client.clientID)) return;
+        if (TextUtils.isEmpty(mViewModel.client().clientID)) return;
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        client.queryChannels(getQueryChannelsRequestPayload(), new QueryChannelListCallback() {
+        mViewModel.client().queryChannels(getQueryChannelsRequestPayload(), new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -297,18 +289,18 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                 .withMessageLimit(Constant.CHANNEL_MESSAGE_LIMIT)
                 .withLimit(Constant.CHANNEL_LIMIT);
 
-        if (client.activeChannels.size() > 0)
-            request.withOffset(client.activeChannels.size());
+        if (mViewModel.client().activeChannels.size() > 0)
+            request.withOffset(mViewModel.client().activeChannels.size());
 
         return request;
     }
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), client.activeChannels,
+        adapter = new ChannelListItemAdapter(getContext(), mViewModel.client().activeChannels,
                 channelItemViewHolderName, channelItemLayoutId, (View view) -> {
 
             String channelId = view.getTag().toString();
-            ChannelState response = client.getChannelByCid(channelId).getChannelState();
+            ChannelState response = mViewModel.client().getChannelByCid(channelId).getChannelState();
             getActivity().runOnUiThread(() -> navigationChannelFragment(response));
 
         }, (View view) -> {
@@ -323,12 +315,12 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
             alertDialog.setOnShowListener((DialogInterface dialog) -> {
                 Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener((View v) -> {
-                    ChannelState response_ = client.getChannelByCid(channelId).getChannelState();
-                    client.deleteChannel(channelId, new QueryChannelCallback() {
+                    ChannelState response_ = mViewModel.client().getChannelByCid(channelId).getChannelState();
+                    mViewModel.client().deleteChannel(channelId, new QueryChannelCallback() {
                         @Override
                         public void onSuccess(ChannelState response) {
                             Utils.showMessage(getContext(), "Deleted successfully!");
-                            client.activeChannels.remove(response_);
+                            mViewModel.client().activeChannels.remove(response_);
                             adapter.notifyDataSetChanged();
                         }
 
@@ -383,7 +375,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
                     String token_ = task.getResult().getToken();
                     Log.d(TAG, "device TokenService: " + token_);
                     // Save to Server
-                    client.addDevice(token_, new DeviceCallback() {
+                    mViewModel.client().addDevice(token_, new DeviceCallback() {
                         @Override
                         public void onSuccess(DevicesResponse response) {
 

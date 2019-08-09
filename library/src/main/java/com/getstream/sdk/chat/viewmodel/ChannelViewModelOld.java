@@ -1,9 +1,10 @@
 package com.getstream.sdk.chat.viewmodel;
 
+import android.text.TextUtils;
+
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import androidx.databinding.ObservableField;
-import android.text.TextUtils;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;

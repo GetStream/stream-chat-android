@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.rest;
 
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.getstream.sdk.chat.StreamChat;
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Global;
@@ -412,10 +412,11 @@ public class Message {
         this.commandInfo = commandInfo;
     }
 
+    // TODO: this is for ModelView to do
     public boolean isIncoming() {
-        return !this.getUser().getId().equals(StreamChat.getInstance().getUserId());
+        return true;
+        //        return !this.getUser().getId().equals(StreamChat.getInstance().getUserId());
     }
-
 
     public boolean isTheirs() {
         return this.isIncoming();

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.fragment;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,20 +9,20 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.StreamChat;
@@ -115,6 +114,10 @@ public class ChannelFragment extends Fragment {
         channelSubscriptionId = 0;
     }
 
+    public Client client(){
+        return StreamChat.getInstance(getActivity().getApplication());
+    }
+
     public void subscribeToChannelEvents(){
         if (channelSubscriptionId != 0) {
             return;
@@ -169,7 +172,7 @@ public class ChannelFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        client = StreamChat.getInstance();
+        client = StreamChat.getInstance(getActivity().getApplication());
         channel = client.channel(channelType, channelID, channelExtraData);
 
         // set binding
@@ -218,7 +221,7 @@ public class ChannelFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        client = StreamChat.getInstance();
+        client = StreamChat.getInstance(getActivity().getApplication());
         channel = client.channel(channelType, channelID);
 
         subscribeToChannelEvents();
@@ -502,7 +505,7 @@ public class ChannelFragment extends Fragment {
     private void configMessageInputView() {
 
         binding.setShowLoadMoreProgressbar(false);
-        binding.setNoConnection(!StreamChat.getInstance().isConnected());
+        binding.setNoConnection(!StreamChat.getInstance(getActivity().getApplication()).isConnected());
         binding.messageInput.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             lockRVScrollListener = hasFocus;
         });
@@ -615,7 +618,7 @@ public class ChannelFragment extends Fragment {
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
         message.setCreated_at(message.convertDateToString(new Date()));
         message.setStartDay(Arrays.asList(message), getLastMessage());
-        message.setUser(StreamChat.getInstance().getUser());
+//        message.setUser(StreamChat.getInstance().getUser());
         if (isThreadMode())
             message.setParent_id(thread_parentMessage.getId());
         if (isOffle)

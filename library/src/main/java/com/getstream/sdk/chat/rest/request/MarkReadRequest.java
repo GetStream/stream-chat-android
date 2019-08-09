@@ -15,9 +15,6 @@ public class MarkReadRequest {
 
     public MarkReadRequest(String messageId) {
         Map<String, Object> map = new HashMap<>();
-        Map<String, String> user = new HashMap<>();
-        user.put("id", StreamChat.getInstance().getUserId());
-        map.put("user", user);
         if (messageId != null)
             map.put("message_id", messageId);
         this.event = map;

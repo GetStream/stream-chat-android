@@ -5,30 +5,46 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ChannelListViewModel extends AndroidViewModel {
     private final String TAG = ChannelListViewModel.class.getSimpleName();
 
+    private MutableLiveData<List<Channel>> channels;
     public MutableLiveData<Boolean> loading;
     public MutableLiveData<Boolean> loadingMore;
     public MutableLiveData<Boolean> failed;
     public MutableLiveData<Boolean> endOfPagination;
     public MutableLiveData<Boolean> online;
+
+
+    public LiveData<List<Channel>> getChannels() {
+        return channels;
+    }
+
     private FilterObject filter;
     private QuerySort sort;
 
+    public Client client(){
+        return StreamChat.getInstance(getApplication());
+    }
 
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
@@ -37,7 +53,9 @@ public class ChannelListViewModel extends AndroidViewModel {
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
         endOfPagination = new MutableLiveData<>(false);
-        Client c = StreamChat.getInstance();
+        channels = new MutableLiveData<>();
+
+        Client c = StreamChat.getInstance(application);
         c.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
@@ -59,12 +77,20 @@ public class ChannelListViewModel extends AndroidViewModel {
                 .withLimit(20)
                 .withMessageLimit(20);
 
-        Client c = StreamChat.getInstance();
+        Client c = StreamChat.getInstance(getApplication());
         c.queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSucces for loading the channels");
                 loading.postValue(false);
+                List<Channel> channelList = channels.getValue();
+                if (channelList == null) {
+                    channelList = new ArrayList<>();
+                }
+                for (ChannelState chan: response.getChannels()) {
+                    channelList.add(chan.getChannel());
+                }
+                channels.postValue(channelList);
             }
 
             @Override

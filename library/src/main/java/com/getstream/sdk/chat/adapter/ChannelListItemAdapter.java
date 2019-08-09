@@ -1,10 +1,12 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
@@ -12,7 +14,6 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.view.ChannelListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = ChannelListItemAdapter.class.getSimpleName();
     private Context context;
-    private List<Channel> channels;
+    private List<Channel> channels; // cached list of channels
     public String filter;
     private View.OnClickListener clickListener;
     private String className;
@@ -39,18 +40,14 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.itemLayoutId = itemLayoutId;
     }
 
+    // TODO: review this. Good to forward to other constructor but I have no idea what the default is for clickListener and longClickListener
     public ChannelListItemAdapter(Context context, int itemLayoutId) {
-        this.context = context;
-        this.channels = new ArrayList<Channel>();
-        this.className = className;
-        this.itemLayoutId = itemLayoutId;
+        this(context, new ArrayList<>(), "", itemLayoutId, null, null);
     }
 
     public void SetOnClickListener(View.OnClickListener l ) {
         clickListener = l;
     }
-
-
 
     public void setStyle(ChannelListView.Style s) {
         style = s;
@@ -79,7 +76,6 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         notifyDataSetChanged();
     }
 
-
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
@@ -100,15 +96,16 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Log.w("RecyclerView", "onBindViewHolder " + position);
         ChannelState channelState = filterChannels(filter).get(position);
         ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, clickListener, longClickListener);
     }
 
     @Override
     public int getItemCount() {
+        Log.w("RecyclerView", "getItemCount " + filterChannels(filter).size());
         return filterChannels(filter).size();
     }
-
 
     private List<ChannelState> filterChannels(String channelName) {
 

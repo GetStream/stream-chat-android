@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
@@ -144,8 +142,10 @@ public class User {
         return extraData;
     }
 
+    // TODO: move to modelview
     public boolean isMe(){
-        return id.equals(StreamChat.getInstance().getUserId());
+        return false;
+//        return id.equals(StreamChat.getInstance().getUserId());
     }
 
     public String getUserInitials() {

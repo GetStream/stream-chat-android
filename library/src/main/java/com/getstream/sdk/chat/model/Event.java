@@ -62,7 +62,7 @@ public class Event {
 
     @SerializedName("watcher_count")
     @Expose
-    private int watcherCount;
+    private Number watcherCount;
 
     @SerializedName("created_at")
     @Expose
@@ -133,7 +133,7 @@ public class Event {
         return totalUnreadCount;
     }
 
-    public int getWatcherCount() {
+    public Number getWatcherCount() {
         return watcherCount;
     }
 

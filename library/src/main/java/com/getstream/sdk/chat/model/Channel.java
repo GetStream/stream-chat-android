@@ -237,7 +237,6 @@ public class Channel {
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 ChannelState state = response.body();
                                 channel.channelState.init(state);
-                                // TODO: implement a good copy approach
                                 channel.config = state.getChannel().config;
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);

@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class QuerySort {
-    private List<Map<String, String>> mSort;
+    private List<Map<String, Object>> mSort;
 
-    private static String DESC = "-1";
-    private static String ASC = "1";
+    private static int DESC = -1;
+    private static int ASC = 1;
 
-    public List<Map<String, String>> getData() {
+    public List<Map<String, Object>> getData() {
         return mSort;
     }
 
@@ -24,8 +24,8 @@ public class QuerySort {
         return _this;
     }
 
-    private QuerySort add(String fieldName, String direction) {
-        Map<String, String> v = new HashMap<>();
+    private QuerySort add(String fieldName, Number direction) {
+        Map<String, Object> v = new HashMap<>();
         v.put("field", fieldName);
         v.put("direction", direction);
         QuerySort _this = clone();

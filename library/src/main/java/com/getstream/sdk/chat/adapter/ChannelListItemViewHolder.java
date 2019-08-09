@@ -2,17 +2,16 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Handler;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ReadIndicator;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -170,12 +169,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             iv_indicator.setVisibility(View.GONE);
             tv_indicator_initials.setVisibility(View.GONE);
             tv_unread.setVisibility(View.VISIBLE);
-            int unreadMessageCount = channelState.getUnreadMessageCount(StreamChat.getInstance().getUserId());
-            if (unreadMessageCount == 0) {
-                tv_unread.setVisibility(View.GONE);
-                return;
-            }
-            tv_unread.setText(unreadMessageCount + " unread");
+
+            // TODO: get this from viewmodel livedata
+//            int unreadMessageCount = channelState.getUnreadMessageCount(StreamChat.getInstance().getUserId());
+//            if (unreadMessageCount == 0) {
+//                tv_unread.setVisibility(View.GONE);
+//                return;
+//            }
+//            tv_unread.setText(unreadMessageCount + " unread");
         }
 
     }

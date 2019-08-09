@@ -3,12 +3,7 @@ package com.getstream.sdk.chat.view.activity;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import androidx.databinding.DataBindingUtil;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,8 +15,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
@@ -231,8 +231,8 @@ public class UsersActivity extends AppCompatActivity {
         binding.setShowMainProgressbar(true);
         isCalling = true;
 
-        if (client == null)
-            client = StreamChat.getInstance();
+//        if (client == null)
+//            client = StreamChat.getInstance();
         client.queryUsers(getUserQueryPayload(), new QueryUserListCallback() {
             @Override
             public void onSuccess(QueryUserListResponse response) {

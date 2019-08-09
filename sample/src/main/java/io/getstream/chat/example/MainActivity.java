@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
-        Client client = StreamChat.getInstance();
+        Client client = StreamChat.getInstance(this.getApplication());
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Broken waterfall");
         extraData.put("image", "https://bit.ly/2u9Vc0r");
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
-        binding.channelList.setViewModel(viewModel);
+        binding.channelList.setViewModel(viewModel, this);
 
         // query all channels where the current user is a member
         FilterObject filter = in("members", USER_ID);

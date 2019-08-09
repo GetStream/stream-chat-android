@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
-import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -120,10 +120,11 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
                     try {
-                        if (user.getId().equals(StreamChat.getInstance().getUserId())) {
+                        // TODO: wrong place
+//                        if (user.getId().equals(StreamChat.getInstance().getUserId())) {
                             isReactioned = true;
                             break;
-                        }
+//                        }
                     } catch (Exception e) {
                     }
 

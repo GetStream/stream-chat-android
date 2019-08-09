@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.core;
 import com.getstream.sdk.chat.model.Event;
 
 public abstract class ChatChannelEventHandler {
+    public void onAnyEvent(Event event) {}
     public void onTypingStart(Event event) {}
     public void onTypingStop(Event event) {}
     public void onMessageNew(Event event) {}
@@ -18,6 +19,7 @@ public abstract class ChatChannelEventHandler {
     public void onChannelDeleted(Event event) {}
 
     public final void dispatchEvent(Event event){
+        onAnyEvent(event);
         switch (event.getType()) {
             case TYPING_START:
                 onTypingStart(event);

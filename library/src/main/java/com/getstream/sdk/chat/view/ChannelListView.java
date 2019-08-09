@@ -8,17 +8,16 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
@@ -52,12 +51,11 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         style = new Style(context, attrs);
     }
 
-    public void setViewModel(ChannelListViewModel viewModel) {
+    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
-        Client client = StreamChat.getInstance();
 
         // listen to events
-        client.addEventHandler(new ChatEventHandler() {
+        viewModel.client().addEventHandler(new ChatEventHandler() {
             // TODO: actually support this
 //            @Override
 //            public void onChannelLoaded(Event event) {
@@ -85,6 +83,8 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
 
         // connect the viewHolder on click listener...
         adapter.SetOnClickListener(this);
+
+        viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.addChannels(channels));
     }
 
     public void setOnUserClickListener(UserClickListener userClickListener) {
@@ -138,8 +138,9 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
             }
         } else {
             if (this.channelClickListener != null) {
-                Channel channel = StreamChat.getInstance().channel(channelCID);
-                this.channelClickListener.onClick(channel);
+                // TODO: wrong place to do this
+//                Channel channel = StreamChat.getInstance().channel(channelCID);
+//                this.channelClickListener.onClick(channel);
             }
         }
     }

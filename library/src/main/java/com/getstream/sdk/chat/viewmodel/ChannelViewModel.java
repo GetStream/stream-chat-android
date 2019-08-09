@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
@@ -36,6 +35,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<Boolean> loadingMore;
     public MutableLiveData<Boolean> failed;
     public MutableLiveData<Boolean> online;
+
+    public Channel getChannel() {
+        return channel;
+    }
+
     private Channel channel;
     public ChannelState channelState;
 
@@ -43,6 +47,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     // TODO: Editing
     // TODO: Event handler
     public MutableLiveData<Boolean> endOfPagination;
+
+
+    public ChannelViewModel(Application application, Channel channel) {
+        super(application);
+        this.channel = channel;
+    }
 
     public ChannelViewModel(@NonNull Application application) {
         super(application);
@@ -55,24 +65,18 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
 
-
-
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-        this.loadChannelState();
-        // TODO: set the adapter
-        this.channel.addEventHandler(new ChatChannelEventHandler(){
-            @Override
-            public void onMessageNew(Event event) {
-                messageEvent(event);
-                // update the adapter
-            }
-        });
-    }
+//    public void setChannel(Channel channel) {
+//        this.channel = channel;
+//        this.loadChannelState();
+//        // TODO: set the adapter
+//        this.channel.addEventHandler(new ChatChannelEventHandler(){
+//            @Override
+//            public void onMessageNew(Event event) {
+//                messageEvent(event);
+//                // update the adapter
+//            }
+//        });
+//    }
 
     private void loadChannelState() {
         ChannelViewModel m = this;
