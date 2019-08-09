@@ -91,8 +91,7 @@
                 android:id="@+id/iv_active_mark"
                 android:layout_width="7dp"
                 android:layout_height="7dp"
-                android:background="@drawable/circle_user_online"
-                android:visibility="gone"
+                android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/circle_user_online : @drawable/circle_user_offline}"
                 app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"
                 app:layout_constraintStart_toEndOf="@+id/iv_header_avatar"
                 app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />

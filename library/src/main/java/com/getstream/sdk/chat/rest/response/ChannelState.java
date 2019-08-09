@@ -77,6 +77,18 @@ public class ChannelState {
         return new Date();
     }
 
+    public Boolean anyOtherUsersOnline() {
+        Boolean online = false;
+        List<User> users = this.getOtherUsers();
+        for (User u: users) {
+            if (u.getOnline()) {
+                online = true;
+                break;
+            }
+        }
+        return online;
+    }
+
     public String getChannelNameOrMembers() {
         String channelName;
 

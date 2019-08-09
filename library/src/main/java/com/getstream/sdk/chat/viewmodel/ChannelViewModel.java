@@ -38,6 +38,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<Boolean> online;
     public MutableLiveData<String> channelName;
 
+    public MutableLiveData<Boolean> anyOtherUsersOnline;
+
     public Channel getChannel() {
         return channel;
     }
@@ -54,12 +56,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
+        this.channelState = channel.getChannelState();
         loading = new MutableLiveData<>(true);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
         endOfPagination = new MutableLiveData<>(false);
-        channelName = new MutableLiveData<>(channel.getChannelState().getChannelNameOrMembers());
+        // TODO: actually listen to the events and verify if anybody is online
+        anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
+        // TODO: change this if the list of channel members changes or the channel is updated
+        channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
 
         // TODO: disabled since there is some bug in the client here
         //this.loadChannelState();
