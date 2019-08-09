@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -138,9 +139,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
             }
         } else {
             if (this.channelClickListener != null) {
-                // TODO: wrong place to do this?
-//                Channel channel = StreamChat.getInstance().channel(channelCID);
-//                this.channelClickListener.onClick(channel);
+                this.channelClickListener.onClick(channelCID);
             }
         }
     }
@@ -186,7 +185,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
     }
 
     public interface ChannelClickListener {
-        void onClick(Channel channel);
+        void onClick(String channelCID);
     }
 
 }

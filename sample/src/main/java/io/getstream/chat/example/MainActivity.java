@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // setup the client
-        configureStreamClient();
+        Client client = configureStreamClient();
 
         // we're using data binding in this example
         ActivityMainBinding binding =
@@ -77,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(new ChannelListView.ChannelClickListener() {
             @Override
-            public void onClick(Channel channel) {
+            public void onClick(String channelCID) {
                 // open the channel activity
+                Channel channel = client.getChannelByCid(channelCID);
                 Intent intent = new Intent(parent, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
