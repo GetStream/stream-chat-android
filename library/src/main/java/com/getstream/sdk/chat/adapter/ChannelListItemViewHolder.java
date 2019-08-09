@@ -135,7 +135,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
     }
 
-    private void configIndicatorUserInfo(ChannelState channelState) {
+    private void configIndicatorUserInfo(ChannelState channelState) {}
+
+    private void ____todo__configIndicatorUserInfo(ChannelState channelState) {
         if (!Global.component.channel.isShowReadIndicator()) {
             tv_indicator_initials.setVisibility(View.INVISIBLE);
             iv_indicator.setVisibility(View.INVISIBLE);

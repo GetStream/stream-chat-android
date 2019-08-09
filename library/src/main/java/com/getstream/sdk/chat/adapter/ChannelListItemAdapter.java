@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.view.ChannelListView;
 
 import java.util.ArrayList;
@@ -108,7 +106,6 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private List<ChannelState> filterChannels(String channelName) {
-
         List<ChannelState> channels_ = new ArrayList<>();
 
         if (TextUtils.isEmpty(channelName)) {
@@ -118,20 +115,22 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        for (int i = 0; i < this.channels.size(); i++) {
-            Channel channel = this.channels.get(i);
-            ChannelState state = channel.getChannelState();
-            if (TextUtils.isEmpty(channel.getName())) {
-                User opponent = Global.getOpponentUser(state);
-                if (opponent != null && opponent.getName().toLowerCase().contains(channelName.toLowerCase())) {
-                    channels_.add(state);
-                }
-            } else {
-                if (channel.getName().toLowerCase().contains(channelName.toLowerCase())) {
-                    channels_.add(state);
-                }
-            }
-        }
         return channels_;
+
+//        for (int i = 0; i < this.channels.size(); i++) {
+//            Channel channel = this.channels.get(i);
+//            ChannelState state = channel.getChannelState();
+//            if (TextUtils.isEmpty(channel.getName())) {
+//                User opponent = Global.getOpponentUser(state);
+//                if (opponent != null && opponent.getName().toLowerCase().contains(channelName.toLowerCase())) {
+//                    channels_.add(state);
+//                }
+//            } else {
+//                if (channel.getName().toLowerCase().contains(channelName.toLowerCase())) {
+//                    channels_.add(state);
+//                }
+//            }
+//        }
+//        return channels_;
     }
 }

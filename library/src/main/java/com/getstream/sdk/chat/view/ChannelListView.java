@@ -138,7 +138,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
             }
         } else {
             if (this.channelClickListener != null) {
-                // TODO: wrong place to do this
+                // TODO: wrong place to do this?
 //                Channel channel = StreamChat.getInstance().channel(channelCID);
 //                this.channelClickListener.onClick(channel);
             }
@@ -159,8 +159,6 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         // styles
         public int titleTextStyle;
         public int unreadTitleTextStyle;
-
-
 
         public Style(Context c, AttributeSet attrs) {
             this.setContext(c);

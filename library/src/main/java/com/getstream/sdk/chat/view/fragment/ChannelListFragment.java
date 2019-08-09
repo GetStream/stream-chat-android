@@ -196,7 +196,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void configChannelRecyclerView() {
         binding.listChannels.setVisibility(View.VISIBLE);
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
         binding.listChannels.setLayoutManager(mLayoutManager);
 
         binding.listChannels.setOnScrollListener(new RecyclerView.OnScrollListener() {

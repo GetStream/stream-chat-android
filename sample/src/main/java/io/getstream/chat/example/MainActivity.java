@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
+
+        binding.channelList.setLayoutManager(new LinearLayoutManager(this));
         binding.channelList.setViewModel(viewModel, this);
 
         // query all channels where the current user is a member

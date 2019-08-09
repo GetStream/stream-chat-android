@@ -81,14 +81,15 @@ public class ChannelListViewModel extends AndroidViewModel {
         c.queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
-                Log.i(TAG, "onSucces for loading the channels");
+                Log.i(TAG, "onSuccess for loading the channels");
                 loading.postValue(false);
                 List<Channel> channelList = channels.getValue();
                 if (channelList == null) {
                     channelList = new ArrayList<>();
                 }
                 for (ChannelState chan: response.getChannels()) {
-                    channelList.add(chan.getChannel());
+                    // TODO: super duper ugly trick to get the right object noooooo
+                    channelList.add(client().getChannelByCid(chan.getChannel().getCid()));
                 }
                 channels.postValue(channelList);
             }
