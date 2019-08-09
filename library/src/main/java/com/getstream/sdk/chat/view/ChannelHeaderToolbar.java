@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ToolbarChannelHeaderBinding;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
@@ -20,15 +21,16 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-public class ChannelHeaderToolbar extends RelativeLayout {
+public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClickListener {
 
     final String TAG = ChannelHeaderToolbar.class.getSimpleName();
 
     // binding for this view
     private ToolbarChannelHeaderBinding binding;
+    private OnBackClickListener onBackClickListener;
 
     // our connection to the channel scope
-    private ChannelViewModel modelView;
+    private ChannelViewModel viewModel;
 
     public ChannelHeaderToolbar(Context context) {
         super(context);
@@ -46,7 +48,8 @@ public class ChannelHeaderToolbar extends RelativeLayout {
     }
 
     public void setViewModel(ChannelViewModel model) {
-        this.modelView = model;
+        this.viewModel = model;
+        configHeaderView();
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
@@ -61,12 +64,31 @@ public class ChannelHeaderToolbar extends RelativeLayout {
 
     }
 
+    public void setOnBackClickListener(OnBackClickListener onBackClickListener) {
+        this.onBackClickListener = onBackClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if (id == R.id.tv_back) {
+            if (this.onBackClickListener != null) {
+                this.onBackClickListener.onClick(v);
+            }
+        }
+    }
+
+    public interface OnBackClickListener {
+        void onClick(View v);
+    }
+
+
     private void configHeaderView() {
 
         // TODO: Move this stuff
 
-        Channel channel = this.modelView.getChannel();
-        ChannelState channelState = this.modelView.channelState;
+        Channel channel = this.viewModel.getChannel();
+        ChannelState channelState = channel.getChannelState();
 
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvChannelInitial.setText(channel.getInitials());
@@ -93,8 +115,8 @@ public class ChannelHeaderToolbar extends RelativeLayout {
         // Channel name
         String channelName = "";
 
-        if (!TextUtils.isEmpty(channelState.getChannel().getName())) {
-            channelName = channelState.getChannel().getName();
+        if (!TextUtils.isEmpty(channel.getName())) {
+            channelName = channel.getName();
         } else {
             User opponent = Global.getOpponentUser(channelState);
             if (opponent != null) {
@@ -122,6 +144,6 @@ public class ChannelHeaderToolbar extends RelativeLayout {
             binding.ivActiveMark.setVisibility(View.GONE);
         }
 
-        binding.tvBack.setOnClickListener((View v) -> finish());
+        binding.tvBack.setOnClickListener(this);
     }
 }

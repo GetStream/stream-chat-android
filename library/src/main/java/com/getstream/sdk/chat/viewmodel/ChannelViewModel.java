@@ -52,6 +52,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
+        Log.i(TAG, "BROKEN1" + channel.getCid());
     }
 
     public ChannelViewModel(@NonNull Application application) {
@@ -61,7 +62,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
         endOfPagination = new MutableLiveData<>(false);
-
+        Log.i(TAG, "BROKEN2");
     }
 
 
