@@ -170,24 +170,7 @@ public class Global {
     }
     // endregion
 
-    // region Channel
-    public static User getOpponentUser(ChannelState channelState) {
-        return null;
-//        if (channelState.getMembers() == null || channelState.getMembers().isEmpty())
-//            return null;
-//        if (channelState.getMembers().size() > 2) return null;
-//        User opponent = null;
-//        try {
-//            for (Member member : channelState.getMembers()) {
-//                if (!member.getUser().getId().equals(client.user.getId())) {
-//                    opponent = member.getUser();
-//                    break;
-//                }
-//            }
-//        } catch (Exception e) {
-//        }
-//        return opponent;
-    }
+
 
     public static List<String> getMentionedUserIDs(ChannelState response, String text) {
         if (TextUtils.isEmpty(text)) return null;

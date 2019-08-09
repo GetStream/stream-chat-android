@@ -4,8 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="lastActive"
-            type="String" />
+            name="viewModel"
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
     </data>
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/header"
@@ -60,7 +60,7 @@
                 <TextView
                     android:id="@+id/tv_active"
                     style="@style/text_s"
-                    android:text="@{lastActive}"
+                    android:text="1 hour ago"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

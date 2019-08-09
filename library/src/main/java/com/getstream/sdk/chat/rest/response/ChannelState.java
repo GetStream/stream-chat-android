@@ -48,12 +48,47 @@ public class ChannelState {
         messages = new ArrayList<>();
         reads = new ArrayList<>();
         members = new ArrayList<>();
-        Log.i(TAG, "ChannelState constructor... ");
     }
 
     // endregion
     public static void sortUserReads(List<ChannelUserRead> reads) {
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
+    }
+
+    public List<User> getOtherUsers() {
+        List<User> users = new ArrayList<User>();
+        for (Member m : this.members) {
+            // TODO: Tommaso
+            String currentUserId = "";
+            if (!m.getUser().getId().equals(currentUserId)) {
+                users.add(m.getUser());
+            }
+        }
+        return users;
+    }
+
+    public String getChannelNameOrMembers() {
+        String channelName;
+
+        if (!TextUtils.isEmpty(channel.getName())) {
+            channelName = channel.getName();
+        } else {
+            List<User> users = this.getOtherUsers();
+
+            List<User> top3 = users.subList(0, 3);
+            List<String> usernames = new ArrayList<String>();
+            for (User u : top3) {
+                usernames.add(u.getName());
+            }
+
+            channelName = TextUtils.join(", ", usernames);
+            if (users.size() > 3) {
+                channelName += "...";
+            }
+
+
+        }
+        return channelName;
     }
 
     public Channel getChannel() {

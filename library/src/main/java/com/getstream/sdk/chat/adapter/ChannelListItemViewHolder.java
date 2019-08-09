@@ -121,17 +121,18 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 tv_initials.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                tv_initials.setText(opponent.getUserInitials());
-                Utils.circleImageLoad(iv_avatar, opponent.getImage());
-                tv_name.setText(opponent.getName());
-                tv_initials.setVisibility(View.VISIBLE);
-                iv_avatar.setVisibility(View.VISIBLE);
-            } else {
-                tv_initials.setVisibility(View.GONE);
-                iv_avatar.setVisibility(View.INVISIBLE);
-            }
+            // TODO: Fix me
+//            User opponent = Global.getOpponentUser(channelState);
+//            if (opponent != null) {
+//                tv_initials.setText(opponent.getUserInitials());
+//                Utils.circleImageLoad(iv_avatar, opponent.getImage());
+//                tv_name.setText(opponent.getName());
+//                tv_initials.setVisibility(View.VISIBLE);
+//                iv_avatar.setVisibility(View.VISIBLE);
+//            } else {
+//                tv_initials.setVisibility(View.GONE);
+//                iv_avatar.setVisibility(View.INVISIBLE);
+//            }
         }
     }
 

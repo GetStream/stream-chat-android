@@ -36,54 +36,54 @@ public class ChannelViewModelOld extends ViewModel {
     }
 
     public boolean isOnline() {
-        if (channelState == null) return false;
-        try {
-            if (Global.getOpponentUser(channelState) == null)
-                return false;
-
-            return Global.getOpponentUser(channelState).getOnline();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        if (channelState == null) return false;
+//        try {
+//            if (Global.getOpponentUser(channelState) == null)
+//                return false;
+//
+//            return Global.getOpponentUser(channelState).getOnline();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         return false;
     }
     public String channelName() {
-        if (channelState == null) return null;
-        if (!TextUtils.isEmpty(channelState.getChannel().getName())) {
-            return channelState.getChannel().getName();
-        } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                return opponent.getName();
-            }
-        }
+//        if (channelState == null) return null;
+//        if (!TextUtils.isEmpty(channelState.getChannel().getName())) {
+//            return channelState.getChannel().getName();
+//        } else {
+//            User opponent = Global.getOpponentUser(channelState);
+//            if (opponent != null) {
+//                return opponent.getName();
+//            }
+//        }
         return null;
     }
     public boolean isVisibleLastActive() {
-        if (channelState == null) return false;
-        User opponent = Global.getOpponentUser(channelState);
-        if (opponent != null) {
-            if (TextUtils.isEmpty(Message.differentTime(opponent.getLast_active())))
-                return false;
-            else {
-
-                return true;
-            }
-        }
+//        if (channelState == null) return false;
+//        User opponent = Global.getOpponentUser(channelState);
+//        if (opponent != null) {
+//            if (TextUtils.isEmpty(Message.differentTime(opponent.getLast_active())))
+//                return false;
+//            else {
+//
+//                return true;
+//            }
+//        }
         return false;
     }
     public String lastActive(){
-        if (channelState == null) return null;
-        // Last Active
-        User opponent = Global.getOpponentUser(channelState);
-        if (opponent != null) {
-            if (TextUtils.isEmpty(Message.differentTime(opponent.getLast_active())))
-                return null;
-            else {
-
-                return Message.differentTime(opponent.getLast_active());
-            }
-        }
+//        if (channelState == null) return null;
+//        // Last Active
+//        User opponent = Global.getOpponentUser(channelState);
+//        if (opponent != null) {
+//            if (TextUtils.isEmpty(Message.differentTime(opponent.getLast_active())))
+//                return null;
+//            else {
+//
+//                return Message.differentTime(opponent.getLast_active());
+//            }
+//        }
         return null;
     }
 

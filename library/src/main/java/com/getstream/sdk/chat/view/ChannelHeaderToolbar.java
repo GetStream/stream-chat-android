@@ -59,11 +59,6 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         return binding;
     }
 
-    private void configHeaderLastActive(@Nullable Message message) {
-        binding.setLastActive("1 hour ago");
-
-    }
-
     public void setOnBackClickListener(OnBackClickListener onBackClickListener) {
         this.onBackClickListener = onBackClickListener;
     }
@@ -85,10 +80,14 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
 
     private void configHeaderView() {
 
-        // TODO: Move this stuff
+        // setup the onClick listener for the back button
+        binding.tvBack.setOnClickListener(this);
+
 
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
+
+        // avatar, channelName, lastActive, online/offline mark...
 
         if (!TextUtils.isEmpty(channel.getName())) {
             binding.tvChannelInitial.setText(channel.getInitials());
@@ -101,49 +100,39 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
                 binding.tvChannelInitial.setVisibility(View.VISIBLE);
             }
         } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                binding.tvChannelInitial.setText(opponent.getUserInitials());
-                Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
-            } else {
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
-            }
+//            User opponent = Global.getOpponentUser(channelState);
+//            if (opponent != null) {
+//                binding.tvChannelInitial.setText(opponent.getUserInitials());
+//                Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
+//                binding.tvChannelInitial.setVisibility(View.VISIBLE);
+//                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
+//            } else {
+//                binding.tvChannelInitial.setVisibility(View.VISIBLE);
+//                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
+//            }
         }
         // Channel name
-        String channelName = "";
 
-        if (!TextUtils.isEmpty(channel.getName())) {
-            channelName = channel.getName();
-        } else {
-            User opponent = Global.getOpponentUser(channelState);
-            if (opponent != null) {
-                channelName = opponent.getName();
-            }
-        }
 
-        binding.tvChannelName.setText(channelName);
+        binding.tvChannelName.setText(channelState.getChannelNameOrMembers());
 
         // Last Active
         Message lastMessage = channelState.getLastMessageFromOtherUser();
-        configHeaderLastActive(lastMessage);
         // Online Mark
         try {
-            if (Global.getOpponentUser(channelState) == null)
-                binding.ivActiveMark.setVisibility(View.GONE);
-            else {
-                if (Global.getOpponentUser(channelState).getOnline()) {
-                    binding.ivActiveMark.setVisibility(View.VISIBLE);
-                } else {
-                    binding.ivActiveMark.setVisibility(View.GONE);
-                }
-            }
+//            if (Global.getOpponentUser(channelState) == null)
+//                binding.ivActiveMark.setVisibility(View.GONE);
+//            else {
+//                if (Global.getOpponentUser(channelState).getOnline()) {
+//                    binding.ivActiveMark.setVisibility(View.VISIBLE);
+//                } else {
+//                    binding.ivActiveMark.setVisibility(View.GONE);
+//                }
+//            }
         } catch (Exception e) {
             binding.ivActiveMark.setVisibility(View.GONE);
         }
 
-        binding.tvBack.setOnClickListener(this);
+
     }
 }
