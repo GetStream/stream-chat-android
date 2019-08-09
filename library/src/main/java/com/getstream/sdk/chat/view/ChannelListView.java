@@ -35,15 +35,18 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
 
     public ChannelListView(Context context) {
         super(context);
+        this.setHasFixedSize(true);
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.setHasFixedSize(true);
         this.parseAttr(context, attrs);
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        this.setHasFixedSize(true);
         this.parseAttr(context, attrs);
     }
 

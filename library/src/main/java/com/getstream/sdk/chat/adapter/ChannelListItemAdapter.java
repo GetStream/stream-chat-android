@@ -36,6 +36,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.longClickListener = longClickListener;
         this.className = className;
         this.itemLayoutId = itemLayoutId;
+
     }
 
     // TODO: review this. Good to forward to other constructor but I have no idea what the default is for clickListener and longClickListener

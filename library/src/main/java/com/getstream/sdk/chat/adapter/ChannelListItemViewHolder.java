@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ReadStateView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import ru.noties.markwon.Markwon;
@@ -120,9 +121,21 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_name.setText(channelName);
 
         // set the lastMessage and last messageDate
-        tv_last_message.setText(lastMessage.getText());
-        String humanizedDateDiff = getRelativeTimeSpanString(lastMessage.getCreatedAtDate().getTime()).toString();
-        tv_date.setText(humanizedDateDiff);
+        SimpleDateFormat format = new SimpleDateFormat("MMM d");
+        if (lastMessage != null) {
+            // humanized time diff
+//            tv_last_message.setText(lastMessage.getText());
+//            String humanizedDateDiff = getRelativeTimeSpanString(lastMessage.getCreatedAtDate().getTime()).toString();
+//            tv_date.setText(humanizedDateDiff);
+
+            if (lastMessage.isToday())
+                tv_date.setText(lastMessage.getTime());
+            else
+                tv_date.setText(format.format(lastMessage.getCreatedAtDate()));
+        }
+
+
+
 
         // read indicators
         read_state.setReads(lastMessageReads);

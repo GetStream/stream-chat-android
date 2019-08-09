@@ -31,14 +31,17 @@ public class AvatarGroupView extends View {
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        this.context = context;
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        this.context = context;
     }
 
     public void setChannelAndOtherUsers(Channel channel, List<User> otherUsers) {
