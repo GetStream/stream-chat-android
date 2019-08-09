@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.ReadIndicator;
@@ -37,6 +39,8 @@ import ru.noties.markwon.image.ImagesPlugin;
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
+
+    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
 
     public ConstraintLayout cl_root;
     public TextView tv_name, tv_last_message, tv_date, tv_click;
@@ -73,20 +77,20 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     }
 
-    // TODO:
     public void applyStyle() {
         // TODO: apply more styles here
         //tv_date.setTextSize(style.dateTextSize);
     }
 
     public void applyUnreadStyle() {
-        // TODO: apply more styles here
-        //tv_date.setTextSize(style.dateTextSize);
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.BOLD);
+        tv_last_message.setTextColor(ContextCompat.getColor(context, R.color.black));
+
     }
 
     public void applyReadStyle() {
-        // TODO: apply more styles here
-        //tv_date.setTextSize(style.dateTextSize);
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.NORMAL);
+        tv_last_message.setTextColor(ContextCompat.getColor(context, R.color.gray_dark));
     }
 
     @Override
@@ -120,18 +124,20 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // set the channel name
         tv_name.setText(channelName);
 
-        // set the lastMessage and last messageDate
-        SimpleDateFormat format = new SimpleDateFormat("MMM d");
+
+
         if (lastMessage != null) {
+            // set the lastMessage and last messageDate
+            tv_last_message.setText(lastMessage.getText());
             // humanized time diff
-//            tv_last_message.setText(lastMessage.getText());
+//
 //            String humanizedDateDiff = getRelativeTimeSpanString(lastMessage.getCreatedAtDate().getTime()).toString();
 //            tv_date.setText(humanizedDateDiff);
 
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
             else
-                tv_date.setText(format.format(lastMessage.getCreatedAtDate()));
+                tv_date.setText(dateFormat.format(lastMessage.getCreatedAtDate()));
         }
 
 
