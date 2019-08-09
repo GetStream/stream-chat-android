@@ -132,25 +132,35 @@ public class ChannelState {
         return reads;
     }
 
+    public List<ChannelUserRead> getLastMessageReads() {
+        Message lastMessage = this.getLastMessage();
+        List<ChannelUserRead> readLastMessage = new ArrayList<ChannelUserRead>();
+        for (ChannelUserRead r : reads) {
+            // TODO: fix me as soon as we have working date parsing
+            //r.getLast_read() > lastMessage.getCreatedAt()
+            if (true) {
+                readLastMessage.add(r);
+            }
+        }
+        return readLastMessage;
+    }
+
     public List<Member> getMembers() {
         return members;
     }
 
     public Message getLastMessage() {
         Message lastMessage = null;
-        try {
-            List<Message> messages = getMessages();
-            for (int i = messages.size() - 1; i >= 0; i--) {
-                Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeletedAt()) && message.getType().equals(ModelType.message_regular)) {
-                    lastMessage = message;
-                    break;
-                }
+        List<Message> messages = getMessages();
+        for (int i = messages.size() - 1; i >= 0; i--) {
+            Message message = messages.get(i);
+            if (TextUtils.isEmpty(message.getDeletedAt()) && message.getType().equals(ModelType.message_regular)) {
+                lastMessage = message;
+                break;
             }
-            Message.setStartDay(Arrays.asList(lastMessage), null);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        Message.setStartDay(Arrays.asList(lastMessage), null);
+
         return lastMessage;
     }
 
@@ -248,6 +258,10 @@ public class ChannelState {
             // TODO: init read state
         }
 
+    }
+
+    public int getCurrentUserUnreadMessageCount() {
+        return this.getUnreadMessageCount(this.getChannel().getClient().getUserId());
     }
 
     public int getUnreadMessageCount(String userId) {

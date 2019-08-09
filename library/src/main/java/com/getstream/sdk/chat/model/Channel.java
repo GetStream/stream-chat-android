@@ -162,6 +162,10 @@ public class Channel {
         this(client, type, id, new HashMap<>());
     }
 
+    public Client getClient() {
+        return this.client;
+    }
+
     /**
      * constructor - Create a channel
      *

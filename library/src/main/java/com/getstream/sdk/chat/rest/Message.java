@@ -380,6 +380,19 @@ public class Message {
         return created_at;
     }
 
+    public Date getCreatedAtDate() {
+        SimpleDateFormat  format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        Date date;
+        try {
+            date = format.parse(getCreatedAt());
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            date = new Date();
+        }
+        return date;
+    }
+
     public String getUpdatedAt() {
         return updatedAt;
     }

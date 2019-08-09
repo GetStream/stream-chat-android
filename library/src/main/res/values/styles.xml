@@ -70,7 +70,7 @@
     </style>
 
     <style name="channel_preview_channel_name">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/black</item>
     </style>
 

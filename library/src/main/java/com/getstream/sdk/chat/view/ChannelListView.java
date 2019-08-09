@@ -133,7 +133,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         Log.i(TAG, "click click on a channel");
         String channelCID = v.getTag().toString();
 
-        if (id == R.id.iv_avatar) {
+        if (id == R.id.avatar_group) {
             if (this.userClickListener != null) {
                 // TODO get the user somehow
                 // this.userClickListener.onClick();
