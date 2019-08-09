@@ -50,12 +50,15 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
 
     public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
         this.viewModel = model;
+
         configHeaderView();
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ToolbarChannelHeaderBinding.inflate(inflater, this, true);
+        // setup the onClick listener for the back button
+        binding.tvBack.setOnClickListener(this);
 
         return binding;
     }
@@ -80,19 +83,13 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
 
 
     private void configHeaderView() {
-
-        // setup the onClick listener for the back button
-        binding.tvBack.setOnClickListener(this);
-
-        // 1. viewmodel should provide livedata object for the online icon
-        // 2. viewmodel should provide livedata object for the lastActive dates of other users (and transform it into, a total last active)
-        // 3. move avatar image into it's own view and handle the edge cases
-
-        // TODO: all of this stuff should be handled in the viewModel
+        // TODO:
+        // - the avatar should be it's own view since the logic is quite complex and needed in many screens
+        // - IE: channelImage with fallback to list of images from other users, fallback to initial of other users
+        // - once we simplify this to it's own view we can just use databinding for the data and remove configHeaderView
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
 
-        // channelImage with fallback to list of images from other users, fallback to initial of other users
         if (StringUtility.isValidImageUrl(channel.getImage())) {
             Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImage());
             binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
