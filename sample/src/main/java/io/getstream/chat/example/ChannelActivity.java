@@ -49,12 +49,7 @@ public class ChannelActivity extends AppCompatActivity {
         binding.messageInput.setViewModel(viewModel);
         binding.messageList.setViewModel(viewModel);
 
-        binding.channelHeader.setOnBackClickListener(new ChannelHeaderToolbar.OnBackClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        binding.channelHeader.setOnBackClickListener(v -> finish());
 
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
