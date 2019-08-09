@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
@@ -43,8 +44,8 @@ public class ChannelState {
     @SerializedName("watcher_count")
     private int watcherCount;
 
-    public ChannelState() {
-        channel = null;
+    public ChannelState(Channel channel) {
+        this.channel = channel;
         messages = new ArrayList<>();
         reads = new ArrayList<>();
         members = new ArrayList<>();
@@ -67,6 +68,15 @@ public class ChannelState {
         return users;
     }
 
+    public Date getLastActive() {
+//        List<User> users = this.getOtherUsers();
+//        for (User u: users) {
+//            // TODO: Tommaso why is this a string?
+//            u.getLast_active();
+//        }
+        return new Date();
+    }
+
     public String getChannelNameOrMembers() {
         String channelName;
 
@@ -75,7 +85,7 @@ public class ChannelState {
         } else {
             List<User> users = this.getOtherUsers();
 
-            List<User> top3 = users.subList(0, 3);
+            List<User> top3 = users.subList(0, Math.min(3, users.size()));
             List<String> usernames = new ArrayList<String>();
             for (User u : top3) {
                 usernames.add(u.getName());

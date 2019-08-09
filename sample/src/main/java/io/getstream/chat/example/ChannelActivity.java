@@ -34,10 +34,12 @@ public class ChannelActivity extends AppCompatActivity {
         String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
+
         // we're using data binding in this example
         ActivityChannelBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
+        binding.setLifecycleOwner(this);
 
         Channel channel = client.channel(channelType, channelID);
         viewModel = ViewModelProviders.of(this,
@@ -45,7 +47,7 @@ public class ChannelActivity extends AppCompatActivity {
         ).get(ChannelViewModel.class);
 
         // connect the view model
-        binding.channelHeader.setViewModel(viewModel);
+        binding.channelHeader.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel);
         binding.messageList.setViewModel(viewModel);
 

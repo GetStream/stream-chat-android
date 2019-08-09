@@ -85,6 +85,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         // connect the viewHolder on click listener...
         adapter.SetOnClickListener(this);
 
+        // TODO: this approach doesn't work, it needs to be an event see line 60
         viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.addChannels(channels));
     }
 

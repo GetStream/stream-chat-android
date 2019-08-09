@@ -196,7 +196,7 @@ public class Channel {
         this.extraData.remove("id");
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
-        channelState = new ChannelState();
+        channelState = new ChannelState(this);
     }
 
     // endregion

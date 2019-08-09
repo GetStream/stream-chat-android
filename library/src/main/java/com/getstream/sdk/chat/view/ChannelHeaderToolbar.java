@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ToolbarChannelHeaderBinding;
@@ -47,7 +48,7 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         binding = initBinding(context);
     }
 
-    public void setViewModel(ChannelViewModel model) {
+    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
         this.viewModel = model;
         configHeaderView();
     }
@@ -83,56 +84,23 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         // setup the onClick listener for the back button
         binding.tvBack.setOnClickListener(this);
 
+        // 1. viewmodel should provide livedata object for the online icon
+        // 2. viewmodel should provide livedata object for the lastActive dates of other users (and transform it into, a total last active)
+        // 3. move avatar image into it's own view and handle the edge cases
 
+        // TODO: all of this stuff should be handled in the viewModel
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
 
-        // avatar, channelName, lastActive, online/offline mark...
-
-        if (!TextUtils.isEmpty(channel.getName())) {
-            binding.tvChannelInitial.setText(channel.getInitials());
+        // channelImage with fallback to list of images from other users, fallback to initial of other users
+        if (StringUtility.isValidImageUrl(channel.getImage())) {
             Utils.circleImageLoad(binding.ivHeaderAvatar, channel.getImage());
-            if (StringUtility.isValidImageUrl(channel.getImage())) {
-                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
-                binding.tvChannelInitial.setVisibility(View.INVISIBLE);
-            } else {
-                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
-                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-            }
+            binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
         } else {
-//            User opponent = Global.getOpponentUser(channelState);
-//            if (opponent != null) {
-//                binding.tvChannelInitial.setText(opponent.getUserInitials());
-//                Utils.circleImageLoad(binding.ivHeaderAvatar, opponent.getImage());
-//                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-//                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
-//            } else {
-//                binding.tvChannelInitial.setVisibility(View.VISIBLE);
-//                binding.ivHeaderAvatar.setVisibility(View.INVISIBLE);
-//            }
+            for (User u: channelState.getOtherUsers()) {
+                Utils.circleImageLoad(binding.ivHeaderAvatar, u.getImage());
+                binding.ivHeaderAvatar.setVisibility(View.VISIBLE);
+            }
         }
-        // Channel name
-
-
-        binding.tvChannelName.setText(channelState.getChannelNameOrMembers());
-
-        // Last Active
-        Message lastMessage = channelState.getLastMessageFromOtherUser();
-        // Online Mark
-        try {
-//            if (Global.getOpponentUser(channelState) == null)
-//                binding.ivActiveMark.setVisibility(View.GONE);
-//            else {
-//                if (Global.getOpponentUser(channelState).getOnline()) {
-//                    binding.ivActiveMark.setVisibility(View.VISIBLE);
-//                } else {
-//                    binding.ivActiveMark.setVisibility(View.GONE);
-//                }
-//            }
-        } catch (Exception e) {
-            binding.ivActiveMark.setVisibility(View.GONE);
-        }
-
-
     }
 }
