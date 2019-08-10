@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
@@ -32,31 +31,37 @@ import java.util.List;
 public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener {
     private final String TAG = ChannelViewModel.class.getSimpleName();
 
+    private Channel channel;
+
+    // TODO: channelState should be removed!
+    public ChannelState channelState;
+
     public MutableLiveData<Boolean> loading;
     public MutableLiveData<Boolean> loadingMore;
     public MutableLiveData<Boolean> failed;
     public MutableLiveData<Boolean> online;
     public MutableLiveData<String> channelName;
-
+    private MutableLiveData<List<Message>> mMessages;
     public MutableLiveData<Boolean> anyOtherUsersOnline;
+    private MutableLiveData<Number> mWatcherCount;
+
+    // TODO: Thread
+    // TODO: Editing
+    // TODO: Event handler
+    // TODO: Typing events
+    // TODO: Messages
+    public MutableLiveData<Boolean> endOfPagination;
 
     public Channel getChannel() {
         return channel;
     }
 
-    private Channel channel;
-    public ChannelState channelState;
-
-    // TODO: Thread
-    // TODO: Editing
-    // TODO: Event handler
-    public MutableLiveData<Boolean> endOfPagination;
-
-
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
         this.channelState = channel.getChannelState();
+        attachToClient();
+
         loading = new MutableLiveData<>(true);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
@@ -65,16 +70,57 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         // TODO: actually listen to the events and verify if anybody is online
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
         // TODO: change this if the list of channel members changes or the channel is updated
-        channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
+        channelName = new MutableLiveData<>(channel.getName());
+        mMessages = new MutableLiveData<>();
+        mWatcherCount = new MutableLiveData<>();
+    }
 
-        // TODO: disabled since there is some bug in the client here
-        //this.loadChannelState();
-        this.channel.addEventHandler(new ChatChannelEventHandler(){
+    private void attachToClient(){
+        channel.query(new QueryChannelCallback(){
+            @Override
+            public void onSuccess(ChannelState response) {
+                loading.postValue(false);
+                channelName.postValue(channel.getName());
+                mMessages.postValue(response.getMessages());
+                setupEventSync();
+            }
+            @Override
+            public void onError(String errMsg, int errCode) {
+            }
+        });
+    }
+
+    private void setupEventSync(){
+        channel.addEventHandler(new ChatChannelEventHandler() {
+            @Override
+            public void onAnyEvent(Event event) {
+                Number watcherCount = event.getWatcherCount();
+                if (watcherCount != null) {
+                    mWatcherCount.postValue(watcherCount);
+                }
+            }
             @Override
             public void onMessageNew(Event event) {
-                messageEvent(event);
-                // update the adapter
+                List<Message> list = mMessages.getValue();
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                list.add(event.getMessage());
+                mMessages.postValue(list);
             }
+//            @Override
+//            public void onTypingStart(Event event) {
+//                User user = event.getUser();
+//                mTypingState.put(user.getId(), event);
+//                mTypingUsers.postValue(typingUsers());
+//                scheduleCleanup();
+//            }
+//            @Override
+//            public void onTypingStop(Event event) {
+//                User user = event.getUser();
+//                mTypingState.remove(user.getId());
+//                mTypingUsers.postValue(typingUsers());
+//            }
         });
     }
 
@@ -89,11 +135,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             @Override
             public void onSuccess(ChannelState response) {
                 m.loading.postValue(false);
-                m.loading.setValue(false);
                 m.channelState = response;
                 List<Message> newMessages = new ArrayList<>(response.getMessages());
                 if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
-
+                m.channelName.postValue(response.getChannelNameOrMembers());
                 Log.d(TAG, "channelState loaded" + newMessages.size());
             }
 
@@ -216,7 +261,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 new QueryChannelCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
-                        loadingMore.setValue(false);
+                        loadingMore.postValue(false);
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
                         if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
                     }

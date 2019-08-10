@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.model;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -11,9 +10,9 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
@@ -240,6 +239,8 @@ public class Channel {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 ChannelState state = response.body();
+                                channel.name = state.getChannel().name;
+                                channel.image = state.getChannel().image;
                                 channel.channelState.init(state);
                                 channel.config = state.getChannel().config;
                                 client.addChannelConfig(type, channel.config);

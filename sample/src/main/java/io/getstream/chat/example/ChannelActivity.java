@@ -2,7 +2,6 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.view.ChannelHeaderToolbar;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -48,8 +46,8 @@ public class ChannelActivity extends AppCompatActivity {
 
         // connect the view model
         binding.channelHeader.setViewModel(viewModel, this);
-        binding.messageInput.setViewModel(viewModel);
-        binding.messageList.setViewModel(viewModel);
+        binding.messageInput.setViewModel(viewModel, this);
+        binding.messageList.setViewModel(viewModel, this);
 
         binding.channelHeader.setOnBackClickListener(v -> finish());
 

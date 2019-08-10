@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view;
 
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +13,8 @@ import androidx.lifecycle.LifecycleOwner;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ToolbarChannelHeaderBinding;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -50,7 +47,8 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
 
     public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
         this.viewModel = model;
-
+        binding.setLifecycleOwner(lifecycleOwner);
+        binding.setViewModel(viewModel);
         configHeaderView();
     }
 
@@ -59,7 +57,6 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         binding = ToolbarChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onClick listener for the back button
         binding.tvBack.setOnClickListener(this);
-
         return binding;
     }
 
@@ -80,7 +77,6 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
     public interface OnBackClickListener {
         void onClick(View v);
     }
-
 
     private void configHeaderView() {
         // TODO:
