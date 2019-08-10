@@ -297,45 +297,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
 
     private void configChannelListView() {
         adapter = new ChannelListItemAdapter(getContext(), mViewModel.client().activeChannels,
-                channelItemViewHolderName, channelItemLayoutId, (View view) -> {
-
-            String channelId = view.getTag().toString();
-            ChannelState response = mViewModel.client().getChannelByCid(channelId).getChannelState();
-            getActivity().runOnUiThread(() -> navigationChannelFragment(response));
-
-        }, (View view) -> {
-            String channelId = view.getTag().toString();
-            final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setTitle("Do you want to delete this channel?")
-                    .setMessage("If you delete this channel, will delete all chat history for this channel!")
-                    .setPositiveButton(android.R.string.ok, null)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .create();
-
-            alertDialog.setOnShowListener((DialogInterface dialog) -> {
-                Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                button.setOnClickListener((View v) -> {
-                    ChannelState response_ = mViewModel.client().getChannelByCid(channelId).getChannelState();
-                    mViewModel.client().deleteChannel(channelId, new QueryChannelCallback() {
-                        @Override
-                        public void onSuccess(ChannelState response) {
-                            Utils.showMessage(getContext(), "Deleted successfully!");
-                            mViewModel.client().activeChannels.remove(response_);
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            Utils.showMessage(getContext(), errMsg);
-                        }
-                    });
-                    alertDialog.dismiss();
-                });
-
-            });
-            alertDialog.show();
-            return true;
-        });
+                 channelItemLayoutId);
         binding.listChannels.setAdapter(adapter);
     }
 

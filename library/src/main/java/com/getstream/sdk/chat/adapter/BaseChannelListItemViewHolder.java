@@ -15,5 +15,5 @@ public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHol
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    public abstract void bind(Context context, ChannelState channelState, int position, View.OnClickListener clickListener, View.OnLongClickListener longClickListener);
+    public abstract void bind(Context context, ChannelState channelState, int position);
 }

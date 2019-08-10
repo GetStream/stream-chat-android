@@ -51,8 +51,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private Context context;
 
     private Markwon markdownBuilder;
-    private View.OnClickListener clickListener;
-    private View.OnLongClickListener longClickListener;
+    private ChannelListView.UserClickListener userClickListener;
+    private ChannelListView.ChannelClickListener channelClickListener;
+    private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.Style style;
     
     public ChannelListItemViewHolder(int resId, ViewGroup parent, ChannelListView.Style style) {
@@ -62,6 +63,17 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         this.style = style;
         findReferences();
         applyStyle();
+    }
+
+    public void setUserClickListener(ChannelListView.UserClickListener l) {
+        userClickListener = l;
+    }
+
+    public void setChannelClickListener(ChannelListView.ChannelClickListener l ) {
+        channelClickListener = l;
+    }
+    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l ) {
+        channelLongClickListener = l;
     }
 
     public void findReferences() {
@@ -94,19 +106,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, int position,
-                     View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, int position) {
 
         // setup the click listeners and the markdown builder
         this.context = context;
-        if (markdownBuilder == null)
-            this.markdownBuilder = Markwon.builder(context)
-                    .usePlugin(ImagesPlugin.create(context))
-                    .usePlugin(CorePlugin.create())
-                    .usePlugin(StrikethroughPlugin.create())
-                    .build();
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
 
         // the UI depends on the
         // - lastMessage
@@ -117,14 +120,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         List<User> otherUsers = channelState.getOtherUsers();
         String channelName = channelState.getChannelNameOrMembers();
+        Channel channel = channelState.getChannel();
 
         // set the data for the avatar
         iv_avatar.setChannelAndOtherUsers(channelState.getChannel(), otherUsers);
 
         // set the channel name
         tv_name.setText(channelName);
-
-
 
         if (lastMessage != null) {
             // set the lastMessage and last messageDate
@@ -140,11 +142,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 tv_date.setText(dateFormat.format(lastMessage.getCreatedAtDate()));
         }
 
-
-
-
         // read indicators
-
         read_state.setReads(lastMessageReads);
 
         // apply unread style or read style
@@ -155,19 +153,25 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         // click listeners
-        // TODO: clicking an individual user avatar... usually has a different behaviour...
+        iv_avatar.setOnClickListener(view -> {
+            // if there is 1 user
+            if (otherUsers.size() == 1) {
+                this.userClickListener.onClick(otherUsers.get(0));
+            } else {
+                this.channelClickListener.onClick(channel);
+
+            }
+        });
+
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
-            view.setTag(channelState.getChannel().getCid());
-
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
             new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
-            this.clickListener.onClick(view);
+            this.channelClickListener.onClick(channel);
         });
 
         tv_click.setOnLongClickListener(view -> {
-            view.setTag(channelState.getChannel().getCid());
-            this.longClickListener.onLongClick(view);
+            this.channelLongClickListener.onClick(channel);
             return true;
         });
     }

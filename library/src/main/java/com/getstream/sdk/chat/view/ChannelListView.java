@@ -14,13 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
-public class ChannelListView extends RecyclerView implements View.OnClickListener {
+public class ChannelListView extends RecyclerView {
     final String TAG = ChannelListView.class.getSimpleName();
 
     private Style style;
@@ -29,6 +30,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
     private ChannelListViewModel viewModel;
     private UserClickListener userClickListener;
     private ChannelClickListener channelClickListener;
+    private ChannelClickListener channelLongClickListener;
     private ChannelListItemAdapter adapter;
 
     public ChannelListView(Context context) {
@@ -90,7 +92,9 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         this.setAdapterWithStyle(adapter);
 
         // connect the viewHolder on click listener...
-        adapter.SetOnClickListener(this);
+        adapter.setChannelClickListener(this.channelClickListener);
+        adapter.setChannelLongClickListener(this.channelLongClickListener);
+        adapter.setUserClickListener(this.userClickListener);
 
         // TODO: this approach is not great for performance
         viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.replaceChannels(channels));
@@ -104,6 +108,10 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         this.channelClickListener = channelClickListener;
     }
 
+    public void setOnLongClickListener(ChannelClickListener listener) {
+        this.channelLongClickListener = listener;
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
@@ -113,12 +121,6 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
     public void setAdapterWithStyle(ChannelListItemAdapter adapter) {
         super.setAdapter(adapter);
         adapter.setStyle(style);
-
-        int fVPosition = 0;
-
-        // TODO: make this work if the layout isn't up and running yet
-        //int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
-
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -141,26 +143,6 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         });
 
     }
-
-    @Override
-    public void onClick(View v) {
-        // TODO: determine what the user clicked.. and forward to user or channel on click listener...s
-        int id = v.getId();
-        Log.i(TAG, "click click on a channel");
-        String channelCID = v.getTag().toString();
-
-        if (id == R.id.avatar_group) {
-            if (this.userClickListener != null) {
-                // TODO get the user somehow
-                // this.userClickListener.onClick();
-            }
-        } else {
-            if (this.channelClickListener != null) {
-                this.channelClickListener.onClick(channelCID);
-            }
-        }
-    }
-
 
     public class Style extends BaseStyle {
         final String TAG = Style.class.getSimpleName();
@@ -202,7 +184,11 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
     }
 
     public interface ChannelClickListener {
-        void onClick(String channelCID);
+        void onClick(Channel channel);
     }
+
+
+
+
 
 }

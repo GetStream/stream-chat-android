@@ -22,31 +22,32 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context context;
     private List<Channel> channels; // cached list of channels
     public String filter;
-    private View.OnClickListener clickListener;
-    private String className;
+    private ChannelListView.ChannelClickListener channelClickListener;
+    private ChannelListView.ChannelClickListener channelLongClickListener;
+    private ChannelListView.UserClickListener userClickListener;
     private int itemLayoutId;
     private ChannelListView.Style style;
-    private View.OnLongClickListener longClickListener;
 
-    public ChannelListItemAdapter(Context context, List<Channel> channels,
-                                  String className, int itemLayoutId,
-                                  View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public ChannelListItemAdapter(Context context, List<Channel> channels, int itemLayoutId) {
         this.context = context;
         this.channels = channels;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.className = className;
         this.itemLayoutId = itemLayoutId;
 
     }
 
-    // TODO: review this. Good to forward to other constructor but I have no idea what the default is for clickListener and longClickListener
     public ChannelListItemAdapter(Context context, int itemLayoutId) {
-        this(context, new ArrayList<>(), "", itemLayoutId, null, null);
+        this(context, new ArrayList<>(), itemLayoutId);
     }
 
-    public void SetOnClickListener(View.OnClickListener l ) {
-        clickListener = l;
+    public void setUserClickListener(ChannelListView.UserClickListener l) {
+        userClickListener = l;
+    }
+
+    public void setChannelClickListener(ChannelListView.ChannelClickListener l ) {
+        channelClickListener = l;
+    }
+    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l ) {
+        channelLongClickListener = l;
     }
 
     public void setStyle(ChannelListView.Style s) {
@@ -80,25 +81,18 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
-        try {
-            Class tempClass = Class.forName(className);
-            Class[] cArg = new Class[2];
-            cArg[0] = int.class;
-            cArg[1] = ViewGroup.class;
-            Object obj = tempClass.getDeclaredConstructor(cArg).newInstance(itemLayoutId, parent);
-            if (obj instanceof BaseChannelListItemViewHolder) {
-                return ((BaseChannelListItemViewHolder) obj);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ChannelListItemViewHolder(R.layout.list_item_channel, parent, style);
+        ChannelListItemViewHolder r =  new ChannelListItemViewHolder(R.layout.list_item_channel, parent, style);
+        r.setChannelClickListener(this.channelClickListener);
+        r.setChannelLongClickListener(this.channelLongClickListener);
+        r.setUserClickListener(this.userClickListener);
+
+        return r;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ChannelState channelState = channels.get(position).getChannelState();
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, clickListener, longClickListener);
+        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position);
     }
 
     @Override
