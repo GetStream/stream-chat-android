@@ -74,7 +74,7 @@ public class ChannelListViewModel extends AndroidViewModel {
         Log.i(TAG, "queryChannels for loading the channels");
 
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
-                .withLimit(20)
+                .withLimit(30)
                 .withMessageLimit(20);
 
         Client c = StreamChat.getInstance(getApplication());
@@ -103,7 +103,46 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public void loadMore() {
-        // TODO: Implement loadmore
-        // TODO: Protect against repeated loading
+        // different loader, offset, perhaps callback...
+        // TODO: Make this more DRY
+
+        int limit = 30;
+        if (loadingMore.getValue()) {
+            return;
+        }
+        loadingMore.setValue(true);
+        int offset = channels.getValue().size();
+        Log.i(TAG, "Offset is " + offset);
+        QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
+                .withLimit(limit)
+                .withOffset(offset)
+                .withMessageLimit(20);
+
+        Client c = StreamChat.getInstance(getApplication());
+        c.queryChannels(request, new QueryChannelListCallback() {
+            @Override
+            public void onSuccess(QueryChannelsResponse response) {
+                Log.i(TAG, "onSuccess for loading more channels");
+                loadingMore.postValue(false);
+                List<Channel> channelList = channels.getValue();
+                if (channelList == null) {
+                    channelList = new ArrayList<>();
+                }
+                if (response.getChannels().size() < limit) {
+                    endOfPagination.postValue(true);
+                }
+                for (ChannelState chan: response.getChannels()) {
+                    // TODO: super duper ugly trick to get the right object noooooo
+                    channelList.add(client().getChannelByCid(chan.getChannel().getCid()));
+                }
+                channels.postValue(channelList);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, "onError for loading the channels" + errMsg);
+                loadingMore.postValue(false);
+            }
+        });
     }
 }

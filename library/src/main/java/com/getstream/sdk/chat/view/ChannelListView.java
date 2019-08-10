@@ -79,6 +79,11 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
             public void onChannelUpdated(Event event) {
                 adapter.upsertChannel(event.getChannel());
             }
+
+            @Override
+            public void onMessageRead(Event event) {
+                adapter.upsertChannel(event.getChannel());
+            }
         });
 
         // setup the default adapter
@@ -89,6 +94,7 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         adapter.SetOnClickListener(this);
 
         // TODO: this approach doesn't work, it needs to be an event see line 60
+        // TODO: it's also not unique...
         viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.addChannels(channels));
     }
 

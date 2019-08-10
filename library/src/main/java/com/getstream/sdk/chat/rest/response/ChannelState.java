@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.SerializedName;
 
@@ -261,9 +262,9 @@ public class ChannelState {
     }
 
     public int getCurrentUserUnreadMessageCount() {
-        return 1;
-        // TODO: fix me
-        // return this.getUnreadMessageCount(this.getChannel().getClient().getUserId());
+        Client client = this.getChannel().getClient();
+        String userID = client.getUserId();
+        return this.getUnreadMessageCount(userID);
     }
 
     public int getUnreadMessageCount(String userId) {
