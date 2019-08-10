@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -112,9 +113,9 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
         return binding;
     }
 
-    public void setViewModel(ChannelViewModel model) {
+    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
         this.modelView = model;
-
+        binding.setLifecycleOwner(lifecycleOwner);
         this.setOnSendMessageListener(model);
     }
 

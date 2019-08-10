@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,7 +50,8 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
-    public void setViewModel(ChannelViewModel viewModel) {
+    //TODO: binding.setLifecycleOwner(lifecycleOwner);
+    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
 
         Channel c = this.viewModel.getChannel();

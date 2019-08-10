@@ -98,7 +98,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header" />
 
-
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"
             android:layout_height="wrap_content"
@@ -112,7 +111,6 @@
             app:layout_constraintStart_toEndOf="@+id/mlv_messageList"
             app:layout_constraintEnd_toEndOf="parent"
             stream:inputHint="what a fun day"
-
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
