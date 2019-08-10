@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -70,8 +71,9 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         channels.add(0, channel);
     }
 
-    public void addChannels(List<Channel> channelList) {
-        channels.addAll(channels.size(), channelList);
+    public void replaceChannels(List<Channel> channelList) {
+        channels = channelList;
+
         notifyDataSetChanged();
     }
 
@@ -95,43 +97,14 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Log.w("RecyclerView", "onBindViewHolder " + position);
-        ChannelState channelState = filterChannels(filter).get(position);
+        ChannelState channelState = channels.get(position).getChannelState();
         ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, clickListener, longClickListener);
     }
 
     @Override
     public int getItemCount() {
-        Log.w("RecyclerView", "getItemCount " + filterChannels(filter).size());
-        return filterChannels(filter).size();
+        return channels.size();
     }
 
-    private List<ChannelState> filterChannels(String channelName) {
-        List<ChannelState> channels_ = new ArrayList<>();
 
-        if (TextUtils.isEmpty(channelName)) {
-            for (int i = 0; i < this.channels.size(); i++) {
-                Channel channel = this.channels.get(i);
-                channels_.add(channel.getChannelState());
-            }
-        }
-
-        return channels_;
-
-//        for (int i = 0; i < this.channels.size(); i++) {
-//            Channel channel = this.channels.get(i);
-//            ChannelState state = channel.getChannelState();
-//            if (TextUtils.isEmpty(channel.getName())) {
-//                User opponent = Global.getOpponentUser(state);
-//                if (opponent != null && opponent.getName().toLowerCase().contains(channelName.toLowerCase())) {
-//                    channels_.add(state);
-//                }
-//            } else {
-//                if (channel.getName().toLowerCase().contains(channelName.toLowerCase())) {
-//                    channels_.add(state);
-//                }
-//            }
-//        }
-//        return channels_;
-    }
 }
