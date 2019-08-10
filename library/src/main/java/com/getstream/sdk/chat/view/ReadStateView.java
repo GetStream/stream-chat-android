@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;
 
@@ -34,9 +35,7 @@ public class ReadStateView extends AppCompatImageView {
         if (reads.size() > 0) {
             User u = reads.get(0).getUser();
             String image = u.getImage();
-            Glide.with(context)
-                    .load(image)
-                    .into(this);
+            Utils.circleImageLoad(this, image);
         }
 
 
