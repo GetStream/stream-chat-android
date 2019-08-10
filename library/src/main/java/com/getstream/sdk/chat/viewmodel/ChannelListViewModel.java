@@ -104,5 +104,6 @@ public class ChannelListViewModel extends AndroidViewModel {
 
     public void loadMore() {
         // TODO: Implement loadmore
+        // TODO: Protect against repeated loading
     }
 }

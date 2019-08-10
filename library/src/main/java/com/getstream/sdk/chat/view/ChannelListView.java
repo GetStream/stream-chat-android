@@ -115,15 +115,24 @@ public class ChannelListView extends RecyclerView implements View.OnClickListene
         // TODO: make this work if the layout isn't up and running yet
         //int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
 
+
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                if (currentFirstVisible < fVPosition) {
+
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (linearLayoutManager != null) {
+                    Boolean reachedTheEnd = linearLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.getItemCount() - 1;
+                    // the viewmodel prevents triggering this all the time
                     viewModel.loadMore();
+                    Log.i(TAG, "loading more");
                 }
+
+
+
             }
         });
 
