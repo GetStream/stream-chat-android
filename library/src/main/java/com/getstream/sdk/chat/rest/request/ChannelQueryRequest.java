@@ -19,8 +19,12 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
         _this.state = this.state;
         _this.watch = this.watch;
         _this.presence = this.presence;
-        _this.messages = new HashMap<>(this.messages);
-        _this.data = new HashMap<>(this.data);
+        if (this.messages != null) {
+            _this.messages = new HashMap<>(this.messages);
+        }
+        if (this.data != null) {
+            _this.data = new HashMap<>(this.data);
+        }
         return _this;
     }
 
