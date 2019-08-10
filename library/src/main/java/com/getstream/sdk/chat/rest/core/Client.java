@@ -330,7 +330,10 @@ public class Client implements WSResponseHandler {
                     Channel channelData = channelState.getChannel();
                     Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
                     checkEphemeralMessages(channelState);
+                    channelState.setChannel(channel);
                     channel.setChannelState(channelState);
+
+
 
                     addToActiveChannels(channel);
                 }

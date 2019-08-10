@@ -52,6 +52,10 @@ public class ChannelState {
         members = new ArrayList<>();
     }
 
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     // endregion
     public static void sortUserReads(List<ChannelUserRead> reads) {
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
