@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.utils.BaseStyle;
@@ -72,6 +73,9 @@ public class ChannelListView extends RecyclerView {
         viewModel.client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onNotificationMessageNew(Event event) {
+                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
+                Log.i(TAG, "Received a new message with text: " + event.getMessage().getText());
+                Log.i(TAG, "Last message is: " + lastMessage.getText());
                 adapter.upsertChannel(event.getChannel());
             }
 
