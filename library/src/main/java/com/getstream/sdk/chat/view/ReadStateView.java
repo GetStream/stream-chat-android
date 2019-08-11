@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ReadStateView extends AppCompatImageView {
@@ -33,6 +34,8 @@ public class ReadStateView extends AppCompatImageView {
 
     public void init() {
         if (reads.size() > 0) {
+            // Show the icon of the user who was last to read...
+            Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
             User u = reads.get(0).getUser();
             String image = u.getImage();
             Utils.circleImageLoad(this, image);

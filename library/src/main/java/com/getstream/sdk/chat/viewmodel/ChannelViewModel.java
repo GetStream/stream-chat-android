@@ -20,7 +20,10 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 
 /*
@@ -44,6 +47,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<List<Message>> mMessages;
     public MutableLiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> mWatcherCount;
+    private MutableLiveData<String> lastActiveString;
+
 
     // TODO: Thread
     // TODO: Editing
@@ -73,6 +78,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channelName = new MutableLiveData<>(channel.getName());
         mMessages = new MutableLiveData<>();
         mWatcherCount = new MutableLiveData<>();
+
+        // humanized time diff
+        Date lastActive = channelState.getLastActive();
+        String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
+        lastActiveString = new MutableLiveData<String>(humanizedDate);
     }
 
     private void attachToClient(){

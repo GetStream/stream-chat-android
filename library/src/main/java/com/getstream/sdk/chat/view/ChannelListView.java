@@ -59,13 +59,17 @@ public class ChannelListView extends RecyclerView {
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
 
+        // setup the default adapter
+        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
+        this.setAdapterWithStyle(adapter);
+
+        // connect the viewHolder on click listener...
+        adapter.setChannelClickListener(this.channelClickListener);
+        adapter.setChannelLongClickListener(this.channelLongClickListener);
+        adapter.setUserClickListener(this.userClickListener);
+
         // listen to events
         viewModel.client().addEventHandler(new ChatEventHandler() {
-            // TODO: actually support this
-//            @Override
-//            public void onChannelLoaded(Event event) {
-//                adapter.addChannels(event.getChannels());
-//            }
             @Override
             public void onNotificationMessageNew(Event event) {
                 adapter.upsertChannel(event.getChannel());
@@ -87,29 +91,29 @@ public class ChannelListView extends RecyclerView {
             }
         });
 
-        // setup the default adapter
-        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
-        this.setAdapterWithStyle(adapter);
-
-        // connect the viewHolder on click listener...
-        adapter.setChannelClickListener(this.channelClickListener);
-        adapter.setChannelLongClickListener(this.channelLongClickListener);
-        adapter.setUserClickListener(this.userClickListener);
-
         // TODO: this approach is not great for performance
         viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.replaceChannels(channels));
     }
 
-    public void setOnUserClickListener(UserClickListener userClickListener) {
-        this.userClickListener = userClickListener;
+    public void setOnUserClickListener(UserClickListener l) {
+        this.userClickListener = l;
+        if (adapter != null) {
+            adapter.setUserClickListener(l);
+        }
     }
 
-    public void setOnChannelClickListener(ChannelClickListener channelClickListener) {
-        this.channelClickListener = channelClickListener;
+    public void setOnChannelClickListener(ChannelClickListener l) {
+        this.channelClickListener = l;
+        if (adapter != null) {
+            adapter.setChannelClickListener(l);
+        }
     }
 
-    public void setOnLongClickListener(ChannelClickListener listener) {
-        this.channelLongClickListener = listener;
+    public void setOnLongClickListener(ChannelClickListener l) {
+        this.channelLongClickListener = l;
+        if (adapter != null) {
+            adapter.setChannelLongClickListener(l);
+        }
     }
 
     @Override

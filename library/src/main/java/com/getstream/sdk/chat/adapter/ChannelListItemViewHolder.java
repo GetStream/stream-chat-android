@@ -131,11 +131,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         if (lastMessage != null) {
             // set the lastMessage and last messageDate
             tv_last_message.setText(lastMessage.getText());
-            // humanized time diff
-//
-//            String humanizedDateDiff = getRelativeTimeSpanString(lastMessage.getCreatedAtDate().getTime()).toString();
-//            tv_date.setText(humanizedDateDiff);
-
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
             else
@@ -155,7 +150,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // click listeners
         iv_avatar.setOnClickListener(view -> {
             // if there is 1 user
-            if (otherUsers.size() == 1) {
+            if (otherUsers.size() == 1 && this.userClickListener != null) {
                 this.userClickListener.onClick(otherUsers.get(0));
             } else {
                 this.channelClickListener.onClick(channel);
