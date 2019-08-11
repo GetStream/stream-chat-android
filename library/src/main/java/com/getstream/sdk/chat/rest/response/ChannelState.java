@@ -148,8 +148,14 @@ public class ChannelState {
                 readLastMessage.add(r);
             }
         }
+
+        // sort the reads
+        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
+
         return readLastMessage;
     }
+
+
 
     public List<Member> getMembers() {
         return members;

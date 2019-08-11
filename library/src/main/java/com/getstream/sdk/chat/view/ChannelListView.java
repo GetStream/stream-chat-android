@@ -19,8 +19,11 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+
+import java.util.List;
 
 public class ChannelListView extends RecyclerView {
     final String TAG = ChannelListView.class.getSimpleName();
@@ -74,8 +77,8 @@ public class ChannelListView extends RecyclerView {
             @Override
             public void onNotificationMessageNew(Event event) {
                 Message lastMessage = event.getChannel().getChannelState().getLastMessage();
-                Log.i(TAG, "Received a new message with text: " + event.getMessage().getText());
-                Log.i(TAG, "Last message is: " + lastMessage.getText());
+                Log.i(TAG, "Event: Received a new message with text: " + event.getMessage().getText());
+                Log.i(TAG, "State: Last message is: " + lastMessage.getText());
                 adapter.upsertChannel(event.getChannel());
             }
 
@@ -91,6 +94,12 @@ public class ChannelListView extends RecyclerView {
 
             @Override
             public void onMessageRead(Event event) {
+                Log.i(TAG, "Event: Message read by user " + event.getUser().getName());
+                List<ChannelUserRead> reads = event.getChannel().getChannelState().getLastMessageReads();
+                if (reads.size() > 0) {
+                    Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
+                }
+
                 adapter.upsertChannel(event.getChannel());
             }
         });
