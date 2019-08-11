@@ -75,7 +75,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         // TODO: actually listen to the events and verify if anybody is online
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
         // TODO: change this if the list of channel members changes or the channel is updated
-        channelName = new MutableLiveData<>(channel.getName());
+        channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
         mMessages = new MutableLiveData<>();
         mWatcherCount = new MutableLiveData<>();
 
