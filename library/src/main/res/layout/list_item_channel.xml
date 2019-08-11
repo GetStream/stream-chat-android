@@ -21,7 +21,7 @@
         <TextView
             android:id="@+id/tv_name"
             style="@style/channel_preview_channel_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:textStyle="bold"
@@ -36,11 +36,10 @@
         <TextView
             android:id="@+id/tv_last_message"
             style="@style/channel_preview_channel_last_message"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="6dp"
             android:ellipsize="end"
-            android:text="mymessage"
             android:ems="3"
             android:gravity="start"
             android:maxLines="1"

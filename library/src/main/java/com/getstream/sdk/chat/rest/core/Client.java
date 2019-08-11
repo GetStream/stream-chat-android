@@ -329,6 +329,9 @@ public class Client implements WSResponseHandler {
                     ChannelState channelState = response.body().getChannels().get(i);
                     Channel channelData = channelState.getChannel();
                     Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
+                    // TODO: why is name not part of the extra?
+                    channel.setName(channelData.getName());
+
                     checkEphemeralMessages(channelState);
                     channelState.setChannel(channel);
                     channel.setChannelState(channelState);
