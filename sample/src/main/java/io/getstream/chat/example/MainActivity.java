@@ -70,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setViewModel(viewModel, this);
 
         // query all channels where the current user is a member
-        FilterObject filter = in("members", USER_ID);
+        // FilterObject filter = in("members", USER_ID);
+        FilterObject filter = in("type", "messaging");
         viewModel.setChannelFilter(filter);
 
         // setup an onclick listener to capture clicks to the user profile or channel

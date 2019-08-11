@@ -381,16 +381,17 @@ public class Message {
     }
 
     public Date getCreatedAtDate() {
-        SimpleDateFormat  format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        Date date;
+        // 2019-08-09T11:02:14.234204Z
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+
         try {
-            date = format.parse(getCreatedAt());
+           return df.parse(getCreatedAt());
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            date = new Date();
+            return new Date();
         }
-        return date;
     }
 
     public String getUpdatedAt() {

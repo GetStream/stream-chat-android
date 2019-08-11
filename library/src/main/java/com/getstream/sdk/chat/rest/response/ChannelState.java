@@ -97,6 +97,7 @@ public class ChannelState {
     public String getChannelNameOrMembers() {
         String channelName;
 
+        Log.i(TAG, "Channel name is" + channel.getName() + channel.getCid());
         if (!TextUtils.isEmpty(channel.getName())) {
             channelName = channel.getName();
         } else {
