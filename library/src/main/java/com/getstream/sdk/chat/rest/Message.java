@@ -383,7 +383,7 @@ public class Message {
     public Date getCreatedAtDate() {
         // 2019-08-09T11:02:14.234204Z
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
         df.setTimeZone(tz);
 
         try {
