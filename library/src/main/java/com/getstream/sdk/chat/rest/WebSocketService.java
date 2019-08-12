@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.rest;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import com.getstream.sdk.chat.enums.EventType;
@@ -82,6 +85,8 @@ public class WebSocketService extends WebSocketListener {
         this.consecutiveFailures = 0;
     }
 
+    private EventHandlerThread eventThread;
+
     public WebSocketService(String wsURL, String userID, WSResponseHandler webSocketListener) {
         this.wsURL = wsURL;
         this.userID = userID;
@@ -101,6 +106,9 @@ public class WebSocketService extends WebSocketListener {
         setConnecting(true);
         resetConsecutiveFailures();
         setupWS();
+
+        eventThread = new EventHandlerThread();
+        eventThread.start();
     }
 
     // TODO: check previous state and clean up if needed
@@ -119,7 +127,7 @@ public class WebSocketService extends WebSocketListener {
         if (healthy && !isHealthy()) {
             setHealthy(true);
             Event wentOnline = new Event(true);
-            webSocketListener.onWSEvent(wentOnline);
+            sendEventToHandlerThread(wentOnline);
         }
         if (!healthy && isHealthy()) {
             setHealthy(false);
@@ -142,6 +150,12 @@ public class WebSocketService extends WebSocketListener {
         mHandler.postDelayed(mReconnect, getRetryInterval());
     }
 
+    private void sendEventToHandlerThread(Event event){
+        Message eventMsg = new Message();
+        eventMsg.obj = event;
+        eventThread.mHandler.sendMessage(eventMsg);
+    }
+
     private Handler mHandler = new Handler();
 
     private Runnable mOfflineNotifier = new Runnable() {
@@ -149,7 +163,7 @@ public class WebSocketService extends WebSocketListener {
         public void run() {
             if (!isHealthy()) {
                 Event wentOffline = new Event(false);
-                webSocketListener.onWSEvent(wentOffline);
+                sendEventToHandlerThread(wentOffline);
             }
         }
     };
@@ -230,7 +244,7 @@ public class WebSocketService extends WebSocketListener {
             setLastEvent(new Date());
 
             if (isConnectionResolved()) {
-                webSocketListener.onWSEvent(event);
+                sendEventToHandlerThread(event);
             } else {
                 setConnectionResolved();
                 webSocketListener.connectionResolved(event);
@@ -259,7 +273,6 @@ public class WebSocketService extends WebSocketListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             consecutiveFailures++;
             setHealth(false);
             reconnect();
@@ -274,4 +287,23 @@ public class WebSocketService extends WebSocketListener {
             e.printStackTrace();
         }
     }
+
+
+    class EventHandlerThread extends Thread {
+        public Handler mHandler;
+
+        @SuppressLint("HandlerLeak")
+        public void run() {
+            Looper.prepare();
+
+            mHandler = new Handler() {
+                public void handleMessage(Message msg) {
+                    webSocketListener.onWSEvent((Event) msg.obj);
+                }
+            };
+
+            Looper.loop();
+        }
+    }
+
 }

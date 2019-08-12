@@ -275,15 +275,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
-        for (ChatEventHandler handler: eventSubscribers) {
-            handler.dispatchEvent(event);
+        Channel channel = getChannelByCid(event.getCid());
+        if (channel != null){
+            event.setChannel(channel);
+            channel.handleChannelEvent(event);
         }
 
-        if (event.isChannelEvent()){
-            Channel channel = getChannelByCid(event.getCid());
-            if (channel != null) {
-                channel.handleChannelEvent(event);
-            }
+        for (ChatEventHandler handler: eventSubscribers) {
+            handler.dispatchEvent(event);
         }
     }
 
@@ -308,6 +307,9 @@ public class Client implements WSResponseHandler {
     }
 
     public Channel getChannelByCid(String cid) {
+        if (cid == null) {
+            return null;
+        }
         for (Channel channel : activeChannels) {
             if (cid.equals(channel.getCid())) {
                 return channel;
