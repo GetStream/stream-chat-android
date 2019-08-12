@@ -27,6 +27,8 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
 
     public QueryChannelsRequest(FilterObject filter, QuerySort sort) {
         this.filter = filter;
+        this.watch = true;
+        this.state = true;
         if (sort != null) {
             this.sort = sort.clone();
         }
