@@ -4,6 +4,8 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.FilterObjectAdapter;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.QuerySortAdapter;
+import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.ChannelStateGsonAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,6 +18,7 @@ public class GsonConverter {
             gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             gsonBuilder.registerTypeAdapter(FilterObject.class, new FilterObjectAdapter());
             gsonBuilder.registerTypeAdapter(QuerySort.class, new QuerySortAdapter());
+            gsonBuilder.registerTypeAdapter(ChannelState.class, new ChannelStateGsonAdapter());
             gson = gsonBuilder.create();
         }
         return gson;

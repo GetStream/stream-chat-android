@@ -52,6 +52,10 @@ public class Event {
     @Expose
     private Reaction reaction;
 
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     @SerializedName("channel")
     @Expose
     private Channel channel;
