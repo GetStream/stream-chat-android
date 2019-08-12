@@ -341,6 +341,7 @@ public class Client implements WSResponseHandler {
                             addChannelConfig(channel.getType(), channel.getConfig());
                         }
                         callback.onSuccess(response.body());
+                        // TODO: trigger an event about loading more channels
                     }
 
                     @Override

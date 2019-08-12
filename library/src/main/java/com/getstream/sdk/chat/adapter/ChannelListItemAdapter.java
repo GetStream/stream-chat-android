@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +61,11 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
     public void deleteChannel(Channel channel) {
         int index = 0;
         for (Channel c : channels) {
-            if (c.getCid() == channel.getCid()) {
+            Log.i(TAG, String.format("channel cid %s iter cid %s", channel.getCid(), c.getCid()));
+            if (TextUtils.equals(c.getCid(), channel.getCid())) {
                 channels.remove(index);
                 notifyItemChanged(index);
+                break;
             }
             index += 1;
         }
@@ -72,6 +76,9 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
         this.deleteChannel(channel);
         // always add to the top of the list...
         channels.add(0, channel);
+
+
+        notifyDataSetChanged();
     }
 
     public void replaceChannels(List<Channel> channelList) {

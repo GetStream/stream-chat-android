@@ -3,6 +3,8 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -77,9 +79,19 @@ public class ChannelListView extends RecyclerView {
             @Override
             public void onMessageNew(Event event) {
                 Message lastMessage = event.getChannel().getChannelState().getLastMessage();
-                Log.i(TAG, "Event: Received a new message with text: " + event.getMessage().getText());
-                Log.i(TAG, "State: Last message is: " + lastMessage.getText());
-                adapter.upsertChannel(event.getChannel());
+                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
+                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
+                // TODO: unread count is wrong...
+                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        adapter.upsertChannel(event.getChannel());
+                    }
+                });
+
             }
 
             @Override
@@ -100,12 +112,15 @@ public class ChannelListView extends RecyclerView {
                     Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
                 }
 
-                adapter.upsertChannel(event.getChannel());
+                //adapter.upsertChannel(event.getChannel());
             }
         });
 
         // TODO: this approach is not great for performance
-        viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.replaceChannels(channels));
+        viewModel.getChannels().observe(lifecycleOwner, channels -> {
+            Log.i(TAG, "Oberseve found this many channels: " + channels.size());
+            adapter.replaceChannels(channels);
+        });
     }
 
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
@@ -155,10 +170,16 @@ public class ChannelListView extends RecyclerView {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (linearLayoutManager != null) {
-                    Boolean reachedTheEnd = linearLayoutManager.findLastCompletelyVisibleItemPosition() == adapter.getItemCount() - 1;
-                    // the viewmodel prevents triggering this all the time
-                    viewModel.loadMore();
-                    Log.i(TAG, "loading more");
+
+                    int lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    Boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
+                    // Log.i(TAG, String.format("Last visible is %d out of %d", lastVisible, adapter.getItemCount()));
+                    // the viewmodel ensures that we only load once..
+                    if (reachedTheEnd) {
+                        viewModel.loadMore();
+                    }
+
+
                 }
 
             }

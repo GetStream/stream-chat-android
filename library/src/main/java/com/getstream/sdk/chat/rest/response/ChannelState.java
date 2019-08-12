@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -284,8 +285,8 @@ public class ChannelState {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
             if (!TextUtils.isEmpty(message.getDeletedAt())) continue;
-//            if (!Global.readMessage(lastReadDate, message.getCreatedAt()))
-//                unreadMessageCount++;
+            if (message.getCreatedAtDate().getTime() > lastReadDate.getTime())
+                unreadMessageCount++;
         }
         return unreadMessageCount;
     }
