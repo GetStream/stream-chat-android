@@ -96,8 +96,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                     channelList = new ArrayList<>();
                 }
                 for (ChannelState chan: response.getChannels()) {
-                    // TODO: super duper ugly trick to get the right object noooooo
-                    channelList.add(client().getChannelByCid(chan.getChannel().getCid()));
+                    channelList.add(chan.getChannel());
                 }
                 channels.postValue(channelList);
                 initEventHandlers();
@@ -141,8 +140,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                     endOfPagination.postValue(true);
                 }
                 for (ChannelState chan: response.getChannels()) {
-                    // TODO: super duper ugly trick to get the right object noooooo
-                    channelList.add(client().getChannelByCid(chan.getChannel().getCid()));
+                    channelList.add(chan.getChannel());
                 }
                 channels.postValue(channelList);
             }

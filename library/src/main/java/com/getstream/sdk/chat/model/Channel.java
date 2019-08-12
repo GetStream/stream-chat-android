@@ -146,8 +146,17 @@ public class Channel {
 
     // region Constructor
 
-    Client client;
-    ChannelState channelState;
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    private Client client;
+    private ChannelState channelState;
+
+    // this constructor is here for GSON to play fair
+    public Channel() {
+        this(null, "", "", new HashMap<>());
+    }
 
     /**
      * constructor - Create a channel
@@ -222,6 +231,13 @@ public class Channel {
         }
     }
 
+    public void mergeWithState(ChannelState state){
+        name = state.getChannel().name;
+        image = state.getChannel().image;
+        channelState.init(state);
+        config = state.getChannel().config;
+    }
+
     /**
      * query - Query the API, get messages, members or other channel fields
      *
@@ -238,11 +254,7 @@ public class Channel {
                         client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                                ChannelState state = response.body();
-                                channel.name = state.getChannel().name;
-                                channel.image = state.getChannel().image;
-                                channel.channelState.init(state);
-                                channel.config = state.getChannel().config;
+                                mergeWithState(response.body());
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
                                 callback.onSuccess(response.body());

@@ -246,11 +246,11 @@ public class Client implements WSResponseHandler {
         WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
     }
+
     public Channel channel(String cid){
         String[] parts = cid.split(":", 2);
         return new Channel(this, parts[0], parts[1]);
     }
-
 
     public Channel channel(String type, String id){
         return new Channel(this, type, id);
@@ -322,6 +322,7 @@ public class Client implements WSResponseHandler {
 
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
+        Client m = this;
         waitForConnection(new ClientConnectionCallback() {
             @Override
             public void onSuccess() {
@@ -331,16 +332,13 @@ public class Client implements WSResponseHandler {
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                        for (int i = 0; i < response.body().getChannels().size(); i++) {
-                            ChannelState channelState = response.body().getChannels().get(i);
-                            Channel channelData = channelState.getChannel();
-                            Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
-                            // TODO: why is name not part of the extra?
-                            channel.setName(channelData.getName());
+                        for (ChannelState channelState: response.body().getChannels()) {
+                            Channel channel = channelState.getChannel();
+                            channel.setClient(m);
+                            channel.mergeWithState(channelState);
                             checkEphemeralMessages(channelState);
-                            channelState.setChannel(channel);
-                            channel.setChannelState(channelState);
                             addToActiveChannels(channel);
+                            addChannelConfig(channel.getType(), channel.getConfig());
                         }
                         callback.onSuccess(response.body());
                     }

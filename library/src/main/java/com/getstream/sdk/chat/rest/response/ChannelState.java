@@ -3,17 +3,13 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.Watcher;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
