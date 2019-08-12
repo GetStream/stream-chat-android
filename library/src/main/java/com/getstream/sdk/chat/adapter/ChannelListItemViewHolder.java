@@ -2,16 +2,13 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Handler;
-import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
@@ -28,9 +25,6 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import ru.noties.markwon.Markwon;
-
-
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
@@ -38,25 +32,20 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public ConstraintLayout cl_root;
     public TextView tv_name, tv_last_message, tv_date, tv_click;
     public ReadStateView read_state;
-    public ImageView iv_indicator;
     public AvatarGroupView iv_avatar;
 
     private Context context;
 
-    private Markwon markdownBuilder;
     private ChannelListView.UserClickListener userClickListener;
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.Style style;
-    
-    public ChannelListItemViewHolder(int resId, ViewGroup parent, ChannelListView.Style style) {
-        super(resId, parent);
 
-
-        this.style = style;
+    public ChannelListItemViewHolder(@NonNull View itemView) {
+        super(itemView);
         findReferences();
-        applyStyle();
     }
+
 
     public void setUserClickListener(ChannelListView.UserClickListener l) {
         userClickListener = l;
@@ -82,8 +71,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     }
 
-    public void applyStyle() {
-
+    public void setStyle(ChannelListView.Style style) {
+        this.style = style;
 
         if (style.avatarHeight != -1) {
             iv_avatar.getLayoutParams().height = style.avatarHeight;

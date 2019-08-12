@@ -1,27 +1,27 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = ChannelListItemAdapter.class.getSimpleName();
+
     private Context context;
     private List<Channel> channels; // cached list of channels
     public String filter;
+    private Class<? extends RecyclerView.ViewHolder> viewHolderWrapper;
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
@@ -30,6 +30,11 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public ChannelListItemAdapter(Context context, List<Channel> channels) {
         this.context = context;
         this.channels = channels;
+        this.viewHolderWrapper = ChannelListItemViewHolder.class;
+    }
+
+    public void setCustomViewHolder(Class<? extends RecyclerView.ViewHolder> wrapper) {
+        this.viewHolderWrapper = wrapper;
     }
 
     public ChannelListItemAdapter(Context context, int itemLayoutId) {
@@ -78,12 +83,31 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
-        ChannelListItemViewHolder r =  new ChannelListItemViewHolder(style.channelPreviewLayout, parent, style);
-        r.setChannelClickListener(this.channelClickListener);
-        r.setChannelLongClickListener(this.channelLongClickListener);
-        r.setUserClickListener(this.userClickListener);
+        // allow users of this library to use any view holder they want...
+        // a subclass of BaseChannelListItemViewHolder is supported, or a completely custom ViewHolder...
+        // - if it extends baseChannelListItemView holder apply the click listeners and style;
+        // - otherwise do nothing special
+        View v = LayoutInflater.from(parent.getContext()).inflate(style.channelPreviewLayout, parent, false);
+        try {
+            Constructor<? extends RecyclerView.ViewHolder> constructor = viewHolderWrapper.getDeclaredConstructor(View.class);
+            constructor.setAccessible(true);
+            RecyclerView.ViewHolder anyViewHolder = constructor.newInstance(v);
+            if (anyViewHolder instanceof BaseChannelListItemViewHolder) {
+                BaseChannelListItemViewHolder channelViewHolder = (BaseChannelListItemViewHolder) anyViewHolder;
 
-        return r;
+                channelViewHolder.setChannelClickListener(this.channelClickListener);
+                channelViewHolder.setChannelLongClickListener(this.channelLongClickListener);
+                channelViewHolder.setUserClickListener(this.userClickListener);
+                channelViewHolder.setStyle(style);
+                return channelViewHolder;
+            } else {
+                return anyViewHolder;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

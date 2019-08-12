@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
+import com.getstream.sdk.chat.adapter.ChannelListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
@@ -67,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
 
         binding.channelList.setLayoutManager(new LinearLayoutManager(this));
-        binding.channelList.setViewModel(viewModel, this);
+        ChannelListItemAdapter adapter = new ChannelListItemAdapter(this, com.getstream.sdk.chat.R.layout.list_item_channel);
+        adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
+        binding.channelList.setViewModel(viewModel, this, adapter);
 
         // query all channels where the current user is a member
         // FilterObject filter = in("members", USER_ID);

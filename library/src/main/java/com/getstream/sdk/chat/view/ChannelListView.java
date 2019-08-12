@@ -60,12 +60,10 @@ public class ChannelListView extends RecyclerView {
         style = new Style(context, attrs);
     }
 
-    // TODO: binding.setLifecycleOwner(lifecycleOwner);
-    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
+    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner, ChannelListItemAdapter adapter) {
         this.viewModel = viewModel;
 
-        // setup the default adapter
-        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
+        // connect the adapter
         this.setAdapterWithStyle(adapter);
 
         // connect the viewHolder on click listener...
@@ -107,6 +105,13 @@ public class ChannelListView extends RecyclerView {
 
         // TODO: this approach is not great for performance
         viewModel.getChannels().observe(lifecycleOwner, channels -> adapter.replaceChannels(channels));
+    }
+
+    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        // default adapter...
+        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
+
+        this.setViewModel(viewModel, lifecycleOwner, adapter);
     }
 
     public void setOnUserClickListener(UserClickListener l) {
