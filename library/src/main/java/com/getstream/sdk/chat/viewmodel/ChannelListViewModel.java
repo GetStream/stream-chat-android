@@ -34,7 +34,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> endOfPagination;
     public MutableLiveData<Boolean> online;
 
-
     public LiveData<List<Channel>> getChannels() {
         return channels;
     }
@@ -70,6 +69,16 @@ public class ChannelListViewModel extends AndroidViewModel {
         this.queryChannels();
     }
 
+    public void initEventHandlers(){
+        client().addEventHandler(new ChatEventHandler() {
+            @Override
+            public void onMessageNew(Event event) {
+                Log.i(TAG, "got a new message, I should bump the channel up on the list right?");
+                super.onMessageNew(event);
+            }
+        });
+    }
+
     public void queryChannels() {
         Log.i(TAG, "queryChannels for loading the channels");
 
@@ -77,8 +86,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                 .withLimit(30)
                 .withMessageLimit(20);
 
-        Client c = StreamChat.getInstance(getApplication());
-        c.queryChannels(request, new QueryChannelListCallback() {
+        client().queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSuccess for loading the channels");
@@ -92,6 +100,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                     channelList.add(client().getChannelByCid(chan.getChannel().getCid()));
                 }
                 channels.postValue(channelList);
+                initEventHandlers();
             }
 
             @Override

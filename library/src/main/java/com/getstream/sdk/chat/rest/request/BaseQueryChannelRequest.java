@@ -1,10 +1,7 @@
 package com.getstream.sdk.chat.rest.request;
 
-import com.getstream.sdk.chat.enums.Pagination;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class BaseQueryChannelRequest <T extends BaseQueryChannelRequest <T>> {
 

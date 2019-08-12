@@ -1,22 +1,23 @@
 package com.getstream.sdk.chat.rest.core;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.getstream.sdk.chat.component.Component;
+import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.TokenService;
+import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.enums.Token;
-import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
@@ -25,11 +26,11 @@ import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
@@ -42,11 +43,11 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Global;
 
 import org.json.JSONObject;
@@ -319,35 +320,42 @@ public class Client implements WSResponseHandler {
 
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
-        String userID = user.getId();
-        String payload = GsonConverter.Gson().toJson(request);
-
-        mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
+        waitForConnection(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                for (int i = 0; i < response.body().getChannels().size(); i++) {
-                    ChannelState channelState = response.body().getChannels().get(i);
-                    Channel channelData = channelState.getChannel();
-                    Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
-                    // TODO: why is name not part of the extra?
-                    channel.setName(channelData.getName());
+            public void onSuccess() {
+                String userID = user.getId();
+                String payload = GsonConverter.Gson().toJson(request);
 
-                    checkEphemeralMessages(channelState);
-                    channelState.setChannel(channel);
-                    channel.setChannelState(channelState);
+                mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
+                    @Override
+                    public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
+                        for (int i = 0; i < response.body().getChannels().size(); i++) {
+                            ChannelState channelState = response.body().getChannels().get(i);
+                            Channel channelData = channelState.getChannel();
+                            Channel channel = channel(channelData.getType(), channelData.getId(), channelData.getExtraData());
+                            // TODO: why is name not part of the extra?
+                            channel.setName(channelData.getName());
+                            checkEphemeralMessages(channelState);
+                            channelState.setChannel(channel);
+                            channel.setChannelState(channelState);
+                            addToActiveChannels(channel);
+                        }
+                        callback.onSuccess(response.body());
+                    }
 
-
-
-                    addToActiveChannels(channel);
-                }
-                callback.onSuccess(response.body());
+                    @Override
+                    public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+            public void onError(String errMsg, int errCode) {
+
             }
         });
+
     }
 
     private void checkEphemeralMessages(ChannelState response) {
