@@ -296,8 +296,7 @@ public class ChannelListFragment extends Fragment implements ChannelListEventHan
     }
 
     private void configChannelListView() {
-        adapter = new ChannelListItemAdapter(getContext(), mViewModel.client().activeChannels,
-                 channelItemLayoutId);
+        adapter = new ChannelListItemAdapter(getContext(), mViewModel.client().activeChannels);
         binding.listChannels.setAdapter(adapter);
     }
 

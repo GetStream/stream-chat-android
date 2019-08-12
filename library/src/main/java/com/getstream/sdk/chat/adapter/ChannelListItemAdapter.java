@@ -25,18 +25,15 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
-    private int itemLayoutId;
     private ChannelListView.Style style;
 
-    public ChannelListItemAdapter(Context context, List<Channel> channels, int itemLayoutId) {
+    public ChannelListItemAdapter(Context context, List<Channel> channels) {
         this.context = context;
         this.channels = channels;
-        this.itemLayoutId = itemLayoutId;
-
     }
 
     public ChannelListItemAdapter(Context context, int itemLayoutId) {
-        this(context, new ArrayList<>(), itemLayoutId);
+        this(context, new ArrayList<>());
     }
 
     public void setUserClickListener(ChannelListView.UserClickListener l) {
@@ -81,7 +78,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
-        ChannelListItemViewHolder r =  new ChannelListItemViewHolder(R.layout.list_item_channel, parent, style);
+        ChannelListItemViewHolder r =  new ChannelListItemViewHolder(style.channelPreviewLayout, parent, style);
         r.setChannelClickListener(this.channelClickListener);
         r.setChannelLongClickListener(this.channelLongClickListener);
         r.setUserClickListener(this.userClickListener);

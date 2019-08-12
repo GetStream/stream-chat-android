@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -179,6 +180,9 @@ public class ChannelListView extends RecyclerView {
         public int messageTextStyle;
         public int unreadMessageTextStyle;
 
+        // layouts
+        public @LayoutRes int channelPreviewLayout;
+
 
         public Style(Context c, AttributeSet attrs) {
             this.setContext(c);
@@ -201,6 +205,8 @@ public class ChannelListView extends RecyclerView {
             unreadTitleTextStyle = a.getInt(R.styleable.ChannelListView_unreadTitleTextStyle, Typeface.BOLD);
             messageTextStyle = a.getInt(R.styleable.ChannelListView_messageTextStyle, Typeface.NORMAL);
             unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_unreadMessageTextStyle, Typeface.BOLD);
+
+            channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
 
             a.recycle();
         }
