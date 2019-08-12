@@ -19,16 +19,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/message_input"
-        app:layout_constraintTop_toBottomOf="@+id/cht_header"
-        app:layout_constraintStart_toEndOf="@+id/cht_header"
-        app:layout_constraintEnd_toStartOf="@+id/message_input"
-        android:background="#F3F5F8"
-        stream:messageTextColorMine="#FFFFFF"
-        stream:messageBubbleDrawableMine="@drawable/message_bubble_mine"
-        stream:messageTextColorTheirs="#1BB76E"
-        stream:messageBubbleDrawableTheirs="@drawable/message_bubble_theirs"
-        tools:listitem="@layout/list_item_message" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+         />
 
     <ProgressBar
         android:layout_width="wrap_content"

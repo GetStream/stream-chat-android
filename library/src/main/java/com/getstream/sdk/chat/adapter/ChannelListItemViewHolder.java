@@ -6,24 +6,20 @@ import android.graphics.Typeface;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.enums.ReadIndicator;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
@@ -33,11 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import ru.noties.markwon.Markwon;
-import ru.noties.markwon.core.CorePlugin;
-import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin;
-import ru.noties.markwon.image.ImagesPlugin;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
@@ -91,19 +83,50 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     public void applyStyle() {
-        // TODO: apply more styles here
-        //tv_date.setTextSize(style.dateTextSize);
+
+
+        if (style.avatarHeight != -1) {
+            iv_avatar.getLayoutParams().height = style.avatarHeight;
+        }
+
+        if (style.avatarWidth != -1) {
+            iv_avatar.getLayoutParams().width = style.avatarWidth;
+        }
+
+        if (style.dateTextColor != -1) {
+            tv_date.setTextColor(style.dateTextColor);
+        }
+
+        if (style.dateTextSize != -1) {
+            tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.dateTextSize);
+        }
+
+        if (style.titleTextSize != -1) {
+            tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.titleTextSize);
+        }
+        if (style.messageTextSize != -1) {
+            tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.messageTextSize);
+        }
+
     }
 
     public void applyUnreadStyle() {
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.BOLD);
-        tv_last_message.setTextColor(ContextCompat.getColor(context, R.color.black));
+        // channel name
+        tv_name.setTextColor(style.unreadTitleTextColor);
+        tv_name.setTypeface(tv_name.getTypeface(), style.unreadTitleTextStyle);
 
+        // last message
+        tv_last_message.setTypeface(tv_last_message.getTypeface(),  style.unreadMessageTextStyle);
+        tv_last_message.setTextColor(style.unreadMessageTextColor);
     }
 
     public void applyReadStyle() {
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), Typeface.NORMAL);
-        tv_last_message.setTextColor(ContextCompat.getColor(context, R.color.gray_dark));
+        // channel name
+        tv_name.setTextColor(style.titleTextColor);
+        tv_name.setTypeface(tv_name.getTypeface(), style.titleTextStyle);
+        // last messsage
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.messageTextStyle);
+        tv_last_message.setTextColor(style.messageTextColor);
     }
 
     @Override

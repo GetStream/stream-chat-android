@@ -154,8 +154,6 @@ public class ChannelListView extends RecyclerView {
                     Log.i(TAG, "loading more");
                 }
 
-
-
             }
         });
 
@@ -164,32 +162,45 @@ public class ChannelListView extends RecyclerView {
     public class Style extends BaseStyle {
         final String TAG = Style.class.getSimpleName();
         // dimensions
-        public float avatarWidth;
-        public float avatarHeight;
-        public float dateTextSize;
+        public int avatarWidth;
+        public int avatarHeight;
+        public int dateTextSize;
+        public int titleTextSize;
+        public int messageTextSize;
         // colors
         public int titleTextColor;
         public int unreadTitleTextColor;
+        public int messageTextColor;
+        public int unreadMessageTextColor;
         public int dateTextColor;
         // styles
         public int titleTextStyle;
         public int unreadTitleTextStyle;
+        public int messageTextStyle;
+        public int unreadMessageTextStyle;
+
 
         public Style(Context c, AttributeSet attrs) {
             this.setContext(c);
             TypedArray a = c.obtainStyledAttributes(attrs,
                     R.styleable.ChannelListView, 0, 0);
 
-            avatarWidth = a.getDimension(R.styleable.ChannelListView_avatarWidth, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_avatar_height));
-            avatarHeight = a.getDimension(R.styleable.ChannelListView_avatarHeight, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_avatar_width));
-            dateTextSize = a.getDimension(R.styleable.ChannelListView_dateTextSize, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_preview_date));
+            avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_avatarWidth, -1);
+            avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelListView_avatarHeight, -1);
+            dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_dateTextSize, -1);
+            titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_titleTextSize, -1);
+            messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_messageTextSize, -1);
 
-            titleTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, c.getResources().getColor(R.color.stream_channel_preview_title));
-            unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_unreadTitleTextColor, c.getResources().getColor(R.color.stream_channel_preview_last_message));
-            dateTextColor = a.getColor(R.styleable.ChannelListView_dateTextColor, c.getResources().getColor(R.color.stream_channel_preview_date));
+            titleTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.black));
+            unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_unreadTitleTextColor, this.getColor(R.color.black));
+            messageTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.gray_dark));
+            unreadMessageTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.black));
+            dateTextColor = a.getColor(R.styleable.ChannelListView_dateTextColor, -1);
 
-            titleTextStyle =a.getInt(R.styleable.ChannelListView_titleTextStyleChannel, Typeface.NORMAL);
-            unreadTitleTextStyle =a.getInt(R.styleable.ChannelListView_unreadTitleTextStyle, Typeface.NORMAL);
+            titleTextStyle = a.getInt(R.styleable.ChannelListView_titleTextStyleChannel, Typeface.BOLD);
+            unreadTitleTextStyle = a.getInt(R.styleable.ChannelListView_unreadTitleTextStyle, Typeface.BOLD);
+            messageTextStyle = a.getInt(R.styleable.ChannelListView_messageTextStyle, Typeface.NORMAL);
+            unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_unreadMessageTextStyle, Typeface.BOLD);
 
             a.recycle();
         }
