@@ -77,7 +77,6 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
         // always add to the top of the list...
         channels.add(0, channel);
 
-
         notifyDataSetChanged();
     }
 

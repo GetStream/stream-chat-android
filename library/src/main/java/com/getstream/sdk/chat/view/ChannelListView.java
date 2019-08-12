@@ -81,7 +81,6 @@ public class ChannelListView extends RecyclerView {
                 Message lastMessage = event.getChannel().getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                // TODO: unread count is wrong...
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
 
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -96,12 +95,24 @@ public class ChannelListView extends RecyclerView {
 
             @Override
             public void onChannelDeleted(Event event) {
-                adapter.deleteChannel(event.getChannel());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        adapter.deleteChannel(event.getChannel());
+                    }
+                });
             }
 
             @Override
             public void onChannelUpdated(Event event) {
-                adapter.upsertChannel(event.getChannel());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        adapter.upsertChannel(event.getChannel());
+                    }
+                });
             }
 
             @Override
@@ -112,7 +123,13 @@ public class ChannelListView extends RecyclerView {
                     Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
                 }
 
-                //adapter.upsertChannel(event.getChannel());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        adapter.upsertChannel(event.getChannel());
+                    }
+                });
             }
         });
 
