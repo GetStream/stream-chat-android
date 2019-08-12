@@ -64,6 +64,7 @@ public class ChannelListView extends RecyclerView {
         this.viewModel = viewModel;
 
         // connect the adapter
+        this.adapter = adapter;
         this.setAdapterWithStyle(adapter);
 
         // connect the viewHolder on click listener...
@@ -74,7 +75,7 @@ public class ChannelListView extends RecyclerView {
         // listen to events
         viewModel.client().addEventHandler(new ChatEventHandler() {
             @Override
-            public void onNotificationMessageNew(Event event) {
+            public void onMessageNew(Event event) {
                 Message lastMessage = event.getChannel().getChannelState().getLastMessage();
                 Log.i(TAG, "Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "State: Last message is: " + lastMessage.getText());
@@ -109,7 +110,7 @@ public class ChannelListView extends RecyclerView {
 
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
         // default adapter...
-        adapter = new ChannelListItemAdapter(getContext(), R.layout.list_item_channel);
+        adapter = new ChannelListItemAdapter(getContext());
 
         this.setViewModel(viewModel, lifecycleOwner, adapter);
     }

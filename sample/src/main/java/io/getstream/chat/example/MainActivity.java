@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
 
         binding.channelList.setLayoutManager(new LinearLayoutManager(this));
-        ChannelListItemAdapter adapter = new ChannelListItemAdapter(this, com.getstream.sdk.chat.R.layout.list_item_channel);
+        ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
         adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
         binding.channelList.setViewModel(viewModel, this, adapter);
 

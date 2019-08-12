@@ -37,7 +37,7 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
         this.viewHolderWrapper = wrapper;
     }
 
-    public ChannelListItemAdapter(Context context, int itemLayoutId) {
+    public ChannelListItemAdapter(Context context) {
         this(context, new ArrayList<>());
     }
 
