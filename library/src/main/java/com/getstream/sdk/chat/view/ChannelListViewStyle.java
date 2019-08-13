@@ -68,7 +68,7 @@ public class ChannelListViewStyle extends BaseStyle {
 
         avatarInitialTextSize = a.getDimension(R.styleable.ChannelListView_channelAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_channelAvatarTextColor, Color.WHITE);
-        avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_channelAvatarTextStyle, Typeface.NORMAL);
+        avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_channelAvatarTextStyle, Typeface.BOLD);
 
         a.recycle();
     }
