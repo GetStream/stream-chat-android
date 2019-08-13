@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
-        
+
         binding.channelList.setOnChannelClickListener(channel -> {
             // open the channel activity
             Intent intent = new Intent(parent, ChannelActivity.class);

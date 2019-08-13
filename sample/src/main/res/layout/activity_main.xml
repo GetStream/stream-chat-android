@@ -26,9 +26,8 @@
             app:layout_constraintTop_toTopOf="parent"
             stream:avatarHeight="40dp"
             stream:avatarWidth="40dp"
-            stream:initialsTextSize="20sp"
-            stream:initialsTextStyle="italic|bold"
-            stream:channelPreviewLayout="@layout/list_item_channel_custom"
+            stream:avatarInitialsTextSize="20sp"
+            stream:avatarInitialsTextStyle="italic|bold"
             />
 
         <ProgressBar
