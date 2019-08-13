@@ -89,7 +89,6 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         // back button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         // Title
-        Log.d(TAG,"Title Size: " + style.getChannelTitleTextSize());
         binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
         binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
         binding.tvChannelName.setTypeface(binding.tvChannelName.getTypeface(), style.getChannelTitleTextStyle());

@@ -164,9 +164,9 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         }
     }
 
-    private void setTextViewStyle(TextView textView, STYLE style, float factor) {        
+    private void setTextViewStyle(TextView textView, STYLE style, float factor) {
         textView.setTextColor(style.getInitialsTextColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,style.getInitialsTextSize() / factor);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInitialsTextSize() / factor);
         textView.setTypeface(textView.getTypeface(), style.getInitialsTextStyle());
     }
 }
