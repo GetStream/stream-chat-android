@@ -49,8 +49,7 @@
             android:singleLine="true"
             app:layout_constraintLeft_toRightOf="@id/avatar_group"
             app:layout_constraintRight_toLeftOf="@id/tv_date"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar_group"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/avatar_group"/>
 
         <TextView
             android:id="@+id/tv_date"

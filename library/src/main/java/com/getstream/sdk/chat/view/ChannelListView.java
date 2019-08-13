@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
@@ -210,21 +209,17 @@ public class ChannelListView extends RecyclerView {
     public class Style extends BaseStyle {
         final String TAG = Style.class.getSimpleName();
         // dimensions
-        private float avatarWidth;
-        private float avatarHeight;
-        private float initialsTextSize;
+
         private int dateTextSize;
         private int titleTextSize;
         private int messageTextSize;
         // colors
-        private int initialsTextColor;
         private int titleTextColor;
         private int unreadTitleTextColor;
         private int messageTextColor;
         private int unreadMessageTextColor;
         private int dateTextColor;
         // styles
-        private int initialsTextStyle;
         private int titleTextStyle;
         private int unreadTitleTextStyle;
         private int messageTextStyle;
@@ -265,18 +260,6 @@ public class ChannelListView extends RecyclerView {
             a.recycle();
         }
 
-        public float getAvatarWidth() {
-            return avatarWidth;
-        }
-
-        public float getAvatarHeight() {
-            return avatarHeight;
-        }
-
-        public float getInitialsTextSize() {
-            return initialsTextSize;
-        }
-
         public int getDateTextSize() {
             return dateTextSize;
         }
@@ -287,10 +270,6 @@ public class ChannelListView extends RecyclerView {
 
         public int getMessageTextSize() {
             return messageTextSize;
-        }
-
-        public int getInitialsTextColor() {
-            return initialsTextColor;
         }
 
         public int getTitleTextColor() {
@@ -311,10 +290,6 @@ public class ChannelListView extends RecyclerView {
 
         public int getDateTextColor() {
             return dateTextColor;
-        }
-
-        public int getInitialsTextStyle() {
-            return initialsTextStyle;
         }
 
         public int getTitleTextStyle() {
@@ -342,9 +317,4 @@ public class ChannelListView extends RecyclerView {
     public interface ChannelClickListener {
         void onClick(Channel channel);
     }
-
-
-
-
-
 }

@@ -31,7 +31,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public ConstraintLayout cl_root;
     public TextView tv_name, tv_last_message, tv_date, tv_click;
     public ReadStateView read_state;
-    public AvatarGroupView avatarGroupView;
+    public AvatarGroupView<ChannelListView.Style> avatarGroupView;
 
     private Context context;
 

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
+        <!--AvatarGroupView-->
         <attr name="avatarWidth" format="dimension|reference" />
         <attr name="avatarHeight" format="dimension|reference" />
         <attr name="initialsTextSize" format="dimension|reference" />
@@ -10,46 +12,58 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="dateTextColor" format="color|reference"/>
-        <attr name="dateTextSize" format="dimension|reference"/>
-
-        <attr name="titleTextColor" format="color|reference"/>
-        <attr name="titleTextSize" format="dimension|reference"/>
+        <!--LastMessageDate-->
+        <attr name="dateTextColor" format="color|reference" />
+        <attr name="dateTextSize" format="dimension|reference" />
+        <!--Title-->
+        <attr name="titleTextColor" format="color|reference" />
+        <attr name="titleTextSize" format="dimension|reference" />
         <attr name="titleTextStyleChannel">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="unreadTitleTextColor" format="color|reference"/>
+        <attr name="unreadTitleTextColor" format="color|reference" />
         <attr name="unreadTitleTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="messageTextColor" format="color|reference"/>
-        <attr name="messageTextSize" format="dimension|reference"/>
+        <attr name="messageTextColor" format="color|reference" />
+        <attr name="messageTextSize" format="dimension|reference" />
         <attr name="messageTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="unreadMessageTextColor" format="color|reference"/>
+        <attr name="unreadMessageTextColor" format="color|reference" />
         <attr name="unreadMessageTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <attr name="channelPreviewLayout" format="reference" />
     </declare-styleable>
+    <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
-        <attr name="inputHint" format="string"/>
+        <attr name="inputHint" format="string" />
     </declare-styleable>
+    <!--MessageListView-->
     <declare-styleable name="MessageListView">
-        <attr name="messageTextColorMine" format="color"/>
-        <attr name="messageTextColorTheirs" format="color"/>
-        <attr name="messageBubbleDrawableMine" format="reference"/>
-        <attr name="messageBubbleDrawableTheirs" format="reference"/>
+        <attr name="messageTextColorMine" format="color" />
+        <attr name="messageTextColorTheirs" format="color" />
+        <attr name="messageBubbleDrawableMine" format="reference" />
+        <attr name="messageBubbleDrawableTheirs" format="reference" />
+        <attr name="channelTitleTextSize" format="dimension|reference" />
+        <attr name="channelTitleTextColor" format="color|reference" />
+        <attr name="backButtonShow" format="boolean" />
+        <attr name="channelTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
+    <!--ShaderImageView-->
     <declare-styleable name="ShaderImageView">
         <attr name="siSquare" format="boolean" />
         <attr name="siBorderColor" format="color" />
@@ -71,18 +85,18 @@
     </declare-styleable>
     <!--exomedia-->
     <declare-styleable name="VideoView">
-        <attr name="useDefaultControls" format="boolean"/>
-        <attr name="useTextureViewBacking" format="boolean"/>
-        <attr name="videoViewApiImpl" format="reference"/>
-        <attr name="videoViewApiImplLegacy" format="reference"/>
-        <attr name="measureBasedOnAspectRatio" format="boolean"/>
+        <attr name="useDefaultControls" format="boolean" />
+        <attr name="useTextureViewBacking" format="boolean" />
+        <attr name="videoViewApiImpl" format="reference" />
+        <attr name="videoViewApiImplLegacy" format="reference" />
+        <attr name="measureBasedOnAspectRatio" format="boolean" />
         <attr name="videoScale" format="enum">
-            <enum name="center" value="0"/>
-            <enum name="centerCrop" value="1"/>
-            <enum name="centerInside" value="2"/>
-            <enum name="fitCenter" value="3"/>
-            <enum name="fitXY" value="4"/>
-            <enum name="none" value="5"/>
+            <enum name="center" value="0" />
+            <enum name="centerCrop" value="1" />
+            <enum name="centerInside" value="2" />
+            <enum name="fitCenter" value="3" />
+            <enum name="fitXY" value="4" />
+            <enum name="none" value="5" />
         </attr>
     </declare-styleable>
 </resources>

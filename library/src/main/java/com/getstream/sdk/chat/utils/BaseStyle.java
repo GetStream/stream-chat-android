@@ -10,7 +10,11 @@ import androidx.core.content.ContextCompat;
 public class BaseStyle {
     private Context context;
 
-
+    protected float avatarWidth;
+    protected float avatarHeight;
+    protected float initialsTextSize;
+    protected int initialsTextColor;
+    protected int initialsTextStyle;
 
     public Drawable getDrawable(@DrawableRes int drawable) {
         return ContextCompat.getDrawable(getContext(), drawable);
@@ -26,5 +30,25 @@ public class BaseStyle {
 
     public int getColor(@ColorRes int color) {
         return ContextCompat.getColor(context, color);
+    }
+
+    public float getAvatarWidth() {
+        return avatarWidth;
+    }
+
+    public float getAvatarHeight() {
+        return avatarHeight;
+    }
+
+    public float getInitialsTextSize() {
+        return initialsTextSize;
+    }
+
+    public int getInitialsTextColor() {
+        return initialsTextColor;
+    }
+
+    public int getInitialsTextStyle() {
+        return initialsTextStyle;
     }
 }

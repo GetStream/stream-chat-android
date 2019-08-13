@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;
@@ -29,10 +30,10 @@ import java.util.List;
  * 2 - If there are members (not all channels have members) render up to 3 avatars sorted based on last active (if there are more than 3 members, we still render 3). For each member if there is no image fallback to their initial.
  * 3 - If there are no members, and there is no channel image fallback to the channel initial
  */
-public class AvatarGroupView extends RelativeLayout {
+public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     Context context;
     Channel channel;
-    ChannelListView.Style style;
+    STYLE style;
     LayoutInflater inflater;
     List<User> lastActiveUsers;
 
@@ -59,7 +60,7 @@ public class AvatarGroupView extends RelativeLayout {
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public void setChannelAndLastActiveUsers(Channel channel, List<User> lastActiveUsers, ChannelListView.Style style) {
+    public void setChannelAndLastActiveUsers(Channel channel, List<User> lastActiveUsers, @NonNull STYLE style) {
         this.channel = channel;
         this.lastActiveUsers = lastActiveUsers;
         this.style = style;
@@ -67,6 +68,7 @@ public class AvatarGroupView extends RelativeLayout {
     }
 
     private void configUIs() {
+
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
         params.width = (int) style.getAvatarWidth();
         params.height = (int) style.getAvatarHeight();
@@ -161,7 +163,7 @@ public class AvatarGroupView extends RelativeLayout {
         }
     }
 
-    private void setTextViewStyle(TextView textView, ChannelListView.Style style, float factor) {
+    private void setTextViewStyle(TextView textView, STYLE style, float factor) {        
         textView.setTextColor(style.getInitialsTextColor());
         textView.setTextSize(style.getInitialsTextSize() / factor);
         textView.setTypeface(textView.getTypeface(), style.getInitialsTextStyle());

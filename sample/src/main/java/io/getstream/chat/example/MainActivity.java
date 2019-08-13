@@ -6,16 +6,13 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.adapter.ChannelListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.HashMap;
@@ -89,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // TODO: open your user profile
         });
-
 
     }
 }

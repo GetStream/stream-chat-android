@@ -27,9 +27,9 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 
 /*
-* - store the channel data
-* - load more data
-* -
+ * - store the channel data
+ * - load more data
+ * -
  */
 public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener {
     private final String TAG = ChannelViewModel.class.getSimpleName();
@@ -85,8 +85,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         lastActiveString = new MutableLiveData<String>(humanizedDate);
     }
 
-    private void attachToClient(){
-        channel.query(new QueryChannelCallback(){
+    private void attachToClient() {
+        channel.query(new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
                 loading.postValue(false);
@@ -94,13 +94,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 mMessages.postValue(response.getMessages());
                 setupEventSync();
             }
+
             @Override
             public void onError(String errMsg, int errCode) {
             }
         });
     }
 
-    private void setupEventSync(){
+    private void setupEventSync() {
         channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onAnyEvent(Event event) {
@@ -109,6 +110,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     mWatcherCount.postValue(watcherCount);
                 }
             }
+
             @Override
             public void onMessageNew(Event event) {
                 List<Message> list = mMessages.getValue();
@@ -267,19 +269,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         loadingMore.setValue(true);
 
         channel.query(
-                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
-                new QueryChannelCallback() {
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        loadingMore.postValue(false);
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
-                    }
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        loadingMore.setValue(false);
-                    }
+            new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
+            new QueryChannelCallback() {
+                @Override
+                public void onSuccess(ChannelState response) {
+                    loadingMore.postValue(false);
+                    List<Message> newMessages = new ArrayList<>(response.getMessages());
+                    if (newMessages.size() < Constant.DEFAULT_LIMIT)
+                        endOfPagination.setValue(true);
                 }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    loadingMore.setValue(false);
+                }
+            }
         );
 
         // TODO: Handle thread...
@@ -315,35 +319,35 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 //                        }
 //                    }
 //            );
-       // } else {
+        // } else {
 
 
-       // }
+        // }
     }
 
     @Override
     public void onSendMessage(Message message) {
         Log.i(TAG, "onSendMessage handler called at viewmodel level");
         channel.sendMessage(message,
-            new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Message responseMessage = response.getMessage();
-                    Log.i(TAG, "onSuccess event for sending the message");
-                    // somehow we need to reach the adapter... (but the viewmodel can't know about the adapter)
-                    // - livedata.observe is one way
-                    // - the adapter listening to an event from the viewmodel or client is another
-                    // -- new message event
-                    // -- updated message event
-                    // -- deleted message event
-                    // -- load more event
-                }
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        Message responseMessage = response.getMessage();
+                        Log.i(TAG, "onSuccess event for sending the message");
+                        // somehow we need to reach the adapter... (but the viewmodel can't know about the adapter)
+                        // - livedata.observe is one way
+                        // - the adapter listening to an event from the viewmodel or client is another
+                        // -- new message event
+                        // -- updated message event
+                        // -- deleted message event
+                        // -- load more event
+                    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    //binding.messageInput.setEnabled(true);
-                }
-        });
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        //binding.messageInput.setEnabled(true);
+                    }
+                });
 
     }
 }
