@@ -92,7 +92,8 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
     private void configUserAvatars() {
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
-            for (int i = 0; i < lastActiveUsers.size(); i++) {
+            double factor_;
+            for (int i = 0; i < (lastActiveUsers.size() < 4 ? lastActiveUsers.size() : 3); i++) {
                 User user = lastActiveUsers.get(i);
                 View v = inflater.inflate(R.layout.view_user_avatar_initials, null);
 
@@ -102,18 +103,18 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                 textView.setText(user.getUserInitials());
                 Utils.circleImageLoad(imageView, user.getImage());
 
+                RelativeLayout.LayoutParams params;
                 if (lastActiveUsers.size() == 1) {
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                            (int) style.getAvatarWidth(),
-                            (int) style.getAvatarHeight());
-                    v.setLayoutParams(params);
-
-                    setTextViewStyle(textView, style, 1.0f);
+                    factor_ = 1.0;
+                    params = new RelativeLayout.LayoutParams(
+                            (int) (style.getAvatarWidth() / factor_),
+                            (int) (style.getAvatarHeight() / factor_));
 
                 } else if (lastActiveUsers.size() == 2) {
-                    double width = style.getAvatarWidth() / factor;
-                    double height = style.getAvatarHeight() / factor;
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (width), (int) (height));
+                    factor_ = factor;
+                    params = new RelativeLayout.LayoutParams(
+                            (int) (style.getAvatarWidth() / factor_),
+                            (int) (style.getAvatarHeight() / factor_));
                     switch (i) {
                         case 0:
                             params.addRule(RelativeLayout.ALIGN_PARENT_START);
@@ -124,15 +125,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
                             break;
                     }
-                    v.setLayoutParams(params);
-
-                    setTextViewStyle(textView, style, (float) factor);
-
                 } else {
-
-                    double width = style.getAvatarWidth() / factor;
-                    double height = style.getAvatarHeight() / factor;
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (width), (int) (height));
+                    factor_ = factor;
+                    params = new RelativeLayout.LayoutParams(
+                            (int) (style.getAvatarWidth() / factor_),
+                            (int) (style.getAvatarHeight() / factor_));
                     switch (i) {
                         case 0:
                             params.addRule(RelativeLayout.ALIGN_PARENT_START);
@@ -147,9 +144,9 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                             params.addRule(RelativeLayout.CENTER_HORIZONTAL);
                             break;
                     }
-                    v.setLayoutParams(params);
-                    setTextViewStyle(textView, style, (float) factor);
                 }
+                v.setLayoutParams(params);
+                applyTextViewStyle(textView, style, factor_);
                 this.addView(v);
             }
         } else {
@@ -159,14 +156,15 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     (int) style.getAvatarHeight()));
             TextView textView = v.findViewById(R.id.tv_initials);
             textView.setText(channel.getInitials());
-            setTextViewStyle(textView, style, 1.0f);
+            applyTextViewStyle(textView, style, 1.0f);
             this.addView(v);
         }
     }
 
-    private void setTextViewStyle(TextView textView, STYLE style, float factor) {
+    private void applyTextViewStyle(TextView textView, STYLE style, double factor) {
         textView.setTextColor(style.getInitialsTextColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInitialsTextSize() / factor);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) (style.getInitialsTextSize() / factor));
         textView.setTypeface(textView.getTypeface(), style.getInitialsTextStyle());
     }
+
 }

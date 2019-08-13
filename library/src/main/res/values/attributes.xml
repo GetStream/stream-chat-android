@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--CircularImageView-->
+    <declare-styleable name="CircularImageView">
+        <attr name="ci_borderColor" format="color" />
+        <attr name="ci_borderWidth" format="dimension" />
+        <attr name="ci_placeholderBackgroundColor" format="color" />
+        <attr name="ci_placeholderText" format="string" />
+        <attr name="ci_placeholderTextColor" format="color" />
+        <attr name="ci_placeholderTextSize" format="dimension" />
+        <attr name="ci_checked" format="boolean" />
+        <attr name="ci_checkedStateBackgroundColor" format="color" />
+        <attr name="ci_shadowRadius" format="float" />
+        <attr name="ci_shadowColor" format="color" />
+    </declare-styleable>
     <!--ShaderImageView-->
     <declare-styleable name="ShaderImageView">
         <attr name="siSquare" format="boolean" />
