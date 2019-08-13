@@ -3,8 +3,6 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -17,15 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-
-import java.util.List;
 
 public class ChannelListView extends RecyclerView {
     final String TAG = ChannelListView.class.getSimpleName();
@@ -177,9 +169,9 @@ public class ChannelListView extends RecyclerView {
 
             avatarWidth = a.getDimension(R.styleable.ChannelListView_avatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
             avatarHeight = a.getDimension(R.styleable.ChannelListView_avatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
-            initialsTextSize = a.getDimension(R.styleable.ChannelListView_initialsTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-            initialsTextColor = a.getColor(R.styleable.ChannelListView_initialsTextColor, c.getResources().getColor(R.color.stream_channel_initials));
-            initialsTextStyle = a.getInt(R.styleable.ChannelListView_initialsTextStyle, Typeface.NORMAL);
+            initialsTextSize = a.getDimension(R.styleable.ChannelListView_avatarInitialsTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
+            initialsTextColor = a.getColor(R.styleable.ChannelListView_avatarInitialsTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+            initialsTextStyle = a.getInt(R.styleable.ChannelListView_avatarInitialsTextStyle, Typeface.NORMAL);
 
             dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_dateTextSize, -1);
             titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_titleTextSize, -1);

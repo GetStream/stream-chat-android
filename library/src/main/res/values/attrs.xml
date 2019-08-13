@@ -5,9 +5,9 @@
         <!--AvatarGroupView-->
         <attr name="avatarWidth" format="dimension|reference" />
         <attr name="avatarHeight" format="dimension|reference" />
-        <attr name="initialsTextSize" format="dimension|reference" />
-        <attr name="initialsTextColor" format="color|reference" />
-        <attr name="initialsTextStyle">
+        <attr name="avatarInitialsTextSize" format="dimension|reference" />
+        <attr name="avatarInitialsTextColor" format="color|reference" />
+        <attr name="avatarInitialsTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

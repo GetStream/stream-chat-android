@@ -27,7 +27,9 @@
             stream:avatarHeight="40dp"
             stream:avatarWidth="40dp"
             stream:initialsTextSize="20sp"
-            stream:initialsTextStyle="italic|bold" />
+            stream:initialsTextStyle="italic|bold"
+            stream:channelPreviewLayout="@layout/list_item_channel_custom"
+            />
 
         <ProgressBar
             android:layout_width="wrap_content"
