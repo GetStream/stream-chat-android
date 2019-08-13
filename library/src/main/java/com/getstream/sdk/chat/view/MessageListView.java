@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -33,16 +34,19 @@ public class MessageListView extends RecyclerView {
     private ChannelViewModel viewModel;
     public MessageListView(Context context) {
         super(context);
+        this.setLayoutManager(new LinearLayoutManager(context));
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.parseAttr(context, attrs);
+        this.setLayoutManager(new LinearLayoutManager(context));
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
+        this.setLayoutManager(new LinearLayoutManager(context));
     }
 
     @Override
@@ -50,43 +54,23 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
-    //TODO: binding.setLifecycleOwner(lifecycleOwner);
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
 
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
-        c.addEventHandler(new ChatChannelEventHandler() {
-            // TODO
-            // - onLoadMore event
-            // - onMessageNew should fire before API call is completed (or have a different event for that)
-            // - perhaps onMessageLocalNew
-            @Override
-            public void onMessageNew(Event event) {
-                Log.i(TAG, "MessageListView received onMessageNew event");
-                // forward to the adapter
-                adapter.addNewMessage(event.getMessage());
-            }
-//            @Override
-//            public void onMessageUpdated(Event event) {
-//                Log.i(TAG, "MessageListView received onMessageNew event");
-//                // forward to the adapter
-//                adapter.addNewMessage(event.getMessage());
-//            }
-//            @Override
-//            public void onMessageDeleted(Event event) {
-//                Log.i(TAG, "MessageListView received onMessageNew event");
-//                // forward to the adapter
-//                adapter.addNewMessage(event.getMessage());
-//            }
-//            @Override
-//            public void onLoadMore(Event event) {
-//                Log.i(TAG, "MessageListView received onLoadMore event");
-//                // forward to the adapter
-//                adapter.addOldMessages(event.getMessages());
-//            }
 
+
+        // Setup a default adapter and pass the style
+        adapter = new MessageListItemAdapter(getContext());
+
+        // use livedata and observe
+        viewModel.getMessages().observe(lifecycleOwner, messages -> {
+            Log.i(TAG, "Observe found this many messages: " + messages.size());
+            adapter.replaceMessages(messages);
         });
+
+        this.setAdapterWithStyle(adapter);
     }
     // set the adapter and apply the style.
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {

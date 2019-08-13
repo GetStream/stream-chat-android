@@ -95,6 +95,17 @@ public class Message {
     private Map<String, Object> extraData;
 
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // we compare based on the CID
+        Message otherMessage = (Message) obj;
+        return TextUtils.equals(this.getId(), otherMessage.getId());
+    }
+
+
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;

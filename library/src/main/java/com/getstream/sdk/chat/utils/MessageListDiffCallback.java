@@ -5,14 +5,15 @@ import android.text.TextUtils;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.rest.Message;
 
 
 import java.util.List;
 
-public class ChannelListDiffCallback extends DiffUtil.Callback {
-    protected List<Channel> oldList, newList;
+public class MessageListDiffCallback extends DiffUtil.Callback {
+    protected List<Message> oldList, newList;
 
-    public ChannelListDiffCallback(List<Channel> oldList, List<Channel> newList) {
+    public MessageListDiffCallback(List<Message> oldList, List<Message> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }
@@ -39,9 +40,6 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         // channel members
         // channel name
         // TODO: fix this
-        Channel oldChannel = oldList.get(oldItemPosition);
-        Channel newChannel =  newList.get(newItemPosition);
-
 
         return false;
     }

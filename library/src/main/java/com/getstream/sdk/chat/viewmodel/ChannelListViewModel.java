@@ -122,8 +122,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public boolean updateChannel(Channel channel) {
-        int index = 0;
-
         List<Channel> channelCopy = channels.getValue();
         Boolean removed = channelCopy.remove(channel);
         if (removed ) {
@@ -135,7 +133,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public void upsertChannel(Channel channel) {
-        int index = 0;
         List<Channel> channelCopy = channels.getValue();
         Boolean removed = channelCopy.remove(channel);
         channelCopy.add(0, channel);
@@ -143,7 +140,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public boolean deleteChannel(Channel channel) {
-        int index = 0;
         List<Channel> channelCopy = channels.getValue();
         Boolean removed = channelCopy.remove(channel);
         channels.postValue(channelCopy);

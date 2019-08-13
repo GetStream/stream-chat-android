@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -10,8 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
+import com.getstream.sdk.chat.utils.MessageListDiffCallback;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Collections;
@@ -47,6 +51,11 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.itemLayoutId = itemLayoutId;
     }
 
+
+    public MessageListItemAdapter(Context context) {
+        this.context = context;
+    }
+
     public void setStyle(MessageListViewStyle s) {
         style = s;
     }
@@ -61,6 +70,14 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         // TODO: scroll to the bottom if the user isn't currently scrolling up. if the user is scrolling up set a new message indicator
 
+    }
+
+    public void replaceMessages(List<Message> newMessages) {
+        final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
+                new MessageListDiffCallback(messageList, newMessages), true);
+        messageList = newMessages;
+        // only update those rows that change...
+        result.dispatchUpdatesTo(this);
     }
 
 

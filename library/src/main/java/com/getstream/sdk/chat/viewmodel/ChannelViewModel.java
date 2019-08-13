@@ -44,7 +44,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<Boolean> failed;
     public MutableLiveData<Boolean> online;
     public MutableLiveData<String> channelName;
-    private MutableLiveData<List<Message>> mMessages;
+    private MutableLiveData<List<Message>> messages;
     public MutableLiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> mWatcherCount;
     private MutableLiveData<String> lastActiveString;
@@ -61,11 +61,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return channel;
     }
 
+    public MutableLiveData<List<Message>> getMessages() {
+        return messages;
+    }
+
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
         this.channelState = channel.getChannelState();
-        attachToClient();
 
         loading = new MutableLiveData<>(true);
         loadingMore = new MutableLiveData<>(false);
@@ -76,25 +79,34 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
         // TODO: change this if the list of channel members changes or the channel is updated
         channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
-        mMessages = new MutableLiveData<>();
+
+
+        // TODO: this starts out empty, probable bug with queryChannels API implementation
+        messages = new MutableLiveData<>(channelState.getMessages());
+
         mWatcherCount = new MutableLiveData<>();
 
         // humanized time diff
         Date lastActive = channelState.getLastActive();
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString = new MutableLiveData<String>(humanizedDate);
+
+
+        this.initEventHandlers();
+        this.queryChannel();
+
     }
 
-    private void attachToClient() {
+    private void queryChannel() {
         channel.query(new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
+                loading.postValue(false);
+                Log.i(TAG, "messages loaded");
                 channelState = response;
                 channel.setChannelState(response);
-                loading.postValue(false);
-                channelName.postValue(channel.getName());
-                mMessages.postValue(response.getMessages());
-                setupEventSync();
+
+                addMessages(response.getMessages());
             }
 
             @Override
@@ -103,7 +115,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         });
     }
 
-    private void setupEventSync() {
+    private void initEventHandlers() {
         channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onAnyEvent(Event event) {
@@ -115,27 +127,82 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageNew(Event event) {
-                List<Message> list = mMessages.getValue();
+                List<Message> list = messages.getValue();
                 if (list == null) {
                     list = new ArrayList<>();
                 }
                 list.add(event.getMessage());
-                mMessages.postValue(list);
+                messages.postValue(list);
             }
-//            @Override
-//            public void onTypingStart(Event event) {
-//                User user = event.getUser();
-//                mTypingState.put(user.getId(), event);
-//                mTypingUsers.postValue(typingUsers());
-//                scheduleCleanup();
-//            }
-//            @Override
-//            public void onTypingStop(Event event) {
-//                User user = event.getUser();
-//                mTypingState.remove(user.getId());
-//                mTypingUsers.postValue(typingUsers());
-//            }
+
+            @Override
+            public void onMessageUpdated(Event event) {
+                updateMessage(event.getMessage());
+            }
+
+            @Override
+            public void onMessageDeleted(Event event) {
+                deleteMessage(event.getMessage());
+            }
+
+            @Override
+            public void onMessageRead(Event event) {
+
+            }
+
+            @Override
+            public void onReactionNew(Event event) {
+                updateMessage(event.getMessage());
+            }
+
+            @Override
+            public void onReactionDeleted(Event event) {
+                updateMessage(event.getMessage());
+            }
+
+            @Override
+            public void onTypingStart(Event event) {
+                super.onTypingStart(event);
+            }
+
+            @Override
+            public void onTypingStop(Event event) {
+                super.onTypingStop(event);
+            }
         });
+    }
+
+    public boolean updateMessage(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        Boolean updated = index != -1;
+        if (updated) {
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
+        return updated;
+    }
+
+    public boolean deleteMessage(Message message) {
+        List<Message> messagesCopy = messages.getValue();
+        Boolean removed = messagesCopy.remove(message);
+        return removed;
+    }
+
+    public void addMessage(Message message) {
+        List<Message> newMessages = new ArrayList<Message>();
+        newMessages.add(message);
+        addMessages(newMessages);
+    }
+
+    public void addMessages(List<Message> newMessages) {
+        List<Message> messagesCopy = messages.getValue();
+        if (messagesCopy == null) {
+            messagesCopy = new ArrayList<>();
+        }
+        messagesCopy.addAll(newMessages);
+        messages.postValue(messagesCopy);
     }
 
     private void loadChannelState() {
