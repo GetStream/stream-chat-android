@@ -10,11 +10,13 @@ import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -46,15 +48,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<String> channelName;
     private MutableLiveData<List<Message>> messages;
     public MutableLiveData<Boolean> anyOtherUsersOnline;
-    private MutableLiveData<Number> mWatcherCount;
+    private MutableLiveData<Number> watcherCount;
     private MutableLiveData<String> lastActiveString;
+    private MutableLiveData<List<User>> typing;
+    private MutableLiveData<List<ChannelUserRead>> reads;
 
 
-    // TODO: Thread
-    // TODO: Editing
-    // TODO: Event handler
-    // TODO: Typing events
-    // TODO: Messages
     public MutableLiveData<Boolean> endOfPagination;
 
     public Channel getChannel() {
@@ -80,40 +79,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         // TODO: change this if the list of channel members changes or the channel is updated
         channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
 
-
-        // TODO: this starts out empty, probable bug with queryChannels API implementation
         messages = new MutableLiveData<>(channelState.getMessages());
+        typing =  new MutableLiveData<List<User>>(new ArrayList<User>());
+        reads =  new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
 
-        mWatcherCount = new MutableLiveData<>();
+        watcherCount = new MutableLiveData<>();
 
         // humanized time diff
         Date lastActive = channelState.getLastActive();
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString = new MutableLiveData<String>(humanizedDate);
 
-
         this.initEventHandlers();
         this.queryChannel();
 
     }
 
-    private void queryChannel() {
-        channel.query(new QueryChannelCallback() {
-            @Override
-            public void onSuccess(ChannelState response) {
-                loading.postValue(false);
-                Log.i(TAG, "messages loaded");
-                channelState = response;
-                channel.setChannelState(response);
 
-                addMessages(response.getMessages());
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-            }
-        });
-    }
 
     private void initEventHandlers() {
         channel.addEventHandler(new ChatChannelEventHandler() {
@@ -121,7 +103,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             public void onAnyEvent(Event event) {
                 Number watcherCount = event.getWatcherCount();
                 if (watcherCount != null) {
-                    mWatcherCount.postValue(watcherCount);
+                    ChannelViewModel.this.watcherCount.postValue(watcherCount);
                 }
             }
 
@@ -162,12 +144,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onTypingStart(Event event) {
-                super.onTypingStart(event);
+                List<User> typingCopy = typing.getValue();
+                typingCopy.add(event.getUser());
+                typing.postValue(typingCopy);
             }
 
             @Override
             public void onTypingStop(Event event) {
-                super.onTypingStop(event);
+                List<User> typingCopy = typing.getValue();
+                typingCopy.remove(event.getUser());
+                typing.postValue(typingCopy);
             }
         });
     }
@@ -205,50 +191,95 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.postValue(messagesCopy);
     }
 
-    private void loadChannelState() {
-        ChannelViewModel m = this;
-        loading.setValue(true);
-        Log.d(TAG, "Channel Connecting...");
-
-        // TODO: figure out why postValue or setValue from the callback don't actually update the UI...
-
-        channel.query(new QueryChannelCallback() {
+    private void queryChannel() {
+        channel.query(
+                new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
+                new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-                m.loading.postValue(false);
-                m.channelState = response;
-                List<Message> newMessages = new ArrayList<>(response.getMessages());
-                if (newMessages.size() < Constant.DEFAULT_LIMIT) endOfPagination.setValue(true);
-                m.channelName.postValue(response.getChannelNameOrMembers());
-                Log.d(TAG, "channelState loaded" + newMessages.size());
+                loading.postValue(false);
+                Log.i(TAG, "messages loaded");
+                channelState = response;
+                channel.setChannelState(response);
+                List<Message> newMessages = response.getMessages();
+                if (newMessages.size() < Constant.DEFAULT_LIMIT) {
+                    endOfPagination.postValue(true);
+                }
+                addMessages(newMessages);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                m.loading.postValue(false);
-                Log.d(TAG, "Failed Connect Channel : " + errMsg);
+                loading.postValue(false);
             }
         });
     }
 
-    private void messageEvent(Event event) {
-        Message message = event.getMessage();
-        if (message == null) return;
+    public void loadMore() {
+        Log.d(TAG, "ViewModel loadMore called");
+        if (loadingMore.getValue()) return;
 
-        switch (event.getType()) {
-            case MESSAGE_NEW:
-                //newMessageEvent(message);
-                break;
-            case MESSAGE_UPDATED:
-//                if (isThreadMode() && message.getId().equals(thread_parentMessage.getId()))
-//                    mViewModel.setReplyCount(message.getReplyCount());
-            case MESSAGE_DELETED:
-                //updateOrDeleteMessageEvent(event, message);
-                break;
-            default:
-                break;
-        }
+        loadingMore.setValue(true);
+
+        channel.query(
+                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
+                new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        loadingMore.postValue(false);
+                        List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        addMessages(newMessages);
+
+                        if (newMessages.size() < Constant.DEFAULT_LIMIT)
+                            endOfPagination.setValue(true);
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        loadingMore.setValue(false);
+                    }
+                }
+        );
+
+        // TODO: Handle thread...
+
+        //if (isThreadMode()) {
+//            binding.setShowMainProgressbar(true);
+//            client.getReplies(thread_parentMessage.getId(),
+//                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
+//                    threadMessages.get(0).getId(), new GetRepliesCallback() {
+//                        @Override
+//                        public void onSuccess(GetRepliesResponse response) {
+//                            binding.setShowMainProgressbar(false);
+//                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+//                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
+//                                noHistoryThread = true;
+//
+//                            Message.setStartDay(newMessages, null);
+//                            // Add new to current Message List
+//                            for (int i = newMessages.size() - 1; i > -1; i--) {
+//                                threadMessages.add(0, newMessages.get(i));
+//                            }
+//                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
+//                            mThreadAdapter.notifyDataSetChanged();
+//                            recyclerView().scrollToPosition(scrollPosition);
+//                            isCalling = false;
+//                        }
+//
+//                        @Override
+//                        public void onError(String errMsg, int errCode) {
+//                            Utils.showMessage(getContext(), errMsg);
+//                            isCalling = false;
+//                            binding.setShowMainProgressbar(false);
+//                        }
+//                    }
+//            );
+        // } else {
+
+
+        // }
     }
+
 
 //    private void newMessageEvent(Message message) {
 //        Message.setStartDay(Arrays.asList(message), getLastMessage());
@@ -331,68 +362,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 //                });
 //    }
 
-    public void loadMore() {
-        Log.d(TAG, "ViewModel loadMore called");
-        if (loadingMore.getValue()) return;
 
-        loadingMore.setValue(true);
-
-        channel.query(
-            new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
-            new QueryChannelCallback() {
-                @Override
-                public void onSuccess(ChannelState response) {
-                    loadingMore.postValue(false);
-                    List<Message> newMessages = new ArrayList<>(response.getMessages());
-                    if (newMessages.size() < Constant.DEFAULT_LIMIT)
-                        endOfPagination.setValue(true);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    loadingMore.setValue(false);
-                }
-            }
-        );
-
-        // TODO: Handle thread...
-
-        //if (isThreadMode()) {
-//            binding.setShowMainProgressbar(true);
-//            client.getReplies(thread_parentMessage.getId(),
-//                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-//                    threadMessages.get(0).getId(), new GetRepliesCallback() {
-//                        @Override
-//                        public void onSuccess(GetRepliesResponse response) {
-//                            binding.setShowMainProgressbar(false);
-//                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-//                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-//                                noHistoryThread = true;
-//
-//                            Message.setStartDay(newMessages, null);
-//                            // Add new to current Message List
-//                            for (int i = newMessages.size() - 1; i > -1; i--) {
-//                                threadMessages.add(0, newMessages.get(i));
-//                            }
-//                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-//                            mThreadAdapter.notifyDataSetChanged();
-//                            recyclerView().scrollToPosition(scrollPosition);
-//                            isCalling = false;
-//                        }
-//
-//                        @Override
-//                        public void onError(String errMsg, int errCode) {
-//                            Utils.showMessage(getContext(), errMsg);
-//                            isCalling = false;
-//                            binding.setShowMainProgressbar(false);
-//                        }
-//                    }
-//            );
-        // } else {
-
-
-        // }
-    }
 
     @Override
     public void onSendMessage(Message message) {
@@ -403,13 +373,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     public void onSuccess(MessageResponse response) {
                         Message responseMessage = response.getMessage();
                         Log.i(TAG, "onSuccess event for sending the message");
-                        // somehow we need to reach the adapter... (but the viewmodel can't know about the adapter)
-                        // - livedata.observe is one way
-                        // - the adapter listening to an event from the viewmodel or client is another
-                        // -- new message event
-                        // -- updated message event
-                        // -- deleted message event
-                        // -- load more event
                     }
 
                     @Override

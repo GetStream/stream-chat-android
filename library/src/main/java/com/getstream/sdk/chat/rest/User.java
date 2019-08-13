@@ -1,5 +1,9 @@
 package com.getstream.sdk.chat.rest;
 
+import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
@@ -99,6 +103,16 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // we compare based on the CID
+        User otherUser = (User) obj;
+        return TextUtils.equals(this.getId(), otherUser.getId());
     }
 
     /**
