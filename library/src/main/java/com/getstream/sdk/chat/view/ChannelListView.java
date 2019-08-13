@@ -210,22 +210,25 @@ public class ChannelListView extends RecyclerView {
     public class Style extends BaseStyle {
         final String TAG = Style.class.getSimpleName();
         // dimensions
-        public int avatarWidth;
-        public int avatarHeight;
-        public int dateTextSize;
-        public int titleTextSize;
-        public int messageTextSize;
+        private float avatarWidth;
+        private float avatarHeight;
+        private float initialsTextSize;
+        private int dateTextSize;
+        private int titleTextSize;
+        private int messageTextSize;
         // colors
-        public int titleTextColor;
-        public int unreadTitleTextColor;
-        public int messageTextColor;
-        public int unreadMessageTextColor;
-        public int dateTextColor;
+        private int initialsTextColor;
+        private int titleTextColor;
+        private int unreadTitleTextColor;
+        private int messageTextColor;
+        private int unreadMessageTextColor;
+        private int dateTextColor;
         // styles
-        public int titleTextStyle;
-        public int unreadTitleTextStyle;
-        public int messageTextStyle;
-        public int unreadMessageTextStyle;
+        private int initialsTextStyle;
+        private int titleTextStyle;
+        private int unreadTitleTextStyle;
+        private int messageTextStyle;
+        private int unreadMessageTextStyle;
 
         // layouts
         public @LayoutRes int channelPreviewLayout;
@@ -236,8 +239,12 @@ public class ChannelListView extends RecyclerView {
             TypedArray a = c.obtainStyledAttributes(attrs,
                     R.styleable.ChannelListView, 0, 0);
 
-            avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_avatarWidth, -1);
-            avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelListView_avatarHeight, -1);
+            avatarWidth = a.getDimension(R.styleable.ChannelListView_avatarWidth, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_avatar_height));
+            avatarHeight = a.getDimension(R.styleable.ChannelListView_avatarHeight, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_avatar_width));
+            initialsTextSize = a.getDimension(R.styleable.ChannelListView_initialsTextSize, c.getResources().getDimensionPixelSize(R.dimen.stream_channel_initials));
+            initialsTextColor = a.getColor(R.styleable.ChannelListView_initialsTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+            initialsTextStyle = a.getInt(R.styleable.ChannelListView_initialsTextStyle, Typeface.NORMAL);
+
             dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_dateTextSize, -1);
             titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_titleTextSize, -1);
             messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_messageTextSize, -1);
@@ -256,6 +263,74 @@ public class ChannelListView extends RecyclerView {
             channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
 
             a.recycle();
+        }
+
+        public float getAvatarWidth() {
+            return avatarWidth;
+        }
+
+        public float getAvatarHeight() {
+            return avatarHeight;
+        }
+
+        public float getInitialsTextSize() {
+            return initialsTextSize;
+        }
+
+        public int getDateTextSize() {
+            return dateTextSize;
+        }
+
+        public int getTitleTextSize() {
+            return titleTextSize;
+        }
+
+        public int getMessageTextSize() {
+            return messageTextSize;
+        }
+
+        public int getInitialsTextColor() {
+            return initialsTextColor;
+        }
+
+        public int getTitleTextColor() {
+            return titleTextColor;
+        }
+
+        public int getUnreadTitleTextColor() {
+            return unreadTitleTextColor;
+        }
+
+        public int getMessageTextColor() {
+            return messageTextColor;
+        }
+
+        public int getUnreadMessageTextColor() {
+            return unreadMessageTextColor;
+        }
+
+        public int getDateTextColor() {
+            return dateTextColor;
+        }
+
+        public int getInitialsTextStyle() {
+            return initialsTextStyle;
+        }
+
+        public int getTitleTextStyle() {
+            return titleTextStyle;
+        }
+
+        public int getUnreadTitleTextStyle() {
+            return unreadTitleTextStyle;
+        }
+
+        public int getMessageTextStyle() {
+            return messageTextStyle;
+        }
+
+        public int getUnreadMessageTextStyle() {
+            return unreadMessageTextStyle;
         }
     }
 

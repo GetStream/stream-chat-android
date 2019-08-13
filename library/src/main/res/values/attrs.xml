@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ChannelListView">
-        <attr name="avatarWidth" format="dimension|reference"/>
-        <attr name="avatarHeight" format="dimension|reference"/>
+        <attr name="avatarWidth" format="dimension|reference" />
+        <attr name="avatarHeight" format="dimension|reference" />
+        <attr name="initialsTextSize" format="dimension|reference" />
+        <attr name="initialsTextColor" format="color|reference" />
+        <attr name="initialsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
         <attr name="dateTextColor" format="color|reference"/>
         <attr name="dateTextSize" format="dimension|reference"/>
 

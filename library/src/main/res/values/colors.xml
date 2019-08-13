@@ -8,7 +8,7 @@
     <color name="stream_channel_preview_last_message">@color/gray_dark</color>
     <color name="stream_channel_preview_date">@color/gray_light</color>
 
-
+    <color name="stream_channel_initials">@color/black</color>
 
     <!--Default-->
     <color name="gray">#ebebeb</color>

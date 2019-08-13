@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,7 +31,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public ConstraintLayout cl_root;
     public TextView tv_name, tv_last_message, tv_date, tv_click;
     public ReadStateView read_state;
-    public AvatarGroupView iv_avatar;
+    public AvatarGroupView avatarGroupView;
 
     private Context context;
 
@@ -65,7 +64,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date = itemView.findViewById(R.id.tv_date);
 
         tv_click = itemView.findViewById(R.id.tv_click);
-        iv_avatar = itemView.findViewById(R.id.avatar_group);
+        avatarGroupView = itemView.findViewById(R.id.avatar_group);
 
         read_state = itemView.findViewById(R.id.read_state);
 
@@ -74,48 +73,41 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public void setStyle(ChannelListView.Style style) {
         this.style = style;
 
-        if (style.avatarHeight != -1) {
-            iv_avatar.getLayoutParams().height = style.avatarHeight;
+
+        if (style.getDateTextColor() != -1) {
+            tv_date.setTextColor(style.getDateTextColor());
         }
 
-        if (style.avatarWidth != -1) {
-            iv_avatar.getLayoutParams().width = style.avatarWidth;
+        if (style.getDateTextSize() != -1) {
+            tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
         }
 
-        if (style.dateTextColor != -1) {
-            tv_date.setTextColor(style.dateTextColor);
+        if (style.getTitleTextSize() != -1) {
+            tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
         }
-
-        if (style.dateTextSize != -1) {
-            tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.dateTextSize);
-        }
-
-        if (style.titleTextSize != -1) {
-            tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.titleTextSize);
-        }
-        if (style.messageTextSize != -1) {
-            tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.messageTextSize);
+        if (style.getMessageTextSize() != -1) {
+            tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
         }
 
     }
 
     public void applyUnreadStyle() {
         // channel name
-        tv_name.setTextColor(style.unreadTitleTextColor);
-        tv_name.setTypeface(tv_name.getTypeface(), style.unreadTitleTextStyle);
+        tv_name.setTextColor(style.getUnreadTitleTextColor());
+        tv_name.setTypeface(tv_name.getTypeface(), style.getUnreadTitleTextStyle());
 
         // last message
-        tv_last_message.setTypeface(tv_last_message.getTypeface(),  style.unreadMessageTextStyle);
-        tv_last_message.setTextColor(style.unreadMessageTextColor);
+        tv_last_message.setTypeface(tv_last_message.getTypeface(),  style.getUnreadMessageTextStyle());
+        tv_last_message.setTextColor(style.getUnreadMessageTextColor());
     }
 
     public void applyReadStyle() {
         // channel name
-        tv_name.setTextColor(style.titleTextColor);
-        tv_name.setTypeface(tv_name.getTypeface(), style.titleTextStyle);
+        tv_name.setTextColor(style.getTitleTextColor());
+        tv_name.setTypeface(tv_name.getTypeface(), style.getTitleTextStyle());
         // last messsage
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.messageTextStyle);
-        tv_last_message.setTextColor(style.messageTextColor);
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getMessageTextStyle());
+        tv_last_message.setTextColor(style.getMessageTextColor());
     }
 
     @Override
@@ -136,7 +128,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         Channel channel = channelState.getChannel();
 
         // set the data for the avatar
-        iv_avatar.setChannelAndOtherUsers(channelState.getChannel(), otherUsers);
+        avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
 
         // set the channel name
         tv_name.setText(channelName);
@@ -161,7 +153,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         // click listeners
-        iv_avatar.setOnClickListener(view -> {
+        avatarGroupView.setOnClickListener(view -> {
             // if there is 1 user
             if (otherUsers.size() == 1 && this.userClickListener != null) {
                 this.userClickListener.onClick(otherUsers.get(0));
