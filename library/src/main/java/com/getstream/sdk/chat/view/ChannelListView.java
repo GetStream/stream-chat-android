@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -38,6 +41,7 @@ public class ChannelListView extends RecyclerView {
         this.setHasFixedSize(true);
         this.setLayoutManager(new LinearLayoutManager(context));
         this.parseAttr(context, attrs);
+
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -50,6 +54,15 @@ public class ChannelListView extends RecyclerView {
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new ChannelListViewStyle(context, attrs);
+
+        // use the background color as a default for the avatar border
+        if (style.getAvatarBorderColor() == -1) {
+            int color = Color.WHITE;
+            Drawable background = this.getBackground();
+            if (background instanceof ColorDrawable)
+                color = ((ColorDrawable) background).getColor();
+            style.setAvatarBorderColor(color);
+        }
     }
 
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner, ChannelListItemAdapter adapter) {

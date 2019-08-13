@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
+import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 
 import com.getstream.sdk.chat.R;
@@ -62,14 +63,18 @@ public class ChannelListViewStyle extends BaseStyle {
         avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
 
         avatarBorderWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
-        avatarBorderColor = a.getColor(R.styleable.ChannelListView_channelAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_channelAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+        avatarBorderColor = a.getColor(R.styleable.ChannelListView_channelAvatarBorderColor, -1);
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_channelAvatarBackGroundColor, c.getResources().getColor(R.color.stream_gray_dark));
 
         avatarInitialTextSize = a.getDimension(R.styleable.ChannelListView_channelAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_channelAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_channelAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_channelAvatarTextStyle, Typeface.NORMAL);
 
         a.recycle();
+    }
+
+    public void setAvatarBorderColor(@ColorRes int color) {
+        avatarBorderColor = color;
     }
 
     public int getDateTextSize() {
