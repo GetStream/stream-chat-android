@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -133,6 +135,16 @@ public class Channel {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // we compare based on the CID
+        Channel otherChannel = (Channel) obj;
+        return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
     private List<ChatChannelEventHandler> eventSubscribers;

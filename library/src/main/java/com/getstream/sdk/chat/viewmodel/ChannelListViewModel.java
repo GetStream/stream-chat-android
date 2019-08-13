@@ -123,29 +123,21 @@ public class ChannelListViewModel extends AndroidViewModel {
 
     public boolean updateChannel(Channel channel) {
         int index = 0;
-        List<Channel> channelCopy = channels.getValue();
-        for (Channel c : channelCopy) {
-            if (TextUtils.equals(c.getCid(), channel.getCid())) {
-                channelCopy.remove(index);
-                channelCopy.add(0, channel);
-                channels.postValue(channelCopy);
-                return true;
-            }
-            index += 1;
-        }
-        return false;
 
+        List<Channel> channelCopy = channels.getValue();
+        Boolean removed = channelCopy.remove(channel);
+        if (removed ) {
+            channelCopy.add(0, channel);
+            channels.postValue(channelCopy);
+        }
+        Boolean updated = removed;
+        return updated;
     }
 
     public void upsertChannel(Channel channel) {
         int index = 0;
         List<Channel> channelCopy = channels.getValue();
-        for (Channel c : channelCopy) {
-            if (TextUtils.equals(c.getCid(), channel.getCid())) {
-                channelCopy.remove(index);
-            }
-            index += 1;
-        }
+        Boolean removed = channelCopy.remove(channel);
         channelCopy.add(0, channel);
         channels.postValue(channelCopy);
     }
@@ -153,15 +145,9 @@ public class ChannelListViewModel extends AndroidViewModel {
     public boolean deleteChannel(Channel channel) {
         int index = 0;
         List<Channel> channelCopy = channels.getValue();
-        for (Channel c : channelCopy) {
-            if (TextUtils.equals(c.getCid(), channel.getCid())) {
-                channelCopy.remove(index);
-                channels.postValue(channelCopy);
-                return true;
-            }
-            index += 1;
-        }
-        return false;
+        Boolean removed = channelCopy.remove(channel);
+        channels.postValue(channelCopy);
+        return removed;
     }
 
     public void addChannels(List<ChannelState> newChannelsState) {
