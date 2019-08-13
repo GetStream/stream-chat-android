@@ -157,7 +157,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             // if there is 1 user
             if (otherUsers.size() == 1 && this.userClickListener != null) {
                 this.userClickListener.onClick(otherUsers.get(0));
-            } else {
+            } else if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
 
             }
@@ -167,11 +167,17 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             Utils.setButtonDelayEnable(view);
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
             new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
-            this.channelClickListener.onClick(channel);
+            if (this.channelClickListener != null) {
+                this.channelClickListener.onClick(channel);
+            }
+
         });
 
         tv_click.setOnLongClickListener(view -> {
-            this.channelLongClickListener.onClick(channel);
+            if (this.channelLongClickListener != null) {
+                this.channelLongClickListener.onClick(channel);
+            }
+
             return true;
         });
     }
