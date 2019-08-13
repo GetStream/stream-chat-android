@@ -2,6 +2,8 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
@@ -31,6 +33,18 @@ public class MessageListViewStyle extends BaseStyle {
         messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, -1));
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
 
+        // Avatar
+        avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.MessageListView_userAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+
+        avatarBorderWidth = a.getDimension(R.styleable.MessageListView_userAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.MessageListView_userAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+
+        avatarInitialTextSize = a.getDimension(R.styleable.MessageListView_userAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_userAvatarTextStyle, Typeface.NORMAL);
+
         a.recycle();
     }
 
@@ -43,7 +57,6 @@ public class MessageListViewStyle extends BaseStyle {
     public void setMessageTextColorMine(int messageTextColorMine) {
         this.messageTextColorMine = messageTextColorMine;
     }
-
 
 
     public int getMessageTextColorTheirs() {

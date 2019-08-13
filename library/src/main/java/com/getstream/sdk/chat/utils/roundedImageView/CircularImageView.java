@@ -41,10 +41,14 @@ public class CircularImageView
         extends AppCompatImageView
         implements Checkable {
 
-    /** Log tag */
+    /**
+     * Log tag
+     */
     private static final String TAG = CircularImageView.class.getSimpleName();
 
-    /** Default colors */
+    /**
+     * Default colors
+     */
     private static final int DEFAULT_BORDER_COLOR = 0xFFFFFFFF;
     private static final int DEFAULT_BACKGROUND_COLOR = 0xFFDDDDDD;
     private static final int DEFAULT_TEXT_COLOR = 0xFF000000;
@@ -52,7 +56,9 @@ public class CircularImageView
     private static final int DEFAULT_CHECK_STROKE_COLOR = 0xFFFFFFFF;
     private static final int DEFAULT_SHADOW_COLOR = 0xFF666666;
 
-    /** Default dimensions */
+    /**
+     * Default dimensions
+     */
     private static final float DEFAULT_CHECK_STROKE_WIDTH_IN_DP = 3f;
     private static final float DEFAULT_SHADOW_RADIUS = 0;
 
@@ -140,7 +146,7 @@ public class CircularImageView
 
         setBorderInternal(mBorderWidth, mBorderColor, false);
         setPlaceholderTextInternal(mText,
-                mTextColor, mTextSize, false);
+                mTextColor, mTextSize, 0, false);
 
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setAntiAlias(true);
@@ -239,6 +245,7 @@ public class CircularImageView
     private void setPlaceholderTextInternal(String text,
                                             @ColorInt int color,
                                             int textSize,
+                                            int typeface,
                                             boolean invalidate) {
         // Takes only the first character as the place holder
         mText = formatPlaceholderText(text);
@@ -254,6 +261,11 @@ public class CircularImageView
         if (null != mTextPaint) {
             mTextPaint.setColor(color);
             mTextPaint.setTextSize(textSize);
+        }
+
+        if (0 != typeface) {
+            Typeface typeface_ = Typeface.create(Typeface.DEFAULT, typeface);
+            mTextPaint.setTypeface(typeface_);
         }
 
         // Invalidate the view if asked
@@ -366,7 +378,7 @@ public class CircularImageView
      */
     public final void setPlaceholder(String text) {
         if (!text.equalsIgnoreCase(mText)) {
-            setPlaceholderTextInternal(text, mTextColor, mTextSize, true);
+            setPlaceholderTextInternal(text, mTextColor, mTextSize, 0, true);
         }
     }
 
@@ -377,13 +389,13 @@ public class CircularImageView
      * @param size
      */
     public final void setPlaceholderTextSize(int unit,
-                                             int size) {
+                                             int size, int typeface) {
         if (size < 0) {
             throw new IllegalArgumentException("Text size cannot be less than zero.");
         }
 
         int scaledSize = (int) TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
-        setPlaceholderTextInternal(mText, mTextColor, scaledSize, true);
+        setPlaceholderTextInternal(mText, mTextColor, scaledSize, typeface, true);
     }
 
     /**
@@ -409,7 +421,7 @@ public class CircularImageView
         if (!text.equalsIgnoreCase(mText) ||
                 (backgroundColor != mBackgroundColor) ||
                 (textColor != mTextColor)) {
-            setPlaceholderTextInternal(text, textColor, mTextSize, false);
+            setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
             invalidate = true;
         }
 
@@ -536,8 +548,7 @@ public class CircularImageView
         // Is checked?
         if (mChecked) {
             drawCheckedState(canvas, mWidth, mHeight);
-        }
-        else {
+        } else {
             // Checks whether to draw border
             boolean drawBorder = shouldDrawBorder();
             int borderWidth = drawBorder ? mBorderWidth : 0;
@@ -587,7 +598,7 @@ public class CircularImageView
 
         int shortStrokeHeight = (int) (mLongStrokeHeight * .4f);
         int halfH = (int) (mLongStrokeHeight * .5f);
-        int offset = (int)(shortStrokeHeight * .3f);
+        int offset = (int) (shortStrokeHeight * .3f);
         int sx = x + offset;
         int sy = y - offset;
         mPath.reset();

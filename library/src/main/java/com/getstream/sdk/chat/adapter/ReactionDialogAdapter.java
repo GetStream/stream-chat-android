@@ -82,7 +82,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             }
 
             if (user != null && showAvatar) {
-                String intials = user.getUserInitials();
+                String intials = user.getInitials();
                 holder.tv_initials.setVisibility(View.VISIBLE);
                 holder.cv_avatar.setVisibility(View.VISIBLE);
                 holder.tv_initials.setText(intials);

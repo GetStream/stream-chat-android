@@ -24,10 +24,14 @@
             android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            stream:avatarHeight="60dp"
-            stream:avatarWidth="60dp"
-            stream:initialsTextSize="20sp"
-            stream:initialsTextStyle="italic|bold" />
+            stream:channelAvatarBackGroundColor="#00FF00"
+            stream:channelAvatarBorderColor="@android:color/holo_red_dark"
+            stream:channelAvatarBorderWidth="5dp"
+            stream:channelAvatarHeight="60dp"
+            stream:channelAvatarTextColor="@color/white"
+            stream:channelAvatarTextSize="25sp"
+            stream:channelAvatarTextStyle="bold|italic"
+            stream:channelAvatarWidth="60dp" />
 
         <ProgressBar
             android:layout_width="wrap_content"

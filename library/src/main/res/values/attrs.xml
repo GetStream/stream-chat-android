@@ -3,15 +3,19 @@
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-        <attr name="avatarWidth" format="dimension|reference" />
-        <attr name="avatarHeight" format="dimension|reference" />
-        <attr name="initialsTextSize" format="dimension|reference" />
-        <attr name="initialsTextColor" format="color|reference" />
-        <attr name="initialsTextStyle">
+        <attr name="channelAvatarWidth" format="dimension|reference" />
+        <attr name="channelAvatarHeight" format="dimension|reference" />
+        <attr name="channelAvatarBorderWidth" format="dimension|reference" />
+        <attr name="channelAvatarBorderColor" format="color|reference" />
+        <attr name="channelAvatarBackGroundColor" format="color|reference" />
+        <attr name="channelAvatarTextSize" format="dimension|reference" />
+        <attr name="channelAvatarTextColor" format="color|reference" />
+        <attr name="channelAvatarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
         <!--LastMessageDate-->
         <attr name="dateTextColor" format="color|reference" />
         <attr name="dateTextSize" format="dimension|reference" />
@@ -50,6 +54,20 @@
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
+        <!--AvatarGroupView-->
+        <attr name="userAvatarWidth" format="dimension|reference" />
+        <attr name="userAvatarHeight" format="dimension|reference" />
+        <attr name="userAvatarBorderWidth" format="dimension|reference" />
+        <attr name="userAvatarBorderColor" format="color|reference" />
+        <attr name="userAvatarBackGroundColor" format="color|reference" />
+        <attr name="userAvatarTextSize" format="dimension|reference" />
+        <attr name="userAvatarTextColor" format="color|reference" />
+        <attr name="userAvatarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="messageTextColorMine" format="color" />
         <attr name="messageTextColorTheirs" format="color" />
         <attr name="messageBubbleDrawableMine" format="reference" />
@@ -57,15 +75,20 @@
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
-        <attr name="channelAvatarWidth" format="dimension|reference" />
-        <attr name="channelAvatarHeight" format="dimension|reference" />
-        <attr name="channelAvatarTextSize" format="dimension|reference" />
-        <attr name="channelAvatarTextColor" format="color|reference" />
-        <attr name="channelAvatarTextStyle">
+        <!--AvatarGroupView-->
+        <attr name="channelHeaderAvatarWidth" format="dimension|reference" />
+        <attr name="channelHeaderAvatarHeight" format="dimension|reference" />
+        <attr name="channelHeaderAvatarBorderWidth" format="dimension|reference" />
+        <attr name="channelHeaderAvatarBorderColor" format="color|reference" />
+        <attr name="channelHeaderAvatarBackGroundColor" format="color|reference" />
+        <attr name="channelHeaderAvatarTextSize" format="dimension|reference" />
+        <attr name="channelHeaderAvatarTextColor" format="color|reference" />
+        <attr name="channelHeaderAvatarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
         <attr name="channelTitleTextSize" format="dimension|reference" />
         <attr name="channelTitleTextColor" format="color|reference" />
         <attr name="channelTitleTextStyle">

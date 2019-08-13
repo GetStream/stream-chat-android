@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
@@ -26,14 +27,20 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelTitleTextColor, c.getResources().getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelTitleTextStyle, Typeface.NORMAL);
 
-        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
-
-        initialsTextSize = a.getDimension(R.styleable.ChannelHeaderView_channelAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        initialsTextColor = a.getColor(R.styleable.ChannelHeaderView_channelAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
-        initialsTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelAvatarTextStyle, Typeface.NORMAL);
-
         backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_backButtonShow, false);
+
+        // Avatar
+        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+
+        avatarBorderWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+
+        avatarInitialTextSize = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderAvatarTextStyle, Typeface.NORMAL);
+
         a.recycle();
     }
 

@@ -22,7 +22,7 @@
             android:layout_margin="5dp"
             android:background="@drawable/circle_message_user_initials"
             android:gravity="center"
-            android:text="@{user.userInitials}"
+            android:text="@{user.initials}"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"

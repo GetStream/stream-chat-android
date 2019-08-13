@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
@@ -39,12 +40,6 @@ public class ChannelListViewStyle extends BaseStyle {
         TypedArray a = c.obtainStyledAttributes(attrs,
                 R.styleable.ChannelListView, 0, 0);
 
-        avatarWidth = a.getDimension(R.styleable.ChannelListView_avatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelListView_avatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
-        initialsTextSize = a.getDimension(R.styleable.ChannelListView_initialsTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        initialsTextColor = a.getColor(R.styleable.ChannelListView_initialsTextColor, c.getResources().getColor(R.color.stream_channel_initials));
-        initialsTextStyle = a.getInt(R.styleable.ChannelListView_initialsTextStyle, Typeface.NORMAL);
-
         dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_dateTextSize, -1);
         titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_titleTextSize, -1);
         messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_messageTextSize, -1);
@@ -61,6 +56,18 @@ public class ChannelListViewStyle extends BaseStyle {
         unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_unreadMessageTextStyle, Typeface.BOLD);
 
         channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
+
+        // Avatar
+        avatarWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+
+        avatarBorderWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.ChannelListView_channelAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_channelAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+
+        avatarInitialTextSize = a.getDimension(R.styleable.ChannelListView_channelAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_channelAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_channelAvatarTextStyle, Typeface.NORMAL);
 
         a.recycle();
     }

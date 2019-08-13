@@ -58,7 +58,7 @@ public class MessageTypeIndicatorViewHolder extends RecyclerView.ViewHolder {
             User user = Global.typingUsers.get(i);
             TextView textView = v.findViewById(R.id.tv_initials);
             ImageView imageView = v.findViewById(R.id.cv_avatar);
-            textView.setText(user.getUserInitials());
+            textView.setText(user.getInitials());
             Utils.circleImageLoad(imageView, user.getImage());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
