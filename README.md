@@ -5,6 +5,11 @@
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
 You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
+This library includes both a low level chat SDK and a set of reusable UI components.
+Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
+
+
+
 
 ## Installation
 
@@ -41,6 +46,84 @@ dependencies {
     implementation 'com.github.getstream:stream-chat-android:<latest-version>'
 }
 ~~~
+
+## UI Components
+
+### ChannelList
+
+The ChannelListView shows a list of channel previews.
+Typically it will show an unread/read state, the last message and who is participating in the conversation.
+
+The easiest way to render a ChannelList is to add it to your layout:
+
+```
+<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginBottom="10dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+     />
+```
+
+And in activity do something like this:
+
+```
+viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+// query all channels where the current user is a member
+// filterObject filter = in("members", USER_ID);
+FilterObject filter = in("type", "messaging");
+viewModel.setChannelFilter(filter);
+binding.channelList.setViewModel(viewModel, this, adapter);
+```
+
+A full example can be found in MainActivity.java
+
+#### Styling using Attributes
+
+The following attributes are available:
+
+```
+<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginBottom="10dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+     />
+```
+
+#### Changing the layout
+
+If you need to make a bigger change you can swap the layout for the channel previews.
+
+```
+<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginBottom="10dp"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+     />
+```
+
+That only works for simple changes where you don't change the IDs of views, or their types.
+
+#### Custom Viewholder
+
+If you need full control over the styling for the channel preview you can overwrite the view holder.
+
+```
+ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
+adapter.setCustomViewHolder(MyCustomViewHolder.class);
+binding.channelList.setViewModel(viewModel, this, adapter);
+```
+
+You'll typically want to extend either the `ChannelListItemViewHolder` or the `BaseChannelListItemViewHolder` class.
+
+#### Client usage
+
+Alternatively you can of course build your own ChannelListView using the low level client.
 
 ## Getting started
 

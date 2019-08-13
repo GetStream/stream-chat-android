@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 
-        binding.channelList.setLayoutManager(new LinearLayoutManager(this));
         ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
         adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
         binding.channelList.setViewModel(viewModel, this, adapter);

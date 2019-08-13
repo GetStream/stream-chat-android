@@ -43,17 +43,20 @@ public class ChannelListView extends RecyclerView {
     public ChannelListView(Context context) {
         super(context);
         this.setHasFixedSize(true);
+        this.setLayoutManager(new LinearLayoutManager(context));
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.setHasFixedSize(true);
+        this.setLayoutManager(new LinearLayoutManager(context));
         this.parseAttr(context, attrs);
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.setHasFixedSize(true);
+        this.setLayoutManager(new LinearLayoutManager(context));
         this.parseAttr(context, attrs);
     }
 
