@@ -76,66 +76,7 @@ public class ChannelListView extends RecyclerView {
         adapter.setChannelLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
-        // listen to events
-        viewModel.client().addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onMessageNew(Event event) {
-                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
-                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
-                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        adapter.upsertChannel(event.getChannel());
-                    }
-                });
-
-            }
-
-            @Override
-            public void onChannelDeleted(Event event) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        adapter.deleteChannel(event.getChannel());
-                    }
-                });
-            }
-
-            @Override
-            public void onChannelUpdated(Event event) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        adapter.upsertChannel(event.getChannel());
-                    }
-                });
-            }
-
-            @Override
-            public void onMessageRead(Event event) {
-                Log.i(TAG, "Event: Message read by user " + event.getUser().getName());
-                List<ChannelUserRead> reads = event.getChannel().getChannelState().getLastMessageReads();
-                if (reads.size() > 0) {
-                    Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
-                }
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        adapter.upsertChannel(event.getChannel());
-                    }
-                });
-            }
-        });
-
-        // TODO: this approach is not great for performance
+        // TODO: this approach is not great for performance, use diffutils...
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
             Log.i(TAG, "Oberseve found this many channels: " + channels.size());
             adapter.replaceChannels(channels);

@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,11 +16,13 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 
 import java.util.ArrayList;
@@ -72,18 +77,112 @@ public class ChannelListViewModel extends AndroidViewModel {
     public void initEventHandlers(){
         client().addEventHandler(new ChatEventHandler() {
             @Override
+            public void onNotificationMessageNew(Event event) {
+                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
+                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
+                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
+                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
+
+                upsertChannel(event.getChannel());
+
+            }
+
+            @Override
             public void onMessageNew(Event event) {
-                Log.i(TAG, "got a new message, I should bump the channel up on the list right?");
-                super.onMessageNew(event);
+                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
+                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
+                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
+                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
+
+                updateChannel(event.getChannel());
+
+            }
+
+            @Override
+            public void onChannelDeleted(Event event) {
+                deleteChannel(event.getChannel());
+            }
+
+            @Override
+            public void onChannelUpdated(Event event) {
+                updateChannel(event.getChannel());
+            }
+
+            @Override
+            public void onMessageRead(Event event) {
+                Log.i(TAG, "Event: Message read by user " + event.getUser().getName());
+                List<ChannelUserRead> reads = event.getChannel().getChannelState().getLastMessageReads();
+                if (reads.size() > 0) {
+                    Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
+                }
+
+                updateChannel(event.getChannel());
             }
         });
+    }
+
+    public boolean updateChannel(Channel channel) {
+        int index = 0;
+        List<Channel> channelCopy = channels.getValue();
+        for (Channel c : channelCopy) {
+            if (TextUtils.equals(c.getCid(), channel.getCid())) {
+                channelCopy.remove(index);
+                channelCopy.add(0, channel);
+                channels.postValue(channelCopy);
+                return true;
+            }
+            index += 1;
+        }
+        return false;
+
+    }
+
+    public void upsertChannel(Channel channel) {
+        int index = 0;
+        List<Channel> channelCopy = channels.getValue();
+        for (Channel c : channelCopy) {
+            if (TextUtils.equals(c.getCid(), channel.getCid())) {
+                channelCopy.remove(index);
+            }
+            index += 1;
+        }
+        channelCopy.add(0, channel);
+        channels.postValue(channelCopy);
+    }
+
+    public boolean deleteChannel(Channel channel) {
+        int index = 0;
+        List<Channel> channelCopy = channels.getValue();
+        for (Channel c : channelCopy) {
+            if (TextUtils.equals(c.getCid(), channel.getCid())) {
+                channelCopy.remove(index);
+                channels.postValue(channelCopy);
+                return true;
+            }
+            index += 1;
+        }
+        return false;
+    }
+
+    public void addChannels(List<ChannelState> newChannelsState) {
+        List<Channel> channelCopy = channels.getValue();
+        if (channelCopy == null) {
+            channelCopy = new ArrayList<>();
+        }
+        List<Channel> newChannels = new ArrayList<>();
+        for (ChannelState chan: newChannelsState) {
+            newChannels.add(chan.getChannel());
+        }
+        channelCopy.addAll(newChannels);
+        channels.postValue(channelCopy);
     }
 
     public void queryChannels() {
         Log.i(TAG, "queryChannels for loading the channels");
 
+        int limit = 30;
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
-                .withLimit(30)
+                .withLimit(limit)
                 .withMessageLimit(20);
 
         client().queryChannels(request, new QueryChannelListCallback() {
@@ -91,14 +190,11 @@ public class ChannelListViewModel extends AndroidViewModel {
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSuccess for loading the channels");
                 loading.postValue(false);
-                List<Channel> channelList = channels.getValue();
-                if (channelList == null) {
-                    channelList = new ArrayList<>();
+                addChannels(response.getChannels());
+                if (response.getChannels().size() < limit) {
+                    endOfPagination.postValue(true);
                 }
-                for (ChannelState chan: response.getChannels()) {
-                    channelList.add(chan.getChannel());
-                }
-                channels.postValue(channelList);
+                // TODO move this
                 initEventHandlers();
             }
 
@@ -111,9 +207,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public void loadMore() {
-        // different loader, offset, perhaps callback...
-        // TODO: Make this more DRY
-
         int limit = 30;
         if (loadingMore.getValue()) {
             return;
@@ -132,17 +225,10 @@ public class ChannelListViewModel extends AndroidViewModel {
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSuccess for loading more channels");
                 loadingMore.postValue(false);
-                List<Channel> channelList = channels.getValue();
-                if (channelList == null) {
-                    channelList = new ArrayList<>();
-                }
+                addChannels(response.getChannels());
                 if (response.getChannels().size() < limit) {
                     endOfPagination.postValue(true);
                 }
-                for (ChannelState chan: response.getChannels()) {
-                    channelList.add(chan.getChannel());
-                }
-                channels.postValue(channelList);
             }
 
             @Override

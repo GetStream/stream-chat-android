@@ -7,10 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
 import com.getstream.sdk.chat.view.ChannelListView;
 
 import java.lang.reflect.Constructor;
@@ -81,9 +83,11 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
     }
 
     public void replaceChannels(List<Channel> channelList) {
+        final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
+                new ChannelListDiffCallback(channels, channelList), true);
         channels = channelList;
-
-        notifyDataSetChanged();
+        // only update those rows that change...
+        result.dispatchUpdatesTo(this);
     }
 
     @Override
