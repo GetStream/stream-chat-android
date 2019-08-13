@@ -43,6 +43,6 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         Channel newChannel =  newList.get(newItemPosition);
 
 
-        return true;
+        return false;
     }
 }
