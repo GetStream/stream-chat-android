@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -256,7 +255,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 tv_indicator_initials.setVisibility(View.VISIBLE);
                 cv_indicator_avatar.setBackgroundResource(0);
                 Utils.circleImageLoad(cv_indicator_avatar, channelState.getLastReader().getImage());
-                tv_indicator_initials.setText(channelState.getLastReader().getUserInitials());
+                tv_indicator_initials.setText(channelState.getLastReader().getInitials());
 
                 if (readUsers.size() > 1) {
                     tv_read_count.setVisibility(View.VISIBLE);
@@ -302,7 +301,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             User user = Global.typingUsers.get(i);
             TextView textView = v.findViewById(R.id.tv_initials);
             ImageView imageView = v.findViewById(R.id.cv_avatar);
-            textView.setText(user.getUserInitials());
+            textView.setText(user.getInitials());
             Utils.circleImageLoad(imageView, user.getImage());
             int height = (int) context.getResources().getDimension(R.dimen.message_typing_indicator_size);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(height, height);
@@ -345,7 +344,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             } else
                 tv_username.setVisibility(View.GONE);
 
-            tv_initials.setText(message.getUser().getUserInitials());
+            tv_initials.setText(message.getUser().getInitials());
             if (message.getDate() == null) message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());

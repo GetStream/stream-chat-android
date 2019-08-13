@@ -81,7 +81,7 @@ public class UserListItemAdapter extends BaseAdapter {
             cv_avatar.setVisibility(View.VISIBLE);
             tv_initials.setVisibility(View.INVISIBLE);
         } else {
-            tv_initials.setText(user.getUserInitials());
+            tv_initials.setText(user.getInitials());
             tv_initials.setVisibility(View.VISIBLE);
             cv_avatar.setVisibility(View.INVISIBLE);
         }

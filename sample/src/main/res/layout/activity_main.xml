@@ -22,13 +22,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
+            android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            stream:avatarHeight="40dp"
-            stream:avatarWidth="40dp"
-            stream:avatarInitialsTextSize="20sp"
-            stream:avatarInitialsTextStyle="italic|bold"
-            />
+            stream:channelAvatarBorderColor="@android:color/transparent"
+             />
 
         <ProgressBar
             android:layout_width="wrap_content"

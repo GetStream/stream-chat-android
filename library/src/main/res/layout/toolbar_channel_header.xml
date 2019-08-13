@@ -74,28 +74,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
-            <!--<TextView-->
-                <!--android:id="@+id/tv_channel_initial"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:background="@drawable/circle_channel_initials"-->
-                <!--android:gravity="center"-->
-                <!--android:textSize="15sp"-->
-                <!--android:textStyle="bold"-->
-                <!--app:layout_constraintBottom_toBottomOf="@+id/iv_header_avatar"-->
-                <!--app:layout_constraintEnd_toEndOf="@+id/iv_header_avatar"-->
-                <!--app:layout_constraintStart_toStartOf="@+id/iv_header_avatar"-->
-                <!--app:layout_constraintTop_toTopOf="@+id/iv_header_avatar" />-->
-
-            <!--<ImageView-->
-                <!--android:id="@+id/iv_header_avatar"-->
-                <!--android:layout_width="30dp"-->
-                <!--android:layout_height="30dp"-->
-                <!--android:layout_marginEnd="20dp"-->
-                <!--app:layout_constraintBottom_toBottomOf="parent"-->
-                <!--app:layout_constraintEnd_toEndOf="parent"-->
-                <!--app:layout_constraintTop_toTopOf="parent" />-->
-
             <ImageView
                 android:id="@+id/iv_active_mark"
                 android:layout_width="7dp"

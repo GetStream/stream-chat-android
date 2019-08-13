@@ -14,23 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
 
-/**
- * Avatar group views renders a list of avatars for a channel
- * There is quite a bit of business logic in here, it's specific to the channel scenario
- * Here's how it should work
- * <p>
- * 1 - If a channel image is available use that
- * 2 - If there are members (not all channels have members) render up to 3 avatars sorted based on last active (if there are more than 3 members, we still render 3). For each member if there is no image fallback to their initial.
- * 3 - If there are no members, and there is no channel image fallback to the channel initial
- */
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     Context context;
     Channel channel;
@@ -92,65 +85,74 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
     private void configUserAvatars() {
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
-            for (int i = 0; i < lastActiveUsers.size(); i++) {
+            double factor_;
+            for (int i = 0; i < (lastActiveUsers.size() < 4 ? lastActiveUsers.size() : 3); i++) {
                 User user = lastActiveUsers.get(i);
-                View v = inflater.inflate(R.layout.view_user_avatar_initials, null);
 
-                TextView textView = v.findViewById(R.id.tv_initials);
-                ImageView imageView = v.findViewById(R.id.cv_avatar);
+                CircularImageView imageView = new CircularImageView(context);
 
-                textView.setText(user.getUserInitials());
-                Utils.circleImageLoad(imageView, user.getImage());
+                imageView.setBorderColor(style.getAvatarBorderColor());
+                imageView.setPlaceholder(user.getInitials(),
+                        style.getAvatarBackGroundColor(),
+                        style.getAvatarInitialTextColor());
+                Glide.with(context)
+                        .load(user.getImage())
+                        .asBitmap()
+                        .into(imageView);
+
+                RelativeLayout.LayoutParams params;
 
                 if (lastActiveUsers.size() == 1) {
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                            (int) style.getAvatarWidth(),
-                            (int) style.getAvatarHeight());
-                    v.setLayoutParams(params);
-
-                    setTextViewStyle(textView, style, 1.0f);
-
-                } else if (lastActiveUsers.size() == 2) {
-                    double width = style.getAvatarWidth() / factor;
-                    double height = style.getAvatarHeight() / factor;
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (width), (int) (height));
-                    switch (i) {
-                        case 0:
-                            params.addRule(RelativeLayout.ALIGN_PARENT_START);
-                            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                            break;
-                        default:
-                            params.addRule(RelativeLayout.ALIGN_PARENT_END);
-                            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                            break;
-                    }
-                    v.setLayoutParams(params);
-
-                    setTextViewStyle(textView, style, (float) factor);
+                    factor_ = 1.0;
+                    imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                            (int) (style.getAvatarInitialTextSize() / factor_),
+                            style.getAvatarInitialTextStyle());
+                    params = new RelativeLayout.LayoutParams(
+                            (int) (style.getAvatarWidth() / factor_),
+                            (int) (style.getAvatarHeight() / factor_));
 
                 } else {
+                    factor_ = factor;
+                    imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
+                            (int) style.getAvatarBorderWidth());
+                    imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                            (int) (style.getAvatarInitialTextSize() / factor_),
+                            style.getAvatarInitialTextStyle());
+                    params = new RelativeLayout.LayoutParams(
+                            (int) (style.getAvatarWidth() / factor_),
+                            (int) (style.getAvatarHeight() / factor_));
 
-                    double width = style.getAvatarWidth() / factor;
-                    double height = style.getAvatarHeight() / factor;
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((int) (width), (int) (height));
-                    switch (i) {
-                        case 0:
-                            params.addRule(RelativeLayout.ALIGN_PARENT_START);
-                            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                            break;
-                        case 1:
-                            params.addRule(RelativeLayout.ALIGN_PARENT_END);
-                            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                            break;
-                        default:
-                            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                            break;
+                    if (lastActiveUsers.size() == 2) {
+                        switch (i) {
+                            case 0:
+                                params.addRule(RelativeLayout.ALIGN_PARENT_START);
+                                params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                                break;
+                            default:
+                                params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                                params.setMarginEnd(20);
+                                break;
+                        }
+                    } else {
+                        switch (i) {
+                            case 0:
+                                params.addRule(RelativeLayout.ALIGN_PARENT_START);
+                                params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                                break;
+                            case 1:
+                                params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                                params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                                break;
+                            default:
+                                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                                break;
+                        }
                     }
-                    v.setLayoutParams(params);
-                    setTextViewStyle(textView, style, (float) factor);
                 }
-                this.addView(v);
+                imageView.setLayoutParams(params);
+                this.addView(imageView);
             }
         } else {
             View v = inflater.inflate(R.layout.view_user_avatar_initials, null);
@@ -159,14 +161,15 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     (int) style.getAvatarHeight()));
             TextView textView = v.findViewById(R.id.tv_initials);
             textView.setText(channel.getInitials());
-            setTextViewStyle(textView, style, 1.0f);
+            applyTextViewStyle(textView, style, 1.0f);
             this.addView(v);
         }
     }
 
-    private void setTextViewStyle(TextView textView, STYLE style, float factor) {
-        textView.setTextColor(style.getInitialsTextColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInitialsTextSize() / factor);
-        textView.setTypeface(textView.getTypeface(), style.getInitialsTextStyle());
+    private void applyTextViewStyle(TextView textView, STYLE style, double factor) {
+        textView.setTextColor(style.getAvatarInitialTextColor());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) (style.getAvatarInitialTextSize() / factor));
+        textView.setTypeface(textView.getTypeface(), style.getAvatarInitialTextStyle());
     }
+
 }

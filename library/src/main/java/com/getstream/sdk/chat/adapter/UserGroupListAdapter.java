@@ -63,7 +63,7 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
             TextView tv_initials = binding.viewUserAvator.findViewById(R.id.tv_initials);
             ImageView cv_avatar = binding.viewUserAvator.findViewById(R.id.cv_avatar);
             binding.tvName.setText(user.getName());
-            tv_initials.setText(user.getUserInitials());
+            tv_initials.setText(user.getInitials());
             Utils.circleImageLoad(cv_avatar, user.getImage());
             Utils.circleImageLoad(cv_avatar, user.getImage());
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--CircularImageView-->
+    <declare-styleable name="CircularImageView">
+        <attr name="ci_borderColor" format="color" />
+        <attr name="ci_borderWidth" format="dimension" />
+        <attr name="ci_placeholderBackgroundColor" format="color" />
+        <attr name="ci_placeholderText" format="string" />
+        <attr name="ci_placeholderTextColor" format="color" />
+        <attr name="ci_placeholderTextSize" format="dimension" />
+        <attr name="ci_checked" format="boolean" />
+        <attr name="ci_checkedStateBackgroundColor" format="color" />
+        <attr name="ci_shadowRadius" format="float" />
+        <attr name="ci_shadowColor" format="color" />
+    </declare-styleable>
+    <!--ShaderImageView-->
+    <declare-styleable name="ShaderImageView">
+        <attr name="siSquare" format="boolean" />
+        <attr name="siBorderColor" format="color" />
+        <attr name="siBorderWidth" format="dimension" />
+        <attr name="siBorderAlpha" format="float" />
+        <attr name="siForeground" format="integer|reference" />
+        <!-- Rounded Image View -->
+        <attr name="siRadius" format="dimension" />
+        <!--BubbleImageView-->
+        <attr name="siArrowPosition" />
+        <attr name="siTriangleHeight" format="dimension" />
+        <!--PorterImageView-->
+        <attr name="siShape" format="integer|reference" />
+        <!--ShaderImageView-->
+        <attr name="siBorderType" />
+        <attr name="siStrokeCap" />
+        <attr name="siStrokeJoin" />
+        <attr name="siStrokeMiter" format="dimension" />
+    </declare-styleable>
+    <!--exomedia-->
+    <declare-styleable name="VideoView">
+        <attr name="useDefaultControls" format="boolean" />
+        <attr name="useTextureViewBacking" format="boolean" />
+        <attr name="videoViewApiImpl" format="reference" />
+        <attr name="videoViewApiImplLegacy" format="reference" />
+        <attr name="measureBasedOnAspectRatio" format="boolean" />
+        <attr name="videoScale" format="enum">
+            <enum name="center" value="0" />
+            <enum name="centerCrop" value="1" />
+            <enum name="centerInside" value="2" />
+            <enum name="fitCenter" value="3" />
+            <enum name="fitXY" value="4" />
+            <enum name="none" value="5" />
+        </attr>
+    </declare-styleable>
+</resources>

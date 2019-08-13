@@ -148,7 +148,7 @@ public class User {
 //        return id.equals(StreamChat.getInstance().getUserId());
     }
 
-    public String getUserInitials() {
+    public String getInitials() {
         if (this.name == null) {
             this.name = "";
         }

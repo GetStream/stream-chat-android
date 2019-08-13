@@ -1,28 +1,24 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+
 
 public class ChannelListView extends RecyclerView {
     final String TAG = ChannelListView.class.getSimpleName();
 
-    private Style style;
+    private ChannelListViewStyle style;
 
     // our connection to the channel scope
     private ChannelListViewModel viewModel;
@@ -53,7 +49,7 @@ public class ChannelListView extends RecyclerView {
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
-        style = new Style(context, attrs);
+        style = new ChannelListViewStyle(context, attrs);
     }
 
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner, ChannelListItemAdapter adapter) {
@@ -68,7 +64,6 @@ public class ChannelListView extends RecyclerView {
         adapter.setChannelLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
-        // TODO: this approach is not great for performance, use diffutils...
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
             Log.i(TAG, "Oberseve found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
@@ -137,109 +132,6 @@ public class ChannelListView extends RecyclerView {
             }
         });
 
-    }
-
-    public class Style extends BaseStyle {
-        final String TAG = Style.class.getSimpleName();
-        // dimensions
-
-        private int dateTextSize;
-        private int titleTextSize;
-        private int messageTextSize;
-        // colors
-        private int titleTextColor;
-        private int unreadTitleTextColor;
-        private int messageTextColor;
-        private int unreadMessageTextColor;
-        private int dateTextColor;
-        // styles
-        private int titleTextStyle;
-        private int unreadTitleTextStyle;
-        private int messageTextStyle;
-        private int unreadMessageTextStyle;
-
-        // layouts
-        public @LayoutRes int channelPreviewLayout;
-
-
-        public Style(Context c, AttributeSet attrs) {
-            this.setContext(c);
-            TypedArray a = c.obtainStyledAttributes(attrs,
-                    R.styleable.ChannelListView, 0, 0);
-
-            avatarWidth = a.getDimension(R.styleable.ChannelListView_avatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-            avatarHeight = a.getDimension(R.styleable.ChannelListView_avatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
-            initialsTextSize = a.getDimension(R.styleable.ChannelListView_avatarInitialsTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-            initialsTextColor = a.getColor(R.styleable.ChannelListView_avatarInitialsTextColor, c.getResources().getColor(R.color.stream_channel_initials));
-            initialsTextStyle = a.getInt(R.styleable.ChannelListView_avatarInitialsTextStyle, Typeface.NORMAL);
-
-            dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_dateTextSize, -1);
-            titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_titleTextSize, -1);
-            messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_messageTextSize, -1);
-
-            titleTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.black));
-            unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_unreadTitleTextColor, this.getColor(R.color.black));
-            messageTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.gray_dark));
-            unreadMessageTextColor = a.getColor(R.styleable.ChannelListView_titleTextColor, this.getColor(R.color.black));
-            dateTextColor = a.getColor(R.styleable.ChannelListView_dateTextColor, -1);
-
-            titleTextStyle = a.getInt(R.styleable.ChannelListView_titleTextStyleChannel, Typeface.BOLD);
-            unreadTitleTextStyle = a.getInt(R.styleable.ChannelListView_unreadTitleTextStyle, Typeface.BOLD);
-            messageTextStyle = a.getInt(R.styleable.ChannelListView_messageTextStyle, Typeface.NORMAL);
-            unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_unreadMessageTextStyle, Typeface.BOLD);
-
-            channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
-
-            a.recycle();
-        }
-
-        public int getDateTextSize() {
-            return dateTextSize;
-        }
-
-        public int getTitleTextSize() {
-            return titleTextSize;
-        }
-
-        public int getMessageTextSize() {
-            return messageTextSize;
-        }
-
-        public int getTitleTextColor() {
-            return titleTextColor;
-        }
-
-        public int getUnreadTitleTextColor() {
-            return unreadTitleTextColor;
-        }
-
-        public int getMessageTextColor() {
-            return messageTextColor;
-        }
-
-        public int getUnreadMessageTextColor() {
-            return unreadMessageTextColor;
-        }
-
-        public int getDateTextColor() {
-            return dateTextColor;
-        }
-
-        public int getTitleTextStyle() {
-            return titleTextStyle;
-        }
-
-        public int getUnreadTitleTextStyle() {
-            return unreadTitleTextStyle;
-        }
-
-        public int getMessageTextStyle() {
-            return messageTextStyle;
-        }
-
-        public int getUnreadMessageTextStyle() {
-            return unreadMessageTextStyle;
-        }
     }
 
 

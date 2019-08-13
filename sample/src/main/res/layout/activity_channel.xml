@@ -16,14 +16,24 @@
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.MainActivity">
 
-        <com.getstream.sdk.chat.view.ChannelHeaderToolbar
+        <com.getstream.sdk.chat.view.ChannelHeaderView
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#2F3036"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            stream:backButtonShow="false"
+            stream:channelHeaderAvatarBackGroundColor="#00FF00"
+            stream:channelHeaderAvatarBorderColor="@android:color/holo_red_dark"
+            stream:channelHeaderAvatarBorderWidth="5dp"
+            stream:channelHeaderAvatarHeight="50dp"
+            stream:channelHeaderAvatarTextColor="@color/white"
+            stream:channelHeaderAvatarTextSize="25sp"
+            stream:channelHeaderAvatarTextStyle="bold|italic"
+            stream:channelHeaderAvatarWidth="50dp"
+            stream:channelTitleTextColor="@color/white" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
@@ -39,7 +49,6 @@
             stream:messageBubbleDrawableTheirs="@drawable/message_bubble_theirs"
             stream:messageTextColorMine="#FFFFFF"
             stream:messageTextColorTheirs="#1BB76E"
-            stream:backButtonShow="false"
             tools:listitem="@layout/list_item_message" />
 
 
@@ -80,6 +89,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList"
-            stream:inputHint="what a fun day"/>
+            stream:inputHint="what a fun day" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

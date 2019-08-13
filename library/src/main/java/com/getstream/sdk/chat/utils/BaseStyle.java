@@ -12,9 +12,14 @@ public class BaseStyle {
 
     protected float avatarWidth;
     protected float avatarHeight;
-    protected float initialsTextSize;
-    protected int initialsTextColor;
-    protected int initialsTextStyle;
+
+    protected float avatarBorderWidth;
+    protected int avatarBorderColor;
+    protected int avatarBackGroundColor;
+
+    protected float avatarInitialTextSize;
+    protected int avatarInitialTextColor;
+    protected int avatarInitialTextStyle;
 
     public Drawable getDrawable(@DrawableRes int drawable) {
         return ContextCompat.getDrawable(getContext(), drawable);
@@ -40,15 +45,27 @@ public class BaseStyle {
         return avatarHeight;
     }
 
-    public float getInitialsTextSize() {
-        return initialsTextSize;
+    public float getAvatarInitialTextSize() {
+        return avatarInitialTextSize;
     }
 
-    public int getInitialsTextColor() {
-        return initialsTextColor;
+    public int getAvatarInitialTextColor() {
+        return avatarInitialTextColor;
     }
 
-    public int getInitialsTextStyle() {
-        return initialsTextStyle;
+    public int getAvatarInitialTextStyle() {
+        return avatarInitialTextStyle;
+    }
+
+    public float getAvatarBorderWidth() {
+        return avatarBorderWidth;
+    }
+
+    public int getAvatarBorderColor() {
+        return avatarBorderColor;
+    }
+
+    public int getAvatarBackGroundColor() {
+        return avatarBackGroundColor;
     }
 }

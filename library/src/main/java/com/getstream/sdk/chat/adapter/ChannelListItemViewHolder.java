@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
+import com.getstream.sdk.chat.view.ChannelListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
@@ -31,14 +32,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public ConstraintLayout cl_root;
     public TextView tv_name, tv_last_message, tv_date, tv_click;
     public ReadStateView read_state;
-    public AvatarGroupView<ChannelListView.Style> avatarGroupView;
+    public AvatarGroupView<ChannelListViewStyle> avatarGroupView;
 
     private Context context;
 
     private ChannelListView.UserClickListener userClickListener;
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
-    private ChannelListView.Style style;
+    private ChannelListViewStyle style;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -70,7 +71,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     }
 
-    public void setStyle(ChannelListView.Style style) {
+    public void setStyle(ChannelListViewStyle style) {
         this.style = style;
 
 
