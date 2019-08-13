@@ -24,8 +24,8 @@
             android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            stream:avatarHeight="60dp"
-            stream:avatarWidth="60dp"
+            stream:avatarHeight="40dp"
+            stream:avatarWidth="40dp"
             stream:initialsTextSize="20sp"
             stream:initialsTextStyle="italic|bold" />
 
