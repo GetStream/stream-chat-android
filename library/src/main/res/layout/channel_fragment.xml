@@ -31,7 +31,7 @@
         android:background="@color/chat_theme"
         tools:context=".view.activity.ChatActivity">
 
-        <com.getstream.sdk.chat.view.ChannelHeaderToolbar
+        <com.getstream.sdk.chat.view.ChannelHeaderView
             android:id="@+id/cht_header"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"

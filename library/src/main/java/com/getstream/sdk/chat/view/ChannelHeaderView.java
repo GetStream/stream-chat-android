@@ -1,9 +1,7 @@
 package com.getstream.sdk.chat.view;
 
-
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,45 +16,47 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClickListener {
+public class ChannelHeaderView extends RelativeLayout implements View.OnClickListener {
 
-    final String TAG = ChannelHeaderToolbar.class.getSimpleName();
+    final String TAG = ChannelHeaderView.class.getSimpleName();
 
     // binding for this view
     private ToolbarChannelHeaderBinding binding;
     private OnBackClickListener onBackClickListener;
-    private MessageListViewStyle style;
+    private ChannelHeaderViewStyle style;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
 
-    public ChannelHeaderToolbar(Context context) {
+    public ChannelHeaderView(Context context) {
         super(context);
         binding = initBinding(context);
     }
 
-    public ChannelHeaderToolbar(Context context, @Nullable AttributeSet attrs) {
+    public ChannelHeaderView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        parseAttr(context, attrs);
         binding = initBinding(context);
     }
 
-    public ChannelHeaderToolbar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ChannelHeaderView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        parseAttr(context, attrs);
         binding = initBinding(context);
+    }
+
+    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
+        // parse the attributes
+        style = new ChannelHeaderViewStyle(context, attrs);
     }
 
     public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
-        setStyle(MessageListView.getStyle());
         viewModel.loading.observe(lifecycleOwner, (Boolean loading) -> {
             if (!loading) configHeaderAvatar();
         });
         configUIs();
-    }
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
@@ -101,7 +101,7 @@ public class ChannelHeaderToolbar extends RelativeLayout implements View.OnClick
         // - once we simplify this to it's own view we can just use databinding for the data and remove configHeaderAvatar
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
-        AvatarGroupView<MessageListViewStyle> avatarGroupView = binding.avatarGroup;
+        AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
         avatarGroupView.setChannelAndLastActiveUsers(channel, channelState.getOtherUsers(), style);
     }
 }

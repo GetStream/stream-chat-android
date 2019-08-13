@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;
+import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
-    private ChannelListView.Style style;
+    private ChannelListViewStyle style;
 
     public ChannelListItemAdapter(Context context, List<Channel> channels) {
         this.context = context;
@@ -54,7 +55,7 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
         channelLongClickListener = l;
     }
 
-    public void setStyle(ChannelListView.Style s) {
+    public void setStyle(ChannelListViewStyle s) {
         style = s;
     }
 
