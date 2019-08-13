@@ -39,6 +39,7 @@
             stream:messageBubbleDrawableTheirs="@drawable/message_bubble_theirs"
             stream:messageTextColorMine="#FFFFFF"
             stream:messageTextColorTheirs="#1BB76E"
+            stream:backButtonShow="false"
             tools:listitem="@layout/list_item_message" />
 
 

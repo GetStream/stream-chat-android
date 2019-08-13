@@ -5,7 +5,7 @@
     <dimen name="stream_channel_avatar_width">40dp</dimen>
     <dimen name="stream_channel_preview_name">14sp</dimen>
     <dimen name="stream_channel_preview_date">11sp</dimen>
-    <dimen name="stream_channel_initials">12sp</dimen>
+    <dimen name="stream_channel_initials">16sp</dimen>
     <!--Message Composer-->
     <dimen name="composer_stroke_width">2dp</dimen>
     <dimen name="composer_corner_radius">10dp</dimen>

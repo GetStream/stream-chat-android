@@ -22,12 +22,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             stream:avatarHeight="60dp"
             stream:avatarWidth="60dp"
-            stream:initialsTextSize="12sp"
-            stream:initialsTextStyle="italic"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            stream:initialsTextSize="20sp"
+            stream:initialsTextStyle="italic|bold" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -46,7 +46,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

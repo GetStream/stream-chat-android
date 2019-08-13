@@ -89,6 +89,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channel.query(new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
+                channelState = response;
+                channel.setChannelState(response);
                 loading.postValue(false);
                 channelName.postValue(channel.getName());
                 mMessages.postValue(response.getMessages());

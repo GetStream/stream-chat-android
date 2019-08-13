@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -46,10 +47,10 @@ public class ChannelActivity extends AppCompatActivity {
 
         // connect the view model
         binding.channelHeader.setViewModel(viewModel, this);
+        binding.channelHeader.setOnBackClickListener(v -> finish());
+
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
-
-        binding.channelHeader.setOnBackClickListener(v -> finish());
 
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);

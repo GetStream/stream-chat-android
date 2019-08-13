@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -165,7 +166,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
     private void setTextViewStyle(TextView textView, STYLE style, float factor) {        
         textView.setTextColor(style.getInitialsTextColor());
-        textView.setTextSize(style.getInitialsTextSize() / factor);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,style.getInitialsTextSize() / factor);
         textView.setTypeface(textView.getTypeface(), style.getInitialsTextStyle());
     }
 }

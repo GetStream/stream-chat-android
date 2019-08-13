@@ -27,7 +27,7 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 public class MessageListView extends RecyclerView {
     final String TAG = MessageListView.class.getSimpleName();
 
-    private MessageListViewStyle style;
+    private static MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
@@ -88,7 +88,9 @@ public class MessageListView extends RecyclerView {
 
         });
     }
-
+    public static MessageListViewStyle getStyle(){
+        return style;
+    }
     // set the adapter and apply the style.
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
         super.setAdapter(adapter);

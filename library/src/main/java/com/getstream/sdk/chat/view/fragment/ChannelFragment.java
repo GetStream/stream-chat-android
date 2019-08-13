@@ -385,7 +385,7 @@ public class ChannelFragment extends Fragment {
             return true;
         });
         binding.mlvMessageList.setAdapterWithStyle(mChannelMessageAdapter);
-        mViewModel.getChannelMessages().observe(this, (@Nullable List<Message> users) -> {
+        mViewModel.getChannelMessages().observe(this, (@Nullable List<Message> messageList) -> {
             if (scrollPosition == -1) return;
 
             mChannelMessageAdapter.notifyDataSetChanged();
