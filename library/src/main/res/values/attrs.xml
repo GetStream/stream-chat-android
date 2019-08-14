@@ -97,6 +97,15 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="lastActiveTextSize" format="dimension|reference" />
+        <attr name="lastActiveTextColor" format="color|reference" />
+        <attr name="lastActiveTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="backButtonShow" format="boolean" />
     </declare-styleable>
 </resources>

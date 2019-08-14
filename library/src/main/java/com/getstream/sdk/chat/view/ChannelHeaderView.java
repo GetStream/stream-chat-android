@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -53,9 +54,9 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
+        applyStyle();
         configHeaderAvatar();
         updateUIs(lifecycleOwner);
-        applyStyle();
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
@@ -85,20 +86,24 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
     }
 
     private void applyStyle() {
-        // back button
-        binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         // Title
         binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
         binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        binding.tvChannelName.setTypeface(binding.tvChannelName.getTypeface(), style.getChannelTitleTextStyle());
+        binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        // Last Active
+        binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
+        binding.tvActive.setTextColor(style.getLastActiveTextColor());
+        binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
+        // back button
+        binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
     }
 
-    private void updateUIs(LifecycleOwner lifecycleOwner){
-        viewModel.getAnyOtherUsersOnline().observe(lifecycleOwner, anyOtherUsersOnline->
+    private void updateUIs(LifecycleOwner lifecycleOwner) {
+        viewModel.getAnyOtherUsersOnline().observe(lifecycleOwner, anyOtherUsersOnline ->
                 viewModel.getAnyOtherUsersOnline().postValue(anyOtherUsersOnline));
-        viewModel.getChannelName().observe(lifecycleOwner,channelName->
+        viewModel.getChannelName().observe(lifecycleOwner, channelName ->
                 viewModel.getChannelName().postValue(channelName));
-        viewModel.getLastActiveString().observe(lifecycleOwner,lastActiveString->
+        viewModel.getLastActiveString().observe(lifecycleOwner, lastActiveString ->
                 viewModel.getLastActiveString().postValue(lastActiveString));
     }
 
