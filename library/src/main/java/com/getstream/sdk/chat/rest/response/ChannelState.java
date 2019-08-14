@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -163,7 +162,7 @@ public class ChannelState {
         List<Message> messages = getMessages();
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
-            if (TextUtils.isEmpty(message.getDeletedAt()) && message.getType().equals(ModelType.message_regular)) {
+            if (message.getDeletedAt() == null && message.getType().equals(ModelType.message_regular)) {
                 lastMessage = message;
                 break;
             }
@@ -179,7 +178,8 @@ public class ChannelState {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeletedAt()) && !message.getUser().isMe()) {
+                if (message.getDeletedAt() == null && !message.getUser().isMe()) {
+
                     lastMessage = message;
                     break;
                 }
@@ -284,7 +284,7 @@ public class ChannelState {
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
-            if (!TextUtils.isEmpty(message.getDeletedAt())) continue;
+            if (message.getDeletedAt() != null) continue;
             if (message.getCreatedAtDate().getTime() > lastReadDate.getTime())
                 unreadMessageCount++;
         }
