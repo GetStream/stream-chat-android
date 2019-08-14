@@ -69,6 +69,14 @@ public class ChannelState {
         return users;
     }
 
+    public String getOldestMessageId(){
+        Message message = this.getOldestMessage();
+        if (message == null) {
+            return null;
+        }
+        return message.getId();
+    }
+
     public Date getLastActive() {
 //        List<User> users = this.getOtherUsers();
 //        for (User u: users) {
@@ -140,7 +148,7 @@ public class ChannelState {
         if (reads == null) return readLastMessage;
         for (ChannelUserRead r : reads) {
             // TODO: fix me as soon as we have working date parsing
-            //r.getLast_read() > lastMessage.getCreatedAt()
+            //r.getLast_read() > lastMessage.getCreatedAt___OLD()
             if (true) {
                 readLastMessage.add(r);
             }
@@ -163,7 +171,7 @@ public class ChannelState {
         List<Message> messages = getMessages();
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
-            if (TextUtils.isEmpty(message.getDeletedAt()) && message.getType().equals(ModelType.message_regular)) {
+            if (message.getDeletedAt() == null && message.getType().equals(ModelType.message_regular)) {
                 lastMessage = message;
                 break;
             }
@@ -179,7 +187,8 @@ public class ChannelState {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (TextUtils.isEmpty(message.getDeletedAt()) && !message.getUser().isMe()) {
+                if (message.getDeletedAt() == null && !message.getUser().isMe()) {
+
                     lastMessage = message;
                     break;
                 }
@@ -224,6 +233,12 @@ public class ChannelState {
         }
         messages.add(newMessage);
         return;
+    }
+
+    public void addMessageSorted(Message message){
+        List<Message> diff = new ArrayList<>();
+        diff.add(message);
+        addMessagesSorted(diff);
     }
 
     public void addMessagesSorted(List<Message> messages){
@@ -284,8 +299,8 @@ public class ChannelState {
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
-            if (!TextUtils.isEmpty(message.getDeletedAt())) continue;
-            if (message.getCreatedAtDate().getTime() > lastReadDate.getTime())
+            if (message.getDeletedAt() != null) continue;
+            if (message.getCreatedAt().getTime() > lastReadDate.getTime())
                 unreadMessageCount++;
         }
         return unreadMessageCount;

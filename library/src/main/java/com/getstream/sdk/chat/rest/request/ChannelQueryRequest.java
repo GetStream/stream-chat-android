@@ -14,6 +14,11 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
     @SerializedName("messages")
     protected Map<String, Object> messages;
 
+    public ChannelQueryRequest() {
+        this.watch = true;
+        this.state = true;
+    }
+
     protected ChannelQueryRequest cloneOpts() {
         ChannelQueryRequest _this = new ChannelQueryRequest();
         _this.state = this.state;

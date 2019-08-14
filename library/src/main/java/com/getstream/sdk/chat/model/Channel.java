@@ -528,7 +528,7 @@ public class Channel {
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
-        channelState.getMessages().add(message);
+        channelState.addMessageSorted(event.getMessage());
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {
