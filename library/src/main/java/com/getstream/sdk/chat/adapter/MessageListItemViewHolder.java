@@ -2,12 +2,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.content.res.Resources;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,21 +15,27 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.MessageTagModel;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.SelectAttachmentModel;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -253,7 +253,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
             view_read_indicator.setVisibility(View.VISIBLE);
             List<User> readUsers = Global.getReadUsers(channelState, message);
-            if (readUsers == null || !TextUtils.isEmpty(message.getDeletedAt()) || message.getType().equals(ModelType.message_error)) {
+            if (readUsers == null || message.getDeletedAt() != null || message.getType().equals(ModelType.message_error)) {
                 view_read_indicator.setVisibility(View.GONE);
                 Log.d(TAG, "Deliever Indicator 1");
                 return;
@@ -402,7 +402,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configMessageText() {
         // Check Deleted Message
-        if (!TextUtils.isEmpty(message.getDeletedAt())) {
+        if (message.getDeletedAt() != null) {
             tv_text.setVisibility(View.GONE);
             tv_deleted.setVisibility(View.VISIBLE);
             return;

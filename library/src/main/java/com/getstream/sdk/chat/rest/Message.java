@@ -61,15 +61,15 @@ public class Message {
 
     @SerializedName("created_at")
     @Expose
-    private String created_at;
+    private Date createdAt;
 
     @SerializedName("updated_at")
     @Expose
-    private String updatedAt;
+    private Date updatedAt;
 
     @SerializedName("deleted_at")
     @Expose
-    private String deletedAt;
+    private Date deletedAt;
 
     @SerializedName("mentioned_users")
     @Expose
@@ -105,7 +105,6 @@ public class Message {
         return TextUtils.equals(this.getId(), otherMessage.getId());
     }
 
-
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -135,18 +134,9 @@ public class Message {
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
         Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String sendDate = message.getCreatedAt();
-
-        Date date = null;
-        try {
-            date = Global.messageDateFormat.parse(sendDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return;
-        }
 
         Calendar smsTime = Calendar.getInstance();
-        smsTime.setTimeInMillis(date.getTime());
+        smsTime.setTimeInMillis(message.getCreatedAt().getTime());
 
         Calendar now = Calendar.getInstance();
 
@@ -164,12 +154,12 @@ public class Message {
             message.setYesterday(true);
             message.setDate("Yesterday");
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
-            message.setDate(dateFormat1.format(date));
+            message.setDate(dateFormat1.format(message.getCreatedAt()));
         } else {
-            message.setDate(dateFormat2.format(date));
+            message.setDate(dateFormat2.format(message.getCreatedAt()));
         }
-        message.setTime(timeFormat.format(date));
-        message.setCreated(dateFormat2.format(date));
+        message.setTime(timeFormat.format(message.getCreatedAt()));
+        message.setCreated(dateFormat2.format(message.getCreatedAt()));
     }
 
     public static String convertDateToString(Date date) {
@@ -383,33 +373,19 @@ public class Message {
         this.reactionCounts = reactionCounts;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public String getCreatedAt() {
-        return created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getCreatedAtDate() {
-        // 2019-08-09T11:02:14.234204Z
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'");
-        df.setTimeZone(tz);
-
-        try {
-           return df.parse(getCreatedAt());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return new Date();
-        }
-    }
-
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public String getDeletedAt() {
+    public Date getDeletedAt() {
         return deletedAt;
     }
 

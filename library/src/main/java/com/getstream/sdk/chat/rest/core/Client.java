@@ -335,9 +335,9 @@ public class Client implements WSResponseHandler {
                         for (ChannelState channelState: response.body().getChannels()) {
                             Channel channel = channelState.getChannel();
                             channel.setClient(m);
+                            addToActiveChannels(channel);
                             channel.mergeWithState(channelState);
                             checkEphemeralMessages(channelState);
-                            addToActiveChannels(channel);
                             addChannelConfig(channel.getType(), channel.getConfig());
                         }
                         callback.onSuccess(response.body());

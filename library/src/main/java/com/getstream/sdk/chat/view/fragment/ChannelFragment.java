@@ -616,7 +616,7 @@ public class ChannelFragment extends Fragment {
         message.setId(message.convertDateToString(new Date()));
         message.setText(binding.messageInput.getMessageText());
         message.setType(isOffle ? ModelType.message_error : ModelType.message_ephemeral);
-        message.setCreated_at(message.convertDateToString(new Date()));
+        message.setCreatedAt(new Date());
         message.setStartDay(Arrays.asList(message), getLastMessage());
 //        message.setUser(StreamChat.getInstance().getUser());
         if (isThreadMode())
@@ -1067,7 +1067,7 @@ public class ChannelFragment extends Fragment {
     private void checkReadMark() {
         if (channelState.getLastMessage() == null) return;
 //        if (!Global.readMessage(channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance().getUserId()),
-//                channelState.getLastMessage().getCreatedAt())) {
+//                channelState.getLastMessage().getCreatedAt___OLD())) {
 //            messageMarkRead();
 //        }
     }

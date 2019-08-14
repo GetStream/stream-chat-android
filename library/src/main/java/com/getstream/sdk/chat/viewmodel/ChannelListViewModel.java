@@ -1,15 +1,14 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -30,9 +29,26 @@ import java.util.List;
 
 
 public class ChannelListViewModel extends AndroidViewModel {
+
+    class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
+
+        protected ChannelListViewModel viewModel;
+
+        @Override
+        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
+            super.observe(owner, observer);
+        }
+
+        @Override
+        protected void onActive() {
+            super.onActive();
+            viewModel.queryChannels();
+        }
+    }
+
     private final String TAG = ChannelListViewModel.class.getSimpleName();
 
-    private MutableLiveData<List<Channel>> channels;
+    private LazyQueryChannelLiveData<List<Channel>> channels;
     public MutableLiveData<Boolean> loading;
     public MutableLiveData<Boolean> loadingMore;
     public MutableLiveData<Boolean> failed;
@@ -57,7 +73,9 @@ public class ChannelListViewModel extends AndroidViewModel {
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
         endOfPagination = new MutableLiveData<>(false);
-        channels = new MutableLiveData<>();
+
+        channels = new LazyQueryChannelLiveData<>();
+        channels.viewModel = this;
 
         Client c = StreamChat.getInstance(application);
         c.addEventHandler(new ChatEventHandler() {
@@ -71,7 +89,6 @@ public class ChannelListViewModel extends AndroidViewModel {
 
     public void setChannelFilter(FilterObject filter) {
         this.filter = filter;
-        this.queryChannels();
     }
 
     public void initEventHandlers(){
@@ -93,9 +110,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-
                 updateChannel(event.getChannel());
-
             }
 
             @Override
