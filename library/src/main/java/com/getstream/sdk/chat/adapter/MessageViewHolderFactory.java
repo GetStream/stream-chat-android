@@ -35,7 +35,7 @@ public class MessageViewHolderFactory {
         return 1;
     }
 
-    public RecyclerView.ViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
+    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
         MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.list_item_message, parent);
         holder.setStyle(adapter.getStyle());
         return holder;

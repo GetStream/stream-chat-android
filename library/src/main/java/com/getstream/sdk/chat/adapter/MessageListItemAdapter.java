@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
 import com.getstream.sdk.chat.utils.MessageListDiffCallback;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,45 +36,36 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private Context context;
     private String className;
     private int itemLayoutId;
+    private MessageViewHolderFactory viewHolderFactory;
 
     public MessageListViewStyle getStyle() {
         return style;
     }
 
+    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList) {
+        this.context = context;
+        this.viewHolderFactory = new MessageViewHolderFactory();
+        this.channelState = channelState;
+        this.messageList = messageList;
+    }
 
-    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList,
-                                  boolean isThread, String className, int itemLayoutId,
-                                  View.OnClickListener clickListener, View.OnLongClickListener longClickListener
-                                  ) {
+
+    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList, MessageViewHolderFactory factory) {
         this.context = context;
         this.channelState = channelState;
         this.messageList = messageList;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.isThread = isThread;
-        this.className = className;
-        this.itemLayoutId = itemLayoutId;
+        this.viewHolderFactory = factory;
     }
 
 
     public MessageListItemAdapter(Context context) {
         this.context = context;
+        this.viewHolderFactory = new MessageViewHolderFactory();
+        this.messageList = new ArrayList<>();
     }
 
     public void setStyle(MessageListViewStyle s) {
         style = s;
-    }
-
-
-
-    public void addNewMessage(Message message) {
-        Log.i(TAG, "MessageListItem adapter addNewMessage called");
-        int position = messageList.size();
-        messageList.add(position, message);
-        notifyItemInserted(position);
-
-        // TODO: scroll to the bottom if the user isn't currently scrolling up. if the user is scrolling up set a new message indicator
-
     }
 
     public void replaceMessages(List<Message> newMessages) {
@@ -84,30 +76,24 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         result.dispatchUpdatesTo(this);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        try {
+            Message message = messageList.get(position);
+            return viewHolderFactory.getMessageViewType(message, true, MessageViewHolderFactory.Position.BOTTOM);
+        } catch(IndexOutOfBoundsException e) {
+            return 0;
+        }
 
-    public boolean addOldMessages(List<Message> messages) {
-        Log.i(TAG, "MessageListItem adapter addOldMessages");
-        messageList.addAll(0, messages);
-        // TODO: scroll to maintain the original scroll position
-        return false;
+
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                       int viewType) {
-        try {
-            Class tempClass = Class.forName(className);
-            Class[] cArg = new Class[2];
-            cArg[0] = int.class;
-            cArg[1] = ViewGroup.class;
-            Object obj = tempClass.getDeclaredConstructor(cArg).newInstance(itemLayoutId, parent);
-            if (obj instanceof BaseMessageListItemViewHolder) {
-                return ((BaseMessageListItemViewHolder) obj);
-            }
-        } catch (Exception e) {
-            //e.printStackTrace();
-        }
-        return new MessageListItemViewHolder(R.layout.list_item_message, parent, style);
+        BaseMessageListItemViewHolder holder = this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
+        return holder;
     }
 
 
