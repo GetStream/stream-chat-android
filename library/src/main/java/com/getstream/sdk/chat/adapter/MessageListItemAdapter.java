@@ -84,9 +84,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
-
-
-
     }
 
     @Override

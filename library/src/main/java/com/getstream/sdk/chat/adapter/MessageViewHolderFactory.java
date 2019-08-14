@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
@@ -41,9 +42,11 @@ public class MessageViewHolderFactory {
         return holder;
     }
 
-//    public RecyclerView.ViewHolder createAttachmentViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
-//        // TODO
-//    }
+    public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
+        AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+        holder.setStyle(adapter.getStyle());
+        return holder;
+    }
 
 
 

@@ -113,7 +113,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.getstream.sdk.chat.view.AttachmentListView
             android:id="@+id/cl_attachment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,37 +123,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction">
 
-            <include
-                android:id="@+id/cl_attachment_media"
-                layout="@layout/list_item_attach_media"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_gap_media_file"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/message_gap"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media" />
-
-            <ListView
-                android:id="@+id/lv_attachment_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:scrollbars="none"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_gap_media_file"
-                tools:listitem="@layout/list_item_attach_file" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_gap_attach"
@@ -346,7 +316,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ContentDescription" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.getstream.sdk.chat.view.AttachmentListView>
 
     <LinearLayout
         android:id="@+id/ll_typing_indicator"

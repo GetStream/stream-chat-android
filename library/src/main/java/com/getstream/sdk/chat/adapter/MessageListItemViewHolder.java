@@ -69,17 +69,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private TextView tv_header_date, tv_header_time;
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
     private TextView tv_username, tv_messagedate, tv_initials;
-    // Attachment
-    private ConstraintLayout cl_attachment, cl_attachment_media;
-    private PorterShapeImageView iv_media_thumb;
-    private ListView lv_attachment_file;
-    private ImageView iv_media_more;
-    private TextView tv_more;
-    private TextView tv_media_title, tv_media_play, tv_media_des;
-    private ImageView iv_command_title;
-    // Action
-    private ConstraintLayout cl_action;
-    private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+
     // Delivered Indicator
     private View view_read_indicator;
     private TextView tv_indicator_initials, tv_read_count;
@@ -130,22 +120,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
         iv_docket = itemView.findViewById(R.id.iv_docket);
-        // Attach
-        cl_attachment = itemView.findViewById(R.id.cl_attachment);
-        cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
-        iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
-        lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
-        iv_media_more = itemView.findViewById(R.id.iv_media_more);
-        tv_more = itemView.findViewById(R.id.tv_more);
-        tv_media_title = itemView.findViewById(R.id.tv_media_title);
-        tv_media_play = itemView.findViewById(R.id.tv_media_play);
-        tv_media_des = itemView.findViewById(R.id.tv_media_des);
-        iv_command_title = itemView.findViewById(R.id.iv_command_title);
 
-        cl_action = itemView.findViewById(R.id.cl_action);
-        tv_action_send = itemView.findViewById(R.id.tv_action_send);
-        tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
-        tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
 
         tv_text = itemView.findViewById(R.id.tv_text);
         tv_deleted = itemView.findViewById(R.id.tv_deleted);
@@ -211,10 +186,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configUserInfo();
         configSendFailed();
         configMessageText();
-        configAttachment();
         configDelieveredIndicator();
-        configCommand();
-        configAction();
         configReactionView();
         configReplyView();
         configGaps();
@@ -478,286 +450,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configAttachment() {
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
-            cl_attachment.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getAttachments() == null) {
-            cl_attachment.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getAttachments().size() == 0) {
-            cl_attachment.setVisibility(View.GONE);
-            return;
-        }
-
-        cl_attachment.setVisibility(View.VISIBLE);
-
-        boolean hasFile = false;
-        boolean hasMedia = false;
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                hasFile = true;
-            } else {
-                hasMedia = true;
-            }
-        }
-
-        if (hasMedia) {
-            cl_attachment_media.setVisibility(View.VISIBLE);
-            configMediaAttach();
-        } else {
-            cl_attachment_media.setVisibility(View.GONE);
-        }
-
-        if (hasFile) {
-            lv_attachment_file.setVisibility(View.VISIBLE);
-            configFileAttach();
-        } else {
-            lv_attachment_file.setVisibility(View.GONE);
-        }
-    }
-
-    private void configCommand() {
-        if (!TextUtils.isEmpty(message.getCommand())) {
-            int back;
-            iv_command_title.setVisibility(View.VISIBLE);
-            switch (message.getCommand()) {
-                case Constant.COMMAND_GIPHY:
-                    back = R.drawable.logogiphy;
-                    break;
-                case Constant.COMMAND_IMGUR:
-                    back = R.drawable.logogiphy;
-                    break;
-                case Constant.COMMAND_BAN:
-                    back = R.drawable.logogiphy;
-                    break;
-                case Constant.COMMAND_FLAG:
-                    back = R.drawable.logogiphy;
-                    break;
-                default:
-                    back = 0;
-                    break;
-            }
-            iv_command_title.setBackgroundResource(back);
-        } else {
-            iv_command_title.setVisibility(View.GONE);
-        }
-    }
-
-    private void configAction() {
-        if (message.getType().equals(ModelType.message_ephemeral)) {
-            cl_action.setVisibility(View.VISIBLE);
-            tv_action_send.setOnClickListener((View v) -> {
-                v.setTag(new MessageTagModel(Constant.TAG_ACTION_SEND, position));
-                clickListener.onClick(v);
-            });
-            if (tv_action_shuffle.getTag() == null) {
-                tv_action_shuffle.setBackgroundResource(R.drawable.round_action_shuffle);
-            } else {
-                tv_action_shuffle.setBackgroundResource(R.drawable.round_action_shuffle_select);
-            }
-
-            tv_action_shuffle.setOnClickListener((View v) -> {
-                tv_action_shuffle.setBackgroundResource(R.drawable.round_action_shuffle_select);
-                v.setTag(new MessageTagModel(Constant.TAG_ACTION_SHUFFLE, position));
-                clickListener.onClick(v);
-            });
-            tv_action_cancel.setOnClickListener((View v) -> {
-                v.setTag(new MessageTagModel(Constant.TAG_ACTION_CANCEL, position));
-                clickListener.onClick(v);
-            });
-        } else {
-            cl_action.setVisibility(View.GONE);
-        }
-    }
-
-    private void configMediaAttach() {
-        List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (!attachment.getType().equals(ModelType.attach_file)) {
-                attachments.add(attachment);
-            }
-        }
-
-        final String type = attachments.get(0).getType();
-
-        String attachUrl = attachments.get(0).getImageURL();
-        if (attachments.get(0).getType().equals(ModelType.attach_image)) {
-            attachUrl = attachments.get(0).getImageURL();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachments.get(0).getThumbURL();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_video)) {
-            attachUrl = attachments.get(0).getThumbURL();
-        } else {
-            if (attachUrl == null) attachUrl = attachments.get(0).getImage();
-        }
-        if (TextUtils.isEmpty(attachUrl)) {
-            cl_attachment_media.setVisibility(View.GONE);
-            return;
-        }
-        cl_attachment_media.setVisibility(View.VISIBLE);
-        configAttachViewBackground(cl_attachment_media);
-        configImageThumbBackground(attachments.get(0));
-        // More
-        if (attachments.size() > 1) {
-            iv_media_more.setVisibility(View.VISIBLE);
-            tv_more.setText(attachments.size() - 1 + " more");
-        } else {
-            iv_media_more.setVisibility(View.GONE);
-        }
-        tv_more.setVisibility(iv_media_more.getVisibility());
-
-
-        // Set Click Listener
-        cl_attachment_media.setOnClickListener((View v) -> {
-            Log.d(TAG, "onClick Attach : " + position);
-            if (clickListener != null) {
-                if (attachments.size() > 0) {
-                    SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                    attachmentModel.setAttachmentIndex(0);
-                    attachmentModel.setAttachments(attachments);
-                    Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
-                    v.setTag(attachmentModel);
-                }
-                clickListener.onClick(v);
-            }
-
-        });
-
-
-        cl_attachment_media.setOnLongClickListener((View v) -> {
-            Log.d(TAG, "Long onClick Attach: " + position);
-            if (longClickListener != null) {
-                v.setTag(String.valueOf(position));
-                longClickListener.onLongClick(v);
-            }
-            return true;
-        });
-        if (!attachUrl.contains("https:"))
-            attachUrl = "https:" + attachUrl;
-        Glide.with(context)
-                .load(attachUrl)
-                .into(iv_media_thumb);
-        if (!message.getType().equals(ModelType.message_ephemeral))
-            tv_media_title.setText(attachments.get(0).getTitle());
-        tv_media_des.setText(attachments.get(0).getText());
-
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getText()))
-            tv_media_des.setVisibility(View.GONE);
-        else
-            tv_media_des.setVisibility(View.VISIBLE);
-
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getTitle()))
-            tv_media_title.setVisibility(View.GONE);
-        else
-            tv_media_title.setVisibility(View.VISIBLE);
-
-        if (type.equals(ModelType.attach_video))
-            tv_media_play.setVisibility(View.VISIBLE);
-        else
-            tv_media_play.setVisibility(View.GONE);
-    }
-
-    private void configAttachViewBackground(View view) {
-        Drawable background;
-        if (message.isIncoming()) {
-            background = style.getMessageBubbleDrawableTheirs();
-        } else {
-            background = style.getMessageBubbleDrawableMine();
-        }
-        view.setBackground(background);
-    }
-
-    private void configImageThumbBackground(Attachment attachment) {
-        int mediaBack, moreBack;
-        if (message.isIncoming()) {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (containerStyleOne(position)) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming3;
-                    moreBack = R.drawable.round_attach_more_incoming3;
-                }
-            } else {
-                if (containerStyleOne(position)) {
-                    mediaBack = R.drawable.round_attach_media_incoming1;
-                    moreBack = R.drawable.round_attach_more_incoming1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming2;
-                    moreBack = R.drawable.round_attach_more_incoming2;
-                }
-            }
-        } else {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (containerStyleOne(position)) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing3;
-                    moreBack = R.drawable.round_attach_more_outgoing3;
-                }
-            } else {
-                if (containerStyleOne(position)) {
-                    mediaBack = R.drawable.round_attach_media_outgoing1;
-                    moreBack = R.drawable.round_attach_more_outgoing1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing2;
-                    moreBack = R.drawable.round_attach_more_outgoing2;
-                }
-            }
-        }
-        if (iv_media_more.getVisibility() == View.VISIBLE)
-            iv_media_more.setBackgroundResource(moreBack);
-
-        iv_media_thumb.setShape(context, context.getResources().getDrawable(mediaBack));
-    }
-
-    private void configFileAttach() {
-        configAttachViewBackground(lv_attachment_file);
-        List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                attachments.add(attachment);
-            }
-        }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
-
-        lv_attachment_file.setAdapter(attachAdapter);
-        lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                   int position, long id) -> {
-            Log.d(TAG, "Attach onClick: " + position);
-            if (clickListener != null) {
-
-                SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                attachmentModel.setAttachmentIndex(position);
-                attachmentModel.setAttachments(attachments);
-
-                view.setTag(attachmentModel);
-                clickListener.onClick(view);
-            }
-        });
-        lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            if (longClickListener != null) {
-                view.setTag(position);
-                longClickListener.onLongClick(view);
-            }
-            return true;
-        });
-
-        float height = context.getResources().getDimension(R.dimen.attach_file_height);
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
-        params.height = (int) height * attachments.size();
-        lv_attachment_file.setLayoutParams(params);
-    }
-
     private void configReactionView() {
         if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
             rv_reaction.setVisibility(View.GONE);
@@ -820,15 +512,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             tv_gap_sameUser.setVisibility(View.VISIBLE);
         // Media_File Gap
-        if (cl_attachment_media.getVisibility() == View.VISIBLE && lv_attachment_file.getVisibility() == View.VISIBLE)
-            tv_gap_media_file.setVisibility(View.VISIBLE);
-        else
-            tv_gap_media_file.setVisibility(View.GONE);
+//        if (cl_attachment_media.getVisibility() == View.VISIBLE && lv_attachment_file.getVisibility() == View.VISIBLE)
+//            tv_gap_media_file.setVisibility(View.VISIBLE);
+//        else
+//            tv_gap_media_file.setVisibility(View.GONE);
 
         // Attach Gap
-        tv_gap_attach.setVisibility(cl_attachment.getVisibility());
-        if (cl_attachment.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
-            tv_gap_attach.setVisibility(View.GONE);
+        //tv_gap_attach.setVisibility(cl_attachment.getVisibility());
+//        if (cl_attachment.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
+//            tv_gap_attach.setVisibility(View.GONE);
 
         // Reaction Gap
         tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
@@ -930,28 +622,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.setLayoutParams(params);
     }
 
-    private void configParamsAttachment() {
-        if (cl_attachment.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cl_attachment.getLayoutParams();
-        ConstraintLayout.LayoutParams paramsLv = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
-        if (lv_attachment_file.getVisibility() == View.VISIBLE) {
-            if (message.isIncoming()) {
-                params.horizontalBias = 0f;
-                paramsLv.horizontalBias = 0f;
-            } else {
-                params.horizontalBias = 1f;
-                paramsLv.horizontalBias = 1f;
-            }
-            params.width = ConstraintLayout.LayoutParams.WRAP_CONTENT;
-            lv_attachment_file.setLayoutParams(paramsLv);
-            cl_attachment.setLayoutParams(params);
-        } else {
-            params.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-        }
-        cl_attachment.setLayoutParams(params);
 
-        lv_attachment_file.setBackgroundColor(context.getResources().getColor(R.color.black));
-    }
 
     private void configPramsDeliveredIndicator() {
         if (view_read_indicator.getVisibility() != View.VISIBLE) return;
@@ -960,8 +631,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.bottomToBottom = tv_text.getId();
             params.endToStart = tv_text.getId();
         } else {
-            params.bottomToBottom = cl_attachment.getId();
-            params.endToStart = cl_attachment.getId();
+            //params.bottomToBottom = cl_attachment.getId();
+            //params.endToStart = cl_attachment.getId();
         }
         view_read_indicator.setLayoutParams(params);
     }

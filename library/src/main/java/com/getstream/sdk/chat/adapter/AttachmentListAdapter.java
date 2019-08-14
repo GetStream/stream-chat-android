@@ -24,6 +24,7 @@ public class AttachmentListAdapter extends BaseAdapter {
     private boolean localAttach;
     private boolean isTotalFileAdapter;
 
+
     public AttachmentListAdapter(Context context, List<Attachment> attachments, boolean localAttach, boolean isTotalFileAdapter) {
         this.attachments = attachments;
         this.layoutInflater = LayoutInflater.from(context);
