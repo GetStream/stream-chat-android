@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
@@ -33,9 +34,12 @@ public class BaseStyle {
         this.context = context;
     }
 
+
     public int getColor(@ColorRes int color) {
         return ContextCompat.getColor(context, color);
     }
+
+
 
     public float getAvatarWidth() {
         return avatarWidth;

@@ -41,7 +41,8 @@ import java.util.List;
  * - Customization via attrs/style
  * - Data binding
  */
-public class MessageInputView extends RelativeLayout implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+public class MessageInputView extends RelativeLayout
+        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
 
     /*
     TODO:
@@ -300,6 +301,4 @@ public class MessageInputView extends RelativeLayout implements View.OnClickList
 
         void onStopTyping();
     }
-
-
 }

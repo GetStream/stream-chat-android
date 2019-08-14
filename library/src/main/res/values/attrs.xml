@@ -52,6 +52,9 @@
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <attr name="inputHint" format="string" />
+        <attr name="showAttachmentButton" format="boolean" />
+        <attr name="attachmentButtonBackground" format="color|reference" />
+        <attr name="attachmentButtonDefaultBgColor" format="color|reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
