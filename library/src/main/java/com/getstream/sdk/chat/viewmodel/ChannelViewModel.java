@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import retrofit2.http.HEAD;
+
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 /*
@@ -62,6 +64,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return messages;
     }
 
+    public MutableLiveData<Boolean> getLoading() {
+        return loading;
+    }
+
+    public MutableLiveData<Boolean> getLoadingMore() {
+        return loadingMore;
+    }
+
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
@@ -89,49 +99,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         lastActiveString = new MutableLiveData<>(humanizedDate);
 
         this.initEventHandlers();
-//        this.queryChannel();
-
-    }
-
-    // region Getter
-    public int getChannelSubscriptionId() {
-        return channelSubscriptionId;
-    }
-
-    public MutableLiveData<Boolean> getLoading() {
-        return loading;
-    }
-
-    public MutableLiveData<Boolean> getLoadingMore() {
-        return loadingMore;
-    }
-
-    public MutableLiveData<Boolean> getFailed() {
-        return failed;
-    }
-
-    public MutableLiveData<Boolean> getOnline() {
-        return online;
-    }
-
-    public MutableLiveData<String> getChannelName() {
-        return channelName;
-    }
-
-    public MutableLiveData<Boolean> getAnyOtherUsersOnline() {
-        return anyOtherUsersOnline;
-    }
-
-    public MutableLiveData<Number> getWatcherCount() {
-        return watcherCount;
-    }
-
-    public MutableLiveData<String> getLastActiveString() {
-        return lastActiveString;
-    }
-
-    public MutableLiveData<List<User>> getTyping() {
-        return typing;
+        this.queryChannel();
     }
 
     public MutableLiveData<List<ChannelUserRead>> getReads() {
@@ -255,18 +223,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channel.query(
                 new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
                 new QueryChannelCallback() {
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        loading.postValue(false);
-                        Log.i(TAG, "messages loaded");
-                        channelState = response;
-                        channel.setChannelState(response);
-                        List<Message> newMessages = response.getMessages();
-                        if (newMessages.size() < Constant.DEFAULT_LIMIT) {
-                            endOfPagination.postValue(true);
-                        }
-                        addMessages(newMessages);
-                    }
+
+            @Override
+            public void onSuccess(ChannelState response) {
+                loading.postValue(false);
+                Log.i(TAG, "messages loaded");
+                channelState = response;
+                if (channelState.getMessages().size() < Constant.DEFAULT_LIMIT) {
+                    endOfPagination.postValue(true);
+                }
+                addMessages(channelState.getMessages());
+            }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
@@ -276,14 +243,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void loadMore() {
-        Log.d(TAG, "ViewModel loadMore called");
-        if (loadingMore.getValue()) return;
+        // don't load more if the channel state is empty or if we are already loading more
+        if (loadingMore.getValue() || channelState.getOldestMessageId() == null) {
+            return;
+        }
         loadingMore.setValue(true);
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT);
-        if (channelState.getMessages().size() > 0) {
-            request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT);
-        }
+
+        Log.d(TAG, "ViewModel loadMore...");
+
+        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
         channel.query(
                 request,
@@ -292,6 +261,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     public void onSuccess(ChannelState response) {
                         loadingMore.postValue(false);
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        // TODO: messages added via load more should be added at the bottom
                         addMessages(newMessages);
 
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)
@@ -444,5 +414,25 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     }
                 });
 
+    }
+
+    public MutableLiveData<String> getChannelName() {
+        return channelName;
+    }
+
+    public MutableLiveData<Boolean> getOnline() {
+        return online;
+    }
+
+    public MutableLiveData<Boolean> getFailed() {
+        return failed;
+    }
+
+    public MutableLiveData<Boolean> getAnyOtherUsersOnline() {
+        return anyOtherUsersOnline;
+    }
+
+    public MutableLiveData<String> getLastActiveString() {
+        return lastActiveString;
     }
 }

@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -12,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 
@@ -73,6 +70,8 @@ public class MessageListView extends RecyclerView {
 
         this.setAdapterWithStyle(adapter);
     }
+
+    // TODO: reachedTheBeginning is triggered too much
     // set the adapter and apply the style.
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
         super.setAdapter(adapter);
@@ -87,16 +86,12 @@ public class MessageListView extends RecyclerView {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (linearLayoutManager != null) {
-
                     int firstVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
                     Boolean reachedTheBeginning = firstVisible <= 3;
                     if (reachedTheBeginning) {
                         viewModel.loadMore();
                     }
-
-
                 }
-
             }
         });
 

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -27,41 +28,41 @@ public class User {
     private String role;
 
     @SerializedName("created_at")
-    private String created_at;
+    private Date createdAt;
 
     @SerializedName("updated_at")
-    private String updated_at;
+    private Date updatedAt;
 
     @SerializedName("last_active")
-    private String last_active;
+    private Date lastActive;
 
     @SerializedName("online")
     private Boolean online;
 
     private HashMap<String, Object> extraData;
 
-    public String getCreated_at() {
-        return created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public Date getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(Date updated_at) {
+        this.updatedAt = updatedAt;
     }
 
-    public String getLast_active() {
-        return last_active;
+    public Date getLastActive() {
+        return lastActive;
     }
 
-    public void setLast_active(String last_active) {
-        this.last_active = last_active;
+    public void setLastActive(Date lastActive) {
+        this.lastActive = lastActive;
     }
 
     public String getId() {
