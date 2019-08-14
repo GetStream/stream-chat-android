@@ -76,4 +76,9 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
 
     }
 
+    @Override
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+    }
+
 }

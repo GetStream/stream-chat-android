@@ -14,6 +14,11 @@ import java.util.List;
  * Allows you to easily customize message rendering or message attachment rendering
  */
 public class MessageViewHolderFactory {
+    private static int NOT_FOUND = 0;
+    private static int DATE_SEPARATOR = 1;
+    private static int MESSAGE = 2;
+    private static int TYPING = 3;
+
 
     public enum Position {
         TOP, MIDDLE, BOTTOM
@@ -25,13 +30,13 @@ public class MessageViewHolderFactory {
         // various message types
         MessageListItemAdapter.EntityType entityType = entity.getType();
         if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
-            return 1;
+            return DATE_SEPARATOR;
         } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
-            return 2;
+            return MESSAGE;
         } else if (entityType == MessageListItemAdapter.EntityType.TYPING) {
-            return 3;
+            return TYPING;
         }
-        return 0;
+        return NOT_FOUND;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
@@ -43,11 +48,23 @@ public class MessageViewHolderFactory {
     }
 
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
-        MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.list_item_message, parent);
-        holder.setViewHolderFactory(this);
-        holder.setStyle(adapter.getStyle());
+        if (viewType == DATE_SEPARATOR) {
+            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.list_item_date_separator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else if (viewType == MESSAGE) {
+            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.list_item_message, parent);
+            holder.setViewHolderFactory(this);
+            holder.setStyle(adapter.getStyle());
+            return holder;
 
-        return holder;
+        } else if (viewType == TYPING) {
+            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.list_item_type_indicator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else {
+            return null;
+        }
     }
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {

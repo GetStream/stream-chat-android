@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -20,4 +21,8 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
                               @NonNull Entity entity, int position,
                               boolean isThread, View.OnClickListener reactionListener,
                               View.OnLongClickListener longClickListener);
+
+    public abstract void setStyle(MessageListViewStyle style);
+
+
 }

@@ -15,11 +15,6 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private TextView tv_header_date, tv_header_time;
 
-    public DateSeparatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
-        this(resId, viewGroup);
-        style = s;
-    }
-
     public DateSeparatorViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
 
@@ -33,5 +28,10 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
         String humanizedDate = getRelativeTimeSpanString(entity.getDate().getTime()).toString();
         tv_header_date.setText(humanizedDate);
         tv_header_time.setText(" AT " + humanizedDate);
+    }
+
+    @Override
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
     }
 }
