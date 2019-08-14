@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
@@ -166,9 +168,9 @@ public class Channel {
     private ChannelState channelState;
 
     // this constructor is here for GSON to play fair
-    public Channel() {
-        this(null, "", "", new HashMap<>());
-    }
+//    public Channel() {
+//        this(null, "", "", new HashMap<>());
+//    }
 
     /**
      * constructor - Create a channel
@@ -227,6 +229,10 @@ public class Channel {
 
     public final synchronized int addEventHandler(ChatChannelEventHandler handler) {
         int id = ++subscribersSeq;
+        if (eventSubscribers == null){
+            eventSubscribers = new ArrayList<>();
+            eventSubscribersBy = new HashMap<>();
+        }
         eventSubscribers.add(handler);
         eventSubscribersBy.put(id, handler);
         return id;

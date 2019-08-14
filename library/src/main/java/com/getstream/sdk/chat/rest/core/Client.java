@@ -760,9 +760,11 @@ public class Client implements WSResponseHandler {
             @Override
             public void onMessageNew(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
-                channel.handleNewMessage(event);
-                activeChannels.remove(channel);
-                activeChannels.add(0, channel);
+                if (channel != null){
+                    channel.handleNewMessage(event);
+                    activeChannels.remove(channel);
+                    activeChannels.add(0, channel);
+                }
                 notifyChannelsSubscribers();
             }
             @Override
@@ -901,11 +903,6 @@ public class Client implements WSResponseHandler {
 
     }
 
-    public void flagMessage() {
-    }
-
-    public void unflagMessage() {
-    }
     /** muteUser - mutes a user
      *
      * @param target_id

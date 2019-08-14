@@ -40,7 +40,10 @@ public class ChannelActivity extends AppCompatActivity {
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
 
-        Channel channel = client.channel(channelType, channelID);
+//        Channel channel = client.channel(channelType, channelID);
+        Channel channel = client.getChannelByCid(channelType +":" + channelID);
+        if (channel == null)
+            channel = client.channel(channelType, channelID);
         viewModel = ViewModelProviders.of(this,
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);

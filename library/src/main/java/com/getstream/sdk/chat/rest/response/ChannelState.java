@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

@@ -27,7 +27,6 @@ import java.util.List;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
-
 /*
  * - store the channel data
  * - load more data
@@ -109,6 +108,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 if (watcherCount != null) {
                     ChannelViewModel.this.watcherCount.postValue(watcherCount);
                 }
+                Log.d(TAG, "New Event: " + event.getType());
             }
 
             @Override
