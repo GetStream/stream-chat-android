@@ -107,9 +107,18 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
-        super(resId, viewGroup);
-        // TODO: This should use data bindings
+        this(resId, viewGroup);
         style = s;
+    }
+
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+
+    }
+
+    public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
+        super(resId, viewGroup);
+
         cl_message = itemView.findViewById(R.id.cl_message);
         ll_typingusers = itemView.findViewById(R.id.ll_typing_indicator);
 

@@ -36,6 +36,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String className;
     private int itemLayoutId;
 
+    public MessageListViewStyle getStyle() {
+        return style;
+    }
+
 
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Message> messageList,
                                   boolean isThread, String className, int itemLayoutId,
