@@ -32,6 +32,7 @@ public class MessageListView extends RecyclerView {
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
+
     public MessageListView(Context context) {
         super(context);
         this.setLayoutManager(new LinearLayoutManager(context));
@@ -77,20 +78,25 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
         adapter.setStyle(style);
 
-        // 1. listen to the scroll
-        // 2. call viewHolder.loadMore when at the top
-        // 3. with the result of loadMore call adapter.addOldMessages()
-        int fVPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
-
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int currentFirstVisible = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-                if (currentFirstVisible < fVPosition) {
-                    viewModel.loadMore();
+
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (linearLayoutManager != null) {
+
+                    int firstVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    Boolean reachedTheBeginning = firstVisible <= 3;
+                    if (reachedTheBeginning) {
+                        viewModel.loadMore();
+                    }
+
+
                 }
+
             }
         });
 

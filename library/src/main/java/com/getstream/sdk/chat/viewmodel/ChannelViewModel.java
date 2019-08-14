@@ -95,6 +95,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     }
 
+    public void markRead() {
+        // TODO: how to mark read?
+    }
+
 
 
     private void initEventHandlers() {
@@ -218,11 +222,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void loadMore() {
         Log.d(TAG, "ViewModel loadMore called");
         if (loadingMore.getValue()) return;
-
         loadingMore.setValue(true);
 
+        ChannelQueryRequest request =  new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT);
+        if (channelState.getMessages().size() > 0) {
+            request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT);
+        }
+
         channel.query(
-                new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT),
+                request,
                 new QueryChannelCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
