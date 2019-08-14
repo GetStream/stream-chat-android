@@ -64,6 +64,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return messages;
     }
 
+    public MutableLiveData<Boolean> getLoading() {
+        return loading;
+    }
+
+    public MutableLiveData<Boolean> getLoadingMore() {
+        return loadingMore;
+    }
+
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
@@ -406,5 +414,25 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     }
                 });
 
+    }
+
+    public MutableLiveData<String> getChannelName() {
+        return channelName;
+    }
+
+    public MutableLiveData<Boolean> getOnline() {
+        return online;
+    }
+
+    public MutableLiveData<Boolean> getFailed() {
+        return failed;
+    }
+
+    public MutableLiveData<Boolean> getAnyOtherUsersOnline() {
+        return anyOtherUsersOnline;
+    }
+
+    public MutableLiveData<String> getLastActiveString() {
+        return lastActiveString;
     }
 }
