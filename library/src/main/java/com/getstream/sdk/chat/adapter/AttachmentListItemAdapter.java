@@ -28,7 +28,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private AttachmentListView.AttachmentClickListener attachmentLongClickListener;
 
 
-    public AttachmentListItemAdapter(Context context, Message message, MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull  Message message,@NonNull  MessageViewHolderFactory factory) {
         this.context = context;
         this.message = message;
         this.factory = factory;
@@ -43,6 +43,11 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return attachments.size();
     }
 
 

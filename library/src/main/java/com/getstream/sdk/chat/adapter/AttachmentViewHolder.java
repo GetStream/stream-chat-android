@@ -79,12 +79,15 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
+        this.message = message;
+        this.attachment = attachment;
+
         configAttachment();
         configCommand();
         // configAction();
 
-        configMediaAttach();
-        configParamsAttachment();
+        //configMediaAttach();
+        //configParamsAttachment();
     }
 
     private void configAttachment() {
@@ -92,16 +95,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 //            cl_attachment.setVisibility(View.GONE);
 //            return;
 //        }
-        if (message.getAttachments() == null) {
-            cl_attachment.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getAttachments().size() == 0) {
-            cl_attachment.setVisibility(View.GONE);
-            return;
-        }
-
-        cl_attachment.setVisibility(View.VISIBLE);
 
         boolean hasFile = false;
         boolean hasMedia = false;

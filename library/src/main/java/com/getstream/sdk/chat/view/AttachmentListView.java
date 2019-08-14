@@ -18,13 +18,13 @@ public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
     private MessageViewHolderFactory viewHolderFactory;
 
-    private MessageListViewStyle parentStyle;
+    private MessageListViewStyle style;
     private Message message;
     private Context context;
     private AttachmentListItemAdapter adapter;
 
     public void setStyle(MessageListViewStyle style) {
-        this.parentStyle = style;
+        this.style = style;
     }
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
@@ -50,8 +50,9 @@ public class AttachmentListView extends RecyclerView {
     public void setMessage(Message message) {
         this.message = message;
         this.setLayoutManager(new LinearLayoutManager(context));
-
         this.adapter = new AttachmentListItemAdapter(context, message, viewHolderFactory);
+        this.adapter.setStyle(style);
+        this.setAdapter(adapter);
     }
 
     public interface AttachmentClickListener {

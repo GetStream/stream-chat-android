@@ -36,6 +36,7 @@ import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
+import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -75,6 +76,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private TextView tv_indicator_initials, tv_read_count;
     private ImageView cv_indicator_avatar;
     private ProgressBar pb_indicator;
+
+    private AttachmentListView alv_attachments;
     // Replay
     private ConstraintLayout cl_reply;
     private ImageView iv_reply;
@@ -84,6 +87,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
+    private MessageViewHolderFactory viewHolderFactory;
 
     private ChannelState channelState;
     private List<Message> messageList;
@@ -145,6 +149,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_media_file = itemView.findViewById(R.id.tv_gap_media_file);
         tv_gap_attach = itemView.findViewById(R.id.tv_gap_attach);
 
+        alv_attachments = itemView.findViewById(R.id.cl_attachment);
+
         iv_typing_indicator = itemView.findViewById(R.id.iv_typing_indicator);
         view_read_indicator = itemView.findViewById(R.id.view_read_indicator);
 
@@ -167,10 +173,27 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        if (position < messageList.size())
+        if (position < messageList.size()) {
+
+
+
             this.message = messageList.get(position);
+            if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
+                alv_attachments.setVisibility(View.GONE);
+            } else {
+                alv_attachments.setVisibility(View.VISIBLE);
+                alv_attachments.setViewHolderFactory(viewHolderFactory);
+                alv_attachments.setStyle(style);
+                alv_attachments.setMessage(this.message);
+            }
+
+        }
+
 
         isThreadHeader = (isThread && this.clickListener == null && longClickListener == null);
+
+
+        // TODO: hook up click and longclick
 
         // Configure UIs
 
@@ -535,7 +558,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             tv_gap_header.setBackgroundResource(0);
             tv_gap_sameUser.setBackgroundResource(0);
-            tv_gap_media_file.setBackgroundResource(0);
+            //tv_gap_media_file.setBackgroundResource(0);
             tv_gap_reaction.setBackgroundResource(0);
             tv_gap_attach.setBackgroundResource(0);
         }
@@ -714,5 +737,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         cl_reply.setLayoutParams(params);
         iv_reply.setLayoutParams(paramsArrow);
         tv_reply.setLayoutParams(paramsText);
+    }
+
+    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
+        this.viewHolderFactory = viewHolderFactory;
     }
 }

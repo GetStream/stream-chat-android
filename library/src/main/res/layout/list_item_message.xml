@@ -121,9 +121,7 @@
             android:layout_marginEnd="@dimen/message_margin_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction">
-
-
+            app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
 
         <TextView
             android:id="@+id/tv_gap_attach"
@@ -316,7 +314,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="ContentDescription" />
-    </com.getstream.sdk.chat.view.AttachmentListView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/ll_typing_indicator"
