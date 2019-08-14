@@ -27,14 +27,14 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha4'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-alpha02'
 
-    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.1.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
 
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
@@ -54,8 +54,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-messaging:17.6.0'
 
-    implementation 'androidx.media:media:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.media:media:1.0.1'
     // ExoPlayer
     api 'com.google.android.exoplayer:exoplayer-core:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
@@ -63,12 +62,6 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
     testImplementation 'com.github.junit-team.junit5:junit-jupiter:r5.5.1'
     testImplementation 'com.github.junit-team.junit5:junit-bom:r5.5.1'
-    // JWT TOKEN
-//    implementation 'io.jsonwebtoken:jjwt-api:0.10.5'
-//    implementation 'io.jsonwebtoken:jjwt-impl:0.10.5'
-//    implementation('io.jsonwebtoken:jjwt-orgjson:0.10.5') {
-//        exclude group: 'org.json', module: 'json'
-//    }
 }
 
 task javadoc(type: Javadoc) {
@@ -80,8 +73,6 @@ task javadoc(type: Javadoc) {
     exclude '**/function'
     exclude '**/interfaces'
     exclude '**/rest'
-//    exclude '**/activity'
-//    exclude '**/fragment'
     exclude '**/BaseActivity.java'
     exclude '**/viewmodel'
     exclude '**/Location.java'
