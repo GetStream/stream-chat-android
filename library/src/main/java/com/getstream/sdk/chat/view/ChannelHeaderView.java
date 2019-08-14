@@ -94,10 +94,12 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
     }
 
     private void updateUIs(LifecycleOwner lifecycleOwner){
-        viewModel.anyOtherUsersOnline.observe(lifecycleOwner, anyOtherUsersOnline->
-                viewModel.anyOtherUsersOnline.postValue(anyOtherUsersOnline));
-        viewModel.channelName.observe(lifecycleOwner,channelName->
-                viewModel.channelName.postValue(channelName));
+        viewModel.getAnyOtherUsersOnline().observe(lifecycleOwner, anyOtherUsersOnline->
+                viewModel.getAnyOtherUsersOnline().postValue(anyOtherUsersOnline));
+        viewModel.getChannelName().observe(lifecycleOwner,channelName->
+                viewModel.getChannelName().postValue(channelName));
+        viewModel.getLastActiveString().observe(lifecycleOwner,lastActiveString->
+                viewModel.getLastActiveString().postValue(lastActiveString));
     }
 
     private void configHeaderAvatar() {
