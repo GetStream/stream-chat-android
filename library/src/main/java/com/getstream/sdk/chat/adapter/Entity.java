@@ -47,4 +47,8 @@ public class Entity {
     public MessageListItemAdapter.EntityType getType() {
         return type;
     }
+
+    public List<MessageViewHolderFactory.Position> getPositions() {
+        return positions;
+    }
 }

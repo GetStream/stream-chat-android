@@ -79,6 +79,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private View.OnLongClickListener longClickListener;
     private Context context;
     private Message message;
+    private Entity entity;
     private MessageListViewStyle style;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
@@ -145,6 +146,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
+        this.entity = entity;
         this.message = entity.getMessage();
 
 
@@ -168,19 +170,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // TODO: hook up click and longclick
 
         // Configure UIs
-
-        if (position == messageList.size()) {
-            //configTypingIndicator();
-            return;
-        } else {
-            cl_message.setVisibility(View.VISIBLE);
-//            ll_typingusers.setVisibility(View.GONE);
-  //          iv_typing_indicator.setVisibility(View.GONE);
-        }
         configUserInfo();
         configSendFailed();
         configMessageText();
-        configDelieveredIndicator();
+        // TODO: configDelieveredIndicator();
         configReactionView();
         configReplyView();
         configGaps();
@@ -199,61 +192,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 //        configParamsAttachment();
     }
     // endregion
-
-
-
-    private void configDelieveredIndicator() {
-        if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
-            view_read_indicator.setVisibility(View.VISIBLE);
-            List<User> readUsers = Global.getReadUsers(channelState, message);
-            if (readUsers == null || message.getDeletedAt() != null || message.getType().equals(ModelType.message_error)) {
-                view_read_indicator.setVisibility(View.GONE);
-                Log.d(TAG, "Deliever Indicator 1");
-                return;
-            }
-            if (readUsers.size() > 0) {
-                pb_indicator.setVisibility(View.GONE);
-                cv_indicator_avatar.setVisibility(View.VISIBLE);
-                tv_indicator_initials.setVisibility(View.VISIBLE);
-                cv_indicator_avatar.setBackgroundResource(0);
-                Utils.circleImageLoad(cv_indicator_avatar, channelState.getLastReader().getImage());
-                tv_indicator_initials.setText(channelState.getLastReader().getInitials());
-
-                if (readUsers.size() > 1) {
-                    tv_read_count.setVisibility(View.VISIBLE);
-                    tv_read_count.setText(String.valueOf(readUsers.size() - 1));
-                } else {
-                    tv_read_count.setVisibility(View.GONE);
-                }
-                Log.d(TAG, "Deliever Indicator 2");
-            } else {
-                if (message.isDelivered()) {
-                    cv_indicator_avatar.setVisibility(View.VISIBLE);
-                    tv_indicator_initials.setVisibility(View.GONE);
-                    tv_read_count.setVisibility(View.GONE);
-                    pb_indicator.setVisibility(View.GONE);
-                    cv_indicator_avatar.setBackgroundResource(R.drawable.delivered_unseen);
-                    Log.d(TAG, "Deliever Indicator 3");
-                } else {
-                    cv_indicator_avatar.setVisibility(View.GONE);
-                    tv_indicator_initials.setVisibility(View.GONE);
-                    tv_read_count.setVisibility(View.GONE);
-                    pb_indicator.setVisibility(View.VISIBLE);
-                    Log.d(TAG, "Deliever Indicator 4");
-                }
-            }
-
-            view_read_indicator.setOnClickListener((View v) -> {
-                v.setTag(new MessageTagModel(Constant.TAG_MESSAGE_CHECK_DELIVERED, position));
-                clickListener.onClick(v);
-            });
-        } else {
-            view_read_indicator.setVisibility(View.GONE);
-        }
-    }
-
-
-
+    // TODO: configure the deliver indicator
 
     private void configUserInfo() {
         if (messageTimeVisible()) {
@@ -298,8 +237,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_failed_text.setText(message.getText());
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.message_failed_send : R.string.message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
-            int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
-            ll_send_failed.setBackgroundResource(background);
+            //TODO what does this do?
+            // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
+            //ll_send_failed.setBackgroundResource(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
                 if (clickListener != null) {
@@ -446,13 +386,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configGaps() {
         // Header Gap
-        tv_gap_header.setVisibility(messageGapViewVisible(position));
+        //tv_gap_header.setVisibility(messageGapViewVisible(position));
 
         // Same User Gap
-        if (containerStyleOne(position))
-            tv_gap_sameUser.setVisibility(View.GONE);
-        else
-            tv_gap_sameUser.setVisibility(View.VISIBLE);
+//        if (containerStyleOne(position))
+//            tv_gap_sameUser.setVisibility(View.GONE);
+//        else
+//            tv_gap_sameUser.setVisibility(View.VISIBLE);
         // Media_File Gap
 //        if (cl_attachment_media.getVisibility() == View.VISIBLE && lv_attachment_file.getVisibility() == View.VISIBLE)
 //            tv_gap_media_file.setVisibility(View.VISIBLE);
@@ -483,40 +423,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private int headerViewVisible() {
-        if (isThreadHeader) return View.GONE;
-//        if (position == 0) return View.VISIBLE;
-        if (this.message.isStartDay()) return View.VISIBLE;
-        return View.GONE;
-    }
 
     private boolean messageTimeVisible() {
-        if (isThreadHeader) return true;
-        if (position == messageList.size() - 1) return true;
-        Message nextMessage;
-        if (position < messageList.size() - 1) {
-            nextMessage = messageList.get(position + 1);
-            if (nextMessage.isStartDay()) return true;
-            if (message.getUser().getId().equals(nextMessage.getUser().getId())) return false;
-        }
-        return true;
+        return this.entity.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM);
     }
 
-    private boolean containerStyleOne(int position) {
-        Message beforeMessage = null;
-        if (headerView.getVisibility() == View.VISIBLE) return true;
-        try {
-            beforeMessage = messageList.get(position - 1);
-            return !(message.getUser().getId().equals(beforeMessage.getUser().getId()));
-        } catch (Exception e) {
-        }
-        return true;
-    }
 
-    private int messageGapViewVisible(int position) {
-        if (!containerStyleOne(position)) return View.GONE;
-        return View.VISIBLE;
-    }
+
     // endregion
 
     // region Layout Params
