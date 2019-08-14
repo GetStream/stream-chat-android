@@ -24,9 +24,11 @@ import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.FlagUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
@@ -43,9 +45,11 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Global;
@@ -897,16 +901,162 @@ public class Client implements WSResponseHandler {
 
     }
 
-
-    public void muteUser() {
-    }
-
-    public void unmuteUser() {
-    }
-
     public void flagMessage() {
     }
 
     public void unflagMessage() {
+    }
+    /** muteUser - mutes a user
+     *
+     * @param target_id
+     * Only used with serverside auth
+     * @returns Server response
+     */
+    public void muteUser(@NonNull String target_id,
+                         MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id",target_id);
+        body.put("user_id",user.getId());
+
+        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /** unmuteUser - unmutes a user
+     *
+     * @param target_id
+     * Only used with serverside auth
+     * @returns Server response
+     */
+    public void unmuteUser(@NonNull String target_id,
+                           MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id",target_id);
+        body.put("user_id",user.getId());
+
+        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+
+
+    public void flagUser(@NonNull String targetUserId,
+                         FlagUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id",targetUserId);
+
+        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void unFlagUser(@NonNull String targetUserId,
+                           FlagUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id",targetUserId);
+
+        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void flagMessage(@NonNull String targetMessageId,
+                            FlagUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_message_id",targetMessageId);
+
+        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void nuFlagMessage(@NonNull String targetMessageId,
+                              FlagUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_message_id",targetMessageId);
+
+        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
     }
 }
