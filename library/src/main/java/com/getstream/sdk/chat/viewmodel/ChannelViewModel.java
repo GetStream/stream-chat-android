@@ -92,14 +92,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         this.initEventHandlers();
         this.queryChannel();
-
     }
 
     public void markRead() {
         // TODO: how to mark read?
     }
-
-
 
     private void initEventHandlers() {
         channel.addEventHandler(new ChatChannelEventHandler() {
@@ -204,12 +201,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 loading.postValue(false);
                 Log.i(TAG, "messages loaded");
                 channelState = response;
-                channel.setChannelState(response);
-                List<Message> newMessages = response.getMessages();
-                if (newMessages.size() < Constant.DEFAULT_LIMIT) {
+                if (channelState.getMessages().size() < Constant.DEFAULT_LIMIT) {
                     endOfPagination.postValue(true);
                 }
-                addMessages(newMessages);
+                addMessages(channelState.getMessages());
             }
 
             @Override
@@ -220,14 +215,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void loadMore() {
-        Log.d(TAG, "ViewModel loadMore called");
-        if (loadingMore.getValue()) return;
+        // don't load more if the channel state is empty or if we are already loading more
+        if (loadingMore.getValue() || channelState.getOldestMessageId() == null) {
+            return;
+        }
         loadingMore.setValue(true);
 
-        ChannelQueryRequest request =  new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT);
-        if (channelState.getMessages().size() > 0) {
-            request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getMessages().get(0).getId(), Constant.DEFAULT_LIMIT);
-        }
+        Log.d(TAG, "ViewModel loadMore...");
+
+        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
         channel.query(
                 request,
@@ -236,6 +232,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     public void onSuccess(ChannelState response) {
                         loadingMore.postValue(false);
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
+                        // TODO: messages added via load more should be added at the bottom
                         addMessages(newMessages);
 
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)

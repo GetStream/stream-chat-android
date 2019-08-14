@@ -69,6 +69,14 @@ public class ChannelState {
         return users;
     }
 
+    public String getOldestMessageId(){
+        Message message = this.getOldestMessage();
+        if (message == null) {
+            return null;
+        }
+        return message.getId();
+    }
+
     public Date getLastActive() {
 //        List<User> users = this.getOtherUsers();
 //        for (User u: users) {
@@ -224,6 +232,12 @@ public class ChannelState {
         }
         messages.add(newMessage);
         return;
+    }
+
+    public void addMessageSorted(Message message){
+        List<Message> diff = new ArrayList<>();
+        diff.add(message);
+        addMessagesSorted(diff);
     }
 
     public void addMessagesSorted(List<Message> messages){

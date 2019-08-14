@@ -110,9 +110,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-
                 updateChannel(event.getChannel());
-
             }
 
             @Override

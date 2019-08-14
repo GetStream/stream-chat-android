@@ -105,7 +105,6 @@ public class Message {
         return TextUtils.equals(this.getId(), otherMessage.getId());
     }
 
-
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
