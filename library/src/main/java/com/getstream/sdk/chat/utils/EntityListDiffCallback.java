@@ -1,20 +1,16 @@
 package com.getstream.sdk.chat.utils;
 
-import android.text.TextUtils;
-
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.adapter.Entity;
 
 
 import java.util.List;
 
 public class EntityListDiffCallback extends DiffUtil.Callback {
-    protected List<MessageListItemAdapter.Entity> oldList, newList;
+    protected List<Entity> oldList, newList;
 
-    public EntityListDiffCallback(List<MessageListItemAdapter.Entity> oldList, List<MessageListItemAdapter.Entity> newList) {
+    public EntityListDiffCallback(List<Entity> oldList, List<Entity> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

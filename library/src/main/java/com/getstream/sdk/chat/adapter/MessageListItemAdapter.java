@@ -6,70 +6,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
 import com.getstream.sdk.chat.utils.EntityListDiffCallback;
-import com.getstream.sdk.chat.utils.MessageListDiffCallback;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public enum EntityType {
         DATE_SEPARATOR, MESSAGE, TYPING
-    }
-    public class Entity {
-        private EntityType type;
-        private Message message;
-        private MessageViewHolderFactory.Position position;
-        private Date date;
-        private MessageViewHolderFactory.Position messagePosition;
-        private Boolean messageMine;
-        private List<User> users;
-
-        public void Entity(Date date) {
-            this.type = EntityType.DATE_SEPARATOR;
-            this.date = date;
-        }
-
-        public void Entity(Message message, MessageViewHolderFactory.Position messagePosition, Boolean messageMine) {
-            this.type = EntityType.MESSAGE;
-            this.message = message;
-            this.messagePosition = messagePosition;
-            this.messageMine = messageMine;
-        }
-
-        public void Entity(List<User> users) {
-            this.type = EntityType.TYPING;
-            this.users = users;
-        }
-
-        public Message getMessage() {
-            return message;
-        }
-
-        public Date getDate() {
-            return date;
-        }
-
-        public List<User> getUsers() {
-            return users;
-        }
-
-        public EntityType getType() {
-            return type;
-        }
     }
 
     private final String TAG = MessageListItemAdapter.class.getSimpleName();

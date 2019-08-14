@@ -3,8 +3,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
@@ -21,7 +19,7 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getEntityViewType(MessageListItemAdapter.Entity entity, Boolean mine, Position position) {
+    public int getEntityViewType(Entity entity, Boolean mine, Position position) {
         // typing
         // date
         // various message types

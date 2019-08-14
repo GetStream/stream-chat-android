@@ -9,7 +9,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
-import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
+import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.EntityLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<String> lastActiveString;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
-    private LiveData<List<MessageListItemAdapter.Entity>> entities;
+    private EntityLiveData entities;
 
 
     public MutableLiveData<Boolean> endOfPagination;
@@ -90,19 +91,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         typing =  new MutableLiveData<List<User>>(new ArrayList<User>());
         reads =  new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
 
-
-        MediatorLiveData merged = new MediatorLiveData<>();
-        merged.addSource(messages, value -> merged.setValue(value));
-        merged.addSource(typing, value -> merged.setValue(value));
-        this.entities = Transformations.map(merged, objectList -> {
-            // objectList is either List<Message> or List<User>
-            // that's not what we want, we need them both at the same time
-            // - compute date separators
-            // - set position top, middle and bottom for messages
-            // - add the list of typing users at the bottom
-            List<MessageListItemAdapter.Entity> empty = new ArrayList<MessageListItemAdapter.Entity>();
-            return empty;
-        });
+        entities = new EntityLiveData(this.channel.getClient().getUser(), messages, typing);
 
         watcherCount = new MutableLiveData<>();
 
@@ -410,7 +399,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     }
 
-    public LiveData<List<MessageListItemAdapter.Entity>> getEntities() {
+    public LiveData<List<Entity>> getEntities() {
         return entities;
     }
 }
