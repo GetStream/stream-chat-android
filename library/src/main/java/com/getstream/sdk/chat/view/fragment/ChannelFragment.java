@@ -797,7 +797,7 @@ public class ChannelFragment extends Fragment {
         threadMessages = new ArrayList<>();
 
         threadBinding.rvHeader.setLayoutManager(mLayoutManager_thread_header);
-        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelState, Arrays.asList(thread_parentMessage));
+        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<MessageListItemAdapter.Entity>());
         threadBinding.rvHeader.setAdapter(mThreadHeaderAdapter);
 
         if (message.getReplyCount() == 0) {
@@ -856,7 +856,7 @@ public class ChannelFragment extends Fragment {
             mLayoutManager_thread.scrollToPosition(threadMessages.size() - 1);
 
         threadBinding.rvThread.setLayoutManager(mLayoutManager_thread);
-        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelState, threadMessages);
+        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<MessageListItemAdapter.Entity>());
         threadBinding.rvThread.setAdapter(mThreadAdapter);
         setScrollDownHideKeyboard(threadBinding.rvThread);
     }

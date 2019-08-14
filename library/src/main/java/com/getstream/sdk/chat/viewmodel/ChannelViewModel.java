@@ -4,8 +4,12 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
+import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -52,6 +56,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<String> lastActiveString;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
+    private LiveData<List<MessageListItemAdapter.Entity>> entities;
 
 
     public MutableLiveData<Boolean> endOfPagination;
@@ -63,6 +68,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<List<Message>> getMessages() {
         return messages;
     }
+
+
 
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
@@ -83,7 +90,22 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         typing =  new MutableLiveData<List<User>>(new ArrayList<User>());
         reads =  new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
 
+
+        MediatorLiveData merged = new MediatorLiveData<>();
+        merged.addSource(messages, value -> merged.setValue(value));
+        merged.addSource(typing, value -> merged.setValue(value));
+        this.entities = Transformations.map(merged, objectList -> {
+            // objectList is either List<Message> or List<User>
+            // that's not what we want, we need them both at the same time
+            // - compute date separators
+            // - set position top, middle and bottom for messages
+            // - add the list of typing users at the bottom
+            List<MessageListItemAdapter.Entity> empty = new ArrayList<MessageListItemAdapter.Entity>();
+            return empty;
+        });
+
         watcherCount = new MutableLiveData<>();
+
 
         // humanized time diff
         Date lastActive = channelState.getLastActive();
@@ -386,5 +408,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     }
                 });
 
+    }
+
+    public LiveData<List<MessageListItemAdapter.Entity>> getEntities() {
+        return entities;
     }
 }

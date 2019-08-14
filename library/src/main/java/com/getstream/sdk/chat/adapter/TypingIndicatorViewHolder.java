@@ -54,6 +54,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         List<User> users = entity.getUsers();
+        int i = 0;
 
         for (User user : users) {
             View v = vi.inflate(R.layout.view_user_avatar_initials, null);
@@ -71,6 +72,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
 
             v.setLayoutParams(params);
             ll_typingusers.addView(v);
+            i += 1;
         }
         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
         Glide.with(context).load(R.raw.typing).into(imageViewTarget);

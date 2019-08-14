@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
+import com.getstream.sdk.chat.utils.EntityListDiffCallback;
 import com.getstream.sdk.chat.utils.MessageListDiffCallback;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -31,7 +32,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public class Entity {
         private EntityType type;
         private Message message;
+        private MessageViewHolderFactory.Position position;
         private Date date;
+        private MessageViewHolderFactory.Position messagePosition;
+        private Boolean messageMine;
         private List<User> users;
 
         public void Entity(Date date) {
@@ -39,9 +43,11 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             this.date = date;
         }
 
-        public void Entity(Message message) {
+        public void Entity(Message message, MessageViewHolderFactory.Position messagePosition, Boolean messageMine) {
             this.type = EntityType.MESSAGE;
             this.message = message;
+            this.messagePosition = messagePosition;
+            this.messageMine = messageMine;
         }
 
         public void Entity(List<User> users) {
@@ -110,10 +116,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         style = s;
     }
 
-    public void replaceMessages(List<Message> newMessages) {
+    public void replaceEntities(List<Entity> newEntities) {
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-                new MessageListDiffCallback(messageList, newMessages), true);
-        messageList = newMessages;
+                new EntityListDiffCallback(entityList, newEntities), true);
+        entityList = newEntities;
         // only update those rows that change...
         result.dispatchUpdatesTo(this);
     }
@@ -146,10 +152,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        if (messageList != null) {
-            return messageList.size() + 1;
-        } else {
-            return 0;
-        }
+        return entityList.size();
     }
 }

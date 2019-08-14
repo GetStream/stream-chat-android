@@ -63,9 +63,9 @@ public class MessageListView extends RecyclerView {
         adapter = new MessageListItemAdapter(getContext());
 
         // use livedata and observe
-        viewModel.getMessages().observe(lifecycleOwner, messages -> {
-            Log.i(TAG, "Observe found this many messages: " + messages.size());
-            adapter.replaceMessages(messages);
+        viewModel.getEntities().observe(lifecycleOwner, entities -> {
+            Log.i(TAG, "Observe found this many entities: " + entities.size());
+            adapter.replaceEntities(entities);
         });
 
         this.setAdapterWithStyle(adapter);
