@@ -23,17 +23,7 @@
             android:background="#2F3036"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            stream:backButtonShow="false"
-            stream:channelHeaderAvatarBackGroundColor="#00FF00"
-            stream:channelHeaderAvatarBorderColor="@android:color/holo_red_dark"
-            stream:channelHeaderAvatarBorderWidth="5dp"
-            stream:channelHeaderAvatarHeight="50dp"
-            stream:channelHeaderAvatarTextColor="@color/white"
-            stream:channelHeaderAvatarTextSize="25sp"
-            stream:channelHeaderAvatarTextStyle="bold|italic"
-            stream:channelHeaderAvatarWidth="50dp"
-            stream:channelTitleTextColor="@color/white" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"

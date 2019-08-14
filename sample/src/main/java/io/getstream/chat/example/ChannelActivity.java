@@ -40,7 +40,6 @@ public class ChannelActivity extends AppCompatActivity {
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
 
-//        Channel channel = client.channel(channelType, channelID);
         Channel channel = client.getChannelByCid(channelType +":" + channelID);
         if (channel == null)
             channel = client.channel(channelType, channelID);
@@ -57,5 +56,11 @@ public class ChannelActivity extends AppCompatActivity {
 
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
+    }
+
+    @Override
+    public void onBackPressed(){
+        viewModel.removeEventHandler();
+        super.onBackPressed();
     }
 }

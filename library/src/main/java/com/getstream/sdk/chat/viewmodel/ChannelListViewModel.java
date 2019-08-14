@@ -118,6 +118,11 @@ public class ChannelListViewModel extends AndroidViewModel {
 
                 updateChannel(event.getChannel());
             }
+            @Override
+            public void onUserWatchingStart(Event event){
+                Channel channel = client().getChannelByCid(event.getCid());
+
+            }
         });
     }
 

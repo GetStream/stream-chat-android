@@ -61,7 +61,7 @@ public class ChannelState {
         List<User> users = new ArrayList<User>();
         for (Member m : this.members) {
             // TODO: Tommaso
-            String currentUserId = "";
+            String currentUserId = channel.getClient().getUserId();
             if (!m.getUser().getId().equals(currentUserId)) {
                 users.add(m.getUser());
             }
@@ -137,6 +137,7 @@ public class ChannelState {
     public List<ChannelUserRead> getLastMessageReads() {
         Message lastMessage = this.getLastMessage();
         List<ChannelUserRead> readLastMessage = new ArrayList<ChannelUserRead>();
+        if (reads == null) return readLastMessage;
         for (ChannelUserRead r : reads) {
             // TODO: fix me as soon as we have working date parsing
             //r.getLast_read() > lastMessage.getCreatedAt()

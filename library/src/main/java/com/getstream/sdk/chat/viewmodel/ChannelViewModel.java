@@ -39,6 +39,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     // TODO: channelState should be removed!
     public ChannelState channelState;
+    private int channelSubscriptionId = 0;
 
     public MutableLiveData<Boolean> loading;
     public MutableLiveData<Boolean> loadingMore;
@@ -68,7 +69,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.channel = channel;
         this.channelState = channel.getChannelState();
 
-        loading = new MutableLiveData<>(true);
+        loading = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
@@ -90,7 +91,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         lastActiveString = new MutableLiveData<String>(humanizedDate);
 
         this.initEventHandlers();
-        this.queryChannel();
+//        this.queryChannel();
 
     }
 
@@ -101,7 +102,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
 
     private void initEventHandlers() {
-        channel.addEventHandler(new ChatChannelEventHandler() {
+        channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onAnyEvent(Event event) {
                 Number watcherCount = event.getWatcherCount();
@@ -162,6 +163,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         });
     }
 
+    public void removeEventHandler(){
+        if (channelSubscriptionId == 0) return;
+        channel.removeEventHandler(channelSubscriptionId);
+        channelSubscriptionId = 0;
+    }
+
     public boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
@@ -196,6 +203,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void queryChannel() {
+        loading.postValue(true);
         channel.query(
                 new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
                 new QueryChannelCallback() {

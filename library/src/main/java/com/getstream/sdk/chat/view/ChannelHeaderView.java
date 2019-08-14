@@ -53,10 +53,9 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
-        viewModel.loading.observe(lifecycleOwner, (Boolean loading) -> {
-            if (!loading) configHeaderAvatar();
-        });
-        configUIs();
+        configHeaderAvatar();
+        updateUIs(lifecycleOwner);
+        applyStyle();
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
@@ -85,7 +84,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         void onClick(View v);
     }
 
-    private void configUIs() {
+    private void applyStyle() {
         // back button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         // Title
@@ -94,11 +93,14 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         binding.tvChannelName.setTypeface(binding.tvChannelName.getTypeface(), style.getChannelTitleTextStyle());
     }
 
+    private void updateUIs(LifecycleOwner lifecycleOwner){
+        viewModel.anyOtherUsersOnline.observe(lifecycleOwner, anyOtherUsersOnline->
+                viewModel.anyOtherUsersOnline.postValue(anyOtherUsersOnline));
+        viewModel.channelName.observe(lifecycleOwner,channelName->
+                viewModel.channelName.postValue(channelName));
+    }
+
     private void configHeaderAvatar() {
-        // TODO:
-        // - the avatar should be it's own view since the logic is quite complex and needed in many screens
-        // - IE: channelImage with fallback to list of images from other users, fallback to initial of other users
-        // - once we simplify this to it's own view we can just use databinding for the data and remove configHeaderAvatar
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;

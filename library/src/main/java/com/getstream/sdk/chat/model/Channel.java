@@ -28,7 +28,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
@@ -73,6 +72,7 @@ public class Channel {
     private Date lastTypingEvent;
     boolean isTyping = false;
     private HashMap<String, Object> extraData;
+
 
     // region Getter & Setter
     public String getId() {
@@ -244,6 +244,7 @@ public class Channel {
     }
 
     public final synchronized void handleChannelEvent(Event event){
+        if (eventSubscribers == null || eventSubscribers.isEmpty()) return;
         for (ChatChannelEventHandler handler: eventSubscribers) {
             handler.dispatchEvent(event);
         }
