@@ -198,12 +198,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // Configure UIs
 
         if (position == messageList.size()) {
-            configTypingIndicator();
+            //configTypingIndicator();
             return;
         } else {
             cl_message.setVisibility(View.VISIBLE);
-            ll_typingusers.setVisibility(View.GONE);
-            iv_typing_indicator.setVisibility(View.GONE);
+//            ll_typingusers.setVisibility(View.GONE);
+  //          iv_typing_indicator.setVisibility(View.GONE);
         }
         configHeaderView();
         configUserInfo();
@@ -229,20 +229,20 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
     // endregion
 
-    // region Config UIs
-    private void configTypingIndicator() {
-        cl_message.setVisibility(View.GONE);
-        if (Global.typingUsers.size() > 0) {
-            ll_typingusers.setVisibility(View.VISIBLE);
-            iv_typing_indicator.setVisibility(View.VISIBLE);
-            createTypingUsersView();
-            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
-            Glide.with(context).load(R.raw.typing).into(imageViewTarget);
-        } else {
-            ll_typingusers.setVisibility(View.INVISIBLE);
-            iv_typing_indicator.setVisibility(View.INVISIBLE);
-        }
-    }
+//    // region Config UIs
+//    private void configTypingIndicator() {
+//        cl_message.setVisibility(View.GONE);
+//        if (Global.typingUsers.size() > 0) {
+//            ll_typingusers.setVisibility(View.VISIBLE);
+//            iv_typing_indicator.setVisibility(View.VISIBLE);
+//            createTypingUsersView();
+//            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
+//            Glide.with(context).load(R.raw.typing).into(imageViewTarget);
+//        } else {
+//            ll_typingusers.setVisibility(View.INVISIBLE);
+//            iv_typing_indicator.setVisibility(View.INVISIBLE);
+//        }
+//    }
 
     private void configDelieveredIndicator() {
         if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
