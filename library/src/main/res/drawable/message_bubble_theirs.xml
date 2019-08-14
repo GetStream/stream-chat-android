@@ -8,8 +8,8 @@
         android:color="#FFF" />
 
     <corners
-        android:bottomLeftRadius="@dimen/message_corner_radius1"
-        android:bottomRightRadius="@dimen/message_corner_radius2"
-        android:topLeftRadius="@dimen/message_corner_radius1"
-        android:topRightRadius="@dimen/message_corner_radius2" />
+        android:bottomLeftRadius="2dp"
+        android:bottomRightRadius="16dp"
+        android:topLeftRadius="2dp"
+        android:topRightRadius="16dp" />
 </shape>

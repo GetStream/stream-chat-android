@@ -32,6 +32,14 @@ public class Entity {
         this.users = users;
     }
 
+    public boolean isMine() {
+        return this.messageMine;
+    }
+
+    public boolean isTheirs() {
+        return !this.messageMine;
+    }
+
     public Message getMessage() {
         return message;
     }

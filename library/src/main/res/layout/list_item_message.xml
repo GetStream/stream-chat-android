@@ -219,10 +219,10 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_reply"
             app:layout_constraintVertical_bias="1" />
 
-        <include
+        <com.getstream.sdk.chat.view.ReadStateView
             android:id="@+id/view_read_indicator"
-            layout="@layout/view_user_read_indicator"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
@@ -238,6 +238,7 @@
             android:gravity="center"
             android:textSize="15sp"
             android:textStyle="bold"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"

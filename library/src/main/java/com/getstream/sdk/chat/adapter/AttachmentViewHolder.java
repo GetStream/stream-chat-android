@@ -124,7 +124,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configImageThumbBackground(Attachment attachment) {
         int mediaBack, moreBack;
-        if (message.isIncoming()) {
+        // TODO: fix this somehow
+        if (true) {
             if (!TextUtils.isEmpty(attachment.getText()) ||
                     !TextUtils.isEmpty(attachment.getTitle())) {
                 if (true) {
@@ -171,7 +172,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configAttachViewBackground(View view) {
         Drawable background;
-        if (message.isIncoming()) {
+        // TODO: fix this somehow
+        if (true) {
             background = style.getMessageBubbleDrawableTheirs();
         } else {
             background = style.getMessageBubbleDrawableMine();
@@ -342,7 +344,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cl_attachment.getLayoutParams();
         ConstraintLayout.LayoutParams paramsLv = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
         if (lv_attachment_file.getVisibility() == View.VISIBLE) {
-            if (message.isIncoming()) {
+            // TODO; fix this somehow
+            if (true) {
                 params.horizontalBias = 0f;
                 paramsLv.horizontalBias = 0f;
             } else {

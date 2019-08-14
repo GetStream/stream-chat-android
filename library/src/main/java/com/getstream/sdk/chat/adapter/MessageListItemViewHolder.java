@@ -81,6 +81,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Message message;
     private Entity entity;
     private MessageListViewStyle style;
+    private List<MessageViewHolderFactory.Position> positions;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
@@ -148,7 +149,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.longClickListener = longClickListener;
         this.entity = entity;
         this.message = entity.getMessage();
-
+        this.positions = entity.getPositions();
 
 
 
@@ -161,7 +162,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setMessage(this.message);
         }
 
+        // apply the style based on mine or theirs
+        if (entity.isMine()) {
+            this.applyStyleMine();
+        } else {
+            this.applyStyleTheirs();
+        }
 
+        // apply position related style tweaks
+        this.applyPositionsStyle();
 
 
         isThreadHeader = (isThread && this.clickListener == null && longClickListener == null);
@@ -170,13 +179,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // TODO: hook up click and longclick
 
         // Configure UIs
-        configUserInfo();
         configSendFailed();
         configMessageText();
         // TODO: configDelieveredIndicator();
         configReactionView();
         configReplyView();
-        configGaps();
 
         // Configure Laytout Params
 
@@ -194,13 +201,47 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
     // TODO: configure the deliver indicator
 
-    private void configUserInfo() {
-        if (messageTimeVisible()) {
+    private void applyStyleMine() {
+        Drawable background = style.getMessageBubbleDrawableMine();
+        tv_text.setBackground(background);
+        tv_text.setTextColor(style.getMessageTextColorMine());
+    }
+
+    private void applyStyleTheirs() {
+        Drawable background = style.getMessageBubbleDrawableTheirs();
+        tv_text.setBackground(background);
+        tv_text.setTextColor(style.getMessageTextColorTheirs());
+    }
+
+    private void applyPositionsStyle() {
+        // TOP position has a rounded top left corner and extra spacing
+        // BOTTOM position shows the user avatar & message time
+
+        // RESET the defaults
+        tv_username.setVisibility(View.GONE);
+        tv_initials.setVisibility(View.GONE);
+        tv_messagedate.setVisibility(View.GONE);
+        cv_avatar.setVisibility(View.GONE);
+        tv_gap_header.setVisibility(View.GONE);
+        tv_gap_sameUser.setVisibility(View.VISIBLE);
+
+        // TOP
+        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+            // extra spacing
+            tv_gap_header.setVisibility(View.VISIBLE);
+            tv_gap_sameUser.setVisibility(View.GONE);
+            // rounded corner
+
+
+        }
+        // BOTTOM
+        if (positions.contains(MessageViewHolderFactory.Position.BOTTOM)) {
+            // show the date and user initials for the bottom message
             tv_username.setVisibility(View.VISIBLE);
             tv_initials.setVisibility(View.VISIBLE);
             tv_messagedate.setVisibility(View.VISIBLE);
             cv_avatar.setVisibility(View.VISIBLE);
-            if (message.isIncoming()) {
+            if (entity.isTheirs()) {
                 tv_username.setVisibility(View.VISIBLE);
                 tv_username.setText(message.getUser().getName());
             } else
@@ -223,13 +264,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             } else {
                 cv_avatar.setVisibility(View.GONE);
             }
-        } else {
-            tv_username.setVisibility(View.GONE);
-            tv_initials.setVisibility(View.GONE);
-            tv_messagedate.setVisibility(View.GONE);
-            cv_avatar.setVisibility(View.GONE);
         }
     }
+
 
     private void configSendFailed() {
         if (message.getType().equals(ModelType.message_error)) {
@@ -290,28 +327,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .build();
         markwon.setMarkdown(tv_text, Global.getMentionedText(message));
 
-        // Set Text background
-        if (StringUtility.isEmoji(message.getText()))
-            tv_text.setBackgroundResource(0); // Check Emoji Text
-        else {
-            Drawable background;
 
-            if (message.isIncoming()) {
-                //color = style.getMessageBubbleColorOther();
-                background = style.getMessageBubbleDrawableTheirs();
-            } else {
-                //color = style.getMessageBubbleColorMine();
-                background = style.getMessageBubbleDrawableMine();
-            }
-            tv_text.setBackground(background);
-        }
-        // Set Color
-        if (message.isMine()) {
-            tv_text.setTextColor(style.getMessageTextColorMine());
-
-        } else {
-            tv_text.setTextColor(style.getMessageTextColorTheirs());
-        }
 
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
@@ -353,7 +369,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_docket.setVisibility(View.VISIBLE);
 
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts()));
-        if (message.isIncoming())
+        if (entity.isTheirs())
             iv_docket.setBackgroundResource(R.drawable.docket_incoming);
         else
             iv_docket.setBackgroundResource(R.drawable.docket_outgoing);
@@ -384,49 +400,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configGaps() {
-        // Header Gap
-        //tv_gap_header.setVisibility(messageGapViewVisible(position));
 
-        // Same User Gap
-//        if (containerStyleOne(position))
-//            tv_gap_sameUser.setVisibility(View.GONE);
-//        else
-//            tv_gap_sameUser.setVisibility(View.VISIBLE);
-        // Media_File Gap
-//        if (cl_attachment_media.getVisibility() == View.VISIBLE && lv_attachment_file.getVisibility() == View.VISIBLE)
-//            tv_gap_media_file.setVisibility(View.VISIBLE);
-//        else
-//            tv_gap_media_file.setVisibility(View.GONE);
-
-        // Attach Gap
-        //tv_gap_attach.setVisibility(cl_attachment.getVisibility());
-//        if (cl_attachment.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
-//            tv_gap_attach.setVisibility(View.GONE);
-
-        // Reaction Gap
-        tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
-
-        // ONLY_FOR_DEBUG
-        if (Global.checkMesageGapState) {
-            tv_gap_header.setBackgroundResource(R.color.gap_header);
-            tv_gap_sameUser.setBackgroundResource(R.color.gap_message);
-            tv_gap_media_file.setBackgroundResource(R.color.gap_media_file);
-            tv_gap_reaction.setBackgroundResource(R.color.gap_reaction);
-            tv_gap_attach.setBackgroundResource(R.color.gap_attach);
-        } else {
-            tv_gap_header.setBackgroundResource(0);
-            tv_gap_sameUser.setBackgroundResource(0);
-            //tv_gap_media_file.setBackgroundResource(0);
-            tv_gap_reaction.setBackgroundResource(0);
-            tv_gap_attach.setBackgroundResource(0);
-        }
-    }
-
-
-    private boolean messageTimeVisible() {
-        return this.entity.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM);
-    }
 
 
 
@@ -436,7 +410,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsMessageText() {
         if (tv_text.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -447,7 +421,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsDeletedMessage() {
         if (tv_deleted.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_deleted.getLayoutParams();
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -458,7 +432,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsMessageDate() {
         if (tv_messagedate.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_messagedate.getLayoutParams();
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -469,7 +443,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionRecycleView() {
         if (rv_reaction.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -495,7 +469,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -507,7 +481,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (cv_avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cv_avatar.getLayoutParams();
         int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);
             params.setMarginEnd(0);
@@ -524,7 +498,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (tv_initials.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_initials.getLayoutParams();
         int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);
             params.setMarginEnd(0);
@@ -553,7 +527,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         ConstraintLayout.LayoutParams paramsText = (ConstraintLayout.LayoutParams) tv_reply.getLayoutParams();
 
         // Set Constraint
-        if (message.isIncoming()) {
+        if (entity.isTheirs()) {
             iv_reply.setBackgroundResource(R.drawable.replies);
             params.horizontalBias = 0f;
             paramsText.endToEnd = cl_reply.getId();

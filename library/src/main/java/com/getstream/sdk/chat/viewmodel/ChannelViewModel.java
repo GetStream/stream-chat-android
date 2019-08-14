@@ -121,12 +121,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageNew(Event event) {
-                List<Message> list = messages.getValue();
-                if (list == null) {
-                    list = new ArrayList<>();
+                Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
+                List<Message> messageList = messages.getValue();
+                if (messageList == null) {
+                    messageList = new ArrayList<>();
                 }
-                list.add(event.getMessage());
-                messages.postValue(list);
+                messageList.add(event.getMessage());
+                messages.postValue(messageList);
             }
 
             @Override
@@ -204,15 +205,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void queryChannel() {
+        int limit = 10; // Constant.DEFAULT_LIMIT
         channel.query(
-                new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
+                new ChannelQueryRequest().withMessages(limit),
                 new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
                 loading.postValue(false);
                 Log.i(TAG, "messages loaded");
                 channelState = response;
-                if (channelState.getMessages().size() < Constant.DEFAULT_LIMIT) {
+                if (channelState.getMessages().size() < limit) {
                     endOfPagination.postValue(true);
                 }
                 addMessages(channelState.getMessages());
