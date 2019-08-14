@@ -65,11 +65,11 @@ public class Message {
 
     @SerializedName("updated_at")
     @Expose
-    private String updatedAt;
+    private Date updatedAt;
 
     @SerializedName("deleted_at")
     @Expose
-    private String deletedAt;
+    private Date deletedAt;
 
     @SerializedName("mentioned_users")
     @Expose
@@ -405,11 +405,11 @@ public class Message {
         }
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public String getDeletedAt() {
+    public Date getDeletedAt() {
         return deletedAt;
     }
 
