@@ -6,13 +6,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.Date;
 import java.util.List;
+
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
@@ -31,18 +35,10 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, MessageListItemAdapter.Entity entity, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
 
-
-        String headerDate = message.getDate(), headerTime;
-        if (message.isToday())
-            headerDate = "Today";
-
-        if (message.isYesterday())
-            headerDate = "Yesterday";
-
-        headerTime = message.getTime();
-        tv_header_date.setText(headerDate);
-        tv_header_time.setText(" AT " + headerTime);
+        String humanizedDate = getRelativeTimeSpanString(entity.getDate().getTime()).toString();
+        tv_header_date.setText(humanizedDate);
+        tv_header_time.setText(" AT " + humanizedDate);
     }
 }

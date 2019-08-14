@@ -21,11 +21,19 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getMessageViewType(Message message, Boolean mine, Position position) {
+    public int getEntityViewType(MessageListItemAdapter.Entity entity, Boolean mine, Position position) {
         // typing
         // date
         // various message types
-        return 1;
+        MessageListItemAdapter.EntityType entityType = entity.getType();
+        if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
+            return 1;
+        } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
+            return 2;
+        } else if (entityType == MessageListItemAdapter.EntityType.TYPING) {
+            return 3;
+        }
+        return 0;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {

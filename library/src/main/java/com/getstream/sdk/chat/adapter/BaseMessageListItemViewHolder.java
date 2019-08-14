@@ -20,7 +20,7 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     }
 
     public abstract void bind(Context context, ChannelState channelState,
-                              @NonNull List<Message> messageList, int position,
+                              @NonNull MessageListItemAdapter.Entity entity, int position,
                               boolean isThread, View.OnClickListener reactionListener,
                               View.OnLongClickListener longClickListener);
 }

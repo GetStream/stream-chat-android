@@ -43,25 +43,20 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, MessageListItemAdapter.Entity entity, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
         this.context = context;
 
         ll_typingusers.setVisibility(View.VISIBLE);
         iv_typing_indicator.setVisibility(View.VISIBLE);
-        createTypingUsersView();
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
-        Glide.with(context).load(R.raw.typing).into(imageViewTarget);
-    }
-
-    private void createTypingUsersView() {
         ll_typingusers.removeAllViews();
         Resources resources = context.getResources();
         float marginLeft = resources.getDimension(R.dimen.user_avatar_margin_left);
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < Global.typingUsers.size(); i++) {
+        List<User> users = entity.getUsers();
+
+        for (User user : users) {
             View v = vi.inflate(R.layout.view_user_avatar_initials, null);
-            User user = Global.typingUsers.get(i);
             TextView textView = v.findViewById(R.id.tv_initials);
             ImageView imageView = v.findViewById(R.id.cv_avatar);
             textView.setText(user.getInitials());
@@ -77,5 +72,10 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             v.setLayoutParams(params);
             ll_typingusers.addView(v);
         }
+        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
+        Glide.with(context).load(R.raw.typing).into(imageViewTarget);
+
+
     }
+
 }

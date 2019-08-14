@@ -77,7 +77,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ImageView iv_reply;
     private TextView tv_reply;
 
-
     private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
     private MessageViewHolderFactory viewHolderFactory;
@@ -149,30 +148,29 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, @NonNull List<Message> messageList, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, MessageListItemAdapter.Entity entity, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         // set binding
         this.context = context;
         this.channelState = channelState;
-        this.messageList = messageList;
         this.position = position;
         this.isThread = isThread;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        if (position < messageList.size()) {
+        this.message = entity.getMessage();
 
 
 
-            this.message = messageList.get(position);
-            if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
-                alv_attachments.setVisibility(View.GONE);
-            } else {
-                alv_attachments.setVisibility(View.VISIBLE);
-                alv_attachments.setViewHolderFactory(viewHolderFactory);
-                alv_attachments.setStyle(style);
-                alv_attachments.setMessage(this.message);
-            }
 
+        if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
+            alv_attachments.setVisibility(View.GONE);
+        } else {
+            alv_attachments.setVisibility(View.VISIBLE);
+            alv_attachments.setViewHolderFactory(viewHolderFactory);
+            alv_attachments.setStyle(style);
+            alv_attachments.setMessage(this.message);
         }
+
+
 
 
         isThreadHeader = (isThread && this.clickListener == null && longClickListener == null);
