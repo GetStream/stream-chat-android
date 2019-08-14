@@ -61,7 +61,11 @@ public class Message {
 
     @SerializedName("created_at")
     @Expose
-    private String created_at;
+    private String createdAt___OLD;
+
+    @SerializedName("created_at")
+    @Expose
+    private Date createdAt;
 
     @SerializedName("updated_at")
     @Expose
@@ -135,7 +139,7 @@ public class Message {
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
         Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String sendDate = message.getCreatedAt();
+        String sendDate = message.getCreatedAt___OLD();
 
         Date date = null;
         try {
@@ -383,12 +387,22 @@ public class Message {
         this.reactionCounts = reactionCounts;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
-    public String getCreatedAt() {
-        return created_at;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    // DEPRECATED: use setCreatedAt instead
+    public void setCreatedAt___OLD(String created_at) {
+        this.createdAt___OLD = created_at;
+    }
+
+    // DEPRECATED: use getCreatedAt instead
+    public String getCreatedAt___OLD() {
+        return createdAt___OLD;
     }
 
     public Date getCreatedAtDate() {
@@ -398,7 +412,7 @@ public class Message {
         df.setTimeZone(tz);
 
         try {
-           return df.parse(getCreatedAt());
+           return df.parse(getCreatedAt___OLD());
         } catch (ParseException e) {
             e.printStackTrace();
             return new Date();

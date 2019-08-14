@@ -139,7 +139,7 @@ public class ChannelState {
         List<ChannelUserRead> readLastMessage = new ArrayList<ChannelUserRead>();
         for (ChannelUserRead r : reads) {
             // TODO: fix me as soon as we have working date parsing
-            //r.getLast_read() > lastMessage.getCreatedAt()
+            //r.getLast_read() > lastMessage.getCreatedAt___OLD()
             if (true) {
                 readLastMessage.add(r);
             }
@@ -213,7 +213,7 @@ public class ChannelState {
 //        return lastReadUser;
     }
 
-    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
+    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt___OLD().compareTo(b.getCreatedAt___OLD());
 
     public void addOrUpdateMessage(Message newMessage){
         for (int i = messages.size() - 1; i >= 0; i--) {
