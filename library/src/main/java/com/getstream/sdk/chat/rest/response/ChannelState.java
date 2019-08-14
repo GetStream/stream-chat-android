@@ -213,7 +213,7 @@ public class ChannelState {
 //        return lastReadUser;
     }
 
-    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt___OLD().compareTo(b.getCreatedAt___OLD());
+    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
 
     public void addOrUpdateMessage(Message newMessage){
         for (int i = messages.size() - 1; i >= 0; i--) {
@@ -285,7 +285,7 @@ public class ChannelState {
             Message message = messages.get(i);
             if (!message.isIncoming()) continue;
             if (message.getDeletedAt() != null) continue;
-            if (message.getCreatedAtDate().getTime() > lastReadDate.getTime())
+            if (message.getCreatedAt().getTime() > lastReadDate.getTime())
                 unreadMessageCount++;
         }
         return unreadMessageCount;

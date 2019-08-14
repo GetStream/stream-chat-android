@@ -140,7 +140,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
             else
-                tv_date.setText(dateFormat.format(lastMessage.getCreatedAtDate()));
+                tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
         }
 
         // read indicators
