@@ -51,23 +51,17 @@ import ru.noties.markwon.image.ImagesPlugin;
 
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
-    // region LifeCycle
-    /**
-     * TODO:
-     * - use data binding
-     * - handle the logic of my message vs their messages once instead of 100 times
-     */
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
     private ConstraintLayout cl_message, headerView;
     private TextView tv_text, tv_deleted;
     private RecyclerView rv_reaction;
-    private LinearLayout ll_typingusers;
+
     private LinearLayout ll_send_failed;
     private TextView tv_failed_text, tv_failed_des;
     private ImageView cv_avatar;
     private ImageView iv_docket;
-    private TextView tv_header_date, tv_header_time;
+
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
     private TextView tv_username, tv_messagedate, tv_initials;
 
@@ -82,8 +76,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ConstraintLayout cl_reply;
     private ImageView iv_reply;
     private TextView tv_reply;
-    // Tying
-    private ImageView iv_typing_indicator;
+
 
     private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -114,14 +107,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         super(resId, viewGroup);
 
         cl_message = itemView.findViewById(R.id.cl_message);
-        ll_typingusers = itemView.findViewById(R.id.ll_typing_indicator);
-
-        headerView = itemView.findViewById(R.id.cl_header);
-        if (headerView == null) Log.d(TAG, "headerView null");
-
-        tv_header_date = itemView.findViewById(R.id.tv_header_date);
-        tv_header_time = itemView.findViewById(R.id.tv_header_time);
-
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
         iv_docket = itemView.findViewById(R.id.iv_docket);
 
@@ -151,7 +136,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         alv_attachments = itemView.findViewById(R.id.cl_attachment);
 
-        iv_typing_indicator = itemView.findViewById(R.id.iv_typing_indicator);
+
         view_read_indicator = itemView.findViewById(R.id.view_read_indicator);
 
         tv_indicator_initials = itemView.findViewById(R.id.tv_indicator_initials);
@@ -205,7 +190,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 //            ll_typingusers.setVisibility(View.GONE);
   //          iv_typing_indicator.setVisibility(View.GONE);
         }
-        configHeaderView();
         configUserInfo();
         configSendFailed();
         configMessageText();
@@ -229,20 +213,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
     // endregion
 
-//    // region Config UIs
-//    private void configTypingIndicator() {
-//        cl_message.setVisibility(View.GONE);
-//        if (Global.typingUsers.size() > 0) {
-//            ll_typingusers.setVisibility(View.VISIBLE);
-//            iv_typing_indicator.setVisibility(View.VISIBLE);
-//            createTypingUsersView();
-//            GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
-//            Glide.with(context).load(R.raw.typing).into(imageViewTarget);
-//        } else {
-//            ll_typingusers.setVisibility(View.INVISIBLE);
-//            iv_typing_indicator.setVisibility(View.INVISIBLE);
-//        }
-//    }
+
 
     private void configDelieveredIndicator() {
         if (position == messageList.size() - 1 && !message.isIncoming() && !isThread) {
@@ -294,47 +265,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void createTypingUsersView() {
-        ll_typingusers.removeAllViews();
-        Resources resources = context.getResources();
-        float marginLeft = resources.getDimension(R.dimen.user_avatar_margin_left);
-        LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < Global.typingUsers.size(); i++) {
-            View v = vi.inflate(R.layout.view_user_avatar_initials, null);
-            User user = Global.typingUsers.get(i);
-            TextView textView = v.findViewById(R.id.tv_initials);
-            ImageView imageView = v.findViewById(R.id.cv_avatar);
-            textView.setText(user.getInitials());
-            Utils.circleImageLoad(imageView, user.getImage());
-            int height = (int) context.getResources().getDimension(R.dimen.message_typing_indicator_size);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(height, height);
-            if (i == 0) {
-                params.setMargins(0, 0, 0, 0);
-            } else {
-                params.setMargins(-(int) marginLeft, 0, 0, 0);
-            }
 
-            v.setLayoutParams(params);
-            ll_typingusers.addView(v);
-        }
-    }
-
-    private void configHeaderView() {
-        headerView.setVisibility(headerViewVisible());
-        if (headerView.getVisibility() != View.VISIBLE) return;
-
-        String headerDate = message.getDate(), headerTime;
-        if (message.isToday())
-            headerDate = "Today";
-
-        if (message.isYesterday())
-            headerDate = "Yesterday";
-
-        headerTime = message.getTime();
-        tv_header_date.setText(headerDate);
-        tv_header_time.setText(" AT " + headerTime);
-    }
 
     private void configUserInfo() {
         if (messageTimeVisible()) {
