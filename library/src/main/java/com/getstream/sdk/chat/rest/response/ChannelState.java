@@ -298,7 +298,7 @@ public class ChannelState {
         if (lastReadDate == null) return unreadMessageCount;
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
-            if (!message.isIncoming()) continue;
+            if (!message.getUser().getId().equals(userId)) continue;
             if (message.getDeletedAt() != null) continue;
             if (message.getCreatedAt().getTime() > lastReadDate.getTime())
                 unreadMessageCount++;

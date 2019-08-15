@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-
-import java.util.List;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -20,7 +18,11 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     }
 
     public abstract void bind(Context context, ChannelState channelState,
-                              @NonNull List<Message> messageList, int position,
+                              @NonNull Entity entity, int position,
                               boolean isThread, View.OnClickListener reactionListener,
                               View.OnLongClickListener longClickListener);
+
+    public abstract void setStyle(MessageListViewStyle style);
+
+
 }

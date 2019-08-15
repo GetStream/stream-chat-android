@@ -28,10 +28,10 @@ public class MessageListViewStyle extends BaseStyle {
         this.setContext(c);
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.MessageListView, 0, 0);
-        messageTextColorMine = a.getColor(R.styleable.MessageListView_messageTextColorMine, -1);
-        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_messageTextColorTheirs, -1);
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, -1));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
+        messageTextColorMine = a.getColor(R.styleable.MessageListView_messageTextColorMine, Color.BLACK);
+        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_messageTextColorTheirs, Color.BLACK);
+        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, R.drawable.message_bubble_mine));
+        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, R.drawable.message_bubble_theirs));
 
         // Avatar
         avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));

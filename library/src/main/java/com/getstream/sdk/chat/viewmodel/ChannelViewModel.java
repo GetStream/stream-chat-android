@@ -4,8 +4,12 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
+import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -19,6 +23,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.EntityLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
@@ -54,7 +59,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<String> lastActiveString;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
-    private MutableLiveData<Boolean> endOfPagination;
+    private EntityLiveData entities;
+    public MutableLiveData<Boolean> endOfPagination;
+
 
     public Channel getChannel() {
         return channel;
@@ -91,14 +98,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         typing = new MutableLiveData<List<User>>(new ArrayList<User>());
         reads = new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
 
+        entities = new EntityLiveData(this.channel.getClient().getUser(), messages, typing);
+
         watcherCount = new MutableLiveData<>();
+
 
         // humanized time diff
         Date lastActive = channelState.getLastActive();
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString = new MutableLiveData<>(humanizedDate);
 
-        this.initEventHandlers();
         this.queryChannel();
     }
 
@@ -130,12 +139,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageNew(Event event) {
-                List<Message> list = messages.getValue();
-                if (list == null) {
-                    list = new ArrayList<>();
+                Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
+                List<Message> messageList = messages.getValue();
+                if (messageList == null) {
+                    messageList = new ArrayList<>();
                 }
-                list.add(event.getMessage());
-                messages.postValue(list);
+                messageList.add(event.getMessage());
+                messages.postValue(messageList);
             }
 
             @Override
@@ -220,8 +230,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private void queryChannel() {
         loading.postValue(true);
+        int limit = 10; // Constant.DEFAULT_LIMIT
         channel.query(
-                new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
+                new ChannelQueryRequest().withMessages(limit),
                 new QueryChannelCallback() {
 
             @Override
@@ -229,10 +240,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 loading.postValue(false);
                 Log.i(TAG, "messages loaded");
                 channelState = response;
-                if (channelState.getMessages().size() < Constant.DEFAULT_LIMIT) {
+                if (channelState.getMessages().size() < limit) {
                     endOfPagination.postValue(true);
                 }
                 addMessages(channelState.getMessages());
+                initEventHandlers();
             }
 
                     @Override
@@ -434,5 +446,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public MutableLiveData<String> getLastActiveString() {
         return lastActiveString;
+    }
+
+    public EntityLiveData getEntities() {
+        return entities;
     }
 }

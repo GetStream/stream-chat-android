@@ -52,7 +52,8 @@ public class ReactionFunction {
                                             final Message message,
                                             final View.OnClickListener clickListener) {
         final Dialog dialog = new Dialog(context);
-        if (message.isIncoming())
+        // TODO: fix me
+        if (true)
             dialog.setContentView(R.layout.dialog_moreaction_incoming);
         else {
             dialog.setContentView(R.layout.dialog_moreaction_outgoing);

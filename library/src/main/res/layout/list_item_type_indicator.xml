@@ -21,7 +21,6 @@
         android:layout_height="30dp"
         android:layout_marginStart="10dp"
         android:scaleType="fitCenter"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/ll_typing_indicator"
         app:layout_constraintStart_toEndOf="@+id/ll_typing_indicator"
         app:layout_constraintTop_toTopOf="@+id/ll_typing_indicator" />

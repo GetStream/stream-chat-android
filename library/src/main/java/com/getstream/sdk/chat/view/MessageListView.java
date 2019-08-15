@@ -63,9 +63,11 @@ public class MessageListView extends RecyclerView {
         adapter = new MessageListItemAdapter(getContext());
 
         // use livedata and observe
-        viewModel.getMessages().observe(lifecycleOwner, messages -> {
-            Log.i(TAG, "Observe found this many messages: " + messages.size());
-            adapter.replaceMessages(messages);
+        viewModel.getEntities().observe(lifecycleOwner, entities -> {
+            Log.i(TAG, "Observe found this many entities: " + entities.size());
+            adapter.replaceEntities(entities);
+            // TODO: for now always scroll to bottom when something changes
+            this.getLayoutManager().scrollToPosition(adapter.getItemCount());
         });
 
         this.setAdapterWithStyle(adapter);
@@ -89,7 +91,8 @@ public class MessageListView extends RecyclerView {
                     int firstVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
                     Boolean reachedTheBeginning = firstVisible <= 3;
                     if (reachedTheBeginning) {
-                        viewModel.loadMore();
+                        //TODO: reenable
+                        // viewModel.loadMore();
                     }
                 }
             }
