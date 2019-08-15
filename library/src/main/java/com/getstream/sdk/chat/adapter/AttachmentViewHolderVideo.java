@@ -17,11 +17,9 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.AttachmentListView;
@@ -30,7 +28,8 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AttachmentViewHolder extends BaseAttachmentViewHolder {
+
+public class AttachmentViewHolderVideo extends BaseAttachmentViewHolder {
 
     private Context context;
     private Message message;
@@ -38,13 +37,11 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private MessageListViewStyle style;
 
     // Attachment
-    private ConstraintLayout cl_attachment, cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
-    private ListView lv_attachment_file;
     private ImageView iv_media_more;
     private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-    private ImageView iv_command_title;
+    private ConstraintLayout cl_video;
     // Action
     private AttachmentListView.AttachmentClickListener clickListener;
     private AttachmentListView.AttachmentClickListener longClickListener;
@@ -52,19 +49,17 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
-    public AttachmentViewHolder(int resId, ViewGroup parent) {
+    public AttachmentViewHolderVideo(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
-        cl_attachment = itemView.findViewById(R.id.cl_attachment);
-        cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
-        lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
         iv_media_more = itemView.findViewById(R.id.iv_media_more);
         tv_more = itemView.findViewById(R.id.tv_more);
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
-        iv_command_title = itemView.findViewById(R.id.iv_command_title);
+        cl_video = itemView.findViewById(R.id.cl_video);
+
     }
 
     @Override
@@ -75,47 +70,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         this.message = message;
         this.attachment = attachment;
 
-        configAttachment();
-
-        //configMediaAttach();
-        //configParamsAttachment();
+        configMediaAttach();
     }
 
-    private void configAttachment() {
-//        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
-//            cl_attachment.setVisibility(View.GONE);
-//            return;
-//        }
-
-        boolean hasFile = false;
-        boolean hasMedia = false;
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                hasFile = true;
-            } else {
-                hasMedia = true;
-            }
-        }
-
-        if (hasMedia) {
-            cl_attachment_media.setVisibility(View.VISIBLE);
-            configMediaAttach();
-        } else {
-            cl_attachment_media.setVisibility(View.GONE);
-        }
-
-        if (hasFile) {
-            lv_attachment_file.setVisibility(View.VISIBLE);
-            configFileAttach();
-        } else {
-            lv_attachment_file.setVisibility(View.GONE);
-        }
-    }
 
     private void configImageThumbBackground(Attachment attachment) {
         int mediaBack, moreBack;
-        // TODO: fix this somehow
+        // TODO: fix this somehow, is mine is not known here
         if (true) {
             if (!TextUtils.isEmpty(attachment.getText()) ||
                     !TextUtils.isEmpty(attachment.getTitle())) {
@@ -172,42 +133,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         view.setBackground(background);
     }
 
-
-    private void configFileAttach() {
-        configAttachViewBackground(lv_attachment_file);
-        List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                attachments.add(attachment);
-            }
-        }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
-
-        lv_attachment_file.setAdapter(attachAdapter);
-        lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                   int position, long id) -> {
-            Log.d(TAG, "Attach onClick: " + position);
-
-                SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                attachmentModel.setAttachmentIndex(position);
-                attachmentModel.setAttachments(attachments);
-
-                view.setTag(attachmentModel);
-                triggerClick(message, attachment);
-
-        });
-        lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            triggerLongClick(message, attachment);
-            return true;
-        });
-
-        float height = context.getResources().getDimension(R.dimen.attach_file_height);
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
-        params.height = (int) height * attachments.size();
-        lv_attachment_file.setLayoutParams(params);
-    }
-
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
         for (Attachment attachment : message.getAttachments()) {
@@ -230,11 +155,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             if (attachUrl == null) attachUrl = attachments.get(0).getImage();
         }
         if (TextUtils.isEmpty(attachUrl)) {
-            cl_attachment_media.setVisibility(View.GONE);
+            cl_video.setVisibility(View.GONE);
             return;
         }
-        cl_attachment_media.setVisibility(View.VISIBLE);
-        configAttachViewBackground(cl_attachment_media);
+        configAttachViewBackground(cl_video);
         configImageThumbBackground(attachments.get(0));
         // More
         if (attachments.size() > 1) {
@@ -247,21 +171,21 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
 
         // Set Click Listener
-        cl_attachment_media.setOnClickListener((View v) -> {
-                if (attachments.size() > 0) {
-                    SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                    attachmentModel.setAttachmentIndex(0);
-                    attachmentModel.setAttachments(attachments);
-                    Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
-                    v.setTag(attachmentModel);
-                }
-                this.triggerClick(message, attachment);
+        cl_video.setOnClickListener((View v) -> {
+            if (attachments.size() > 0) {
+                SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
+                attachmentModel.setAttachmentIndex(0);
+                attachmentModel.setAttachments(attachments);
+                Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
+                v.setTag(attachmentModel);
+            }
+            this.triggerClick(message, attachment);
 
 
         });
 
 
-        cl_attachment_media.setOnLongClickListener((View v) -> {
+        cl_video.setOnLongClickListener((View v) -> {
             this.triggerLongClick(message, attachment);
             return true;
         });
@@ -299,30 +223,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (this.clickListener != null) {
             this.clickListener.onClick(message, attachment);
         }
-    }
-
-    private void configParamsAttachment() {
-        if (cl_attachment.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cl_attachment.getLayoutParams();
-        ConstraintLayout.LayoutParams paramsLv = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
-        if (lv_attachment_file.getVisibility() == View.VISIBLE) {
-            // TODO; fix this somehow
-            if (true) {
-                params.horizontalBias = 0f;
-                paramsLv.horizontalBias = 0f;
-            } else {
-                params.horizontalBias = 1f;
-                paramsLv.horizontalBias = 1f;
-            }
-            params.width = ConstraintLayout.LayoutParams.WRAP_CONTENT;
-            lv_attachment_file.setLayoutParams(paramsLv);
-            cl_attachment.setLayoutParams(params);
-        } else {
-            params.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-        }
-        cl_attachment.setLayoutParams(params);
-
-        lv_attachment_file.setBackgroundColor(context.getResources().getColor(R.color.black));
     }
 
     public void setStyle(MessageListViewStyle style) {

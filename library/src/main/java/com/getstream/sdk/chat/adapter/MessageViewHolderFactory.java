@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 
 import java.util.List;
@@ -18,6 +19,11 @@ public class MessageViewHolderFactory {
     private static int DATE_SEPARATOR = 1;
     private static int MESSAGE = 2;
     private static int TYPING = 3;
+
+    private static int GENERIC_ATTACHMENT = 1;
+    private static int IMAGE_ATTACHMENT = 2;
+    private static int VIDEO_ATTACHMENT = 3;
+    private static int FILE_ATTACHMENT = 4;
 
 
     public enum Position {
@@ -44,7 +50,15 @@ public class MessageViewHolderFactory {
         // image
         // link/card layout
         // custom attachment types
-        return 1;
+        String t = attachment.getType();
+        if (t.equals(ModelType.attach_video)) {
+            return VIDEO_ATTACHMENT;
+        } else if (attachments.get(0).getType().equals(ModelType.attach_image)) {
+            return IMAGE_ATTACHMENT;
+        } else {
+            return GENERIC_ATTACHMENT;
+        }
+
     }
 
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
@@ -68,9 +82,18 @@ public class MessageViewHolderFactory {
     }
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
-        AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
-        holder.setStyle(adapter.getStyle());
-        return holder;
+        if (viewType == GENERIC_ATTACHMENT) {
+            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else if (viewType == VIDEO_ATTACHMENT) {
+            AttachmentViewHolderVideo holder = new AttachmentViewHolderVideo(R.layout.list_item_attachment_video, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else {
+            return null;
+        }
+
     }
 
 
