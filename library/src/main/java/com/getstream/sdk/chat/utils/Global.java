@@ -1,12 +1,10 @@
 package com.getstream.sdk.chat.utils;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.getstream.sdk.chat.component.Component;

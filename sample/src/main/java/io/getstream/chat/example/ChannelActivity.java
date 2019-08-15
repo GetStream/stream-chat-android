@@ -1,8 +1,10 @@
 package io.getstream.chat.example;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -10,7 +12,8 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -56,11 +59,26 @@ public class ChannelActivity extends AppCompatActivity {
 
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
+        // Permission Check
+        PermissionChecker.permissionCheck(this, null);
     }
 
     @Override
     public void onBackPressed(){
         viewModel.removeEventHandler();
         super.onBackPressed();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean granted = true;
+            for (int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            if (!granted) PermissionChecker.showRationalDialog(this, null);
+        }
     }
 }
