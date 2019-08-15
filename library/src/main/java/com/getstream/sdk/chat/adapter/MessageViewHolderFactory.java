@@ -84,7 +84,8 @@ public class MessageViewHolderFactory {
     }
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
-        if (viewType == GENERIC_ATTACHMENT) {
+        // TODO: Refactor into a media, file and generic attachment, clean up code
+        if (viewType == GENERIC_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
             AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
