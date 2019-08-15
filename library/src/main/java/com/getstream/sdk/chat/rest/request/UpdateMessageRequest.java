@@ -60,12 +60,14 @@ public class UpdateMessageRequest {
         this.message.remove("isStartDay");
         this.message.remove("isYesterday");
         this.message.remove("isToday");
-        this.message.remove("created");
-        this.message.remove("edited");
-        this.message.remove("deleted");
         this.message.remove("date");
         this.message.remove("time");
         this.message.remove("isIncoming");
         this.message.remove("isDelivered");
+        this.message.remove("convertDateToString");
+        this.message.remove("isCommandMessage");
+        this.message.remove("differentTime");
+        this.message.remove("TimeElapsed");
+        this.message.remove("equals");
     }
 }

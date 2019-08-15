@@ -91,199 +91,7 @@ public class Message {
     @Expose
     private Map<String, String> commandInfo;
 
-    // Additional Params
-    private Map<String, Object> extraData;
-
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        // we compare based on the CID
-        Message otherMessage = (Message) obj;
-        return TextUtils.equals(this.getId(), otherMessage.getId());
-    }
-
-    private boolean isStartDay = false;
-    private boolean isYesterday = false;
-    private boolean isToday = false;
-    private String created, edited, deleted;
-    private String date, time;
-    private boolean isDelivered = false;
-
-    // region Set Date and Time
-    public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
-        if (messages == null) return;
-        if (messages.size() == 0) return;
-
-        Message preMessage = (preMessage0 != null) ? preMessage0 : messages.get(0);
-        setFormattedDate(preMessage);
-        int startIndex = (preMessage0 != null) ? 0 : 1;
-        for (int i = startIndex; i < messages.size(); i++) {
-            if (i != startIndex) {
-                preMessage = messages.get(i - 1);
-            }
-
-            Message message = messages.get(i);
-            setFormattedDate(message);
-            message.setStartDay(!message.getDate().equals(preMessage.getDate()));
-        }
-    }
-
-    private static void setFormattedDate(Message message) {
-        if (message == null || message.getDate() != null) return;
-        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        Calendar smsTime = Calendar.getInstance();
-        smsTime.setTimeInMillis(message.getCreatedAt().getTime());
-
-        Calendar now = Calendar.getInstance();
-
-        final String timeFormatString = "h:mm aa";
-        final String dateTimeFormatString = "EEEE";
-
-        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Global.locale);
-        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Global.locale);
-        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Global.locale);
-
-        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            message.setToday(true);
-            message.setDate("Today");
-        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-            message.setYesterday(true);
-            message.setDate("Yesterday");
-        } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
-            message.setDate(dateFormat1.format(message.getCreatedAt()));
-        } else {
-            message.setDate(dateFormat2.format(message.getCreatedAt()));
-        }
-        message.setTime(timeFormat.format(message.getCreatedAt()));
-        message.setCreated(dateFormat2.format(message.getCreatedAt()));
-    }
-
-    public static String convertDateToString(Date date) {
-        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String timeStr = Global.messageDateFormat.format(date);
-        return timeStr;
-    }
-
-    public static boolean isCommandMessage(Message message) {
-        return message.getText().startsWith("/");
-    }
-
-    // Passed Time
-    public static String differentTime(String dateStr) {
-        if (TextUtils.isEmpty(dateStr)) return null;
-        Date lastActiveDate = null;
-        try {
-            lastActiveDate = Global.messageDateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Date dateTwo = new Date();
-        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
-        String timeElapsed = TimeElapsed(timeDiff);
-        String differTime = "";
-        if (timeElapsed.contains("Just now"))
-            differTime = "Active: " + timeElapsed;
-        else
-            differTime = "Active: " + timeElapsed + " ago";
-
-        return differTime;
-    }
-
-    public static String TimeElapsed(long seconds) {
-        String elapsed;
-        if (seconds < 60) {
-            elapsed = "Just now";
-        } else if (seconds < 60 * 60) {
-            int minutes = (int) (seconds / 60);
-            elapsed = String.valueOf(minutes) + " " + ((minutes > 1) ? "mins" : "min");
-        } else if (seconds < 24 * 60 * 60) {
-            int hours = (int) (seconds / (60 * 60));
-            elapsed = String.valueOf(hours) + " " + ((hours > 1) ? "hours" : "hour");
-        } else {
-            int days = (int) (seconds / (24 * 60 * 60));
-            elapsed = String.valueOf(days) + " " + ((days > 1) ? "days" : "day");
-        }
-        return elapsed;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public String getEdited() {
-        return edited;
-    }
-
-    public void setEdited(String edited) {
-        this.edited = edited;
-    }
-
-    public String getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(String deleted) {
-        this.deleted = deleted;
-    }
-
-    public boolean isYesterday() {
-        return isYesterday;
-    }
-
-    public void setYesterday(boolean yesterday) {
-        isYesterday = yesterday;
-    }
-
-    public boolean isToday() {
-        return isToday;
-    }
-
-    public void setToday(boolean today) {
-        isToday = today;
-    }
-
-    public boolean isStartDay() {
-        return isStartDay;
-    }
-
-    public void setStartDay(boolean startDay) {
-        isStartDay = startDay;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public boolean isDelivered() {
-        return isDelivered;
-    }
-
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
-    }
-
+    // region Getter & Setter
     public String getId() {
         return id;
     }
@@ -411,6 +219,176 @@ public class Message {
 
     public void setCommandInfo(Map<String, String> commandInfo) {
         this.commandInfo = commandInfo;
+    }
+
+    // endregion
+
+
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // we compare based on the CID
+        Message otherMessage = (Message) obj;
+        return TextUtils.equals(this.getId(), otherMessage.getId());
+    }
+    // Additional Params
+    private Map<String, Object> extraData;
+    private boolean isStartDay = false;
+    private boolean isYesterday = false;
+    private boolean isToday = false;
+
+    private String date, time;
+    private boolean isDelivered = false;
+
+    // region Set Date and Time
+    public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
+        if (messages == null) return;
+        if (messages.size() == 0) return;
+
+        Message preMessage = (preMessage0 != null) ? preMessage0 : messages.get(0);
+        setFormattedDate(preMessage);
+        int startIndex = (preMessage0 != null) ? 0 : 1;
+        for (int i = startIndex; i < messages.size(); i++) {
+            if (i != startIndex) {
+                preMessage = messages.get(i - 1);
+            }
+
+            Message message = messages.get(i);
+            setFormattedDate(message);
+            message.setStartDay(!message.getDate().equals(preMessage.getDate()));
+        }
+    }
+
+    private static void setFormattedDate(Message message) {
+        if (message == null || message.getDate() != null) return;
+        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        Calendar smsTime = Calendar.getInstance();
+        smsTime.setTimeInMillis(message.getCreatedAt().getTime());
+
+        Calendar now = Calendar.getInstance();
+
+        final String timeFormatString = "h:mm aa";
+        final String dateTimeFormatString = "EEEE";
+
+        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Global.locale);
+        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Global.locale);
+        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Global.locale);
+
+        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
+            message.setToday(true);
+            message.setDate("Today");
+        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
+            message.setYesterday(true);
+            message.setDate("Yesterday");
+        } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
+            message.setDate(dateFormat1.format(message.getCreatedAt()));
+        } else {
+            message.setDate(dateFormat2.format(message.getCreatedAt()));
+        }
+        message.setTime(timeFormat.format(message.getCreatedAt()));
+    }
+
+    public static String convertDateToString(Date date) {
+        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String timeStr = Global.messageDateFormat.format(date);
+        return timeStr;
+    }
+
+    public static boolean isCommandMessage(Message message) {
+        return message.getText().startsWith("/");
+    }
+
+    // Passed Time
+    public static String differentTime(String dateStr) {
+        if (TextUtils.isEmpty(dateStr)) return null;
+        Date lastActiveDate = null;
+        try {
+            lastActiveDate = Global.messageDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Date dateTwo = new Date();
+        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
+        String timeElapsed = TimeElapsed(timeDiff);
+        String differTime = "";
+        if (timeElapsed.contains("Just now"))
+            differTime = "Active: " + timeElapsed;
+        else
+            differTime = "Active: " + timeElapsed + " ago";
+
+        return differTime;
+    }
+
+    public static String TimeElapsed(long seconds) {
+        String elapsed;
+        if (seconds < 60) {
+            elapsed = "Just now";
+        } else if (seconds < 60 * 60) {
+            int minutes = (int) (seconds / 60);
+            elapsed = String.valueOf(minutes) + " " + ((minutes > 1) ? "mins" : "min");
+        } else if (seconds < 24 * 60 * 60) {
+            int hours = (int) (seconds / (60 * 60));
+            elapsed = String.valueOf(hours) + " " + ((hours > 1) ? "hours" : "hour");
+        } else {
+            int days = (int) (seconds / (24 * 60 * 60));
+            elapsed = String.valueOf(days) + " " + ((days > 1) ? "days" : "day");
+        }
+        return elapsed;
+    }
+
+    public boolean isYesterday() {
+        return isYesterday;
+    }
+
+    public void setYesterday(boolean yesterday) {
+        isYesterday = yesterday;
+    }
+
+    public boolean isToday() {
+        return isToday;
+    }
+
+    public void setToday(boolean today) {
+        isToday = today;
+    }
+
+    public boolean isStartDay() {
+        return isStartDay;
+    }
+
+    public void setStartDay(boolean startDay) {
+        isStartDay = startDay;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
     }
 
     // TODO: this is for ModelView to do

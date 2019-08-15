@@ -245,7 +245,7 @@ public class MessageInputView extends RelativeLayout
     public void onClick(View v) {
         int id = v.getId();
         Log.i(TAG, "click click");
-        if (id == R.id.tv_send) {
+        if (id == R.id.iv_send) {
             this.onSendMessage(binding.etMessage.getText().toString());
             this.stopTyping();
         } else if (id == R.id.iv_openAttach) {

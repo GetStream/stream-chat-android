@@ -1,13 +1,11 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
