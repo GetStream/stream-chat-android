@@ -123,7 +123,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         typingUsers = new MutableLiveData<>(new ArrayList<User>());
         reads = new MutableLiveData<>(channelState.getReads());
 
-        entities = new EntityLiveData(this.channel.getClient().getUser(), messages, typingUsers);
+        entities = new EntityLiveData(this.channel.getClient().getUser(), messages, typingUsers, reads);
         watcherCount = new MutableLiveData<>();
 
         // humanized time diff
@@ -322,127 +322,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     }
                 }
         );
-
-        // TODO: Handle thread...
-
-        //if (isThreadMode()) {
-//            binding.setShowMainProgressbar(true);
-//            client.getReplies(thread_parentMessage.getId(),
-//                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-//                    threadMessages.get(0).getId(), new GetRepliesCallback() {
-//                        @Override
-//                        public void onSuccess(GetRepliesResponse response) {
-//                            binding.setShowMainProgressbar(false);
-//                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-//                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-//                                noHistoryThread = true;
-//
-//                            Message.setStartDay(newMessages, null);
-//                            // Add new to current Message List
-//                            for (int i = newMessages.size() - 1; i > -1; i--) {
-//                                threadMessages.add(0, newMessages.get(i));
-//                            }
-//                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-//                            mThreadAdapter.notifyDataSetChanged();
-//                            recyclerView().scrollToPosition(scrollPosition);
-//                            isCalling = false;
-//                        }
-//
-//                        @Override
-//                        public void onError(String errMsg, int errCode) {
-//                            Utils.showMessage(getContext(), errMsg);
-//                            isCalling = false;
-//                            binding.setShowMainProgressbar(false);
-//                        }
-//                    }
-//            );
-        // } else {
-
-
-        // }
     }
 
-
-//    private void newMessageEvent(Message message) {
-//        Message.setStartDay(Arrays.asList(message), getLastMessage());
-//
-//        switch (message.getType()) {
-//            case ModelType.message_regular:
-//                if (!message.isIncoming())
-//                    message.setDelivered(true);
-//
-//                messages().remove(ephemeralMessage);
-//                if (message.isIncoming() && !isShowLastMessage) {
-//                    scrollPosition = -1;
-////                    binding.tvNewMessage.setVisibility(View.VISIBLE);
-//                } else {
-//                    scrollPosition = 0;
-//                }
-//                mViewModel.setChannelMessages(channelMessages);
-//                messageMarkRead();
-//                break;
-//            case ModelType.message_ephemeral:
-//            case ModelType.message_error:
-//                boolean isContain = false;
-//                for (int i = messages().size() - 1; i >= 0; i--) {
-//                    Message message1 = messages().get(i);
-//                    if (message1.getId().equals(message.getId())) {
-//                        messages().remove(message1);
-//                        isContain = true;
-//                        break;
-//                    }
-//                }
-//                if (!isContain) messages().add(message);
-//                scrollPosition = 0;
-//                if (isThreadMode()) {
-//                    mThreadAdapter.notifyDataSetChanged();
-//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-//                } else {
-//                    mViewModel.setChannelMessages(messages());
-//                }
-//                break;
-//            case ModelType.message_reply:
-//                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
-//                    messages().remove(ephemeralMessage);
-//                    threadMessages.add(message);
-//                    mThreadAdapter.notifyDataSetChanged();
-//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-//                }
-//                break;
-//            case ModelType.message_system:
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    public void sendNewMessage(Message message) {
-//        if (offline) {
-//            //sendOfflineMessage();
-//            return;
-//        }
-//        if (resendMessageId == null) {
-//            ephemeralMessage = createEphemeralMessage(false);
-//            handleAction(ephemeralMessage);
-//        }
-//        binding.messageInput.setEnabled(false);
-//        channel.sendMessage(text,
-//                attachments,
-//                isThreadMode() ? thread_parentMessage.getId() : null,
-//                new MessageCallback() {
-//                    @Override
-//                    public void onSuccess(MessageResponse response) {
-//                        binding.messageInput.setEnabled(true);
-//                        progressSendMessage(response.getMessage(), resendMessageId);
-//                    }
-//
-//                    @Override
-//                    public void onError(String errMsg, int errCode) {
-//                        binding.messageInput.setEnabled(true);
-//                        Utils.showMessage(getContext(), errMsg);
-//                    }
-//                });
-//    }
 
 
     @Override
