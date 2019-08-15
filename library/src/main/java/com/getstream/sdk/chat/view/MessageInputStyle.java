@@ -2,14 +2,9 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
-import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.BaseStyle;
@@ -74,9 +69,9 @@ class MessageInputStyle extends BaseStyle {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageInputView);
 
-//        showAttachmentButton = a.getBoolean(R.styleable.MessageInputView_showAttachmentButton, false);
-//
-//        attachmentButtonBackground = a.getResourceId(R.styleable.MessageInputView_attachmentButtonBackground, -1);
+        showAttachmentButton = a.getBoolean(R.styleable.MessageInputView_showAttachmentButton, false);
+
+        attachmentButtonBackground = a.getResourceId(R.styleable.MessageInputView_attachmentButtonBackground, -1);
 //        attachmentButtonDefaultBgColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultBgColor,
 //                getColor(R.color.white_four));
 //        attachmentButtonDefaultBgPressedColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultBgPressedColor,
