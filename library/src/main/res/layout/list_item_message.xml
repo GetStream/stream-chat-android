@@ -13,66 +13,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="1px"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintBottom_toBottomOf="@+id/layout1"
-                app:layout_constraintEnd_toStartOf="@+id/layout1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/layout1"
-                tools:ignore="ContentDescription" />
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="1px"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@android:color/darker_gray"
-                app:layout_constraintBottom_toBottomOf="@+id/layout1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/layout1"
-                app:layout_constraintTop_toTopOf="@+id/layout1"
-                tools:ignore="ContentDescription" />
-            <LinearLayout
-                android:id="@+id/layout1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/tv_header_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_header_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="AT 8:33PM"
-                    android:textSize="12dp" />
-
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <TextView
             android:id="@+id/tv_gap_header"
             android:layout_width="match_parent"
@@ -113,7 +53,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.getstream.sdk.chat.view.AttachmentListView
             android:id="@+id/cl_attachment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,39 +61,7 @@
             android:layout_marginEnd="@dimen/message_margin_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction">
-
-            <include
-                android:id="@+id/cl_attachment_media"
-                layout="@layout/list_item_attach_media"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_gap_media_file"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/message_gap"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media" />
-
-            <ListView
-                android:id="@+id/lv_attachment_file"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:scrollbars="none"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_gap_media_file"
-                tools:listitem="@layout/list_item_attach_file" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
 
         <TextView
             android:id="@+id/tv_gap_attach"
@@ -311,10 +219,10 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_reply"
             app:layout_constraintVertical_bias="1" />
 
-        <include
+        <com.getstream.sdk.chat.view.ReadStateView
             android:id="@+id/view_read_indicator"
-            layout="@layout/view_user_read_indicator"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
@@ -330,6 +238,7 @@
             android:gravity="center"
             android:textSize="15sp"
             android:textStyle="bold"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -348,27 +257,5 @@
             tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_typing_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="visible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_typing_indicator"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="10dp"
-        android:scaleType="fitCenter"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/ll_typing_indicator"
-        app:layout_constraintStart_toEndOf="@+id/ll_typing_indicator"
-        app:layout_constraintTop_toTopOf="@+id/ll_typing_indicator" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

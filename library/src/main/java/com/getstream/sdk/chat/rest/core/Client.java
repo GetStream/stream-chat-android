@@ -488,15 +488,27 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * markRead - Send the mark read event for this user, only works if the `read_events` setting is enabled
-     *
-     * @return {Promise} Description
+     * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
      */
-    public void markRead(@NonNull String channelId,
+    public void markRead(@NonNull Channel channel,
+                         EventCallback callback) {
+        markRead(channel, new MarkReadRequest(null), callback);
+    }
+
+    /**
+     * markRead - Send the mark read event for this user, only works if the `read_events` setting is enabled
+     */
+    public void markRead(@NonNull Channel channel,
                          MarkReadRequest readRequest,
                          EventCallback callback) {
 
-        mService.markRead(channelId, apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
+        Config channelConfig = getChannelConfig(channel.getType());
+        if (channelConfig != null && !channelConfig.isReadEvents()) {
+            callback.onError("Read events are disabled for this channel type", -1);
+        }
+
+        if (getChannelConfig(channel.getType()).isReadEvents())
+        mService.markRead(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -512,7 +524,6 @@ public class Client implements WSResponseHandler {
     /**
      * markAllRead - marks all channels for this user as read
      *
-     * @return {Promise} Description
      */
     public void markAllRead(MarkReadRequest readRequest,
                             EventCallback callback) {

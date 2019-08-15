@@ -12,6 +12,7 @@
 
     <!--Default-->
     <color name="gray">#ebebeb</color>
+    <color name="stream_gray">#ebebeb</color>
     <color name="stream_gray_background">#F1F1F3</color>
     <color name="stream_gray_dark">#989898</color>
     <color name="gray_light">#e8e8e8</color>

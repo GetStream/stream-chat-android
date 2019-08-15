@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.enums.InputType;
@@ -20,11 +22,17 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.EntityLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
@@ -37,10 +45,28 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private final String TAG = ChannelViewModel.class.getSimpleName();
 
     private Channel channel;
+    private Looper looper;
+    private Map<String, Event> typingState;
 
     // TODO: channelState should be removed!
     public ChannelState channelState;
     private int channelSubscriptionId = 0;
+
+    // constants
+    private long TYPING_TIMEOUT = 10000;
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        if (looper != null) {
+            looper.interrupt();
+        }
+
+        if (channelSubscriptionId != 0) {
+            channel.removeEventHandler(channelSubscriptionId);
+        }
+    }
 
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
@@ -51,10 +77,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> watcherCount;
     private MutableLiveData<String> lastActiveString;
-    private MutableLiveData<List<User>> typing;
+    private MutableLiveData<Boolean> hasNewMessages;
+
+    public LiveData<List<User>> getTypingUsers() {
+        return typingUsers;
+    }
+
+    public MutableLiveData<List<User>> typingUsers;
     private MutableLiveData<List<ChannelUserRead>> reads;
     private MutableLiveData<Boolean> endOfPagination;
     private MutableLiveData<InputType> inputType;
+    private EntityLiveData entities;
 
     public Channel getChannel() {
         return channel;
@@ -71,22 +104,31 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         online = new MutableLiveData<>(true);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         endOfPagination = new MutableLiveData<>(false);
+        hasNewMessages = new MutableLiveData<>(false);
         // TODO: actually listen to the events and verify if anybody is online
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
         // TODO: change this if the list of channel members changes or the channel is updated
         channelName = new MutableLiveData<>(channelState.getChannelNameOrMembers());
 
         messages = new MutableLiveData<>(channelState.getMessages());
-        typing = new MutableLiveData<List<User>>(new ArrayList<User>());
-        reads = new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
+        typingUsers = new MutableLiveData<>(new ArrayList<User>());
+        reads = new MutableLiveData<>(channelState.getReads());
 
+        entities = new EntityLiveData(this.channel.getClient().getUser(), messages, typingUsers, reads);
         watcherCount = new MutableLiveData<>();
         // humanized time diff
         Date lastActive = channelState.getLastActive();
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString = new MutableLiveData<>(humanizedDate);
+        typingState = new HashMap<>();
 
-        this.initEventHandlers();
+        Callable<Void> markRead = () -> {
+            channel.markRead();
+            return null;
+        };
+        looper = new Looper(markRead);
+        looper.start();
+
         this.queryChannel();
     }
 
@@ -136,11 +178,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     // endregion
-
     public void markRead() {
-        // TODO: how to mark read?
+        looper.markRead();
     }
-
 
     private void initEventHandlers() {
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
@@ -155,12 +195,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageNew(Event event) {
-                List<Message> list = messages.getValue();
-                if (list == null) {
-                    list = new ArrayList<>();
+                Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
+                List<Message> messageList = messages.getValue();
+                if (messageList == null) {
+                    messageList = new ArrayList<>();
                 }
-                list.add(event.getMessage());
-                messages.postValue(list);
+                messageList.add(event.getMessage());
+                messages.postValue(messageList);
+
+                if (!TextUtils.equals(event.getMessage().getUser().getId(), channel.getClient().getUserId())) {
+                    markRead();
+                }
             }
 
             @Override
@@ -190,16 +235,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onTypingStart(Event event) {
-                List<User> typingCopy = typing.getValue();
-                typingCopy.add(event.getUser());
-                typing.postValue(typingCopy);
+                User user = event.getUser();
+                typingState.put(user.getId(), event);
+                typingUsers.postValue(getCleanedTypingUsers());
             }
 
             @Override
             public void onTypingStop(Event event) {
-                List<User> typingCopy = typing.getValue();
-                typingCopy.remove(event.getUser());
-                typing.postValue(typingCopy);
+                User user = event.getUser();
+                typingState.remove(user.getId());
+                typingUsers.postValue(getCleanedTypingUsers());
             }
         });
     }
@@ -245,26 +290,30 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private void queryChannel() {
         loading.postValue(true);
+        int limit = 10; // Constant.DEFAULT_LIMIT
         channel.query(
-                new ChannelQueryRequest().withMessages(Constant.DEFAULT_LIMIT),
-                new QueryChannelCallback() {
-
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        loading.postValue(false);
-                        Log.i(TAG, "messages loaded");
-                        channelState = response;
-                        if (channelState.getMessages().size() < Constant.DEFAULT_LIMIT) {
-                            endOfPagination.postValue(true);
-                        }
-                        addMessages(channelState.getMessages());
+            new ChannelQueryRequest().withMessages(limit),
+            new QueryChannelCallback() {
+                @Override
+                public void onSuccess(ChannelState response) {
+                    loading.postValue(false);
+                    Log.i(TAG, "messages loaded");
+                    channelState = response;
+                    if (channelState.getMessages().size() < limit) {
+                        endOfPagination.postValue(true);
                     }
+                    addMessages(channelState.getMessages());
+                    initEventHandlers();
+                    markRead();
+                }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        loading.postValue(false);
-                    }
-                });
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    loading.postValue(false);
+                }
+            }
+        );
     }
 
     public void loadMore() {
@@ -274,8 +323,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
         loadingMore.setValue(true);
 
-
-        Log.d(TAG, "ViewModel loadMore...");
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channelState.getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
@@ -284,142 +332,26 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 new QueryChannelCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
-                        loadingMore.postValue(false);
+
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        // TODO: messages added via load more should be added at the bottom
+                        // used to modify the scroll behaviour...
+                        entities.setIsLoadingMore(true);
                         addMessages(newMessages);
 
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)
                             endOfPagination.setValue(true);
+
+                        loadingMore.postValue(false);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        loadingMore.setValue(false);
+                        loadingMore.postValue(false);
                     }
                 }
         );
-
-        // TODO: Handle thread...
-
-        //if (isThreadMode()) {
-//            binding.setShowMainProgressbar(true);
-//            client.getReplies(thread_parentMessage.getId(),
-//                    String.valueOf(Constant.THREAD_MESSAGE_LIMIT),
-//                    threadMessages.get(0).getId(), new GetRepliesCallback() {
-//                        @Override
-//                        public void onSuccess(GetRepliesResponse response) {
-//                            binding.setShowMainProgressbar(false);
-//                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-//                            if (newMessages.size() < Constant.THREAD_MESSAGE_LIMIT)
-//                                noHistoryThread = true;
-//
-//                            Message.setStartDay(newMessages, null);
-//                            // Add new to current Message List
-//                            for (int i = newMessages.size() - 1; i > -1; i--) {
-//                                threadMessages.add(0, newMessages.get(i));
-//                            }
-//                            int scrollPosition = ((LinearLayoutManager) recyclerView().getLayoutManager()).findLastCompletelyVisibleItemPosition() + response.getMessages().size();
-//                            mThreadAdapter.notifyDataSetChanged();
-//                            recyclerView().scrollToPosition(scrollPosition);
-//                            isCalling = false;
-//                        }
-//
-//                        @Override
-//                        public void onError(String errMsg, int errCode) {
-//                            Utils.showMessage(getContext(), errMsg);
-//                            isCalling = false;
-//                            binding.setShowMainProgressbar(false);
-//                        }
-//                    }
-//            );
-        // } else {
-
-
-        // }
     }
 
-
-//    private void newMessageEvent(Message message) {
-//        Message.setStartDay(Arrays.asList(message), getLastMessage());
-//
-//        switch (message.getType()) {
-//            case ModelType.message_regular:
-//                if (!message.isIncoming())
-//                    message.setDelivered(true);
-//
-//                messages().remove(ephemeralMessage);
-//                if (message.isIncoming() && !isShowLastMessage) {
-//                    scrollPosition = -1;
-////                    binding.tvNewMessage.setVisibility(View.VISIBLE);
-//                } else {
-//                    scrollPosition = 0;
-//                }
-//                mViewModel.setChannelMessages(channelMessages);
-//                messageMarkRead();
-//                break;
-//            case ModelType.message_ephemeral:
-//            case ModelType.message_error:
-//                boolean isContain = false;
-//                for (int i = messages().size() - 1; i >= 0; i--) {
-//                    Message message1 = messages().get(i);
-//                    if (message1.getId().equals(message.getId())) {
-//                        messages().remove(message1);
-//                        isContain = true;
-//                        break;
-//                    }
-//                }
-//                if (!isContain) messages().add(message);
-//                scrollPosition = 0;
-//                if (isThreadMode()) {
-//                    mThreadAdapter.notifyDataSetChanged();
-//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-//                } else {
-//                    mViewModel.setChannelMessages(messages());
-//                }
-//                break;
-//            case ModelType.message_reply:
-//                if (isThreadMode() && message.getParentId().equals(thread_parentMessage.getId())) {
-//                    messages().remove(ephemeralMessage);
-//                    threadMessages.add(message);
-//                    mThreadAdapter.notifyDataSetChanged();
-//                    threadBinding.rvThread.scrollToPosition(threadMessages.size() - 1);
-//                }
-//                break;
-//            case ModelType.message_system:
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
-//    public void sendNewMessage(Message message) {
-//        if (offline) {
-//            //sendOfflineMessage();
-//            return;
-//        }
-//        if (resendMessageId == null) {
-//            ephemeralMessage = createEphemeralMessage(false);
-//            handleAction(ephemeralMessage);
-//        }
-//        binding.messageInput.setEnabled(false);
-//        channel.sendMessage(text,
-//                attachments,
-//                isThreadMode() ? thread_parentMessage.getId() : null,
-//                new MessageCallback() {
-//                    @Override
-//                    public void onSuccess(MessageResponse response) {
-//                        binding.messageInput.setEnabled(true);
-//                        progressSendMessage(response.getMessage(), resendMessageId);
-//                    }
-//
-//                    @Override
-//                    public void onError(String errMsg, int errCode) {
-//                        binding.messageInput.setEnabled(true);
-//                        Utils.showMessage(getContext(), errMsg);
-//                    }
-//                });
-//    }
 
 
     @Override
@@ -442,4 +374,81 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
 
+    public EntityLiveData getEntities() {
+        return entities;
+    }
+
+    private List<User> getCleanedTypingUsers() {
+        List<User> users = new ArrayList<>();
+        long now = new Date().getTime();
+        for (Event event: typingState.values()){
+            if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
+                users.add(event.getUser());
+            }
+        }
+        return users;
+    }
+
+    /**
+     * Cleans up the typing state by removing typing users that did not send
+     * typing.stop event for long time
+     */
+    private void cleanupTypingUsers() {
+        List<User> prev = typingUsers.getValue();
+        List<User> cleaned = getCleanedTypingUsers();
+        if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
+            typingUsers.postValue(getCleanedTypingUsers());
+        }
+    }
+
+    public MutableLiveData<Boolean> getHasNewMessages() {
+        return hasNewMessages;
+    }
+
+    public void setHasNewMessages(Boolean hasNewMessages) {
+        this.hasNewMessages.postValue(hasNewMessages);
+    }
+
+    /**
+     * Service thread to keep state neat and clean. Ticks twice per second
+     */
+    class Looper extends Thread {
+        private Callable<Void> markReadFn;
+        private AtomicInteger pendingMarkReadRequests;
+
+        public Looper(Callable<Void> markReadFn) {
+            this.markReadFn = markReadFn;
+            pendingMarkReadRequests = new AtomicInteger(0);
+        }
+
+        public void markRead(){
+            pendingMarkReadRequests.incrementAndGet();
+        }
+
+        private void throttledMarkRead() {
+            int pendingCalls = pendingMarkReadRequests.get();
+            if (pendingCalls == 0) {
+                return;
+            }
+            try {
+                markReadFn.call();
+            } catch (Exception e) {
+                Log.e(TAG, e.getLocalizedMessage());
+            }
+            pendingMarkReadRequests.compareAndSet(pendingCalls, 0);
+        }
+
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                cleanupTypingUsers();
+                throttledMarkRead();
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+    }
 }

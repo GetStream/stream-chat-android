@@ -31,16 +31,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            android:background="#F3F5F8"
+            android:background="#FFF"
             app:layout_constraintBottom_toTopOf="@+id/message_input"
             app:layout_constraintEnd_toStartOf="@+id/message_input"
             app:layout_constraintStart_toEndOf="@+id/channelHeader"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-            stream:messageBubbleDrawableMine="@drawable/message_bubble_mine"
-            stream:messageBubbleDrawableTheirs="@drawable/message_bubble_theirs"
-            stream:messageTextColorMine="#FFFFFF"
-            stream:messageTextColorTheirs="#1BB76E"
-            tools:listitem="@layout/list_item_message" />
+            />
 
 
         <TextView
@@ -80,5 +76,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

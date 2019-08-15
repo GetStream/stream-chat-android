@@ -65,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 
-        ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
-        adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
-        binding.channelList.setViewModel(viewModel, this, adapter);
+        //ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
+        //adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
+        binding.channelList.setViewModel(viewModel, this);
 
         // query all channels where the current user is a member
         // FilterObject filter = in("members", USER_ID);

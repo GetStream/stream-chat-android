@@ -20,13 +20,12 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = ChannelListItemAdapter.class.getSimpleName();
 
     private Context context;
     private List<Channel> channels; // cached list of channels
     public String filter;
-    private Class<? extends RecyclerView.ViewHolder> viewHolderWrapper;
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
@@ -35,11 +34,6 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
     public ChannelListItemAdapter(Context context, List<Channel> channels) {
         this.context = context;
         this.channels = channels;
-        this.viewHolderWrapper = ChannelListItemViewHolder.class;
-    }
-
-    public void setCustomViewHolder(Class<? extends RecyclerView.ViewHolder> wrapper) {
-        this.viewHolderWrapper = wrapper;
     }
 
     public ChannelListItemAdapter(Context context) {
@@ -100,9 +94,8 @@ public class ChannelListItemAdapter<T extends BaseChannelListItemViewHolder> ext
         // - otherwise do nothing special
         View v = LayoutInflater.from(parent.getContext()).inflate(style.channelPreviewLayout, parent, false);
         try {
-            Constructor<? extends RecyclerView.ViewHolder> constructor = viewHolderWrapper.getDeclaredConstructor(View.class);
-            constructor.setAccessible(true);
-            RecyclerView.ViewHolder anyViewHolder = constructor.newInstance(v);
+            // TODO: make the viewholder configurable
+            RecyclerView.ViewHolder anyViewHolder = new ChannelListItemViewHolder(v);
             if (anyViewHolder instanceof BaseChannelListItemViewHolder) {
                 BaseChannelListItemViewHolder channelViewHolder = (BaseChannelListItemViewHolder) anyViewHolder;
 

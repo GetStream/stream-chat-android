@@ -54,6 +54,9 @@ public class ChannelActivity extends AppCompatActivity {
         binding.channelHeader.setViewModel(viewModel, this);
         binding.channelHeader.setOnBackClickListener(v -> finish());
 
+        MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
+        binding.messageList.setViewHolderFactory(factory);
+
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
 

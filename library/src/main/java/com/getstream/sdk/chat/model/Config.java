@@ -19,10 +19,10 @@ public class Config {
     private String name;
 
     @SerializedName("typing_events")
-    private boolean typing_events;
+    private boolean typingEvents;
 
     @SerializedName("read_events")
-    private boolean read_events;
+    private boolean readEvents;
 
     @SerializedName("connect_events")
     private boolean connect_events;
@@ -51,11 +51,11 @@ public class Config {
     @SerializedName("commands")
     private List<Command>commands;
 
-    public String getCreated_at() {
+    public String getCreatedAt() {
         return created_at;
     }
 
-    public String getUpdated_at() {
+    public String getUpdatedAt() {
         return updated_at;
     }
 
@@ -63,12 +63,12 @@ public class Config {
         return name;
     }
 
-    public boolean isTyping_events() {
-        return typing_events;
+    public boolean istypingEvents() {
+        return typingEvents;
     }
 
-    public boolean isRead_events() {
-        return read_events;
+    public boolean isReadEvents() {
+        return readEvents;
     }
 
     public boolean isConnect_events() {

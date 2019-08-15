@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Global;
@@ -91,137 +92,7 @@ public class Message {
     @Expose
     private Map<String, String> commandInfo;
 
-    // region Getter & Setter
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Attachment> getAttachments() {
-        return attachments;
-    }
-
-    public void setAttachments(List<Attachment> attachments) {
-        this.attachments = attachments;
-    }
-
-    public List<Reaction> getLatestReactions() {
-        return latestReactions;
-    }
-
-    public void setLatestReactions(List<Reaction> latestReactions) {
-        this.latestReactions = latestReactions;
-    }
-
-    public List<Reaction> getOwnReactions() {
-        return ownReactions;
-    }
-
-    public void setOwnReactions(List<Reaction> ownReactions) {
-        this.ownReactions = ownReactions;
-    }
-
-    public int getReplyCount() {
-        return replyCount;
-    }
-
-    public void setReplyCount(int replyCount) {
-        this.replyCount = replyCount;
-    }
-
-
-    public List<User> getMentionedUsers() {
-        return mentionedUsers;
-    }
-
-    public void setMentionedUsers(List<User> mentionedUsers) {
-        this.mentionedUsers = mentionedUsers;
-    }
-
-    public Map<String, Integer> getReactionCounts() {
-        return reactionCounts;
-    }
-
-    public void setReactionCounts(Map<String, Integer> reactionCounts) {
-        this.reactionCounts = reactionCounts;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Date getDeletedAt() {
-        return deletedAt;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public void setParent_id(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    public Map<String, String> getCommandInfo() {
-        return commandInfo;
-    }
-
-    public void setCommandInfo(Map<String, String> commandInfo) {
-        this.commandInfo = commandInfo;
-    }
-
-    // endregion
 
 
 
@@ -391,17 +262,133 @@ public class Message {
         isDelivered = delivered;
     }
 
-    // TODO: this is for ModelView to do
-    public boolean isIncoming() {
-        return true;
-        //        return !this.getUser().getId().equals(StreamChat.getInstance().getUserId());
+    public String getId() {
+        return id;
     }
 
-    public boolean isTheirs() {
-        return this.isIncoming();
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public boolean isMine() {
-        return !this.isIncoming();
+    public void setText(String text) {
+        this.text = text;
     }
+
+    public String getText() {
+        return text;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<Reaction> getLatestReactions() {
+        return latestReactions;
+    }
+
+    public void setLatestReactions(List<Reaction> latestReactions) {
+        this.latestReactions = latestReactions;
+    }
+
+    public List<Reaction> getOwnReactions() {
+        return ownReactions;
+    }
+
+    public void setOwnReactions(List<Reaction> ownReactions) {
+        this.ownReactions = ownReactions;
+    }
+
+    public int getReplyCount() {
+        return replyCount;
+    }
+
+    public void setReplyCount(int replyCount) {
+        this.replyCount = replyCount;
+    }
+
+
+    public List<User> getMentionedUsers() {
+        return mentionedUsers;
+    }
+
+    public void setMentionedUsers(List<User> mentionedUsers) {
+        this.mentionedUsers = mentionedUsers;
+    }
+
+    public Map<String, Integer> getReactionCounts() {
+        return reactionCounts;
+    }
+
+    public void setReactionCounts(Map<String, Integer> reactionCounts) {
+        this.reactionCounts = reactionCounts;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Date getDeletedAt() {
+        return deletedAt;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParent_id(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
+    public Map<String, String> getCommandInfo() {
+        return commandInfo;
+    }
+
+    public void setCommandInfo(Map<String, String> commandInfo) {
+        this.commandInfo = commandInfo;
+    }
+
 }

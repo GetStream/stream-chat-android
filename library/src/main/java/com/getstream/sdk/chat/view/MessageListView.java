@@ -9,9 +9,13 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
+import java.util.List;
 
 
 /**
@@ -29,22 +33,37 @@ public class MessageListView extends RecyclerView {
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
+    private MessageViewHolderFactory viewHolderFactory;
+
+    private int firstVisible;
+    private int lastVisible;
+    private boolean hasScrolledUp;
 
     public MessageListView(Context context) {
         super(context);
         this.setLayoutManager(new LinearLayoutManager(context));
+        hasScrolledUp = false;
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.parseAttr(context, attrs);
         this.setLayoutManager(new LinearLayoutManager(context));
+        hasScrolledUp = false;
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
         this.setLayoutManager(new LinearLayoutManager(context));
+        hasScrolledUp = false;
+    }
+
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+        if (this.adapter != null) {
+            this.adapter.setFactory(factory);
+        }
     }
 
     @Override
@@ -61,17 +80,40 @@ public class MessageListView extends RecyclerView {
 
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
+        if (viewHolderFactory != null) {
+            adapter.setFactory(viewHolderFactory);
+        }
+
 
         // use livedata and observe
-        viewModel.getMessages().observe(lifecycleOwner, messages -> {
-            Log.i(TAG, "Observe found this many messages: " + messages.size());
-            adapter.replaceMessages(messages);
+        viewModel.getEntities().observe(lifecycleOwner, entityWrapper -> {
+            List<Entity> entities = entityWrapper.getListEntities();
+            Log.i(TAG, "Observe found this many entities: " + entities.size());
+            int oldPosition = firstVisible;
+            adapter.replaceEntities(entities);
+
+            if (entityWrapper.getLoadingMore()) {
+                // the load more behaviour is different, scroll positions starts out at 0
+                // to stay at the relative 0 we should go to 0 + size of new messages...
+                int newPosition = oldPosition + entities.size();
+                this.getLayoutManager().scrollToPosition(newPosition);
+            } else {
+                // regular new message behaviour
+                // we scroll down all the way, unless you've scrolled up
+                // if you've scrolled up we set a variable on the viewmodel that there are new messages
+                if (!hasScrolledUp) {
+                    this.getLayoutManager().scrollToPosition(adapter.getItemCount()-1);
+                    viewModel.setHasNewMessages(false);
+                } else {
+                    viewModel.setHasNewMessages(true);
+                }
+                viewModel.markRead();
+            }
         });
 
         this.setAdapterWithStyle(adapter);
     }
 
-    // TODO: reachedTheBeginning is triggered too much
     // set the adapter and apply the style.
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
         super.setAdapter(adapter);
@@ -86,8 +128,13 @@ public class MessageListView extends RecyclerView {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (linearLayoutManager != null) {
-                    int firstVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
-                    Boolean reachedTheBeginning = firstVisible <= 3;
+                    firstVisible = linearLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    hasScrolledUp = lastVisible < (adapter.getItemCount() -3);
+                    if (!hasScrolledUp) {
+                        viewModel.setHasNewMessages(false);
+                    }
+                    Boolean reachedTheBeginning = firstVisible <= 2;
                     if (reachedTheBeginning) {
                         viewModel.loadMore();
                     }
