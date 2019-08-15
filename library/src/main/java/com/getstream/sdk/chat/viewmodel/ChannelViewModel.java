@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.enums.Pagination;
@@ -74,7 +75,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> watcherCount;
     private MutableLiveData<String> lastActiveString;
-    private MutableLiveData<List<User>> typingUsers;
+
+    public LiveData<List<User>> getTypingUsers() {
+        return typingUsers;
+    }
+
+    public MutableLiveData<List<User>> typingUsers;
     private MutableLiveData<List<ChannelUserRead>> reads;
     private EntityLiveData entities;
     public MutableLiveData<Boolean> endOfPagination;
@@ -203,14 +209,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             public void onTypingStart(Event event) {
                 User user = event.getUser();
                 typingState.put(user.getId(), event);
-                typingUsers.postValue(getTypingUsers());
+                typingUsers.postValue(getCleanedTypingUsers());
             }
 
             @Override
             public void onTypingStop(Event event) {
                 User user = event.getUser();
                 typingState.remove(user.getId());
-                typingUsers.postValue(getTypingUsers());
+                typingUsers.postValue(getCleanedTypingUsers());
             }
         });
     }
@@ -478,7 +484,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return entities;
     }
 
-    private List<User> getTypingUsers() {
+    private List<User> getCleanedTypingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
         for (Event event: typingState.values()){
@@ -495,9 +501,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
      */
     private void cleanupTypingUsers() {
         List<User> prev = typingUsers.getValue();
-        List<User> cleaned = getTypingUsers();
+        List<User> cleaned = getCleanedTypingUsers();
         if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
-            typingUsers.postValue(getTypingUsers());
+            typingUsers.postValue(getCleanedTypingUsers());
         }
     }
 

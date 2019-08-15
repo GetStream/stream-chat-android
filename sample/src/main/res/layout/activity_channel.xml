@@ -77,5 +77,15 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList"
             stream:inputHint="what a fun day" />
+
+        <com.getstream.sdk.chat.view.ChannelTypingIndicator
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+        />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
