@@ -25,7 +25,8 @@ public class MessageListViewStyle extends BaseStyle {
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
-        this.setContext(c);
+        setContext(c);
+
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.MessageListView, 0, 0);
         messageTextColorMine = a.getColor(R.styleable.MessageListView_messageTextColorMine, -1);
@@ -34,15 +35,15 @@ public class MessageListViewStyle extends BaseStyle {
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
 
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.MessageListView_userAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.MessageListView_userAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
 
-        avatarBorderWidth = a.getDimension(R.styleable.MessageListView_userAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderWidth = a.getDimension(R.styleable.MessageListView_userAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.MessageListView_userAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, getColor(R.color.user_intials_background));
 
-        avatarInitialTextSize = a.getDimension(R.styleable.MessageListView_userAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextSize = a.getDimension(R.styleable.MessageListView_userAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, getColor(R.color.stream_channel_initials));
         avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_userAvatarTextStyle, Typeface.NORMAL);
 
         a.recycle();

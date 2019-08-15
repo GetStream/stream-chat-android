@@ -18,11 +18,11 @@ class MessageInputStyle extends BaseStyle {
     private static final int DEFAULT_DELAY_TYPING_STATUS = 1500;
 
     private boolean showAttachmentButton;
+    private int attachmentButtonActiveDrawble;
+    private int attachmentButtonDisabledDrawble;
 
-    private int attachmentButtonBackground;
-    private int attachmentButtonDefaultBgColor;
-    private int attachmentButtonDefaultBgPressedColor;
-    private int attachmentButtonDefaultBgDisabledColor;
+    private int sendButtonActiveDrawble;
+    private int sendButtonDisabledDrawble;
 
     private int attachmentButtonIcon;
     private int attachmentButtonDefaultIconColor;
@@ -66,70 +66,12 @@ class MessageInputStyle extends BaseStyle {
     private int delayTypingStatus;
 
     public MessageInputStyle (Context context, AttributeSet attrs) {
-
+        setContext(context);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageInputView);
 
         showAttachmentButton = a.getBoolean(R.styleable.MessageInputView_showAttachmentButton, false);
 
-        attachmentButtonBackground = a.getResourceId(R.styleable.MessageInputView_attachmentButtonBackground, -1);
-//        attachmentButtonDefaultBgColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultBgColor,
-//                getColor(R.color.white_four));
-//        attachmentButtonDefaultBgPressedColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultBgPressedColor,
-//                getColor(R.color.white_five));
-//        attachmentButtonDefaultBgDisabledColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultBgDisabledColor,
-//                getColor(R.color.transparent));
-//
-//        attachmentButtonIcon = a.getResourceId(R.styleable.MessageInputView_attachmentButtonIcon, -1);
-//        attachmentButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconColor,
-//                getColor(R.color.cornflower_blue_two));
-//        attachmentButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconPressedColor,
-//                getColor(R.color.cornflower_blue_two_dark));
-//        attachmentButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconDisabledColor,
-//                getColor(R.color.cornflower_blue_light_40));
-//
-//        attachmentButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonWidth, getDimension(R.dimen.input_button_width));
-//        attachmentButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonHeight, getDimension(R.dimen.input_button_height));
-//        attachmentButtonMargin = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonMargin, getDimension(R.dimen.input_button_margin));
-//
-//        inputButtonBackground = a.getResourceId(R.styleable.MessageInputView_inputButtonBackground, -1);
-//        inputButtonDefaultBgColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultBgColor,
-//                getColor(R.color.cornflower_blue_two));
-//        inputButtonDefaultBgPressedColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultBgPressedColor,
-//                getColor(R.color.cornflower_blue_two_dark));
-//        inputButtonDefaultBgDisabledColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultBgDisabledColor,
-//                getColor(R.color.white_four));
-//
-//        inputButtonIcon = a.getResourceId(R.styleable.MessageInputView_inputButtonIcon, -1);
-//        inputButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconColor,
-//                getColor(R.color.white));
-//        inputButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconPressedColor,
-//                getColor(R.color.white));
-//        inputButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconDisabledColor,
-//                getColor(R.color.warm_grey));
-//
-//        inputButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonWidth, getDimension(R.dimen.input_button_width));
-//        inputButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonHeight, getDimension(R.dimen.input_button_height));
-//        inputButtonMargin = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonMargin, getDimension(R.dimen.input_button_margin));
-//
-//        inputMaxLines = a.getInt(R.styleable.MessageInputView_inputMaxLines, DEFAULT_MAX_LINES);
-//        inputHint = a.getString(R.styleable.MessageInputView_inputHint);
-//        inputText = a.getString(R.styleable.MessageInputView_inputText);
-//
-//        inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_inputTextSize, getDimension(R.dimen.input_text_size));
-//        inputTextColor = a.getColor(R.styleable.MessageInputView_inputTextColor, getColor(R.color.dark_grey_two));
-//        inputHintColor = a.getColor(R.styleable.MessageInputView_inputHintColor, getColor(R.color.warm_grey_three));
-//
-//        inputBackground = a.getDrawable(R.styleable.MessageInputView_inputBackground);
-//        inputCursorDrawable = a.getDrawable(R.styleable.MessageInputView_inputCursorDrawable);
-//
-//        delayTypingStatus = a.getInt(R.styleable.MessageInputView_delayTypingStatus, DEFAULT_DELAY_TYPING_STATUS);
-//
-//
-//
-//        inputDefaultPaddingLeft = getDimension(R.dimen.input_padding_left);
-//        inputDefaultPaddingRight = getDimension(R.dimen.input_padding_right);
-//        inputDefaultPaddingTop = getDimension(R.dimen.input_padding_top);
-//        inputDefaultPaddingBottom = getDimension(R.dimen.input_padding_bottom);
+
 
         a.recycle();
     }

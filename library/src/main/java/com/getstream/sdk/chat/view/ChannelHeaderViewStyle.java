@@ -23,29 +23,29 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
-        this.setContext(c);
+        setContext(c);
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.ChannelHeaderView, 0, 0);
         // Channel Title
-        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelTitleTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelTitleTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelTitleTextSize, getDimension(R.dimen.stream_channel_initials));
+        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelTitleTextColor, getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelTitleTextStyle, Typeface.NORMAL);
         // Last Active
-        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_lastActiveTextSize, c.getResources().getDimension(R.dimen.stream_channel_preview_date));
-        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_lastActiveTextColor, c.getResources().getColor(R.color.gray_dark));
+        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_lastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
+        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_lastActiveTextColor, getColor(R.color.gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_lastActiveTextStyle, Typeface.NORMAL);
         // Back Button Show/Hide
         backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_backButtonShow, false);
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
 
-        avatarBorderWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBackGroundColor, c.getResources().getColor(R.color.user_intials_background));
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBackGroundColor, getColor(R.color.user_intials_background));
 
-        avatarInitialTextSize = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarTextColor, c.getResources().getColor(R.color.stream_channel_initials));
+        avatarInitialTextSize = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarTextColor, getColor(R.color.stream_channel_initials));
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderAvatarTextStyle, Typeface.NORMAL);
 
         a.recycle();

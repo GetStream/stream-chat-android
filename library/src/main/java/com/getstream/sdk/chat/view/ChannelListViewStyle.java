@@ -59,14 +59,14 @@ public class ChannelListViewStyle extends BaseStyle {
         channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
 
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, c.getResources().getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
+        avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
 
-        avatarBorderWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarBorderWidth, c.getResources().getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.ChannelListView_channelAvatarBorderColor, -1);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_channelAvatarBackGroundColor, c.getResources().getColor(R.color.stream_gray_dark));
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_channelAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimension(R.styleable.ChannelListView_channelAvatarTextSize, c.getResources().getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextSize = a.getDimension(R.styleable.ChannelListView_channelAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_channelAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_channelAvatarTextStyle, Typeface.BOLD);
 
