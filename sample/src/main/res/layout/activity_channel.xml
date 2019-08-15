@@ -79,12 +79,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/messageList"
-            stream:attachmentButtonHeight="25dp"
-            stream:attachmentButtonWidth="25dp"
-            stream:inputButtonHeight="25dp"
-            stream:inputButtonWidth="25dp"
-            stream:attachmentButtonDefaultIconColor="#E91E63"
-            stream:inputHint="what a fun day" />
+            app:layout_constraintStart_toEndOf="@+id/messageList"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

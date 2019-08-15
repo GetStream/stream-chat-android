@@ -2,11 +2,13 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -101,14 +103,21 @@ public class MessageInputView extends RelativeLayout
     private void applyStyle() {
         // Attachment Button
         binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
-        binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon());
+        binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
-        // Input Button
+        // Send Button
         binding.ivSend.setImageDrawable(style.getInputButtonIcon());
         binding.ivSend.getLayoutParams().width = style.getInputButtonWidth();
         binding.ivSend.getLayoutParams().height = style.getInputButtonHeight();
-//        binding.etMessage.setHint(hintText);
+        // Input Background
+        binding.llComposer.setBackground(style.getInputBackground());
+        // Input Text
+        binding.etMessage.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
+        binding.etMessage.setHint(style.getInputHint());
+        binding.etMessage.setTextColor(style.getInputTextColor());
+        binding.etMessage.setHintTextColor(style.getInputHintColor());
+        binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
     }
 
     private ViewMessageInputBinding initBinding(Context context) {
@@ -246,7 +255,6 @@ public class MessageInputView extends RelativeLayout
 
         //binding.setActiveMessageComposer(hasFocus);
     }
-
 
 
     private void onSendMessage(String input) {

@@ -25,8 +25,8 @@
     <!--Message Composer-->
     <color name="input_message_send_button">#0076FF</color>
     <color name="input_message_box_stroke_select">#0076FF</color>
+    <color name="input_message_box_stroke_edit">#0DD25E</color>
     <color name="input_message_box_background">#0D000000</color>
-
     <color name="chat_no_connection">#1AD0021B</color>
     <!--Message Item-->
     <color name="message_background_incoming">#FFFFFF</color>

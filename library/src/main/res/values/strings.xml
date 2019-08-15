@@ -11,7 +11,8 @@
     <string name="you">(you)</string>
     <!-- Menu actions -->
     <string name="action_create_channel">Create activeChannel</string>
-
+    <!--MessageInput-->
+    <string name="input_hint">Write a message</string>
     <!-- Message Status -->
     <string name="delete_message">This message was deleted.</string>
     <string name="message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>

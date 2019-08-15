@@ -55,18 +55,31 @@
         <attr name="attachmentButtonDefaultIconColor" format="color|reference" />
         <attr name="attachmentButtonDefaultIconPressedColor" format="color|reference" />
         <attr name="attachmentButtonDefaultIconDisabledColor" format="color|reference" />
-        <attr name="attachmentButtonIcon" format="reference"/>
+        <attr name="attachmentButtonSelectedIconColor" format="color|reference" />
+        <attr name="attachmentButtonIcon" format="reference" />
         <attr name="attachmentButtonWidth" format="dimension|reference" />
         <attr name="attachmentButtonHeight" format="dimension|reference" />
         <!--Send Button-->
         <attr name="inputButtonDefaultIconColor" format="color|reference" />
         <attr name="inputButtonDefaultIconPressedColor" format="color|reference" />
         <attr name="inputButtonDefaultIconDisabledColor" format="color|reference" />
-        <attr name="inputButtonIcon" format="reference"/>
+        <attr name="inputButtonIcon" format="reference" />
         <attr name="inputButtonWidth" format="dimension|reference" />
         <attr name="inputButtonHeight" format="dimension|reference" />
-
+        <!--Input Text-->
         <attr name="inputHint" format="string" />
+        <attr name="inputTextSize" format="dimension|reference" />
+        <attr name="inputTextColor" format="color|reference" />
+        <attr name="inputHintColor" format="color|reference" />
+        <attr name="inputTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!--Input Background-->
+        <attr name="inputBackground" format="reference" />
+        <attr name="inputSelectedBackground" format="reference" />
+        <attr name="inputEditBackground" format="reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">

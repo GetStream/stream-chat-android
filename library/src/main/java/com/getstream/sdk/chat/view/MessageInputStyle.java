@@ -4,7 +4,9 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import androidx.annotation.ColorInt;
@@ -20,7 +22,6 @@ import com.getstream.sdk.chat.utils.BaseStyle;
 class MessageInputStyle extends BaseStyle {
 
     private static final int DEFAULT_MAX_LINES = 5;
-    private static final int DEFAULT_DELAY_TYPING_STATUS = 1500;
 
     private boolean showAttachmentButton;
 
@@ -28,6 +29,7 @@ class MessageInputStyle extends BaseStyle {
     private int attachmentButtonDefaultIconColor;
     private int attachmentButtonDefaultIconPressedColor;
     private int attachmentButtonDefaultIconDisabledColor;
+    private int attachmentButtonSelectedIconColor;
 
     private int attachmentButtonWidth;
     private int attachmentButtonHeight;
@@ -40,7 +42,18 @@ class MessageInputStyle extends BaseStyle {
     private int inputButtonWidth;
     private int inputButtonHeight;
 
-    public MessageInputStyle (Context context, AttributeSet attrs) {
+    private String inputHint;
+
+    private int inputTextSize;
+    private int inputTextColor;
+    private int inputHintColor;
+    private int inputTextStyle;
+    private Drawable inputBackground;
+    private Drawable inputSelectedBackground;
+    private Drawable inputEditBackground;
+
+
+    public MessageInputStyle(Context context, AttributeSet attrs) {
         setContext(context);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageInputView);
         // Attachment Button
@@ -53,6 +66,8 @@ class MessageInputStyle extends BaseStyle {
                 getColor(R.color.white));
         attachmentButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconDisabledColor,
                 getColor(R.color.gray_light));
+        attachmentButtonSelectedIconColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconDisabledColor,
+                getColor(R.color.black));
 
         attachmentButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonWidth, getDimension(R.dimen.attachment_button_width));
         attachmentButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonHeight, getDimension(R.dimen.attachment_button_height));
@@ -67,7 +82,18 @@ class MessageInputStyle extends BaseStyle {
 
         inputButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonWidth, getDimension(R.dimen.input_button_width));
         inputButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonHeight, getDimension(R.dimen.input_button_height));
-        
+        // Input Text
+        inputHint = a.getString(R.styleable.MessageInputView_inputHint);
+
+        inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_inputTextSize, getDimension(R.dimen.input_text_size));
+        inputTextColor = a.getColor(R.styleable.MessageInputView_inputTextColor, getColor(R.color.black));
+        inputHintColor = a.getColor(R.styleable.MessageInputView_inputHintColor, getColor(R.color.gray_dark));
+        inputTextStyle = a.getInt(R.styleable.MessageInputView_inputTextStyle, Typeface.NORMAL);
+
+        inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_inputBackground, R.drawable.round_message_composer));
+        inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_inputSelectedBackground, R.drawable.round_message_composer_select));
+        inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_inputEditBackground, R.drawable.round_message_composer_edit));
+
         a.recycle();
     }
 
@@ -89,28 +115,31 @@ class MessageInputStyle extends BaseStyle {
     }
 
     // Attachment Button
-    protected boolean showAttachmentButton() {
+    public boolean showAttachmentButton() {
         return showAttachmentButton;
     }
 
-    protected Drawable getAttachmentButtonIcon() {
+    public Drawable getAttachmentButtonIcon(boolean isSelected) {
         if (attachmentButtonIcon == -1) {
-            return getSelector(attachmentButtonDefaultIconColor, attachmentButtonDefaultIconPressedColor,
-                    attachmentButtonDefaultIconDisabledColor, R.drawable.ic_add_attachment);
+            return getSelector(isSelected ? attachmentButtonSelectedIconColor : attachmentButtonDefaultIconColor,
+                    attachmentButtonDefaultIconPressedColor,
+                    attachmentButtonDefaultIconDisabledColor,
+                    R.drawable.ic_add_attachment);
         } else {
             return getDrawable(attachmentButtonIcon);
         }
     }
 
-    protected int getAttachmentButtonWidth() {
+    public int getAttachmentButtonWidth() {
         return attachmentButtonWidth;
     }
 
-    protected int getAttachmentButtonHeight() {
+    public int getAttachmentButtonHeight() {
         return attachmentButtonHeight;
     }
+
     // Send Button
-    protected Drawable getInputButtonIcon() {
+    public Drawable getInputButtonIcon() {
         if (inputButtonIcon == -1) {
             return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
                     inputButtonDefaultIconDisabledColor, R.drawable.ic_send);
@@ -119,12 +148,45 @@ class MessageInputStyle extends BaseStyle {
         }
     }
 
-    protected int getInputButtonWidth() {
+    public int getInputButtonWidth() {
         return inputButtonWidth;
     }
 
-    protected int getInputButtonHeight() {
+    public int getInputButtonHeight() {
         return inputButtonHeight;
     }
 
+    // Input Text
+    public String getInputHint() {
+        return TextUtils.isEmpty(inputHint) ? context.getString(R.string.input_hint) : inputHint;
+    }
+
+    public int getInputTextSize() {
+        return inputTextSize;
+    }
+
+    public int getInputTextColor() {
+        return inputTextColor;
+    }
+
+    public int getInputHintColor() {
+        return inputHintColor;
+    }
+
+    public int getInputTextStyle() {
+        return inputTextStyle;
+    }
+
+    // Inputbox Background
+    public Drawable getInputBackground() {
+        return inputBackground;
+    }
+
+    public Drawable getInputSelectedBackground() {
+        return inputSelectedBackground;
+    }
+
+    public Drawable getInputEditBackground() {
+        return inputEditBackground;
+    }
 }
