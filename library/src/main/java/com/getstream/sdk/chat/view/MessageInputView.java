@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -20,12 +21,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
+import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,20 +58,15 @@ public class MessageInputView extends RelativeLayout
      */
 
     final String TAG = MessageInputView.class.getSimpleName();
-
     // our connection to the channel scope
     private ChannelViewModel channelViewModel;
-
     // binding for this view
     private ViewMessageInputBinding binding;
     private MessageInputStyle style;
-
     // listeners
     private SendMessageListener sendMessageListener;
     private TypingListener typingListener;
     private AttachmentListener attachmentListener;
-    private OnFocusChangeListener onFocusChangeListener;
-
     // state
     private Message editingMessage;
     private boolean isTyping;
@@ -79,7 +78,6 @@ public class MessageInputView extends RelativeLayout
     public MessageInputView(Context context) {
         super(context);
         binding = initBinding(context);
-        initAttachmentUI(context);
     }
 
     public MessageInputView(Context context, AttributeSet attrs) {
@@ -87,17 +85,23 @@ public class MessageInputView extends RelativeLayout
         parseAttr(context, attrs);
         binding = initBinding(context);
         applyStyle();
-        initAttachmentUI(context);
+    }
+    // endregion
+
+    private ViewMessageInputBinding initBinding(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        return ViewMessageInputBinding.inflate(inflater, this, true);
     }
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         style = new MessageInputStyle(context, attrs);
     }
 
-    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        this.channelViewModel = model;
+    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        this.channelViewModel = viewModel;
         binding.setLifecycleOwner(lifecycleOwner);
-        this.setOnSendMessageListener(model);
+        init();
+        observeUIs(lifecycleOwner);
     }
 
     private void applyStyle() {
@@ -120,18 +124,19 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
     }
 
-    private ViewMessageInputBinding initBinding(Context context) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ViewMessageInputBinding.inflate(inflater, this, true);
-
-        binding.setActiveMessageComposer(false);
+    private void init() {
         binding.setActiveMessageSend(false);
-
         binding.ivSend.setOnClickListener(this);
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
-        return binding;
+
+        setOnSendMessageListener(channelViewModel);
+        initAttachmentUI();
+        KeyboardVisibilityEvent.setEventListener(
+                (Activity) getContext(), (boolean isOpen) -> {
+                    if (!isOpen) binding.etMessage.clearFocus();
+                });
     }
 
     public List<Attachment> GetAttachments() {
@@ -139,13 +144,31 @@ public class MessageInputView extends RelativeLayout
         return a;
     }
 
+    private void observeUIs(LifecycleOwner lifecycleOwner) {
+        channelViewModel.getInputType().observe(lifecycleOwner, inputType -> {
+            switch (inputType) {
+                case DEFAULT:
+                    binding.llComposer.setBackground(style.getInputBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
+                    break;
+                case SELECT:
+                    binding.llComposer.setBackground(style.getInputSelectedBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    break;
+                case EDIT:
+                    binding.llComposer.setBackground(style.getInputEditBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    break;
+            }
+        });
+    }
 
-    private void initAttachmentUI(Context context) {
+    private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        sendFileFunction = new SendFileFunction(context, binding);
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(context, 4, LinearLayoutManager.VERTICAL, false));
+        sendFileFunction = new SendFileFunction(getContext(), binding, this.channelViewModel);
+        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(context, 1, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
         int spanCount = 4;  // 4 columns
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
@@ -170,19 +193,19 @@ public class MessageInputView extends RelativeLayout
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
-    public boolean IsEditing() {
+    public boolean isEditing() {
         return editingMessage != null;
     }
 
-    public void EditMessage(Message message) {
+    public void editMessage(Message message) {
         editingMessage = message;
     }
 
-    public Message GetEditMessage() {
+    public Message getEditMessage() {
         return editingMessage;
     }
 
-    public void CancelEditMessage() {
+    public void cancelEditMessage() {
         editingMessage = null;
         binding.etMessage.setText("");
         this.clearFocus();
@@ -193,9 +216,7 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setEnabled(true);
     }
 
-    public void setOnFocusChangeListener(OnFocusChangeListener l) {
-        this.onFocusChangeListener = l;
-    }
+
 
     public void clearFocus() {
         binding.etMessage.clearFocus();
@@ -245,6 +266,7 @@ public class MessageInputView extends RelativeLayout
         }
         // detect commands
         sendFileFunction.checkCommand(messageText);
+        binding.setActiveMessageSend(!(messageText.length() == 0));
     }
 
     @Override
@@ -252,10 +274,8 @@ public class MessageInputView extends RelativeLayout
         if (!hasFocus) {
             this.stopTyping();
         }
-
-        //binding.setActiveMessageComposer(hasFocus);
+        channelViewModel.getInputType().postValue(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
-
 
     private void onSendMessage(String input) {
         Message m = new Message();
@@ -287,9 +307,10 @@ public class MessageInputView extends RelativeLayout
         }
     }
 
-    public boolean IsTyping() {
+    public boolean isTyping() {
         return isTyping;
     }
+
 
     /**
      * Used for listening to the sendMessage event

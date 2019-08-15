@@ -21,8 +21,6 @@ import com.getstream.sdk.chat.utils.BaseStyle;
  */
 class MessageInputStyle extends BaseStyle {
 
-    private static final int DEFAULT_MAX_LINES = 5;
-
     private boolean showAttachmentButton;
 
     private int attachmentButtonIcon;

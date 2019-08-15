@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
+import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
@@ -31,6 +32,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class SendFileFunction {
 
     private static final String TAG = SendFileFunction.class.getSimpleName();
 
+    ChannelViewModel viewModel;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
     private List<Attachment> selectedAttachments = null;
@@ -56,9 +59,10 @@ public class SendFileFunction {
     ViewMessageInputBinding binding;
     ChannelState channelResponse;
 
-    public SendFileFunction(Context context, ViewMessageInputBinding binding) {
+    public SendFileFunction(Context context, ViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
         this.binding = binding;
+        this.viewModel = viewModel;
     }
 
     public List<Attachment> getSelectedAttachments() {
@@ -214,10 +218,12 @@ public class SendFileFunction {
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageComposer(true);
+//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
+            viewModel.getInputType().postValue(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-            binding.setActiveMessageComposer(false);
+//            binding.setActiveMessageComposer(false);
+            viewModel.getInputType().postValue(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
     }
@@ -242,7 +248,8 @@ public class SendFileFunction {
             }
 
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                binding.setActiveMessageComposer(false);
+//                binding.setActiveMessageComposer(false);
+                viewModel.getInputType().postValue(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
             }
         });
@@ -286,10 +293,12 @@ public class SendFileFunction {
         setSelectedFileAttachmentListAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageComposer(true);
+            viewModel.getInputType().postValue(InputType.SELECT);
+//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-            binding.setActiveMessageComposer(false);
+//            binding.setActiveMessageComposer(false);
+            viewModel.getInputType().postValue(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
     }
@@ -313,7 +322,8 @@ public class SendFileFunction {
             if (position_ != -1)
                 fileAttachmentAdapter.notifyDataSetChanged();
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                binding.setActiveMessageComposer(false);
+                viewModel.getInputType().postValue(InputType.DEFAULT);
+//                binding.setActiveMessageComposer(false);
                 binding.setActiveMessageSend(false);
             }
         });

@@ -442,7 +442,7 @@ public class ChannelFragment extends Fragment {
      * Send Message - Send a message to this channel
      */
     public void sendMessage(String messageText) {
-        if (binding.messageInput.IsEditing()) {
+        if (binding.messageInput.isEditing()) {
             updateMessage(binding.messageInput.getMessageText());
         } else {
             sendNewMessage(messageText, binding.messageInput.GetAttachments(), null);
@@ -484,13 +484,13 @@ public class ChannelFragment extends Fragment {
         }
         binding.messageInput.setEnabled(false);
         channel.updateMessage(binding.messageInput.getMessageText(),
-                (Message) binding.messageInput.GetEditMessage(),
+                (Message) binding.messageInput.getEditMessage(),
                 sendFileFunction.getSelectedAttachments(),
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         response.getMessage().setDelivered(true);
-                        binding.messageInput.CancelEditMessage();
+                        binding.messageInput.cancelEditMessage();
                         binding.messageInput.setEnabled(true);
                     }
 
@@ -632,7 +632,7 @@ public class ChannelFragment extends Fragment {
 
     // Edit
     private void editMessage(Message message) {
-        binding.messageInput.EditMessage(message);
+        binding.messageInput.editMessage(message);
         binding.messageInput.requestInputFocus();
         if (!TextUtils.isEmpty(message.getText())) {
             // TODO: figure out what this does...
@@ -658,7 +658,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void cancelEditMessage() {
-        binding.messageInput.CancelEditMessage();
+        binding.messageInput.cancelEditMessage();
     }
 
     // endregion
@@ -903,7 +903,7 @@ public class ChannelFragment extends Fragment {
     }
 
     private void cleanEditView() {
-        binding.messageInput.CancelEditMessage();
+        binding.messageInput.cancelEditMessage();
         thread_parentMessage = null;
         threadMessages = null;
         lVPosition = 0;

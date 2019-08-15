@@ -1,11 +1,14 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -53,6 +56,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
     private MutableLiveData<Boolean> endOfPagination;
+    private MutableLiveData<InputType> inputType;
 
     public Channel getChannel() {
         return channel;
@@ -67,6 +71,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
+        inputType = new MutableLiveData<>(InputType.DEFAULT);
         endOfPagination = new MutableLiveData<>(false);
         // TODO: actually listen to the events and verify if anybody is online
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
@@ -78,7 +83,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads = new MutableLiveData<List<ChannelUserRead>>(channelState.getReads());
 
         watcherCount = new MutableLiveData<>();
-
         // humanized time diff
         Date lastActive = channelState.getLastActive();
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
@@ -128,6 +132,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public MutableLiveData<String> getLastActiveString() {
         return lastActiveString;
     }
+
+    public MutableLiveData<InputType> getInputType() {
+        return inputType;
+    }
+
     // endregion
 
     public void markRead() {

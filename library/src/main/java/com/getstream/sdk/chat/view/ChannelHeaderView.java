@@ -37,12 +37,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         super(context, attrs);
         parseAttr(context, attrs);
         binding = initBinding(context);
-    }
-
-    public ChannelHeaderView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        parseAttr(context, attrs);
-        binding = initBinding(context);
+        applyStyle();
     }
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
@@ -54,7 +49,6 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
-        applyStyle();
         configHeaderAvatar();
         updateUIs(lifecycleOwner);
     }
