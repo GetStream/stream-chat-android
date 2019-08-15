@@ -151,7 +151,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     // endregion
-
     public void markRead() {
         looper.markRead();
     }

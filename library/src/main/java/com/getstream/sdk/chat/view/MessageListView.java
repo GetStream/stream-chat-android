@@ -94,6 +94,7 @@ public class MessageListView extends RecyclerView {
                 } else {
                     viewModel.setHasNewMessages(true);
                 }
+                viewModel.markRead();
             }
         });
 
