@@ -53,8 +53,10 @@ public class MessageViewHolderFactory {
         String t = attachment.getType();
         if (t.equals(ModelType.attach_video)) {
             return VIDEO_ATTACHMENT;
-        } else if (attachments.get(0).getType().equals(ModelType.attach_image)) {
+        } else if (t.equals(ModelType.attach_image)) {
             return IMAGE_ATTACHMENT;
+        } else if (t.equals(ModelType.attach_file)) {
+            return FILE_ATTACHMENT;
         } else {
             return GENERIC_ATTACHMENT;
         }
@@ -88,6 +90,10 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == VIDEO_ATTACHMENT) {
             AttachmentViewHolderVideo holder = new AttachmentViewHolderVideo(R.layout.list_item_attachment_video, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else if (viewType == FILE_ATTACHMENT) {
+            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.list_item_attachment_file, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
