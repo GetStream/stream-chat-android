@@ -23,6 +23,7 @@
     <color name="chat_theme">#FFFFFF</color>
     <color name="channel_theme">#FFFFFF</color>
     <!--Message Composer-->
+    <color name="input_message_send_button">#0076FF</color>
     <color name="input_message_box_stroke_select">#0076FF</color>
     <color name="input_message_box_background">#0D000000</color>
 

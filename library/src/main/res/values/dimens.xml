@@ -10,11 +10,9 @@
     <!--Message Input-->
     <dimen name="attachment_button_width">25dp</dimen>
     <dimen name="attachment_button_height">25dp</dimen>
-    <dimen name="attachment_button_margin">10dp</dimen>
 
     <dimen name="input_button_width">25dp</dimen>
     <dimen name="input_button_height">25dp</dimen>
-    <dimen name="input_button_margin">10dp</dimen>
 
     <dimen name="composer_stroke_width">2dp</dimen>
     <dimen name="composer_corner_radius">10dp</dimen>

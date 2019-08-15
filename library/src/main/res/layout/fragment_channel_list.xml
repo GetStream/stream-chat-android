@@ -74,7 +74,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="4dp"
-                android:background="@drawable/sendicon"
+                android:background="@drawable/ic_send"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_send_back"
                 app:layout_constraintEnd_toEndOf="@+id/tv_send_back"
                 app:layout_constraintStart_toStartOf="@+id/tv_send_back"

@@ -18,7 +18,6 @@
             type="boolean" />
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -369,7 +368,7 @@
                         android:id="@+id/iv_openAttach"
                         android:layout_width="@dimen/attachment_button_width"
                         android:layout_height="@dimen/attachment_button_height"
-                        android:layout_marginStart="@dimen/attachment_button_margin" />
+                        android:layout_marginStart="10dp" />
 
                     <EditText
                         android:id="@+id/et_message"
@@ -386,22 +385,12 @@
                         android:paddingBottom="30dp"
                         android:textSize="15sp" />
 
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/iv_send"
+                        android:layout_width="@dimen/input_button_width"
+                        android:layout_height="@dimen/input_button_height"
+                        android:layout_marginEnd="10dp" />
 
-                        <TextView
-                            android:id="@+id/tv_send_back"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/sendicon" />
-
-                        <TextView
-                            android:id="@+id/tv_send"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp" />
-                    </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
 

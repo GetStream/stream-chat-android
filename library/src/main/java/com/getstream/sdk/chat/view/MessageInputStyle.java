@@ -31,26 +31,43 @@ class MessageInputStyle extends BaseStyle {
 
     private int attachmentButtonWidth;
     private int attachmentButtonHeight;
-    private int attachmentButtonMargin;
 
+    private int inputButtonIcon;
+    private int inputButtonDefaultIconColor;
+    private int inputButtonDefaultIconPressedColor;
+    private int inputButtonDefaultIconDisabledColor;
+
+    private int inputButtonWidth;
+    private int inputButtonHeight;
 
     public MessageInputStyle (Context context, AttributeSet attrs) {
         setContext(context);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageInputView);
+        // Attachment Button
         showAttachmentButton = a.getBoolean(R.styleable.MessageInputView_showAttachmentButton, true);
 
         attachmentButtonIcon = a.getResourceId(R.styleable.MessageInputView_attachmentButtonIcon, -1);
         attachmentButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconColor,
                 getColor(R.color.gray_dark));
         attachmentButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconPressedColor,
-                getColor(R.color.black));
+                getColor(R.color.white));
         attachmentButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_attachmentButtonDefaultIconDisabledColor,
                 getColor(R.color.gray_light));
 
         attachmentButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonWidth, getDimension(R.dimen.attachment_button_width));
         attachmentButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonHeight, getDimension(R.dimen.attachment_button_height));
-        attachmentButtonMargin = a.getDimensionPixelSize(R.styleable.MessageInputView_attachmentButtonMargin, getDimension(R.dimen.input_button_margin));
+        // Send Button
+        inputButtonIcon = a.getResourceId(R.styleable.MessageInputView_inputButtonIcon, -1);
+        inputButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconColor,
+                getColor(R.color.input_message_send_button));
+        inputButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconPressedColor,
+                getColor(R.color.white));
+        inputButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_inputButtonDefaultIconDisabledColor,
+                getColor(R.color.gray_dark));
 
+        inputButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonWidth, getDimension(R.dimen.input_button_width));
+        inputButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_inputButtonHeight, getDimension(R.dimen.input_button_height));
+        
         a.recycle();
     }
 
@@ -71,6 +88,7 @@ class MessageInputStyle extends BaseStyle {
         return drawable;
     }
 
+    // Attachment Button
     protected boolean showAttachmentButton() {
         return showAttachmentButton;
     }
@@ -91,9 +109,22 @@ class MessageInputStyle extends BaseStyle {
     protected int getAttachmentButtonHeight() {
         return attachmentButtonHeight;
     }
+    // Send Button
+    protected Drawable getInputButtonIcon() {
+        if (inputButtonIcon == -1) {
+            return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
+                    inputButtonDefaultIconDisabledColor, R.drawable.ic_send);
+        } else {
+            return getDrawable(inputButtonIcon);
+        }
+    }
 
-    protected int getAttachmentButtonMargin() {
-        return attachmentButtonMargin;
+    protected int getInputButtonWidth() {
+        return inputButtonWidth;
+    }
+
+    protected int getInputButtonHeight() {
+        return inputButtonHeight;
     }
 
 }

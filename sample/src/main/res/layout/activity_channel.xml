@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
@@ -20,10 +21,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#2F3036"
-            stream:backButtonShow="true"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            stream:backButtonShow="true" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
@@ -79,8 +80,11 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList"
-            stream:attachmentButtonWidth="50dp"
-            stream:attachmentButtonHeight="50dp"
+            stream:attachmentButtonHeight="25dp"
+            stream:attachmentButtonWidth="25dp"
+            stream:inputButtonHeight="25dp"
+            stream:inputButtonWidth="25dp"
+            stream:attachmentButtonDefaultIconColor="#E91E63"
             stream:inputHint="what a fun day" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

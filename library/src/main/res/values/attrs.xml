@@ -50,6 +50,7 @@
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
+        <!--Attachment Button-->
         <attr name="showAttachmentButton" format="boolean" />
         <attr name="attachmentButtonDefaultIconColor" format="color|reference" />
         <attr name="attachmentButtonDefaultIconPressedColor" format="color|reference" />
@@ -57,7 +58,13 @@
         <attr name="attachmentButtonIcon" format="reference"/>
         <attr name="attachmentButtonWidth" format="dimension|reference" />
         <attr name="attachmentButtonHeight" format="dimension|reference" />
-        <attr name="attachmentButtonMargin" format="dimension|reference" />
+        <!--Send Button-->
+        <attr name="inputButtonDefaultIconColor" format="color|reference" />
+        <attr name="inputButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="inputButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="inputButtonIcon" format="reference"/>
+        <attr name="inputButtonWidth" format="dimension|reference" />
+        <attr name="inputButtonHeight" format="dimension|reference" />
 
         <attr name="inputHint" format="string" />
     </declare-styleable>

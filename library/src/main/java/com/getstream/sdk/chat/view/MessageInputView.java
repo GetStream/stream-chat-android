@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -100,11 +99,15 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void applyStyle() {
+        // Attachment Button
         binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon());
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
-
+        // Input Button
+        binding.ivSend.setImageDrawable(style.getInputButtonIcon());
+        binding.ivSend.getLayoutParams().width = style.getInputButtonWidth();
+        binding.ivSend.getLayoutParams().height = style.getInputButtonHeight();
 //        binding.etMessage.setHint(hintText);
     }
 
@@ -115,7 +118,7 @@ public class MessageInputView extends RelativeLayout
         binding.setActiveMessageComposer(false);
         binding.setActiveMessageSend(false);
 
-        binding.tvSend.setOnClickListener(this);
+        binding.ivSend.setOnClickListener(this);
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
