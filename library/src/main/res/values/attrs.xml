@@ -3,7 +3,6 @@
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-
         <attr name="channelAvatarWidth" format="dimension|reference" />
         <attr name="channelAvatarHeight" format="dimension|reference" />
         <attr name="channelAvatarBorderWidth" format="dimension|reference" />
@@ -51,10 +50,16 @@
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
-        <attr name="inputHint" format="string" />
         <attr name="showAttachmentButton" format="boolean" />
-        <attr name="attachmentButtonBackground" format="color|reference" />
-        <attr name="attachmentButtonDefaultBgColor" format="color|reference" />
+        <attr name="attachmentButtonDefaultIconColor" format="color|reference" />
+        <attr name="attachmentButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="attachmentButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="attachmentButtonIcon" format="reference"/>
+        <attr name="attachmentButtonWidth" format="dimension|reference" />
+        <attr name="attachmentButtonHeight" format="dimension|reference" />
+        <attr name="attachmentButtonMargin" format="dimension|reference" />
+
+        <attr name="inputHint" format="string" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">

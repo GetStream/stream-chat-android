@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -19,14 +19,14 @@
     </data>
 
 
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout android:layout_height="wrap_content" android:layout_width="match_parent" >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/iv_back_attachment"
@@ -365,12 +365,11 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tv_openAttach"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_marginStart="10dp"
-                        android:background="@{activeMessageComposer ? @drawable/add_black : @drawable/add_gray}" />
+                    <ImageView
+                        android:id="@+id/iv_openAttach"
+                        android:layout_width="@dimen/attachment_button_width"
+                        android:layout_height="@dimen/attachment_button_height"
+                        android:layout_marginStart="@dimen/attachment_button_margin" />
 
                     <EditText
                         android:id="@+id/et_message"
@@ -410,5 +409,5 @@
         </LinearLayout>
 
 
-     </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

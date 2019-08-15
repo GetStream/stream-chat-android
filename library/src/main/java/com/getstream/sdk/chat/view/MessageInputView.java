@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,7 +29,6 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Rich Message Input View component, allows you to:
  * - type messages
@@ -43,7 +43,6 @@ import java.util.List;
  */
 public class MessageInputView extends RelativeLayout
         implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
-
     /*
     TODO:
     - MessageInputView needs to be aware of the channel (for the list of commands, perhaps other settings);
@@ -56,11 +55,11 @@ public class MessageInputView extends RelativeLayout
     final String TAG = MessageInputView.class.getSimpleName();
 
     // our connection to the channel scope
-    private ChannelViewModel modelView;
+    private ChannelViewModel channelViewModel;
 
     // binding for this view
     private ViewMessageInputBinding binding;
-
+    private MessageInputStyle style;
 
     // listeners
     private SendMessageListener sendMessageListener;
@@ -75,29 +74,38 @@ public class MessageInputView extends RelativeLayout
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
 
-
+    // region Constructor
     public MessageInputView(Context context) {
         super(context);
-
-        binding = this.initBinding(context);
-
-        this.initAttachmentUI(context);
+        binding = initBinding(context);
+        initAttachmentUI(context);
     }
 
-    // https://blog.danlew.net/2016/07/19/a-deep-dive-into-android-view-constructors/
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // parse the attributes
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.MessageInputView, 0, 0);
-        String hintText = a.getString(R.styleable.MessageInputView_inputHint);
-        a.recycle();
+        parseAttr(context, attrs);
+        binding = initBinding(context);
+        applyStyle();
+        initAttachmentUI(context);
+    }
 
-        // setup the bindings
-        binding = this.initBinding(context);
-        binding.etMessage.setHint(hintText);
+    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
+        style = new MessageInputStyle(context, attrs);
+    }
 
-        this.initAttachmentUI(context);
+    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
+        this.channelViewModel = model;
+        binding.setLifecycleOwner(lifecycleOwner);
+        this.setOnSendMessageListener(model);
+    }
+
+    private void applyStyle() {
+        binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
+        binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon());
+        binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
+        binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
+
+//        binding.etMessage.setHint(hintText);
     }
 
     private ViewMessageInputBinding initBinding(Context context) {
@@ -108,16 +116,10 @@ public class MessageInputView extends RelativeLayout
         binding.setActiveMessageSend(false);
 
         binding.tvSend.setOnClickListener(this);
-        binding.tvOpenAttach.setOnClickListener(this);
+        binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
         return binding;
-    }
-
-    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        this.modelView = model;
-        binding.setLifecycleOwner(lifecycleOwner);
-        this.setOnSendMessageListener(model);
     }
 
     public List<Attachment> GetAttachments() {
@@ -137,7 +139,7 @@ public class MessageInputView extends RelativeLayout
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        binding.tvOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
+        binding.ivOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
         binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
@@ -203,7 +205,7 @@ public class MessageInputView extends RelativeLayout
         if (id == R.id.tv_send) {
             this.onSendMessage(binding.etMessage.getText().toString());
             this.stopTyping();
-        } else if (id == R.id.tv_openAttach) {
+        } else if (id == R.id.iv_openAttach) {
             // open the attachment drawer
             Log.i(TAG, "opening the attachment drawer");
             binding.setIsAttachFile(true);
