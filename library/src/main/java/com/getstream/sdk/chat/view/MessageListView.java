@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -32,6 +33,7 @@ public class MessageListView extends RecyclerView {
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
+    private MessageViewHolderFactory viewHolderFactory;
 
     private int firstVisible;
     private int lastVisible;
@@ -57,6 +59,13 @@ public class MessageListView extends RecyclerView {
         hasScrolledUp = false;
     }
 
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+        if (this.adapter != null) {
+            this.adapter.setFactory(factory);
+        }
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
@@ -71,6 +80,10 @@ public class MessageListView extends RecyclerView {
 
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
+        if (viewHolderFactory != null) {
+            adapter.setFactory(viewHolderFactory);
+        }
+
 
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, entityWrapper -> {

@@ -39,6 +39,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return style;
     }
 
+    public void setFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+    }
+
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<Entity> entityList) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
