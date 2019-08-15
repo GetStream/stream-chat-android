@@ -55,7 +55,7 @@ public class ChannelRepository {
         looper.start();
     }
 
-    private List<User> typingUsers(){
+    private List<User> typingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
         for (Event event: mTypingState.values()){

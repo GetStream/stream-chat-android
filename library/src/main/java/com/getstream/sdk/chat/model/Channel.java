@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
@@ -497,7 +498,7 @@ public class Channel {
      * Call this on every keystroke
      */
     public void keystroke(){
-        if (!getConfig().isTyping_events()) return;
+        if (!getConfig().istypingEvents()) return;
         Date now = new Date();
         long diff;
         if (this.lastKeyStroke == null)
@@ -552,7 +553,7 @@ public class Channel {
      * stopTyping - Sets last typing to null and sends the typing.stop event
      */
     public void stopTyping(){
-        if (!getConfig().isTyping_events()) return;
+        if (!getConfig().istypingEvents()) return;
         this.lastTypingEvent = null;
         this.isTyping = false;
         sendEvent(EventType.TYPING_STOP, new EventCallback() {
@@ -603,6 +604,23 @@ public class Channel {
             @Override
             public void onError(String errMsg, int errCode) {
                 callback.onError(errMsg,errCode);
+            }
+        });
+    }
+
+    /**
+     * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
+     */
+    public void markRead() {
+        client.markRead(this, new MarkReadRequest(null), new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+                Log.i(TAG, "mark read successful");
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, "mark read failed with error " + errMsg);
             }
         });
     }
