@@ -295,9 +295,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
         loadingMore.setValue(true);
-        entities.setIsLoadingMore(true);
 
-        Log.d(TAG, "ViewModel loadMore...");
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channelState.getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channelState.getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
@@ -306,18 +305,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 new QueryChannelCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
-                        loadingMore.postValue(false);
+
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        // TODO: messages added via load more should be added at the bottom
+                        // used to modify the scroll behaviour...
+                        entities.setIsLoadingMore(true);
                         addMessages(newMessages);
 
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)
                             endOfPagination.setValue(true);
+
+                        loadingMore.postValue(false);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        loadingMore.setValue(false);
+                        loadingMore.postValue(false);
                     }
                 }
         );
