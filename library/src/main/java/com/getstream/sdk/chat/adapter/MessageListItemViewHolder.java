@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,11 +27,13 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.MessageBubbleDrawable;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -209,7 +214,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void applyStyleTheirs() {
         Drawable background = style.getMessageBubbleDrawableTheirs();
-        tv_text.setBackground(background);
+
+        InputStream resource = context.getResources().openRawResource(R.raw.typing);
+        Bitmap bitmap = BitmapFactory.decodeStream(resource);
+        tv_text.setBackground(new MessageBubbleDrawable(R.color.stream_gray_dark, 1, Color.GREEN));
+
+
+        //tv_text.setBackground(background);
         tv_text.setTextColor(style.getMessageTextColorTheirs());
     }
 
