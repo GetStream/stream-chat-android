@@ -445,7 +445,7 @@ public class ChannelFragment extends Fragment {
         if (binding.messageInput.isEditing()) {
             updateMessage(binding.messageInput.getMessageText());
         } else {
-            sendNewMessage(messageText, binding.messageInput.GetAttachments(), null);
+            sendNewMessage(messageText, binding.messageInput.getAttachments(), null);
         }
     }
 

@@ -66,6 +66,16 @@ public class MessageInputView extends RelativeLayout
     // listeners
     private SendMessageListener sendMessageListener;
     private TypingListener typingListener;
+    private static final int DEFAULT_DELAY_TYPING_STATUS = 1500;
+    private Runnable typingTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isTyping) {
+                isTyping = false;
+                stopTyping();
+            }
+        }
+    };
     private AttachmentListener attachmentListener;
     // state
     private Message editingMessage;
@@ -139,7 +149,7 @@ public class MessageInputView extends RelativeLayout
                 });
     }
 
-    public List<Attachment> GetAttachments() {
+    public List<Attachment> getAttachments() {
         List<Attachment> a = new ArrayList<>();
         return a;
     }
@@ -259,10 +269,11 @@ public class MessageInputView extends RelativeLayout
     public void afterTextChanged(Editable s) {
         String messageText = this.getMessageText();
         Log.i(TAG, "Length is " + s.length());
-        if (s.length() > 0) {
+        if (messageText.length() > 0) {
             this.keyStroke();
         } else {
-            this.stopTyping();
+            removeCallbacks(typingTimerRunnable);
+            postDelayed(typingTimerRunnable, DEFAULT_DELAY_TYPING_STATUS);
         }
         // detect commands
         sendFileFunction.checkCommand(messageText);
@@ -295,21 +306,20 @@ public class MessageInputView extends RelativeLayout
 
     private void stopTyping() {
         isTyping = false;
+        channelViewModel.getChannel().stopTyping();
         if (typingListener != null) {
             typingListener.onStopTyping();
         }
     }
 
     private void keyStroke() {
+        channelViewModel.getChannel().keystroke();
         isTyping = true;
         if (typingListener != null) {
             typingListener.onKeystroke();
         }
     }
 
-    public boolean isTyping() {
-        return isTyping;
-    }
 
 
     /**
