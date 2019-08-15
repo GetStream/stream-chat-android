@@ -46,8 +46,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_title;
     // Action
-    private ConstraintLayout cl_action;
-    private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+//    private ConstraintLayout cl_action;
+//    private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
     private AttachmentListView.AttachmentClickListener clickListener;
     private AttachmentListView.AttachmentClickListener longClickListener;
 
@@ -68,10 +68,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         iv_command_title = itemView.findViewById(R.id.iv_command_title);
 
-        cl_action = itemView.findViewById(R.id.cl_action);
-        tv_action_send = itemView.findViewById(R.id.tv_action_send);
-        tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
-        tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
+//        cl_action = itemView.findViewById(R.id.cl_action);
+//        tv_action_send = itemView.findViewById(R.id.tv_action_send);
+//        tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
+//        tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
     }
 
     @Override
@@ -197,7 +197,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
             Log.d(TAG, "Attach onClick: " + position);
-            if (clickListener != null) {
 
                 SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
                 attachmentModel.setAttachmentIndex(position);
@@ -205,7 +204,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
                 view.setTag(attachmentModel);
                 triggerClick(message, attachment);
-            }
+
         });
         lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
             triggerLongClick(message, attachment);
@@ -285,7 +284,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         // Set Click Listener
         cl_attachment_media.setOnClickListener((View v) -> {
-            if (clickListener != null) {
                 if (attachments.size() > 0) {
                     SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
                     attachmentModel.setAttachmentIndex(0);
@@ -294,7 +292,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                     v.setTag(attachmentModel);
                 }
                 this.triggerClick(message, attachment);
-            }
+
 
         });
 

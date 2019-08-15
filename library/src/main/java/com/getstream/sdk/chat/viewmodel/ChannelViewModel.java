@@ -101,7 +101,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString = new MutableLiveData<String>(humanizedDate);
 
-        this.initEventHandlers();
         this.queryChannel();
     }
 
@@ -218,6 +217,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     endOfPagination.postValue(true);
                 }
                 addMessages(channelState.getMessages());
+                initEventHandlers();
             }
 
             @Override

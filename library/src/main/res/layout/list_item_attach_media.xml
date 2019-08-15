@@ -83,52 +83,5 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_action"
-        android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:layout_margin="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_media_thumb">
 
-        <TextView
-            android:id="@+id/tv_action_send"
-            style="@style/text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/round_action_send"
-            android:gravity="center"
-            android:text="Send"
-            android:textColor="@color/white"
-            app:layout_constraintEnd_toStartOf="@+id/tv_action_shuffle"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_action_shuffle"
-            style="@style/text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:background="@drawable/round_action_shuffle"
-            android:gravity="center"
-            android:text="Shuffle"
-            app:layout_constraintEnd_toStartOf="@+id/tv_action_cancel"
-            app:layout_constraintStart_toEndOf="@+id/tv_action_send" />
-
-        <TextView
-            android:id="@+id/tv_action_cancel"
-            style="@style/text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/round_action_shuffle"
-            android:gravity="center"
-            android:text="Cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_action_shuffle" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

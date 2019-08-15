@@ -55,6 +55,7 @@
             android:id="@+id/tv_header_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:text="AT 8:33PM"
             android:textSize="12dp" />
 
