@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class EntityLiveData extends LiveData<List<Entity>> {
+public class EntityLiveData extends LiveData<EntityListWrapper> {
     private MutableLiveData<List<Message>> messages;
     private MutableLiveData<List<User>> typing;
 
@@ -25,6 +25,7 @@ public class EntityLiveData extends LiveData<List<Entity>> {
     private User currentUser;
     private List<Entity> messageEntities;
     private List<Entity> typingEntities;
+    private Boolean isLoadingMore;
 
     public EntityLiveData(User currentUser, MutableLiveData<List<Message>> messages, MutableLiveData<List<User>> typing) {
         this.messages = messages;
@@ -32,13 +33,23 @@ public class EntityLiveData extends LiveData<List<Entity>> {
         this.typing = typing;
         this.messageEntities = new ArrayList<>();
         this.typingEntities = new ArrayList<>();
+        this.isLoadingMore = false;
+    }
+
+    public void setIsLoadingMore(Boolean loading) {
+        isLoadingMore = loading;
     }
 
     private void broadcastValue() {
         List<Entity> merged = new ArrayList<>();
         merged.addAll(messageEntities);
         merged.addAll(typingEntities);
-        setValue(merged);
+        EntityListWrapper wrapper = new EntityListWrapper(isLoadingMore, merged);
+        setValue(wrapper);
+        // isLoadingMore is only true once...
+        if (isLoadingMore) {
+            this.setIsLoadingMore(true);
+        }
     }
 
     private boolean isSameDay(Message a, Message b) {
@@ -47,7 +58,7 @@ public class EntityLiveData extends LiveData<List<Entity>> {
     }
 
     @Override
-    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super List<Entity>> observer) {
+    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super EntityListWrapper> observer) {
         super.observe(owner, observer);
         // TODO: update based on read state..
         this.messages.observe(owner, messages -> {

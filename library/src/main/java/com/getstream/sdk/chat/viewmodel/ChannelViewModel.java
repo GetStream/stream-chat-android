@@ -75,6 +75,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> watcherCount;
     private MutableLiveData<String> lastActiveString;
+    private MutableLiveData<Boolean> hasNewMessages;
 
     public LiveData<List<User>> getTypingUsers() {
         return typingUsers;
@@ -112,6 +113,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         failed = new MutableLiveData<>(false);
         online = new MutableLiveData<>(true);
         endOfPagination = new MutableLiveData<>(false);
+        hasNewMessages = new MutableLiveData<>(false);
         // TODO: actually listen to the events and verify if anybody is online
         anyOtherUsersOnline = new MutableLiveData<>(channelState.anyOtherUsersOnline());
         // TODO: change this if the list of channel members changes or the channel is updated
@@ -293,6 +295,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
         loadingMore.setValue(true);
+        entities.setIsLoadingMore(true);
 
         Log.d(TAG, "ViewModel loadMore...");
 
@@ -505,6 +508,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
             typingUsers.postValue(getCleanedTypingUsers());
         }
+    }
+
+    public MutableLiveData<Boolean> getHasNewMessages() {
+        return hasNewMessages;
+    }
+
+    public void setHasNewMessages(Boolean hasNewMessages) {
+        this.hasNewMessages.postValue(hasNewMessages);
     }
 
     /**
