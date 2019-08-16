@@ -96,8 +96,8 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                         style.getAvatarBackGroundColor(),
                         style.getAvatarInitialTextColor());
                 Glide.with(context)
-                        .load(user.getImage())
                         .asBitmap()
+                        .load(user.getImage())
                         .into(imageView);
 
                 RelativeLayout.LayoutParams params;

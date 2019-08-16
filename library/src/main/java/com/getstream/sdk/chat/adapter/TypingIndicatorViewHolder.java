@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -70,8 +69,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             ll_typingusers.addView(v);
             i += 1;
         }
-        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
-        Glide.with(context).load(R.raw.typing).into(imageViewTarget);
+        Glide.with(context).load(R.raw.typing).into(iv_typing_indicator);
 
 
     }
