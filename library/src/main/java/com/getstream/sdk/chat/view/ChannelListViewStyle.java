@@ -77,6 +77,7 @@ public class ChannelListViewStyle extends BaseStyle {
         readStateTextSize = a.getDimension(R.styleable.ChannelListView_channelRreadStateTextSize, getDimension(R.dimen.read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.ChannelListView_channelReadStateTextColor, Color.BLACK);
         readStateTextStyle = a.getColor(R.styleable.ChannelListView_channelReadStateTextStyle, Typeface.NORMAL);
+
         a.recycle();
     }
 

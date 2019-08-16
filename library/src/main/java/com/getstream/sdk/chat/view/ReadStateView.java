@@ -37,6 +37,8 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
     public void init() {
         removeAllViews();
+        setVisibility(style.isShowReadState() ? VISIBLE : GONE);
+        if (!style.isShowReadState()) return;
         if (reads == null || reads.isEmpty()) return;
 
         // Show the icon of the user who was last to read...
@@ -61,6 +63,6 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 (int) (style.getReadStateAvatarHeight()));
         imageView.setLayoutParams(params);
 
-        this.addView(imageView);
+        addView(imageView);
     }
 }

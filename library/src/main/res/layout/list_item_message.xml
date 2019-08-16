@@ -221,9 +221,8 @@
 
         <com.getstream.sdk.chat.view.ReadStateView
             android:id="@+id/view_read_indicator"
-            android:background="@color/red"
             android:layout_width="20dp"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_height="20dp"
             android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
