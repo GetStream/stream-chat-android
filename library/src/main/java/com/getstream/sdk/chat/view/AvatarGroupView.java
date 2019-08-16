@@ -67,7 +67,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         params.height = (int) style.getAvatarHeight();
         this.setLayoutParams(params);
 
-        this.removeAllViews();
+        removeAllViews();
         if (user != null) {
             configAvatar(user.getImage(), user.getInitials());
         } else if (!TextUtils.isEmpty(channel.getImage())) {
