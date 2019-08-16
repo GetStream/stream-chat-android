@@ -17,8 +17,8 @@
     <dimen name="composer_corner_radius">10dp</dimen>
     <dimen name="input_text_size">15sp</dimen>
 
-    <dimen name="read_state_avatar_height">13dp</dimen>
-    <dimen name="read_state_avatar_width">13dp</dimen>
+    <dimen name="read_state_avatar_height">14dp</dimen>
+    <dimen name="read_state_avatar_width">14dp</dimen>
     <!--Message Item-->
     <dimen name="message_avatar_height">32dp</dimen>
     <dimen name="message_avatar_width">32dp</dimen>
@@ -30,6 +30,7 @@
     <dimen name="message_avatar_margin">10dp</dimen>
     <dimen name="message_date_margin">5dp</dimen>
     <dimen name="message_text_font_size">15sp</dimen>
+    <dimen name="read_state_text_size">8sp</dimen>
     <dimen name="message_typing_indicator_size">30dp</dimen>
     <!--Attachment Item-->
     <dimen name="attach_image_width">250dp</dimen>

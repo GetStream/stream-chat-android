@@ -74,7 +74,6 @@ public class BaseStyle {
         return ContextCompat.getDrawable(context, drawable);
     }
 
-
     protected float avatarWidth;
     protected float avatarHeight;
 
@@ -85,6 +84,15 @@ public class BaseStyle {
     protected float avatarInitialTextSize;
     protected int avatarInitialTextColor;
     protected int avatarInitialTextStyle;
+
+    protected boolean showReadState;
+
+    protected float readStateAvatarWidth;
+    protected float readStateAvatarHeight;
+
+    protected float readStateTextSize;
+    protected int readStateTextColor;
+    protected int readStateTextStyle;
 
     public float getAvatarWidth() {
         return avatarWidth;
@@ -116,5 +124,29 @@ public class BaseStyle {
 
     public int getAvatarBackGroundColor() {
         return avatarBackGroundColor;
+    }
+
+    public boolean isShowReadState() {
+        return showReadState;
+    }
+
+    public float getReadStateAvatarWidth() {
+        return readStateAvatarWidth;
+    }
+
+    public float getReadStateAvatarHeight() {
+        return readStateAvatarHeight;
+    }
+
+    public float getReadStateTextSize() {
+        return readStateTextSize;
+    }
+
+    public int getReadStateTextColor() {
+        return readStateTextColor;
+    }
+
+    public int getReadStateTextStyle() {
+        return readStateTextStyle;
     }
 }

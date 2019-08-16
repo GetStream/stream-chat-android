@@ -158,7 +158,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = entity.getPositions();
 
 
-
         if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
             alv_attachments.setVisibility(View.GONE);
         } else {
@@ -178,7 +177,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         // apply position related style tweaks
         this.applyPositionsStyle();
-
 
 
         // TODO: hook up click and longclick
@@ -322,7 +320,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         markwon.setMarkdown(tv_text, Global.getMentionedText(message));
 
 
-
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
             Log.d(TAG, "onClick: " + position);
@@ -384,9 +381,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-
-
-
     // endregion
 
     // region Layout Params
@@ -435,14 +429,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-
     private void configPramsDeliveredIndicator() {
         List<ChannelUserRead> readBy = entity.getMessageReadBy();
 
         if (readBy.size() == 0) {
             view_read_indicator.setVisibility(View.GONE);
         } else {
-            view_read_indicator.setReads(readBy);
+            view_read_indicator.setReads(readBy, style);
             view_read_indicator.setVisibility(View.VISIBLE);
         }
     }

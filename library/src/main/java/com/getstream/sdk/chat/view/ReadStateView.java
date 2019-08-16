@@ -2,19 +2,21 @@ package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
-
+import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.BaseStyle;
+import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.Collections;
 import java.util.List;
 
-public class ReadStateView extends RelativeLayout {
+public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
     private List<ChannelUserRead> reads;
-    private ReadStateStyle style;
+    STYLE style;
 
     public ReadStateView(Context context) {
         super(context);
@@ -23,20 +25,13 @@ public class ReadStateView extends RelativeLayout {
 
     public ReadStateView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        parseAttr(context, attrs);
-        applyStyle();
-    }
-
-    private void applyStyle() {
 
     }
 
-    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
-        style = new ReadStateStyle(context, attrs);
-    }
 
-    public void setReads(List<ChannelUserRead> reads) {
+    public void setReads(List<ChannelUserRead> reads, STYLE style) {
         this.reads = reads;
+        this.style = style;
         init();
     }
 
@@ -46,10 +41,26 @@ public class ReadStateView extends RelativeLayout {
 
         // Show the icon of the user who was last to read...
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-        User u = reads.get(0).getUser();
-        String image = u.getImage();
-//        Utils.circleImageLoad(this, image);
-//        AvatarGroupView<ReadStateStyle> avatarGroupView = new AvatarGroupView<>(getContext());
-//        avatarGroupView.setUser(u, style);
+        User user = reads.get(0).getUser();
+        String image = user.getImage();
+        CircularImageView imageView = new CircularImageView(getContext());
+        imageView.setPlaceholder(user.getInitials(),
+                style.getAvatarBackGroundColor(),
+                style.getAvatarInitialTextColor());
+        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                (int) (style.getReadStateTextSize()),
+                style.getAvatarInitialTextStyle());
+
+        Glide.with(getContext())
+                .load(image)
+                .into(imageView);
+
+        RelativeLayout.LayoutParams params;
+        params = new RelativeLayout.LayoutParams(
+                (int) (style.getReadStateAvatarWidth()),
+                (int) (style.getReadStateAvatarHeight()));
+        imageView.setLayoutParams(params);
+
+        this.addView(imageView);
     }
 }

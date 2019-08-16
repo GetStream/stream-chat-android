@@ -15,7 +15,17 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
+        <!--ReadStateView-->
+        <attr name="channelShowReadState" format="boolean" />
+        <attr name="channelReadStateAvatarWidth" format="dimension|reference" />
+        <attr name="channelReadStateAvatarHeight" format="dimension|reference" />
+        <attr name="channelRreadStateTextSize" format="dimension|reference" />
+        <attr name="channelReadStateTextColor" format="color|reference" />
+        <attr name="channelReadStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
         <!--LastMessageDate-->
         <attr name="dateTextColor" format="color|reference" />
         <attr name="dateTextSize" format="dimension|reference" />
@@ -92,6 +102,17 @@
         <attr name="userAvatarTextSize" format="dimension|reference" />
         <attr name="userAvatarTextColor" format="color|reference" />
         <attr name="userAvatarTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!--ReadStateView-->
+        <attr name="userShowReadState" format="boolean" />
+        <attr name="userReadStateAvatarWidth" format="dimension|reference" />
+        <attr name="userReadStateAvatarHeight" format="dimension|reference" />
+        <attr name="userRreadStateTextSize" format="dimension|reference" />
+        <attr name="userReadStateTextColor" format="color|reference" />
+        <attr name="userReadStateTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
