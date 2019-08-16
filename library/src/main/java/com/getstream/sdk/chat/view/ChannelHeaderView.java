@@ -90,6 +90,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         // back button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
     }
+
     private void configHeaderAvatar() {
         Channel channel = this.viewModel.getChannel();
         ChannelState channelState = channel.getChannelState();
