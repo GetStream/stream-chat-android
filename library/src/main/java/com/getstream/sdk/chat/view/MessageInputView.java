@@ -285,7 +285,7 @@ public class MessageInputView extends RelativeLayout
         if (!hasFocus) {
             this.stopTyping();
         }
-        channelViewModel.getInputType().postValue(hasFocus ? InputType.SELECT : InputType.DEFAULT);
+        channelViewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
 
     private void onSendMessage(String input) {

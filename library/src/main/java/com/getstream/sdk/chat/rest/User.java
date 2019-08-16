@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
@@ -14,7 +15,7 @@ import java.util.HashMap;
  * A user
  */
 
-public class User {
+public class User implements UserEntity {
     @SerializedName("id")
     private String id;
 
@@ -157,12 +158,6 @@ public class User {
         return extraData;
     }
 
-    // TODO: move to modelview
-    public boolean isMe(){
-        return false;
-//        return id.equals(StreamChat.getInstance().getUserId());
-    }
-
     public String getInitials() {
         if (this.name == null) {
             this.name = "";
@@ -184,5 +179,14 @@ public class User {
         if (!StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         return null;
+    }
+
+    // TODO: populate this from API
+    public boolean isMe(){
+        return false;
+    }
+
+    public String getUserId() {
+        return id;
     }
 }

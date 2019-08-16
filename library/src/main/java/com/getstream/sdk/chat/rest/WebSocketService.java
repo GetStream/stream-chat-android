@@ -191,7 +191,6 @@ public class WebSocketService extends WebSocketListener {
                 Event event = new Event();
                 event.setType(EventType.HEALTH_CHECK);
                 event.setClientId(clientID);
-                event.setUserId(userID);
                 webSocket.send(new Gson().toJson(event));
             } finally {
                 mHandler.postDelayed(mHealthCheck, healthCheckInterval);

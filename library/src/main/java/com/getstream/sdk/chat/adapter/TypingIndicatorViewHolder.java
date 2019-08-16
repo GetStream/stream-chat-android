@@ -72,8 +72,6 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         }
         GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(iv_typing_indicator);
         Glide.with(context).load(R.raw.typing).into(imageViewTarget);
-
-
     }
 
     @Override

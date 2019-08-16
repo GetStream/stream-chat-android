@@ -54,15 +54,13 @@ public class ChannelState {
 
     // endregion
     public static void sortUserReads(List<ChannelUserRead> reads) {
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
+        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
     }
 
     public List<User> getOtherUsers() {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         for (Member m : this.members) {
-            // TODO: Tommaso
-            String currentUserId = channel.getClient().getUserId();
-            if (!m.getUser().getId().equals(currentUserId)) {
+            if (!channel.getClient().fromCurrentUser(m)) {
                 users.add(m.getUser());
             }
         }
@@ -77,13 +75,22 @@ public class ChannelState {
         return message.getId();
     }
 
+    // last time the channel had another user online OR got a message from another user
     public Date getLastActive() {
-//        List<User> users = this.getOtherUsers();
-//        for (User u: users) {
-//            // TODO: Tommaso why is this a string?
-//            u.getLast_active();
-//        }
-        return new Date();
+        Message message = getLastMessageFromOtherUser();
+        Date lastActive = new Date(0);
+        List<User> users = this.getOtherUsers();
+        for (User u: users) {
+            if (u.getLastActive().after(lastActive)) {
+                lastActive = u.getLastActive();
+            }
+        }
+
+        if (lastActive.after(message.getCreatedAt())) {
+            return lastActive;
+        }
+
+        return message.getCreatedAt();
     }
 
     public Boolean anyOtherUsersOnline() {
@@ -106,9 +113,8 @@ public class ChannelState {
             channelName = channel.getName();
         } else {
             List<User> users = this.getOtherUsers();
-
             List<User> top3 = users.subList(0, Math.min(3, users.size()));
-            List<String> usernames = new ArrayList<String>();
+            List<String> usernames = new ArrayList<>();
             for (User u : top3) {
                 usernames.add(u.getName());
             }
@@ -117,8 +123,6 @@ public class ChannelState {
             if (users.size() > 3) {
                 channelName += "...";
             }
-
-
         }
         return channelName;
     }
@@ -147,20 +151,15 @@ public class ChannelState {
         List<ChannelUserRead> readLastMessage = new ArrayList<ChannelUserRead>();
         if (reads == null) return readLastMessage;
         for (ChannelUserRead r : reads) {
-            // TODO: fix me as soon as we have working date parsing
-            //r.getLast_read() > lastMessage.getCreatedAt___OLD()
-            if (true) {
+            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
                 readLastMessage.add(r);
             }
         }
 
         // sort the reads
-        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLast_read().compareTo(o2.getLast_read()));
-
+        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
         return readLastMessage;
     }
-
-
 
     public List<Member> getMembers() {
         return members;
@@ -187,8 +186,7 @@ public class ChannelState {
             List<Message> messages = getMessages();
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
-                if (message.getDeletedAt() == null && !message.getUser().isMe()) {
-
+                if (message.getDeletedAt() == null && !channel.getClient().fromCurrentUser(message)) {
                     lastMessage = message;
                     break;
                 }
@@ -315,7 +313,7 @@ public class ChannelState {
             for (int i = reads.size() - 1; i >= 0; i--) {
                 ChannelUserRead channelUserRead = reads.get(i);
                 if (channelUserRead.getUser().getId().equals(userId)) {
-                    lastReadDate = channelUserRead.getLast_read();
+                    lastReadDate = channelUserRead.getLastRead();
                     break;
                 }
             }
@@ -333,7 +331,7 @@ public class ChannelState {
             try {
                 User user_ = userLastRead.getUser();
                 if (user_.getId().equals(user.getId())) {
-                    userLastRead.setLast_read(readDate);
+                    userLastRead.setLastRead(readDate);
                     // Change Order
                     this.reads.remove(userLastRead);
                     this.reads.add(userLastRead);
@@ -347,7 +345,7 @@ public class ChannelState {
         if (isNotSet) {
             ChannelUserRead channelUserRead = new ChannelUserRead();
             channelUserRead.setUser(user);
-            channelUserRead.setLast_read(readDate);
+            channelUserRead.setLastRead(readDate);
             this.reads.add(channelUserRead);
         }
     }

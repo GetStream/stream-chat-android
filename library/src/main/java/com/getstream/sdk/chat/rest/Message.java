@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Global;
@@ -23,7 +23,7 @@ import java.util.TimeZone;
 /**
  * A message
  */
-public class Message {
+public class Message implements UserEntity {
     @SerializedName("id")
     @Expose
     private String id;
@@ -92,10 +92,7 @@ public class Message {
     @Expose
     private Map<String, String> commandInfo;
 
-
-
-
-
+    private boolean me;
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -391,4 +388,11 @@ public class Message {
         this.commandInfo = commandInfo;
     }
 
+    @Override
+    public String getUserId() {
+        if (user == null) {
+            return null;
+        }
+        return user.getId();
+    }
 }

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.function;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,9 +9,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 
 import com.getstream.sdk.chat.R;
@@ -22,11 +18,11 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Command;
+import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.model.Member;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -37,10 +33,6 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class SendFileFunction {
 
@@ -220,10 +212,10 @@ public class SendFileFunction {
         if (selectedAttachments.size() > 0) {
 //            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
-            viewModel.getInputType().postValue(InputType.SELECT);
+            viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
 //            binding.setActiveMessageComposer(false);
-            viewModel.getInputType().postValue(InputType.DEFAULT);
+            viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
     }
@@ -249,7 +241,7 @@ public class SendFileFunction {
 
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
 //                binding.setActiveMessageComposer(false);
-                viewModel.getInputType().postValue(InputType.DEFAULT);
+                viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
             }
         });
@@ -293,12 +285,12 @@ public class SendFileFunction {
         setSelectedFileAttachmentListAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-            viewModel.getInputType().postValue(InputType.SELECT);
+            viewModel.setInputType(InputType.SELECT);
 //            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
 //            binding.setActiveMessageComposer(false);
-            viewModel.getInputType().postValue(InputType.DEFAULT);
+            viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
     }
@@ -322,7 +314,7 @@ public class SendFileFunction {
             if (position_ != -1)
                 fileAttachmentAdapter.notifyDataSetChanged();
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                viewModel.getInputType().postValue(InputType.DEFAULT);
+                viewModel.setInputType(InputType.DEFAULT);
 //                binding.setActiveMessageComposer(false);
                 binding.setActiveMessageSend(false);
             }

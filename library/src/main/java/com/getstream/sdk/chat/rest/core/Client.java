@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
@@ -200,6 +201,13 @@ public class Client implements WSResponseHandler {
     }
 
     // endregion
+
+    public boolean fromCurrentUser(UserEntity entity){
+        String otherUserId = entity.getUserId();
+        if (otherUserId == null) return false;
+        if (user == null) return false;
+        return TextUtils.equals(user.getId(), otherUserId);
+    }
 
     public final synchronized int addEventHandler(ChatEventHandler handler) {
         int id = ++subscribersSeq;
@@ -735,10 +743,10 @@ public class Client implements WSResponseHandler {
         mService.queryUsers(apiKey, user.getId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                for (int i = 0; i < response.body().getUsers().size(); i++)
-                    if (!response.body().getUsers().get(i).isMe())
-                        users.add(response.body().getUsers().get(i));
-
+                for (User user : response.body().getUsers())
+                    if (!fromCurrentUser(user)){
+                        users.add(user);
+                    }
                 callback.onSuccess(response.body());
             }
 
