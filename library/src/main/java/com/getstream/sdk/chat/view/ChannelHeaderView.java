@@ -50,7 +50,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
         configHeaderAvatar();
-        updateUIs(lifecycleOwner);
+//        updateUIs(lifecycleOwner);
     }
 
     private ToolbarChannelHeaderBinding initBinding(Context context) {
@@ -91,15 +91,15 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         // back button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
     }
-
-    private void updateUIs(LifecycleOwner lifecycleOwner) {
-        viewModel.getAnyOtherUsersOnline().observe(lifecycleOwner, anyOtherUsersOnline ->
-                viewModel.getAnyOtherUsersOnline().postValue(anyOtherUsersOnline));
-        viewModel.getChannelName().observe(lifecycleOwner, channelName ->
-                viewModel.getChannelName().postValue(channelName));
-        viewModel.getLastActiveString().observe(lifecycleOwner, lastActiveString ->
-                viewModel.getLastActiveString().postValue(lastActiveString));
-    }
+//
+//    private void updateUIs(LifecycleOwner lifecycleOwner) {
+//        viewModel.getAnyOtherUsersOnline().observe(lifecycleOwner, anyOtherUsersOnline ->
+//                viewModel.getAnyOtherUsersOnline().postValue(anyOtherUsersOnline));
+//        viewModel.getChannelName().observe(lifecycleOwner, channelName ->
+//                viewModel.getChannelName().postValue(channelName));
+//        viewModel.getLastActiveString().observe(lifecycleOwner, lastActiveString ->
+//                viewModel.getLastActiveString().postValue(lastActiveString));
+//    }
 
     private void configHeaderAvatar() {
         Channel channel = this.viewModel.getChannel();

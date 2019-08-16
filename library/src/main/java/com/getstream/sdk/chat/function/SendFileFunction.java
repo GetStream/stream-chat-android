@@ -126,42 +126,47 @@ public class SendFileFunction {
         binding.setIsAttachFile(!isMedia);
         if (isMedia) {
             List<Attachment> attachments = Global.getAllShownImagesPath(context);
-            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                Attachment attachment = attachments.get(position);
-                attachment.config.setSelected(!attachment.config.isSelected());
-                mediaAttachmentAdapter.notifyItemChanged(position);
-                updateComposerViewBySelectedMedia(attachments, attachment);
+            ((Activity) context).runOnUiThread(() -> {
+                mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
+                    Attachment attachment = attachments.get(position);
+                    attachment.config.setSelected(!attachment.config.isSelected());
+                    mediaAttachmentAdapter.notifyItemChanged(position);
+                    updateComposerViewBySelectedMedia(attachments, attachment);
+                });
+                binding.rvMedia.setAdapter(mediaAttachmentAdapter);
+                binding.progressBarFileLoader.setVisibility(View.GONE);
+                // edit
+                if (editAttachments != null) {
+                    binding.rvComposer.setVisibility(View.VISIBLE);
+                    setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
+                }
             });
-            binding.rvMedia.setAdapter(mediaAttachmentAdapter);
-            binding.progressBarFileLoader.setVisibility(View.GONE);
-            // edit
-            if (editAttachments != null) {
-                binding.rvComposer.setVisibility(View.VISIBLE);
-                setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
-            }
         } else {
             Global.attachments = new ArrayList<>();
             List<Attachment> attachments = Global.Search_Dir(Environment.getExternalStorageDirectory());
-            if (attachments.size() > 0) {
-                fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
-                binding.lvFile.setAdapter(fileAttachmentAdapter);
-                binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                       int position, long id) -> {
-                    Attachment attachment = attachments.get(position);
+            ((Activity) context).runOnUiThread(() -> {
+                if (attachments.size() > 0) {
+                    fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
+                    binding.lvFile.setAdapter(fileAttachmentAdapter);
+                    binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
+                                                           int position, long id) -> {
+                        Attachment attachment = attachments.get(position);
 
-                    attachment.config.setSelected(!attachment.config.isSelected());
-                    fileAttachmentAdapter.notifyDataSetChanged();
-                    updateComposerViewBySelectedFile(attachments, attachment);
-                });
-            } else {
-                Utils.showMessage(context, "There is no file");
-            }
-            binding.progressBarFileLoader.setVisibility(View.GONE);
-            // edit
-            if (editAttachments != null) {
-                binding.lvComposer.setVisibility(View.VISIBLE);
-                setSelectedFileAttachmentListAdapter(attachments);
-            }
+                        attachment.config.setSelected(!attachment.config.isSelected());
+                        fileAttachmentAdapter.notifyDataSetChanged();
+                        updateComposerViewBySelectedFile(attachments, attachment);
+                    });
+                } else {
+                    Utils.showMessage(context, "There is no file");
+
+                }
+                binding.progressBarFileLoader.setVisibility(View.GONE);
+                // edit
+                if (editAttachments != null) {
+                    binding.lvComposer.setVisibility(View.VISIBLE);
+                    setSelectedFileAttachmentListAdapter(attachments);
+                }
+            });
         }
     }
 
@@ -186,7 +191,7 @@ public class SendFileFunction {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
 
-            channelResponse.getChannel().sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
+            viewModel.getChannel().sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.setActiveMessageSend(true);
@@ -273,7 +278,7 @@ public class SendFileFunction {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            channelResponse.getChannel().sendFile(attachment, false, new SendFileCallback() {
+            viewModel.getChannel().sendFile(attachment, false, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     attachment.setAssetURL(response.getFileUrl());

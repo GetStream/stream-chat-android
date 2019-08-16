@@ -54,10 +54,15 @@ public class EntityLiveData extends LiveData<EntityListWrapper> {
         for (ChannelUserRead r : listReads) {
             for (int i = merged.size(); i-- > 0; ) {
                 Entity e = merged.get(i);
-                if (r.getLast_read().getTime() > e.getMessage().getCreatedAt().getTime()) {
-                    // set the read state on this entity
-                    e.addMessageReadBy(r);
+                try {
+                    if (r.getLast_read().getTime() > e.getMessage().getCreatedAt().getTime()) {
+                        // set the read state on this entity
+                        e.addMessageReadBy(r);
+                    }
+                }catch (Exception e1){
+
                 }
+
             }
         }
 
