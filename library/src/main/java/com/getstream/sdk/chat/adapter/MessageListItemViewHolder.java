@@ -379,7 +379,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_docket.setVisibility(View.VISIBLE);
 
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts()));
-        if (entity.isTheirs())
+        if (entity.isMine())
             iv_docket.setBackgroundResource(R.drawable.docket_incoming);
         else
             iv_docket.setBackgroundResource(R.drawable.docket_outgoing);
