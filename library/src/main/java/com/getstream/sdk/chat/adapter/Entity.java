@@ -21,6 +21,7 @@ public class Entity {
     public Entity(Date date) {
         this.type = MessageListItemAdapter.EntityType.DATE_SEPARATOR;
         this.date = date;
+        this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
@@ -35,6 +36,7 @@ public class Entity {
     public Entity(List<User> users) {
         this.type = MessageListItemAdapter.EntityType.TYPING;
         this.users = users;
+        this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
