@@ -13,21 +13,21 @@ public class ChannelUserRead {
 
     @SerializedName("last_read")
     @Expose
-    private Date last_read;
+    private Date lastRead;
 
     public User getUser() {
         return user;
     }
 
-    public Date getLast_read() {
-        return last_read;
+    public Date getLastRead() {
+        return lastRead;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void setLast_read(Date last_read) {
-        this.last_read = last_read;
+    public void setLastRead(Date last_read) {
+        this.lastRead = last_read;
     }
 }

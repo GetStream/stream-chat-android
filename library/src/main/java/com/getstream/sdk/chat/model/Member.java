@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.model;
 
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -9,7 +10,7 @@ import java.util.Date;
 /**
  * A member
  */
-public class Member {
+public class Member implements UserEntity {
     @SerializedName("user")
     @Expose
     private User user;
@@ -33,7 +34,6 @@ public class Member {
     @SerializedName("invite_accepted_at")
     @Expose
     private Date inviteAcceptedAt;
-
 
     public void setUser(User user) {
         this.user = user;
@@ -81,5 +81,11 @@ public class Member {
 
     public void setInviteAcceptedAt(Date inviteAcceptedAt) {
         this.inviteAcceptedAt = inviteAcceptedAt;
+    }
+
+    @Override
+    public String getUserId() {
+        if (user == null) return null;
+        return user.getId();
     }
 }

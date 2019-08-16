@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -14,7 +15,6 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -54,13 +54,13 @@ public class EntityLiveData extends LiveData<EntityListWrapper> {
         for (ChannelUserRead r : listReads) {
             for (int i = merged.size(); i-- > 0; ) {
                 Entity e = merged.get(i);
-                try {
-                    if (r.getLast_read().getTime() > e.getMessage().getCreatedAt().getTime()) {
-                        // set the read state on this entity
-                        e.addMessageReadBy(r);
-                    }
-                }catch (Exception e1){
-
+                // TODO: make sure this is a good check, atm without this everything breaks :)
+                if (e.getType() != MessageListItemAdapter.EntityType.MESSAGE) {
+                    continue;
+                }
+                if (r.getLastRead().getTime() > e.getMessage().getCreatedAt().getTime()) {
+                    // set the read state on this entity
+                    e.addMessageReadBy(r);
                 }
 
             }

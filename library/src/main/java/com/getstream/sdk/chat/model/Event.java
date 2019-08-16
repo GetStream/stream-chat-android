@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.model;
 
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
@@ -11,7 +12,7 @@ import java.util.Date;
 /**
  * An event
  */
-public class Event {
+public class Event implements UserEntity {
     @SerializedName("connection_id")
     @Expose
     private String connectionId;
@@ -23,10 +24,6 @@ public class Event {
     @SerializedName("client_id")
     @Expose
     private String clientId;
-
-    @SerializedName("user_id")
-    @Expose
-    private String userId;
 
     @SerializedName("type")
     @Expose
@@ -158,10 +155,10 @@ public class Event {
     }
 
     public String getUserId() {
-        return userId;
+        if (user == null) {
+            return null;
+        }
+        return user.getId();
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 }

@@ -70,8 +70,6 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             i += 1;
         }
         Glide.with(context).load(R.raw.typing).into(iv_typing_indicator);
-
-
     }
 
     @Override

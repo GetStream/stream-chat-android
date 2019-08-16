@@ -258,7 +258,7 @@ public class Global {
 //
 //        for (int i = response.getReads().size() - 1; i >= 0; i--) {
 //            ChannelUserRead read = response.getReads().get(i);
-//            if (readMessage(read.getLast_read(), message.getCreatedAt___OLD())) {
+//            if (readMessage(read.getLastRead(), message.getCreatedAt___OLD())) {
 //                if (!users.contains(read.getUser()) && !read.getUser().getId().equals(client.user.getId()))
 //                    users.add(read.getUser());
 //            }

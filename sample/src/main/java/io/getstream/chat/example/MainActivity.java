@@ -8,8 +8,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
-import com.getstream.sdk.chat.adapter.ChannelListItemViewHolder;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -29,20 +27,19 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
-    final String USER_ID = "broken-waterfall-5";
+    final String USER_ID = "paranoid-android";
     // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoicGFyYW5vaWQtYW5kcm9pZCJ9.zrhwtQei0wNyvDsX8kBNctvLVg7-OQLH1oB4oc0tc5c";
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(this.getApplication());
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Broken waterfall");
-        extraData.put("image", "https://bit.ly/2u9Vc0r");
+        extraData.put("name", "Paranoid Android");
+        extraData.put("image", "https://cdn.imgbin.com/3/9/6/imgbin-marvin-the-hitchhiker-s-guide-to-the-galaxy-robby-the-robot-paranoid-android-others-YrBap1yzzSaXs6vsPQ0tVVaKm.jpg");
         User user = new User(USER_ID, extraData);
         client.setUser(user, USER_TOKEN);
-
         return client;
     }
 
