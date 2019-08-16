@@ -40,11 +40,11 @@ public class MessageListViewStyle extends BaseStyle {
 
         avatarBorderWidth = a.getDimension(R.styleable.MessageListView_userAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.MessageListView_userAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, getColor(R.color.user_intials_background));
+        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
         avatarInitialTextSize = a.getDimension(R.styleable.MessageListView_userAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, getColor(R.color.stream_channel_initials));
-        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_userAvatarTextStyle, Typeface.NORMAL);
+        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_userAvatarTextStyle, Typeface.BOLD);
 
         a.recycle();
     }

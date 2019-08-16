@@ -13,7 +13,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
-        android:background="@drawable/toolbarback"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,12 +53,13 @@
 
                 <TextView
                     android:id="@+id/tv_channel_name"
-                    style="@style/text_b"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:text="@{viewModel.channelName}"
-                    android:textColor="#FFF" />
+                    android:textColor="#000" />
 
                 <TextView
                     android:id="@+id/tv_active"
@@ -85,6 +86,13 @@
                 app:layout_constraintEnd_toEndOf="@+id/avatar_group"
                 app:layout_constraintStart_toEndOf="@+id/avatar_group"
                 app:layout_constraintTop_toTopOf="@+id/avatar_group" />
+
+            <ImageView
+                android:id="@+id/iv_separator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray"
+                app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.appcompat.widget.Toolbar>

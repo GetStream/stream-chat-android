@@ -95,12 +95,16 @@ public class MessageListView extends RecyclerView {
             if (entityWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
+
                 int newPosition = oldPosition + entities.size();
                 this.getLayoutManager().scrollToPosition(newPosition);
+                Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
                 // regular new message behaviour
                 // we scroll down all the way, unless you've scrolled up
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
+                Log.i(TAG, String.format("Scroll: Moving down"));
+
                 if (!hasScrolledUp) {
                     this.getLayoutManager().scrollToPosition(adapter.getItemCount()-1);
                     viewModel.setHasNewMessages(false);
@@ -135,6 +139,7 @@ public class MessageListView extends RecyclerView {
                         viewModel.setHasNewMessages(false);
                     }
                     Boolean reachedTheBeginning = firstVisible <= 2;
+                    Log.i(TAG, String.format("Scroll: First visible is %d last visible is %s", firstVisible, lastVisible));
                     if (reachedTheBeginning) {
                         viewModel.loadMore();
                     }
