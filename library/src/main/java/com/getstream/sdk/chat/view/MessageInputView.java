@@ -24,7 +24,11 @@ import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -227,7 +231,6 @@ public class MessageInputView extends RelativeLayout
     }
 
 
-
     public void clearFocus() {
         binding.etMessage.clearFocus();
     }
@@ -289,12 +292,51 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void onSendMessage(String input) {
+        binding.ivSend.setEnabled(false);
         Message m = new Message();
         m.setText(input);
+        m.setAttachments(sendFileFunction.getSelectedAttachments());
         if (sendMessageListener != null) {
-            sendMessageListener.onSendMessage(m);
+            sendMessageListener.onSendMessage(m, new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    binding.ivSend.setEnabled(true);
+                    binding.etMessage.setText("");
+                    sendFileFunction.onClickAttachmentViewClose(null);
+                    progressSendMessage(response.getMessage(), null);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    binding.ivSend.setEnabled(true);
+                }
+            });
+        }
+
+    }
+
+    public void progressSendMessage(Message message, String resendMessageId) {
+        if (resendMessageId != null) {
+            Global.removeEphemeralMessage(channelViewModel.getChannel().getId(), resendMessageId);
+            initSendMessage();
+        } else {
+//            if (Message.isCommandMessage(message) ||
+//                    message.getType().equals(ModelType.message_error)) {
+//                channelMessages.remove(ephemeralMessage);
+//                message.setDelivered(true);
+//            } else {
+//                ephemeralMessage.setId(message.getId());
+//            }
+//
+//            handleAction(message);
         }
     }
+
+    private void initSendMessage() {
+        binding.etMessage.setText("");
+        sendFileFunction.initSendMessage();
+    }
+
 
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;
@@ -321,12 +363,11 @@ public class MessageInputView extends RelativeLayout
     }
 
 
-
     /**
      * Used for listening to the sendMessage event
      */
     public interface SendMessageListener {
-        void onSendMessage(Message message);
+        void onSendMessage(Message message, MessageCallback callback);
     }
 
     /**

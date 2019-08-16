@@ -355,18 +355,20 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
 
     @Override
-    public void onSendMessage(Message message) {
+    public void onSendMessage(Message message, MessageCallback callback) {
         Log.i(TAG, "onSendMessage handler called at viewmodel level");
         channel.sendMessage(message,
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
+                        callback.onSuccess(response);
                         Message responseMessage = response.getMessage();
                         Log.i(TAG, "onSuccess event for sending the message");
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
+                        callback.onError(errMsg, errCode);
                         //binding.messageInput.setEnabled(true);
                     }
                 });
