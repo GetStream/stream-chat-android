@@ -36,7 +36,8 @@
             app:layout_constraintEnd_toStartOf="@+id/message_input"
             app:layout_constraintStart_toEndOf="@+id/channelHeader"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-            />
+            stream:userAvatarTextColor="@android:color/holo_blue_dark"
+            stream:userAvatarTextStyle="bold|italic" />
 
 
         <TextView
@@ -75,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/messageList"/>
+            app:layout_constraintStart_toEndOf="@+id/messageList" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

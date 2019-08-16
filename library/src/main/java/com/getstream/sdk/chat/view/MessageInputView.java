@@ -212,6 +212,7 @@ public class MessageInputView extends RelativeLayout
     // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
+            if (data == null) return;
             try {
                 Object object = data.getExtras().get("data");
                 if (object.getClass().equals(Bitmap.class)) {
