@@ -20,6 +20,10 @@ import java.util.List;
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
+
     public enum EntityType {
         DATE_SEPARATOR, MESSAGE, TYPING
     }
@@ -37,6 +41,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String className;
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
+    private MessageListView.BubbleHelper bubbleHelper;
 
     public MessageListViewStyle getStyle() {
         return style;
@@ -84,7 +89,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             Entity entity = entityList.get(position);
-            // TODO: determine position and mine/theirs
             return viewHolderFactory.getEntityViewType(entity, entity.isMine(), entity.getPositions());
         } catch(IndexOutOfBoundsException e) {
             return 0;
@@ -102,7 +106,9 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Entity entity = entityList.get(position);
+        ((BaseMessageListItemViewHolder) holder).setBubbleHelper(bubbleHelper);
         ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelState, entity, position, isThread, messageClickListener, attachmentClickListener);
+
 
     }
 

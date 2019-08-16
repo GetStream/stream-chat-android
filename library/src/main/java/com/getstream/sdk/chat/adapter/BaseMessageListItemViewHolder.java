@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
-
+    private MessageListView.BubbleHelper bubbleHelper;
 
     public BaseMessageListItemViewHolder(int resId, ViewGroup parent) {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
@@ -26,4 +26,11 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     public abstract void setStyle(MessageListViewStyle style);
 
 
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
+
+    public MessageListView.BubbleHelper getBubbleHelper() {
+        return bubbleHelper;
+    }
 }

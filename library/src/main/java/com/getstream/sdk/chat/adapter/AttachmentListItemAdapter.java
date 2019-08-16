@@ -23,14 +23,17 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private Message message;
     private MessageViewHolderFactory factory;
     private Context context;
+    private Entity entity;
     private List<Attachment> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull  Message message,@NonNull  MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull  Entity entity,@NonNull  MessageViewHolderFactory factory) {
         this.context = context;
-        this.message = message;
+        this.entity = entity;
+        this.message = entity.getMessage();
         this.factory = factory;
         this.attachments = message.getAttachments();
     }
@@ -62,7 +65,8 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, message, attachment, attachmentClickListener);
+        ((BaseAttachmentViewHolder) holder).setBubbleHelper(bubbleHelper);
+        ((BaseAttachmentViewHolder) holder).bind(this.context, entity, attachment, attachmentClickListener);
     }
 
     public MessageListViewStyle getStyle() {
@@ -75,5 +79,13 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
+    }
+
+    public MessageListView.BubbleHelper getBubbleHelper() {
+        return bubbleHelper;
+    }
+
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
     }
 }

@@ -165,7 +165,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setVisibility(View.VISIBLE);
             alv_attachments.setViewHolderFactory(viewHolderFactory);
             alv_attachments.setStyle(style);
-            alv_attachments.setMessage(this.message);
+            alv_attachments.setEntity(this.entity);
+            alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
         }
 
@@ -186,7 +187,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // Configure UIs
         configSendFailed();
         configMessageText();
-        // TODO: configDelieveredIndicator();
         configReactionView();
         configReplyView();
 
@@ -203,22 +203,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 //        configParamsAttachment();
     }
     // endregion
-    // TODO: configure the deliver indicator
 
     private void applyStyleMine() {
-        Drawable background = style.getMessageBubbleDrawableMine();
+        Drawable background = getBubbleHelper().getDrawableForMessage(entity.getMessage(), entity.isMine(), entity.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextColor(style.getMessageTextColorMine());
     }
 
     private void applyStyleTheirs() {
-        Drawable background = style.getMessageBubbleDrawableTheirs();
-
-        InputStream resource = context.getResources().openRawResource(R.raw.typing);
-        Bitmap bitmap = BitmapFactory.decodeStream(resource);
-        tv_text.setBackground(new MessageBubbleDrawable(R.color.stream_gray_dark, 1, Color.GREEN));
-
-
+        Drawable background = getBubbleHelper().getDrawableForMessage(entity.getMessage(), entity.isMine(), entity.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextColor(style.getMessageTextColorTheirs());
     }

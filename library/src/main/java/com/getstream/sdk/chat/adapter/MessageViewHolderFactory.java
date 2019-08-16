@@ -51,7 +51,9 @@ public class MessageViewHolderFactory {
         // link/card layout
         // custom attachment types
         String t = attachment.getType();
-        if (t.equals(ModelType.attach_video)) {
+        if (t == null) {
+            return GENERIC_ATTACHMENT;
+        } else if (t.equals(ModelType.attach_video)) {
             return VIDEO_ATTACHMENT;
         } else if (t.equals(ModelType.attach_image)) {
             return IMAGE_ATTACHMENT;

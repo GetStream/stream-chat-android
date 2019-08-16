@@ -45,7 +45,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_video;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
-
+    private Entity entity;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
@@ -63,10 +63,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, Entity entity, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
-        this.message = message;
+        this.entity = entity;
+        this.message = entity.getMessage();
         this.attachment = attachment;
 
         configMediaAttach();
@@ -74,62 +75,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        int mediaBack, moreBack;
-        // TODO: fix this somehow, is mine is not known here
-        if (true) {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming3;
-                    moreBack = R.drawable.round_attach_more_incoming3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_incoming1;
-                    moreBack = R.drawable.round_attach_more_incoming1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming2;
-                    moreBack = R.drawable.round_attach_more_incoming2;
-                }
-            }
-        } else {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing3;
-                    moreBack = R.drawable.round_attach_more_outgoing3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_outgoing1;
-                    moreBack = R.drawable.round_attach_more_outgoing1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing2;
-                    moreBack = R.drawable.round_attach_more_outgoing2;
-                }
-            }
-        }
-        if (iv_media_more.getVisibility() == View.VISIBLE)
-            iv_media_more.setBackgroundResource(moreBack);
-
-        iv_media_thumb.setShape(context, context.getResources().getDrawable(mediaBack));
-    }
-
-    private void configAttachViewBackground(View view) {
-        Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = style.getMessageBubbleDrawableTheirs();
-        } else {
-            background = style.getMessageBubbleDrawableMine();
-        }
-        view.setBackground(background);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(entity.getMessage(), entity.isMine(), entity.getPositions(), attachment);
+        iv_media_thumb.setShape(context, background);
     }
 
     private void configMediaAttach() {
@@ -157,7 +104,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             cl_video.setVisibility(View.GONE);
             return;
         }
-        configAttachViewBackground(cl_video);
         configImageThumbBackground(attachments.get(0));
         // More
         if (attachments.size() > 1) {

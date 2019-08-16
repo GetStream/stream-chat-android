@@ -31,6 +31,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_attachment;
     private ImageView iv_file_thumb;
     private TextView tv_file_size, tv_file_title;
+    private Entity entity;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.AttachmentClickListener longClickListener;
@@ -45,18 +46,19 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, Entity entity, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        this.message = message;
+        this.entity = entity;
+        this.message = entity.getMessage();
         this.attachment = attachment;
         tv_file_size.setText(attachment.getFileSizeHumanized());
         // update the icon nicely
         iv_file_thumb.setImageResource(attachment.getIcon());
         tv_file_title.setText(attachment.getTitle());
 
-        Drawable background = style.getMessageBubbleDrawableTheirs();
+        Drawable background = getBubbleHelper().getDrawableForAttachment(entity.getMessage(), entity.isMine(), entity.getPositions(), attachment);
         cl_attachment.setBackground(background);
     }
 
