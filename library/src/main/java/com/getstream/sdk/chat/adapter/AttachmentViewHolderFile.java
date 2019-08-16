@@ -2,56 +2,45 @@ package com.getstream.sdk.chat.adapter;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
+import android.net.Uri;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
+    final String TAG = AttachmentViewHolder.class.getSimpleName();
     private Context context;
     private Message message;
     private Attachment attachment;
     private MessageListViewStyle style;
-
     // Attachment
     private ConstraintLayout cl_attachment;
-
+    private ImageView iv_file_thumb;
+    private TextView tv_file_size, tv_file_title;
     // Action
     private AttachmentListView.AttachmentClickListener clickListener;
     private AttachmentListView.AttachmentClickListener longClickListener;
-
-
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
 
     public AttachmentViewHolderFile(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
         cl_attachment = itemView.findViewById(R.id.cl_attachment);
+        iv_file_thumb = itemView.findViewById(R.id.iv_file_thumb);
+        tv_file_size = itemView.findViewById(R.id.tv_file_size);
+        tv_file_title = itemView.findViewById(R.id.tv_file_title);
     }
 
     @Override
@@ -61,39 +50,21 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         this.longClickListener = longClickListener;
         this.message = message;
         this.attachment = attachment;
+        tv_file_size.setText(attachment.getFileSizeHumanized());
+        // update the icon nicely
+        iv_file_thumb.setImageResource(attachment.getIcon());
+        tv_file_title.setText(attachment.getTitle());
 
-        configFileAttach();
+        Drawable background = style.getMessageBubbleDrawableTheirs();
+        cl_attachment.setBackground(background);
     }
-
-
-
-    private void configAttachViewBackground(View view) {
-        Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = style.getMessageBubbleDrawableTheirs();
-        } else {
-            background = style.getMessageBubbleDrawableMine();
-        }
-        view.setBackground(background);
-    }
-
-
-    private void configFileAttach() {
-        configAttachViewBackground(cl_attachment);
-
-
-
-
-    }
-
-
 
     private void triggerLongClick(Message message, Attachment attachment) {
         if (this.longClickListener != null) {
             this.longClickListener.onClick(message, attachment);
         }
     }
+
     private void triggerClick(Message message, Attachment attachment) {
         if (this.clickListener != null) {
             this.clickListener.onClick(message, attachment);

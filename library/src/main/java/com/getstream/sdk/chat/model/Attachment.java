@@ -1,7 +1,13 @@
 package com.getstream.sdk.chat.model;
 
+import android.graphics.drawable.Drawable;
+
+import com.getstream.sdk.chat.R;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.text.DecimalFormat;
+
 /**
  * An attachment
  */
@@ -176,6 +182,50 @@ public class Attachment {
         return mime_type;
     }
 
+    public int getIcon() {
+        int fileTyineRes = 0;
+        switch (this.getMime_type()) {
+            case ModelType.attach_mime_pdf:
+                fileTyineRes = R.drawable.file_pdf;
+                break;
+            case ModelType.attach_mime_csv:
+                fileTyineRes = R.drawable.file_csv;
+                break;
+            case ModelType.attach_mime_tar:
+                fileTyineRes = R.drawable.file_tar;
+                break;
+            case ModelType.attach_mime_zip:
+                fileTyineRes = R.drawable.file_zip;
+                break;
+            case ModelType.attach_mime_doc:
+            case ModelType.attach_mime_docx:
+            case ModelType.attach_mime_txt:
+                fileTyineRes = R.drawable.file_doc;
+                break;
+            case ModelType.attach_mime_xlsx:
+                fileTyineRes = R.drawable.file_xls;
+                break;
+            case ModelType.attach_mime_ppt:
+                fileTyineRes = R.drawable.file_ppt;
+                break;
+            case ModelType.attach_mime_mov:
+            case ModelType.attach_mime_mp4:
+                fileTyineRes = R.drawable.file_mov;
+                break;
+            case ModelType.attach_mime_mp3:
+                fileTyineRes = R.drawable.file_mp3;
+                break;
+            default:
+                if (this.getMime_type().contains("audio")) {
+                    fileTyineRes = R.drawable.file_mp3;
+                } else if (this.getMime_type().contains("video")) {
+                    fileTyineRes = R.drawable.file_mov;
+                }
+                break;
+        }
+        return fileTyineRes;
+    }
+
     public void setMime_type(String mime_type) {
         this.mime_type = mime_type;
     }
@@ -186,6 +236,14 @@ public class Attachment {
 
     public int getFile_size() {
         return file_size;
+    }
+
+    public String getFileSizeHumanized() {
+        int size = getFile_size();
+        if(size <= 0) return "0";
+        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
     public class Config {

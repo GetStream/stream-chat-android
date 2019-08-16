@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AttachmentViewHolderVideo extends BaseAttachmentViewHolder {
+public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     private Context context;
     private Message message;
@@ -49,7 +49,7 @@ public class AttachmentViewHolderVideo extends BaseAttachmentViewHolder {
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
-    public AttachmentViewHolderVideo(int resId, ViewGroup parent) {
+    public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
