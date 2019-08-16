@@ -78,7 +78,7 @@ public class ChannelListView extends RecyclerView {
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
-            Log.i(TAG, "Oberseve found this many channels: " + channels.size());
+            Log.i(TAG, "Observe found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
         });
     }
@@ -131,9 +131,8 @@ public class ChannelListView extends RecyclerView {
 
                 if (linearLayoutManager != null) {
 
-                    int lastVisible = linearLayoutManager.findLastCompletelyVisibleItemPosition();
+                    int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
                     Boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
-                    // Log.i(TAG, String.format("Last visible is %d out of %d", lastVisible, adapter.getItemCount()));
                     // the viewmodel ensures that we only load once..
                     if (reachedTheEnd) {
                         viewModel.loadMore();
