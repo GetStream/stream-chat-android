@@ -373,6 +373,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     @Override
     public void onSendMessage(Message message, MessageCallback callback) {
         Log.i(TAG, "onSendMessage handler called at viewmodel level");
+        // immediately add the message
+        // TODO: Tommaso implement this
+//        message.setUser(client().getUser());
+//        message.setCreatedAt(new Date());
+//        message.setType("regular");
+//        addMessage(message);
+
+
+        // afterwards send the request
+
         channel.sendMessage(message,
                 new MessageCallback() {
                     @Override
