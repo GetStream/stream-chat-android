@@ -3,7 +3,9 @@ package com.getstream.sdk.chat.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
@@ -25,6 +28,10 @@ import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -66,6 +73,9 @@ public class MessageInputView extends RelativeLayout
     // listeners
     private SendMessageListener sendMessageListener;
     private TypingListener typingListener;
+    private OpenCameraViewListener openCameraViewListener;
+
+
     private static final int DEFAULT_DELAY_TYPING_STATUS = 1500;
     private Runnable typingTimerRunnable = new Runnable() {
         @Override
@@ -98,6 +108,7 @@ public class MessageInputView extends RelativeLayout
     }
     // endregion
 
+    // region Init
     private ViewMessageInputBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return ViewMessageInputBinding.inflate(inflater, this, true);
@@ -149,10 +160,6 @@ public class MessageInputView extends RelativeLayout
                 });
     }
 
-    public List<Attachment> getAttachments() {
-        List<Attachment> a = new ArrayList<>();
-        return a;
-    }
 
     private void observeUIs(LifecycleOwner lifecycleOwner) {
         channelViewModel.getInputType().observe(lifecycleOwner, inputType -> {
@@ -176,7 +183,7 @@ public class MessageInputView extends RelativeLayout
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
         sendFileFunction = new SendFileFunction(getContext(), binding, this.channelViewModel);
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
         int spanCount = 4;  // 4 columns
@@ -195,12 +202,29 @@ public class MessageInputView extends RelativeLayout
             Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-            // TODO: somehow fix this
-            // startActivityForResult(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
-
+            if (this.openCameraViewListener != null)
+                openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
+    }
+
+    // endregion
+    public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
+            try {
+                Object object = data.getExtras().get("data");
+                if (object.getClass().equals(Bitmap.class)) {
+                    Bitmap bitmap = (Bitmap) object;
+                    Uri uri = Utils.getUriFromBitmap(getContext(), bitmap);
+                    sendFileFunction.progressCapturedMedia(getContext(), uri, true);
+                }
+            } catch (Exception e) {
+                Uri uri = data.getData();
+                if (uri == null) return;
+                sendFileFunction.progressCapturedMedia(getContext(), uri, false);
+            }
+        }
     }
 
     public boolean isEditing() {
@@ -225,7 +249,6 @@ public class MessageInputView extends RelativeLayout
     public void setEnabled(boolean enabled) {
         binding.etMessage.setEnabled(true);
     }
-
 
 
     public void clearFocus() {
@@ -289,13 +312,51 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void onSendMessage(String input) {
+        binding.ivSend.setEnabled(false);
         Message m = new Message();
         m.setText(input);
+        m.setAttachments(sendFileFunction.getSelectedAttachments());
         if (sendMessageListener != null) {
-            sendMessageListener.onSendMessage(m);
+            sendMessageListener.onSendMessage(m, new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    binding.ivSend.setEnabled(true);
+                    progressSendMessage(response.getMessage(), null);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    binding.ivSend.setEnabled(true);
+                }
+            });
+        }
+
+    }
+
+    public void progressSendMessage(Message message, String resendMessageId) {
+        initSendMessage();
+        if (resendMessageId != null) {
+            Global.removeEphemeralMessage(channelViewModel.getChannel().getId(), resendMessageId);
+            initSendMessage();
+        } else {
+//            if (Message.isCommandMessage(message) ||
+//                    message.getType().equals(ModelType.message_error)) {
+//                channelMessages.remove(ephemeralMessage);
+//                message.setDelivered(true);
+//            } else {
+//                ephemeralMessage.setId(message.getId());
+//            }
+//
+//            handleAction(message);
         }
     }
 
+    private void initSendMessage() {
+        binding.etMessage.setText("");
+        sendFileFunction.initSendMessage();
+    }
+
+    // region Set Listeners
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;
     }
@@ -304,6 +365,11 @@ public class MessageInputView extends RelativeLayout
         this.typingListener = l;
     }
 
+    public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
+        this.openCameraViewListener = openCameraViewListener;
+    }
+
+    // endregion
     private void stopTyping() {
         isTyping = false;
         channelViewModel.getChannel().stopTyping();
@@ -320,13 +386,13 @@ public class MessageInputView extends RelativeLayout
         }
     }
 
-
+    // region Listeners
 
     /**
      * Used for listening to the sendMessage event
      */
     public interface SendMessageListener {
-        void onSendMessage(Message message);
+        void onSendMessage(Message message, MessageCallback callback);
     }
 
     /**
@@ -345,4 +411,10 @@ public class MessageInputView extends RelativeLayout
 
         void onStopTyping();
     }
+
+    public interface OpenCameraViewListener {
+        void openCameraView(Intent intent, int REQUEST_CODE);
+    }
+
+    // endregion
 }

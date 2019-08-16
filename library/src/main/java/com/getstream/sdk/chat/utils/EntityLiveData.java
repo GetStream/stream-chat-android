@@ -62,6 +62,7 @@ public class EntityLiveData extends LiveData<EntityListWrapper> {
                     // set the read state on this entity
                     e.addMessageReadBy(r);
                 }
+
             }
         }
 

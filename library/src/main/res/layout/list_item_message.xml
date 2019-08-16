@@ -229,23 +229,8 @@
             app:layout_constraintBottom_toBottomOf="@id/cl_attachment"
             app:layout_constraintEnd_toStartOf="@id/cl_attachment" />
 
-        <TextView
-            android:id="@+id/tv_initials"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/circle_message_user_initials"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:textStyle="bold"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/cv_avatar"
+        <com.getstream.sdk.chat.view.AvatarGroupView
+            android:id="@+id/avatar"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="10dp"
@@ -253,8 +238,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="ContentDescription" />
+            app:layout_constraintStart_toStartOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

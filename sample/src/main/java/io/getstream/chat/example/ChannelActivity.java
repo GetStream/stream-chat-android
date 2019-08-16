@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -22,10 +23,11 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
 /**
  * Show the messages for a channel
  */
-public class ChannelActivity extends AppCompatActivity {
+public class ChannelActivity extends AppCompatActivity
+        implements MessageInputView.OpenCameraViewListener {
 
     private ChannelViewModel viewModel;
-
+    private ActivityChannelBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,12 +40,12 @@ public class ChannelActivity extends AppCompatActivity {
 
 
         // we're using data binding in this example
-        ActivityChannelBinding binding =
+        binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
 
-        Channel channel = client.getChannelByCid(channelType +":" + channelID);
+        Channel channel = client.getChannelByCid(channelType + ":" + channelID);
         if (channel == null)
             channel = client.channel(channelType, channelID);
         viewModel = ViewModelProviders.of(this,
@@ -59,7 +61,7 @@ public class ChannelActivity extends AppCompatActivity {
 
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
-
+        binding.messageInput.setOpenCameraViewListener(this);
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
         // Permission Check
@@ -67,10 +69,11 @@ public class ChannelActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         viewModel.removeEventHandler();
         super.onBackPressed();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -83,5 +86,16 @@ public class ChannelActivity extends AppCompatActivity {
                 }
             if (!granted) PermissionChecker.showRationalDialog(this, null);
         }
+    }
+
+    @Override
+    public void openCameraView(Intent intent, int REQUEST_CODE) {
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
     }
 }

@@ -4,22 +4,16 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.BaseStyle;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
@@ -28,36 +22,41 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     Context context;
     Channel channel;
     STYLE style;
-    LayoutInflater inflater;
     List<User> lastActiveUsers;
+    User user;
 
     public AvatarGroupView(Context context) {
         super(context);
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
-        this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public void setChannelAndLastActiveUsers(Channel channel, List<User> lastActiveUsers, @NonNull STYLE style) {
         this.channel = channel;
         this.lastActiveUsers = lastActiveUsers;
+        this.user = null;
         this.style = style;
+        configUIs();
+    }
+
+    public void setUser(User user, @NonNull STYLE style) {
+        this.user = user;
+        this.style = style;
+        this.channel = null;
+        this.lastActiveUsers = null;
         configUIs();
     }
 
@@ -69,13 +68,10 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         this.setLayoutParams(params);
 
         this.removeAllViews();
-        if (!TextUtils.isEmpty(channel.getImage())) {
-            ImageView imageView = new ImageView(context);
-            imageView.setLayoutParams(new RelativeLayout.LayoutParams(
-                    (int) style.getAvatarWidth(),
-                    (int) style.getAvatarHeight()));
-            Utils.circleImageLoad(imageView, channel.getImage());
-            this.addView(imageView);
+        if (user != null) {
+            configAvatar(user.getImage(), user.getInitials());
+        } else if (!TextUtils.isEmpty(channel.getImage())) {
+            configAvatar(channel.getImage(), channel.getInitials());
         } else {
             configUserAvatars();
         }
@@ -84,34 +80,24 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     double factor = 1.7;
 
     private void configUserAvatars() {
+        double factor_;
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
-            double factor_;
             for (int i = 0; i < (lastActiveUsers.size() < 4 ? lastActiveUsers.size() : 3); i++) {
-                User user = lastActiveUsers.get(i);
-
-                CircularImageView imageView = new CircularImageView(context);
-
-                imageView.setBorderColor(style.getAvatarBorderColor());
-                imageView.setPlaceholder(user.getInitials(),
-                        style.getAvatarBackGroundColor(),
-                        style.getAvatarInitialTextColor());
-                Glide.with(context)
-                        .load(user.getImage())
-                        .asBitmap()
-                        .into(imageView);
-
-                RelativeLayout.LayoutParams params;
-
+                User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
-                    factor_ = 1.0;
-                    imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                            (int) (style.getAvatarInitialTextSize() / factor_),
-                            style.getAvatarInitialTextStyle());
-                    params = new RelativeLayout.LayoutParams(
-                            (int) (style.getAvatarWidth() / factor_),
-                            (int) (style.getAvatarHeight() / factor_));
-
+                    configAvatar(user_.getImage(), user_.getInitials());
                 } else {
+                    CircularImageView imageView = new CircularImageView(context);
+
+                    imageView.setBorderColor(style.getAvatarBorderColor());
+                    imageView.setPlaceholder(user_.getInitials(),
+                            style.getAvatarBackGroundColor(),
+                            style.getAvatarInitialTextColor());
+                    Glide.with(context)
+                            .load(user_.getImage())
+                            .into(imageView);
+
+                    RelativeLayout.LayoutParams params;
                     factor_ = factor;
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
                             (int) style.getAvatarBorderWidth());
@@ -150,26 +136,34 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                                 break;
                         }
                     }
+                    imageView.setLayoutParams(params);
+                    this.addView(imageView);
                 }
-                imageView.setLayoutParams(params);
-                this.addView(imageView);
             }
         } else {
-            View v = inflater.inflate(R.layout.view_user_avatar_initials, null);
-            v.setLayoutParams(new RelativeLayout.LayoutParams(
-                    (int) style.getAvatarWidth(),
-                    (int) style.getAvatarHeight()));
-            TextView textView = v.findViewById(R.id.tv_initials);
-            textView.setText(channel.getInitials());
-            applyTextViewStyle(textView, style, 1.0f);
-            this.addView(v);
+            configAvatar(channel.getImage(), channel.getInitials());
         }
     }
 
-    private void applyTextViewStyle(TextView textView, STYLE style, double factor) {
-        textView.setTextColor(style.getAvatarInitialTextColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (float) (style.getAvatarInitialTextSize() / factor));
-        textView.setTypeface(textView.getTypeface(), style.getAvatarInitialTextStyle());
+    private void configAvatar(String image, String initial) {
+        CircularImageView imageView = new CircularImageView(context);
+        imageView.setBorderColor(style.getAvatarBorderColor());
+        imageView.setPlaceholder(initial,
+                style.getAvatarBackGroundColor(),
+                style.getAvatarInitialTextColor());
+        Glide.with(context)
+                .load(image)
+                .into(imageView);
+
+        RelativeLayout.LayoutParams params;
+        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                (int) (style.getAvatarInitialTextSize()),
+                style.getAvatarInitialTextStyle());
+        params = new RelativeLayout.LayoutParams(
+                (int) (style.getAvatarWidth()),
+                (int) (style.getAvatarHeight()));
+        imageView.setLayoutParams(params);
+        this.addView(imageView);
     }
 
 }

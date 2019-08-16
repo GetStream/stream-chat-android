@@ -43,7 +43,7 @@ public class BindingAdapters {
                 imageView.setVisibility(View.INVISIBLE);
                 return;
             }
-            Glide.with(imageView.getContext()).load(imageUrl).asBitmap().centerCrop().into(new BitmapImageViewTarget(imageView) {
+            Glide.with(imageView.getContext()).asBitmap().load(imageUrl).centerCrop().into(new BitmapImageViewTarget(imageView) {
                 @Override
                 protected void setResource(Bitmap resource) {
                     RoundedBitmapDrawable circularBitmapDrawable =

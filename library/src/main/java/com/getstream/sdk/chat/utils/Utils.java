@@ -41,7 +41,7 @@ public class Utils {
 
 
     public static void circleImageLoad(ImageView view, String url) {
-        Glide.with(view.getContext()).load(url).asBitmap().centerCrop().into(new BitmapImageViewTarget(view) {
+        Glide.with(view.getContext()).asBitmap().load(url).centerCrop().into(new BitmapImageViewTarget(view) {
             @Override
             protected void setResource(Bitmap resource) {
                 RoundedBitmapDrawable circularBitmapDrawable =

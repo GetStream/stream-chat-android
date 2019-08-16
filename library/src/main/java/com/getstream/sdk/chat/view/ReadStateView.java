@@ -39,8 +39,6 @@ public class ReadStateView extends AppCompatImageView {
             String image = u.getImage();
             Utils.circleImageLoad(this, image);
         }
-
-
     }
 
     public void setReads(List<ChannelUserRead> reads) {

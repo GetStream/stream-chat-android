@@ -59,8 +59,8 @@ public class ChannelListViewStyle extends BaseStyle {
         channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_channelPreviewLayout, R.layout.list_item_channel);
 
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarHeight = a.getDimension(R.styleable.ChannelListView_channelAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
 
         avatarBorderWidth = a.getDimension(R.styleable.ChannelListView_channelAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.ChannelListView_channelAvatarBorderColor, -1);
