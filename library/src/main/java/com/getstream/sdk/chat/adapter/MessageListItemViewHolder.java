@@ -40,11 +40,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ru.noties.markwon.Markwon;
-import ru.noties.markwon.core.CorePlugin;
-import ru.noties.markwon.ext.latex.JLatexMathPlugin;
-import ru.noties.markwon.ext.strikethrough.StrikethroughPlugin;
-import ru.noties.markwon.image.ImagesPlugin;
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
@@ -334,10 +332,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // Set Text
         if (markwon == null)
             markwon = Markwon.builder(context)
-                    .usePlugin(ImagesPlugin.create(context))
                     .usePlugin(CorePlugin.create())
-                    .usePlugin(StrikethroughPlugin.create())
-                    .usePlugin(JLatexMathPlugin.create(tv_text.getTextSize()))
+                    .usePlugin(LinkifyPlugin.create())
                     .build();
         markwon.setMarkdown(tv_text, Global.getMentionedText(message));
 
