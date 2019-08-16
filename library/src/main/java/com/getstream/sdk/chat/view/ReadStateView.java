@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
@@ -40,8 +39,6 @@ public class ReadStateView extends AppCompatImageView {
             String image = u.getImage();
             Utils.circleImageLoad(this, image);
         }
-
-
     }
 
     public void setReads(List<ChannelUserRead> reads) {

@@ -23,7 +23,8 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
 /**
  * Show the messages for a channel
  */
-public class ChannelActivity extends AppCompatActivity implements MessageInputView.OpenCameraViewListener {
+public class ChannelActivity extends AppCompatActivity
+        implements MessageInputView.OpenCameraViewListener {
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;

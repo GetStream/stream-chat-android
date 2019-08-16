@@ -108,6 +108,7 @@ public class MessageInputView extends RelativeLayout
     }
     // endregion
 
+    // region Init
     private ViewMessageInputBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return ViewMessageInputBinding.inflate(inflater, this, true);
@@ -159,10 +160,6 @@ public class MessageInputView extends RelativeLayout
                 });
     }
 
-    public List<Attachment> getAttachments() {
-        List<Attachment> a = new ArrayList<>();
-        return a;
-    }
 
     private void observeUIs(LifecycleOwner lifecycleOwner) {
         channelViewModel.getInputType().observe(lifecycleOwner, inputType -> {
@@ -212,6 +209,7 @@ public class MessageInputView extends RelativeLayout
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
+    // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
             try {
