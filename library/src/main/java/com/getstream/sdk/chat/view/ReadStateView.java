@@ -49,7 +49,7 @@ public class ReadStateView extends RelativeLayout {
         User u = reads.get(0).getUser();
         String image = u.getImage();
 //        Utils.circleImageLoad(this, image);
-        AvatarGroupView<ReadStateStyle> avatarGroupView = new AvatarGroupView<>(getContext());
-        avatarGroupView.setUser(u, style);
+//        AvatarGroupView<ReadStateStyle> avatarGroupView = new AvatarGroupView<>(getContext());
+//        avatarGroupView.setUser(u, style);
     }
 }

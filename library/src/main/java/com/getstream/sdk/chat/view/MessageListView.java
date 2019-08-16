@@ -9,6 +9,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -165,6 +166,10 @@ public class MessageListView extends RecyclerView {
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new MessageListViewStyle(context, attrs);
+        try {
+            Fresco.initialize(getContext());
+        } catch (Exception e) {
+        }
     }
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {

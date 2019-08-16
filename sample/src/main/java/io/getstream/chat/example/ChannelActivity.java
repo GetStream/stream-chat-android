@@ -74,12 +74,12 @@ public class ChannelActivity extends AppCompatActivity
             // Image
 
             if (attachment.getType().equals(ModelType.attach_image)) {
-                List<String> imageUrls = new ArrayList<>();
-                for (Attachment a : message.getAttachments()) {
-                    imageUrls.add(a.getAssetURL());
-                }
+//                List<String> imageUrls = new ArrayList<>();
+//                for (Attachment a : message.getAttachments()) {
+//                    imageUrls.add(a.getAssetURL());
+//                }
 
-                new ImageViewer.Builder<>(this, imageUrls)
+                new ImageViewer.Builder<>(this, getImageURLs(message.getAttachments()))
                         .setStartPosition(0)
                         .show();
                 return;
@@ -88,9 +88,6 @@ public class ChannelActivity extends AppCompatActivity
                 Intent mediaIntent = new Intent(this, AttachmentActivity.class);
                 this.startActivity(mediaIntent);
             }
-
-
-
 
         });
 
@@ -132,5 +129,27 @@ public class ChannelActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
+    }
+
+    private List<String> getImageURLs(List<Attachment> attachments) {
+        List<String> imageURLs = new ArrayList<>();
+        if (attachments.size() == 1) {
+            if (attachments.get(0).getType().equals(ModelType.attach_image)) {
+                if (attachments.get(0).getOgURL() == null) {
+                    String url = attachments.get(0).getImageURL();
+                    imageURLs.add(url);
+                }
+            }
+        } else {
+            Attachment attachment = attachments.get(0);
+            if (attachment.getType().equals(ModelType.attach_image)) {
+                for (int i = 0; i < attachments.size(); i++) {
+                    if (attachments.get(i).getOgURL() == null && attachments.get(i).getImageURL() != null) {
+                        imageURLs.add(attachments.get(i).getImageURL());
+                    }
+                }
+            }
+        }
+        return imageURLs;
     }
 }
