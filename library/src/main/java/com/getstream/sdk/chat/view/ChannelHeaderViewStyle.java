@@ -37,8 +37,8 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         // Back Button Show/Hide
         backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_backButtonShow, false);
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarHeight = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
 
         avatarBorderWidth = a.getDimension(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderColor, Color.WHITE);

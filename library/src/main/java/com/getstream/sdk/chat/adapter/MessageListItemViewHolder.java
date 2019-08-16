@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.utils.MessageBubbleDrawable;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
@@ -54,11 +55,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private LinearLayout ll_send_failed;
     private TextView tv_failed_text, tv_failed_des;
-    private ImageView cv_avatar;
+    private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_docket;
 
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
-    private TextView tv_username, tv_messagedate, tv_initials;
+    private TextView tv_username, tv_messagedate;
 
     // Delivered Indicator
     private ReadStateView view_read_indicator;
@@ -113,9 +114,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         ll_send_failed = itemView.findViewById(R.id.ll_send_failed);
         tv_failed_des = itemView.findViewById(R.id.tv_failed_des);
         tv_failed_text = itemView.findViewById(R.id.tv_failed_text);
-
-        cv_avatar = itemView.findViewById(R.id.cv_avatar);
-        tv_initials = itemView.findViewById(R.id.tv_initials);
+        avatar = itemView.findViewById(R.id.avatar);
 
         cl_reply = itemView.findViewById(R.id.cl_reply);
         iv_reply = itemView.findViewById(R.id.iv_reply);
@@ -131,7 +130,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_attach = itemView.findViewById(R.id.tv_gap_attach);
 
         alv_attachments = itemView.findViewById(R.id.cl_attachment);
-
 
         view_read_indicator = itemView.findViewById(R.id.view_read_indicator);
 
@@ -196,7 +194,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
-        configParamsUserInitials();
         configParamsReactionRecycleView();
         configPramsDeliveredIndicator();
         configParamsReactionTail();
@@ -231,9 +228,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         // RESET the defaults
         tv_username.setVisibility(View.GONE);
-        tv_initials.setVisibility(View.GONE);
         tv_messagedate.setVisibility(View.GONE);
-        cv_avatar.setVisibility(View.GONE);
+        avatar.setVisibility(View.GONE);
         tv_gap_header.setVisibility(View.GONE);
         tv_gap_sameUser.setVisibility(View.VISIBLE);
 
@@ -250,32 +246,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (positions.contains(MessageViewHolderFactory.Position.BOTTOM)) {
             // show the date and user initials for the bottom message
             tv_username.setVisibility(View.VISIBLE);
-            tv_initials.setVisibility(View.VISIBLE);
             tv_messagedate.setVisibility(View.VISIBLE);
-            cv_avatar.setVisibility(View.VISIBLE);
+            avatar.setVisibility(View.VISIBLE);
             if (entity.isTheirs()) {
                 tv_username.setVisibility(View.VISIBLE);
                 tv_username.setText(message.getUser().getName());
             } else
                 tv_username.setVisibility(View.GONE);
-
-            tv_initials.setText(message.getUser().getInitials());
+            avatar.setUser(message.getUser(), style);
             if (message.getDate() == null) message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(message.getDate() + ", " + message.getTime());
-
-            String avatarImageUrl = message.getUser().getImage();
-            if (!TextUtils.isEmpty(avatarImageUrl)) {
-                if (StringUtility.isValidImageUrl(avatarImageUrl))
-                    Utils.circleImageLoad(cv_avatar, avatarImageUrl);
-                else {
-                    cv_avatar.setVisibility(View.GONE);
-                }
-            } else {
-                cv_avatar.setVisibility(View.GONE);
-            }
         }
     }
 
@@ -486,8 +469,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configParamsUserAvatar() {
-        if (cv_avatar.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cv_avatar.getLayoutParams();
+        if (avatar.getVisibility() != View.VISIBLE) return;
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
         int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
         if (entity.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
@@ -499,24 +482,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.setMarginEnd(marginStart);
             params.horizontalBias = 1f;
         }
-        cv_avatar.setLayoutParams(params);
-    }
-
-    private void configParamsUserInitials() {
-        if (tv_initials.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_initials.getLayoutParams();
-        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-        if (entity.isTheirs()) {
-            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-            params.setMarginStart(marginStart);
-            params.setMarginEnd(0);
-            params.horizontalBias = 0f;
-        } else {
-            params.setMarginStart(0);
-            params.setMarginEnd(marginStart);
-            params.horizontalBias = 1f;
-        }
-        tv_initials.setLayoutParams(params);
+        avatar.setLayoutParams(params);
     }
 
     private void configParamsReply() {

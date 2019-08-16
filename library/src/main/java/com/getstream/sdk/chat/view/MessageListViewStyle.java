@@ -35,8 +35,8 @@ public class MessageListViewStyle extends BaseStyle {
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, R.drawable.message_bubble_theirs));
 
         // Avatar
-        avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, getDimension(R.dimen.stream_channel_avatar_height));
-        avatarHeight = a.getDimension(R.styleable.MessageListView_userAvatarHeight, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarWidth = a.getDimension(R.styleable.MessageListView_userAvatarWidth, getDimension(R.dimen.message_avatar_width));
+        avatarHeight = a.getDimension(R.styleable.MessageListView_userAvatarHeight, getDimension(R.dimen.message_avatar_height));
 
         avatarBorderWidth = a.getDimension(R.styleable.MessageListView_userAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.MessageListView_userAvatarBorderColor, Color.WHITE);

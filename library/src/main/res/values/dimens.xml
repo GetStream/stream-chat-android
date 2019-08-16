@@ -19,6 +19,8 @@
     <dimen name="input_text_size">15sp</dimen>
 
     <!--Message Item-->
+    <dimen name="message_avatar_height">32dp</dimen>
+    <dimen name="message_avatar_width">32dp</dimen>
     <dimen name="message_corner_radius1">16dp</dimen>
     <dimen name="message_corner_radius2">2dp</dimen>
     <dimen name="message_stroke_width">1dp</dimen>
