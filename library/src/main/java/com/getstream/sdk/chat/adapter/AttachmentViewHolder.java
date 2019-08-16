@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_title;
     // Action
-    private AttachmentListView.AttachmentClickListener clickListener;
-    private AttachmentListView.AttachmentClickListener longClickListener;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.AttachmentClickListener longClickListener;
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -68,7 +69,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, AttachmentListView.AttachmentClickListener clickListener, AttachmentListView.AttachmentClickListener longClickListener) {
+    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;

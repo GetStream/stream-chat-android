@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
@@ -31,8 +32,8 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     private ImageView iv_file_thumb;
     private TextView tv_file_size, tv_file_title;
     // Action
-    private AttachmentListView.AttachmentClickListener clickListener;
-    private AttachmentListView.AttachmentClickListener longClickListener;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.AttachmentClickListener longClickListener;
 
     public AttachmentViewHolderFile(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -44,7 +45,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, AttachmentListView.AttachmentClickListener clickListener, AttachmentListView.AttachmentClickListener longClickListener) {
+    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;

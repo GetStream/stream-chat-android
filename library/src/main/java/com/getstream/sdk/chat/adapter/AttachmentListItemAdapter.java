@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
@@ -24,8 +25,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private Context context;
     private List<Attachment> attachments;
     private MessageListViewStyle style;
-    private AttachmentListView.AttachmentClickListener attachmentClickListener;
-    private AttachmentListView.AttachmentClickListener attachmentLongClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
 
 
     public AttachmentListItemAdapter(Context context, @NonNull  Message message,@NonNull  MessageViewHolderFactory factory) {
@@ -62,7 +62,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, message, attachment, attachmentClickListener, attachmentLongClickListener);
+        ((BaseAttachmentViewHolder) holder).bind(this.context, message, attachment, attachmentClickListener);
     }
 
     public MessageListViewStyle getStyle() {
@@ -73,11 +73,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         this.style = style;
     }
 
-    public void setAttachmentClickListener(AttachmentListView.AttachmentClickListener l) {
-        this.attachmentClickListener = l;
-    }
-
-    public void setAttachmentLongClickListener(AttachmentListView.AttachmentClickListener l) {
-        this.attachmentLongClickListener = l;
+    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
     }
 }

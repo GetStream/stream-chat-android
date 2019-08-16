@@ -23,6 +23,8 @@ public class AttachmentListView extends RecyclerView {
     private Context context;
     private AttachmentListItemAdapter adapter;
 
+    private MessageListView.AttachmentClickListener attachmentClickListener;
+
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
     }
@@ -52,18 +54,16 @@ public class AttachmentListView extends RecyclerView {
         this.setLayoutManager(new LinearLayoutManager(context));
         this.adapter = new AttachmentListItemAdapter(context, message, viewHolderFactory);
         this.adapter.setStyle(style);
+        if (this.attachmentClickListener != null) {
+            this.adapter.setAttachmentClickListener(attachmentClickListener);
+        }
         this.setAdapter(adapter);
     }
 
-    public interface AttachmentClickListener {
-        void onClick(Message message, Attachment attachment);
-    }
-
-    public void setAttachmentClickListener(AttachmentClickListener l) {
-        this.adapter.setAttachmentClickListener(l);
-    }
-
-    public void setAttachmentLongClickListener(AttachmentClickListener l) {
-        this.adapter.setAttachmentLongClickListener(l);
+    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
+        if (this.adapter != null) {
+            this.adapter.setAttachmentClickListener(attachmentClickListener);
+        }
     }
 }

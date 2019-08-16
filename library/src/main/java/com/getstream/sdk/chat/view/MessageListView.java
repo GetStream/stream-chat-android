@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.adapter.Entity;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.List;
@@ -34,6 +37,9 @@ public class MessageListView extends RecyclerView {
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
+
+    private MessageClickListener messageClickListener;
+    private AttachmentClickListener attachmentClickListener;
 
     private int firstVisible;
     private int lastVisible;
@@ -126,6 +132,10 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
         adapter.setStyle(style);
 
+
+        if (this.attachmentClickListener != null) {
+            adapter.setAttachmentClickListener(this.attachmentClickListener);
+        }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -155,5 +165,24 @@ public class MessageListView extends RecyclerView {
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new MessageListViewStyle(context, attrs);
+    }
+
+    public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
+        if (this.adapter != null) {
+            this.adapter.setAttachmentClickListener(this.attachmentClickListener);
+        }
+    }
+
+    public void setMessageClickListener(MessageClickListener messageClickListener) {
+        this.messageClickListener = messageClickListener;
+    }
+
+    public interface MessageClickListener {
+        void onClick(Message message);
+    }
+
+    public interface AttachmentClickListener {
+        void onClick(Message message, Attachment attachment);
     }
 }

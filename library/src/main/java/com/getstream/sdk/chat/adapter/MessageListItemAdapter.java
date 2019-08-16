@@ -11,12 +11,15 @@ import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.EntityListDiffCallback;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+
     public enum EntityType {
         DATE_SEPARATOR, MESSAGE, TYPING
     }
@@ -24,8 +27,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
 
     private ChannelState channelState;
-    private View.OnClickListener clickListener;
-    private View.OnLongClickListener longClickListener;
+    private MessageListView.MessageClickListener messageClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
     private List<Entity> entityList;
     private boolean isThread;
     private MessageListViewStyle style;
@@ -82,7 +85,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         try {
             Entity entity = entityList.get(position);
             // TODO: determine position and mine/theirs
-            return viewHolderFactory.getEntityViewType(entity, true, MessageViewHolderFactory.Position.BOTTOM);
+            return viewHolderFactory.getEntityViewType(entity, entity.isMine(), entity.getPositions());
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
@@ -99,8 +102,16 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Entity entity = entityList.get(position);
-        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelState, entity, position, isThread, clickListener, longClickListener);
+        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelState, entity, position, isThread, messageClickListener, attachmentClickListener);
 
+    }
+
+    public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
+        this.messageClickListener = messageClickListener;
+    }
+
+    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
     }
 
     @Override

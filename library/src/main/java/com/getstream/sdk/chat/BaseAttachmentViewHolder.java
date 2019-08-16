@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
 
 public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder {
 
@@ -20,5 +21,5 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    public abstract void bind(Context context, Message message, Attachment attachment, AttachmentListView.AttachmentClickListener clickListener, AttachmentListView.AttachmentClickListener longClickListener);
+    public abstract void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener);
 }

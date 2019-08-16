@@ -3,6 +3,7 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.adapter.AttachmentViewHolder;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
@@ -25,6 +27,8 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
  */
 public class ChannelActivity extends AppCompatActivity
         implements MessageInputView.OpenCameraViewListener {
+
+    final String TAG = ChannelActivity.class.getSimpleName();
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
@@ -58,6 +62,9 @@ public class ChannelActivity extends AppCompatActivity
 
         MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
         binding.messageList.setViewHolderFactory(factory);
+        binding.messageList.setAttachmentClickListener((message, attachment) -> {
+            Log.i(TAG, "attachment was clicked");
+        });
 
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);

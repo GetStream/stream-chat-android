@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
@@ -23,7 +24,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
 
         String humanizedDate = getRelativeTimeSpanString(entity.getDate().getTime()).toString();
         tv_header_date.setText(humanizedDate);

@@ -33,6 +33,7 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
@@ -79,11 +80,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private ChannelState channelState;
     private List<Message> messageList;
+    private MessageListView.MessageClickListener messageClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
     private int position;
     private boolean isThread;
     private boolean isThreadHeader = false;
-    private View.OnClickListener clickListener;
-    private View.OnLongClickListener longClickListener;
     private Context context;
     private Message message;
     private Entity entity;
@@ -143,14 +144,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener messageClickListener, MessageListView.AttachmentClickListener attachmentClickListener) {
         // set binding
         this.context = context;
         this.channelState = channelState;
         this.position = position;
         this.isThread = isThread;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
+        this.messageClickListener = messageClickListener;
+        this.attachmentClickListener = attachmentClickListener;
+
         this.entity = entity;
         this.message = entity.getMessage();
         this.positions = entity.getPositions();
@@ -164,6 +166,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setViewHolderFactory(viewHolderFactory);
             alv_attachments.setStyle(style);
             alv_attachments.setMessage(this.message);
+            alv_attachments.setAttachmentClickListener(attachmentClickListener);
         }
 
         // apply the style based on mine or theirs
@@ -176,8 +179,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // apply position related style tweaks
         this.applyPositionsStyle();
 
-
-        isThreadHeader = (isThread && this.clickListener == null && longClickListener == null);
 
 
         // TODO: hook up click and longclick
@@ -274,10 +275,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             //ll_send_failed.setBackgroundResource(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
-                if (clickListener != null) {
+                if (messageClickListener != null) {
                     String tag = TextUtils.isEmpty(message.getCommand()) ? Constant.TAG_MESSAGE_RESEND : Constant.TAG_MESSAGE_INVALID_COMMAND;
                     v.setTag(new MessageTagModel(tag, position));
-                    clickListener.onClick(v);
+                    messageClickListener.onClick(message);
                 }
             });
 
@@ -325,20 +326,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
             Log.d(TAG, "onClick: " + position);
-            if (clickListener != null) {
-                v.setTag(new MessageTagModel(Constant.TAG_MESSAGE_REACTION, position));
-                clickListener.onClick(v);
+            if (messageClickListener != null) {
+                messageClickListener.onClick(message);
             }
         });
 
-        tv_text.setOnLongClickListener((View v) -> {
-            Log.d(TAG, "Long onClick: " + position);
-            if (longClickListener != null) {
-                v.setTag(String.valueOf(position));
-                longClickListener.onLongClick(v);
-            }
-            return true;
-        });
+
     }
 
     private void configReactionView() {
@@ -386,10 +379,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getReplyCount() > 1) tv_reply.setText(message.getReplyCount() + " replies");
 
         cl_reply.setOnClickListener((View v) -> {
-            if (clickListener != null) {
-                v.setTag(new MessageTagModel(Constant.TAG_MOREACTION_REPLY, position));
-                clickListener.onClick(v);
-            }
+
         });
     }
 

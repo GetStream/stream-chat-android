@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, View.OnClickListener reactionListener, View.OnLongClickListener longClickListener) {
+    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
         this.context = context;
 
         ll_typingusers.setVisibility(View.VISIBLE);

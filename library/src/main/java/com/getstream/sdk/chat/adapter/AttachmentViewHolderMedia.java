@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -43,8 +44,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ConstraintLayout cl_video;
     // Action
-    private AttachmentListView.AttachmentClickListener clickListener;
-    private AttachmentListView.AttachmentClickListener longClickListener;
+    private MessageListView.AttachmentClickListener clickListener;
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -63,10 +63,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, AttachmentListView.AttachmentClickListener clickListener, AttachmentListView.AttachmentClickListener longClickListener) {
+    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
         this.message = message;
         this.attachment = attachment;
 
@@ -171,24 +170,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
         // Set Click Listener
-        cl_video.setOnClickListener((View v) -> {
-            if (attachments.size() > 0) {
-                SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                attachmentModel.setAttachmentIndex(0);
-                attachmentModel.setAttachments(attachments);
-                Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
-                v.setTag(attachmentModel);
-            }
+        iv_media_thumb.setOnClickListener((View v) -> {
             this.triggerClick(message, attachment);
-
-
         });
 
-
-        cl_video.setOnLongClickListener((View v) -> {
-            this.triggerLongClick(message, attachment);
-            return true;
-        });
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
@@ -214,11 +199,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.GONE);
     }
 
-    private void triggerLongClick(Message message, Attachment attachment) {
-        if (this.longClickListener != null) {
-            this.longClickListener.onClick(message, attachment);
-        }
-    }
     private void triggerClick(Message message, Attachment attachment) {
         if (this.clickListener != null) {
             this.clickListener.onClick(message, attachment);

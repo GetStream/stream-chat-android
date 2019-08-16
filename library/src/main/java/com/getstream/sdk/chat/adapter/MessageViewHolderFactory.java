@@ -30,7 +30,7 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getEntityViewType(Entity entity, Boolean mine, Position position) {
+    public int getEntityViewType(Entity entity, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
