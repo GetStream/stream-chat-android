@@ -76,13 +76,14 @@ public class ChannelActivity extends AppCompatActivity
             if (attachment.getType().equals(ModelType.attach_image)) {
                 List<String> imageUrls = new ArrayList<>();
                 for (Attachment a : message.getAttachments()) {
-                    imageUrls.add(a.getAssetURL());
+                    imageUrls.add(a.getImageURL());
                 }
 
+                int position = message.getAttachments().indexOf(attachment);
+
                 new ImageViewer.Builder<>(this, imageUrls)
-                        .setStartPosition(0)
+                        .setStartPosition(position)
                         .show();
-                return;
             } else {
                 // Giphy, Video, Link, Product,...
                 Intent mediaIntent = new Intent(this, AttachmentActivity.class);
