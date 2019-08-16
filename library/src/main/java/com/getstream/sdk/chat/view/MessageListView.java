@@ -136,6 +136,9 @@ public class MessageListView extends RecyclerView {
         if (this.attachmentClickListener != null) {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         }
+        if (this.messageClickListener != null) {
+            this.adapter.setMessageClickListener(this.messageClickListener);
+        }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -176,6 +179,9 @@ public class MessageListView extends RecyclerView {
 
     public void setMessageClickListener(MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
+        if (this.adapter != null) {
+            this.adapter.setMessageClickListener(this.messageClickListener);
+        }
     }
 
     public interface MessageClickListener {

@@ -69,6 +69,9 @@ public class ChannelActivity extends AppCompatActivity
 
         MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
         binding.messageList.setViewHolderFactory(factory);
+        binding.messageList.setMessageClickListener(message -> {
+            Log.i(TAG, "message was clicked");
+        });
         binding.messageList.setAttachmentClickListener((message, attachment) -> {
             Log.i(TAG, "attachment was clicked");
             // Image
