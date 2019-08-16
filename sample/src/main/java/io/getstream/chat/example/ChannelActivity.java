@@ -12,13 +12,20 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentViewHolder;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.MessageInputView;
+import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -64,6 +71,27 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setViewHolderFactory(factory);
         binding.messageList.setAttachmentClickListener((message, attachment) -> {
             Log.i(TAG, "attachment was clicked");
+            // Image
+
+            if (attachment.getType().equals(ModelType.attach_image)) {
+                List<String> imageUrls = new ArrayList<>();
+                for (Attachment a : message.getAttachments()) {
+                    imageUrls.add(a.getAssetURL());
+                }
+
+                new ImageViewer.Builder<>(this, imageUrls)
+                        .setStartPosition(0)
+                        .show();
+                return;
+            } else {
+                // Giphy, Video, Link, Product,...
+                Intent mediaIntent = new Intent(this, AttachmentActivity.class);
+                this.startActivity(mediaIntent);
+            }
+
+
+
+
         });
 
         binding.messageInput.setViewModel(viewModel, this);
