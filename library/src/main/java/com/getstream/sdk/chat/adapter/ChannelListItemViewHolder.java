@@ -144,7 +144,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         // read indicators
-        read_state.setReads(lastMessageReads, style);
+        read_state.setReads(lastMessageReads,true, style);
 
         // apply unread style or read style
         if (unreadCount == 0) {

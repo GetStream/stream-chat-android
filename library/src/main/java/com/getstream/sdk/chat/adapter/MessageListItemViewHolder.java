@@ -435,7 +435,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (readBy.size() == 0) {
             view_read_indicator.setVisibility(View.GONE);
         } else {
-            view_read_indicator.setReads(readBy, style);
+            view_read_indicator.setReads(readBy, false, style);
             view_read_indicator.setVisibility(View.VISIBLE);
         }
     }

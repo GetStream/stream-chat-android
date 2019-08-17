@@ -69,5 +69,6 @@ public class UpdateMessageRequest {
         this.message.remove("differentTime");
         this.message.remove("TimeElapsed");
         this.message.remove("equals");
+        this.message.remove("getUserId");
     }
 }

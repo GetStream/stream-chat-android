@@ -37,7 +37,13 @@
             app:layout_constraintStart_toEndOf="@+id/channelHeader"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
             stream:userAvatarTextColor="@android:color/holo_blue_dark"
-            stream:userAvatarTextStyle="bold|italic" />
+            stream:userAvatarTextStyle="bold|italic"
+            stream:userReadStateAvatarHeight="15dp"
+            stream:userReadStateAvatarWidth="15dp"
+            stream:userReadStateTextColor="#001DC4"
+            stream:userReadStateTextStyle="bold|italic"
+            stream:userRreadStateTextSize="9sp"
+            stream:userShowReadState="true" />
 
 
         <TextView
