@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.Message;
 
-
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
     private MessageViewHolderFactory viewHolderFactory;
