@@ -360,7 +360,13 @@ public class Channel {
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
+        SendMessageRequest request;
+        if (message.getId() != null) {
+            request = new SendMessageRequest(message.getId(), message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
+        } else {
+            request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
+        }
+
         client.sendMessage(this.id, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
