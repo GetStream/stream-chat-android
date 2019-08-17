@@ -74,35 +74,35 @@ public class BaseStyle {
         return ContextCompat.getDrawable(context, drawable);
     }
 
-    protected float avatarWidth;
-    protected float avatarHeight;
+    protected int avatarWidth;
+    protected int avatarHeight;
 
-    protected float avatarBorderWidth;
+    protected int avatarBorderWidth;
     protected int avatarBorderColor;
     protected int avatarBackGroundColor;
 
-    protected float avatarInitialTextSize;
+    protected int avatarInitialTextSize;
     protected int avatarInitialTextColor;
     protected int avatarInitialTextStyle;
 
     protected boolean showReadState;
 
-    protected float readStateAvatarWidth;
-    protected float readStateAvatarHeight;
+    protected int readStateAvatarWidth;
+    protected int readStateAvatarHeight;
 
-    protected float readStateTextSize;
+    protected int readStateTextSize;
     protected int readStateTextColor;
     protected int readStateTextStyle;
 
-    public float getAvatarWidth() {
+    public int getAvatarWidth() {
         return avatarWidth;
     }
 
-    public float getAvatarHeight() {
+    public int getAvatarHeight() {
         return avatarHeight;
     }
 
-    public float getAvatarInitialTextSize() {
+    public int getAvatarInitialTextSize() {
         return avatarInitialTextSize;
     }
 
@@ -114,7 +114,7 @@ public class BaseStyle {
         return avatarInitialTextStyle;
     }
 
-    public float getAvatarBorderWidth() {
+    public int getAvatarBorderWidth() {
         return avatarBorderWidth;
     }
 
@@ -130,15 +130,15 @@ public class BaseStyle {
         return showReadState;
     }
 
-    public float getReadStateAvatarWidth() {
+    public int getReadStateAvatarWidth() {
         return readStateAvatarWidth;
     }
 
-    public float getReadStateAvatarHeight() {
+    public int getReadStateAvatarHeight() {
         return readStateAvatarHeight;
     }
 
-    public float getReadStateTextSize() {
+    public int getReadStateTextSize() {
         return readStateTextSize;
     }
 

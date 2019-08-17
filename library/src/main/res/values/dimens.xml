@@ -32,6 +32,8 @@
     <dimen name="message_text_font_size">15sp</dimen>
     <dimen name="read_state_text_size">8sp</dimen>
     <dimen name="message_typing_indicator_size">30dp</dimen>
+    <dimen name="reaction_dialog_emoji_size">22sp</dimen>
+    <dimen name="reaction_dialog_emoji_margin">5sp</dimen>
     <!--Attachment Item-->
     <dimen name="attach_image_width">250dp</dimen>
     <dimen name="attach_image_height">200dp</dimen>

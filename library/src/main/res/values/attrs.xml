@@ -117,7 +117,14 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-
+        <!--Reaction Dialog-->
+        <attr name="showReactionDlg" format="boolean" />
+        <attr name="showUsersReactionDlg" format="boolean" />
+        <attr name="reactionDlgBgDrawable" format="reference" />
+        <attr name="reactionDlgbgColor" format="color" />
+        <attr name="reactionDlgEmojiSize" format="dimension|reference" />
+        <attr name="reactionDlgEmojiMargin" format="dimension|reference" />
+        <!--Message-->
         <attr name="messageTextColorMine" format="color" />
         <attr name="messageTextColorTheirs" format="color" />
         <attr name="messageBubbleDrawableMine" format="reference" />
