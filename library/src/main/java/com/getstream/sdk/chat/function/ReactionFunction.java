@@ -18,12 +18,8 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 
 public class ReactionFunction {
-    Channel channel;
-    public ReactionFunction(Channel channel){
-        this.channel = channel;
-    }
 
-    public void showReactionDialog(Context context, Message message, int originY) {
+    public static void showReactionDialog(Context context,Channel channel, Message message, int originY) {
         final Dialog dialog = new Dialog(context); // Context, this, etc.
         dialog.setContentView(R.layout.dialog_reaction);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -48,7 +44,7 @@ public class ReactionFunction {
         window.setAttributes(wlp);
     }
 
-    public void showMoreActionDialog(Context context,
+    public static void showMoreActionDialog(Context context, Channel channel,
                                             final Message message,
                                             final View.OnClickListener clickListener) {
         final Dialog dialog = new Dialog(context);

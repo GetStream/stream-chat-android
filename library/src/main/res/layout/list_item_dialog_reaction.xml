@@ -49,7 +49,7 @@
             android:layout_marginBottom="3dp"
             android:gravity="center_vertical"
             android:textColor="@color/white"
-            android:textSize="9dp"
+            android:textSize="9sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/tv_emoji"
             app:layout_constraintStart_toStartOf="@+id/tv_emoji"

@@ -7,16 +7,16 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 
-public class ReactionView extends RelativeLayout implements View.OnClickListener {
+public class ReactionDlgView extends RelativeLayout implements View.OnClickListener {
 
-    final String TAG = ReactionView.class.getSimpleName();
-
-    public ReactionView(Context context) {
+    final String TAG = ReactionDlgView.class.getSimpleName();
+    MessageListViewStyle style;
+    public ReactionDlgView(Context context) {
         super(context);
 
     }
 
-    public ReactionView(Context context, @Nullable AttributeSet attrs) {
+    public ReactionDlgView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         parseAttr(context, attrs);
         applyStyle();
@@ -25,6 +25,10 @@ public class ReactionView extends RelativeLayout implements View.OnClickListener
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
 
+    }
+
+    public void setStyle(MessageListViewStyle style){
+        this.style = style;
     }
 
     @Override

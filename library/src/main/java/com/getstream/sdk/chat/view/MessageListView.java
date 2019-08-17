@@ -9,17 +9,18 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.List;
-
 
 
 /**
@@ -47,6 +48,9 @@ public class MessageListView extends RecyclerView {
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
+    private ReactionFunction reactionFunction;
+
+    // region Constructor
     public MessageListView(Context context) {
         super(context);
         this.setLayoutManager(new LinearLayoutManager(context));
@@ -68,6 +72,13 @@ public class MessageListView extends RecyclerView {
         this.setLayoutManager(new LinearLayoutManager(context));
         hasScrolledUp = false;
         initDefaultBubbleHelper();
+    }
+    // endregion
+
+    // region Init
+    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
+        // parse the attributes
+        style = new MessageListViewStyle(context, attrs);
     }
 
     public void initDefaultBubbleHelper() {
@@ -106,16 +117,46 @@ public class MessageListView extends RecyclerView {
         });
     }
 
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-        if (this.adapter != null) {
-            this.adapter.setFactory(factory);
-        }
-    }
+    // set the adapter and apply the style.
+    public void setAdapterWithStyle(MessageListItemAdapter adapter) {
+        super.setAdapter(adapter);
+        adapter.setStyle(style);
 
-    @Override
-    public void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
+
+        if (this.attachmentClickListener != null) {
+            adapter.setAttachmentClickListener(this.attachmentClickListener);
+        }
+        if (this.messageClickListener != null) {
+            this.adapter.setMessageClickListener(this.messageClickListener);
+        } else {
+            this.adapter.setMessageClickListener(message -> {
+
+            });
+        }
+        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
+                if (linearLayoutManager != null) {
+                    firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
+                    lastVisible = linearLayoutManager.findLastVisibleItemPosition();
+                    hasScrolledUp = lastVisible < (adapter.getItemCount() - 3);
+                    if (!hasScrolledUp) {
+                        viewModel.setHasNewMessages(false);
+                    }
+                    Boolean reachedTheBeginning = firstVisible <= 2;
+                    Log.i(TAG, String.format("Scroll: First visible is %d last visible is %s", firstVisible, lastVisible));
+                    if (reachedTheBeginning) {
+                        viewModel.loadMore();
+                    }
+                }
+            }
+        });
+
     }
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
@@ -160,7 +201,7 @@ public class MessageListView extends RecyclerView {
                 Log.i(TAG, String.format("Scroll: Moving down"));
 
                 if (!hasScrolledUp) {
-                    this.getLayoutManager().scrollToPosition(adapter.getItemCount()-1);
+                    this.getLayoutManager().scrollToPosition(adapter.getItemCount() - 1);
                     viewModel.setHasNewMessages(false);
                 } else {
                     viewModel.setHasNewMessages(true);
@@ -172,49 +213,21 @@ public class MessageListView extends RecyclerView {
         this.setAdapterWithStyle(adapter);
     }
 
-    // set the adapter and apply the style.
-    public void setAdapterWithStyle(MessageListItemAdapter adapter) {
-        super.setAdapter(adapter);
-        adapter.setStyle(style);
-
-
-        if (this.attachmentClickListener != null) {
-            adapter.setAttachmentClickListener(this.attachmentClickListener);
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+        if (this.adapter != null) {
+            this.adapter.setFactory(factory);
         }
-        if (this.messageClickListener != null) {
-            this.adapter.setMessageClickListener(this.messageClickListener);
-        }
-        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
-                if (linearLayoutManager != null) {
-                    firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
-                    lastVisible = linearLayoutManager.findLastVisibleItemPosition();
-                    hasScrolledUp = lastVisible < (adapter.getItemCount() -3);
-                    if (!hasScrolledUp) {
-                        viewModel.setHasNewMessages(false);
-                    }
-                    Boolean reachedTheBeginning = firstVisible <= 2;
-                    Log.i(TAG, String.format("Scroll: First visible is %d last visible is %s", firstVisible, lastVisible));
-                    if (reachedTheBeginning) {
-                        viewModel.loadMore();
-                    }
-                }
-            }
-        });
-
     }
 
-    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
-        // parse the attributes
-        style = new MessageListViewStyle(context, attrs);
+    @Override
+    public void setAdapter(Adapter adapter) {
+        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
+    // endregion
 
+
+    // region Listener
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
         if (this.adapter != null) {
@@ -242,10 +255,12 @@ public class MessageListView extends RecyclerView {
 
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
     }
 
     public interface AttachmentClickListener {
         void onClick(Message message, Attachment attachment);
     }
+    // endregion
 }

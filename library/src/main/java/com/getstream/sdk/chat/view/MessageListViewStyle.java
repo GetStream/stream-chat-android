@@ -43,7 +43,7 @@ public class MessageListViewStyle extends BaseStyle {
         // Reaction Dialog
         showReactionDlg = a.getBoolean(R.styleable.MessageListView_showReactionDlg, true);
         showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_showUsersReactionDlg, true);
-        reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_reactionDlgBgDrawable, -1));
+        reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_reactionDlgBgDrawable, R.drawable.round_dialog_reaction));
         reactionDlgBgColor = a.getColor(R.styleable.MessageListView_reactionDlgbgColor, Color.BLACK);
         reactionDlgEmojiSize = a.getColor(R.styleable.MessageListView_reactionDlgEmojiSize, getDimension(R.dimen.reaction_dialog_emoji_size));
         reactionDlgEmojiMargin = a.getColor(R.styleable.MessageListView_reactionDlgEmojiMargin, getDimension(R.dimen.reaction_dialog_emoji_margin));
