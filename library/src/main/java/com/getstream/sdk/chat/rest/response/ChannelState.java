@@ -148,8 +148,8 @@ public class ChannelState {
 
     public List<ChannelUserRead> getLastMessageReads() {
         Message lastMessage = this.getLastMessage();
-        List<ChannelUserRead> readLastMessage = new ArrayList<ChannelUserRead>();
-        if (reads == null) return readLastMessage;
+        List<ChannelUserRead> readLastMessage = new ArrayList<>();
+        if (reads == null || lastMessage == null) return readLastMessage;
         for (ChannelUserRead r : reads) {
             if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
                 readLastMessage.add(r);

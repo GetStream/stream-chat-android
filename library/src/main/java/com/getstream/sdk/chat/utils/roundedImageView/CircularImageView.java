@@ -261,12 +261,13 @@ public class CircularImageView
         if (null != mTextPaint) {
             mTextPaint.setColor(color);
             mTextPaint.setTextSize(textSize);
+            if (0 != typeface) {
+                Typeface typeface_ = Typeface.create(Typeface.DEFAULT, typeface);
+                mTextPaint.setTypeface(typeface_);
+            }
         }
 
-        if (0 != typeface) {
-            Typeface typeface_ = Typeface.create(Typeface.DEFAULT, typeface);
-            mTextPaint.setTypeface(typeface_);
-        }
+
 
         // Invalidate the view if asked
         if (invalidate) {
@@ -418,12 +419,15 @@ public class CircularImageView
             }
         }
         // Set the placeholder text color
-        if (!text.equalsIgnoreCase(mText) ||
-                (backgroundColor != mBackgroundColor) ||
-                (textColor != mTextColor)) {
-            setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
-            invalidate = true;
+        if (mText != null) {
+            if (!text.equalsIgnoreCase(mText) ||
+                    (backgroundColor != mBackgroundColor) ||
+                    (textColor != mTextColor)) {
+                setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
+                invalidate = true;
+            }
         }
+
 
         if (invalidate) {
             invalidate();
