@@ -337,7 +337,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void loadMore() {
         // don't load more if the channel state is empty or if we are already loading more
-        if (loadingMore.getValue() || channelState.getOldestMessageId() == null) {
+        if (loadingMore.getValue() || endOfPagination.getValue() || channelState.getOldestMessageId() == null) {
             return;
         }
         loadingMore.setValue(true);
