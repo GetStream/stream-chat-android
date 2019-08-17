@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -82,7 +81,7 @@ public class ChannelActivity extends AppCompatActivity
 
         MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
         binding.messageList.setViewHolderFactory(factory);
-        binding.messageList.setMessageClickListener(this);
+//        binding.messageList.setMessageClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
 
         binding.messageInput.setViewModel(viewModel, this);
@@ -126,7 +125,7 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(Message message) {
+    public void onClick(Message message, int position) {
         Log.i(TAG, "message was clicked");
         showReactionDialog(message);
     }

@@ -261,7 +261,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 if (messageClickListener != null) {
                     String tag = TextUtils.isEmpty(message.getCommand()) ? Constant.TAG_MESSAGE_RESEND : Constant.TAG_MESSAGE_INVALID_COMMAND;
                     v.setTag(new MessageTagModel(tag, position));
-                    messageClickListener.onClick(message);
+                    messageClickListener.onClick(message, position);
                 }
             });
 
@@ -309,7 +309,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_text.setOnClickListener((View v) -> {
             Log.d(TAG, "onClick: " + position);
             if (messageClickListener != null) {
-                messageClickListener.onClick(message);
+                messageClickListener.onClick(message, position);
             }
         });
 

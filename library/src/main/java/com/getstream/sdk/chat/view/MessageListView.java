@@ -129,8 +129,17 @@ public class MessageListView extends RecyclerView {
         if (this.messageClickListener != null) {
             this.adapter.setMessageClickListener(this.messageClickListener);
         } else {
-            this.adapter.setMessageClickListener(message -> {
-
+            this.adapter.setMessageClickListener((Message message, int position) -> {
+                int firstListItemPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
+                final int lastListItemPosition = firstListItemPosition + this.getChildCount() - 1;
+                int childIndex;
+                if (position < firstListItemPosition || position > lastListItemPosition) {
+                    childIndex = position;
+                } else {
+                    childIndex = position - firstListItemPosition;
+                }
+                int originY = this.getChildAt(childIndex).getBottom();
+                ReactionFunction.showReactionDialog(getContext(),viewModel.getChannel(),message, originY);
             });
         }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -250,7 +259,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface MessageClickListener {
-        void onClick(Message message);
+        void onClick(Message message, int position);
     }
 
     public interface BubbleHelper {
