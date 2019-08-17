@@ -1,11 +1,13 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +17,9 @@ import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 
-public class ReactionDlgView extends RelativeLayout implements View.OnClickListener {
+import top.defaults.drawabletoolbox.DrawableBuilder;
+
+public class ReactionDlgView extends RelativeLayout {
 
     final String TAG = ReactionDlgView.class.getSimpleName();
     MessageListViewStyle style;
@@ -36,7 +40,9 @@ public class ReactionDlgView extends RelativeLayout implements View.OnClickListe
         initView();
     }
 
-    public void setMessagewithStyle(Channel channel, Message message, View.OnClickListener clickListener, MessageListViewStyle style) {
+    public void setMessagewithStyle(Channel channel, Message message,
+                                    View.OnClickListener clickListener,
+                                    MessageListViewStyle style) {
         this.style = style;
         init(channel, message, clickListener);
     }
@@ -49,25 +55,27 @@ public class ReactionDlgView extends RelativeLayout implements View.OnClickListe
     private void init(Channel channel, Message message, View.OnClickListener clickListener) {
         RecyclerView rv_reaction = this.findViewById(R.id.rv_reaction);
         ImageView iv_bg = this.findViewById(R.id.iv_bg);
+
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message, style.isShowUsersReactionDlg(), style, clickListener);
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message,
+                style.isShowUsersReactionDlg(), style, clickListener);
         rv_reaction.setAdapter(reactionAdapter);
-        iv_bg.setBackground(style.getReactionDlgBgDrawable());
+
+        if (style.getReactionDlgBgDrawable() != null) {
+            this.setBackground(style.getReactionDlgBgDrawable());
+            iv_bg.setBackgroundResource(0);
+        } else {
+            @DimenRes int conerRadius = R.dimen.reaction_dialog_corner_radius;
+            Drawable drawable = new DrawableBuilder()
+                    .rectangle()
+                    .strokeColor(0)
+                    .strokeWidth(0)
+                    .solidColor(style.getReactionDlgBgColor())
+                    .cornerRadii(conerRadius, conerRadius, conerRadius, conerRadius) // the same as the two lines above
+                    .build();
+            iv_bg.setBackground(drawable);
+        }
     }
-
-
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-
-    }
-
-    public interface OnBackClickListener {
-        void onClick(View v);
-    }
-
-
 }

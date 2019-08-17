@@ -36,6 +36,8 @@
             app:layout_constraintEnd_toStartOf="@+id/message_input"
             app:layout_constraintStart_toEndOf="@+id/channelHeader"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
+            stream:reactionDlgEmojiSize="50dp"
+            stream:reactionDlgbgColor="#001DC4"
             stream:showUsersReactionDlg="true"
             stream:userAvatarTextColor="@android:color/holo_blue_dark"
             stream:userAvatarTextStyle="bold|italic"
@@ -43,8 +45,7 @@
             stream:userReadStateAvatarWidth="15dp"
             stream:userReadStateTextColor="#001DC4"
             stream:userReadStateTextStyle="bold|italic"
-            stream:userRreadStateTextSize="9sp"
-            stream:reactionDlgEmojiSize="40dp" />
+            stream:userRreadStateTextSize="9sp" />
 
 
         <TextView

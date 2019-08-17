@@ -37,6 +37,8 @@
     <color name="message_border">#14000000</color>
     <color name="message_failed">#1AD0021B</color>
     <color name="user_intials_background">#CCCCA4D6</color>
+    <color name="reaction_dialog_background">#292929</color>
+
     <!--Reaction-->
     <color name="reaction_background">#1B1B1B</color>
     <!--More Action-->

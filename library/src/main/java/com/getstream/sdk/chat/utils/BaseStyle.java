@@ -67,6 +67,7 @@ public class BaseStyle {
     }
 
     protected final Drawable getDrawable(@DrawableRes int drawable) {
+        if (drawable == -1) return null;
         return ContextCompat.getDrawable(context, drawable);
     }
 
