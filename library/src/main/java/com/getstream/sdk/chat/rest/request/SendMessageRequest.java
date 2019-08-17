@@ -16,6 +16,12 @@ public class SendMessageRequest {
     @Expose
     Map<String, Object> message;
 
+    public SendMessageRequest(String id, String text, List<Attachment> attachments, String parentId,
+                              boolean showInChannel, List<String> mentionedUserIDs) {
+        this(text, attachments, parentId, showInChannel, mentionedUserIDs);
+        message.put("id", id);
+    }
+
     public SendMessageRequest(String text, List<Attachment> attachments, String parentId,
                               boolean showInChannel, List<String> mentionedUserIDs) {
         message = new HashMap<>();

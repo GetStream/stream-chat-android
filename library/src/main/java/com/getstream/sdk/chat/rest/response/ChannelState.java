@@ -81,7 +81,7 @@ public class ChannelState {
         Date lastActive = new Date(0);
         List<User> users = this.getOtherUsers();
         for (User u: users) {
-            if (u.getLastActive().after(lastActive)) {
+            if (u.getLastActive() != null && u.getLastActive().after(lastActive)) {
                 lastActive = u.getLastActive();
             }
         }

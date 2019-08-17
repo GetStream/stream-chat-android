@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static java.util.UUID.randomUUID;
 
 /*
  * - store the channel data
@@ -211,12 +212,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             @Override
             public void onMessageNew(Event event) {
                 Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
-                List<Message> messageList = messages.getValue();
-                if (messageList == null) {
-                    messageList = new ArrayList<>();
-                }
-                messageList.add(event.getMessage());
-                messages.postValue(messageList);
+                upsertMessage(event.getMessage());
                 if (!client().fromCurrentUser(event.getMessage())){
                     markRead();
                 }
@@ -270,6 +266,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (channelSubscriptionId == 0) return;
         channel.removeEventHandler(channelSubscriptionId);
         channelSubscriptionId = 0;
+    }
+
+    public boolean upsertMessage(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        Boolean updated = index != -1;
+        if (updated) {
+            messagesCopy.set(index, message);
+        } else {
+            messagesCopy.add(message);
+        }
+
+        messages.postValue(messagesCopy);
+        return updated;
     }
 
     public boolean updateMessage(Message message) {
@@ -374,11 +385,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void onSendMessage(Message message, MessageCallback callback) {
         Log.i(TAG, "onSendMessage handler called at viewmodel level");
         // immediately add the message
-        // TODO: Tommaso implement this
-//        message.setUser(client().getUser());
-//        message.setCreatedAt(new Date());
-//        message.setType("regular");
-//        addMessage(message);
+        message.setUser(client().getUser());
+        message.setCreatedAt(new Date());
+        message.setType("regular");
+        String clientSideID = this.client().getUserId() + "-" + randomUUID().toString();
+        message.setId(clientSideID);
+        addMessage(message);
 
 
         // afterwards send the request
