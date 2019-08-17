@@ -139,7 +139,7 @@ public class MessageListView extends RecyclerView {
                     childIndex = position - firstListItemPosition;
                 }
                 int originY = this.getChildAt(childIndex).getBottom();
-                ReactionFunction.showReactionDialog(getContext(),viewModel.getChannel(),message, originY);
+                ReactionFunction.showReactionDialog(getContext(),viewModel.getChannel(),message, style, originY);
             });
         }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -259,7 +259,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface MessageClickListener {
-        void onClick(Message message, int position);
+        void onMessageClick(Message message, int position);
     }
 
     public interface BubbleHelper {
@@ -269,7 +269,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface AttachmentClickListener {
-        void onClick(Message message, Attachment attachment);
+        void onAttachmentClick(Message message, Attachment attachment);
     }
     // endregion
 }

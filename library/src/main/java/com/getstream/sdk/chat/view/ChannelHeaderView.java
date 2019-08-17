@@ -55,7 +55,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
     private ToolbarChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ToolbarChannelHeaderBinding.inflate(inflater, this, true);
-        // setup the onClick listener for the back button
+        // setup the onMessageClick listener for the back button
         binding.tvBack.setOnClickListener(this);
         return binding;
     }

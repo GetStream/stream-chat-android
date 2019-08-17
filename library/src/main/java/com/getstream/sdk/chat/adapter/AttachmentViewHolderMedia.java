@@ -142,7 +142,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     private void triggerClick(Message message, Attachment attachment) {
         if (this.clickListener != null) {
-            this.clickListener.onClick(message, attachment);
+            this.clickListener.onAttachmentClick(message, attachment);
         }
     }
 

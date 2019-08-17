@@ -60,13 +60,13 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
     private void triggerLongClick(Message message, Attachment attachment) {
         if (this.longClickListener != null) {
-            this.longClickListener.onClick(message, attachment);
+            this.longClickListener.onAttachmentClick(message, attachment);
         }
     }
 
     private void triggerClick(Message message, Attachment attachment) {
         if (this.clickListener != null) {
-            this.clickListener.onClick(message, attachment);
+            this.clickListener.onAttachmentClick(message, attachment);
         }
     }
 

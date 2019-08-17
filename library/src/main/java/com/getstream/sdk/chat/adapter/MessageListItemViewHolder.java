@@ -261,7 +261,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 if (messageClickListener != null) {
                     String tag = TextUtils.isEmpty(message.getCommand()) ? Constant.TAG_MESSAGE_RESEND : Constant.TAG_MESSAGE_INVALID_COMMAND;
                     v.setTag(new MessageTagModel(tag, position));
-                    messageClickListener.onClick(message, position);
+                    messageClickListener.onMessageClick(message, position);
                 }
             });
 
@@ -307,9 +307,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
-            Log.d(TAG, "onClick: " + position);
+            Log.d(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
-                messageClickListener.onClick(message, position);
+                messageClickListener.onMessageClick(message, position);
             }
         });
 
@@ -494,7 +494,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         set.clone(cl_message);
         set.clear(R.id.read_state, ConstraintSet.START);
         set.clear(R.id.read_state, ConstraintSet.END);
-//        set.clear(R.id.read_state, ConstraintSet.BOTTOM);
         set.applyTo(cl_message);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
