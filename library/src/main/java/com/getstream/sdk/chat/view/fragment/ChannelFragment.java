@@ -26,7 +26,7 @@
 ////
 ////import com.facebook.drawee.backends.pipeline.Fresco;
 ////import com.getstream.sdk.chat.StreamChat;
-////import com.getstream.sdk.chat.adapter.Entity;
+////import com.getstream.sdk.chat.adapter.MessageListItem;
 ////import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 ////import com.getstream.sdk.chat.databinding.ChannelFragmentBinding;
 ////import com.getstream.sdk.chat.databinding.ViewThreadBinding;
@@ -798,7 +798,7 @@
 ////        threadMessages = new ArrayList<>();
 ////
 ////        threadBinding.rvHeader.setLayoutManager(mLayoutManager_thread_header);
-////        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<Entity>());
+////        MessageListItemAdapter mThreadHeaderAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<MessageListItem>());
 ////        threadBinding.rvHeader.setAdapter(mThreadHeaderAdapter);
 ////
 ////        if (message.getReplyCount() == 0) {
@@ -857,7 +857,7 @@
 ////            mLayoutManager_thread.scrollToPosition(threadMessages.size() - 1);
 ////
 ////        threadBinding.rvThread.setLayoutManager(mLayoutManager_thread);
-////        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<Entity>());
+////        mThreadAdapter = new MessageListItemAdapter(getContext(), this.channelState, new ArrayList<MessageListItem>());
 ////        threadBinding.rvThread.setAdapter(mThreadAdapter);
 ////        setScrollDownHideKeyboard(threadBinding.rvThread);
 ////    }

@@ -39,7 +39,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
+    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
         this.context = context;
 
         ll_typingusers.setVisibility(View.VISIBLE);
@@ -49,7 +49,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         float marginLeft = resources.getDimension(R.dimen.user_avatar_margin_left);
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        List<User> users = entity.getUsers();
+        List<User> users = messageListItem.getUsers();
         int i = 0;
 
         for (User user : users) {

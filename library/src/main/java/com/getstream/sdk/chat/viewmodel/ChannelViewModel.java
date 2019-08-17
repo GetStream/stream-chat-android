@@ -23,7 +23,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.EntityLiveData;
+import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<List<ChannelUserRead>> reads;
     private MutableLiveData<Boolean> endOfPagination;
     private MutableLiveData<InputType> inputType;
-    private EntityLiveData entities;
+    private MessageListItemLiveData entities;
 
     public Channel getChannel() {
         return channel;
@@ -112,7 +112,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         typingUsers = new MutableLiveData<>(new ArrayList<>());
         reads = new MutableLiveData<>(channelState.getReads());
 
-        entities = new EntityLiveData(client().getUser(), messages, typingUsers, reads);
+        entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
         watcherCount = new MutableLiveData<>();
 
         lastActiveString = new MutableLiveData<>();
@@ -348,7 +348,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void loadMore() {
         // don't load more if the channel state is empty or if we are already loading more
-        if (loadingMore.getValue() || channelState.getOldestMessageId() == null) {
+        if (loadingMore.getValue() || endOfPagination.getValue() || channelState.getOldestMessageId() == null) {
             return;
         }
         loadingMore.setValue(true);
@@ -413,7 +413,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
 
-    public EntityLiveData getEntities() {
+    public MessageListItemLiveData getEntities() {
         return entities;
     }
 

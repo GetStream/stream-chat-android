@@ -17,14 +17,11 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -47,8 +44,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_title;
     // Action
+    private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.AttachmentClickListener longClickListener;
+    private MessageListItem messageListItem;
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -69,11 +68,12 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        this.message = message;
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.attachment = attachment;
 
         configAttachment();
@@ -115,51 +115,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configImageThumbBackground(Attachment attachment) {
-        int mediaBack, moreBack;
-        // TODO: fix this somehow
-        if (true) {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming3;
-                    moreBack = R.drawable.round_attach_more_incoming3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_incoming1;
-                    moreBack = R.drawable.round_attach_more_incoming1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming2;
-                    moreBack = R.drawable.round_attach_more_incoming2;
-                }
-            }
-        } else {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing3;
-                    moreBack = R.drawable.round_attach_more_outgoing3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_outgoing1;
-                    moreBack = R.drawable.round_attach_more_outgoing1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing2;
-                    moreBack = R.drawable.round_attach_more_outgoing2;
-                }
-            }
-        }
-        if (iv_media_more.getVisibility() == View.VISIBLE)
-            iv_media_more.setBackgroundResource(moreBack);
-
-        iv_media_thumb.setShape(context, context.getResources().getDrawable(mediaBack));
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        iv_media_thumb.setShape(context, background);
     }
 
     private void configAttachViewBackground(View view) {

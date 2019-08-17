@@ -3,12 +3,9 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -18,11 +15,9 @@ import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -45,7 +40,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_video;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
-
+    private MessageListItem messageListItem;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
@@ -63,10 +58,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Message message, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
-        this.message = message;
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.attachment = attachment;
 
         configMediaAttach();
@@ -74,62 +70,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        int mediaBack, moreBack;
-        // TODO: fix this somehow, is mine is not known here
-        if (true) {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming3;
-                    moreBack = R.drawable.round_attach_more_incoming3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_incoming1;
-                    moreBack = R.drawable.round_attach_more_incoming1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_incoming2;
-                    moreBack = R.drawable.round_attach_more_incoming2;
-                }
-            }
-        } else {
-            if (!TextUtils.isEmpty(attachment.getText()) ||
-                    !TextUtils.isEmpty(attachment.getTitle())) {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media;
-                    moreBack = R.drawable.round_attach_more;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing3;
-                    moreBack = R.drawable.round_attach_more_outgoing3;
-                }
-            } else {
-                if (true) {
-                    mediaBack = R.drawable.round_attach_media_outgoing1;
-                    moreBack = R.drawable.round_attach_more_outgoing1;
-                } else {
-                    mediaBack = R.drawable.round_attach_media_outgoing2;
-                    moreBack = R.drawable.round_attach_more_outgoing2;
-                }
-            }
-        }
-        if (iv_media_more.getVisibility() == View.VISIBLE)
-            iv_media_more.setBackgroundResource(moreBack);
-
-        iv_media_thumb.setShape(context, context.getResources().getDrawable(mediaBack));
-    }
-
-    private void configAttachViewBackground(View view) {
-        Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = style.getMessageBubbleDrawableTheirs();
-        } else {
-            background = style.getMessageBubbleDrawableMine();
-        }
-        view.setBackground(background);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        iv_media_thumb.setShape(context, background);
     }
 
     private void configMediaAttach() {
@@ -157,7 +99,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             cl_video.setVisibility(View.GONE);
             return;
         }
-        configAttachViewBackground(cl_video);
         configImageThumbBackground(attachments.get(0));
         // More
         if (attachments.size() > 1) {

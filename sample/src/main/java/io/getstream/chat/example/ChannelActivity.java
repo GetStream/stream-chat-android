@@ -69,20 +69,24 @@ public class ChannelActivity extends AppCompatActivity
 
         MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
         binding.messageList.setViewHolderFactory(factory);
+        binding.messageList.setMessageClickListener(message -> {
+            Log.i(TAG, "message was clicked");
+        });
         binding.messageList.setAttachmentClickListener((message, attachment) -> {
             Log.i(TAG, "attachment was clicked");
             // Image
 
             if (attachment.getType().equals(ModelType.attach_image)) {
-//                List<String> imageUrls = new ArrayList<>();
-//                for (Attachment a : message.getAttachments()) {
-//                    imageUrls.add(a.getAssetURL());
-//                }
+                List<String> imageUrls = new ArrayList<>();
+                for (Attachment a : message.getAttachments()) {
+                    imageUrls.add(a.getImageURL());
+                }
 
-                new ImageViewer.Builder<>(this, getImageURLs(message.getAttachments()))
-                        .setStartPosition(0)
+                int position = message.getAttachments().indexOf(attachment);
+
+                new ImageViewer.Builder<>(this, imageUrls)
+                        .setStartPosition(position)
                         .show();
-                return;
             } else {
                 // Giphy, Video, Link, Product,...
                 Intent mediaIntent = new Intent(this, AttachmentActivity.class);

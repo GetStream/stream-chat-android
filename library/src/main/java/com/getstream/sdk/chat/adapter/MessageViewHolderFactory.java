@@ -30,11 +30,11 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getEntityViewType(Entity entity, Boolean mine, List<Position> positions) {
+    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
-        MessageListItemAdapter.EntityType entityType = entity.getType();
+        MessageListItemAdapter.EntityType entityType = messageListItem.getType();
         if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
             return DATE_SEPARATOR;
         } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
@@ -51,7 +51,9 @@ public class MessageViewHolderFactory {
         // link/card layout
         // custom attachment types
         String t = attachment.getType();
-        if (t.equals(ModelType.attach_video)) {
+        if (t == null) {
+            return GENERIC_ATTACHMENT;
+        } else if (t.equals(ModelType.attach_video)) {
             return VIDEO_ATTACHMENT;
         } else if (t.equals(ModelType.attach_image)) {
             return IMAGE_ATTACHMENT;
@@ -94,10 +96,9 @@ public class MessageViewHolderFactory {
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
-//            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
-//            holder.setStyle(adapter.getStyle());
-//            return holder;
-            return null;
+            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
         }
 
     }

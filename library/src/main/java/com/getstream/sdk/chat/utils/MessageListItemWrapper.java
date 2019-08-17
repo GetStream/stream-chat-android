@@ -1,23 +1,23 @@
 package com.getstream.sdk.chat.utils;
 
-import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 
 import java.util.List;
 
-public class EntityListWrapper {
-    private List<Entity> listEntities;
+public class MessageListItemWrapper {
+    private List<MessageListItem> listEntities;
     private Boolean isLoadingMore;
 
-    EntityListWrapper(Boolean isLoadingMore, List<Entity> listEntities) {
+    MessageListItemWrapper(Boolean isLoadingMore, List<MessageListItem> listEntities) {
         this.isLoadingMore = isLoadingMore;
         this.listEntities = listEntities;
     }
 
-    public List<Entity> getListEntities() {
+    public List<MessageListItem> getListEntities() {
         return listEntities;
     }
 
-    public void setListEntities(List<Entity> listEntities) {
+    public void setListEntities(List<MessageListItem> listEntities) {
         this.listEntities = listEntities;
     }
 

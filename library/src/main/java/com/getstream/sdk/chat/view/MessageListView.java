@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -8,18 +9,17 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.List;
+
 
 
 /**
@@ -45,11 +45,13 @@ public class MessageListView extends RecyclerView {
     private int firstVisible;
     private int lastVisible;
     private boolean hasScrolledUp;
+    private BubbleHelper bubbleHelper;
 
     public MessageListView(Context context) {
         super(context);
         this.setLayoutManager(new LinearLayoutManager(context));
         hasScrolledUp = false;
+        initDefaultBubbleHelper();
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
@@ -57,6 +59,7 @@ public class MessageListView extends RecyclerView {
         this.parseAttr(context, attrs);
         this.setLayoutManager(new LinearLayoutManager(context));
         hasScrolledUp = false;
+        initDefaultBubbleHelper();
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -64,6 +67,43 @@ public class MessageListView extends RecyclerView {
         this.parseAttr(context, attrs);
         this.setLayoutManager(new LinearLayoutManager(context));
         hasScrolledUp = false;
+        initDefaultBubbleHelper();
+    }
+
+    public void initDefaultBubbleHelper() {
+        this.setBubbleHelper(new BubbleHelper() {
+            @Override
+            public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
+                if (mine) {
+                    // if the size is 0 the attachment has the corner change
+                    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
+                        return getResources().getDrawable(R.drawable.message_bubble_mine_top);
+                    }
+                    return style.getMessageBubbleDrawableMine();
+                } else {
+                    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
+                        return getResources().getDrawable(R.drawable.message_bubble_theirs_top);
+                    }
+                    return style.getMessageBubbleDrawableTheirs();
+                }
+            }
+
+            @Override
+            public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
+                if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                    int attachmentPosition = message.getAttachments().indexOf(attachment);
+                    if (attachmentPosition == 0) {
+                        return getResources().getDrawable(R.drawable.round_attach_media_incoming1);
+                    }
+                }
+                return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
+
+
+                // round_attach_media_incoming1
+                // round_attach_more_incoming1
+                // round_attach_media_incoming2
+            }
+        });
     }
 
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
@@ -91,10 +131,14 @@ public class MessageListView extends RecyclerView {
             adapter.setFactory(viewHolderFactory);
         }
 
+        if (bubbleHelper != null) {
+            adapter.setBubbleHelper(bubbleHelper);
+        }
+
 
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, entityWrapper -> {
-            List<Entity> entities = entityWrapper.getListEntities();
+            List<MessageListItem> entities = entityWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
@@ -137,6 +181,9 @@ public class MessageListView extends RecyclerView {
         if (this.attachmentClickListener != null) {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         }
+        if (this.messageClickListener != null) {
+            this.adapter.setMessageClickListener(this.messageClickListener);
+        }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -166,10 +213,6 @@ public class MessageListView extends RecyclerView {
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new MessageListViewStyle(context, attrs);
-        try {
-            Fresco.initialize(getContext());
-        } catch (Exception e) {
-        }
     }
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
@@ -181,10 +224,25 @@ public class MessageListView extends RecyclerView {
 
     public void setMessageClickListener(MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
+        if (this.adapter != null) {
+            this.adapter.setMessageClickListener(this.messageClickListener);
+        }
+    }
+
+    public void setBubbleHelper(BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+        if (adapter != null) {
+            adapter.setBubbleHelper(bubbleHelper);
+        }
     }
 
     public interface MessageClickListener {
         void onClick(Message message);
+    }
+
+    public interface BubbleHelper {
+        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
     }
 
     public interface AttachmentClickListener {

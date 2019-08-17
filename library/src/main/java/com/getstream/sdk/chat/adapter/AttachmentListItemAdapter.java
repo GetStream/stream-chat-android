@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -23,14 +21,17 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private Message message;
     private MessageViewHolderFactory factory;
     private Context context;
+    private MessageListItem messageListItem;
     private List<Attachment> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull  Message message,@NonNull  MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem messageListItem, @NonNull  MessageViewHolderFactory factory) {
         this.context = context;
-        this.message = message;
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.factory = factory;
         this.attachments = message.getAttachments();
     }
@@ -62,7 +63,8 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, message, attachment, attachmentClickListener);
+        ((BaseAttachmentViewHolder) holder).setBubbleHelper(bubbleHelper);
+        ((BaseAttachmentViewHolder) holder).bind(this.context, messageListItem, attachment, attachmentClickListener);
     }
 
     public MessageListViewStyle getStyle() {
@@ -75,5 +77,13 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
+    }
+
+    public MessageListView.BubbleHelper getBubbleHelper() {
+        return bubbleHelper;
+    }
+
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
     }
 }
