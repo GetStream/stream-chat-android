@@ -4,7 +4,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -19,7 +18,7 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     }
 
     public abstract void bind(Context context, ChannelState channelState,
-                              @NonNull Entity entity, int position,
+                              @NonNull MessageListItem messageListItem, int position,
                               boolean isThread, MessageListView.MessageClickListener messageClickListener,
                               MessageListView.AttachmentClickListener attachmentClickListener);
 

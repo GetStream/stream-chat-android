@@ -1,9 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,22 +20,16 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
-import com.getstream.sdk.chat.utils.MessageBubbleDrawable;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -87,7 +78,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private boolean isThreadHeader = false;
     private Context context;
     private Message message;
-    private Entity entity;
+    private MessageListItem messageListItem;
     private MessageListViewStyle style;
     private List<MessageViewHolderFactory.Position> positions;
 
@@ -144,7 +135,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener messageClickListener, MessageListView.AttachmentClickListener attachmentClickListener) {
+    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener messageClickListener, MessageListView.AttachmentClickListener attachmentClickListener) {
         // set binding
         this.context = context;
         this.channelState = channelState;
@@ -153,9 +144,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.messageClickListener = messageClickListener;
         this.attachmentClickListener = attachmentClickListener;
 
-        this.entity = entity;
-        this.message = entity.getMessage();
-        this.positions = entity.getPositions();
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
+        this.positions = messageListItem.getPositions();
 
 
 
@@ -165,13 +156,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setVisibility(View.VISIBLE);
             alv_attachments.setViewHolderFactory(viewHolderFactory);
             alv_attachments.setStyle(style);
-            alv_attachments.setEntity(this.entity);
+            alv_attachments.setEntity(this.messageListItem);
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
         }
 
         // apply the style based on mine or theirs
-        if (entity.isMine()) {
+        if (messageListItem.isMine()) {
             this.applyStyleMine();
         } else {
             this.applyStyleTheirs();
@@ -205,13 +196,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     private void applyStyleMine() {
-        Drawable background = getBubbleHelper().getDrawableForMessage(entity.getMessage(), entity.isMine(), entity.getPositions());
+        Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextColor(style.getMessageTextColorMine());
     }
 
     private void applyStyleTheirs() {
-        Drawable background = getBubbleHelper().getDrawableForMessage(entity.getMessage(), entity.isMine(), entity.getPositions());
+        Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextColor(style.getMessageTextColorTheirs());
     }
@@ -242,7 +233,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_username.setVisibility(View.VISIBLE);
             tv_messagedate.setVisibility(View.VISIBLE);
             avatar.setVisibility(View.VISIBLE);
-            if (entity.isTheirs()) {
+            if (messageListItem.isTheirs()) {
                 tv_username.setVisibility(View.VISIBLE);
                 tv_username.setText(message.getUser().getName());
             } else
@@ -348,7 +339,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_docket.setVisibility(View.VISIBLE);
 
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts()));
-        if (entity.isMine())
+        if (messageListItem.isMine())
             iv_docket.setBackgroundResource(R.drawable.docket_incoming);
         else
             iv_docket.setBackgroundResource(R.drawable.docket_outgoing);
@@ -386,7 +377,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsMessageText() {
         if (tv_text.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -397,7 +388,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsDeletedMessage() {
         if (tv_deleted.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_deleted.getLayoutParams();
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -408,7 +399,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsMessageDate() {
         if (tv_messagedate.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_messagedate.getLayoutParams();
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -419,7 +410,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionRecycleView() {
         if (rv_reaction.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -430,7 +421,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
 
     private void configPramsDeliveredIndicator() {
-        List<ChannelUserRead> readBy = entity.getMessageReadBy();
+        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
 
         if (readBy.size() == 0) {
             view_read_indicator.setVisibility(View.GONE);
@@ -443,7 +434,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
             params.horizontalBias = 1f;
@@ -455,7 +446,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
         int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);
             params.setMarginEnd(0);
@@ -484,7 +475,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         ConstraintLayout.LayoutParams paramsText = (ConstraintLayout.LayoutParams) tv_reply.getLayoutParams();
 
         // Set Constraint
-        if (entity.isTheirs()) {
+        if (messageListItem.isTheirs()) {
             iv_reply.setBackgroundResource(R.drawable.replies);
             params.horizontalBias = 0f;
             paramsText.endToEnd = cl_reply.getId();

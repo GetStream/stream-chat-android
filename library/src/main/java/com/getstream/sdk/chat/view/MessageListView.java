@@ -11,13 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.List;
@@ -140,7 +139,7 @@ public class MessageListView extends RecyclerView {
 
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, entityWrapper -> {
-            List<Entity> entities = entityWrapper.getListEntities();
+            List<MessageListItem> entities = entityWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();

@@ -3,12 +3,9 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -18,11 +15,9 @@ import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -45,7 +40,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_video;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
-    private Entity entity;
+    private MessageListItem messageListItem;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
@@ -63,11 +58,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Entity entity, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
-        this.entity = entity;
-        this.message = entity.getMessage();
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.attachment = attachment;
 
         configMediaAttach();
@@ -75,7 +70,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(entity.getMessage(), entity.isMine(), entity.getPositions(), attachment);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
     }
 

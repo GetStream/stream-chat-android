@@ -8,10 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter;
-import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 
 
@@ -51,10 +49,10 @@ public class AttachmentListView extends RecyclerView {
         this.context = context;
     }
 
-    public void setEntity(Entity entity) {
-        this.message = entity.getMessage();
+    public void setEntity(MessageListItem messageListItem) {
+        this.message = messageListItem.getMessage();
         this.setLayoutManager(new LinearLayoutManager(context));
-        this.adapter = new AttachmentListItemAdapter(context, entity, viewHolderFactory);
+        this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
         if (this.attachmentClickListener != null) {
             this.adapter.setAttachmentClickListener(attachmentClickListener);

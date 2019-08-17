@@ -2,15 +2,15 @@ package com.getstream.sdk.chat.utils;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.getstream.sdk.chat.adapter.Entity;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 
 
 import java.util.List;
 
 public class EntityListDiffCallback extends DiffUtil.Callback {
-    protected List<Entity> oldList, newList;
+    protected List<MessageListItem> oldList, newList;
 
-    public EntityListDiffCallback(List<Entity> oldList, List<Entity> newList) {
+    public EntityListDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

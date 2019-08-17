@@ -419,14 +419,14 @@ public class CircularImageView
             }
         }
         // Set the placeholder text color
-        if (mText != null) {
-            if (!text.equalsIgnoreCase(mText) ||
+
+            if (text == null || mText == null || !text.equalsIgnoreCase(mText) ||
                     (backgroundColor != mBackgroundColor) ||
                     (textColor != mTextColor)) {
                 setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
                 invalidate = true;
             }
-        }
+
 
 
         if (invalidate) {

@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -24,9 +23,9 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, Entity entity, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
+    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
 
-        String humanizedDate = getRelativeTimeSpanString(entity.getDate().getTime()).toString();
+        String humanizedDate = getRelativeTimeSpanString(messageListItem.getDate().getTime()).toString();
         tv_header_date.setText(humanizedDate);
         tv_header_time.setText(" AT " + humanizedDate);
     }

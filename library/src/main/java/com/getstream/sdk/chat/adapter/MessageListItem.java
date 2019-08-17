@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Entity {
+public class MessageListItem {
     private MessageListItemAdapter.EntityType type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
@@ -18,14 +18,14 @@ public class Entity {
     private Boolean messageMine;
     private List<User> users;
 
-    public Entity(Date date) {
+    public MessageListItem(Date date) {
         this.type = MessageListItemAdapter.EntityType.DATE_SEPARATOR;
         this.date = date;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
-    public Entity(Message message, List<MessageViewHolderFactory.Position> positions, Boolean messageMine) {
+    public MessageListItem(Message message, List<MessageViewHolderFactory.Position> positions, Boolean messageMine) {
         this.type = MessageListItemAdapter.EntityType.MESSAGE;
         this.message = message;
         this.positions = positions;
@@ -33,7 +33,7 @@ public class Entity {
         this.messageReadBy = new ArrayList<>();
     }
 
-    public Entity(List<User> users) {
+    public MessageListItem(List<User> users) {
         this.type = MessageListItemAdapter.EntityType.TYPING;
         this.users = users;
         this.messageMine = false;

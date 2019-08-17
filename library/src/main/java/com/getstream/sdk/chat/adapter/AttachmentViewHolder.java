@@ -17,14 +17,11 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -50,7 +47,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.AttachmentClickListener longClickListener;
-    private Entity entity;
+    private MessageListItem messageListItem;
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -71,12 +68,12 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, Entity entity, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
-        this.entity = entity;
-        this.message = entity.getMessage();
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.attachment = attachment;
 
         configAttachment();
@@ -118,7 +115,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(entity.getMessage(), entity.isMine(), entity.getPositions(), attachment);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
     }
 

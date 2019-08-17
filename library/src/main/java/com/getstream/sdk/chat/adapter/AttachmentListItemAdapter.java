@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -23,17 +21,17 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private Message message;
     private MessageViewHolderFactory factory;
     private Context context;
-    private Entity entity;
+    private MessageListItem messageListItem;
     private List<Attachment> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull  Entity entity,@NonNull  MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem messageListItem, @NonNull  MessageViewHolderFactory factory) {
         this.context = context;
-        this.entity = entity;
-        this.message = entity.getMessage();
+        this.messageListItem = messageListItem;
+        this.message = messageListItem.getMessage();
         this.factory = factory;
         this.attachments = message.getAttachments();
     }
@@ -66,7 +64,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
         ((BaseAttachmentViewHolder) holder).setBubbleHelper(bubbleHelper);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, entity, attachment, attachmentClickListener);
+        ((BaseAttachmentViewHolder) holder).bind(this.context, messageListItem, attachment, attachmentClickListener);
     }
 
     public MessageListViewStyle getStyle() {

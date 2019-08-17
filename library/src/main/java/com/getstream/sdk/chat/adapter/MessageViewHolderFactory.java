@@ -30,11 +30,11 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getEntityViewType(Entity entity, Boolean mine, List<Position> positions) {
+    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
-        MessageListItemAdapter.EntityType entityType = entity.getType();
+        MessageListItemAdapter.EntityType entityType = messageListItem.getType();
         if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
             return DATE_SEPARATOR;
         } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
