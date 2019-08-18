@@ -67,6 +67,7 @@ public class BaseStyle {
     }
 
     protected final Drawable getDrawable(@DrawableRes int drawable) {
+        if (drawable == -1) return null;
         return ContextCompat.getDrawable(context, drawable);
     }
 
@@ -74,27 +75,35 @@ public class BaseStyle {
         return ContextCompat.getDrawable(context, drawable);
     }
 
+    protected int avatarWidth;
+    protected int avatarHeight;
 
-    protected float avatarWidth;
-    protected float avatarHeight;
-
-    protected float avatarBorderWidth;
+    protected int avatarBorderWidth;
     protected int avatarBorderColor;
     protected int avatarBackGroundColor;
 
-    protected float avatarInitialTextSize;
+    protected int avatarInitialTextSize;
     protected int avatarInitialTextColor;
     protected int avatarInitialTextStyle;
 
-    public float getAvatarWidth() {
+    protected boolean showReadState;
+
+    protected int readStateAvatarWidth;
+    protected int readStateAvatarHeight;
+
+    protected int readStateTextSize;
+    protected int readStateTextColor;
+    protected int readStateTextStyle;
+
+    public int getAvatarWidth() {
         return avatarWidth;
     }
 
-    public float getAvatarHeight() {
+    public int getAvatarHeight() {
         return avatarHeight;
     }
 
-    public float getAvatarInitialTextSize() {
+    public int getAvatarInitialTextSize() {
         return avatarInitialTextSize;
     }
 
@@ -106,7 +115,7 @@ public class BaseStyle {
         return avatarInitialTextStyle;
     }
 
-    public float getAvatarBorderWidth() {
+    public int getAvatarBorderWidth() {
         return avatarBorderWidth;
     }
 
@@ -116,5 +125,29 @@ public class BaseStyle {
 
     public int getAvatarBackGroundColor() {
         return avatarBackGroundColor;
+    }
+
+    public boolean isShowReadState() {
+        return showReadState;
+    }
+
+    public int getReadStateAvatarWidth() {
+        return readStateAvatarWidth;
+    }
+
+    public int getReadStateAvatarHeight() {
+        return readStateAvatarHeight;
+    }
+
+    public int getReadStateTextSize() {
+        return readStateTextSize;
+    }
+
+    public int getReadStateTextColor() {
+        return readStateTextColor;
+    }
+
+    public int getReadStateTextStyle() {
+        return readStateTextStyle;
     }
 }

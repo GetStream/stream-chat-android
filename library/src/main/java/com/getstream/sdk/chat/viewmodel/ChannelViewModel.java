@@ -231,7 +231,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageRead(Event event) {
-
+                List<ChannelUserRead> readsCopy = reads.getValue();
+                for (ChannelUserRead r : readsCopy) {
+                    if (r.getUser().equals(event.getUser())) {
+                        readsCopy.remove(r);
+                    }
+                }
+                ChannelUserRead newRead = new ChannelUserRead();
+                newRead.setUser(event.getUser());
+                newRead.setLastRead(event.getCreatedAt());
             }
 
             @Override

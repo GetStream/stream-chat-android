@@ -2,8 +2,10 @@ package com.getstream.sdk.chat.function;
 
 import android.app.Dialog;
 import android.content.Context;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -16,26 +18,17 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
+import com.getstream.sdk.chat.view.ReactionDlgView;
 
 public class ReactionFunction {
-    Channel channel;
-    public ReactionFunction(Channel channel){
-        this.channel = channel;
-    }
 
-    public void showReactionDialog(Context context, Message message, int originY) {
+    public static void showReactionDialog(Context context, Channel channel, Message message, MessageListViewStyle style, int originY) {
         final Dialog dialog = new Dialog(context); // Context, this, etc.
-        dialog.setContentView(R.layout.dialog_reaction);
+        ReactionDlgView reactionDlgView = new ReactionDlgView(context);
+        reactionDlgView.setMessagewithStyle(channel, message, view -> dialog.dismiss(), style);
+        dialog.setContentView(reactionDlgView);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        RecyclerView rv_reaction = dialog.findViewById(R.id.rv_reaction);
-        RecyclerView.LayoutManager mLayoutManager;
-        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel,message, true, (View v) -> {
-            dialog.dismiss();
-        });
-        rv_reaction.setAdapter(reactionAdapter);
 
         dialog.show();
 
@@ -48,7 +41,7 @@ public class ReactionFunction {
         window.setAttributes(wlp);
     }
 
-    public void showMoreActionDialog(Context context,
+    public static void showMoreActionDialog(Context context, Channel channel,
                                             final Message message,
                                             final View.OnClickListener clickListener) {
         final Dialog dialog = new Dialog(context);
@@ -78,7 +71,7 @@ public class ReactionFunction {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message, false, (View v) -> {
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message, false,null, (View v) -> {
             dialog.dismiss();
         });
         rv_reaction.setAdapter(reactionAdapter);

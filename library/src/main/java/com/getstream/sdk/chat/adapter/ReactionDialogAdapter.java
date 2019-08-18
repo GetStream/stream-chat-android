@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,12 +35,14 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     private View.OnClickListener clickListener;
     private boolean showAvatar;
     private List<String> types = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
-
+    private MessageListViewStyle style;
     public ReactionDialogAdapter(Channel channel, Message message,
                                  boolean showAvatar,
+                                 MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
         this.channel = channel;
         this.message = message;
+        this.style = style;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
     }
@@ -56,6 +60,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
+        applyStyle(holder);
         String type = types.get(position);
         holder.tv_emoji.setText(ReactionEmoji.valueOf(type).get());
 
@@ -93,6 +98,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             holder.tv_count.setText("");
     }
 
+    private void applyStyle(final MyViewHolder holder){
+        holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionDlgEmojiSize());
+    }
     @Override
     public int getItemCount() {
         return types.size();

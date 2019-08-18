@@ -37,8 +37,8 @@ import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
-
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
+
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
     private ConstraintLayout cl_message, headerView;
@@ -54,7 +54,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private TextView tv_username, tv_messagedate;
 
     // Delivered Indicator
-    private ReadStateView view_read_indicator;
+    private ReadStateView read_state;
     private TextView tv_indicator_initials, tv_read_count;
     private ImageView cv_indicator_avatar;
     private ProgressBar pb_indicator;
@@ -123,7 +123,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         alv_attachments = itemView.findViewById(R.id.cl_attachment);
 
-        view_read_indicator = itemView.findViewById(R.id.view_read_indicator);
+        read_state = itemView.findViewById(R.id.read_state);
 
         tv_indicator_initials = itemView.findViewById(R.id.tv_indicator_initials);
         tv_read_count = itemView.findViewById(R.id.tv_read_count);
@@ -149,7 +149,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = messageListItem.getPositions();
 
 
-
         if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
             alv_attachments.setVisibility(View.GONE);
         } else {
@@ -172,7 +171,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.applyPositionsStyle();
 
 
-
         // TODO: hook up click and longclick
 
         // Configure UIs
@@ -187,10 +185,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsDeletedMessage();
         configParamsUserAvatar();
         configParamsReactionRecycleView();
-        configPramsDeliveredIndicator();
+        configParamsDeliveredIndicator();
         configParamsReactionTail();
         configParamsMessageDate();
         configParamsReply();
+        configParamsReadState();
 //        configParamsAttachment();
     }
     // endregion
@@ -262,7 +261,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 if (messageClickListener != null) {
                     String tag = TextUtils.isEmpty(message.getCommand()) ? Constant.TAG_MESSAGE_RESEND : Constant.TAG_MESSAGE_INVALID_COMMAND;
                     v.setTag(new MessageTagModel(tag, position));
-                    messageClickListener.onClick(message);
+                    messageClickListener.onMessageClick(message, position);
                 }
             });
 
@@ -306,12 +305,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         markwon.setMarkdown(tv_text, Global.getMentionedText(message));
 
 
-
         // Set Click Listener
         tv_text.setOnClickListener((View v) -> {
-            Log.d(TAG, "onClick: " + position);
+            Log.d(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
-                messageClickListener.onClick(message);
+                messageClickListener.onMessageClick(message, position);
             }
         });
 
@@ -368,9 +366,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-
-
-
     // endregion
 
     // region Layout Params
@@ -419,15 +414,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-
-    private void configPramsDeliveredIndicator() {
+    private void configParamsDeliveredIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
 
         if (readBy.size() == 0) {
-            view_read_indicator.setVisibility(View.GONE);
+            read_state.setVisibility(View.GONE);
         } else {
-            view_read_indicator.setReads(readBy);
-            view_read_indicator.setVisibility(View.VISIBLE);
+            read_state.setVisibility(View.VISIBLE);
+            read_state.setReads(readBy, messageListItem.isTheirs(), style);
         }
     }
 
@@ -493,7 +487,36 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reply.setLayoutParams(paramsText);
     }
 
+    public void configParamsReadState(){
+        if (read_state.getVisibility() != View.VISIBLE) return;
+
+        ConstraintSet set = new ConstraintSet();
+        set.clone(cl_message);
+        set.clear(R.id.read_state, ConstraintSet.START);
+        set.clear(R.id.read_state, ConstraintSet.END);
+        set.applyTo(cl_message);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
+
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            if (messageListItem.isMine()){
+                params.endToStart = alv_attachments.getId();
+            }else{
+                params.startToEnd = alv_attachments.getId();
+            }
+        }else {
+            if (messageListItem.isMine()){
+                params.endToStart = tv_text.getId();
+            }else{
+                params.startToEnd = tv_text.getId();
+            }
+        }
+        read_state.setLayoutParams(params);
+    }
+
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
     }
+
+
 }

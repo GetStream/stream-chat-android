@@ -173,8 +173,8 @@
                 style="@style/text_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="3dp"
                 android:paddingStart="3dp"
+                android:paddingEnd="3dp"
                 android:textColor="#006CFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_reply"
@@ -220,14 +220,13 @@
             app:layout_constraintVertical_bias="1" />
 
         <com.getstream.sdk.chat.view.ReadStateView
-            android:id="@+id/view_read_indicator"
+            android:id="@+id/read_state"
             android:layout_width="wrap_content"
-            android:visibility="gone"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
-            app:layout_constraintBottom_toBottomOf="@id/cl_attachment"
-            app:layout_constraintEnd_toStartOf="@id/cl_attachment" />
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@id/tv_text"
+            app:layout_constraintEnd_toStartOf="@id/tv_text" />
 
         <com.getstream.sdk.chat.view.AvatarGroupView
             android:id="@+id/avatar"
@@ -238,7 +237,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

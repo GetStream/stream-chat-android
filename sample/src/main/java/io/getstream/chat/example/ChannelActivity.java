@@ -4,22 +4,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.AttachmentViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.MessageInputView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
@@ -33,12 +33,15 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
  * Show the messages for a channel
  */
 public class ChannelActivity extends AppCompatActivity
-        implements MessageInputView.OpenCameraViewListener {
+        implements MessageListView.MessageClickListener,
+        MessageListView.AttachmentClickListener,
+        MessageInputView.OpenCameraViewListener {
 
     final String TAG = ChannelActivity.class.getSimpleName();
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,34 +72,8 @@ public class ChannelActivity extends AppCompatActivity
 
         MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
         binding.messageList.setViewHolderFactory(factory);
-        binding.messageList.setMessageClickListener(message -> {
-            Log.i(TAG, "message was clicked");
-        });
-        binding.messageList.setAttachmentClickListener((message, attachment) -> {
-            Log.i(TAG, "attachment was clicked");
-            // Image
-
-            if (attachment.getType().equals(ModelType.attach_image)) {
-                List<String> imageUrls = new ArrayList<>();
-                for (Attachment a : message.getAttachments()) {
-                    imageUrls.add(a.getImageURL());
-                }
-
-                int position = message.getAttachments().indexOf(attachment);
-
-                new ImageViewer.Builder<>(this, imageUrls)
-                        .setStartPosition(position)
-                        .show();
-            } else {
-                // Giphy, Video, Link, Product,...
-                Intent mediaIntent = new Intent(this, AttachmentActivity.class);
-                this.startActivity(mediaIntent);
-            }
-
-
-
-
-        });
+//        binding.messageList.setMessageClickListener(this);
+        binding.messageList.setAttachmentClickListener(this);
 
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
@@ -136,5 +113,39 @@ public class ChannelActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onMessageClick(Message message, int position) {
+        Log.i(TAG, "message was clicked");
+        showReactionDialog(message);
+    }
+
+    @Override
+    public void onAttachmentClick(Message message, Attachment attachment) {
+        Log.i(TAG, "attachment was clicked");
+        // Image
+
+        if (attachment.getType().equals(ModelType.attach_image)) {
+            List<String> imageUrls = new ArrayList<>();
+            for (Attachment a : message.getAttachments()) {
+                imageUrls.add(a.getImageURL());
+            }
+
+            int position = message.getAttachments().indexOf(attachment);
+
+            new ImageViewer.Builder<>(this, imageUrls)
+                    .setStartPosition(position)
+                    .show();
+        } else {
+            // Giphy, Video, Link, Product,...
+            Intent mediaIntent = new Intent(this, AttachmentActivity.class);
+            this.startActivity(mediaIntent);
+        }
+
+    }
+
+    public void showReactionDialog(Message message) {
+
     }
 }

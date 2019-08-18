@@ -145,7 +145,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
-            Log.d(TAG, "Attach onClick: " + position);
+            Log.d(TAG, "Attach onMessageClick: " + position);
 
                 SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
                 attachmentModel.setAttachmentIndex(position);
@@ -250,12 +250,12 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void triggerLongClick(Message message, Attachment attachment) {
         if (this.longClickListener != null) {
-            this.longClickListener.onClick(message, attachment);
+            this.longClickListener.onAttachmentClick(message, attachment);
         }
     }
     private void triggerClick(Message message, Attachment attachment) {
         if (this.clickListener != null) {
-            this.clickListener.onClick(message, attachment);
+            this.clickListener.onAttachmentClick(message, attachment);
         }
     }
 

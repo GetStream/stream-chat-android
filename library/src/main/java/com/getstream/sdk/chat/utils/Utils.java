@@ -3,11 +3,14 @@ package com.getstream.sdk.chat.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
+
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -22,6 +25,8 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Scanner;
+
+import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class Utils {
 
@@ -75,8 +80,30 @@ public class Utils {
         return height;
     }
 
-    public static void setButtonDelayEnable(View v){
+    public static void setButtonDelayEnable(View v) {
         v.setEnabled(false);
         new Handler().postDelayed(() -> v.setEnabled(true), 1000);
     }
+
+    public static Drawable getDrawable(boolean isRect, int strokeColor, int strokeWidth, int solidColor, int topLeftRadius, int topRightRadius ) {
+        if (isRect)
+            return new DrawableBuilder()
+                    .rectangle()
+                    .strokeColor(strokeColor)
+                    .strokeWidth(strokeWidth)
+                    .solidColor(solidColor)
+                    .cornerRadii(0, 0, 20, 20) // the same as the two lines above
+                    .build();
+        else
+            return new DrawableBuilder()
+                    .oval()
+                    .strokeColor(0)
+                    .strokeWidth(0)
+                    .cornerRadii(0, 0, 0, 0)
+                    .solidColor(0)
+                    .build();
+
+    }
+
+
 }
