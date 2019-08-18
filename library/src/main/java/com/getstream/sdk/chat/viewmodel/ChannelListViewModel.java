@@ -5,10 +5,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -26,6 +24,7 @@ import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class ChannelListViewModel extends AndroidViewModel {
@@ -40,20 +39,18 @@ public class ChannelListViewModel extends AndroidViewModel {
     private QuerySort sort;
 
     private boolean reachedEndOfPagination;
-    private boolean initialized;
-    private boolean isLoading;
-    private boolean isLoadingMore;
+    private AtomicBoolean initialized;
+    private AtomicBoolean isLoading;
+    private AtomicBoolean isLoadingMore;
     private int pageSize;
 
     public LiveData<List<Channel>> getChannels() {
         return channels;
     }
-
-    public MutableLiveData<Boolean> getLoading() {
+    public LiveData<Boolean> getLoading() {
         return loading;
     }
-
-    public MutableLiveData<Boolean> getLoadingMore() {
+    public LiveData<Boolean> getLoadingMore() {
         return loadingMore;
     }
 
@@ -61,30 +58,34 @@ public class ChannelListViewModel extends AndroidViewModel {
         this.pageSize = pageSize;
     }
 
-    private void setLoading(){
-        isLoading = true;
-        loading.postValue(true);
+    private boolean setLoading(){
+        if (isLoading.compareAndSet(false, true)) {
+            loading.postValue(true);
+            return true;
+        }
+        return false;
     }
 
     private void setLoadingDone(){
-        isLoading = false;
-        loading.postValue(false);
+        if (isLoading.compareAndSet(true, false))
+            loading.postValue(false);
     }
 
-    private void setLoadingMore(){
-        setLoading();
-        isLoadingMore = true;
-        loadingMore.postValue(true);
+    private boolean setLoadingMore(){
+        if (isLoadingMore.compareAndSet(false, true)) {
+            loadingMore.postValue(true);
+            return true;
+        }
+        return false;
     }
 
     private void setLoadingMoreDone(){
-        setLoadingDone();
-        isLoadingMore = false;
-        loadingMore.postValue(false);
+        if (isLoadingMore.compareAndSet(true, false))
+            loadingMore.postValue(false);
     }
 
     public void setChannelFilter(FilterObject filter) {
-        if (initialized) {
+        if (initialized.get()) {
             Log.e(TAG, "setChannelFilter on an already initialized channel list is a no-op, make sure to set filters *before* consuming channels or create a new ChannelListViewModel if you need a different query");
             return;
         }
@@ -98,8 +99,10 @@ public class ChannelListViewModel extends AndroidViewModel {
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
-        isLoading = true;
-        isLoadingMore = false;
+        isLoading = new AtomicBoolean(false);
+        isLoadingMore = new AtomicBoolean(false);
+        initialized = new AtomicBoolean(false);
+
         reachedEndOfPagination = false;
         pageSize = 25;
 
@@ -227,6 +230,7 @@ public class ChannelListViewModel extends AndroidViewModel {
 
     private void queryChannels() {
         Log.i(TAG, "queryChannels for loading the channels");
+        if (!setLoading()) return;
 
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
@@ -235,7 +239,7 @@ public class ChannelListViewModel extends AndroidViewModel {
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
-                initialized = true;
+                initialized.set(true);
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
@@ -248,7 +252,7 @@ public class ChannelListViewModel extends AndroidViewModel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                initialized = true;
+                initialized.set(true);
                 setLoadingDone();
                 Log.e(TAG, "onError for loading the channels" + errMsg);
             }
@@ -256,7 +260,7 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public void loadMore() {
-        if (isLoading) {
+        if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
             return;
         }
@@ -264,18 +268,17 @@ public class ChannelListViewModel extends AndroidViewModel {
             Log.i(TAG, "already reached end of pagination, skip loading more");
             return;
         }
-        if (isLoadingMore) {
+        if (!setLoadingMore()) {
             Log.i(TAG, "already loading next page, skip loading more");
             return;
         }
-        setLoadingMore();
 
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
         if (channels.getValue() != null) {
-            request = request.withLimit(channels.getValue().size());
+            request = request.withOffset(channels.getValue().size());
         }
 
         client().queryChannels(request, new QueryChannelListCallback() {
@@ -303,14 +306,9 @@ public class ChannelListViewModel extends AndroidViewModel {
         protected ChannelListViewModel viewModel;
 
         @Override
-        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
-            super.observe(owner, observer);
-        }
-
-        @Override
         protected void onActive() {
             super.onActive();
-            if (!viewModel.initialized) {
+            if (viewModel.initialized.compareAndSet(false, true)) {
                 viewModel.queryChannels();
             }
         }

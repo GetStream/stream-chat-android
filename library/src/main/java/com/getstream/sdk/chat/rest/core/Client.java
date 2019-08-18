@@ -376,10 +376,10 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                         for (ChannelState channelState: response.body().getChannels()) {
                             Channel channel = channelState.getChannel();
+                            channel.setClient(m);
                             if (getChannelByCid(channel.getCid()) != null) {
                                 channel = getChannelByCid(channel.getCid());
                             } else {
-                                channel.setClient(m);
                                 addToActiveChannels(channel);
                                 addChannelConfig(channel.getType(), channel.getConfig());
                             }

@@ -17,8 +17,6 @@ import java.util.HashMap;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
-import static com.getstream.sdk.chat.enums.Filters.eq;
 import static com.getstream.sdk.chat.enums.Filters.in;
 
 
@@ -70,8 +68,10 @@ public class MainActivity extends AppCompatActivity {
 
         // query all channels where the current user is a member
         // FilterObject filter = in("members", USER_ID);
-        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
+//        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
+        FilterObject filter = in("type", "messaging");
         viewModel.setChannelFilter(filter);
+//        viewModel.setChannelsPageSize(2);
 
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
