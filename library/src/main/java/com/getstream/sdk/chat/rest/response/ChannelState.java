@@ -220,17 +220,18 @@ public class ChannelState {
 //        return lastReadUser;
     }
 
-    public static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
+    private static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
 
-    public void addOrUpdateMessage(Message newMessage){
+    private void addOrUpdateMessage(Message newMessage){
         for (int i = messages.size() - 1; i >= 0; i--) {
             if (messages.get(i).getId().equals(newMessage.getId())) {
+                Log.w(TAG, "found and updating");
                 messages.set(i, newMessage);
                 return;
             }
         }
+        Log.w(TAG, "not found and adding it");
         messages.add(newMessage);
-        return;
     }
 
     public void addMessageSorted(Message message){
@@ -239,8 +240,11 @@ public class ChannelState {
         addMessagesSorted(diff);
     }
 
-    public void addMessagesSorted(List<Message> messages){
+    private void addMessagesSorted(List<Message> messages){
         int initialSize = messages.size();
+        Log.w(TAG, "initial size" + initialSize);
+        Log.w(TAG, "incoming size" + messages.size());
+
         for (Message m : messages) {
             if(m.getParentId() == null) {
                 addOrUpdateMessage(m);
@@ -262,7 +266,11 @@ public class ChannelState {
             }
         }
 
-        addMessagesSorted(incoming.messages);
+        if (incoming.messages != null) {
+            Log.w(TAG, "merging channel state");
+            addMessagesSorted(incoming.messages);
+        }
+
         watcherCount = incoming.watcherCount;
 
         watchers = incoming.watchers;

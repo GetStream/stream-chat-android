@@ -36,7 +36,6 @@ public class QuerySort {
     public QuerySort asc(String fieldName) {
         return add(fieldName, ASC);
     }
-
     public QuerySort desc(String fieldName) {
         return add(fieldName, DESC);
     }

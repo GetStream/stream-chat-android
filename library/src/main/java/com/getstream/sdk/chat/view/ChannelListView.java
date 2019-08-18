@@ -130,17 +130,13 @@ public class ChannelListView extends RecyclerView {
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (linearLayoutManager != null) {
-
                     int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
                     Boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
                     // the viewmodel ensures that we only load once..
                     if (reachedTheEnd) {
                         viewModel.loadMore();
                     }
-
-
                 }
-
             }
         });
 

@@ -73,6 +73,10 @@ public class Event implements UserEntity {
 
     public Event() {}
 
+    public Event(String type) {
+        this.type = type;
+    }
+
     public Event(boolean online) {
         this.online = online;
         setType(EventType.CONNECTION_CHANGED);

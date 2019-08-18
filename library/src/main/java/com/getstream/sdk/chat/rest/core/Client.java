@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.component.Component;
+import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -58,6 +60,7 @@ import com.getstream.sdk.chat.utils.Global;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +69,9 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.getstream.sdk.chat.enums.Filters.and;
+import static com.getstream.sdk.chat.enums.Filters.in;
 
 
 public class Client implements WSResponseHandler {
@@ -97,8 +103,13 @@ public class Client implements WSResponseHandler {
     public String clientID;
 
     private Component component;
+
+    public List<Channel> getActiveChannels() {
+        return activeChannels;
+    }
+
     // Client params
-    public List<Channel> activeChannels = new ArrayList<>();
+    private List<Channel> activeChannels = new ArrayList<>();
     public List<User> users = new ArrayList<>();
     public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channel ID, Value: ephemeralMessages
 
@@ -301,7 +312,26 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionRecovered() {
         connected = true;
-        //TODO: add reconnection magic here
+        List<String> cids = new ArrayList<>();
+        Date mostRecentDate = new Date(0);
+        for (Channel channel: activeChannels) {
+            cids.add(channel.getCid());
+            if (mostRecentDate.before(channel.getLastMessageDate())) {
+                mostRecentDate = channel.getLastMessageDate();
+            }
+        }
+
+        queryChannels(new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at")), new QueryChannelListCallback() {
+            @Override
+            public void onSuccess(QueryChannelsResponse response) {
+                onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                // TODO: probably the best is to make sure the client goes back offline and online again
+            }
+        });
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -346,14 +376,17 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                         for (ChannelState channelState: response.body().getChannels()) {
                             Channel channel = channelState.getChannel();
-                            channel.setClient(m);
-                            addToActiveChannels(channel);
+                            if (getChannelByCid(channel.getCid()) != null) {
+                                channel = getChannelByCid(channel.getCid());
+                            } else {
+                                channel.setClient(m);
+                                addToActiveChannels(channel);
+                                addChannelConfig(channel.getType(), channel.getConfig());
+                            }
                             channel.mergeWithState(channelState);
                             checkEphemeralMessages(channelState);
-                            addChannelConfig(channel.getType(), channel.getConfig());
                         }
                         callback.onSuccess(response.body());
-                        // TODO: trigger an event about loading more channels
                     }
 
                     @Override
