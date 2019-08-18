@@ -39,12 +39,12 @@
             stream:reactionDlgEmojiSize="50dp"
             stream:reactionDlgbgColor="#001DC4"
             stream:showUsersReactionDlg="true"
-            stream:userAvatarTextColor="@android:color/holo_blue_dark"
+            stream:userAvatarTextColor="#FFF"
             stream:userAvatarTextStyle="bold|italic"
             stream:userReadStateAvatarHeight="15dp"
             stream:userReadStateAvatarWidth="15dp"
-            stream:userReadStateTextColor="#001DC4"
-            stream:userReadStateTextStyle="bold|italic"
+            stream:userReadStateTextColor="#FFF"
+            stream:userReadStateTextStyle="bold"
             stream:userRreadStateTextSize="9sp" />
 
 

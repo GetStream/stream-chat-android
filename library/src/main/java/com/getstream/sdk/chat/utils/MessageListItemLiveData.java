@@ -52,15 +52,21 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // TODO replace with more efficient approach
         // this wil become slow with many users and many messages
         for (ChannelUserRead r : listReads) {
+            // we don't show read state for the current user
+            if (r.getUser().getId().equals(currentUser.getId())) {
+                continue;
+            }
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
-                // TODO: make sure this is a good check, atm without this everything breaks :)
+                // skip things that aren't messages
                 if (e.getType() != MessageListItemAdapter.EntityType.MESSAGE) {
                     continue;
                 }
                 if (r.getLastRead().getTime() > e.getMessage().getCreatedAt().getTime()) {
                     // set the read state on this entity
                     e.addMessageReadBy(r);
+                    // we only show it for the last message, so break
+                    break;
                 }
 
             }

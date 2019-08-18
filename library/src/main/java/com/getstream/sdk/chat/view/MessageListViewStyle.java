@@ -65,8 +65,8 @@ public class MessageListViewStyle extends BaseStyle {
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_userReadStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
 
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_userRreadStateTextSize, getDimension(R.dimen.read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.MessageListView_userReadStateTextColor, Color.BLACK);
-        readStateTextStyle = a.getColor(R.styleable.MessageListView_userReadStateTextStyle, Typeface.NORMAL);
+        readStateTextColor = a.getColor(R.styleable.MessageListView_userReadStateTextColor, Color.WHITE);
+        readStateTextStyle = a.getColor(R.styleable.MessageListView_userReadStateTextStyle, Typeface.BOLD);
 
         a.recycle();
     }
