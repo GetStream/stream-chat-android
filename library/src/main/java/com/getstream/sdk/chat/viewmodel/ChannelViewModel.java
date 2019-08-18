@@ -123,6 +123,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.setValue(channel.getChannelState().getReads());
 
         entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
+        reads.setValue(channel.getChannelState().getReads());
+
         watcherCount = new MutableLiveData<>();
 
         lastActiveString = new MutableLiveData<>();
@@ -263,6 +265,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onMessageRead(Event event) {
+                Log.i(TAG, "Message read by " + event.getUser().getId());
                 List<ChannelUserRead> readsCopy = reads.getValue();
                 for (ChannelUserRead r : readsCopy) {
                     if (r.getUser().equals(event.getUser())) {
@@ -272,6 +275,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 ChannelUserRead newRead = new ChannelUserRead();
                 newRead.setUser(event.getUser());
                 newRead.setLastRead(event.getCreatedAt());
+                readsCopy.add(newRead);
+                reads.postValue(readsCopy);
             }
 
             @Override

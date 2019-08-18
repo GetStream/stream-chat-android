@@ -54,14 +54,6 @@ import java.util.List;
  */
 public class MessageInputView extends RelativeLayout
         implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
-    /*
-    TODO:
-    - MessageInputView needs to be aware of the channel (for the list of commands, perhaps other settings);
-    - SendFileFunction (attachments and commands needs extensive changes);
-    - Data bindings need to be renamed, super confusing atm
-    - Make more things configurable
-    - Documentation
-     */
 
     final String TAG = MessageInputView.class.getSimpleName();
     // our connection to the channel scope

@@ -108,11 +108,6 @@ public class MessageListView extends RecyclerView {
                     }
                 }
                 return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
-
-
-                // round_attach_media_incoming1
-                // round_attach_more_incoming1
-                // round_attach_media_incoming2
             }
         });
     }
@@ -215,7 +210,8 @@ public class MessageListView extends RecyclerView {
                 } else {
                     viewModel.setHasNewMessages(true);
                 }
-                viewModel.markRead();
+                // TODO: this is an infinite loop: read event -> mark read -> read event
+                //viewModel.markRead();
             }
         });
 
