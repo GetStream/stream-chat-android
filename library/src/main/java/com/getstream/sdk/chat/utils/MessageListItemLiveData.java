@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
@@ -12,6 +14,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,6 +22,10 @@ import java.util.List;
 
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
+
+    private final String TAG = MessageListItemLiveData.class.getSimpleName();
+
+
     private MutableLiveData<List<Message>> messages;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
@@ -56,6 +63,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (r.getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
+            Log.i(TAG, "Setting read state for user: " + r.getUser().getId());
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
                 // skip things that aren't messages
