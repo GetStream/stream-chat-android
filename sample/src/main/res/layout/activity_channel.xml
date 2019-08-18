@@ -40,7 +40,7 @@
             stream:reactionDlgbgColor="#001DC4"
             stream:showUsersReactionDlg="true"
             stream:userAvatarTextColor="#FFF"
-            stream:userAvatarTextStyle="bold|italic"
+            stream:userAvatarTextStyle="bold"
             stream:userReadStateAvatarHeight="15dp"
             stream:userReadStateAvatarWidth="15dp"
             stream:userReadStateTextColor="#FFF"
