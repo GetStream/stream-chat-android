@@ -38,7 +38,9 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -88,6 +90,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
+        viewModel.getChannel().setReactionTypes(reactionTypes);
 
         binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
@@ -160,7 +163,17 @@ public class ChannelActivity extends AppCompatActivity
 
     }
 
-    List<String> reactionTypes = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
+    Map<String, String> reactionTypes = new HashMap<String, String>() {
+        {
+            put("like", "\uD83D\uDC4D");
+            put("love", "\u2764\uFE0F");
+            put("haha", "\uD83D\uDE02");
+            put("wow", "\uD83D\uDE32");
+            put("sad", " \uD83D\uDE41");
+            put("angry", "\uD83D\uDE21");
+            put("cheeky","\uD83D\uDE1B");
+        }
+    };
 
     public void showReactionDialog(Message message, int position) {
         int firstListItemPosition = ((LinearLayoutManager) binding.messageList.getLayoutManager()).findFirstVisibleItemPosition();
@@ -176,9 +189,8 @@ public class ChannelActivity extends AppCompatActivity
         final Dialog dialog = new Dialog(this); // Context, this, etc.
         ReactionDlgView reactionDlgView = new ReactionDlgView(this);
 
-
         reactionDlgView.setMessagewithStyle(binding.messageList.getChannel(),
-                message, reactionTypes,
+                message,
                 binding.messageList.getStyle(),
                 view -> dialog.dismiss()
         );
@@ -225,7 +237,6 @@ public class ChannelActivity extends AppCompatActivity
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(binding.messageList.getChannel(),
                 message,
-                reactionTypes,
                 false,
                 binding.messageList.getStyle(),
                 (View v) -> dialog.dismiss());
@@ -236,7 +247,6 @@ public class ChannelActivity extends AppCompatActivity
             dialog.dismiss();
         });
         tv_cancel.setOnClickListener((View v) -> dialog.dismiss());
-
         dialog.show();
 
         Window window = dialog.getWindow();

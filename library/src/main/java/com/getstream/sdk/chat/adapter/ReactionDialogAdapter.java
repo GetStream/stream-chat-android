@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.enums.ReactionEmoji;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
@@ -22,28 +21,28 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import java.util.List;
+import java.util.Map;
 
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.MyViewHolder> {
 
-    private final String TAG = ReactionDialogAdapter.class.getSimpleName();
+    private static final String TAG = ReactionDialogAdapter.class.getSimpleName();
 
     private Channel channel;
     private Message message;
     private View.OnClickListener clickListener;
     private boolean showAvatar;
-    private List<String> reactionTypes;
+    private Map<String, String> reactionTypes;
     private MessageListViewStyle style;
+
     public ReactionDialogAdapter(Channel channel,
                                  Message message,
-                                 List<String> reactionTypes,
                                  boolean showAvatar,
                                  MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
         this.channel = channel;
         this.message = message;
-        this.reactionTypes = reactionTypes;
+        this.reactionTypes = channel.getReactionTypes();
         this.style = style;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
@@ -63,8 +62,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         applyStyle(holder);
-        String type = reactionTypes.get(position);
-        holder.tv_emoji.setText(ReactionEmoji.valueOf(type).get());
+        String key = (String) reactionTypes.keySet().toArray()[position];
+        String value = reactionTypes.get(key);
+        holder.tv_emoji.setText(value);
 
         if (!showAvatar) {
             holder.cv_avatar.setVisibility(View.GONE);
@@ -77,12 +77,12 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         if (message.getReactionCounts() == null) return;
-        if (message.getReactionCounts().containsKey(type)) {
-            holder.tv_count.setText(String.valueOf(message.getReactionCounts().get(type)));
+        if (message.getReactionCounts().containsKey(key)) {
+            holder.tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
 
             User user = null;
             for (Reaction reaction : message.getLatestReactions()) {
-                if (reaction.getType().equals(type)) {
+                if (reaction.getType().equals(key)) {
                     user = reaction.getUser();
                     break;
                 }
@@ -100,9 +100,10 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             holder.tv_count.setText("");
     }
 
-    private void applyStyle(final MyViewHolder holder){
+    private void applyStyle(final MyViewHolder holder) {
         holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionDlgEmojiSize());
     }
+
     @Override
     public int getItemCount() {
         return reactionTypes.size();
@@ -123,7 +124,8 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         @Override
         public void onClick(View v) {
-            String type = reactionTypes.get(getLayoutPosition());
+            String type = (String) reactionTypes.keySet().toArray()[getLayoutPosition()];
+
             boolean isReactioned = false;
             for (Reaction reaction : message.getLatestReactions()) {
                 if (reaction.getType().equals(type)) {

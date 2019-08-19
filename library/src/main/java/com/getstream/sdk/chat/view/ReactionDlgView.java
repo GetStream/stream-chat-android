@@ -44,11 +44,10 @@ public class ReactionDlgView extends RelativeLayout {
 
     public void setMessagewithStyle(Channel channel,
                                     Message message,
-                                    List<String> reactionTypes,
                                     MessageListViewStyle style,
                                     View.OnClickListener clickListener) {
         this.style = style;
-        init(channel, message, reactionTypes, clickListener);
+        init(channel, message, clickListener);
     }
 
     private void initView() {
@@ -56,14 +55,14 @@ public class ReactionDlgView extends RelativeLayout {
         addView(view);
     }
 
-    private void init(Channel channel, Message message, List<String> reactionTypes, View.OnClickListener clickListener) {
+    private void init(Channel channel, Message message, View.OnClickListener clickListener) {
         RecyclerView rv_reaction = this.findViewById(R.id.rv_reaction);
         ImageView iv_bg = this.findViewById(R.id.iv_bg);
 
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message, reactionTypes,
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel, message,
                 style.isShowUsersReactionDlg(), style, clickListener);
         rv_reaction.setAdapter(reactionAdapter);
 
