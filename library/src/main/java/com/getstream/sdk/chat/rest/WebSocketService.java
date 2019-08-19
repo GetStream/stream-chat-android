@@ -230,7 +230,7 @@ public class WebSocketService extends WebSocketListener {
             setConnecting(false);
             resetConsecutiveFailures();
             if (wsId > 1) {
-                webSocketListener.connectionRecovered();
+                mHandler.post(() -> webSocketListener.connectionRecovered());
             }
             Log.d(TAG, "WebSocket Connected : " + response);
         }
@@ -245,8 +245,10 @@ public class WebSocketService extends WebSocketListener {
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);
             } else {
-                setConnectionResolved();
-                webSocketListener.connectionResolved(event);
+                mHandler.post(() -> {
+                    webSocketListener.connectionResolved(event);
+                    setConnectionResolved();
+                });
             }
         }
 
