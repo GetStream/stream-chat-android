@@ -332,7 +332,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(message);
-        Boolean updated = index != -1;
+        boolean updated = index != -1;
         if (updated) {
             messagesCopy.set(index, message);
             messages.postValue(messagesCopy);
@@ -342,7 +342,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = messages.getValue();
-        Boolean removed = messagesCopy.remove(message);
+        boolean removed = messagesCopy.remove(message);
         return removed;
     }
 
@@ -357,7 +357,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
         }
-        messagesCopy.addAll(newMessages);
+
+        // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
+        for (int i = newMessages.size() - 1; i >= 0; i--) {
+            Message message = newMessages.get(i);
+            int index = messagesCopy.indexOf(message);
+            if (index == -1) {
+                messagesCopy.add(0, message);
+            } else {
+                messagesCopy.set(index, message);
+            }
+        }
         messages.postValue(messagesCopy);
     }
 

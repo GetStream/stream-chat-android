@@ -15,13 +15,12 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 public class ChannelState {
 
-    private final String TAG = ChannelState.class.getSimpleName();
+    private static final String TAG = ChannelState.class.getSimpleName();
 
     @SerializedName("channel")
     private Channel channel;
@@ -59,7 +58,7 @@ public class ChannelState {
 
     public List<User> getOtherUsers() {
         List<User> users = new ArrayList<>();
-        for (Member m : this.members) {
+        for (Member m : members) {
             if (!channel.getClient().fromCurrentUser(m)) {
                 users.add(m.getUser());
             }
@@ -67,8 +66,8 @@ public class ChannelState {
         return users;
     }
 
-    public String getOldestMessageId(){
-        Message message = this.getOldestMessage();
+    public String getOldestMessageId() {
+        Message message = getOldestMessage();
         if (message == null) {
             return null;
         }
@@ -135,7 +134,7 @@ public class ChannelState {
         if (messages == null || messages.size() == 0) {
             return null;
         }
-        return messages.get(messages.size() - 1);
+        return messages.get(0);
     }
 
     public List<Message> getMessages() {
@@ -220,18 +219,16 @@ public class ChannelState {
 //        return lastReadUser;
     }
 
-    private static Comparator<Message> byDate = (Message a, Message b) -> a.getCreatedAt().compareTo(b.getCreatedAt());
-
-    private void addOrUpdateMessage(Message newMessage){
+    private void addOrUpdateMessage(Message newMessage) {
         for (int i = messages.size() - 1; i >= 0; i--) {
             if (messages.get(i).getId().equals(newMessage.getId())) {
-                Log.w(TAG, "found and updating");
                 messages.set(i, newMessage);
                 return;
             }
+            if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
+                messages.add(newMessage);
+            }
         }
-        Log.w(TAG, "not found and adding it");
-        messages.add(newMessage);
     }
 
     public void addMessageSorted(Message message){
@@ -250,9 +247,6 @@ public class ChannelState {
                 addOrUpdateMessage(m);
             }
         }
-        if (initialSize != messages.size()) {
-            Collections.sort(messages, byDate);
-        }
     }
 
     public void init(ChannelState incoming) {
@@ -267,10 +261,8 @@ public class ChannelState {
         }
 
         if (incoming.messages != null) {
-            Log.w(TAG, "merging channel state");
             addMessagesSorted(incoming.messages);
         }
-
         watcherCount = incoming.watcherCount;
 
         watchers = incoming.watchers;
