@@ -5,20 +5,20 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 import java.util.List;
 
 public class MessageListItemWrapper {
-    private List<MessageListItem> listEntities;
+    private List<MessageListItem> messageListItemList;
     private Boolean isLoadingMore;
 
-    MessageListItemWrapper(Boolean isLoadingMore, List<MessageListItem> listEntities) {
+    MessageListItemWrapper(Boolean isLoadingMore, List<MessageListItem> messageListItemList) {
         this.isLoadingMore = isLoadingMore;
-        this.listEntities = listEntities;
+        this.messageListItemList = messageListItemList;
     }
 
     public List<MessageListItem> getListEntities() {
-        return listEntities;
+        return messageListItemList;
     }
 
-    public void setListEntities(List<MessageListItem> listEntities) {
-        this.listEntities = listEntities;
+    public void setListEntities(List<MessageListItem> messageListItemList) {
+        this.messageListItemList = messageListItemList;
     }
 
     public Boolean getLoadingMore() {

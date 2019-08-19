@@ -80,9 +80,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void replaceEntities(List<MessageListItem> newEntities) {
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new MessageListItemDiffCallback(messageListItemList, newEntities), true);
-        messageListItemList = newEntities;
+
         // only update those rows that change...
         result.dispatchUpdatesTo(this);
+        messageListItemList = newEntities;
     }
 
     @Override
@@ -132,6 +133,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
+
         return messageListItemList.size();
     }
 }

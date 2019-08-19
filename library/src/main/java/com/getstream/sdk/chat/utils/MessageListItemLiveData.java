@@ -85,7 +85,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         setValue(wrapper);
         // isLoadingMore is only true once...
         if (isLoadingMore) {
-            this.setIsLoadingMore(true);
+            this.setIsLoadingMore(false);
         }
     }
 

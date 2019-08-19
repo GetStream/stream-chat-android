@@ -184,8 +184,8 @@ public class MessageListView extends RecyclerView {
 
 
         // use livedata and observe
-        viewModel.getEntities().observe(lifecycleOwner, entityWrapper -> {
-            List<MessageListItem> entities = entityWrapper.getListEntities();
+        viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
+            List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
@@ -193,7 +193,7 @@ public class MessageListView extends RecyclerView {
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
-            if (entityWrapper.getLoadingMore()) {
+            if (messageListItemWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
 
@@ -204,10 +204,12 @@ public class MessageListView extends RecyclerView {
                 // regular new message behaviour
                 // we scroll down all the way, unless you've scrolled up
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
-                Log.i(TAG, String.format("Scroll: Moving down"));
+                int newPosition = adapter.getItemCount() - 1;
+                int layoutSize = this.getLayoutManager().getItemCount();
+                Log.i(TAG, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
                 if (!hasScrolledUp) {
-                    this.getLayoutManager().scrollToPosition(adapter.getItemCount() - 1);
+                    this.getLayoutManager().scrollToPosition(newPosition);
                     viewModel.setHasNewMessages(false);
                 } else {
                     viewModel.setHasNewMessages(true);
