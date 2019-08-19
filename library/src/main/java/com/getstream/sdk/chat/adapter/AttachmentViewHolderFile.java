@@ -30,7 +30,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     private MessageListItem messageListItem;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
-    private MessageListView.AttachmentClickListener longClickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
 
     public AttachmentViewHolderFile(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -42,7 +42,11 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context,
+                     MessageListItem messageListItem,
+                     Attachment attachment,
+                     MessageListView.AttachmentClickListener clickListener,
+                     MessageListView.MessageLongClickListener longClickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
@@ -58,9 +62,9 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         cl_attachment.setBackground(background);
     }
 
-    private void triggerLongClick(Message message, Attachment attachment) {
+    private void triggerLongClick(Message message) {
         if (this.longClickListener != null) {
-            this.longClickListener.onAttachmentClick(message, attachment);
+            this.longClickListener.onMessageLongClick(message);
         }
     }
 

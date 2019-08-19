@@ -46,7 +46,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     // Action
     private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
-    private MessageListView.AttachmentClickListener longClickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
     private MessageListItem messageListItem;
 
 
@@ -68,7 +68,11 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context,
+                     MessageListItem messageListItem,
+                     Attachment attachment,
+                     MessageListView.AttachmentClickListener clickListener,
+                     MessageListView.MessageLongClickListener longClickListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
@@ -156,7 +160,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         });
         lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            triggerLongClick(message, attachment);
+            triggerLongClick(message);
             return true;
         });
 
@@ -220,7 +224,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
 
         cl_attachment_media.setOnLongClickListener((View v) -> {
-            this.triggerLongClick(message, attachment);
+            this.triggerLongClick(message);
             return true;
         });
         if (!attachUrl.contains("https:"))
@@ -248,9 +252,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.GONE);
     }
 
-    private void triggerLongClick(Message message, Attachment attachment) {
+    private void triggerLongClick(Message message) {
         if (this.longClickListener != null) {
-            this.longClickListener.onAttachmentClick(message, attachment);
+            this.longClickListener.onMessageLongClick(message);
         }
     }
     private void triggerClick(Message message, Attachment attachment) {

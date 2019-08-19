@@ -23,7 +23,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.AttachmentClickListener l2) {
+    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.MessageLongClickListener messageLongClickListener, MessageListView.AttachmentClickListener l2) {
 
         String humanizedDate = getRelativeTimeSpanString(messageListItem.getDate().getTime()).toString();
         tv_header_date.setText(humanizedDate);

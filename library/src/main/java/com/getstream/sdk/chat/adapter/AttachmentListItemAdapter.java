@@ -25,10 +25,11 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private List<Attachment> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem messageListItem, @NonNull  MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem messageListItem, @NonNull MessageViewHolderFactory factory) {
         this.context = context;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -41,7 +42,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         try {
             Attachment attachment = attachments.get(position);
             return factory.getAttachmentViewType(message, true, MessageViewHolderFactory.Position.BOTTOM, attachments, attachment);
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -64,7 +65,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
         ((BaseAttachmentViewHolder) holder).setBubbleHelper(bubbleHelper);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, messageListItem, attachment, attachmentClickListener);
+        ((BaseAttachmentViewHolder) holder).bind(this.context, messageListItem, attachment, attachmentClickListener, longClickListener);
     }
 
     public MessageListViewStyle getStyle() {
@@ -77,6 +78,10 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
+    }
+
+    public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

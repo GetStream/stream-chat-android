@@ -17,6 +17,8 @@ import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 
+import java.util.List;
+
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class ReactionDlgView extends RelativeLayout {
@@ -40,9 +42,10 @@ public class ReactionDlgView extends RelativeLayout {
         initView();
     }
 
-    public void setMessagewithStyle(Channel channel, Message message,
-                                    View.OnClickListener clickListener,
-                                    MessageListViewStyle style) {
+    public void setMessagewithStyle(Channel channel,
+                                    Message message,
+                                    MessageListViewStyle style,
+                                    View.OnClickListener clickListener) {
         this.style = style;
         init(channel, message, clickListener);
     }

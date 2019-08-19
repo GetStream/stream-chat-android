@@ -73,7 +73,7 @@ public class Channel {
     private Date lastTypingEvent;
     boolean isTyping = false;
     private HashMap<String, Object> extraData;
-
+    private Map<String, String>reactionTypes;
 
     // region Getter & Setter
     public String getId() {
@@ -138,6 +138,26 @@ public class Channel {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Map<String, String> getReactionTypes() {
+        if (reactionTypes == null){
+            return new HashMap<String, String>() {
+                {
+                    put("like", "\uD83D\uDC4D");
+                    put("love", "\u2764\uFE0F");
+                    put("haha", "\uD83D\uDE02");
+                    put("wow", "\uD83D\uDE32");
+                    put("sad", " \uD83D\uDE41");
+                    put("angry", "\uD83D\uDE21");
+                }
+            };
+        }
+        return reactionTypes;
+    }
+
+    public void setReactionTypes(Map<String, String> reactionTypes) {
+        this.reactionTypes = reactionTypes;
     }
 
     @Override

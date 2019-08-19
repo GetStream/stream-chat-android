@@ -23,6 +23,7 @@ public class AttachmentListView extends RecyclerView {
     private AttachmentListItemAdapter adapter;
 
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
@@ -67,6 +68,12 @@ public class AttachmentListView extends RecyclerView {
         if (this.adapter != null) {
             this.adapter.setAttachmentClickListener(attachmentClickListener);
         }
+    }
+
+    public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
+        this.longClickListener = longClickListener;
+        if (adapter != null)
+            adapter.setLongClickListener(this.longClickListener);
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

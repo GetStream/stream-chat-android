@@ -40,6 +40,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_video;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
     private MessageListItem messageListItem;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -58,9 +59,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener) {
+    public void bind(Context context,
+                     MessageListItem messageListItem,
+                     Attachment attachment,
+                     MessageListView.AttachmentClickListener clickListener,
+                     MessageListView.MessageLongClickListener longClickListener) {
         this.context = context;
         this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.attachment = attachment;
@@ -111,10 +117,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener((View v) -> {
+        iv_media_thumb.setOnClickListener(view -> {
             this.triggerClick(message, attachment);
         });
-
+        iv_media_thumb.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
