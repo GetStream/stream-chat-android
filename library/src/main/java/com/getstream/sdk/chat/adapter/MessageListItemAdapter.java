@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.EntityListDiffCallback;
+import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -79,7 +79,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void replaceEntities(List<MessageListItem> newEntities) {
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-                new EntityListDiffCallback(messageListItemList, newEntities), true);
+                new MessageListItemDiffCallback(messageListItemList, newEntities), true);
         messageListItemList = newEntities;
         // only update those rows that change...
         result.dispatchUpdatesTo(this);

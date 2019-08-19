@@ -7,10 +7,10 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 
 import java.util.List;
 
-public class EntityListDiffCallback extends DiffUtil.Callback {
+public class MessageListItemDiffCallback extends DiffUtil.Callback {
     protected List<MessageListItem> oldList, newList;
 
-    public EntityListDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {
+    public MessageListItemDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

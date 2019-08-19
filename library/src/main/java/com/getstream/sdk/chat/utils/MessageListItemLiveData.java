@@ -98,6 +98,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         this.reads.observe(owner, reads -> {
+            if (reads == null) {
+                reads = new ArrayList<ChannelUserRead>();
+            }
             listReads = reads;
             broadcastValue();
         });
