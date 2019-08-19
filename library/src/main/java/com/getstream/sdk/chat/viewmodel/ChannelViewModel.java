@@ -347,9 +347,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
-        List<Message> newMessages = new ArrayList<Message>();
-        newMessages.add(message);
-        addMessages(newMessages);
+        List<Message> messagesCopy = messages.getValue();
+        messagesCopy.add(message);
+        messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
