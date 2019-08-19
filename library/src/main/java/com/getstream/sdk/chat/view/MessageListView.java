@@ -41,6 +41,7 @@ public class MessageListView extends RecyclerView {
     private MessageViewHolderFactory viewHolderFactory;
 
     private MessageClickListener messageClickListener;
+    private LinearLayoutManager layoutManager;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
 
@@ -52,26 +53,28 @@ public class MessageListView extends RecyclerView {
     // region Constructor
     public MessageListView(Context context) {
         super(context);
-        this.setLayoutManager(new LinearLayoutManager(context));
-        hasScrolledUp = false;
-        initDefaultBubbleHelper();
+        init(context);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.parseAttr(context, attrs);
-        this.setLayoutManager(new LinearLayoutManager(context));
-        hasScrolledUp = false;
-        initDefaultBubbleHelper();
+        init(context);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
-        this.setLayoutManager(new LinearLayoutManager(context));
+        init(context);
+    }
+
+    private void init(Context context) {
+        layoutManager = new LinearLayoutManager(context);
+        this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
     }
+
     // endregion
 
     // region Init
@@ -139,17 +142,17 @@ public class MessageListView extends RecyclerView {
             this.adapter.setMessageLongClickListener(this.messageLongClickListener);
         }
         this.adapter.setChannelState(getChannel().getChannelState());
+
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                if (linearLayoutManager != null) {
-                    firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
-                    lastVisible = linearLayoutManager.findLastVisibleItemPosition();
+                if (layoutManager != null) {
+                    firstVisible = layoutManager.findFirstVisibleItemPosition();
+                    lastVisible = layoutManager.findLastVisibleItemPosition();
                     hasScrolledUp = lastVisible < (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
@@ -195,14 +198,14 @@ public class MessageListView extends RecyclerView {
 
             if (oldSize == 0 && newSize != 0) {
                 int newPosition = adapter.getItemCount() - 1;
-                this.getLayoutManager().scrollToPosition(newPosition);
+                layoutManager.scrollToPosition(newPosition);
                 Log.i(TAG, String.format("Scroll: First load scrolling down to bottom %d", newPosition));
             } else if (messageListItemWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
 
                 int newPosition = oldPosition + sizeGrewBy;
-                this.getLayoutManager().scrollToPosition(newPosition);
+                layoutManager.scrollToPosition(newPosition);
                 Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
                 if (newSize == 0) return;
@@ -210,11 +213,11 @@ public class MessageListView extends RecyclerView {
                 // we scroll down all the way, unless you've scrolled up
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
                 int newPosition = adapter.getItemCount() - 1;
-                int layoutSize = this.getLayoutManager().getItemCount();
+                int layoutSize = layoutManager.getItemCount();
                 Log.i(TAG, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
                 if (!hasScrolledUp) {
-                    this.getLayoutManager().scrollToPosition(newPosition + 100);
+                    layoutManager.scrollToPosition(newPosition);
                     viewModel.setHasNewMessages(false);
                 } else {
                     viewModel.setHasNewMessages(true);
