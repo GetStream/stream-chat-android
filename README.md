@@ -113,6 +113,21 @@ The `USER_TOKEN` variable is the unique token for the user with ID `USER_ID` in 
 
 Once you called `setUser` you will be able to use Stream Chat APIs; all calls will automatically wait for the `setUser` call to complete. No need to add callbacks or complex syncronization code from your end.
 
+If needed you can add callbacks to `setUser` via `Client.onSetUserCompleted(ClientConnectionCallback)`
+
+```java
+client.onSetUserCompleted(new ClientConnectionCallback() {
+    @Override
+    public void onSuccess(User user) {
+    	Log.i(TAG, "user connected!");
+    }
+
+    @Override
+    public void onError(String errMsg, int errCode) {
+    }
+});
+```
+
 ## UI Components
 
 ### ChannelList
