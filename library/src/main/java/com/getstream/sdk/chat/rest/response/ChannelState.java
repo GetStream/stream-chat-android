@@ -19,9 +19,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class ChannelState {
+public class ChannelState{
 
-    private final String TAG = ChannelState.class.getSimpleName();
+    private static final String TAG = ChannelState.class.getSimpleName();
 
     @SerializedName("channel")
     private Channel channel;

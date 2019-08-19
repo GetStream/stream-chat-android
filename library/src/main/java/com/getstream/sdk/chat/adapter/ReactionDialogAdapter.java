@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ReactionEmoji;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
@@ -34,14 +35,17 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     private Message message;
     private View.OnClickListener clickListener;
     private boolean showAvatar;
-    private List<String> types = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
+    private List<String> reactionTypes;
     private MessageListViewStyle style;
-    public ReactionDialogAdapter(Channel channel, Message message,
+    public ReactionDialogAdapter(Channel channel,
+                                 Message message,
+                                 List<String> reactionTypes,
                                  boolean showAvatar,
                                  MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
         this.channel = channel;
         this.message = message;
+        this.reactionTypes = reactionTypes;
         this.style = style;
         this.clickListener = clickListener;
         this.showAvatar = showAvatar;
@@ -61,7 +65,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         applyStyle(holder);
-        String type = types.get(position);
+        String type = reactionTypes.get(position);
         holder.tv_emoji.setText(ReactionEmoji.valueOf(type).get());
 
         if (!showAvatar) {
@@ -103,7 +107,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     }
     @Override
     public int getItemCount() {
-        return types.size();
+        return reactionTypes.size();
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -121,21 +125,15 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "TAP : " + this.getLayoutPosition());
-            String type = types.get(getLayoutPosition());
+            String type = reactionTypes.get(getLayoutPosition());
             boolean isReactioned = false;
             for (Reaction reaction : message.getLatestReactions()) {
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
-                    try {
-                        // TODO: wrong place
-//                        if (user.getId().equals(StreamChat.getInstance().getUserId())) {
+                        if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
                             isReactioned = true;
                             break;
-//                        }
-                    } catch (Exception e) {
                     }
-
                 }
             }
             if (isReactioned)
@@ -173,4 +171,5 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             });
         }
     }
+
 }

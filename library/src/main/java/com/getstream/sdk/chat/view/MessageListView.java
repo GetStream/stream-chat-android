@@ -14,7 +14,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.function.ReactionFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
@@ -34,21 +33,20 @@ import java.util.List;
 public class MessageListView extends RecyclerView {
     final String TAG = MessageListView.class.getSimpleName();
 
-    private MessageListViewStyle style;
+    protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
 
     private MessageClickListener messageClickListener;
+    private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
 
     private int firstVisible;
     private int lastVisible;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-
-    private ReactionFunction reactionFunction;
 
     // region Constructor
     public MessageListView(Context context) {
@@ -113,29 +111,22 @@ public class MessageListView extends RecyclerView {
     }
 
     // set the adapter and apply the style.
+    @Override
+    public void setAdapter(Adapter adapter) {
+        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
+    }
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
-        super.setAdapter(adapter);
-        adapter.setStyle(style);
 
+        adapter.setStyle(style);
 
         if (this.attachmentClickListener != null) {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         }
         if (this.messageClickListener != null) {
             this.adapter.setMessageClickListener(this.messageClickListener);
-        } else {
-            this.adapter.setMessageClickListener((Message message, int position) -> {
-                int firstListItemPosition = ((LinearLayoutManager) this.getLayoutManager()).findFirstVisibleItemPosition();
-                final int lastListItemPosition = firstListItemPosition + this.getChildCount() - 1;
-                int childIndex;
-                if (position < firstListItemPosition || position > lastListItemPosition) {
-                    childIndex = position;
-                } else {
-                    childIndex = position - firstListItemPosition;
-                }
-                int originY = this.getChildAt(childIndex).getBottom();
-                ReactionFunction.showReactionDialog(getContext(),viewModel.getChannel(),message, style, originY);
-            });
+        }
+        if (this.messageLongClickListener != null) {
+            this.adapter.setMessageLongClickListener(this.messageLongClickListener);
         }
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -160,7 +151,7 @@ public class MessageListView extends RecyclerView {
                 }
             }
         });
-
+        super.setAdapter(adapter);
     }
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
@@ -225,9 +216,14 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    @Override
-    public void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
+    public Channel getChannel(){
+        if (viewModel != null)
+            return viewModel.getChannel();
+        return null;
+    }
+
+    public MessageListViewStyle getStyle(){
+        return style;
     }
     // endregion
 
@@ -247,6 +243,10 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setMessageLongClickListener(MessageLongClickListener messageLongClickListener) {
+        this.messageLongClickListener = messageLongClickListener;
+    }
+
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
         if (adapter != null) {
@@ -257,7 +257,9 @@ public class MessageListView extends RecyclerView {
     public interface MessageClickListener {
         void onMessageClick(Message message, int position);
     }
-
+    public interface MessageLongClickListener {
+        void onMessageLongClick(Message message, int position);
+    }
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 

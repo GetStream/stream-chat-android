@@ -312,8 +312,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 messageClickListener.onMessageClick(message, position);
             }
         });
-
-
     }
 
     private void configReactionView() {
@@ -517,6 +515,4 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
     }
-
-
 }
