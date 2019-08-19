@@ -59,7 +59,11 @@ public class Event implements UserEntity {
 
     @SerializedName("total_unread_count")
     @Expose
-    private int totalUnreadCount;
+    private Number totalUnreadCount;
+
+    @SerializedName("unread_channels")
+    @Expose
+    private Number unreadChannels;
 
     @SerializedName("watcher_count")
     @Expose
@@ -134,8 +138,12 @@ public class Event implements UserEntity {
         return channel;
     }
 
-    public int getTotalUnreadCount() {
+    public Number getTotalUnreadCount() {
         return totalUnreadCount;
+    }
+
+    public Number getUnreadChannels() {
+        return unreadChannels;
     }
 
     public Number getWatcherCount() {

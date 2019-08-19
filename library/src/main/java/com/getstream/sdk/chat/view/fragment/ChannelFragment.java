@@ -201,7 +201,7 @@
 ////        onBackPressed();
 ////
 ////        if (singleConversation) {
-////            client.waitForConnection(new ClientConnectionCallback() {
+////            client.onSetUserCompleted(new ClientConnectionCallback() {
 ////                @Override
 ////                public void onSuccess() {
 ////                    //getChannel();

@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.Token;
-import com.getstream.sdk.chat.interfaces.ChannelListEventHandler;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.UserEntity;
@@ -135,13 +134,6 @@ public class Client implements WSResponseHandler {
     private WebSocketService WSConn;
     private ApiClientOptions options;
 
-    // Interfaces
-    private ChannelListEventHandler channelListEventHandler;
-
-    public void setChannelListEventHandler(ChannelListEventHandler channelListEventHandler) {
-        this.channelListEventHandler = channelListEventHandler;
-    }
-
     public Client(String apiKey) {
         this(apiKey, new ApiClientOptions());
     }
@@ -232,9 +224,9 @@ public class Client implements WSResponseHandler {
         eventSubscribers.remove(handler);
     }
 
-    public void waitForConnection(ClientConnectionCallback callback){
+    public void onSetUserCompleted(ClientConnectionCallback callback){
         if (connected) {
-            callback.onSuccess();
+            callback.onSuccess(user);
         } else {
             connectionWaiters.add(callback);
         }
@@ -290,8 +282,9 @@ public class Client implements WSResponseHandler {
             user = event.getMe();
 
         connected = true;
+
         for (ClientConnectionCallback waiter: connectionWaiters) {
-            waiter.onSuccess();
+            waiter.onSuccess(user);
         }
         connectionWaiters.clear();
     }
@@ -365,9 +358,9 @@ public class Client implements WSResponseHandler {
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
         Client m = this;
-        waitForConnection(new ClientConnectionCallback() {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(User user) {
                 String userID = user.getId();
                 String payload = GsonConverter.Gson().toJson(request);
 
@@ -793,15 +786,11 @@ public class Client implements WSResponseHandler {
     // endregion
     public void setupEventHandling(){
         addEventHandler(new ChatEventHandler(){
-            private void notifyChannelsSubscribers() {
-                // TODO: kill this
-                if (channelListEventHandler != null)
-                    channelListEventHandler.updateChannels();
-            }
             private void updateChannelMessage(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
-                channel.handleMessageUpdatedOrDeleted(event);
-                notifyChannelsSubscribers();
+                if (channel != null) {
+                    channel.handleMessageUpdatedOrDeleted(event);
+                }
             }
             @Override
             public void onTypingStart(Event event) {
@@ -814,10 +803,7 @@ public class Client implements WSResponseHandler {
                 Channel channel = getChannelByCid(event.getCid());
                 if (channel != null){
                     channel.handleNewMessage(event);
-                    activeChannels.remove(channel);
-                    activeChannels.add(0, channel);
                 }
-                notifyChannelsSubscribers();
             }
             @Override
             public void onMessageUpdated(Event event) {
@@ -830,7 +816,9 @@ public class Client implements WSResponseHandler {
             @Override
             public void onMessageRead(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
-                channel.handleReadEvent(event);
+                if (channel != null) {
+                    channel.handleReadEvent(event);
+                }
             }
             @Override
             public void onReactionNew(Event event) {
@@ -843,10 +831,9 @@ public class Client implements WSResponseHandler {
             @Override
             public void onChannelUpdated(Event event){
                 Channel channel = getChannelByCid(event.getCid());
-                channel.handleNewMessage(event);
-                activeChannels.remove(channel);
-                activeChannels.add(0, channel);
-                notifyChannelsSubscribers();
+                if (channel != null) {
+                    channel.handleNewMessage(event);
+                }
             }
             @Override
             public void onChannelDeleted(Event event) {

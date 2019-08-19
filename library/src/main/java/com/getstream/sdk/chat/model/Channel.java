@@ -267,10 +267,10 @@ public class Channel {
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
-        client.waitForConnection(
+        client.onSetUserCompleted(
                 new ClientConnectionCallback() {
                     @Override
-                    public void onSuccess() {
+                    public void onSuccess(User user) {
                         client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {

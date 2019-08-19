@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 
@@ -22,9 +23,19 @@ public class StreamChat {
     private static int eventListener;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
+    private static MutableLiveData<Number> totalUnreadMessages;
+    private static MutableLiveData<Number> unreadChannels;
 
-    public LiveData<OnlineStatus> getOnlineStatus() {
+    public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
+    }
+
+    public static LiveData<Number> getTotalUnreadMessages() {
+        return totalUnreadMessages;
+    }
+
+    public static LiveData<Number> getUnreadChannels() {
+        return unreadChannels;
     }
 
     public static synchronized Client getInstance(final Context context) {
@@ -58,6 +69,16 @@ public class StreamChat {
                     Log.w(TAG, channels.size() + " channels to recover!");
                 }
             }
+
+            @Override
+            public void onAnyEvent(Event event) {
+                if (event.getTotalUnreadCount() != null) {
+                    totalUnreadMessages.postValue(event.getTotalUnreadCount());
+                }
+                if (event.getUnreadChannels() != null) {
+                    unreadChannels.postValue(event.getUnreadChannels());
+                }
+            }
         });
     }
 
@@ -68,11 +89,17 @@ public class StreamChat {
         synchronized (Client.class) {
             if (INSTANCE == null) {
                 INSTANCE = new Client(apiKey);
+
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
-                INSTANCE.waitForConnection(new ClientConnectionCallback() {
+                totalUnreadMessages = new MutableLiveData<>();
+                unreadChannels = new MutableLiveData<>();
+
+                INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
-                    public void onSuccess() {
+                    public void onSuccess(User user) {
                         onlineStatus.postValue(OnlineStatus.CONNECTED);
+                        totalUnreadMessages.setValue(user.getTotalUnreadCount());
+                        unreadChannels.setValue(user.getUnreadChannels());
                         setupEventListeners();
                     }
 

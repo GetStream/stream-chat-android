@@ -40,6 +40,12 @@ public class User implements UserEntity {
     @SerializedName("online")
     private Boolean online;
 
+    @SerializedName("total_unread_count")
+    private Number totalUnreadCount;
+
+    @SerializedName("unread_channels")
+    private Number unreadChannels;
+
     private HashMap<String, Object> extraData;
 
     public Date getCreatedAt() {
@@ -74,7 +80,6 @@ public class User implements UserEntity {
         this.id = id;
     }
 
-
     public String getImage() {
         return image;
     }
@@ -105,6 +110,14 @@ public class User implements UserEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Number getTotalUnreadCount() {
+        return totalUnreadCount;
+    }
+
+    public Number getUnreadChannels() {
+        return unreadChannels;
     }
 
     @Override

@@ -160,7 +160,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-                updateChannel(event.getChannel());
+                updateChannel(event.getChannel(), true);
             }
 
             @Override
@@ -170,7 +170,7 @@ public class ChannelListViewModel extends AndroidViewModel {
 
             @Override
             public void onChannelUpdated(Event event) {
-                updateChannel(event.getChannel());
+                updateChannel(event.getChannel(), false);
             }
 
             @Override
@@ -180,8 +180,7 @@ public class ChannelListViewModel extends AndroidViewModel {
                 if (reads.size() > 0) {
                     Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
                 }
-
-                updateChannel(event.getChannel());
+                updateChannel(event.getChannel(),false);
             }
             @Override
             public void onUserWatchingStart(Event event){
@@ -190,15 +189,17 @@ public class ChannelListViewModel extends AndroidViewModel {
         });
     }
 
-    private boolean updateChannel(Channel channel) {
+    private boolean updateChannel(Channel channel, boolean moveToTop) {
         List<Channel> channelCopy = channels.getValue();
-        Boolean removed = channelCopy.remove(channel);
-        if (removed) {
-            channelCopy.add(0, channel);
+        int idx = channelCopy.lastIndexOf(channel);
+
+        if (idx != -1) {
+            channelCopy.remove(channel);
+            channelCopy.add(moveToTop ? 0 : idx, channel);
             channels.postValue(channelCopy);
         }
-        Boolean updated = removed;
-        return updated;
+
+        return idx != -1;
     }
 
     private void upsertChannel(Channel channel) {

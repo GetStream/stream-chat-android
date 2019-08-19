@@ -44,7 +44,7 @@ import static java.util.UUID.randomUUID;
  * -
  */
 public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener {
-    private final String TAG = ChannelViewModel.class.getSimpleName();
+    private static final String TAG = ChannelViewModel.class.getSimpleName();
 
     private Channel channel;
     private Looper looper;
@@ -266,10 +266,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             @Override
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
-                List<ChannelUserRead> readsCopy = reads.getValue();
-                for (ChannelUserRead r : readsCopy) {
-                    if (r.getUser().equals(event.getUser())) {
-                        readsCopy.remove(r);
+                List<ChannelUserRead> readsCopy = new ArrayList<>();
+                for (ChannelUserRead r : reads.getValue()) {
+                    if (!r.getUser().equals(event.getUser())) {
+                        readsCopy.add(r);
                     }
                 }
                 ChannelUserRead newRead = new ChannelUserRead();

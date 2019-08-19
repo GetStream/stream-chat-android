@@ -30,10 +30,10 @@ public abstract class ChatEventHandler {
     public void onNotificationInviteAccepted(Event event) {}
     public void onNotificationAddedToChannel(Event event) {}
     public void onNotificationRemovedFromChannel(Event event) {}
-    public void onEvent(Event event) {}
+    public void onAnyEvent(Event event) {}
 
     public final void dispatchEvent(Event event){
-        onEvent(event);
+        onAnyEvent(event);
         switch (event.getType()) {
             case USER_PRESENCE_CHANGED:
                 onUserPresenceChanged(event);
