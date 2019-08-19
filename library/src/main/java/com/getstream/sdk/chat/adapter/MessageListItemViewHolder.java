@@ -72,6 +72,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ChannelState channelState;
     private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
+    private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private int position;
     private boolean isThread;
@@ -135,13 +136,21 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener messageClickListener, MessageListView.AttachmentClickListener attachmentClickListener) {
+    public void bind(Context context,
+                     ChannelState channelState,
+                     MessageListItem messageListItem,
+                     int position,
+                     boolean isThread,
+                     MessageListView.MessageClickListener messageClickListener,
+                     MessageListView.MessageLongClickListener messageLongClickListener,
+                     MessageListView.AttachmentClickListener attachmentClickListener) {
         // set binding
         this.context = context;
         this.channelState = channelState;
         this.position = position;
         this.isThread = isThread;
         this.messageClickListener = messageClickListener;
+        this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
 
         this.messageListItem = messageListItem;
@@ -158,6 +167,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setEntity(this.messageListItem);
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
+            alv_attachments.setLongClickListener(messageLongClickListener);
         }
 
         // apply the style based on mine or theirs
@@ -306,14 +316,20 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
 
         // Set Click Listener
-        tv_text.setOnClickListener((View v) -> {
+        tv_text.setOnClickListener(view -> {
             Log.d(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
                 messageClickListener.onMessageClick(message, position);
             }
         });
-
-
+        tv_text.setOnLongClickListener(view -> {
+            Log.d(TAG, "Long onClick: " + position);
+            if (this.messageLongClickListener != null) {
+                view.setTag(String.valueOf(position));
+                this.messageLongClickListener.onMessageLongClick(message);
+            }
+            return true;
+        });
     }
 
     private void configReactionView() {
@@ -487,7 +503,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reply.setLayoutParams(paramsText);
     }
 
-    public void configParamsReadState(){
+    public void configParamsReadState() {
         if (read_state.getVisibility() != View.VISIBLE) return;
 
         ConstraintSet set = new ConstraintSet();
@@ -499,15 +515,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
 
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            if (messageListItem.isMine()){
+            if (messageListItem.isMine()) {
                 params.endToStart = alv_attachments.getId();
-            }else{
+            } else {
                 params.startToEnd = alv_attachments.getId();
             }
-        }else {
-            if (messageListItem.isMine()){
+        } else {
+            if (messageListItem.isMine()) {
                 params.endToStart = tv_text.getId();
-            }else{
+            } else {
                 params.startToEnd = tv_text.getId();
             }
         }
@@ -517,6 +533,4 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
     }
-
-
 }

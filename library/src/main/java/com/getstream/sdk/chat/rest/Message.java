@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
