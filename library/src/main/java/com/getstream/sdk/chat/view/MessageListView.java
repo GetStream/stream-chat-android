@@ -138,6 +138,7 @@ public class MessageListView extends RecyclerView {
         if (this.messageLongClickListener != null) {
             this.adapter.setMessageLongClickListener(this.messageLongClickListener);
         }
+        this.adapter.setChannelState(getChannel().getChannelState());
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override

@@ -8,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.enums.ReactionEmoji;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +20,11 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
     private Context context;
     private List<String>reactions = new ArrayList<>();
     private int reactionCount;
-    public ReactionListItemAdapter(Context context, Map<String,Integer> reactionCountMap) {
+    private Map<String, String>reactionTypes;
+
+    public ReactionListItemAdapter(Context context, Map<String,Integer> reactionCountMap, Map<String, String>reactionTypes) {
         this.context = context;
+        this.reactionTypes = reactionTypes;
         Set keys = reactionCountMap.keySet();
         reactionCount = 0;
         for(Object key: keys){
@@ -45,12 +46,17 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        String emoji;
+        String emoji = "";
         if (position == reactions.size()){
             emoji = String.valueOf(reactionCount);
         }else {
             String reaction = reactions.get(position);
-            emoji = ReactionEmoji.valueOf(reaction).get();
+            try {
+                emoji = reactionTypes.get(reaction);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+//            emoji = ReactionEmoji.valueOf(reaction).get();
         }
         holder.tv_emoji.setText(emoji);
     }
@@ -60,18 +66,13 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
         return reactions.size() + 1;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView tv_emoji;
 
         public MyViewHolder(View view) {
             super(view);
             tv_emoji = view.findViewById(R.id.tv_emoji);
-            view.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-
-        }
     }
 }
