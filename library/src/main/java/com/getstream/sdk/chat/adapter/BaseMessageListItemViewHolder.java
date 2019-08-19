@@ -17,9 +17,13 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    public abstract void bind(Context context, ChannelState channelState,
-                              @NonNull MessageListItem messageListItem, int position,
-                              boolean isThread, MessageListView.MessageClickListener messageClickListener,
+    public abstract void bind(Context context,
+                              ChannelState channelState,
+                              @NonNull MessageListItem messageListItem,
+                              int position,
+                              boolean isThread,
+                              MessageListView.MessageClickListener messageClickListener,
+                              MessageListView.MessageLongClickListener messageLongClickListener,
                               MessageListView.AttachmentClickListener attachmentClickListener);
 
     public abstract void setStyle(MessageListViewStyle style);

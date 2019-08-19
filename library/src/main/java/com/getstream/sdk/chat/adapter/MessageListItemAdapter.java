@@ -107,7 +107,13 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MessageListItem messageListItem = messageListItemList.get(position);
         ((BaseMessageListItemViewHolder) holder).setBubbleHelper(bubbleHelper);
-        ((BaseMessageListItemViewHolder) holder).bind(this.context, this.channelState, messageListItem, position, isThread, messageClickListener, attachmentClickListener);
+        ((BaseMessageListItemViewHolder) holder).bind(this.context,
+                this.channelState,
+                messageListItem,
+                position, isThread,
+                messageClickListener,
+                messageLongClickListener,
+                attachmentClickListener);
 
 
     }

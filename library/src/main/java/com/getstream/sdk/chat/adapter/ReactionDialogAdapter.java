@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import java.util.Arrays;
 import java.util.List;
 
 

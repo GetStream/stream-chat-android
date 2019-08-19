@@ -159,7 +159,9 @@ public class ChannelActivity extends AppCompatActivity
         }
 
     }
+
     List<String> reactionTypes = Arrays.asList("like", "love", "haha", "wow", "sad", "angry");
+
     public void showReactionDialog(Message message, int position) {
         int firstListItemPosition = ((LinearLayoutManager) binding.messageList.getLayoutManager()).findFirstVisibleItemPosition();
         final int lastListItemPosition = firstListItemPosition + binding.messageList.getChildCount() - 1;
@@ -221,9 +223,12 @@ public class ChannelActivity extends AppCompatActivity
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(binding.messageList.getChannel(), message,reactionTypes, false,null, (View v) -> {
-            dialog.dismiss();
-        });
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(binding.messageList.getChannel(),
+                message,
+                reactionTypes,
+                false,
+                binding.messageList.getStyle(),
+                (View v) -> dialog.dismiss());
         rv_reaction.setAdapter(reactionAdapter);
 
         tv_reply.setOnClickListener((View v) -> {
