@@ -55,6 +55,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private AtomicBoolean isLoading;
     private AtomicBoolean isLoadingMore;
     private boolean reachedEndOfPagination;
+    private Date lastMarkRead;
 
     @Override
     protected void onCleared() {
@@ -227,8 +228,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.inputType.postValue(inputType);
     }
 
-    public void markRead() {
-        looper.markRead();
+    public void markLastMessageRead() {
+        // this prevents infinite loops with mark read commands
+        Message message = this.channel.getChannelState().getLastMessage();
+        if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
+            looper.markRead();
+            lastMarkRead = message.getCreatedAt();
+        }
     }
 
     private void initEventHandlers() {
@@ -247,9 +253,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             public void onMessageNew(Event event) {
                 Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
                 upsertMessage(event.getMessage());
-                if (!client().fromCurrentUser(event.getMessage())){
-                    markRead();
-                }
                 updateChannelHead();
             }
 
@@ -389,7 +392,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                         reachedEndOfPagination = true;
                     }
                     addMessages(response.getMessages());
-                    markRead(); // TODO: this should go in the UI
                     updateChannelHead();
                 }
 

@@ -72,6 +72,10 @@ public class MessageListItem {
         return messageReadBy;
     }
 
+    public void removeMessageReadBy() {
+        this.messageReadBy = new ArrayList<>();
+    }
+
     public void addMessageReadBy(ChannelUserRead r) {
         this.messageReadBy.add(r);
     }

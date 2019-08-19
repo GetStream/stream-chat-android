@@ -57,6 +57,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         merged.addAll(messageEntities);
 
         // TODO replace with more efficient approach
+        // remove the old read state
+        for (MessageListItem i : merged) {
+            if (i.getMessageReadBy().size() != 0) {
+                i.removeMessageReadBy();
+            }
+        }
+
+        // set the new read state
         // this wil become slow with many users and many messages
         for (ChannelUserRead r : listReads) {
             // we don't show read state for the current user

@@ -70,6 +70,7 @@ public class MessageListView extends RecyclerView {
 
     private void init(Context context) {
         layoutManager = new LinearLayoutManager(context);
+        layoutManager.setStackFromEnd(true);
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
@@ -223,7 +224,10 @@ public class MessageListView extends RecyclerView {
                     viewModel.setHasNewMessages(true);
                 }
                 // TODO: this is an infinite loop: read event -> mark read -> read event
-                //viewModel.markRead();
+                // we want to mark read if there is a new message
+                // and this view is currently being displayed...
+                // we can't always run it since read and typing events also influence this list..
+                viewModel.markLastMessageRead();
             }
         });
 
