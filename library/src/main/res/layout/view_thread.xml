@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelViewModelOld" />
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
 
         <variable
             name="showThread"
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="@{safeUnbox(viewModel.replyCount)>1? @string/replies_count(viewModel.replyCount):@string/reply_count(viewModel.replyCount)}"
+                    android:text="1 reply"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/toolbar_left"
                     app:layout_constraintTop_toTopOf="parent" />
