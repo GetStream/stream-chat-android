@@ -193,7 +193,11 @@ public class MessageListView extends RecyclerView {
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
-            if (messageListItemWrapper.getLoadingMore()) {
+            if (oldSize == 0 && newSize != 0) {
+                int newPosition = adapter.getItemCount() - 1;
+                this.getLayoutManager().scrollToPosition(newPosition);
+                Log.i(TAG, String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+            } else if (messageListItemWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
 
@@ -201,6 +205,7 @@ public class MessageListView extends RecyclerView {
                 this.getLayoutManager().scrollToPosition(newPosition);
                 Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
+                if (newSize == 0) return;
                 // regular new message behaviour
                 // we scroll down all the way, unless you've scrolled up
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
@@ -209,7 +214,7 @@ public class MessageListView extends RecyclerView {
                 Log.i(TAG, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
                 if (!hasScrolledUp) {
-                    this.getLayoutManager().scrollToPosition(newPosition);
+                    this.getLayoutManager().scrollToPosition(newPosition + 100);
                     viewModel.setHasNewMessages(false);
                 } else {
                     viewModel.setHasNewMessages(true);
