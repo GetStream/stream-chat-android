@@ -8,9 +8,6 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 This library includes both a low level chat SDK and a set of reusable UI components.
 Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
-
-
-
 ## Installation
 
 - **Step 1** Add repository into root build.gradle
@@ -47,6 +44,75 @@ dependencies {
 }
 ~~~
 
+## Setup Stream Chat
+
+Make sure to initialize the SDK only once; the best place to do this is in your `Application` class.
+
+
+```java
+public class BaseApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        StreamChat.init("STREAM-API-KEY", getApplicationContext());
+    }
+}
+```
+
+If this is a new Android app you will need to register `BaseApplication` inside AndroidManifest.xml as well. 
+```xml
+...
+
+<application
+    android:name=".BaseApplication"
+    ...
+>
+
+...
+
+</application>
+```
+
+With this you will be able to retrieve the shared Chat client from any part of your application using `StreamChat.getInstance()`. Here's an example:
+
+```java
+public class MainActivity extends AppCompatActivity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Client client = StreamChat.getInstance(this.getApplication());
+		...
+	}
+```
+
+### Initialize Chat for a user
+
+1. Retrieve the chat client:
+
+```java
+Client client = StreamChat.getInstance(this.getApplication());
+```
+
+2. Setup a user, you can use as many custom fields as you want. Both `name` and `image` are used automatically by UI components:
+
+```java
+HashMap<String, Object> extraData = new HashMap<>();
+extraData.put("name", "Happy Android");
+extraData.put("image", "https://bit.ly/2TIt8NR");
+User user = new User(USER_ID, extraData);
+```
+
+3. Setup chat for current user:
+
+```java
+client.setUser(user, USER_TOKEN);
+```
+
+The `USER_TOKEN` variable is the unique token for the user with ID `USER_ID` in this case is hard-coded but in real-life it will be something that comes from your auth backend.
+
+Once you called `setUser` you will be able to use Stream Chat APIs; all calls will automatically wait for the `setUser` call to complete. No need to add callbacks or complex syncronization code from your end.
+
 ## UI Components
 
 ### ChannelList
@@ -56,7 +122,7 @@ Typically it will show an unread/read state, the last message and who is partici
 
 The easiest way to render a ChannelList is to add it to your layout:
 
-```
+```xml
 <com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -68,7 +134,7 @@ The easiest way to render a ChannelList is to add it to your layout:
 
 And in activity do something like this:
 
-```
+```java
 package io.getstream.chat.example;
 
 import android.content.Intent;
@@ -174,7 +240,7 @@ The following listeners can be set
 
 The following attributes are available:
 
-```
+```xml
 <com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -206,7 +272,7 @@ The following attributes are available:
 
 If you need to make a bigger change you can swap the layout for the channel previews.
 
-```
+```xml
 <com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -224,7 +290,7 @@ You can find the default layout and copy and paste it in **list_item_channel.xml
 
 If you need full control over the styling for the channel preview you can overwrite the view holder.
 
-```
+```java
 ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
 adapter.setCustomViewHolder(MyCustomViewHolder.class);
 binding.channelList.setViewModel(viewModel, this, adapter);
@@ -240,7 +306,7 @@ Alternatively you can of course build your own ChannelListView using the low lev
 
 The message list renders a list of messages. You can use it like this:
 
-```
+```xml
 <com.getstream.sdk.chat.view.MessageListView
     android:id="@+id/messageList"
     android:layout_width="match_parent"
@@ -265,7 +331,7 @@ The message list renders a list of messages. You can use it like this:
 
 And here's a full example of an activity that renders a message list, channel header and message input
 
-```
+```java
 package io.getstream.chat.example;
 
 import android.content.Intent;
@@ -427,7 +493,7 @@ TODO document the attributes for styling the message list
 
 Many messaging apps will have rather complex message bubbles. The layout typically changes based on the position of the message, if it's your or written by someone else, and if it has attachments. Here's an example of the default bubble list helper.
 
-```
+```java
 messageList.setBubbleHelper(new BubbleHelper() {
     @Override
     public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
@@ -462,14 +528,14 @@ messageList.setBubbleHelper(new BubbleHelper() {
 
 You can configure your own viewholder factory like this:
 
-```
+```java
 MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
 binding.messageList.setViewHolderFactory(factory);
 ```
 
 This allows you to swap the layout file that's used for the typing indicator, the date seperator or the message. You can also implement your own view holder. It's common to implement your own message or attachment type and render it in a custom way.
 
-```
+```java
 public class MessageViewHolderFactory {
     private static int NOT_FOUND = 0;
     private static int DATE_SEPARATOR = 1;
@@ -564,7 +630,7 @@ public class MessageViewHolderFactory {
 
 Here's an example message input view
 
-```
+```java
 <com.getstream.sdk.chat.view.MessageInputView
     android:id="@+id/message_input"
     android:layout_width="match_parent"
@@ -593,7 +659,7 @@ A message input or channel header view is much easier to build though.
 
 As a first step connect the channel view model. The channel view model holds all the state for a channel activity.
 
-```
+```java
 public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
 	this.channelViewModel = viewModel;
 	binding.setLifecycleOwner(lifecycleOwner);
@@ -604,7 +670,7 @@ public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwn
 
 Second step is to forward typing events to the view model
 
-```
+```java
     private void stopTyping() {
         isTyping = false;
         channelViewModel.getChannel().stopTyping();
@@ -626,139 +692,30 @@ Third step is to connect the sendMessage flow
 
 TODO document this
 
-## Getting started
-
-- **Initialize Client**
-
- Java
-~~~java
-StreamChat streamChat = new StreamChat("API KEY");
-~~~
-
- Kotlin
-~~~
-val streamChat = StreamChat(API_KEY)
-~~~
-
-- **Initialize User**
-
- Java
-~~~java
-User user = new User("USER ID", EXTRA_DATA); // EXTRA_DATA : HashMap
-~~~
-
- Kotlin
-~~~
-val user = User(USER_ID, extraData)
-~~~
-
-- **Set User**
-
- Java
-~~~java
-streamChat.setUser(user, "USER TOKEN");
-~~~
-
- Kotlin
-~~~
-streamChat.setUser(user, "USER TOKEN")
-~~~
-
-- **Adding Single Conversation Screen**
-
-Adding chat is simple as the library comes with a built-in **ChatActivity** of library class which loads messages for a specified activeChannel using the APIs and renders its content.
-
-  1. Set specified **activeChannel** object with activeChannel Id, activeChannel name and activeChannel image.
-  2. Set  specified **activeChannel** to **streamChat**.
-  3. Navigate to **ChatActivity** 
-
- Java
-~~~java
-// Setting Channel
-Channel activeChannel = new Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA); // EXTRA_DATA : HashMap
-streamChat.setChannel(activeChannel);
- 
-// Start ChatActivity
-Intent i = new Intent(this, ChatActivity.class);
-startActivity(i);
-~~~
-
- Kotlin 
-~~~kotlin
-// Setting Channel
-val activeChannel = Channel("CHANNEL TYPE", "CHANNEL ID", EXTRA_DATA) // EXTRA_DATA : HashMap
-streamChat.activeChannel = activeChannel
-
-// Start ChatActivity
-val i = Intent(this, ChatActivity::class.java)
-startActivity(i)
-~~~
-
-- **Multiple conversations**
-
-We can add **ChannelListFragment** of library in any Activity or Fragment directly.
-
- Xml layout
-
-~~~xml
-<FrameLayout
-    android:fitsSystemWindows="true"
-    android:id="@+id/container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />	
-~~~
-
- Java
-~~~java
-ChannelListFragment fragment = new ChannelListFragment(); 
-fragment.containerResId = R.id.container;  
-FragmentManager fragmentManager = getSupportFragmentManager();
-FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-fragmentTransaction.replace(R.id.container, fragment);
-fragmentTransaction.addToBackStack(null);
-fragmentTransaction.commit();
-~~~
-
- Kotlin
-~~~kotlin
-val fragment = ChannelListFragment()
-fragment.containerResId = R.id.container  
-val fragmentManager = supportFragmentManager
-val fragmentTransaction = fragmentManager.beginTransaction()
-fragmentTransaction.replace(R.id.container, fragment)
-fragmentTransaction.addToBackStack(null)
-fragmentTransaction.commit()
-~~~
-
 ## Documentation
 
 TODO - Java Chat Tutorial page
 [Official API Docs](https://getstream.io/chat/docs)
 
-## In progress/ not supported yet
+## Supported features
 
+- Channels list UI
+- Channel UI
+- Message Reactions
+- Link preview
+- Images, Videos and Files attachments
+- Edit and Delete message
+- Typing Inditicators
+- Read Inditicators
+- Push Notifications
+- Image gallery
+- GIF support
+- Light/Dark themes
+- Style customization
+- UI customization
 - Threads
 - Slash commands
 
-## Supported features
-
-- A group chat
-- Channel list
-- Reactions
-- A link preview
-- Attach images, videos or files
-- Edit a message
-- Typing events
-- Read events
-- Notifications
-- Opening a link in the internal browser
-- Image gallery
-- Supporting Gifs
-- Light/Dark styles
-- Style customization
-- UI customization
-
 ## Getting started
-
 
 TODO: https://getstream.io/chat/docs/#introduction but with Android code examples
