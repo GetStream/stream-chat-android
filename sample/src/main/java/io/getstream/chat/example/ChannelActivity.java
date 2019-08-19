@@ -198,7 +198,7 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMessageLongClick(Message message, int position) {
+    public void onMessageLongClick(Message message) {
         final Dialog dialog = new Dialog(this);
         if (!message.getUserId().equals(StreamChat.getInstance(this).getUserId()))
             dialog.setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);
@@ -235,9 +235,7 @@ public class ChannelActivity extends AppCompatActivity
             v.setTag(Constant.TAG_MOREACTION_REPLY);
             dialog.dismiss();
         });
-        tv_cancel.setOnClickListener((View v) -> {
-            dialog.dismiss();
-        });
+        tv_cancel.setOnClickListener((View v) -> dialog.dismiss());
 
         dialog.show();
 

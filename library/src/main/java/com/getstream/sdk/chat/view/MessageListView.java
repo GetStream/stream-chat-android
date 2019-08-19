@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
@@ -110,11 +111,20 @@ public class MessageListView extends RecyclerView {
         });
     }
 
+    private void initFresco() {
+        try {
+            Fresco.initialize(getContext());
+        } catch (Exception e) {
+        }
+
+    }
+
     // set the adapter and apply the style.
     @Override
     public void setAdapter(Adapter adapter) {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
+
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
@@ -156,7 +166,7 @@ public class MessageListView extends RecyclerView {
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
-
+        initFresco();
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
 
@@ -216,13 +226,13 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public Channel getChannel(){
+    public Channel getChannel() {
         if (viewModel != null)
             return viewModel.getChannel();
         return null;
     }
 
-    public MessageListViewStyle getStyle(){
+    public MessageListViewStyle getStyle() {
         return style;
     }
     // endregion
@@ -257,9 +267,11 @@ public class MessageListView extends RecyclerView {
     public interface MessageClickListener {
         void onMessageClick(Message message, int position);
     }
+
     public interface MessageLongClickListener {
-        void onMessageLongClick(Message message, int position);
+        void onMessageLongClick(Message message);
     }
+
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 

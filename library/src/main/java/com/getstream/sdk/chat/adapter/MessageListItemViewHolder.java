@@ -167,6 +167,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setEntity(this.messageListItem);
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
+            alv_attachments.setLongClickListener(messageLongClickListener);
         }
 
         // apply the style based on mine or theirs
@@ -325,7 +326,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             Log.d(TAG, "Long onClick: " + position);
             if (this.messageLongClickListener != null) {
                 view.setTag(String.valueOf(position));
-                this.messageLongClickListener.onMessageLongClick(message, position);
+                this.messageLongClickListener.onMessageLongClick(message);
             }
             return true;
         });

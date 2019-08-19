@@ -18,7 +18,11 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    public abstract void bind(Context context, MessageListItem messageListItem, Attachment attachment, MessageListView.AttachmentClickListener clickListener);
+    public abstract void bind(Context context,
+                              MessageListItem messageListItem,
+                              Attachment attachment,
+                              MessageListView.AttachmentClickListener clickListener,
+                              MessageListView.MessageLongClickListener longClickListener);
 
     public MessageListView.BubbleHelper getBubbleHelper() {
         return bubbleHelper;
