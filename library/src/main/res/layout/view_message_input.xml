@@ -327,7 +327,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="10dp">
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -347,7 +347,7 @@
             </FrameLayout>
 
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:layout_gravity="center_horizontal"
@@ -362,6 +362,9 @@
                     android:id="@+id/iv_openAttach"
                     android:layout_width="@dimen/attachment_button_width"
                     android:layout_height="@dimen/attachment_button_height"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="10dp" />
 
                 <EditText
@@ -376,6 +379,10 @@
                     android:paddingTop="30dp"
                     android:paddingEnd="5dp"
                     android:paddingBottom="30dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_send"
                     android:textSize="15sp" />
 
                 <ImageView
@@ -383,9 +390,12 @@
                     android:layout_width="@dimen/input_button_width"
                     android:layout_height="@dimen/input_button_height"
                     android:layout_marginEnd="10dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:isGone="@{!activeMessageSend}" />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
