@@ -40,23 +40,8 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         // channel name
         // channel extra data
         // TODO: fix this
-        Channel oldChannel = oldList.get(oldItemPosition);
-        Channel newChannel =  newList.get(newItemPosition);
-
-//        Log.i(TAG, "areContentsTheSame?");
-//        Log.i(TAG, oldChannel.getLastMessageDate().toString());
-//        Log.i(TAG, newChannel.getLastMessageDate().toString());
-
-        if (!oldChannel.getLastMessageDate().equals(newChannel.getLastMessageDate())) {
-            Log.i(TAG, "LastMessage is different");
-            return false;
-        }
-
-        if (!oldChannel.getName().contentEquals(newChannel.getName())) {
-            Log.i(TAG, "channel name is different");
-            return false;
-        }
-
         return false;
+
+
     }
 }

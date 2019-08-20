@@ -27,8 +27,6 @@
             app:layout_constraintTop_toTopOf="parent"
             stream:channelReadStateAvatarHeight="15dp"
             stream:channelReadStateAvatarWidth="15dp"
-            stream:channelReadStateTextColor="#FF0000"
-            stream:channelReadStateTextStyle="bold|italic"
             stream:channelRreadStateTextSize="9sp"
             stream:channelShowReadState="true" />
 

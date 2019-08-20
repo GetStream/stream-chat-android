@@ -45,6 +45,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
+
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach

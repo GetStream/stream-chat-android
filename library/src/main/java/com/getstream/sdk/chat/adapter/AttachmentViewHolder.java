@@ -42,7 +42,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private ImageView iv_media_more;
     private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-    private ImageView iv_command_title;
     // Action
     private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
@@ -64,7 +63,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
-        iv_command_title = itemView.findViewById(R.id.iv_command_title);
     }
 
     @Override

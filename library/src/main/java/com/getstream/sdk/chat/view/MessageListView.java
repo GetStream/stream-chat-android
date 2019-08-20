@@ -337,7 +337,6 @@ public class MessageListView extends RecyclerView {
                 } else {
                     viewModel.setHasNewMessages(true);
                 }
-                // TODO: this is an infinite loop: read event -> mark read -> read event
                 // we want to mark read if there is a new message
                 // and this view is currently being displayed...
                 // we can't always run it since read and typing events also influence this list..

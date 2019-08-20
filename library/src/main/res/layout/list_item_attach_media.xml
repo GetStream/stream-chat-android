@@ -74,14 +74,6 @@
         app:layout_constraintStart_toStartOf="@+id/tv_media_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_media_title" />
 
-    <ImageView
-        android:id="@+id/iv_command_title"
-        android:layout_width="50dp"
-        android:layout_height="18dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/logogiphy"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
