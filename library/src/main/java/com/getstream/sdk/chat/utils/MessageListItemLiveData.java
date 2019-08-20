@@ -34,6 +34,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private List<MessageListItem> typingEntities;
     private List<ChannelUserRead> listReads;
     private Boolean isLoadingMore;
+    private Boolean hasNewMessages;
+    private String lastMessageID;
 
 
     public MessageListItemLiveData(User currentUser, MutableLiveData<List<Message>> messages, MutableLiveData<List<User>> typing, MutableLiveData<List<ChannelUserRead>> reads) {
@@ -45,6 +47,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.typingEntities = new ArrayList<>();
         this.listReads = new ArrayList<>();
         this.isLoadingMore = false;
+        // scroll behaviour is only triggered for new messages
+        this.lastMessageID = "";
+        this.hasNewMessages = false;
     }
 
     public void setIsLoadingMore(Boolean loading) {
@@ -88,7 +93,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
 
         merged.addAll(typingEntities);
-        MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, merged);
+        MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
         setValue(wrapper);
         // isLoadingMore is only true once...
         if (isLoadingMore) {
@@ -105,6 +110,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         this.reads.observe(owner, reads -> {
+            hasNewMessages = false;
             if (reads == null) {
                 reads = new ArrayList<ChannelUserRead>();
             }
@@ -113,6 +119,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
         this.messages.observe(owner, messages -> {
             // update based on messages
+            hasNewMessages = false;
+            String newlastMessageID = messages.get(messages.size() -1).getId();
+            if (!newlastMessageID.equals(lastMessageID)) {
+                hasNewMessages = true;
+            }
+            lastMessageID = newlastMessageID;
             List<MessageListItem> entities = new ArrayList<MessageListItem>();
             // iterate over messages and stick in the date entities
             Message previousMessage = null;
@@ -155,10 +167,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
 
             this.messageEntities = entities;
+
             broadcastValue();
         });
         this.typing.observe(owner, users -> {
             // update
+            hasNewMessages = false;
             List<MessageListItem> typingEntities = new ArrayList<MessageListItem>();
             if (users.size() > 0) {
                 MessageListItem messageListItem = new MessageListItem(users);
@@ -168,5 +182,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
+    }
+
+    public Boolean getHasNewMessages() {
+        return hasNewMessages;
     }
 }

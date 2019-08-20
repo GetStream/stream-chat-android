@@ -305,6 +305,13 @@ public class MessageListView extends RecyclerView {
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
+            if (!messageListItemWrapper.getHasNewMessages()) {
+                // we only touch scroll for new messages, we ignore
+                // read
+                // typing
+                // message updates
+                return;
+            }
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
             adapter.replaceEntities(entities);

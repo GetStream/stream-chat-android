@@ -7,9 +7,11 @@ import java.util.List;
 public class MessageListItemWrapper {
     private List<MessageListItem> messageListItemList;
     private Boolean isLoadingMore;
+    private Boolean hasNewMessages;
 
-    MessageListItemWrapper(Boolean isLoadingMore, List<MessageListItem> messageListItemList) {
+    MessageListItemWrapper(Boolean isLoadingMore, Boolean hasNewMessages, List<MessageListItem> messageListItemList) {
         this.isLoadingMore = isLoadingMore;
+        this.hasNewMessages = hasNewMessages;
         this.messageListItemList = messageListItemList;
     }
 
@@ -27,5 +29,9 @@ public class MessageListItemWrapper {
 
     public void setLoadingMore(Boolean loadingMore) {
         isLoadingMore = loadingMore;
+    }
+
+    public Boolean getHasNewMessages() {
+        return hasNewMessages;
     }
 }
