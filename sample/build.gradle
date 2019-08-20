@@ -60,7 +60,7 @@ dependencies {
     implementation 'ru.noties.markwon:image-gif:3.0.0'
     implementation 'ru.noties.markwon:ext-latex:3.0.0'
 
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0'
@@ -69,5 +69,10 @@ dependencies {
         transitive = true;
     }
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.github.bumptech.glide:annotations:4.9.0'
+    annotationProcessor 'androidx.annotation:annotation:1.1.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }
 apply plugin: 'com.google.gms.google-services'
