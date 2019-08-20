@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -201,12 +202,16 @@ public class MessageListView extends RecyclerView {
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
                     }
+                    Number number = 9;
+                    if (number != null){
+
+                    }
                 }
                 return new DrawableBuilder()
                         .rectangle()
                         .strokeColor(strokeColor)
                         .strokeWidth(strokeWidth)
-                        .solidColor(style.getMessageBackgroundColorTheirs())
+                        .solidColor(Color.WHITE)
                         .cornerRadii(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius)
                         .build();
             }
