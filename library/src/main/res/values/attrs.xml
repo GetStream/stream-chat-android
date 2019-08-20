@@ -118,7 +118,7 @@
             <flag name="italic" value="2" />
         </attr>
         <!--Reaction Dialog-->
-        <attr name="showReactionDlg" format="boolean" />
+        <attr name="enableReaction" format="boolean" />
         <attr name="showUsersReactionDlg" format="boolean" />
         <attr name="reactionDlgBgDrawable" format="reference" />
         <attr name="reactionDlgbgColor" format="color" />
@@ -158,6 +158,8 @@
         <attr name="messageStrokeColorTheirs" format="color" />
         <attr name="messageStrokeWidthMine" format="dimension|reference" />
         <attr name="messageStrokeWidthTheirs" format="dimension|reference" />
+        <!--Thread-->
+        <attr name="enableThread" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

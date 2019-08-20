@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.BaseStyle;
 
 public class MessageListViewStyle extends BaseStyle {
-    final String TAG = MessageListViewStyle.class.getSimpleName();
+    private static final String TAG = MessageListViewStyle.class.getSimpleName();
 
     // Message text
     private int messageTextSizeMine;
@@ -38,12 +38,14 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageStrokeWidthMine;
     private int messageStrokeWidthTheirs;
     // Reaction
-    private boolean showReactionDlg;
+    private boolean enableReaction;
     private boolean showUsersReactionDlg;
     private Drawable reactionDlgBgDrawable;
     private int reactionDlgBgColor;
     private int reactionDlgEmojiSize;
     private int reactionDlgEmojiMargin;
+    // Thread
+    private boolean enableThread;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -64,14 +66,14 @@ public class MessageListViewStyle extends BaseStyle {
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
 
         messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
-        messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
+        messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
         messageBottomRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
         messageBottomLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
 
         messageTopLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
-        messageTopRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
-        messageBottomRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
-        messageBottomLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageTopRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageBottomRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageBottomLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
 
         messageBackgroundColorMine = a.getColor(R.styleable.MessageListView_messageBackgroundColorMine, getColor(R.color.message_background_outgoing));
         messageBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_messageBackgroundColorTheirs, getColor(R.color.message_background_incoming));
@@ -82,7 +84,7 @@ public class MessageListViewStyle extends BaseStyle {
         messageStrokeWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthMine, getDimension(R.dimen.message_stroke));
         messageStrokeWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthTheirs, getDimension(R.dimen.message_stroke));
         // Reaction Dialog
-        showReactionDlg = a.getBoolean(R.styleable.MessageListView_showReactionDlg, true);
+        enableReaction = a.getBoolean(R.styleable.MessageListView_enableReaction, true);
         showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_showUsersReactionDlg, true);
         reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_reactionDlgBgDrawable, -1));
         reactionDlgBgColor = a.getColor(R.styleable.MessageListView_reactionDlgbgColor, getColor(R.color.reaction_dialog_background));
@@ -108,7 +110,8 @@ public class MessageListViewStyle extends BaseStyle {
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_userRreadStateTextSize, getDimension(R.dimen.read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.MessageListView_userReadStateTextColor, Color.WHITE);
         readStateTextStyle = a.getColor(R.styleable.MessageListView_userReadStateTextStyle, Typeface.BOLD);
-
+        // Thread
+        enableThread = a.getBoolean(R.styleable.MessageListView_enableThread, true);
         a.recycle();
     }
 
@@ -202,8 +205,8 @@ public class MessageListViewStyle extends BaseStyle {
 
     // Reaction Dialog
 
-    public boolean isShowReactionDlg() {
-        return showReactionDlg;
+    public boolean isEnableReaction() {
+        return enableReaction;
     }
 
     public boolean isShowUsersReactionDlg() {
@@ -224,5 +227,11 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getReactionDlgEmojiMargin() {
         return reactionDlgEmojiMargin;
+    }
+
+    // Thread
+
+    public boolean isEnableThread() {
+        return enableThread;
     }
 }

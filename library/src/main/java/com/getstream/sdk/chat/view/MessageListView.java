@@ -88,81 +88,140 @@ public class MessageListView extends RecyclerView {
 
     public void initDefaultBubbleHelper() {
         this.setBubbleHelper(new BubbleHelper() {
+            int topLeftRadius;
+            int topRightRadius;
+            int bottomRightRadius;
+            int bottomLeftRadius;
+            int bgColor;
+            int strokeColor;
+            int strokeWidth;
             @Override
             public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
                 if (mine) {
-                    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
-                        return getResources().getDrawable(R.drawable.message_bubble_mine_top);
+                    if (style.getMessageBubbleDrawableMine() != null)
+                        return style.getMessageBubbleDrawableMine();
+
+                    bgColor = style.getMessageBackgroundColorMine();
+                    strokeColor = style.getMessageStrokeColorMine();
+                    strokeWidth = style.getMessageStrokeWidthMine();
+                    if (!isDefaultBubble()){
+                        topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
+                        topRightRadius = style.getMessageTopRightCornerRadiusMine();
+                        bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
+                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
+                    }else{
+                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }else{
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }
                     }
-                    int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                    int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                    int bgColor = getResources().getColor(R.color.message_background_outgoing);
-                    int strokeColor = getResources().getColor(R.color.message_stroke);
-                    int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke);
-                    return new DrawableBuilder()
-                            .rectangle()
-                            .strokeColor(strokeColor)
-                            .strokeWidth(strokeWidth)
-                            .solidColor(bgColor)
-                            .cornerRadii(conerRadius1, conerRadius2, conerRadius2, conerRadius1)
-                            .build();
                 } else {
-                    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
-                        return getResources().getDrawable(R.drawable.message_bubble_theirs_top);
+                    if (style.getMessageBubbleDrawableTheirs() != null)
+                        return style.getMessageBubbleDrawableTheirs();
+
+                    bgColor = style.getMessageBackgroundColorTheirs();
+                    strokeColor = style.getMessageStrokeColorTheirs();
+                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    if (!isDefaultBubble()){
+                        topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
+                        topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
+                        bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
+                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
+                    }else{
+                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }else{
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }
                     }
-                    return style.getMessageBubbleDrawableTheirs();
                 }
+                return new DrawableBuilder()
+                        .rectangle()
+                        .strokeColor(strokeColor)
+                        .strokeWidth(strokeWidth)
+                        .solidColor(bgColor)
+                        .cornerRadii(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius)
+                        .build();
             }
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                int bgColor = getResources().getColor(R.color.message_background_incoming);
-                int strokeColor = getResources().getColor(R.color.message_stroke);
-                int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke);
                 if (mine) {
-                    int attachmentPosition = message.getAttachments().indexOf(attachment);
-                    if (attachmentPosition == 0) {
-                        return new DrawableBuilder()
-                                .rectangle()
-                                .strokeColor(strokeColor)
-                                .strokeWidth(strokeWidth)
-                                .solidColor(bgColor)
-                                .cornerRadii(conerRadius1, conerRadius1, conerRadius2, conerRadius1)
-                                .build();
-                    } else {
-                        return new DrawableBuilder()
-                                .rectangle()
-                                .strokeColor(strokeColor)
-                                .strokeWidth(strokeWidth)
-                                .solidColor(bgColor)
-                                .cornerRadii(conerRadius1, conerRadius2, conerRadius2, conerRadius1)
-                                .build();
-                    }
+                    if (style.getMessageBubbleDrawableMine() != null)
+                        return style.getMessageBubbleDrawableMine();
 
+                    bgColor = style.getMessageBackgroundColorMine();
+                    strokeColor = style.getMessageStrokeColorMine();
+                    strokeWidth = style.getMessageStrokeWidthMine();
+                    if (!isDefaultBubble()){
+                        topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
+                        topRightRadius = style.getMessageTopRightCornerRadiusMine();
+                        bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
+                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
+                    }else{
+                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }else{
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }
+                    }
                 } else {
-                    int attachmentPosition = message.getAttachments().indexOf(attachment);
-                    if (attachmentPosition == 0) {
-                        return new DrawableBuilder()
-                                .rectangle()
-                                .strokeColor(strokeColor)
-                                .strokeWidth(strokeWidth)
-                                .solidColor(bgColor)
-                                .cornerRadii(conerRadius1, conerRadius1, conerRadius1, conerRadius2)
-                                .build();
-                    } else {
-                        return new DrawableBuilder()
-                                .rectangle()
-                                .strokeColor(strokeColor)
-                                .strokeWidth(strokeWidth)
-                                .solidColor(bgColor)
-                                .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
-                                .build();
+                    if (style.getMessageBubbleDrawableTheirs() != null)
+                        return style.getMessageBubbleDrawableTheirs();
+
+                    bgColor = style.getMessageBackgroundColorTheirs();
+                    strokeColor = style.getMessageStrokeColorTheirs();
+                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    if (!isDefaultBubble()){
+                        topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
+                        topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
+                        bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
+                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
+                    }else{
+                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }else{
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        }
                     }
                 }
+                return new DrawableBuilder()
+                        .rectangle()
+                        .strokeColor(strokeColor)
+                        .strokeWidth(strokeWidth)
+                        .solidColor(style.getMessageBackgroundColorTheirs())
+                        .cornerRadii(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius)
+                        .build();
             }
         });
+    }
+
+    private boolean isDefaultBubble() {
+        return (style.getMessageTopLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageTopRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageBottomRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius2)) &&
+                (style.getMessageBottomLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageTopLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageTopRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageBottomRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
+                (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius2));
     }
 
     private void initFresco() {
