@@ -138,7 +138,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper = new Looper(markRead);
         looper.start();
 
-        initEventHandlers();
+//        initEventHandlers();
         updateChannelHead();
     }
 
@@ -565,7 +565,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                viewModel.queryChannel();
+//                viewModel.queryChannel();
             }
         }
     }

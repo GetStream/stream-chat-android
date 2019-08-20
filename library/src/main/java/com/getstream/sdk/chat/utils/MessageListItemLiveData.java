@@ -14,7 +14,6 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

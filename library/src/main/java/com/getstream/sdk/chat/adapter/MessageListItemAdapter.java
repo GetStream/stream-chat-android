@@ -82,8 +82,9 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 new MessageListItemDiffCallback(messageListItemList, newEntities), true);
 
         // only update those rows that change...
-        result.dispatchUpdatesTo(this);
+
         messageListItemList = newEntities;
+        result.dispatchUpdatesTo(this);
     }
 
     @Override

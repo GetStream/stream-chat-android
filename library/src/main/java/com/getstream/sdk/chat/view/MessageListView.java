@@ -22,6 +22,8 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.List;
 
+import top.defaults.drawabletoolbox.DrawableBuilder;
+
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -93,7 +95,20 @@ public class MessageListView extends RecyclerView {
                     if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
                         return getResources().getDrawable(R.drawable.message_bubble_mine_top);
                     }
-                    return style.getMessageBubbleDrawableMine();
+                    int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                    int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                    int bgColor = getResources().getColor(R.color.message_background_incoming);
+                    int strokeColor = getResources().getColor(R.color.message_border);
+                    int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
+                    return new DrawableBuilder()
+                            .rectangle()
+                            .strokeColor(strokeColor)
+                            .strokeWidth(strokeWidth)
+                            .solidColor(bgColor)
+                            .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
+                            .build();
+
+//                    return style.getMessageBubbleDrawableMine();
                 } else {
                     if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
                         return getResources().getDrawable(R.drawable.message_bubble_theirs_top);
@@ -104,13 +119,25 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-                    int attachmentPosition = message.getAttachments().indexOf(attachment);
-                    if (attachmentPosition == 0) {
-                        return getResources().getDrawable(R.drawable.round_attach_media_incoming1);
-                    }
-                }
-                return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
+//                if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+//                    int attachmentPosition = message.getAttachments().indexOf(attachment);
+//                    if (attachmentPosition == 0) {
+//                        return getResources().getDrawable(R.drawable.round_attach_media_incoming1);
+//                    }
+//                }
+                int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                int bgColor = getResources().getColor(R.color.message_background_incoming);
+                int strokeColor = getResources().getColor(R.color.message_border);
+                int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
+                return new DrawableBuilder()
+                        .rectangle()
+                        .strokeColor(strokeColor)
+                        .strokeWidth(strokeWidth)
+                        .solidColor(bgColor)
+                        .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
+                        .build();
+//                return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
             }
         });
     }
