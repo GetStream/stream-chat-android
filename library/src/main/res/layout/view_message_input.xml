@@ -334,6 +334,7 @@
                     android:id="@+id/rv_composer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
                     android:visibility="gone" />
@@ -342,6 +343,7 @@
                     android:id="@+id/lv_composer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:divider="@null"
                     android:visibility="gone" />
             </FrameLayout>
