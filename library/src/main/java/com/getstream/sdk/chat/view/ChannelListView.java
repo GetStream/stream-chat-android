@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
+import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
@@ -29,6 +31,7 @@ public class ChannelListView extends RecyclerView {
     private ChannelClickListener channelClickListener;
     private ChannelClickListener channelLongClickListener;
     private ChannelListItemAdapter adapter;
+    private ChannelViewHolderFactory viewHolderFactory;
 
     public ChannelListView(Context context) {
         super(context);
@@ -83,6 +86,14 @@ public class ChannelListView extends RecyclerView {
         });
     }
 
+
+    public void setViewHolderFactory(ChannelViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+        if (this.adapter != null) {
+            this.adapter.setViewHolderFactory(factory);
+        }
+    }
+
     public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
         // default adapter...
         adapter = new ChannelListItemAdapter(getContext());
@@ -120,6 +131,10 @@ public class ChannelListView extends RecyclerView {
     public void setAdapterWithStyle(ChannelListItemAdapter adapter) {
         super.setAdapter(adapter);
         adapter.setStyle(style);
+
+        if (viewHolderFactory != null) {
+            adapter.setViewHolderFactory(viewHolderFactory);
+        }
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 

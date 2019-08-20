@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -69,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
         // query all channels where the current user is a member
         // FilterObject filter = in("members", USER_ID);
 //        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
+        ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         FilterObject filter = in("type", "messaging");
+        binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
 //        viewModel.setChannelsPageSize(2);
 
