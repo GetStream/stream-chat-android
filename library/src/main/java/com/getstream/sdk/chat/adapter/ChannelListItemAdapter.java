@@ -80,9 +80,10 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void replaceChannels(List<Channel> channelList) {
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new ChannelListDiffCallback(channels, channelList), true);
-        channels = channelList;
+
         // only update those rows that change...
         result.dispatchUpdatesTo(this);
+        channels = channelList;
     }
 
     @Override

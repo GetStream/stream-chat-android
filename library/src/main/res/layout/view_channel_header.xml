@@ -1,94 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
     </data>
 
-    <RelativeLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height_material">
+        android:layout_height="61dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_back"
+            style="@style/text"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/round_thread_close"
+            android:gravity="center"
+            android:text="‹"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_back"
-                style="@style/text"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="20dp"
-                android:background="@drawable/round_thread_close"
-                android:gravity="center"
-                android:text="‹"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
+        <TextView
+            android:id="@+id/tv_channel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{viewModel.channelName}"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_active"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_active"
+            style="@style/text_s"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text='@{"Active " + viewModel.lastActiveString}'
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_channel_name" />
 
-                <TextView
-                    android:id="@+id/tv_channel_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="@{viewModel.channelName}"
-                    android:textColor="#000"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+        <com.getstream.sdk.chat.view.AvatarGroupView
+            android:id="@+id/avatar_group"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="18dp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_active"
-                    style="@style/text_s"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.lastActiveString}" />
-            </LinearLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp">
-
-                <com.getstream.sdk.chat.view.AvatarGroupView
-                    android:id="@+id/avatar_group"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/iv_active_mark"
-                    android:layout_width="7dp"
-                    android:layout_height="7dp"
-                    android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/circle_user_online : @drawable/circle_user_offline}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        </LinearLayout>
+        <ImageView
+            android:id="@+id/iv_active_mark"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/circle_user_online : @drawable/circle_user_offline}"
+            app:layout_constraintEnd_toEndOf="@+id/avatar_group"
+            app:layout_constraintStart_toEndOf="@+id/avatar_group"
+            app:layout_constraintTop_toTopOf="@+id/avatar_group" />
 
         <ImageView
             android:id="@+id/iv_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/gray" />
-    </RelativeLayout>
+            android:background="@color/stream_gray"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>
