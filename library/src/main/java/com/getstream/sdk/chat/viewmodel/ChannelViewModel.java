@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -139,16 +140,40 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper.start();
 
         initEventHandlers();
-        updateChannelHead();
+        updateChannelActiveStatus();
     }
 
     // updates live data about channel status (useful to render header and similar UI)
-    private void updateChannelHead() {
-        Date lastActive = channel.getChannelState().getLastActive();
+    private void updateChannelActiveStatus() {
+        // watcher count for higher traffic channels is sent on the send message event
+        // for regular channels it's done using the start watching and stop watching events
+        Boolean isAnyOtherUserOnline = getWatcherCount() > 1;
+        anyOtherUsersOnline.postValue(isAnyOtherUserOnline);
+        // last active is when any of the other users was last online
+        Date lastActive;
+        if (isAnyOtherUserOnline) {
+            lastActive = new Date();
+        } else {
+            lastActive = channel.getChannelState().getLastActive();
+        }
         String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
         lastActiveString.postValue(humanizedDate);
-        anyOtherUsersOnline.postValue(channel.getChannelState().anyOtherUsersOnline());
+
+    }
+
+    private void updateChannelName() {
         channelName.postValue(channel.getChannelState().getChannelNameOrMembers());
+    }
+
+    private int getWatcherCount() {
+        Number n = watcherCount.getValue();
+        int c;
+        if (n == null) {
+            c = 0;
+        } else {
+            c = n.intValue();
+        }
+        return c;
     }
 
     // region Getter
@@ -241,10 +266,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onAnyEvent(Event event) {
-                Number watcherCount = event.getWatcherCount();
-                if (watcherCount != null) {
-                    ChannelViewModel.this.watcherCount.postValue(watcherCount);
-                    updateChannelHead();
+                // the watcher count can be updated from any event...
+                Number newCount = event.getWatcherCount();
+                if (newCount != null) {
+                    watcherCount.postValue(newCount);
+                    updateChannelActiveStatus();
                 }
                 Log.d(TAG, "New Event: " + event.getType());
             }
@@ -253,7 +279,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             public void onMessageNew(Event event) {
                 Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
                 upsertMessage(event.getMessage());
-                updateChannelHead();
+            }
+
+            // TODO: onStartedWatching, onStoppedWatching
+
+            @Override
+            public void onChannelUpdated(Event event) {
+                 updateChannelName();
+            }
+
+            @Override
+            public void onMemberAdded(Event event) {
+                updateChannelName();
+            }
+
+            @Override
+            public void onMemberRemoved(Event event) {
+                updateChannelName();
             }
 
             @Override
@@ -392,7 +434,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                         reachedEndOfPagination = true;
                     }
                     addMessages(response.getMessages());
-                    updateChannelHead();
+                    updateChannelActiveStatus();
+                    updateChannelName();
                 }
 
                 @Override
