@@ -99,6 +99,5 @@ public class MessageViewHolderFactory {
             holder.setStyle(adapter.getStyle());
             return holder;
         }
-
     }
 }

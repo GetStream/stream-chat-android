@@ -15,12 +15,30 @@ import com.getstream.sdk.chat.utils.BaseStyle;
 public class MessageListViewStyle extends BaseStyle {
     final String TAG = MessageListViewStyle.class.getSimpleName();
 
-    // Dimension
+    // Message text
+    private int messageTextSizeMine;
+    private int messageTextSizeTheirs;
     private int messageTextColorMine;
     private int messageTextColorTheirs;
-    // Drawable
+    private int messageTextStyleMine;
+    private int messageTextStyleTheirs;
+    // Message Bubble
     private Drawable messageBubbleDrawableMine;
     private Drawable messageBubbleDrawableTheirs;
+    private int messageTopLeftCornerRadiusMine;
+    private int messageTopRightCornerRadiusMine;
+    private int messageBottomRightCornerRadiusMine;
+    private int messageBottomLeftRadiusMine;
+    private int messageTopLeftCornerRadiusTheirs;
+    private int messageTopRightCornerRadiusTheirs;
+    private int messageBottomRightCornerRadiusTheirs;
+    private int messageBottomLeftRadiusTheirs;
+    private int messageBackgroundColorMine;
+    private int messageBackgroundColorTheirs;
+    private int messageStrokeColorMine;
+    private int messageStrokeColorTheirs;
+    private int messageStrokeWidthMine;
+    private int messageStrokeWidthTheirs;
     // Reaction
     private boolean showReactionDlg;
     private boolean showUsersReactionDlg;

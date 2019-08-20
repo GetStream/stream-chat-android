@@ -125,10 +125,39 @@
         <attr name="reactionDlgEmojiSize" format="dimension|reference" />
         <attr name="reactionDlgEmojiMargin" format="dimension|reference" />
         <!--Message-->
+        <attr name="messageTextSizeMine" format="dimension|reference" />
+        <attr name="messageTextSizeTheirs" format="dimension|reference" />
         <attr name="messageTextColorMine" format="color" />
         <attr name="messageTextColorTheirs" format="color" />
+        <attr name="messageTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="messageTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="messageBubbleDrawableMine" format="reference" />
         <attr name="messageBubbleDrawableTheirs" format="reference" />
+
+        <attr name="messageTopLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="messageTopRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="messageBottomRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="messageBottomLeftRadiusMine" format="dimension|reference" />
+        <attr name="messageTopLeftCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="messageTopRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="messageBottomRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="messageBottomLeftRadiusTheirs" format="dimension|reference" />
+
+        <attr name="messageBackgroundColorMine" format="color" />
+        <attr name="messageBackgroundColorTheirs" format="color" />
+        <attr name="messageStrokeColorMine" format="color" />
+        <attr name="messageStrokeColorTheirs" format="color" />
+        <attr name="messageStrokeWidthMine" format="dimension|reference" />
+        <attr name="messageStrokeWidthTheirs" format="dimension|reference" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
