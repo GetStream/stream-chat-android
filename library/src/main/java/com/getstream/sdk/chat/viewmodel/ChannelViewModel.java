@@ -618,7 +618,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-//                viewModel.queryChannel();
+                viewModel.queryChannel();
             }
         }
     }
