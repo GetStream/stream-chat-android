@@ -140,6 +140,17 @@ public class Channel {
         this.image = image;
     }
 
+    public Channel copy() {
+        Channel clone = new Channel(client, type, id);
+        clone.name = name;
+        clone.lastMessageDate = new Date(lastMessageDate.getTime());
+        // TODO: add all fields here
+        // TODO: copy
+        clone.channelState = channelState;
+        clone.channelState.setChannel(clone);
+        return clone;
+    }
+
     public Map<String, String> getReactionTypes() {
         if (reactionTypes == null){
             return new HashMap<String, String>() {
@@ -556,6 +567,9 @@ public class Channel {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         channelState.addMessageSorted(event.getMessage());
+        if (getLastMessageDate().before(message.getCreatedAt())) {
+            setLastMessageDate(message.getCreatedAt());
+        }
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {

@@ -255,8 +255,6 @@ public class Client implements WSResponseHandler {
                 + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
 
-        setupEventHandling();
-
         mService = RetrofitClient.getAuthorizedClient(baseURL.url(BaseURL.Scheme.https), userToken).create(APIService.class);
         WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
@@ -294,11 +292,17 @@ public class Client implements WSResponseHandler {
         Channel channel = getChannelByCid(event.getCid());
         if (channel != null){
             event.setChannel(channel);
-            channel.handleChannelEvent(event);
         }
 
-        for (ChatEventHandler handler: eventSubscribers) {
+        builtinHandler.dispatchEvent(event);
+
+        for (int i = eventSubscribers.size() - 1; i >= 0 ; i--) {
+            ChatEventHandler handler = eventSubscribers.get(i);
             handler.dispatchEvent(event);
+        }
+
+        if (channel != null) {
+            channel.handleChannelEvent(event);
         }
     }
 
@@ -784,35 +788,42 @@ public class Client implements WSResponseHandler {
     }
 
     // endregion
-    public void setupEventHandling(){
-        addEventHandler(new ChatEventHandler(){
+    private ChatEventHandler builtinHandler =
+
+        new ChatEventHandler() {
             private void updateChannelMessage(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
                 if (channel != null) {
                     channel.handleMessageUpdatedOrDeleted(event);
                 }
             }
+
             @Override
             public void onTypingStart(Event event) {
             }
+
             @Override
             public void onTypingStop(Event event) {
             }
+
             @Override
             public void onMessageNew(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
-                if (channel != null){
+                if (channel != null) {
                     channel.handleNewMessage(event);
                 }
             }
+
             @Override
             public void onMessageUpdated(Event event) {
                 this.updateChannelMessage(event);
             }
+
             @Override
             public void onMessageDeleted(Event event) {
                 this.updateChannelMessage(event);
             }
+
             @Override
             public void onMessageRead(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
@@ -820,33 +831,37 @@ public class Client implements WSResponseHandler {
                     channel.handleReadEvent(event);
                 }
             }
+
             @Override
             public void onReactionNew(Event event) {
                 this.updateChannelMessage(event);
             }
+
             @Override
             public void onReactionDeleted(Event event) {
                 this.updateChannelMessage(event);
             }
+
             @Override
-            public void onChannelUpdated(Event event){
+            public void onChannelUpdated(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
                 if (channel != null) {
                     channel.handleNewMessage(event);
                 }
             }
+
             @Override
             public void onChannelDeleted(Event event) {
                 //TODO: remove channel from client activeChannels
             }
+
             @Override
             public void onConnectionChanged(Event event) {
                 if (!event.getOnline()) {
                     connected = false;
                 }
             }
-        });
-    }
+    };
 
     // region Device
 
@@ -1073,7 +1088,7 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    public void nuFlagMessage(@NonNull String targetMessageId,
+    public void unFlagMessage(@NonNull String targetMessageId,
                               FlagUserCallback callback) {
 
         Map<String, String> body = new HashMap<>();
