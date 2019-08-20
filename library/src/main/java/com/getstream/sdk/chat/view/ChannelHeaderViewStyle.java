@@ -27,9 +27,9 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.ChannelHeaderView, 0, 0);
         // Channel Title
-        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelTitleTextSize, getDimension(R.dimen.stream_channel_initials));
+        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelTitleTextColor, getColor(R.color.stream_channel_initials));
-        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelTitleTextStyle, Typeface.NORMAL);
+        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelTitleTextStyle, Typeface.BOLD);
         // Last Active
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_lastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_lastActiveTextColor, getColor(R.color.gray_dark));

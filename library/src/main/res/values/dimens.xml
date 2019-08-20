@@ -6,6 +6,7 @@
     <dimen name="stream_channel_preview_name">14sp</dimen>
     <dimen name="stream_channel_preview_date">11sp</dimen>
     <dimen name="stream_channel_initials">14sp</dimen>
+    <dimen name="stream_channel_header_initials">16sp</dimen>
     <!--Message Input-->
     <dimen name="attachment_button_width">25dp</dimen>
     <dimen name="attachment_button_height">25dp</dimen>
