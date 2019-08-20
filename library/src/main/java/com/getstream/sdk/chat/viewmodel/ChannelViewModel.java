@@ -418,6 +418,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
 
+        loadingMore.setValue(true);
         Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
@@ -434,10 +435,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)
                             reachedEndOfPagination = true;
                         setLoadingMoreDone();
+                        loadingMore.setValue(false);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
+                        loadingMore.setValue(false);
                         setLoadingMoreDone();
                     }
                 }

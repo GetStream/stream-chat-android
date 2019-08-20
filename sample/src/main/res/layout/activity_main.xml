@@ -20,7 +20,7 @@
         <com.getstream.sdk.chat.view.ChannelListView
             android:id="@+id/channelList"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
