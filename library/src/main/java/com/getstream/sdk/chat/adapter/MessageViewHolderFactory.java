@@ -87,7 +87,7 @@ public class MessageViewHolderFactory {
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
-            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.list_item_attachment_video, parent);
+            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.list_item_attach_media, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else if (viewType == FILE_ATTACHMENT) {
@@ -101,7 +101,4 @@ public class MessageViewHolderFactory {
         }
 
     }
-
-
-
 }
