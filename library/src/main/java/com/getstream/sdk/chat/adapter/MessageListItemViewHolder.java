@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.DimenRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,7 +36,6 @@ import java.util.List;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
-import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
@@ -202,7 +200,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadState();
-//        configParamsAttachment();
+        configParamsAttachment();
     }
     // endregion
 
@@ -531,6 +529,24 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         read_state.setLayoutParams(params);
     }
+
+    public void configParamsAttachment(){
+//        if (alv_attachments.getVisibility() != View.VISIBLE) return;
+//        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) alv_attachments.getLayoutParams();
+//        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
+//        if (messageListItem.isTheirs()) {
+//            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
+//            params.setMarginStart(marginStart);
+//            params.setMarginEnd(0);
+//            params.horizontalBias = 0f;
+//        } else {
+//            params.setMarginStart(0);
+//            params.setMarginEnd(marginStart);
+//            params.horizontalBias = 1f;
+//        }
+//        alv_attachments.setLayoutParams(params);
+    }
+
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;

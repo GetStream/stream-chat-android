@@ -97,7 +97,7 @@ public class MessageListView extends RecyclerView {
                     }
                     int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                     int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                    int bgColor = getResources().getColor(R.color.message_background_incoming);
+                    int bgColor = getResources().getColor(R.color.message_background_outgoing);
                     int strokeColor = getResources().getColor(R.color.message_border);
                     int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
                     return new DrawableBuilder()
@@ -105,7 +105,7 @@ public class MessageListView extends RecyclerView {
                             .strokeColor(strokeColor)
                             .strokeWidth(strokeWidth)
                             .solidColor(bgColor)
-                            .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
+                            .cornerRadii(conerRadius1, conerRadius2, conerRadius2, conerRadius1)
                             .build();
 
 //                    return style.getMessageBubbleDrawableMine();
@@ -119,24 +119,51 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-//                if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-//                    int attachmentPosition = message.getAttachments().indexOf(attachment);
-//                    if (attachmentPosition == 0) {
-//                        return getResources().getDrawable(R.drawable.round_attach_media_incoming1);
-//                    }
-//                }
                 int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                 int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                 int bgColor = getResources().getColor(R.color.message_background_incoming);
                 int strokeColor = getResources().getColor(R.color.message_border);
                 int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
-                return new DrawableBuilder()
-                        .rectangle()
-                        .strokeColor(strokeColor)
-                        .strokeWidth(strokeWidth)
-                        .solidColor(bgColor)
-                        .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
-                        .build();
+                if (mine) {
+                    int attachmentPosition = message.getAttachments().indexOf(attachment);
+                    if (attachmentPosition == 0) {
+                        return new DrawableBuilder()
+                                .rectangle()
+                                .strokeColor(strokeColor)
+                                .strokeWidth(strokeWidth)
+                                .solidColor(bgColor)
+                                .cornerRadii(conerRadius1, conerRadius1, conerRadius2, conerRadius1)
+                                .build();
+                    } else {
+                        return new DrawableBuilder()
+                                .rectangle()
+                                .strokeColor(strokeColor)
+                                .strokeWidth(strokeWidth)
+                                .solidColor(bgColor)
+                                .cornerRadii(conerRadius1, conerRadius2, conerRadius2, conerRadius1)
+                                .build();
+                    }
+
+                } else {
+                    int attachmentPosition = message.getAttachments().indexOf(attachment);
+                    if (attachmentPosition == 0) {
+                        return new DrawableBuilder()
+                                .rectangle()
+                                .strokeColor(strokeColor)
+                                .strokeWidth(strokeWidth)
+                                .solidColor(bgColor)
+                                .cornerRadii(conerRadius1, conerRadius1, conerRadius1, conerRadius2)
+                                .build();
+                    } else {
+                        return new DrawableBuilder()
+                                .rectangle()
+                                .strokeColor(strokeColor)
+                                .strokeWidth(strokeWidth)
+                                .solidColor(bgColor)
+                                .cornerRadii(conerRadius2, conerRadius1, conerRadius1, conerRadius2)
+                                .build();
+                    }
+                }
 //                return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
             }
         });

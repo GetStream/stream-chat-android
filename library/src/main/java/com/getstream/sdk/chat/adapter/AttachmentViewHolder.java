@@ -197,7 +197,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
         cl_attachment_media.setVisibility(View.VISIBLE);
         configAttachViewBackground(cl_attachment_media);
-        configImageThumbBackground(attachments.get(0));
+//        configImageThumbBackground(attachments.get(0));
         // More
         if (attachments.size() > 1) {
             iv_media_more.setVisibility(View.VISIBLE);
