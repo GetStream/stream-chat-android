@@ -55,7 +55,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         cl_video = itemView.findViewById(R.id.cl_video);
-
     }
 
     @Override

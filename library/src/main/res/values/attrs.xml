@@ -3,14 +3,14 @@
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-        <attr name="channelAvatarWidth" format="dimension|reference" />
-        <attr name="channelAvatarHeight" format="dimension|reference" />
-        <attr name="channelAvatarBorderWidth" format="dimension|reference" />
-        <attr name="channelAvatarBorderColor" format="color|reference" />
-        <attr name="channelAvatarBackGroundColor" format="color|reference" />
-        <attr name="channelAvatarTextSize" format="dimension|reference" />
-        <attr name="channelAvatarTextColor" format="color|reference" />
-        <attr name="channelAvatarTextStyle">
+        <attr name="avatarWidth" format="dimension|reference" />
+        <attr name="avatarHeight" format="dimension|reference" />
+        <attr name="avatarBorderWidth" format="dimension|reference" />
+        <attr name="avatarBorderColor" format="color|reference" />
+        <attr name="avatarBackGroundColor" format="color|reference" />
+        <attr name="avatarTextSize" format="dimension|reference" />
+        <attr name="avatarTextColor" format="color|reference" />
+        <attr name="avatarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

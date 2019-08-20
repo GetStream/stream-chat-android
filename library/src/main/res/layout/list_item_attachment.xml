@@ -6,8 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
         <include
             android:id="@+id/cl_attachment_media"
             layout="@layout/list_item_attach_media"
