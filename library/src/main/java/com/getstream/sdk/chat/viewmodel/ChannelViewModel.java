@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.InputType;
@@ -77,7 +78,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> online;
     private MutableLiveData<String> channelName;
     private LazyQueryChannelLiveData<List<Message>> messages;
-    private MutableLiveData<Boolean> anyOtherUsersOnline;
+    private LiveData<Boolean> anyOtherUsersOnline;
     private MutableLiveData<Number> watcherCount;
     private MutableLiveData<String> lastActiveString;
     private MutableLiveData<Boolean> hasNewMessages;
@@ -109,7 +110,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         online = new MutableLiveData<>(true);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
-        anyOtherUsersOnline = new MutableLiveData<>();
+
+
+
+
         channelName = new MutableLiveData<>();
 
         messages = new LazyQueryChannelLiveData<>();
@@ -128,6 +132,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.setValue(channel.getChannelState().getReads());
 
         watcherCount = new MutableLiveData<>();
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> {
+            if (count == null) return false;
+            return count.intValue() > 0;
+        });
 
         lastActiveString = new MutableLiveData<>();
         typingState = new HashMap<>();
@@ -145,13 +153,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     // updates live data about channel status (useful to render header and similar UI)
     private void updateChannelActiveStatus() {
-        // watcher count for higher traffic channels is sent on the send message event
-        // for regular channels it's done using the start watching and stop watching events
-        Boolean isAnyOtherUserOnline = getWatcherCount() > 1;
-        anyOtherUsersOnline.postValue(isAnyOtherUserOnline);
+
         // last active is when any of the other users was last online
+        // TODO: we need to keep a list of users that are watching
+        //  - update that using events
+        // - have a transformation of that list that returns the lastActive
         Date lastActive;
-        if (isAnyOtherUserOnline) {
+        if (true) {
             lastActive = new Date();
         } else {
             lastActive = channel.getChannelState().getLastActive();
@@ -266,7 +274,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onAnyEvent(Event event) {
-                // the watcher count can be updated from any event...
+                // watcher count for higher traffic channels is sent on the send message event
+                // for regular channels it's done using the start watching and stop watching events
                 Number newCount = event.getWatcherCount();
                 if (newCount != null) {
                     watcherCount.postValue(newCount);
