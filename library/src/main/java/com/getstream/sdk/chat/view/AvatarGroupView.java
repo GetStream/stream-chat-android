@@ -63,8 +63,8 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
-        params.width = (int) style.getAvatarWidth();
-        params.height = (int) style.getAvatarHeight();
+        params.width = style.getAvatarWidth();
+        params.height = style.getAvatarHeight();
         this.setLayoutParams(params);
 
         removeAllViews();
@@ -157,11 +157,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         RelativeLayout.LayoutParams params;
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (int) (style.getAvatarInitialTextSize()),
+                (style.getAvatarInitialTextSize()),
                 style.getAvatarInitialTextStyle());
         params = new RelativeLayout.LayoutParams(
-                (int) (style.getAvatarWidth()),
-                (int) (style.getAvatarHeight()));
+                (style.getAvatarWidth()),
+                (style.getAvatarHeight()));
         imageView.setLayoutParams(params);
         this.addView(imageView);
     }

@@ -11,69 +11,61 @@
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.ChannelActivity">
 
-        <com.getstream.sdk.chat.view.ChannelHeaderView
-            android:id="@+id/channelHeader"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFC107"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            stream:backButtonShow="true" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <com.getstream.sdk.chat.view.MessageListView
-            android:id="@+id/messageList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:background="#FFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-            stream:reactionDlgEmojiSize="50dp"
-            stream:reactionDlgbgColor="#001DC4"
-            stream:showUsersReactionDlg="true"
-            stream:userAvatarTextColor="#FFF"
-            stream:userAvatarTextStyle="bold"
-            stream:userReadStateAvatarHeight="15dp"
-            stream:userReadStateAvatarWidth="15dp"
-            stream:userReadStateTextColor="#FFF"
-            stream:userReadStateTextStyle="bold"
-            stream:userRreadStateTextSize="9sp" />
+            <com.getstream.sdk.chat.view.ChannelHeaderView
+                android:id="@+id/channelHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                stream:backButtonShow="true" />
+
+            <com.getstream.sdk.chat.view.MessageListView
+                android:id="@+id/messageList"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#FFF"
+                stream:reactionDlgEmojiSize="50dp"
+                stream:reactionDlgbgColor="#001DC4"
+                stream:showUsersReactionDlg="true"
+                stream:userAvatarTextColor="#FFF"
+                stream:userAvatarTextStyle="bold"
+                stream:userReadStateAvatarHeight="15dp"
+                stream:userReadStateAvatarWidth="15dp"
+                stream:userReadStateTextColor="#FFF"
+                stream:userReadStateTextStyle="bold"
+                stream:userRreadStateTextSize="9sp" />
+
+            <com.getstream.sdk.chat.view.MessageInputView
+                android:id="@+id/message_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:background="@color/chat_theme" />
+        </LinearLayout>
 
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:isGone="@{!safeUnbox(viewModel.loading)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:isGone="@{!safeUnbox(viewModel.loading)}" />
 
         <ProgressBar
             android:layout_width="25dp"
             android:layout_height="25dp"
-            app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
+            android:layout_centerHorizontal="true"
+            app:isGone="@{!safeUnbox(viewModel.loadingMore)}" />
 
-        <com.getstream.sdk.chat.view.MessageInputView
-            android:id="@+id/message_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="0dp"
-            android:background="@color/chat_theme"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 </layout>

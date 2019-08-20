@@ -11,7 +11,7 @@
             type="com.getstream.sdk.chat.viewmodel.ChannelListViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.MainActivity">
@@ -21,10 +21,7 @@
             android:id="@+id/channelList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
             android:background="@color/stream_gray_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             stream:channelReadStateAvatarHeight="15dp"
             stream:channelReadStateAvatarWidth="15dp"
             stream:channelReadStateTextColor="#FF0000"
@@ -35,20 +32,17 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:isGone="@{!safeUnbox(viewModel.loading)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:isGone="@{!safeUnbox(viewModel.loading)}" />
 
         <ProgressBar
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:isGone="@{!safeUnbox(viewModel.loadingMore)}" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 </layout>
