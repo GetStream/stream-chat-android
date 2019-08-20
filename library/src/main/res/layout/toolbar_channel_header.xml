@@ -79,8 +79,8 @@
         <ImageView
             android:id="@+id/iv_separator"
             android:layout_width="match_parent"
-            android:layout_height="6dp"
-            android:background="@drawable/channel_header_separator"
+            android:layout_height="1dp"
+            android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -4,11 +4,7 @@
     <stroke
         android:height="1dp"
         android:color="@color/stream_gray" />
-    <gradient
-        android:angle="90"
-        android:endColor="@color/stream_gray"
-        android:startColor="#FFF"
-        android:type="linear" />
+
 
 
 </shape>
