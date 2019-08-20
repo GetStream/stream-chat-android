@@ -25,7 +25,7 @@
                 style="@style/text"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginStart="20dp"
                 android:background="@drawable/round_thread_close"
                 android:gravity="center"
                 android:text="‹"

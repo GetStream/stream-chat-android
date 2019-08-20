@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ToolbarChannelHeaderBinding;
+import com.getstream.sdk.chat.databinding.ViewChannelHeaderBinding;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -22,7 +22,7 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
     final String TAG = ChannelHeaderView.class.getSimpleName();
 
     // binding for this view
-    private ToolbarChannelHeaderBinding binding;
+    private ViewChannelHeaderBinding binding;
     private OnBackClickListener onBackClickListener;
     private ChannelHeaderViewStyle style;
     // our connection to the channel scope
@@ -52,9 +52,9 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         configHeaderAvatar();
     }
 
-    private ToolbarChannelHeaderBinding initBinding(Context context) {
+    private ViewChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ToolbarChannelHeaderBinding.inflate(inflater, this, true);
+        binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
         binding.tvBack.setOnClickListener(this);
         return binding;

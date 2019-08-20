@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:stream="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:stream="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -13,46 +12,41 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="io.getstream.chat.example.ChannelActivity">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <com.getstream.sdk.chat.view.ChannelHeaderView
+            android:id="@+id/channelHeader"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="#FFFFFF"
+            stream:backButtonShow="true" />
 
-            <com.getstream.sdk.chat.view.ChannelHeaderView
-                android:id="@+id/channelHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#FFFFFF"
-                stream:backButtonShow="true" />
+        <com.getstream.sdk.chat.view.MessageListView
+            android:id="@+id/messageList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_above="@+id/message_input"
+            android:layout_below="@+id/channelHeader"
+            android:background="#FFF"
+            stream:reactionDlgEmojiSize="50dp"
+            stream:reactionDlgbgColor="#001DC4"
+            stream:showUsersReactionDlg="true"
+            stream:userAvatarTextColor="#FFF"
+            stream:userAvatarTextStyle="bold"
+            stream:userReadStateAvatarHeight="15dp"
+            stream:userReadStateAvatarWidth="15dp"
+            stream:userReadStateTextColor="#FFF"
+            stream:userReadStateTextStyle="bold"
+            stream:userRreadStateTextSize="9sp" />
 
-            <com.getstream.sdk.chat.view.MessageListView
-                android:id="@+id/messageList"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:background="#FFF"
-                stream:reactionDlgEmojiSize="50dp"
-                stream:reactionDlgbgColor="#001DC4"
-                stream:showUsersReactionDlg="true"
-                stream:userAvatarTextColor="#FFF"
-                stream:userAvatarTextStyle="bold"
-                stream:userReadStateAvatarHeight="15dp"
-                stream:userReadStateAvatarWidth="15dp"
-                stream:userReadStateTextColor="#FFF"
-                stream:userReadStateTextStyle="bold"
-                stream:userRreadStateTextSize="9sp" />
-
-            <com.getstream.sdk.chat.view.MessageInputView
-                android:id="@+id/message_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:background="@color/chat_theme" />
-        </LinearLayout>
-
+        <com.getstream.sdk.chat.view.MessageInputView
+            android:id="@+id/message_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="32dp"
+            android:background="@color/chat_theme" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -64,6 +58,7 @@
         <ProgressBar
             android:layout_width="25dp"
             android:layout_height="25dp"
+            android:layout_below="@+id/channelHeader"
             android:layout_centerHorizontal="true"
             app:isGone="@{!safeUnbox(viewModel.loadingMore)}" />
 
