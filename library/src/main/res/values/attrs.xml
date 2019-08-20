@@ -146,11 +146,11 @@
         <attr name="messageTopLeftCornerRadiusMine" format="dimension|reference" />
         <attr name="messageTopRightCornerRadiusMine" format="dimension|reference" />
         <attr name="messageBottomRightCornerRadiusMine" format="dimension|reference" />
-        <attr name="messageBottomLeftRadiusMine" format="dimension|reference" />
+        <attr name="messageBottomLeftCornerRadiusMine" format="dimension|reference" />
         <attr name="messageTopLeftCornerRadiusTheirs" format="dimension|reference" />
         <attr name="messageTopRightCornerRadiusTheirs" format="dimension|reference" />
         <attr name="messageBottomRightCornerRadiusTheirs" format="dimension|reference" />
-        <attr name="messageBottomLeftRadiusTheirs" format="dimension|reference" />
+        <attr name="messageBottomLeftCornerRadiusTheirs" format="dimension|reference" />
 
         <attr name="messageBackgroundColorMine" format="color" />
         <attr name="messageBackgroundColorTheirs" format="color" />

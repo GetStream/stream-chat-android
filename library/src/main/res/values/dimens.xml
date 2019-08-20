@@ -24,7 +24,7 @@
     <dimen name="message_avatar_width">32dp</dimen>
     <dimen name="message_corner_radius1">16dp</dimen>
     <dimen name="message_corner_radius2">2dp</dimen>
-    <dimen name="message_stroke_width">1dp</dimen>
+    <dimen name="message_stroke">1dp</dimen>
     <dimen name="message_margin_start">47dp</dimen>
     <dimen name="message_gap">5px</dimen>
     <dimen name="message_avatar_margin">10dp</dimen>

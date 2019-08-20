@@ -7,8 +7,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import androidx.annotation.ColorInt;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.BaseStyle;
 
@@ -28,11 +26,11 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageTopLeftCornerRadiusMine;
     private int messageTopRightCornerRadiusMine;
     private int messageBottomRightCornerRadiusMine;
-    private int messageBottomLeftRadiusMine;
+    private int messageBottomLeftCornerRadiusMine;
     private int messageTopLeftCornerRadiusTheirs;
     private int messageTopRightCornerRadiusTheirs;
     private int messageBottomRightCornerRadiusTheirs;
-    private int messageBottomLeftRadiusTheirs;
+    private int messageBottomLeftCornerRadiusTheirs;
     private int messageBackgroundColorMine;
     private int messageBackgroundColorTheirs;
     private int messageStrokeColorMine;
@@ -53,11 +51,36 @@ public class MessageListViewStyle extends BaseStyle {
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.MessageListView, 0, 0);
 
+        // Message Text
+        messageTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTextSizeMine, getDimension(R.dimen.message_text_font_size));
         messageTextColorMine = a.getColor(R.styleable.MessageListView_messageTextColorMine, Color.BLACK);
-        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_messageTextColorTheirs, Color.BLACK);
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, R.drawable.message_bubble_mine));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, R.drawable.message_bubble_theirs));
+        messageTextStyleMine = a.getColor(R.styleable.MessageListView_messageTextStyleMine, Typeface.NORMAL);
 
+        messageTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTextSizeTheirs, getDimension(R.dimen.message_text_font_size));
+        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_messageTextColorTheirs, Color.BLACK);
+        messageTextStyleTheirs = a.getColor(R.styleable.MessageListView_messageTextStyleTheirs, Typeface.NORMAL);
+        // Message Bubble
+        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, -1));
+        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
+
+        messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
+        messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
+        messageBottomRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
+        messageBottomLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
+
+        messageTopLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageTopRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
+        messageBottomRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
+        messageBottomLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+
+        messageBackgroundColorMine = a.getColor(R.styleable.MessageListView_messageBackgroundColorMine, getColor(R.color.message_background_outgoing));
+        messageBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_messageBackgroundColorTheirs, getColor(R.color.message_background_incoming));
+
+        messageStrokeColorMine = a.getColor(R.styleable.MessageListView_messageStrokeColorMine, getColor(R.color.message_stroke));
+        messageStrokeColorTheirs = a.getColor(R.styleable.MessageListView_messageStrokeColorTheirs, getColor(R.color.message_stroke));
+
+        messageStrokeWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthMine, getDimension(R.dimen.message_stroke));
+        messageStrokeWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthTheirs, getDimension(R.dimen.message_stroke));
         // Reaction Dialog
         showReactionDlg = a.getBoolean(R.styleable.MessageListView_showReactionDlg, true);
         showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_showUsersReactionDlg, true);
@@ -89,39 +112,92 @@ public class MessageListViewStyle extends BaseStyle {
         a.recycle();
     }
 
+    public int getMessageTextSizeMine() {
+        return messageTextSizeMine;
+    }
 
-    @ColorInt
+    public int getMessageTextSizeTheirs() {
+        return messageTextSizeTheirs;
+    }
+
     public int getMessageTextColorMine() {
         return messageTextColorMine;
     }
-
-    public void setMessageTextColorMine(int messageTextColorMine) {
-        this.messageTextColorMine = messageTextColorMine;
-    }
-
 
     public int getMessageTextColorTheirs() {
         return messageTextColorTheirs;
     }
 
-    public void setMessageTextColorTheirs(int messageTextColorTheirs) {
-        this.messageTextColorTheirs = messageTextColorTheirs;
+    public int getMessageTextStyleMine() {
+        return messageTextStyleMine;
+    }
+
+    public int getMessageTextStyleTheirs() {
+        return messageTextStyleTheirs;
     }
 
     public Drawable getMessageBubbleDrawableMine() {
         return messageBubbleDrawableMine;
     }
 
-    public void setMessageBubbleDrawableMine(Drawable messageBubbleDrawableMine) {
-        this.messageBubbleDrawableMine = messageBubbleDrawableMine;
-    }
-
     public Drawable getMessageBubbleDrawableTheirs() {
         return messageBubbleDrawableTheirs;
     }
 
-    public void setMessageBubbleDrawableTheirs(Drawable messageBubbleDrawableTheirs) {
-        this.messageBubbleDrawableTheirs = messageBubbleDrawableTheirs;
+    public int getMessageTopLeftCornerRadiusMine() {
+        return messageTopLeftCornerRadiusMine;
+    }
+
+    public int getMessageTopRightCornerRadiusMine() {
+        return messageTopRightCornerRadiusMine;
+    }
+
+    public int getMessageBottomRightCornerRadiusMine() {
+        return messageBottomRightCornerRadiusMine;
+    }
+
+    public int getMessageBottomLeftCornerRadiusMine() {
+        return messageBottomLeftCornerRadiusMine;
+    }
+
+    public int getMessageTopLeftCornerRadiusTheirs() {
+        return messageTopLeftCornerRadiusTheirs;
+    }
+
+    public int getMessageTopRightCornerRadiusTheirs() {
+        return messageTopRightCornerRadiusTheirs;
+    }
+
+    public int getMessageBottomRightCornerRadiusTheirs() {
+        return messageBottomRightCornerRadiusTheirs;
+    }
+
+    public int getMessageBottomLeftCornerRadiusTheirs() {
+        return messageBottomLeftCornerRadiusTheirs;
+    }
+
+    public int getMessageBackgroundColorMine() {
+        return messageBackgroundColorMine;
+    }
+
+    public int getMessageBackgroundColorTheirs() {
+        return messageBackgroundColorTheirs;
+    }
+
+    public int getMessageStrokeColorMine() {
+        return messageStrokeColorMine;
+    }
+
+    public int getMessageStrokeColorTheirs() {
+        return messageStrokeColorTheirs;
+    }
+
+    public int getMessageStrokeWidthMine() {
+        return messageStrokeWidthMine;
+    }
+
+    public int getMessageStrokeWidthTheirs() {
+        return messageStrokeWidthTheirs;
     }
 
     // Reaction Dialog

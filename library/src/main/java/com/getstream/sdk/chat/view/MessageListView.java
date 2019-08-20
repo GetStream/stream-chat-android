@@ -91,15 +91,14 @@ public class MessageListView extends RecyclerView {
             @Override
             public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
                 if (mine) {
-                    // if the size is 0 the attachment has the corner change
                     if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
                         return getResources().getDrawable(R.drawable.message_bubble_mine_top);
                     }
                     int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                     int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                     int bgColor = getResources().getColor(R.color.message_background_outgoing);
-                    int strokeColor = getResources().getColor(R.color.message_border);
-                    int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
+                    int strokeColor = getResources().getColor(R.color.message_stroke);
+                    int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke);
                     return new DrawableBuilder()
                             .rectangle()
                             .strokeColor(strokeColor)
@@ -107,8 +106,6 @@ public class MessageListView extends RecyclerView {
                             .solidColor(bgColor)
                             .cornerRadii(conerRadius1, conerRadius2, conerRadius2, conerRadius1)
                             .build();
-
-//                    return style.getMessageBubbleDrawableMine();
                 } else {
                     if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
                         return getResources().getDrawable(R.drawable.message_bubble_theirs_top);
@@ -122,8 +119,8 @@ public class MessageListView extends RecyclerView {
                 int conerRadius1 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                 int conerRadius2 = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                 int bgColor = getResources().getColor(R.color.message_background_incoming);
-                int strokeColor = getResources().getColor(R.color.message_border);
-                int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke_width);
+                int strokeColor = getResources().getColor(R.color.message_stroke);
+                int strokeWidth = getResources().getDimensionPixelSize(R.dimen.message_stroke);
                 if (mine) {
                     int attachmentPosition = message.getAttachments().indexOf(attachment);
                     if (attachmentPosition == 0) {
@@ -164,7 +161,6 @@ public class MessageListView extends RecyclerView {
                                 .build();
                     }
                 }
-//                return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
             }
         });
     }

@@ -4,8 +4,8 @@
 
     <solid android:color="@color/white" />
     <stroke
-        android:width="@dimen/message_stroke_width"
-        android:color="@color/message_border" />
+        android:width="@dimen/message_stroke"
+        android:color="@color/message_stroke" />
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
