@@ -148,7 +148,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper.start();
 
 
-        initEventHandlers();
+//        initEventHandlers();
         updateChannelActiveStatus();
     }
 

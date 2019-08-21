@@ -33,8 +33,8 @@
             android:layout_marginBottom="10dp"
             android:background="#FFF"
             app:layout_constraintBottom_toTopOf="@+id/message_input"
-            app:layout_constraintEnd_toStartOf="@+id/message_input"
-            app:layout_constraintStart_toEndOf="@+id/channelHeader"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
             stream:reactionDlgEmojiSize="50dp"
             stream:reactionDlgbgColor="#001DC4"
@@ -45,8 +45,9 @@
             stream:userReadStateAvatarWidth="15dp"
             stream:userReadStateTextColor="#FFF"
             stream:userReadStateTextStyle="bold"
-            stream:userRreadStateTextSize="9sp" />
-
+            stream:userRreadStateTextSize="9sp"
+            stream:messageBubbleDrawableMine="@drawable/bg_custom_outcoming_message"
+            stream:messageBubbleDrawableTheirs="@drawable/bg_custom_incoming_message"/>
 
         <TextView
             android:layout_width="wrap_content"

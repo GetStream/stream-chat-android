@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -158,7 +160,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = messageListItem.getPositions();
 
 
-        if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
         } else {
             alv_attachments.setVisibility(View.VISIBLE);
@@ -168,6 +170,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
             alv_attachments.setLongClickListener(messageLongClickListener);
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            alv_attachments.setBackground(background);
         }
 
         // apply the style based on mine or theirs
@@ -207,13 +211,17 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void applyStyleMine() {
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
         tv_text.setTextColor(style.getMessageTextColorMine());
+        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
     }
 
     private void applyStyleTheirs() {
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
         tv_text.setTextColor(style.getMessageTextColorTheirs());
+        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
     }
 
     private void applyPositionsStyle() {
@@ -530,7 +538,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         read_state.setLayoutParams(params);
     }
 
-    public void configParamsAttachment(){
+    public void configParamsAttachment() {
 //        if (alv_attachments.getVisibility() != View.VISIBLE) return;
 //        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) alv_attachments.getLayoutParams();
 //        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
