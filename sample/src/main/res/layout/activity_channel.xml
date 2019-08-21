@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
@@ -19,10 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFF"
+            app:backButtonShow="true"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:backButtonShow="true" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
@@ -34,6 +35,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
+            app:messageBackgroundColorMine="#226DFF"
+            app:messageBackgroundColorTheirs="@color/white"
+            app:messageTextColorMine="@color/white"
+            app:messageTextColorTheirs="#53C900"
+            app:messageTextSizeMine="20sp"
+            app:messageTextStyleTheirs="bold|italic"
             app:reactionDlgEmojiSize="50dp"
             app:reactionDlgbgColor="#001DC4"
             app:showUsersReactionDlg="true"
@@ -43,16 +50,7 @@
             app:userReadStateAvatarWidth="15dp"
             app:userReadStateTextColor="#FFF"
             app:userReadStateTextStyle="bold"
-            app:userRreadStateTextSize="9sp"
-            app:messageTextSizeMine="20sp"
-            app:messageTextColorTheirs="#53C900"
-            app:messageTextStyleTheirs="bold|italic"
-            app:messageBackgroundColorMine="#226DFF"
-            app:messageBackgroundColorTheirs="@color/white"
-            app:messageTextColorMine="@color/white"
-            app:messageStrokeWidthMine="4dp"
-            app:messageStrokeColorMine="#FF0000"
-            />
+            app:userRreadStateTextSize="9sp" />
 
         <TextView
             android:layout_width="wrap_content"
