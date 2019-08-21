@@ -18,7 +18,6 @@ import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
@@ -148,12 +147,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
             Log.d(TAG, "Attach onMessageClick: " + position);
-
-                SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                attachmentModel.setAttachmentIndex(position);
-                attachmentModel.setAttachments(attachments);
-
-                view.setTag(attachmentModel);
                 triggerClick(message, attachment);
 
         });
@@ -208,16 +201,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         // Set Click Listener
         cl_attachment_media.setOnClickListener((View v) -> {
-                if (attachments.size() > 0) {
-                    SelectAttachmentModel attachmentModel = new SelectAttachmentModel();
-                    attachmentModel.setAttachmentIndex(0);
-                    attachmentModel.setAttachments(attachments);
-                    Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
-                    v.setTag(attachmentModel);
-                }
-                this.triggerClick(message, attachment);
-
-
+            this.triggerClick(message, attachment);
         });
 
 

@@ -33,11 +33,12 @@ import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.ReactionDlgView;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,27 +142,83 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onAttachmentClick(Message message, Attachment attachment) {
-        Log.i(TAG, "attachment was clicked");
-        // Image
+        switch (attachment.getType()) {
+            case ModelType.attach_file:
+                loadFile(attachment);
+                break;
+            case ModelType.attach_image:
+                List<String> imageUrls = new ArrayList<>();
+                for (Attachment a : message.getAttachments()) {
+                    imageUrls.add(a.getImageURL());
+                }
 
-        if (attachment.getType().equals(ModelType.attach_image)) {
-            List<String> imageUrls = new ArrayList<>();
-            for (Attachment a : message.getAttachments()) {
-                imageUrls.add(a.getImageURL());
-            }
+                int position = message.getAttachments().indexOf(attachment);
 
-            int position = message.getAttachments().indexOf(attachment);
+                new ImageViewer.Builder<>(this, imageUrls)
+                        .setStartPosition(position)
+                        .show();
+                break;
+            default:
+                String url = null;
+                String type = null;
+                switch (attachment.getType()) {
+                    case ModelType.attach_video:
+                        url = attachment.getTitleLink();
+                        break;
+                    case ModelType.attach_giphy:
+                        url = attachment.getThumbURL();
+                        break;
+                    case ModelType.attach_image:
+                        if (attachment.getOgURL() != null) {
+                            url = attachment.getOgURL();
+                            type = ModelType.attach_link;
+                        } else {
+                            url = attachment.getImageURL();
+                        }
+                        break;
+                    case ModelType.attach_product:
+                        url = attachment.getUrl();
+                        break;
+                    default:
+                        break;
+                }
 
-            new ImageViewer.Builder<>(this, imageUrls)
-                    .setStartPosition(position)
-                    .show();
-        } else {
-            // Giphy, Video, Link, Product,...
-            Intent mediaIntent = new Intent(this, AttachmentActivity.class);
-            this.startActivity(mediaIntent);
+                Intent intent = new Intent(this, AttachmentActivity.class);
+                intent.putExtra("type", type);
+                intent.putExtra("url", url);
+                startActivity(intent);
+                break;
+
+        }
+    }
+
+    // region Load File
+    private void loadFile(Attachment attachment) {
+        // Media
+        if (attachment.getMime_type().contains("audio") ||
+                attachment.getMime_type().contains("video")) {
+            Intent intent = new Intent(this, AttachmentMediaActivity.class);
+            intent.putExtra("type", attachment.getMime_type());
+            intent.putExtra("url", attachment.getAssetURL());
+            startActivity(intent);
+            return;
         }
 
+        // Office
+        if (attachment.getMime_type().equals("application/msword") ||
+                attachment.getMime_type().equals(ModelType.attach_mime_txt) ||
+                attachment.getMime_type().equals(ModelType.attach_mime_pdf) ||
+                attachment.getMime_type().contains("application/vnd")) {
+
+            Intent intent = new Intent(this, AttachmentDocumentActivity.class);
+            intent.putExtra("url", attachment.getAssetURL());
+            startActivity(intent);
+        }
     }
+
+
+    // endregion
+
 
     Map<String, String> reactionTypes = new HashMap<String, String>() {
         {
@@ -171,7 +228,7 @@ public class ChannelActivity extends AppCompatActivity
             put("wow", "\uD83D\uDE32");
             put("sad", " \uD83D\uDE41");
             put("angry", "\uD83D\uDE21");
-            put("cheeky","\uD83D\uDE1B");
+            put("cheeky", "\uD83D\uDE1B");
         }
     };
 

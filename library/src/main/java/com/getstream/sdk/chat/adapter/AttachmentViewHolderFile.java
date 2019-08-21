@@ -58,8 +58,20 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         iv_file_thumb.setImageResource(attachment.getIcon());
         tv_file_title.setText(attachment.getTitle());
 
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(),
+                messageListItem.isMine(),
+                messageListItem.getPositions(),
+                attachment);
         cl_attachment.setBackground(background);
+
+        cl_attachment.setOnClickListener(view -> {
+            this.triggerClick(message, attachment);
+        });
+        cl_attachment.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
     }
 
     private void triggerLongClick(Message message) {

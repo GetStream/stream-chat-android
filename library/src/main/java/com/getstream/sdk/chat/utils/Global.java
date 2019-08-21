@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.model.SelectAttachmentModel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.File;
@@ -29,7 +28,6 @@ public class Global {
 
     private static final String TAG = Global.class.getSimpleName();
 
-    public static SelectAttachmentModel selectAttachmentModel;
     public static Component component;
 
     public static List<User> typingUsers = new ArrayList<>();

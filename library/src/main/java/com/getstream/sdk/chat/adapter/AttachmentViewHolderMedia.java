@@ -76,7 +76,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(),
+                messageListItem.isMine(),
+                messageListItem.getPositions(),
+                attachment);
         iv_media_thumb.setShape(context, background);
     }
 

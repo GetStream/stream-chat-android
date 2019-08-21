@@ -47,13 +47,11 @@ public class AttachmentListView extends RecyclerView {
         super(context, attrs, defStyle);
         this.setLayoutManager(new LinearLayoutManager(context));
         this.context = context;
-//        setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
     }
 
     public void setEntity(MessageListItem messageListItem) {
         this.message = messageListItem.getMessage();
         this.setLayoutManager(new LinearLayoutManager(context));
-//        setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
         if (this.attachmentClickListener != null) {

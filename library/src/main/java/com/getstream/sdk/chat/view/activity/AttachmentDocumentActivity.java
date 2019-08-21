@@ -33,7 +33,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity{
 
     private void init() {
         Intent intent = getIntent();
-        String filePath = intent.getStringExtra(Constant.TAG_ATTACH_FILE_PATH);
+        String filePath = intent.getStringExtra("url");
         loadDocument(filePath);
     }
 
