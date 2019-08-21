@@ -46,6 +46,9 @@
             stream:userReadStateTextColor="#FFF"
             stream:userReadStateTextStyle="bold"
             stream:userRreadStateTextSize="9sp"
+            stream:messageTextSizeMine="20sp"
+            app:messageTextColorTheirs="#53C900"
+            app:messageTextStyleTheirs="bold|italic"
             stream:messageBubbleDrawableMine="@drawable/bg_custom_outcoming_message"
             stream:messageBubbleDrawableTheirs="@drawable/bg_custom_incoming_message"/>
 
@@ -85,6 +88,5 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
