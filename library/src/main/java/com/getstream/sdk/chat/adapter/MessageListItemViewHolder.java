@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -209,6 +210,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     private void applyStyleMine() {
+        if (tv_text.getVisibility() != View.VISIBLE) return;
+        if (StringUtility.isEmoji(message.getText())){
+            tv_text.setBackgroundResource(0);
+            return;
+        }
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
@@ -217,6 +223,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void applyStyleTheirs() {
+        if (tv_text.getVisibility() != View.VISIBLE) return;
+        if (StringUtility.isEmoji(message.getText())){
+            tv_text.setBackgroundResource(0);
+            return;
+        }
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
