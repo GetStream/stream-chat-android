@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -204,7 +205,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadState();
-        configParamsAttachment();
     }
     // endregion
 
@@ -522,38 +522,21 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
 
+        @IdRes int layoutId;
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            if (messageListItem.isMine()) {
-                params.endToStart = alv_attachments.getId();
-            } else {
-                params.startToEnd = alv_attachments.getId();
-            }
+            layoutId = tv_text.getId();
         } else {
-            if (messageListItem.isMine()) {
-                params.endToStart = tv_text.getId();
-            } else {
-                params.startToEnd = tv_text.getId();
-            }
+            layoutId = alv_attachments.getId();
         }
+
+        if (messageListItem.isMine())
+            params.endToStart = layoutId;
+        else
+            params.startToEnd = layoutId;
+
         read_state.setLayoutParams(params);
     }
 
-    public void configParamsAttachment() {
-//        if (alv_attachments.getVisibility() != View.VISIBLE) return;
-//        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) alv_attachments.getLayoutParams();
-//        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-//        if (messageListItem.isTheirs()) {
-//            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-//            params.setMarginStart(marginStart);
-//            params.setMarginEnd(0);
-//            params.horizontalBias = 0f;
-//        } else {
-//            params.setMarginStart(0);
-//            params.setMarginEnd(marginStart);
-//            params.horizontalBias = 1f;
-//        }
-//        alv_attachments.setLayoutParams(params);
-    }
 
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {

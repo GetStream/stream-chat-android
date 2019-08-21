@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -90,7 +91,7 @@ public class MessageListView extends RecyclerView {
 
     public void initDefaultBubbleHelper() {
         this.setBubbleHelper(new BubbleHelper() {
-            int topLeftRadius, topRightRadius, bottomRightRadius,bottomLeftRadius;
+            int topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius;
             int bgColor, strokeColor, strokeWidth;
 
             @Override
@@ -117,9 +118,6 @@ public class MessageListView extends RecyclerView {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
-//                        if (message.getAttachments() != null && !message.getAttachments().isEmpty()){
-//                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-//                        }
                     }
                 } else {
                     if (style.getMessageBubbleDrawableTheirs() != null)
@@ -171,6 +169,14 @@ public class MessageListView extends RecyclerView {
                     strokeColor = style.getMessageStrokeColorMine();
                     strokeWidth = style.getMessageStrokeWidthMine();
                     if (isDefaultBubble()) {
+                        try {
+                            if (message.getAttachments() != null
+                                    && !message.getAttachments().isEmpty()
+                                    && message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                                return null;
+                            }
+                        } catch (Exception e) {
+                        }
                         topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
@@ -180,8 +186,8 @@ public class MessageListView extends RecyclerView {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
-                        if (!TextUtils.isEmpty(attachment.getTitle()))
-                                bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                        if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                     }
                 } else {
                     if (style.getMessageBubbleDrawableTheirs() != null)
@@ -195,6 +201,14 @@ public class MessageListView extends RecyclerView {
                     strokeColor = style.getMessageStrokeColorTheirs();
                     strokeWidth = style.getMessageStrokeWidthTheirs();
                     if (isDefaultBubble()) {
+                        try {
+                            if (message.getAttachments() != null
+                                    && !message.getAttachments().isEmpty()
+                                    && message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                                return null;
+                            }
+                        } catch (Exception e) {
+                        }
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
@@ -204,7 +218,7 @@ public class MessageListView extends RecyclerView {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
-                        if (!TextUtils.isEmpty(attachment.getTitle()))
+                        if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
 
                     }

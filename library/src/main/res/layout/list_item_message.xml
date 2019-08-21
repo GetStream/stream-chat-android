@@ -223,7 +223,7 @@
             android:id="@+id/read_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
+            android:layout_margin="3dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/tv_text"
             app:layout_constraintEnd_toStartOf="@id/tv_text" />

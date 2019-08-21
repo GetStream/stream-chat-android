@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/tv_file_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:lines="1"
@@ -37,6 +37,7 @@
             android:textSize="14sp"
             app:layout_constrainedWidth="true"
             app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/iv_file_thumb" />
 
         <TextView
