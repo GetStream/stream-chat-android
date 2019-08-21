@@ -123,7 +123,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.channelState = channelState;
     }
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
-        this.messageClickListener = messageClickListener;
+        if (style.isEnableReaction())
+            this.messageClickListener = messageClickListener;
     }
     public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener){
         this.messageLongClickListener = messageLongClickListener;

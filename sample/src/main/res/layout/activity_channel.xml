@@ -46,6 +46,7 @@
             app:showUsersReactionDlg="true"
             app:userAvatarTextColor="#FFF"
             app:userAvatarTextStyle="bold"
+            app:enableReaction="false"
             app:userReadStateAvatarHeight="15dp"
             app:userReadStateAvatarWidth="15dp"
             app:userReadStateTextColor="#000000"

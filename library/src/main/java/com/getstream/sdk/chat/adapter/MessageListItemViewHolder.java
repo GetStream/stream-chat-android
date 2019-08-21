@@ -341,6 +341,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReactionView() {
+        if (!style.isEnableReaction()){
+            rv_reaction.setVisibility(View.GONE);
+            iv_docket.setVisibility(View.GONE);
+            return;
+        }
         if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
@@ -534,9 +539,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
 
+        params.leftMargin = 20;
+        params.rightMargin = 20;
         read_state.setLayoutParams(params);
     }
-
 
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
