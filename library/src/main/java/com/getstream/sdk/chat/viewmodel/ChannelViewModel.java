@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -146,7 +145,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         };
         looper = new Looper(markRead);
         looper.start();
-
 
         initEventHandlers();
         updateChannelActiveStatus();

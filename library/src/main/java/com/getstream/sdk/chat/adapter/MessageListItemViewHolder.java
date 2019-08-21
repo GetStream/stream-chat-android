@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -11,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -158,7 +161,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = messageListItem.getPositions();
 
 
-        if (this.message.getAttachments() == null || this.message.getAttachments().size() == 0) {
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
         } else {
             alv_attachments.setVisibility(View.VISIBLE);
@@ -168,6 +171,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
             alv_attachments.setLongClickListener(messageLongClickListener);
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            alv_attachments.setBackground(background);
         }
 
         // apply the style based on mine or theirs
@@ -200,20 +205,23 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadState();
-        configParamsAttachment();
     }
     // endregion
 
     private void applyStyleMine() {
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
         tv_text.setTextColor(style.getMessageTextColorMine());
+        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
     }
 
     private void applyStyleTheirs() {
         Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         tv_text.setBackground(background);
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
         tv_text.setTextColor(style.getMessageTextColorTheirs());
+        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
     }
 
     private void applyPositionsStyle() {
@@ -333,6 +341,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReactionView() {
+        if (!style.isEnableReaction()){
+            rv_reaction.setVisibility(View.GONE);
+            iv_docket.setVisibility(View.GONE);
+            return;
+        }
         if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
@@ -514,37 +527,21 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
 
+        @IdRes int layoutId;
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            if (messageListItem.isMine()) {
-                params.endToStart = alv_attachments.getId();
-            } else {
-                params.startToEnd = alv_attachments.getId();
-            }
+            layoutId = tv_text.getId();
         } else {
-            if (messageListItem.isMine()) {
-                params.endToStart = tv_text.getId();
-            } else {
-                params.startToEnd = tv_text.getId();
-            }
+            layoutId = alv_attachments.getId();
         }
-        read_state.setLayoutParams(params);
-    }
 
-    public void configParamsAttachment(){
-//        if (alv_attachments.getVisibility() != View.VISIBLE) return;
-//        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) alv_attachments.getLayoutParams();
-//        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
-//        if (messageListItem.isTheirs()) {
-//            params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-//            params.setMarginStart(marginStart);
-//            params.setMarginEnd(0);
-//            params.horizontalBias = 0f;
-//        } else {
-//            params.setMarginStart(0);
-//            params.setMarginEnd(marginStart);
-//            params.horizontalBias = 1f;
-//        }
-//        alv_attachments.setLayoutParams(params);
+        if (messageListItem.isMine())
+            params.endToStart = layoutId;
+        else
+            params.startToEnd = layoutId;
+
+        params.leftMargin = 20;
+        params.rightMargin = 20;
+        read_state.setLayoutParams(params);
     }
 
 

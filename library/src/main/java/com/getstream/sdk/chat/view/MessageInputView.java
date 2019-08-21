@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -189,10 +189,19 @@ public class MessageInputView extends RelativeLayout
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
             sendFileFunction.onClickAttachmentViewClose(v);
+
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "New Picture");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+            imageUri = getContext().getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+
             Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
+
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
@@ -200,24 +209,26 @@ public class MessageInputView extends RelativeLayout
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
+    Uri imageUri;
     // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE) {
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) return;
             try {
-                Object object = data.getExtras().get("data");
-                if (object.getClass().equals(Bitmap.class)) {
-                    Bitmap bitmap = (Bitmap) object;
-                    Uri uri = Utils.getUriFromBitmap(getContext(), bitmap);
-                    sendFileFunction.progressCapturedMedia(getContext(), uri, true);
+                Uri uri = data.getData();
+                if (uri == null) {
+                    if (imageUri != null)
+                        sendFileFunction.progressCapturedMedia(getContext(), imageUri, true);
+                    imageUri = null;
+                } else {
+                    sendFileFunction.progressCapturedMedia(getContext(), uri, false);
                 }
             } catch (Exception e) {
-                Uri uri = data.getData();
-                if (uri == null) return;
-                sendFileFunction.progressCapturedMedia(getContext(), uri, false);
+                e.printStackTrace();
             }
         }
     }
+
 
     public boolean isEditing() {
         return editingMessage != null;

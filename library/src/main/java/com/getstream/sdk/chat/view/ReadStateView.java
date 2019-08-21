@@ -62,19 +62,19 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 style.getAvatarBackGroundColor(),
                 style.getAvatarInitialTextColor());
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (int) (style.getReadStateTextSize()),
+                (style.getReadStateTextSize()),
                 style.getAvatarInitialTextStyle());
         Glide.with(getContext())
                 .load(image)
                 .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(
-                (int) (style.getReadStateAvatarWidth()),
-                (int) (style.getReadStateAvatarHeight()));
+                (style.getReadStateAvatarWidth()),
+                (style.getReadStateAvatarHeight()));
 
         RelativeLayout.LayoutParams textParams = new RelativeLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
-                (int) (style.getReadStateAvatarHeight()));
+                (style.getReadStateAvatarHeight()));
         imageView.setId(1);
 
         if (reads.size()<2){

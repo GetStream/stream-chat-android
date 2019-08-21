@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:stream="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -21,10 +20,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFF"
+            app:backButtonShow="true"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            stream:backButtonShow="true" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
@@ -33,20 +32,26 @@
             android:layout_marginBottom="10dp"
             android:background="#FFF"
             app:layout_constraintBottom_toTopOf="@+id/message_input"
-            app:layout_constraintEnd_toStartOf="@+id/message_input"
-            app:layout_constraintStart_toEndOf="@+id/channelHeader"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-            stream:reactionDlgEmojiSize="50dp"
-            stream:reactionDlgbgColor="#001DC4"
-            stream:showUsersReactionDlg="true"
-            stream:userAvatarTextColor="#FFF"
-            stream:userAvatarTextStyle="bold"
-            stream:userReadStateAvatarHeight="15dp"
-            stream:userReadStateAvatarWidth="15dp"
-            stream:userReadStateTextColor="#FFF"
-            stream:userReadStateTextStyle="bold"
-            stream:userRreadStateTextSize="9sp" />
-
+            app:messageBackgroundColorMine="#FF9800"
+            app:messageBackgroundColorTheirs="@color/white"
+            app:messageTextColorMine="@color/white"
+            app:messageTextColorTheirs="#53C900"
+            app:messageTextSizeMine="20sp"
+            app:messageTextStyleTheirs="bold|italic"
+            app:reactionDlgEmojiSize="50dp"
+            app:reactionDlgbgColor="#001DC4"
+            app:showUsersReactionDlg="true"
+            app:userAvatarTextColor="#FFF"
+            app:userAvatarTextStyle="bold"
+            app:enableReaction="false"
+            app:userReadStateAvatarHeight="15dp"
+            app:userReadStateAvatarWidth="15dp"
+            app:userReadStateTextColor="#000000"
+            app:userReadStateTextStyle="bold"
+            app:userRreadStateTextSize="9sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,6 +89,5 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
