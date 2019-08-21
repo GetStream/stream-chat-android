@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
         binding.channelList.setOnUserClickListener(user -> {
-            // TODO: open your user profile
+            // open your user profile
         });
 
     }
