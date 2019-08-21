@@ -39,10 +39,12 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public ChannelListItemAdapter(Context context, List<Channel> channels) {
         this.context = context;
         this.channels = channels;
+        this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
     public ChannelListItemAdapter(Context context) {
         this(context, new ArrayList<>());
+        this.viewHolderFactory = new ChannelViewHolderFactory();
     }
 
     public ChannelListView.ChannelClickListener getChannelClickListener() {

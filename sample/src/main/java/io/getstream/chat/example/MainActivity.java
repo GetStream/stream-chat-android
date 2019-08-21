@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 //        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         FilterObject filter = in("type", "messaging");
-        binding.channelList.setViewHolderFactory(factory);
+        //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
 //        viewModel.setChannelsPageSize(2);
 
