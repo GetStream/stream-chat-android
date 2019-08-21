@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -89,13 +90,9 @@ public class MessageListView extends RecyclerView {
 
     public void initDefaultBubbleHelper() {
         this.setBubbleHelper(new BubbleHelper() {
-            int topLeftRadius;
-            int topRightRadius;
-            int bottomRightRadius;
-            int bottomLeftRadius;
-            int bgColor;
-            int strokeColor;
-            int strokeWidth;
+            int topLeftRadius, topRightRadius, bottomRightRadius,bottomLeftRadius;
+            int bgColor, strokeColor, strokeWidth;
+
             @Override
             public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
                 if (mine) {
@@ -105,18 +102,18 @@ public class MessageListView extends RecyclerView {
                     bgColor = style.getMessageBackgroundColorMine();
                     strokeColor = style.getMessageStrokeColorMine();
                     strokeWidth = style.getMessageStrokeWidthMine();
-                    if (!isDefaultBubble()){
-                        topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
-                        topRightRadius = style.getMessageTopRightCornerRadiusMine();
-                        bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
-                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
-                    }else{
+                    topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
+                    topRightRadius = style.getMessageTopRightCornerRadiusMine();
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
+
+                    if (isDefaultBubble()) {
                         topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                        }else{
+                        } else {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
@@ -125,21 +122,21 @@ public class MessageListView extends RecyclerView {
                     if (style.getMessageBubbleDrawableTheirs() != null)
                         return style.getMessageBubbleDrawableTheirs();
 
+                    topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
+                    topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
                     strokeColor = style.getMessageStrokeColorTheirs();
                     strokeWidth = style.getMessageStrokeWidthTheirs();
-                    if (!isDefaultBubble()){
-                        topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
-                        topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
-                        bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
-                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
-                    }else{
+
+                    if (isDefaultBubble()) {
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                        }else{
+                        } else {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
@@ -160,50 +157,49 @@ public class MessageListView extends RecyclerView {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
 
+                    topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
+                    topRightRadius = style.getMessageTopRightCornerRadiusMine();
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
                     bgColor = style.getMessageBackgroundColorMine();
                     strokeColor = style.getMessageStrokeColorMine();
                     strokeWidth = style.getMessageStrokeWidthMine();
-                    if (!isDefaultBubble()){
-                        topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
-                        topRightRadius = style.getMessageTopRightCornerRadiusMine();
-                        bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
-                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
-                    }else{
+                    if (isDefaultBubble()) {
                         topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                        }else{
+                        } else {
                             topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
+                        if (!TextUtils.isEmpty(attachment.getTitle()))
+                                bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                     }
                 } else {
                     if (style.getMessageBubbleDrawableTheirs() != null)
                         return style.getMessageBubbleDrawableTheirs();
 
+                    topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
+                    topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
                     strokeColor = style.getMessageStrokeColorTheirs();
                     strokeWidth = style.getMessageStrokeWidthTheirs();
-                    if (!isDefaultBubble()){
-                        topLeftRadius = style.getMessageTopLeftCornerRadiusTheirs();
-                        topRightRadius = style.getMessageTopRightCornerRadiusTheirs();
-                        bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
-                        bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
-                    }else{
+                    if (isDefaultBubble()) {
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                        }else{
+                        } else {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
                         }
-                    }
-                    Number number = 9;
-                    if (number != null){
+                        if (!TextUtils.isEmpty(attachment.getTitle()))
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
 
                     }
                 }
