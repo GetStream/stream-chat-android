@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -65,6 +66,8 @@ public class SendFileFunction {
     // region Attachment
 
     public void onClickAttachmentViewOpen(View v) {
+        // Permission Check
+        PermissionChecker.permissionCheck((Activity) v.getContext(), null);
         if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
         openAnimationView(binding.clAddFile);
         fadeAnimationView(binding.ivBackAttachment, true);

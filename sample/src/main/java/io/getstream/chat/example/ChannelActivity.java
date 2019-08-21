@@ -5,21 +5,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -31,6 +26,7 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.ReactionDlgView;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
@@ -98,9 +94,6 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageInput.setOpenCameraViewListener(this);
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
-        // Permission Check
-        PermissionChecker.permissionCheck(this, null);
-
     }
 
     @Override
@@ -268,49 +261,10 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageLongClick(Message message) {
-        final Dialog dialog = new Dialog(this);
-        if (!message.getUserId().equals(StreamChat.getInstance(this).getUserId()))
-            dialog.setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);
-        else {
-            dialog.setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_outgoing);
-            TextView tv_edit = dialog.findViewById(com.getstream.sdk.chat.R.id.tv_edit);
-            TextView tv_delete = dialog.findViewById(com.getstream.sdk.chat.R.id.tv_delete);
-            tv_edit.setOnClickListener((View v) -> {
-                v.setTag(Constant.TAG_MOREACTION_EDIT);
-                dialog.dismiss();
-            });
-            tv_delete.setOnClickListener((View v) -> {
-                v.setTag(Constant.TAG_MOREACTION_DELETE);
-                dialog.dismiss();
-            });
-        }
-
-
-        RecyclerView rv_reaction = dialog.findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
-        TextView tv_reply = dialog.findViewById(com.getstream.sdk.chat.R.id.tv_reply);
-        TextView tv_cancel = dialog.findViewById(com.getstream.sdk.chat.R.id.tv_cancel);
-        RecyclerView.LayoutManager mLayoutManager;
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(binding.messageList.getChannel(),
+        MoreActionDialog moreActionDialog = new MoreActionDialog(this,
+                binding.messageList.getChannel(),
                 message,
-                false,
-                binding.messageList.getStyle(),
-                (View v) -> dialog.dismiss());
-        rv_reaction.setAdapter(reactionAdapter);
-
-        tv_reply.setOnClickListener((View v) -> {
-            v.setTag(Constant.TAG_MOREACTION_REPLY);
-            dialog.dismiss();
-        });
-        tv_cancel.setOnClickListener((View v) -> dialog.dismiss());
-        dialog.show();
-
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.BOTTOM;
-
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
+                binding.messageList.getStyle());
+        moreActionDialog.show();
     }
 }
