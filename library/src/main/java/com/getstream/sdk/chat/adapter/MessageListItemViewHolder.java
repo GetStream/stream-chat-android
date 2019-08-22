@@ -160,7 +160,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
 
-
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
         } else {

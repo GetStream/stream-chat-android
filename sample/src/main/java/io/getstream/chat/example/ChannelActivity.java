@@ -74,11 +74,6 @@ public class ChannelActivity extends AppCompatActivity
                 put("cheeky", "\uD83D\uDE1B");
             }
         });
-        // connect the view model
-        binding.setViewModel(viewModel);
-        binding.channelHeader.setViewModel(viewModel, this);
-        binding.messageList.setViewModel(viewModel, this);
-        binding.messageInput.setViewModel(viewModel, this);
         // set listeners
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
@@ -86,6 +81,12 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageInput.setOpenCameraViewListener(this);
 
         binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
+
+        // connect the view model
+        binding.setViewModel(viewModel);
+        binding.channelHeader.setViewModel(viewModel, this);
+        binding.messageList.setViewModel(viewModel, this);
+        binding.messageInput.setViewModel(viewModel, this);
     }
 
 
