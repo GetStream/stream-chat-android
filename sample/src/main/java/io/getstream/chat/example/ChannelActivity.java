@@ -1,18 +1,13 @@
 package io.getstream.chat.example;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
@@ -22,12 +17,11 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
+import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.ReactionDlgView;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
@@ -65,7 +59,6 @@ public class ChannelActivity extends AppCompatActivity
         String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
-
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
@@ -77,7 +70,7 @@ public class ChannelActivity extends AppCompatActivity
         viewModel = ViewModelProviders.of(this,
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);
-
+        viewModel.getChannel().setReactionTypes(reactionTypes);
         // connect the view model
         binding.channelHeader.setViewModel(viewModel, this);
         binding.channelHeader.setOnBackClickListener(v -> finish());
@@ -87,10 +80,9 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
-        viewModel.getChannel().setReactionTypes(reactionTypes);
 
-        binding.messageInput.setViewModel(viewModel, this);
         binding.messageList.setViewModel(viewModel, this);
+        binding.messageInput.setViewModel(viewModel, this);
         binding.messageInput.setOpenCameraViewListener(this);
         // set the viewModel data for the activity_channel.xml layout
         binding.setViewModel(viewModel);
@@ -129,60 +121,51 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageClick(Message message, int position) {
-        Log.i(TAG, "message was clicked");
-        showReactionDialog(message, position);
+        ReactionDialog reactionDialog = new ReactionDialog(this,
+                viewModel.getChannel(), message, position, binding.messageList, binding.messageList.getStyle());
+        reactionDialog.show();
     }
 
     @Override
     public void onAttachmentClick(Message message, Attachment attachment) {
+        String url = null;
+        String type = null;
         switch (attachment.getType()) {
             case ModelType.attach_file:
                 loadFile(attachment);
-                break;
+                return;
             case ModelType.attach_image:
-                List<String> imageUrls = new ArrayList<>();
-                for (Attachment a : message.getAttachments()) {
-                    imageUrls.add(a.getImageURL());
+                if (attachment.getOgURL() != null) {
+                    url = attachment.getOgURL();
+                    type = ModelType.attach_link;
+                } else {
+                    List<String> imageUrls = new ArrayList<>();
+                    for (Attachment a : message.getAttachments()) {
+                        imageUrls.add(a.getImageURL());
+                    }
+                    int position = message.getAttachments().indexOf(attachment);
+
+                    new ImageViewer.Builder<>(this, imageUrls)
+                            .setStartPosition(position)
+                            .show();
+                    return;
                 }
-
-                int position = message.getAttachments().indexOf(attachment);
-
-                new ImageViewer.Builder<>(this, imageUrls)
-                        .setStartPosition(position)
-                        .show();
                 break;
-            default:
-                String url = null;
-                String type = null;
-                switch (attachment.getType()) {
-                    case ModelType.attach_video:
-                        url = attachment.getTitleLink();
-                        break;
-                    case ModelType.attach_giphy:
-                        url = attachment.getThumbURL();
-                        break;
-                    case ModelType.attach_image:
-                        if (attachment.getOgURL() != null) {
-                            url = attachment.getOgURL();
-                            type = ModelType.attach_link;
-                        } else {
-                            url = attachment.getImageURL();
-                        }
-                        break;
-                    case ModelType.attach_product:
-                        url = attachment.getUrl();
-                        break;
-                    default:
-                        break;
-                }
-
-                Intent intent = new Intent(this, AttachmentActivity.class);
-                intent.putExtra("type", type);
-                intent.putExtra("url", url);
-                startActivity(intent);
+            case ModelType.attach_video:
+                url = attachment.getTitleLink();
                 break;
-
+            case ModelType.attach_giphy:
+                url = attachment.getThumbURL();
+                break;
+            case ModelType.attach_product:
+                url = attachment.getUrl();
+                break;
         }
+        if (type == null) type = attachment.getType();
+        Intent intent = new Intent(this, AttachmentActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("url", url);
+        startActivity(intent);
     }
 
     // region Load File
@@ -208,8 +191,6 @@ public class ChannelActivity extends AppCompatActivity
             startActivity(intent);
         }
     }
-
-
     // endregion
 
 
@@ -225,44 +206,11 @@ public class ChannelActivity extends AppCompatActivity
         }
     };
 
-    public void showReactionDialog(Message message, int position) {
-        int firstListItemPosition = ((LinearLayoutManager) binding.messageList.getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastListItemPosition = firstListItemPosition + binding.messageList.getChildCount() - 1;
-        int childIndex;
-        if (position < firstListItemPosition || position > lastListItemPosition) {
-            childIndex = position;
-        } else {
-            childIndex = position - firstListItemPosition;
-        }
-        int originY = binding.messageList.getChildAt(childIndex).getBottom();
-
-        final Dialog dialog = new Dialog(this); // Context, this, etc.
-        ReactionDlgView reactionDlgView = new ReactionDlgView(this);
-
-        reactionDlgView.setMessagewithStyle(binding.messageList.getChannel(),
-                message,
-                binding.messageList.getStyle(),
-                view -> dialog.dismiss()
-        );
-
-        dialog.setContentView(reactionDlgView);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        dialog.show();
-
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.x = 0;
-        int screenHeight = Utils.getScreenResolution(this);
-        wlp.y = originY - screenHeight / 2;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-    }
 
     @Override
     public void onMessageLongClick(Message message) {
         MoreActionDialog moreActionDialog = new MoreActionDialog(this,
-                binding.messageList.getChannel(),
+                viewModel.getChannel(),
                 message,
                 binding.messageList.getStyle());
         moreActionDialog.show();
