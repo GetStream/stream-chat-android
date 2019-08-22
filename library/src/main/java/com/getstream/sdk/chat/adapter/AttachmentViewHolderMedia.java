@@ -6,36 +6,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.http.HEAD;
 
 
-public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
-
-    private Context context;
-    private Message message;
-    private Attachment attachment;
-    private MessageListViewStyle style;
-
+public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
     // Attachment
     private PorterShapeImageView iv_media_thumb;
     private TextView tv_media_title, tv_media_play, tv_media_des;
 
-    // Action
-    private MessageListView.AttachmentClickListener clickListener;
-    private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListItem messageListItem;
+    private ConstraintLayout cl_video;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
-
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -52,26 +47,22 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        this.context = context;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.messageListItem = messageListItem;
-        this.message = messageListItem.getMessage();
-        this.attachment = attachment;
 
+        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
         configMediaAttach();
     }
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(),
-                messageListItem.isMine(),
-                messageListItem.getPositions(),
+        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessage(),
+                getMessageListItem().isMine(),
+                getMessageListItem().getPositions(),
                 attachment);
-        iv_media_thumb.setShape(context, background);
+        iv_media_thumb.setShape(getContext(), background);
     }
 
     private void configMediaAttach() {
+        Attachment attachment = getAttachment();
 
         final String type = attachment.getType();
 
@@ -83,35 +74,30 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         } else if (attachment.getType().equals(ModelType.attach_video)) {
             attachUrl = attachment.getThumbURL();
         } else {
-            if (attachUrl == null) attachUrl = attachment.getImage();
+            if (attachUrl == null) attachUrl = getAttachment().getImage();
         }
 
-        configImageThumbBackground(attachment);
+        configImageThumbBackground(getAttachment());
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener(view -> {
-            this.triggerClick(message, attachment);
-        });
-        iv_media_thumb.setOnLongClickListener(view -> {
-            if (longClickListener != null)
-                longClickListener.onMessageLongClick(message);
-            return true;
-        });
+        iv_media_thumb.setOnClickListener(this);
+        iv_media_thumb.setOnLongClickListener(this);
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
-        Glide.with(context)
+        Glide.with(getContext())
                 .load(attachUrl)
                 .into(iv_media_thumb);
-        if (!message.getType().equals(ModelType.message_ephemeral))
-            tv_media_title.setText(attachment.getTitle());
-        tv_media_des.setText(attachment.getText());
+        if (!getMessage().getType().equals(ModelType.message_ephemeral))
+            tv_media_title.setText(getAttachment().getTitle());
+        tv_media_des.setText(getAttachment().getText());
 
-        if (StringUtility.isNullOrEmpty(attachment.getText()))
+
+        if (StringUtility.isNullOrEmpty(getAttachment().getText()))
             tv_media_des.setVisibility(View.GONE);
         else
             tv_media_des.setVisibility(View.VISIBLE);
 
-        if (StringUtility.isNullOrEmpty(attachment.getTitle()))
+        if (StringUtility.isNullOrEmpty(getAttachment().getTitle()))
             tv_media_title.setVisibility(View.GONE);
         else
             tv_media_title.setVisibility(View.VISIBLE);
@@ -120,15 +106,5 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
-    }
-
-    private void triggerClick(Message message, Attachment attachment) {
-        if (this.clickListener != null) {
-            this.clickListener.onAttachmentClick(message, attachment);
-        }
-    }
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
     }
 }

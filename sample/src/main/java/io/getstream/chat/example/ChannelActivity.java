@@ -1,5 +1,6 @@
 package io.getstream.chat.example;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
@@ -62,18 +64,7 @@ public class ChannelActivity extends AppCompatActivity
         viewModel = ViewModelProviders.of(this,
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);
-        // set custom Reaction Emojis
-        channel.setReactionTypes(new HashMap<String, String>() {
-            {
-                put("like", "\uD83D\uDC4D");
-                put("love", "\u2764\uFE0F");
-                put("haha", "\uD83D\uDE02");
-                put("wow", "\uD83D\uDE32");
-                put("sad", " \uD83D\uDE41");
-                put("angry", "\uD83D\uDE21");
-                put("cheeky", "\uD83D\uDE1B");
-            }
-        });
+
         // set listeners
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
@@ -97,6 +88,7 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
@@ -134,6 +126,7 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onAttachmentClick(Message message, Attachment attachment) {
         binding.messageList.showAttachment(message, attachment);
+
     }
 
 }

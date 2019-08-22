@@ -43,6 +43,8 @@ public class ChannelListViewModel extends AndroidViewModel {
     private AtomicBoolean isLoading;
     private AtomicBoolean isLoadingMore;
     private int pageSize;
+    private int subscriptionId = 0;
+    private int recoverySubscriptionId = 0;
 
     public LiveData<List<Channel>> getChannels() {
         return channels;
@@ -56,6 +58,18 @@ public class ChannelListViewModel extends AndroidViewModel {
 
     public void setChannelsPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        if (subscriptionId != 0) {
+            client().removeEventHandler(subscriptionId);
+        }
+        if (recoverySubscriptionId != 0) {
+            client().removeEventHandler(recoverySubscriptionId);
+        }
     }
 
     private boolean setLoading(){
@@ -118,7 +132,7 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     private void setupConnectionRecovery(){
-        client().addEventHandler(new ChatEventHandler() {
+        recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
                 Log.w(TAG, "onConnectionRecovered");
@@ -144,7 +158,7 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     private void initEventHandlers() {
-        client().addEventHandler(new ChatEventHandler() {
+        subscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onNotificationMessageNew(Event event) {
                 Message lastMessage = event.getChannel().getChannelState().getLastMessage();
