@@ -24,7 +24,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     private final String TAG = MessageListItemLiveData.class.getSimpleName();
 
-
     private MutableLiveData<List<Message>> messages;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
@@ -38,7 +37,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private String lastMessageID;
 
 
-    public MessageListItemLiveData(User currentUser, MutableLiveData<List<Message>> messages, MutableLiveData<List<User>> typing, MutableLiveData<List<ChannelUserRead>> reads) {
+    public MessageListItemLiveData(User currentUser,
+                                   MutableLiveData<List<Message>> messages,
+                                   MutableLiveData<List<User>> typing,
+                                   MutableLiveData<List<ChannelUserRead>> reads) {
         this.messages = messages;
         this.currentUser = currentUser;
         this.typing = typing;
@@ -107,7 +109,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     @Override
-    public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super MessageListItemWrapper> observer) {
+    public void observe(@NonNull LifecycleOwner owner,
+                        @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;

@@ -85,6 +85,5 @@ task javadoc(type: Javadoc) {
     exclude '**/TokenService.java'
     exclude '**/ModelType.java'
     exclude '**/MessageTagModel.java'
-    exclude '**/SelectAttachmentModel.java'
     failOnError false
 }

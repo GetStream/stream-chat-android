@@ -22,8 +22,11 @@ public class SendMessageRequest {
         message.put("id", id);
     }
 
-    public SendMessageRequest(String text, List<Attachment> attachments, String parentId,
-                              boolean showInChannel, List<String> mentionedUserIDs) {
+    public SendMessageRequest(String text,
+                              List<Attachment> attachments,
+                              String parentId,
+                              boolean showInChannel,
+                              List<String> mentionedUserIDs) {
         message = new HashMap<>();
         message.put("text", text);
         if (parentId != null) {

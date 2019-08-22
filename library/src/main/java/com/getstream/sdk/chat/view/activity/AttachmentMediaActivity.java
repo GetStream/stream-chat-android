@@ -1,11 +1,17 @@
 package com.getstream.sdk.chat.view.activity;
 
+import android.content.Intent;
 import android.net.Uri;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
@@ -27,18 +33,23 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_attachment_media);
         videoView = findViewById(R.id.videoView);
         iv_audio = findViewById(R.id.iv_audio);
+        init();
+    }
 
-
-        int index = Global.selectAttachmentModel.getAttachmentIndex();
-        List<Attachment> attachments = Global.selectAttachmentModel.getAttachments();
-
-        Attachment attachment = attachments.get(index);
-        if (attachment.getMime_type().contains("audio"))
+    private void init() {
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("type");
+        String url = intent.getStringExtra("url");
+        if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
+            Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
+            return;
+        }
+        if (type.contains("audio"))
             iv_audio.setVisibility(View.VISIBLE);
         else
             iv_audio.setVisibility(View.GONE);
 
-        playVideo(attachment.getAssetURL());
+        playVideo(url);
     }
 
     /**

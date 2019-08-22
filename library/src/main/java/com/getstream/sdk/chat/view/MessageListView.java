@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -21,8 +22,15 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
+import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
+import com.getstream.sdk.chat.view.activity.AttachmentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -262,17 +270,11 @@ public class MessageListView extends RecyclerView {
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
+        setMessageClickListener(messageClickListener);
+        setMessageLongClickListener(messageLongClickListener);
+        setAttachmentClickListener(attachmentClickListener);
 
-        if (this.attachmentClickListener != null) {
-            adapter.setAttachmentClickListener(this.attachmentClickListener);
-        }
-        if (this.messageClickListener != null) {
-            this.adapter.setMessageClickListener(this.messageClickListener);
-        }
-        if (this.messageLongClickListener != null) {
-            this.adapter.setMessageLongClickListener(this.messageLongClickListener);
-        }
-        this.adapter.setChannelState(getChannel().getChannelState());
+        adapter.setChannelState(getChannel().getChannelState());
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -372,8 +374,8 @@ public class MessageListView extends RecyclerView {
 
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
         this.viewHolderFactory = factory;
-        if (this.adapter != null) {
-            this.adapter.setFactory(factory);
+        if (adapter != null) {
+            adapter.setFactory(factory);
         }
     }
 
@@ -390,23 +392,54 @@ public class MessageListView extends RecyclerView {
 
 
     // region Listener
-    public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
-        this.attachmentClickListener = attachmentClickListener;
-        if (this.adapter != null) {
-            this.adapter.setAttachmentClickListener(this.attachmentClickListener);
-        }
-    }
-
     public void setMessageClickListener(MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
-        if (this.adapter != null) {
-            this.adapter.setMessageClickListener(this.messageClickListener);
+
+        if (adapter == null) return;
+
+        if (this.messageClickListener != null) {
+            adapter.setMessageClickListener(this.messageClickListener);
+        } else {
+            adapter.setMessageClickListener((message, position) -> {
+                ReactionDialog reactionDialog = new ReactionDialog(getContext(),
+                        viewModel.getChannel(), message, position, this, style);
+                reactionDialog.show();
+            });
         }
     }
 
     public void setMessageLongClickListener(MessageLongClickListener messageLongClickListener) {
         this.messageLongClickListener = messageLongClickListener;
+
+        if (adapter == null) return;
+
+        if (this.messageLongClickListener != null) {
+            adapter.setMessageLongClickListener(this.messageLongClickListener);
+        } else {
+            adapter.setMessageLongClickListener(message -> {
+                MoreActionDialog moreActionDialog = new MoreActionDialog(getContext(),
+                        viewModel.getChannel(),
+                        message,
+                        style);
+                moreActionDialog.show();
+            });
+        }
     }
+
+    public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
+
+        if (adapter == null) return;
+
+        if (this.attachmentClickListener != null) {
+            adapter.setAttachmentClickListener(this.attachmentClickListener);
+        } else {
+            adapter.setAttachmentClickListener((message, attachment) -> {
+                showAttachment(message, attachment);
+            });
+        }
+    }
+
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
@@ -423,14 +456,82 @@ public class MessageListView extends RecyclerView {
         void onMessageLongClick(Message message);
     }
 
+    public interface AttachmentClickListener {
+        void onAttachmentClick(Message message, Attachment attachment);
+    }
+
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
     }
 
-    public interface AttachmentClickListener {
-        void onAttachmentClick(Message message, Attachment attachment);
+
+    // endregion
+
+    // region View Attachment
+    public void showAttachment(Message message, Attachment attachment) {
+        String url = null;
+        String type = null;
+        switch (attachment.getType()) {
+            case ModelType.attach_file:
+                loadFile(attachment);
+                return;
+            case ModelType.attach_image:
+                if (attachment.getOgURL() != null) {
+                    url = attachment.getOgURL();
+                    type = ModelType.attach_link;
+                } else {
+                    List<String> imageUrls = new ArrayList<>();
+                    for (Attachment a : message.getAttachments()) {
+                        imageUrls.add(a.getImageURL());
+                    }
+                    int position = message.getAttachments().indexOf(attachment);
+
+                    new ImageViewer.Builder<>(getContext(), imageUrls)
+                            .setStartPosition(position)
+                            .show();
+                    return;
+                }
+                break;
+            case ModelType.attach_video:
+                url = attachment.getTitleLink();
+                break;
+            case ModelType.attach_giphy:
+                url = attachment.getThumbURL();
+                break;
+            case ModelType.attach_product:
+                url = attachment.getUrl();
+                break;
+        }
+        if (type == null) type = attachment.getType();
+        Intent intent = new Intent(getContext(), AttachmentActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("url", url);
+        getContext().startActivity(intent);
+    }
+
+    private void loadFile(Attachment attachment) {
+        // Media
+        if (attachment.getMime_type().contains("audio") ||
+                attachment.getMime_type().contains("video")) {
+            Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
+            intent.putExtra("type", attachment.getMime_type());
+            intent.putExtra("url", attachment.getAssetURL());
+            getContext().startActivity(intent);
+            return;
+        }
+
+        // Office
+        if (attachment.getMime_type().equals("application/msword") ||
+                attachment.getMime_type().equals(ModelType.attach_mime_txt) ||
+                attachment.getMime_type().equals(ModelType.attach_mime_pdf) ||
+                attachment.getMime_type().contains("application/vnd")) {
+
+            Intent intent = new Intent(getContext(), AttachmentDocumentActivity.class);
+            intent.putExtra("url", attachment.getAssetURL());
+            getContext().startActivity(intent);
+        }
     }
     // endregion
 }

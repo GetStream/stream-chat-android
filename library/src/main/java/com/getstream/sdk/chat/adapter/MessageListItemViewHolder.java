@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -76,7 +77,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
-    private MessageListView.AttachmentClickListener attachmentClickListener;
+
     private int position;
     private boolean isThread;
     private boolean isThreadHeader = false;
@@ -154,12 +155,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
-        this.attachmentClickListener = attachmentClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
-
 
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
@@ -171,6 +170,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
             alv_attachments.setLongClickListener(messageLongClickListener);
+
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             alv_attachments.setBackground(background);
         }
@@ -209,16 +209,24 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     private void applyStyleMine() {
-        Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-        tv_text.setBackground(background);
+        if (StringUtility.isEmoji(message.getText())){
+            tv_text.setBackgroundResource(0);
+        }else{
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            tv_text.setBackground(background);
+        }
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
         tv_text.setTextColor(style.getMessageTextColorMine());
         tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
     }
 
     private void applyStyleTheirs() {
-        Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-        tv_text.setBackground(background);
+        if (StringUtility.isEmoji(message.getText())){
+            tv_text.setBackgroundResource(0);
+        }else{
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            tv_text.setBackground(background);
+        }
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
         tv_text.setTextColor(style.getMessageTextColorTheirs());
         tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());

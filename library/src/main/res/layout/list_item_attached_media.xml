@@ -14,7 +14,6 @@
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent"
-            app:siShape="@drawable/round_attach_media0"
             app:siSquare="true" />
 
         <TextView

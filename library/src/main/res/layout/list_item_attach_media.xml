@@ -16,28 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:siSquare="true" />
 
-    <ImageView
-        android:id="@+id/iv_media_more"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/attach_image_height"
-        android:layout_marginStart="1px"
-        android:layout_marginTop="1px"
-        android:layout_marginEnd="1px"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/tv_more"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media_more"
-        app:layout_constraintEnd_toEndOf="@+id/iv_media_more"
-        app:layout_constraintStart_toStartOf="@+id/iv_media_more"
-        app:layout_constraintTop_toTopOf="@+id/iv_media_more" />
-
     <TextView
         android:id="@+id/tv_media_play"
         android:layout_width="50dp"

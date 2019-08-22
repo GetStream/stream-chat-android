@@ -3,8 +3,10 @@ package com.getstream.sdk.chat.view.activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -12,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -20,8 +23,6 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
@@ -40,11 +41,6 @@ public class AttachmentActivity extends AppCompatActivity {
     ImageView iv_image;
     ProgressBar progressBar;
 
-    private final String YouTube = "YouTube";
-
-    int index;
-    List<Attachment> attachments;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,34 +51,23 @@ public class AttachmentActivity extends AppCompatActivity {
         iv_image = findViewById(R.id.iv_image);
         progressBar = findViewById(R.id.progressBar);
 
-        iv_image.setVisibility(View.GONE);
-        youtube_player_view.setVisibility(View.GONE);
-        webView.setVisibility(View.GONE);
-        init();
         configUIs();
-        showAttachment(attachments.get(0));
-    }
 
-
-    private void init() {
-        if (Global.selectAttachmentModel == null) {
-            Log.d(TAG, "Model is NULL");
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("type");
+        String url = intent.getStringExtra("url");
+        if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
+            Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
             return;
         }
-
-        index = Global.selectAttachmentModel.getAttachmentIndex();
-        attachments = Global.selectAttachmentModel.getAttachments();
-        if (attachments == null) {
-            Log.d(TAG, "index is : " + index);
-            return;
-        }
-
-        iv_image.setVisibility(View.GONE);
-        youtube_player_view.setVisibility(View.GONE);
-        webView.setVisibility(View.GONE);
+        showAttachment(type, url);
     }
+
 
     private void configUIs() {
+        iv_image.setVisibility(View.GONE);
+        youtube_player_view.setVisibility(View.GONE);
+        webView.setVisibility(View.GONE);
         // WebView
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setLoadWithOverviewMode(true);
@@ -92,42 +77,13 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setWebViewClient(new AppWebViewClients());
     }
 
-    private void showAttachment(Attachment attachment) {
-        String url = null;
-        String type = null;
-        switch (attachment.getType()) {
-            case ModelType.attach_video:
-                url = attachment.getTitleLink();
-                if (url.contains("giphy"))
-                    type = ModelType.attach_giphy;
-                break;
-            case ModelType.attach_giphy:
-                url = attachment.getThumbURL();
-                break;
-            case ModelType.attach_image:
-                if (attachment.getOgURL() != null) {
-                    url = attachment.getOgURL();
-                    type = ModelType.attach_link;
-                } else {
-                    url = attachment.getImageURL();
-                }
-                break;
-            case ModelType.attach_product:
-                url = attachment.getUrl();
-                break;
-            case ModelType.attach_file:
-                break;
-            default:
-                break;
-        }
-        if (type == null) type = attachment.getType();
-
+    private void showAttachment(final String type, final String url) {
         switch (type) {
             case ModelType.attach_video:
-                if(attachment.getAuthor().toLowerCase().equals("youtube")){
+                if(url.toLowerCase().equals("youtube")){
                     playYoutube(url);
                 }else{
-                    loadUrlToWeb(attachment.getAssetURL());
+                    loadUrlToWeb(url);
                 }
                 break;
             case ModelType.attach_giphy:
@@ -219,14 +175,12 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // TODO Auto-generated method stub
             view.loadUrl(url);
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
             super.onPageFinished(view, url);
             progressBar.setVisibility(View.GONE);
         }

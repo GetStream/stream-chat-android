@@ -73,12 +73,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
-    private MutableLiveData<Boolean> online;
-
-    public LiveData<ChannelState> getChannelState() {
-        return channelState;
-    }
-
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LiveData<Boolean> anyOtherUsersOnline;
@@ -109,7 +103,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         loading = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
-        online = new MutableLiveData<>(true);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
@@ -145,18 +138,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         initEventHandlers();
     }
 
-    private int getWatcherCount() {
-        Number n = watcherCount.getValue();
-        int c;
-        if (n == null) {
-            c = 0;
-        } else {
-            c = n.intValue();
-        }
-        return c;
+    // region Getter
+
+    public LiveData<ChannelState> getChannelState() {
+        return channelState;
     }
 
-    // region Getter
     public LiveData<List<Message>> getMessages() {
         return messages;
     }
@@ -173,8 +160,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return reads;
     }
 
-    public LiveData<Boolean> getOnline() {
-        return online;
+    public LiveData<Number> getWatcherCount() {
+        return watcherCount;
     }
 
     public LiveData<Boolean> getFailed() {
@@ -311,14 +298,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         });
     }
 
-    public void removeEventHandler() {
-        if (channelSubscriptionId == 0) return;
-        channel.removeEventHandler(channelSubscriptionId);
-        channelSubscriptionId = 0;
-    }
-
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
+        Log.d(TAG,"messages Count:" + messages.getValue().size());
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(message);
         Boolean updated = index != -1;
@@ -327,8 +309,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         } else {
             messagesCopy.add(message);
         }
-
+        Log.d(TAG,"New messages Count:" + messagesCopy.size());
         messages.postValue(messagesCopy);
+        Log.d(TAG,"New messages Count:" + messages.getValue().size());
         return updated;
     }
 
@@ -351,12 +334,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
+        Log.d(TAG,"Add Message");
         List<Message> messagesCopy = messages.getValue();
         messagesCopy.add(message);
         messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
+        Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();

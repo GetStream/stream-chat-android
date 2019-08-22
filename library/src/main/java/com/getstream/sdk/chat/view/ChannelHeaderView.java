@@ -1,17 +1,16 @@
 package com.getstream.sdk.chat.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ViewChannelHeaderBinding;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -32,13 +31,12 @@ Out of the box this view shows the following information:
 - Channel last activity from other users
 
  */
-public class ChannelHeaderView extends RelativeLayout implements View.OnClickListener {
+public class ChannelHeaderView extends RelativeLayout {
 
     final static String TAG = ChannelHeaderView.class.getSimpleName();
 
     // binding for this view
     private ViewChannelHeaderBinding binding;
-    private OnBackClickListener onBackClickListener;
     private ChannelHeaderViewStyle style;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
@@ -90,27 +88,10 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(this);
+        binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
         return binding;
     }
 
-    public void setOnBackClickListener(OnBackClickListener onBackClickListener) {
-        this.onBackClickListener = onBackClickListener;
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.tv_back) {
-            if (this.onBackClickListener != null) {
-                this.onBackClickListener.onClick(v);
-            }
-        }
-    }
-
-    public interface OnBackClickListener {
-        void onClick(View v);
-    }
 
     private void applyStyle() {
         // Title

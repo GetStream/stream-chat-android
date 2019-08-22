@@ -37,8 +37,6 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Rich Message Input View component, allows you to:
