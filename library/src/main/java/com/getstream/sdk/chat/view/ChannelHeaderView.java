@@ -13,13 +13,28 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ViewChannelHeaderBinding;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import java.util.Date;
+
+import static android.text.format.DateUtils.getRelativeTimeSpanString;
+
+/*
+ChannelHeaderView is used to show a header for a channel
+
+it binds to ChannelViewModel view model and subscribe to channel data
+
+Out of the box this view shows the following information:
+
+- Channel title
+- Online status of other members (using AvatarGroupView)
+- Channel last activity from other users
+
+ */
 public class ChannelHeaderView extends RelativeLayout implements View.OnClickListener {
 
-    final String TAG = ChannelHeaderView.class.getSimpleName();
+    final static String TAG = ChannelHeaderView.class.getSimpleName();
 
     // binding for this view
     private ViewChannelHeaderBinding binding;
@@ -49,7 +64,26 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
-        configHeaderAvatar();
+
+        viewModel.getChannelState().observe(lifecycleOwner, channelState -> setHeaderTitle(channelState));
+        viewModel.getChannelState().observe(lifecycleOwner, channelState -> setHeaderLastActive(channelState));
+        viewModel.getChannelState().observe(lifecycleOwner, channelState -> configHeaderAvatar(channelState));
+    }
+
+    protected void setHeaderTitle(ChannelState channelState){
+        binding.setChannelName(channelState.getChannelNameOrMembers());
+    }
+
+    protected void setHeaderLastActive(ChannelState channelState){
+        Date lastActive = channelState.getLastActive();
+        Date now = new Date();
+        String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
+
+        if (now.getTime() - lastActive.getTime() < 60000) {
+            timeAgo = "just now";
+        }
+
+        binding.setChannelLastActive(String.format("Active %s", timeAgo));
     }
 
     private ViewChannelHeaderBinding initBinding(Context context) {
@@ -91,10 +125,8 @@ public class ChannelHeaderView extends RelativeLayout implements View.OnClickLis
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
     }
 
-    private void configHeaderAvatar() {
-        Channel channel = this.viewModel.getChannel();
-        ChannelState channelState = channel.getChannelState();
+    private void configHeaderAvatar(ChannelState channelState) {
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
-        avatarGroupView.setChannelAndLastActiveUsers(channel, channelState.getOtherUsers(), style);
+        avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), channelState.getOtherUsers(), style);
     }
 }

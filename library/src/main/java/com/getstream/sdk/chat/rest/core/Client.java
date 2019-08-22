@@ -16,7 +16,9 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.TokenService;
+import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -109,8 +111,7 @@ public class Client implements WSResponseHandler {
 
     // Client params
     private List<Channel> activeChannels = new ArrayList<>();
-    public List<User> users = new ArrayList<>();
-    public Map<String, List<Message>> ephemeralMessage = new HashMap<>(); // Key: Channel ID, Value: ephemeralMessages
+    public HashMap<String, User> knownUsers = new HashMap<>();
 
     public APIService getApiService() {
         return mService;
@@ -171,6 +172,29 @@ public class Client implements WSResponseHandler {
         } catch (Exception e) {
             provider.onError(e.getLocalizedMessage());
             e.printStackTrace();
+        }
+    }
+
+    public User getTrackedUser(User user) {
+        User knownUser = knownUsers.get(user.getId());
+        return knownUser == null ? user : knownUser;
+    }
+
+    private void trackUser(User newUser){
+        User user = knownUsers.get(newUser.getId());
+        if (user == null) {
+            knownUsers.put(newUser.getId(), newUser.shallowCopy());
+        } else {
+            user.shallowUpdate(newUser);
+        }
+    }
+
+    private void trackUsersFromChannel(Channel channel){
+        for (Watcher watcher: channel.getChannelState().getWatchers()) {
+            trackUser(watcher.getUser());
+        }
+        for (Member member: channel.getChannelState().getMembers()) {
+            trackUser(member.getUser());
         }
     }
 
@@ -289,12 +313,12 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
+        builtinHandler.dispatchEvent(event);
+
         Channel channel = getChannelByCid(event.getCid());
         if (channel != null){
             event.setChannel(channel);
         }
-
-        builtinHandler.dispatchEvent(event);
 
         for (int i = eventSubscribers.size() - 1; i >= 0 ; i--) {
             ChatEventHandler handler = eventSubscribers.get(i);
@@ -775,7 +799,7 @@ public class Client implements WSResponseHandler {
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
                 for (User user : response.body().getUsers())
                     if (!fromCurrentUser(user)){
-                        users.add(user);
+                        trackUser(user);
                     }
                 callback.onSuccess(response.body());
             }
@@ -791,6 +815,17 @@ public class Client implements WSResponseHandler {
     private ChatEventHandler builtinHandler =
 
         new ChatEventHandler() {
+            @Override
+            public void onAnyEvent(Event event) {
+                if (event.getUser() != null) {
+                    trackUser(event.getUser());
+                }
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    trackUsersFromChannel(channel);
+                }
+            }
+
             private void updateChannelMessage(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
                 if (channel != null) {
@@ -799,11 +834,19 @@ public class Client implements WSResponseHandler {
             }
 
             @Override
-            public void onTypingStart(Event event) {
+            public void onUserWatchingStart(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleWatcherStart(event);
+                }
             }
 
             @Override
-            public void onTypingStop(Event event) {
+            public void onUserWatchingStop(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleWatcherStop(event);
+                }
             }
 
             @Override
@@ -846,7 +889,7 @@ public class Client implements WSResponseHandler {
             public void onChannelUpdated(Event event) {
                 Channel channel = getChannelByCid(event.getCid());
                 if (channel != null) {
-                    channel.handleNewMessage(event);
+                    channel.handleChannelUpdated(event);
                 }
             }
 

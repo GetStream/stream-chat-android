@@ -58,6 +58,19 @@ public class Channel {
     private String type;
     @SerializedName("last_message_at")
     private Date lastMessageDate;
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @SerializedName("created_at")
+    private Date createdAt;
+    @SerializedName("updated_at")
+    private Date updatedAt;
     @SerializedName("created_by")
     private User createdByUser;
     @SerializedName("frozen")
@@ -305,9 +318,11 @@ public class Channel {
                         client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
                                 mergeWithState(response.body());
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
+                                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                                 callback.onSuccess(response.body());
                             }
 
@@ -563,6 +578,22 @@ public class Channel {
         }
     }
 
+    public void handleChannelUpdated(Event event){
+        name = event.getChannel().name;
+        image = event.getChannel().image;
+        extraData = event.getChannel().extraData;
+    }
+
+    public void handleWatcherStart(Event event) {
+        channelState.addWatcher(new Watcher(event.getUser(), event.getCreatedAt()));
+        channelState.setWatcherCount(event.getWatcherCount().intValue());
+    }
+
+    public void handleWatcherStop(Event event) {
+        channelState.removeWatcher(new Watcher(event.getUser(), event.getCreatedAt()));
+        channelState.setWatcherCount(event.getWatcherCount().intValue());
+    }
+
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
@@ -581,6 +612,9 @@ public class Channel {
                 channelState.getMessages().set(i, message);
                 break;
             }
+        }
+        if (event.getWatcherCount() != null) {
+            channelState.setWatcherCount(event.getWatcherCount().intValue());
         }
     }
 

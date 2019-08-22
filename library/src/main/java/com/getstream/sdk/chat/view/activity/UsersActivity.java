@@ -10,8 +10,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -37,7 +35,6 @@ import com.getstream.sdk.chat.utils.Utils;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -113,48 +110,48 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configChannelListView() {
-        adapter = new UserListItemAdapter(this, client.users, (View view) -> {
-            User user = (User) view.getTag();
-            Log.d(TAG, "User Selected: " + user.getName());
-            if (!groupUsers.contains(user)) {
-                groupUsers.add(user);
-            } else {
-                groupUsers.remove(user);
-            }
-            changeGroupUsers(false);
-        });
-        binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
-            if (binding.clGroup.getVisibility() == View.VISIBLE) return;
-            if (client.isConnected())
-                getChannel(Arrays.asList(client.users.get(i)));
-            else
-                Utils.showMessage(UsersActivity.this, "No internet connection!");
-        });
-
-        binding.listUsers.setAdapter(adapter);
-
-        binding.listUsers.setOnScrollListener(new AbsListView.OnScrollListener() {
-            private int mLastFirstVisibleItem;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (mLastFirstVisibleItem < firstVisibleItem) {
-                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
-                    if (view.getLastVisiblePosition() == client.users.size() - 1)
-                        getUsers();
-                }
-                if (mLastFirstVisibleItem > firstVisibleItem) {
-                    Log.d(TAG, "SCROLLING UP");
-                }
-                mLastFirstVisibleItem = firstVisibleItem;
-            }
-        });
+//        adapter = new UserListItemAdapter(this, client.users, (View view) -> {
+//            User user = (User) view.getTag();
+//            Log.d(TAG, "User Selected: " + user.getName());
+//            if (!groupUsers.contains(user)) {
+//                groupUsers.add(user);
+//            } else {
+//                groupUsers.remove(user);
+//            }
+//            changeGroupUsers(false);
+//        });
+//        binding.listUsers.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
+//            if (binding.clGroup.getVisibility() == View.VISIBLE) return;
+//            if (client.isConnected())
+//                getChannel(Arrays.asList(client.users.get(i)));
+//            else
+//                Utils.showMessage(UsersActivity.this, "No internet connection!");
+//        });
+//
+//        binding.listUsers.setAdapter(adapter);
+//
+//        binding.listUsers.setOnScrollListener(new AbsListView.OnScrollListener() {
+//            private int mLastFirstVisibleItem;
+//
+//            @Override
+//            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView view, int firstVisibleItem,
+//                                 int visibleItemCount, int totalItemCount) {
+//                if (mLastFirstVisibleItem < firstVisibleItem) {
+//                    Log.d(TAG, "LastVisiblePosition: " + view.getLastVisiblePosition());
+//                    if (view.getLastVisiblePosition() == client.users.size() - 1)
+//                        getUsers();
+//                }
+//                if (mLastFirstVisibleItem > firstVisibleItem) {
+//                    Log.d(TAG, "SCROLLING UP");
+//                }
+//                mLastFirstVisibleItem = firstVisibleItem;
+//            }
+//        });
     }
     // endregion
 
@@ -243,9 +240,9 @@ public class UsersActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (client.users.isEmpty()) {
-                    configChannelListView();
-                }
+//                if (client.users.isEmpty()) {
+//                    configChannelListView();
+//                }
                 adapter.notifyDataSetChanged();
                 isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
             }
@@ -278,8 +275,8 @@ public class UsersActivity extends AppCompatActivity {
             payload.put("sort", Collections.singletonList(sort));
         }
 
-        if (client.users.size() > 0)
-            payload.put("offset", client.users.size());
+//        if (client.users.size() > 0)
+//            payload.put("offset", client.users.size());
         payload.put("limit", Constant.USER_LIMIT);
 
         JSONObject json;

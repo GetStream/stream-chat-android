@@ -6,7 +6,7 @@ public abstract class ChatEventHandler {
 
     public void onUserPresenceChanged(Event event) {}
     public void onUserWatchingStart(Event event) {}
-    public void onUserWatching_stop(Event event) {}
+    public void onUserWatchingStop(Event event) {}
     public void onUserUpdated(Event event) {}
     public void onTypingStart(Event event) {}
     public void onTypingStop(Event event) {}
@@ -42,7 +42,7 @@ public abstract class ChatEventHandler {
                 onUserWatchingStart(event);
                 break;
             case USER_WATCHING_STOP:
-                onUserWatching_stop(event);
+                onUserWatchingStop(event);
                 break;
             case USER_UPDATED:
                 onUserUpdated(event);

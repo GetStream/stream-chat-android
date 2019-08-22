@@ -120,6 +120,24 @@ public class User implements UserEntity {
         return unreadChannels;
     }
 
+    public User shallowCopy(){
+        User copy = new User(id);
+        copy.shallowUpdate(this);
+        return copy;
+    }
+
+    public void shallowUpdate(User user){
+        name = user.name;
+        online = user.online;
+        image = user.image;
+        createdAt = user.createdAt;
+        lastActive = user.lastActive;
+        updatedAt = user.updatedAt;
+        if (user.extraData != null) {
+            extraData = new HashMap<>(user.extraData);
+        }
+    }
+
     @Override
     public boolean equals(@Nullable Object obj) {
         if (getClass() != obj.getClass()) {

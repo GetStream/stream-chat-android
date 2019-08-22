@@ -36,7 +36,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -75,11 +74,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<Boolean> online;
-    private MutableLiveData<String> channelName;
+
+    public LiveData<ChannelState> getChannelState() {
+        return channelState;
+    }
+
+    private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LiveData<Boolean> anyOtherUsersOnline;
-    private MutableLiveData<Number> watcherCount;
-    private MutableLiveData<String> lastActiveString;
+    private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
     private LazyQueryChannelLiveData<List<User>> typingUsers;
     private LazyQueryChannelLiveData<List<ChannelUserRead>> reads;
@@ -111,10 +114,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         hasNewMessages = new MutableLiveData<>(false);
 
 
-
-
-        channelName = new MutableLiveData<>();
-
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
@@ -130,14 +129,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
         reads.setValue(channel.getChannelState().getReads());
 
-        watcherCount = new MutableLiveData<>();
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> {
-            if (count == null) return false;
-            return count.intValue() > 0;
-        });
-
-        lastActiveString = new MutableLiveData<>();
         typingState = new HashMap<>();
+
+        channelState = new MutableLiveData<>(channel.getChannelState());
+        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
 
         Callable<Void> markRead = () -> {
             channel.markRead();
@@ -147,29 +143,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper.start();
 
         initEventHandlers();
-        updateChannelActiveStatus();
-    }
-
-    // updates live data about channel status (useful to render header and similar UI)
-    private void updateChannelActiveStatus() {
-
-        // last active is when any of the other users was last online
-        // TODO: we need to keep a list of users that are watching
-        //  - update that using events
-        // - have a transformation of that list that returns the lastActive
-        Date lastActive;
-        if (true) {
-            lastActive = new Date();
-        } else {
-            lastActive = channel.getChannelState().getLastActive();
-        }
-        String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
-        lastActiveString.postValue(humanizedDate);
-
-    }
-
-    private void updateChannelName() {
-        channelName.postValue(channel.getChannelState().getChannelNameOrMembers());
     }
 
     private int getWatcherCount() {
@@ -200,10 +173,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return reads;
     }
 
-    public LiveData<String> getChannelName() {
-        return channelName;
-    }
-
     public LiveData<Boolean> getOnline() {
         return online;
     }
@@ -214,10 +183,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public LiveData<Boolean> getAnyOtherUsersOnline() {
         return anyOtherUsersOnline;
-    }
-
-    public LiveData<String> getLastActiveString() {
-        return lastActiveString;
     }
 
     public LiveData<InputType> getInputType() {
@@ -272,38 +237,24 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private void initEventHandlers() {
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
-            public void onAnyEvent(Event event) {
-                // watcher count for higher traffic channels is sent on the send message event
-                // for regular channels it's done using the start watching and stop watching events
-                Number newCount = event.getWatcherCount();
-                if (newCount != null) {
-                    watcherCount.postValue(newCount);
-                    updateChannelActiveStatus();
-                }
-                Log.d(TAG, "New Event: " + event.getType());
+            public void onMessageNew(Event event) {
+                upsertMessage(event.getMessage());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
-            public void onMessageNew(Event event) {
-                Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
-                upsertMessage(event.getMessage());
+            public void onUserWatchingStart(Event event) {
+                channelState.postValue(event.getChannel().getChannelState());
             }
 
-            // TODO: onStartedWatching, onStoppedWatching
+            @Override
+            public void onUserWatchingStop(Event event) {
+                channelState.postValue(event.getChannel().getChannelState());
+            }
 
             @Override
             public void onChannelUpdated(Event event) {
-                 updateChannelName();
-            }
-
-            @Override
-            public void onMemberAdded(Event event) {
-                updateChannelName();
-            }
-
-            @Override
-            public void onMemberRemoved(Event event) {
-                updateChannelName();
+                channelState.postValue(event.getChannel().getChannelState());
             }
 
             @Override
@@ -437,13 +388,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 public void onSuccess(ChannelState response) {
                     initialized.set(true);
                     setLoadingDone();
-                    Log.i(TAG, response.getMessages().size() + " more messages loaded");
                     if (response.getMessages().size() < limit) {
                         reachedEndOfPagination = true;
                     }
                     addMessages(response.getMessages());
-                    updateChannelActiveStatus();
-                    updateChannelName();
+                    channelState.postValue(channel.getChannelState());
                 }
 
                 @Override

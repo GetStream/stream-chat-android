@@ -6,6 +6,12 @@
         <variable
             name="viewModel"
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
+        <variable
+            name="channelLastActive"
+            type="String" />
+        <variable
+            name="channelName"
+            type="String" />
     </data>
 
 
@@ -32,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="@{viewModel.channelName}"
+            android:text="@{channelName}"
             app:layout_constraintVertical_chainStyle="packed"
             android:textColor="#000"
             android:textSize="20sp"
@@ -49,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text='@{"Active " + viewModel.lastActiveString}'
+            android:text='@{channelLastActive}'
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
