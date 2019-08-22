@@ -362,6 +362,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
+        Log.d(TAG,"messages Count:" + messages.getValue().size());
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(message);
         Boolean updated = index != -1;
@@ -370,8 +371,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         } else {
             messagesCopy.add(message);
         }
-
+        Log.d(TAG,"New messages Count:" + messagesCopy.size());
         messages.postValue(messagesCopy);
+        Log.d(TAG,"New messages Count:" + messages.getValue().size());
         return updated;
     }
 
@@ -394,12 +396,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
+        Log.d(TAG,"Add Message");
         List<Message> messagesCopy = messages.getValue();
         messagesCopy.add(message);
         messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
+        Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
