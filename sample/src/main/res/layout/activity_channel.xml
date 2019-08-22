@@ -76,7 +76,7 @@
             app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"

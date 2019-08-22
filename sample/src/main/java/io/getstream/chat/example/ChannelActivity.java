@@ -63,7 +63,7 @@ public class ChannelActivity extends AppCompatActivity
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);
         // set custom Reaction Emojis
-        viewModel.getChannel().setReactionTypes(new HashMap<String, String>() {
+        channel.setReactionTypes(new HashMap<String, String>() {
             {
                 put("like", "\uD83D\uDC4D");
                 put("love", "\u2764\uFE0F");
