@@ -75,19 +75,17 @@ public class ChannelActivity extends AppCompatActivity
             }
         });
         // connect the view model
+        binding.setViewModel(viewModel);
         binding.channelHeader.setViewModel(viewModel, this);
-        binding.channelHeader.setOnBackClickListener(v -> finish());
-
-        binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
+        binding.messageList.setViewModel(viewModel, this);
+        binding.messageInput.setViewModel(viewModel, this);
+        // set listeners
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
-
-        binding.messageList.setViewModel(viewModel, this);
-        binding.messageInput.setViewModel(viewModel, this);
         binding.messageInput.setOpenCameraViewListener(this);
-        // set the viewModel data for the activity_channel.xml layout
-        binding.setViewModel(viewModel);
+
+        binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
     }
 
 
