@@ -17,6 +17,8 @@ public abstract class ChatChannelEventHandler {
     public void onMemberRemoved(Event event) {}
     public void onChannelUpdated(Event event) {}
     public void onChannelDeleted(Event event) {}
+    public void onUserWatchingStart(Event event) {}
+    public void onUserWatchingStop(Event event) {}
 
     public final void dispatchEvent(Event event){
         onAnyEvent(event);
@@ -59,6 +61,12 @@ public abstract class ChatChannelEventHandler {
                 break;
             case CHANNEL_DELETED:
                 onChannelDeleted(event);
+                break;
+            case USER_WATCHING_START:
+                onUserWatchingStart(event);
+                break;
+            case USER_WATCHING_STOP:
+                onUserWatchingStop(event);
                 break;
         }
     }

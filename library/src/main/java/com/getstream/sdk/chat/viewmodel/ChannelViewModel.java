@@ -36,7 +36,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -74,12 +73,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
-    private MutableLiveData<Boolean> online;
-    private MutableLiveData<String> channelName;
+    private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LiveData<Boolean> anyOtherUsersOnline;
-    private MutableLiveData<Number> watcherCount;
-    private MutableLiveData<String> lastActiveString;
+    private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
     private LazyQueryChannelLiveData<List<User>> typingUsers;
     private LazyQueryChannelLiveData<List<ChannelUserRead>> reads;
@@ -90,7 +87,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return channel;
     }
 
-    public Client client() {
+    public Client client(){
         return StreamChat.getInstance(getApplication());
     }
 
@@ -106,12 +103,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         loading = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
-        online = new MutableLiveData<>(true);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
-
-        channelName = new MutableLiveData<>();
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
@@ -128,14 +122,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
         reads.setValue(channel.getChannelState().getReads());
 
-        watcherCount = new MutableLiveData<>();
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> {
-            if (count == null) return false;
-            return count.intValue() > 0;
-        });
-
-        lastActiveString = new MutableLiveData<>();
         typingState = new HashMap<>();
+
+        channelState = new MutableLiveData<>(channel.getChannelState());
+        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
 
         Callable<Void> markRead = () -> {
             channel.markRead();
@@ -145,44 +136,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper.start();
 
         initEventHandlers();
-        updateChannelActiveStatus();
-    }
-
-
-    // updates live data about channel status (useful to render header and similar UI)
-    private void updateChannelActiveStatus() {
-
-        // last active is when any of the other users was last online
-        // TODO: we need to keep a list of users that are watching
-        //  - update that using events
-        // - have a transformation of that list that returns the lastActive
-        Date lastActive;
-        if (true) {
-            lastActive = new Date();
-        } else {
-            lastActive = channel.getChannelState().getLastActive();
-        }
-        String humanizedDate = getRelativeTimeSpanString(lastActive.getTime()).toString();
-        lastActiveString.postValue(humanizedDate);
-
-    }
-
-    private void updateChannelName() {
-        channelName.postValue(channel.getChannelState().getChannelNameOrMembers());
-    }
-
-    private int getWatcherCount() {
-        Number n = watcherCount.getValue();
-        int c;
-        if (n == null) {
-            c = 0;
-        } else {
-            c = n.intValue();
-        }
-        return c;
     }
 
     // region Getter
+
+    public LiveData<ChannelState> getChannelState() {
+        return channelState;
+    }
+
     public LiveData<List<Message>> getMessages() {
         return messages;
     }
@@ -199,12 +160,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return reads;
     }
 
-    public LiveData<String> getChannelName() {
-        return channelName;
-    }
-
-    public LiveData<Boolean> getOnline() {
-        return online;
+    public LiveData<Number> getWatcherCount() {
+        return watcherCount;
     }
 
     public LiveData<Boolean> getFailed() {
@@ -213,10 +170,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public LiveData<Boolean> getAnyOtherUsersOnline() {
         return anyOtherUsersOnline;
-    }
-
-    public LiveData<String> getLastActiveString() {
-        return lastActiveString;
     }
 
     public LiveData<InputType> getInputType() {
@@ -229,7 +182,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     // endregion
 
-    private boolean setLoading() {
+    private boolean setLoading(){
         if (isLoading.compareAndSet(false, true)) {
             loading.postValue(true);
             return true;
@@ -237,12 +190,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingDone() {
+    private void setLoadingDone(){
         if (isLoading.compareAndSet(true, false))
             loading.postValue(false);
     }
 
-    private boolean setLoadingMore() {
+    private boolean setLoadingMore(){
         if (isLoadingMore.compareAndSet(false, true)) {
             loadingMore.postValue(true);
             return true;
@@ -250,7 +203,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingMoreDone() {
+    private void setLoadingMoreDone(){
         if (isLoadingMore.compareAndSet(true, false))
             loadingMore.postValue(false);
     }
@@ -271,38 +224,24 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private void initEventHandlers() {
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
-            public void onAnyEvent(Event event) {
-                // watcher count for higher traffic channels is sent on the send message event
-                // for regular channels it's done using the start watching and stop watching events
-                Number newCount = event.getWatcherCount();
-                if (newCount != null) {
-                    watcherCount.postValue(newCount);
-                    updateChannelActiveStatus();
-                }
-                Log.d(TAG, "New Event: " + event.getType());
+            public void onMessageNew(Event event) {
+                upsertMessage(event.getMessage());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
-            public void onMessageNew(Event event) {
-                Log.i(TAG, "onMessageNew for channelviewmodel" + event.getMessage().getText());
-                upsertMessage(event.getMessage());
+            public void onUserWatchingStart(Event event) {
+                channelState.postValue(event.getChannel().getChannelState());
             }
 
-            // TODO: onStartedWatching, onStoppedWatching
+            @Override
+            public void onUserWatchingStop(Event event) {
+                channelState.postValue(event.getChannel().getChannelState());
+            }
 
             @Override
             public void onChannelUpdated(Event event) {
-                updateChannelName();
-            }
-
-            @Override
-            public void onMemberAdded(Event event) {
-                updateChannelName();
-            }
-
-            @Override
-            public void onMemberRemoved(Event event) {
-                updateChannelName();
+                channelState.postValue(event.getChannel().getChannelState());
             }
 
             @Override
@@ -361,7 +300,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        Log.d(TAG, "messages Count:" + messages.getValue().size());
+        Log.d(TAG,"messages Count:" + messages.getValue().size());
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(message);
         Boolean updated = index != -1;
@@ -370,9 +309,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         } else {
             messagesCopy.add(message);
         }
-        Log.d(TAG, "New messages Count:" + messagesCopy.size());
+        Log.d(TAG,"New messages Count:" + messagesCopy.size());
         messages.postValue(messagesCopy);
-        Log.d(TAG, "New messages Count:" + messages.getValue().size());
+        Log.d(TAG,"New messages Count:" + messages.getValue().size());
         return updated;
     }
 
@@ -395,12 +334,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
+        Log.d(TAG,"Add Message");
         List<Message> messagesCopy = messages.getValue();
         messagesCopy.add(message);
         messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
+        Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
@@ -432,13 +373,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     public void onSuccess(ChannelState response) {
                         initialized.set(true);
                         setLoadingDone();
-                        Log.i(TAG, response.getMessages().size() + " more messages loaded");
                         if (response.getMessages().size() < limit) {
                             reachedEndOfPagination = true;
                         }
                         addMessages(response.getMessages());
-                        updateChannelActiveStatus();
-                        updateChannelName();
+                        channelState.postValue(channel.getChannelState());
                     }
 
                     @Override
@@ -465,7 +404,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
 
         loadingMore.setValue(true);
-        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
@@ -530,7 +469,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private List<User> getCleanedTypingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
-        for (Event event : typingState.values()) {
+        for (Event event: typingState.values()){
             // constants
             long TYPING_TIMEOUT = 10000;
             if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
@@ -572,7 +511,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             pendingMarkReadRequests = new AtomicInteger(0);
         }
 
-        public void markRead() {
+        public void markRead(){
             pendingMarkReadRequests.incrementAndGet();
         }
 

@@ -106,6 +106,10 @@ public class ChannelListViewModel extends AndroidViewModel {
         this.filter = filter;
     }
 
+    public void setChannelSort(QuerySort sort){
+        this.sort = sort;
+    }
+
     public Client client(){
         return StreamChat.getInstance(getApplication());
     }

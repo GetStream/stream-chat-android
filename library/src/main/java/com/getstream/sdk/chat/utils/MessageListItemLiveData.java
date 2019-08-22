@@ -121,6 +121,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
         this.messages.observe(owner, messages -> {
+            if (messages == null || messages.size() == 0) return;
             // update based on messages
             hasNewMessages = false;
             String newlastMessageID = messages.get(messages.size() -1).getId();

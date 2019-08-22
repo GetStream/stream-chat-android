@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ChannelState{
+public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
@@ -34,8 +34,19 @@ public class ChannelState{
     @SerializedName("members")
     private List<Member> members;
 
+    public List<Watcher> getWatchers() {
+        if (watchers == null) {
+            return new ArrayList<>();
+        }
+        return watchers;
+    }
+
     @SerializedName("watchers")
     private List<Watcher> watchers;
+
+    public int getWatcherCount() {
+        return watcherCount;
+    }
 
     @SerializedName("watcher_count")
     private int watcherCount;
@@ -56,13 +67,40 @@ public class ChannelState{
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
     }
 
+    public synchronized void addWatcher(Watcher watcher){
+        if (watchers == null) {
+            watchers = new ArrayList<>();
+        }
+        watchers.remove(watcher);
+        watchers.add(watcher);
+    }
+
+    public void removeWatcher(Watcher watcher){
+        if (watchers == null) {
+            watchers = new ArrayList<>();
+        }
+        watchers.remove(watcher);
+    }
+
     public List<User> getOtherUsers() {
         List<User> users = new ArrayList<>();
-        for (Member m : members) {
-            if (!channel.getClient().fromCurrentUser(m)) {
-                users.add(m.getUser());
+
+        if (members != null) {
+            for (Member m : members) {
+                if (!channel.getClient().fromCurrentUser(m)) {
+                    users.add(channel.getClient().getTrackedUser(m.getUser()));
+                }
             }
         }
+
+        if (watchers != null) {
+            for (Watcher w : watchers) {
+                if (!channel.getClient().fromCurrentUser(w)) {
+                    users.add(channel.getClient().getTrackedUser(w.getUser()));
+                }
+            }
+        }
+
         return users;
     }
 
@@ -74,22 +112,16 @@ public class ChannelState{
         return message.getId();
     }
 
-    // last time the channel had another user online OR got a message from another user
+    // last time the channel had a message from another user
     public Date getLastActive() {
+        Date lastActive = channel.getCreatedAt();
         Message message = getLastMessageFromOtherUser();
-        Date lastActive = new Date(0);
-        List<User> users = this.getOtherUsers();
-        for (User u: users) {
-            if (u.getLastActive() != null && u.getLastActive().after(lastActive)) {
-                lastActive = u.getLastActive();
+        if (message != null) {
+            if (message.getCreatedAt().after(lastActive)) {
+                lastActive = message.getCreatedAt();
             }
         }
-
-        if (lastActive.after(message.getCreatedAt())) {
-            return lastActive;
-        }
-
-        return message.getCreatedAt();
+        return lastActive;
     }
 
     public Boolean anyOtherUsersOnline() {
@@ -138,6 +170,9 @@ public class ChannelState{
     }
 
     public List<Message> getMessages() {
+        if (messages == null) {
+            return new ArrayList<>();
+        }
         return messages;
     }
 
@@ -161,6 +196,9 @@ public class ChannelState{
     }
 
     public List<Member> getMembers() {
+        if (members == null) {
+            return new ArrayList<>();
+        }
         return members;
     }
 
@@ -249,37 +287,27 @@ public class ChannelState{
         }
     }
 
+    public void setWatcherCount(int watcherCount) {
+        this.watcherCount = watcherCount;
+    }
+
     public void init(ChannelState incoming) {
         //TODO: do an actual init instead of a replacement
         reads = incoming.reads;
         members = incoming.members;
-
-        if (incoming.members != null && incoming.members.size() > 0) {
-            for (Member m : incoming.members) {
-                //TODO: update user references to client
-            }
-        }
+        watcherCount = incoming.watcherCount;
 
         if (incoming.messages != null) {
             addMessagesSorted(incoming.messages);
         }
-        watcherCount = incoming.watcherCount;
 
-        watchers = incoming.watchers;
-        if (incoming.watchers != null && incoming.watchers.size() != 0) {
-            // TODO: init watchers
+        if (incoming.watchers != null) {
+            for (Watcher watcher: incoming.watchers) {
+                addWatcher(watcher);
+            }
         }
-
-        reads = incoming.reads;
-        if (incoming.reads != null && incoming.reads.size() != 0) {
-            // TODO: init read state
-        }
-
-        members = incoming.members;
-        if (incoming.members != null && incoming.members.size() != 0) {
-            // TODO: init read state
-        }
-
+        // TODO: merge with incoming.reads
+        // TODO: merge with incoming.members
     }
 
     public int getCurrentUserUnreadMessageCount() {
