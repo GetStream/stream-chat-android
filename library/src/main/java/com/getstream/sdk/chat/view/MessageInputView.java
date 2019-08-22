@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;

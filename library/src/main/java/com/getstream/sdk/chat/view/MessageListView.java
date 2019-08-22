@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -21,8 +22,13 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
+import com.getstream.sdk.chat.view.activity.AttachmentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
+import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -431,6 +437,71 @@ public class MessageListView extends RecyclerView {
 
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
+    }
+    // endregion
+
+    // region View Attachment
+    public void showAttachment(Message message, Attachment attachment){
+        String url = null;
+        String type = null;
+        switch (attachment.getType()) {
+            case ModelType.attach_file:
+                loadFile(attachment);
+                return;
+            case ModelType.attach_image:
+                if (attachment.getOgURL() != null) {
+                    url = attachment.getOgURL();
+                    type = ModelType.attach_link;
+                } else {
+                    List<String> imageUrls = new ArrayList<>();
+                    for (Attachment a : message.getAttachments()) {
+                        imageUrls.add(a.getImageURL());
+                    }
+                    int position = message.getAttachments().indexOf(attachment);
+
+                    new ImageViewer.Builder<>(getContext(), imageUrls)
+                            .setStartPosition(position)
+                            .show();
+                    return;
+                }
+                break;
+            case ModelType.attach_video:
+                url = attachment.getTitleLink();
+                break;
+            case ModelType.attach_giphy:
+                url = attachment.getThumbURL();
+                break;
+            case ModelType.attach_product:
+                url = attachment.getUrl();
+                break;
+        }
+        if (type == null) type = attachment.getType();
+        Intent intent = new Intent(getContext(), AttachmentActivity.class);
+        intent.putExtra("type", type);
+        intent.putExtra("url", url);
+        getContext().startActivity(intent);
+    }
+    private void loadFile(Attachment attachment) {
+        // Media
+        if (attachment.getMime_type().contains("audio") ||
+                attachment.getMime_type().contains("video")) {
+            Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
+            intent.putExtra("type", attachment.getMime_type());
+            intent.putExtra("url", attachment.getAssetURL());
+            getContext().startActivity(intent);
+            return;
+        }
+
+        // Office
+        if (attachment.getMime_type().equals("application/msword") ||
+                attachment.getMime_type().equals(ModelType.attach_mime_txt) ||
+                attachment.getMime_type().equals(ModelType.attach_mime_pdf) ||
+                attachment.getMime_type().contains("application/vnd")) {
+
+            Intent intent = new Intent(getContext(), AttachmentDocumentActivity.class);
+            intent.putExtra("url", attachment.getAssetURL());
+            getContext().startActivity(intent);
+        }
     }
     // endregion
 }
