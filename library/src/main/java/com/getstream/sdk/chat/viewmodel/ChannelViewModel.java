@@ -150,6 +150,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         updateChannelActiveStatus();
     }
 
+
+
     // updates live data about channel status (useful to render header and similar UI)
     private void updateChannelActiveStatus() {
 

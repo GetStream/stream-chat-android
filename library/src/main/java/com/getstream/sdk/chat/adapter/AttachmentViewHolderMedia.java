@@ -15,36 +15,24 @@ import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
-
-    private Context context;
-    private Message message;
-    private Attachment attachment;
-    private MessageListViewStyle style;
-
+public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
     // Attachment
     private PorterShapeImageView iv_media_thumb;
     private ImageView iv_media_more;
     private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ConstraintLayout cl_video;
-    // Action
-    private MessageListView.AttachmentClickListener clickListener;
-    private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListItem messageListItem;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
-
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -64,25 +52,20 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        this.context = context;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.messageListItem = messageListItem;
-        this.message = messageListItem.getMessage();
-        this.attachment = attachment;
 
+        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
         configMediaAttach();
     }
 
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
-        iv_media_thumb.setShape(context, background);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions(), attachment);
+        iv_media_thumb.setShape(getContext(), background);
     }
 
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
+        for (Attachment attachment : getMessage().getAttachments()) {
             if (attachment.getType() == null) continue;
             if (!attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
@@ -117,20 +100,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener(view -> {
-            this.triggerClick(message, attachment);
-        });
-        iv_media_thumb.setOnLongClickListener(view -> {
-            if (longClickListener != null)
-                longClickListener.onMessageLongClick(message);
-            return true;
-        });
+        iv_media_thumb.setOnClickListener(this);
+        iv_media_thumb.setOnLongClickListener(this);
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
-        Glide.with(context)
+        Glide.with(getContext())
                 .load(attachUrl)
                 .into(iv_media_thumb);
-        if (!message.getType().equals(ModelType.message_ephemeral))
+        if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());
         tv_media_des.setText(attachments.get(0).getText());
 
@@ -148,15 +125,5 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
-    }
-
-    private void triggerClick(Message message, Attachment attachment) {
-        if (this.clickListener != null) {
-            this.clickListener.onAttachmentClick(message, attachment);
-        }
-    }
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
     }
 }

@@ -103,12 +103,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        viewModel.removeEventHandler();
-        super.onBackPressed();
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
@@ -136,7 +130,37 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onMessageClick(Message message, int position) {
         Log.i(TAG, "message was clicked");
-        showReactionDialog(message, position);
+        int firstListItemPosition = ((LinearLayoutManager) binding.messageList.getLayoutManager()).findFirstVisibleItemPosition();
+        final int lastListItemPosition = firstListItemPosition + binding.messageList.getChildCount() - 1;
+        int childIndex;
+        if (position < firstListItemPosition || position > lastListItemPosition) {
+            childIndex = position;
+        } else {
+            childIndex = position - firstListItemPosition;
+        }
+        int originY = binding.messageList.getChildAt(childIndex).getBottom();
+
+        final Dialog dialog = new Dialog(this); // Context, this, etc.
+        ReactionDlgView reactionDlgView = new ReactionDlgView(this);
+
+        reactionDlgView.setMessagewithStyle(binding.messageList.getChannel(),
+                message,
+                binding.messageList.getStyle(),
+                view -> dialog.dismiss()
+        );
+
+        dialog.setContentView(reactionDlgView);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        dialog.show();
+
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.x = 0;
+        int screenHeight = Utils.getScreenResolution(this);
+        wlp.y = originY - screenHeight / 2;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
     }
 
     @Override
@@ -175,42 +199,10 @@ public class ChannelActivity extends AppCompatActivity
         }
     };
 
-    public void showReactionDialog(Message message, int position) {
-        int firstListItemPosition = ((LinearLayoutManager) binding.messageList.getLayoutManager()).findFirstVisibleItemPosition();
-        final int lastListItemPosition = firstListItemPosition + binding.messageList.getChildCount() - 1;
-        int childIndex;
-        if (position < firstListItemPosition || position > lastListItemPosition) {
-            childIndex = position;
-        } else {
-            childIndex = position - firstListItemPosition;
-        }
-        int originY = binding.messageList.getChildAt(childIndex).getBottom();
-
-        final Dialog dialog = new Dialog(this); // Context, this, etc.
-        ReactionDlgView reactionDlgView = new ReactionDlgView(this);
-
-        reactionDlgView.setMessagewithStyle(binding.messageList.getChannel(),
-                message,
-                binding.messageList.getStyle(),
-                view -> dialog.dismiss()
-        );
-
-        dialog.setContentView(reactionDlgView);
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-
-        dialog.show();
-
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.x = 0;
-        int screenHeight = Utils.getScreenResolution(this);
-        wlp.y = originY - screenHeight / 2;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-    }
-
     @Override
     public void onMessageLongClick(Message message) {
+
+
         final Dialog dialog = new Dialog(this);
         if (!message.getUserId().equals(StreamChat.getInstance(this).getUserId()))
             dialog.setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);

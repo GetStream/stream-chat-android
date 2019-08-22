@@ -30,10 +30,7 @@ import java.util.List;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
-    private Context context;
-    private Message message;
-    private Attachment attachment;
-    private MessageListViewStyle style;
+
 
     // Attachment
     private ConstraintLayout cl_attachment, cl_attachment_media;
@@ -42,11 +39,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private ImageView iv_media_more;
     private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-    // Action
-    private MessageListView.BubbleHelper bubbleHelper;
-    private MessageListView.AttachmentClickListener clickListener;
-    private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListItem messageListItem;
+
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -71,12 +64,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        this.context = context;
-        this.clickListener = clickListener;
-        this.longClickListener = longClickListener;
-        this.messageListItem = messageListItem;
-        this.message = messageListItem.getMessage();
-        this.attachment = attachment;
+
 
         configAttachment();
 
@@ -92,7 +80,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         boolean hasFile = false;
         boolean hasMedia = false;
-        for (Attachment attachment : message.getAttachments()) {
+        for (Attachment attachment : getMessage().getAttachments()) {
             if (attachment.getType() == null) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 hasFile = true;
@@ -117,17 +105,17 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
-        iv_media_thumb.setShape(context, background);
+        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions(), attachment);
+        iv_media_thumb.setShape(getContext(), background);
     }
 
     private void configAttachViewBackground(View view) {
         Drawable background;
         // TODO: fix this somehow
         if (true) {
-            background = style.getMessageBubbleDrawableTheirs();
+            background = getStyle().getMessageBubbleDrawableTheirs();
         } else {
-            background = style.getMessageBubbleDrawableMine();
+            background = getStyle().getMessageBubbleDrawableMine();
         }
         view.setBackground(background);
     }
@@ -136,13 +124,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private void configFileAttach() {
         configAttachViewBackground(lv_attachment_file);
         List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
+        for (Attachment attachment : getMessage().getAttachments()) {
             if (attachment.getType() == null) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
             }
         }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
+        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(getContext(), attachments, false, false);
 
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
@@ -154,15 +142,15 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                 attachmentModel.setAttachments(attachments);
 
                 view.setTag(attachmentModel);
-                triggerClick(message, attachment);
+                triggerClick(getMessage(), getAttachment());
 
         });
         lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            triggerLongClick(message);
+            triggerLongClick(getMessage());
             return true;
         });
 
-        float height = context.getResources().getDimension(R.dimen.attach_file_height);
+        float height = getContext().getResources().getDimension(R.dimen.attach_file_height);
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
         params.height = (int) height * attachments.size();
         lv_attachment_file.setLayoutParams(params);
@@ -170,7 +158,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
+        for (Attachment attachment : getMessage().getAttachments()) {
             if (attachment.getType() == null) continue;
             if (!attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
@@ -215,22 +203,22 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                     Log.d(TAG, "Attachments set : " + attachmentModel.getAttachments().size());
                     v.setTag(attachmentModel);
                 }
-                this.triggerClick(message, attachment);
+                this.triggerClick(getMessage(), getAttachment());
 
 
         });
 
 
         cl_attachment_media.setOnLongClickListener((View v) -> {
-            this.triggerLongClick(message);
+            this.triggerLongClick(getMessage());
             return true;
         });
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
-        Glide.with(context)
+        Glide.with(getContext())
                 .load(attachUrl)
                 .into(iv_media_thumb);
-        if (!message.getType().equals(ModelType.message_ephemeral))
+        if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());
         tv_media_des.setText(attachments.get(0).getText());
 
@@ -251,13 +239,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void triggerLongClick(Message message) {
-        if (this.longClickListener != null) {
-            this.longClickListener.onMessageLongClick(message);
+        if (this.getLongClickListener() != null) {
+            this.getLongClickListener().onMessageLongClick(message);
         }
     }
     private void triggerClick(Message message, Attachment attachment) {
-        if (this.clickListener != null) {
-            this.clickListener.onAttachmentClick(message, attachment);
+        if (this.getClickListener() != null) {
+            this.getClickListener().onAttachmentClick(message, attachment);
         }
     }
 
@@ -282,10 +270,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
         cl_attachment.setLayoutParams(params);
 
-        lv_attachment_file.setBackgroundColor(context.getResources().getColor(R.color.black));
+        lv_attachment_file.setBackgroundColor(getContext().getResources().getColor(R.color.black));
     }
 
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
 }
