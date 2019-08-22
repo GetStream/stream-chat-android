@@ -34,10 +34,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     // Attachment
     private PorterShapeImageView iv_media_thumb;
-    private ImageView iv_media_more;
-    private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-    private ConstraintLayout cl_video;
+
     // Action
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
@@ -50,12 +48,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         super(resId, parent);
         // Attach
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
-        iv_media_more = itemView.findViewById(R.id.iv_media_more);
-        tv_more = itemView.findViewById(R.id.tv_more);
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
-        cl_video = itemView.findViewById(R.id.cl_video);
     }
 
     @Override
@@ -84,40 +79,21 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     private void configMediaAttach() {
-        List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
-            if (!attachment.getType().equals(ModelType.attach_file)) {
-                attachments.add(attachment);
-            }
-        }
 
-        final String type = attachments.get(0).getType();
+        final String type = attachment.getType();
 
-        String attachUrl = attachments.get(0).getImageURL();
-        if (attachments.get(0).getType().equals(ModelType.attach_image)) {
-            attachUrl = attachments.get(0).getImageURL();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachments.get(0).getThumbURL();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_video)) {
-            attachUrl = attachments.get(0).getThumbURL();
+        String attachUrl = attachment.getImageURL();
+        if (attachment.getType().equals(ModelType.attach_image)) {
+            attachUrl = attachment.getImageURL();
+        } else if (attachment.getType().equals(ModelType.attach_giphy)) {
+            attachUrl = attachment.getThumbURL();
+        } else if (attachment.getType().equals(ModelType.attach_video)) {
+            attachUrl = attachment.getThumbURL();
         } else {
-            if (attachUrl == null) attachUrl = attachments.get(0).getImage();
+            if (attachUrl == null) attachUrl = attachment.getImage();
         }
-        if (TextUtils.isEmpty(attachUrl)) {
-            cl_video.setVisibility(View.GONE);
-            return;
-        }
-        configImageThumbBackground(attachments.get(0));
-        // More
-        if (attachments.size() > 1) {
-            iv_media_more.setVisibility(View.VISIBLE);
-            tv_more.setText(attachments.size() - 1 + " more");
-        } else {
-            iv_media_more.setVisibility(View.GONE);
-        }
-        tv_more.setVisibility(iv_media_more.getVisibility());
 
+        configImageThumbBackground(attachment);
 
         // Set Click Listener
         iv_media_thumb.setOnClickListener(view -> {
@@ -134,15 +110,15 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 .load(attachUrl)
                 .into(iv_media_thumb);
         if (!message.getType().equals(ModelType.message_ephemeral))
-            tv_media_title.setText(attachments.get(0).getTitle());
-        tv_media_des.setText(attachments.get(0).getText());
+            tv_media_title.setText(attachment.getTitle());
+        tv_media_des.setText(attachment.getText());
 
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getText()))
+        if (StringUtility.isNullOrEmpty(attachment.getText()))
             tv_media_des.setVisibility(View.GONE);
         else
             tv_media_des.setVisibility(View.VISIBLE);
 
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getTitle()))
+        if (StringUtility.isNullOrEmpty(attachment.getTitle()))
             tv_media_title.setVisibility(View.GONE);
         else
             tv_media_title.setVisibility(View.VISIBLE);

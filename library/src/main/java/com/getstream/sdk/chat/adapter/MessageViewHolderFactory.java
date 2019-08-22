@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
@@ -15,6 +16,8 @@ import java.util.List;
  * Allows you to easily customize message rendering or message attachment rendering
  */
 public class MessageViewHolderFactory {
+    private static String TAG = MessageViewHolderFactory.class.getName();
+
     private static int NOT_FOUND = 0;
     private static int DATE_SEPARATOR = 1;
     private static int MESSAGE = 2;
@@ -55,7 +58,8 @@ public class MessageViewHolderFactory {
             return GENERIC_ATTACHMENT;
         } else if (t.equals(ModelType.attach_video)) {
             return VIDEO_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_image)) {
+        } else if (t.equals(ModelType.attach_image) ||
+                t.equals(ModelType.attach_giphy)) {
             return IMAGE_ATTACHMENT;
         } else if (t.equals(ModelType.attach_file)) {
             return FILE_ATTACHMENT;
@@ -96,6 +100,7 @@ public class MessageViewHolderFactory {
             return holder;
         } else {
             AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+            Log.d(TAG,"Show AttachmentViewHolder");
             holder.setStyle(adapter.getStyle());
             return holder;
         }

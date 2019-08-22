@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,8 +37,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_attachment, cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
-    private ImageView iv_media_more;
-    private TextView tv_more;
     private TextView tv_media_title, tv_media_play, tv_media_des;
     // Action
     private MessageListView.BubbleHelper bubbleHelper;
@@ -57,8 +54,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
-        iv_media_more = itemView.findViewById(R.id.iv_media_more);
-        tv_more = itemView.findViewById(R.id.tv_more);
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
@@ -78,16 +73,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         this.attachment = attachment;
 
         configAttachment();
-
-        //configMediaAttach();
-        //configParamsAttachment();
     }
 
     private void configAttachment() {
-//        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
-//            cl_attachment.setVisibility(View.GONE);
-//            return;
-//        }
 
         boolean hasFile = false;
         boolean hasMedia = false;
@@ -189,15 +177,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         cl_attachment_media.setVisibility(View.VISIBLE);
         configAttachViewBackground(cl_attachment_media);
         configImageThumbBackground(attachments.get(0));
-        // More
-        if (attachments.size() > 1) {
-            iv_media_more.setVisibility(View.VISIBLE);
-            tv_more.setText(attachments.size() - 1 + " more");
-        } else {
-            iv_media_more.setVisibility(View.GONE);
-        }
-        tv_more.setVisibility(iv_media_more.getVisibility());
-
 
         // Set Click Listener
         cl_attachment_media.setOnClickListener((View v) -> {
@@ -243,30 +222,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (this.clickListener != null) {
             this.clickListener.onAttachmentClick(message, attachment);
         }
-    }
-
-    private void configParamsAttachment() {
-        if (cl_attachment.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cl_attachment.getLayoutParams();
-        ConstraintLayout.LayoutParams paramsLv = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
-        if (lv_attachment_file.getVisibility() == View.VISIBLE) {
-            // TODO; fix this somehow
-            if (true) {
-                params.horizontalBias = 0f;
-                paramsLv.horizontalBias = 0f;
-            } else {
-                params.horizontalBias = 1f;
-                paramsLv.horizontalBias = 1f;
-            }
-            params.width = ConstraintLayout.LayoutParams.WRAP_CONTENT;
-            lv_attachment_file.setLayoutParams(paramsLv);
-            cl_attachment.setLayoutParams(params);
-        } else {
-            params.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-        }
-        cl_attachment.setLayoutParams(params);
-
-        lv_attachment_file.setBackgroundColor(context.getResources().getColor(R.color.black));
     }
 
     public void setStyle(MessageListViewStyle style) {
