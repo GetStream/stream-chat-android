@@ -3,54 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.ChannelActivity">
-
-        <com.getstream.sdk.chat.view.ChannelHeaderView
-            android:id="@+id/channelHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFF"
-            app:backButtonShow="true"
-            app:layout_constraintEnd_toStartOf="@+id/messageList"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.getstream.sdk.chat.view.MessageListView
-            android:id="@+id/messageList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-
-            app:layout_constraintBottom_toTopOf="@+id/message_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-
-            android:background="#f3f5f8"
-            app:messageTextColorMine="@color/white"
-
-            app:messageBackgroundColorMine="#70af74"
-            app:messageTextColorTheirs="#000"
-            app:messageBackgroundColorTheirs="@color/white"
-             />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="6dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -69,6 +25,24 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="6dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.getstream.sdk.chat.view.ChannelHeaderView
+            android:id="@+id/channelHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFF"
+            app:backButtonShow="true"
+            app:layout_constraintEnd_toStartOf="@+id/messageList"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"
             android:layout_width="match_parent"
@@ -80,5 +54,27 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toEndOf="@+id/messageList" />
+
+        <com.getstream.sdk.chat.view.MessageListView
+            android:id="@+id/messageList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="#f3f5f8"
+            app:layout_constraintBottom_toTopOf="@+id/message_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader"
+            app:messageBackgroundColorMine="#70af74"
+            app:messageBackgroundColorTheirs="@color/white"
+            app:messageTextColorMine="@color/white"
+            app:messageTextColorTheirs="#000" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
+    </data>
 </layout>
