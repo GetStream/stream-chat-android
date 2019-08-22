@@ -360,12 +360,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         });
     }
 
-    public void removeEventHandler() {
-        if (channelSubscriptionId == 0) return;
-        channel.removeEventHandler(channelSubscriptionId);
-        channelSubscriptionId = 0;
-    }
-
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
