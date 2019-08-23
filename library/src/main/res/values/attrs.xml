@@ -81,35 +81,35 @@
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <!--Attachment Button-->
-        <attr name="showAttachmentButton" format="boolean" />
-        <attr name="attachmentButtonDefaultIconColor" format="color|reference" />
-        <attr name="attachmentButtonDefaultIconPressedColor" format="color|reference" />
-        <attr name="attachmentButtonDefaultIconDisabledColor" format="color|reference" />
-        <attr name="attachmentButtonSelectedIconColor" format="color|reference" />
-        <attr name="attachmentButtonIcon" format="reference" />
-        <attr name="attachmentButtonWidth" format="dimension|reference" />
-        <attr name="attachmentButtonHeight" format="dimension|reference" />
+        <attr name="streamShowAttachmentButton" format="boolean" />
+        <attr name="streamAttachmentButtonDefaultIconColor" format="color|reference" />
+        <attr name="streamAttachmentButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="streamAttachmentButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="streamAttachmentButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamAttachmentButtonIcon" format="reference" />
+        <attr name="streamAttachmentButtonWidth" format="dimension|reference" />
+        <attr name="streamAttachmentButtonHeight" format="dimension|reference" />
         <!--Send Button-->
-        <attr name="inputButtonDefaultIconColor" format="color|reference" />
-        <attr name="inputButtonDefaultIconPressedColor" format="color|reference" />
-        <attr name="inputButtonDefaultIconDisabledColor" format="color|reference" />
-        <attr name="inputButtonIcon" format="reference" />
-        <attr name="inputButtonWidth" format="dimension|reference" />
-        <attr name="inputButtonHeight" format="dimension|reference" />
+        <attr name="streamInputButtonDefaultIconColor" format="color|reference" />
+        <attr name="streamInputButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="streamInputButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="streamInputButtonIcon" format="reference" />
+        <attr name="streamInputButtonWidth" format="dimension|reference" />
+        <attr name="streamInputButtonHeight" format="dimension|reference" />
         <!--Input Text-->
-        <attr name="inputHint" format="string" />
-        <attr name="inputTextSize" format="dimension|reference" />
-        <attr name="inputTextColor" format="color|reference" />
-        <attr name="inputHintColor" format="color|reference" />
-        <attr name="inputTextStyle">
+        <attr name="streamInputHint" format="string" />
+        <attr name="streamInputTextSize" format="dimension|reference" />
+        <attr name="streamInputTextColor" format="color|reference" />
+        <attr name="streamInputHintColor" format="color|reference" />
+        <attr name="streamInputTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
         <!--Input Background-->
-        <attr name="inputBackground" format="reference" />
-        <attr name="inputSelectedBackground" format="reference" />
-        <attr name="inputEditBackground" format="reference" />
+        <attr name="streamInputBackground" format="reference" />
+        <attr name="streamInputSelectedBackground" format="reference" />
+        <attr name="streamInputEditBackground" format="reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
