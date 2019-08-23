@@ -70,7 +70,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_active_mark"
+            android:id="@+id/iv_active_badge"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/circle_user_online : @drawable/circle_user_offline}"
@@ -84,6 +84,18 @@
             android:layout_height="1dp"
             android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_option"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="18dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

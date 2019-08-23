@@ -1,15 +1,14 @@
 package io.getstream.chat.example;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
@@ -18,14 +17,12 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
-
-import java.util.HashMap;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -36,7 +33,9 @@ public class ChannelActivity extends AppCompatActivity
         implements MessageListView.MessageClickListener,
         MessageListView.MessageLongClickListener,
         MessageListView.AttachmentClickListener,
-        MessageInputView.OpenCameraViewListener {
+        MessageInputView.OpenCameraViewListener,
+        MessageListView.HeaderOptionsClickListener,
+        MessageListView.HeaderAvatarGroupClickListener {
 
     final String TAG = ChannelActivity.class.getSimpleName();
 
@@ -76,6 +75,8 @@ public class ChannelActivity extends AppCompatActivity
         // connect the view model
         binding.setViewModel(viewModel);
         binding.channelHeader.setViewModel(viewModel, this);
+        binding.channelHeader.setHeaderOptionsClickListener(this);
+        binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
     }
@@ -129,4 +130,23 @@ public class ChannelActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onHeaderOptionsClick(Channel channel) {
+        new AlertDialog.Builder(this)
+                .setTitle("Options for channel " + channel.getName())
+                .setMessage("You pressed on the options, well done")
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.settings)
+                .show();
+    }
+
+    @Override
+    public void onHeaderAvatarGroupClick(Channel channel) {
+        new AlertDialog.Builder(this)
+                .setTitle("Avatar group click for channel " + channel.getName())
+                .setMessage("You pressed on the avatar group, well done")
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.settings)
+                .show();
+    }
 }

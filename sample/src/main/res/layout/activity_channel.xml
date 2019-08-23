@@ -19,32 +19,24 @@
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#10D0FF"
-            app:channelHeaderAvatarBackGroundColor="#9C27B0"
-            app:channelHeaderBackButtonShow="true"
-            app:channelHeaderTitleTextColor="#C020FF"
+            app:streamChannelHeaderBackButtonShow="true"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.getstream.sdk.chat.view.MessageListView
-            android:id="@+id/messageList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
+            <com.getstream.sdk.chat.view.MessageListView
+                android:id="@+id/messageList"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="10dp"
 
-            app:layout_constraintBottom_toTopOf="@+id/message_input"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelHeader"
+                android:background="#f3f5f8"
+                app:messageBackgroundColorMine="#70af74"
 
-            android:background="#f3f5f8"
-            app:messageTextColorMine="@color/white"
-
-            app:messageBackgroundColorMine="#70af74"
-            app:messageTextColorTheirs="#000"
-            app:messageBackgroundColorTheirs="@color/white"
-             />
+                app:messageBackgroundColorTheirs="@color/white"
+                app:messageTextColorMine="@color/white"
+                app:messageTextColorTheirs="#000" />
+        </com.getstream.sdk.chat.view.ChannelHeaderView>
 
         <TextView
             android:layout_width="wrap_content"

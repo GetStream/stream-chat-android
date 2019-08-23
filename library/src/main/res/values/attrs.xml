@@ -164,36 +164,47 @@
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
-        <attr name="channelHeaderAvatarWidth" format="dimension|reference" />
-        <attr name="channelHeaderAvatarHeight" format="dimension|reference" />
-        <attr name="channelHeaderAvatarBorderWidth" format="dimension|reference" />
-        <attr name="channelHeaderAvatarBorderColor" format="color|reference" />
-        <attr name="channelHeaderAvatarBackGroundColor" format="color|reference" />
-        <attr name="channelHeaderAvatarTextSize" format="dimension|reference" />
-        <attr name="channelHeaderAvatarTextColor" format="color|reference" />
-        <attr name="channelHeaderAvatarTextStyle">
+        <attr name="streamChannelHeaderAvatarShow" format="boolean" />
+        <attr name="streamChannelHeaderAvatarWidth" format="dimension|reference" />
+        <attr name="streamChannelHeaderAvatarHeight" format="dimension|reference" />
+        <attr name="streamChannelHeaderAvatarBorderWidth" format="dimension|reference" />
+        <attr name="streamChannelHeaderAvatarBorderColor" format="color|reference" />
+        <attr name="streamChannelHeaderAvatarBackGroundColor" format="color|reference" />
+        <attr name="streamChannelHeaderAvatarTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderAvatarTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderAvatarTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="channelHeaderTitleTextSize" format="dimension|reference" />
-        <attr name="channelHeaderTitleTextColor" format="color|reference" />
-        <attr name="channelHeaderTitleTextStyle">
+        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="channelHeaderLastActiveTextSize" format="dimension|reference" />
-        <attr name="channelHeaderLastActiveTextColor" format="color|reference" />
-        <attr name="channelHeaderLastActiveTextStyle">
+        <attr name="streamChannelHeaderLastActiveTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderLastActiveTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderLastActiveShow" format="boolean" />
+        <attr name="streamChannelHeaderLastActiveTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="channelHeaderBackButtonBackground" format="reference" />
-        <attr name="channelHeaderBackButtonShow" format="boolean" />
+        <attr name="streamChannelHeaderBackButtonBackground" format="reference" />
+        <attr name="streamChannelHeaderBackButtonShow" format="boolean" />
+
+        <attr name="streamChannelHeaderOptionsButtonBackground" format="reference" />
+        <attr name="streamChannelHeaderOptionsButtonShow" format="boolean" />
+        <attr name="streamChannelHeaderOptionsButtonTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderOptionsButtonWidth" format="dimension|reference" />
+        <attr name="streamChannelHeaderOptionsButtonHeight" format="dimension|reference" />
+
+        <attr name="streamChannelHeaderActiveBadgeShow" format="boolean" />
+
     </declare-styleable>
 </resources>

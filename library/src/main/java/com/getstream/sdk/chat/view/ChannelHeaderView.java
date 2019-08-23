@@ -97,6 +97,14 @@ public class ChannelHeaderView extends RelativeLayout {
         return binding;
     }
 
+    public void setHeaderOptionsClickListener(MessageListView.HeaderOptionsClickListener headerOptionsClickListener) {
+        binding.tvOption.setOnClickListener(view -> headerOptionsClickListener.onHeaderOptionsClick(viewModel.getChannel()));
+    }
+
+    public void setHeaderAvatarGroupClickListener(MessageListView.HeaderAvatarGroupClickListener headerOptionsClickListener) {
+        binding.avatarGroup.setOnClickListener(view -> headerOptionsClickListener.onHeaderAvatarGroupClick(viewModel.getChannel()));
+    }
+
     private void applyStyle() {
         // Title
         binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
@@ -106,9 +114,20 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
         binding.tvActive.setTextColor(style.getLastActiveTextColor());
         binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
-        // back button
+        binding.tvActive.setVisibility(style.isLastActiveShow   () ? VISIBLE : INVISIBLE);
+        // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         binding.tvBack.setBackground(style.getBackButtonBackground());
+        // Avatar Group
+        binding.avatarGroup.setVisibility(style.isAvatarGroupShow() ? VISIBLE : INVISIBLE);
+        // Options Button
+        binding.tvOption.setVisibility(style.isOptionsButtonShow() ? VISIBLE : INVISIBLE);
+        binding.tvOption.setBackground(style.getOptionsButtonBackground());
+        binding.tvOption.setTextSize(style.getOptionsButtonTextSize());
+        binding.tvOption.setWidth(style.getOptionsButtonWidth());
+        binding.tvOption.setHeight(style.getOptionsButtonHeight());
+        // Active Badge
+        binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : INVISIBLE);
     }
 
 }

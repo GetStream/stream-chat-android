@@ -21,7 +21,18 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int lastActiveTextStyle;
 
     private boolean backButtonShow;
+    private boolean lastActiveShow;
+
+    private boolean avatarGroupShow;
     private Drawable backButtonBackground;
+
+    private boolean optionsButtonShow;
+    private Drawable optionsButtonBackground;
+    private int optionsButtonTextSize;
+    private int optionsButtonWidth;
+    private int optionsButtonHeight;
+
+    private boolean activeBadgeShow;
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -30,30 +41,43 @@ public class ChannelHeaderViewStyle extends BaseStyle {
                 R.styleable.ChannelHeaderView, 0, 0);
 
         // Channel Title
-        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
-        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
-        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderTitleTextStyle, Typeface.BOLD);
+        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
+        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
+        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD);
 
         // Last Active
-        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
-        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextColor, getColor(R.color.gray_dark));
-        lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextStyle, Typeface.NORMAL);
+        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
+        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.gray_dark));
+        lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
+        lastActiveShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true);
 
         // Back Button
-        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_channelHeaderBackButtonShow, false);
-        backButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_channelHeaderBackButtonBackground);
+        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonShow, false);
+        backButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonBackground);
 
         // Avatar
-        avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
-        avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
+        avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
 
-        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
-        avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
+        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderAvatarTextColor, Color.WHITE);
-        avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderAvatarTextStyle, Typeface.BOLD);
+        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextStyle, Typeface.BOLD);
+
+        avatarGroupShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarShow, true);
+
+        // Badge
+        activeBadgeShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderActiveBadgeShow, true);
+
+        // Options
+        optionsButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonShow, false);
+        optionsButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonBackground);
+        optionsButtonTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonTextSize, getDimension(R.dimen.stream_channel_header_initials));
+        optionsButtonWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonWidth, getDimension(R.dimen.stream_channel_avatar_width));
+        optionsButtonHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonHeight, getDimension(R.dimen.stream_channel_avatar_height));
 
         a.recycle();
     }
@@ -89,4 +113,37 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     public Drawable getBackButtonBackground() {
         return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.arrow_left);
     }
+
+    public boolean isLastActiveShow() {
+        return lastActiveShow;
+    }
+
+    public boolean isAvatarGroupShow() {
+        return avatarGroupShow;
+    }
+
+    public boolean isOptionsButtonShow() {
+        return optionsButtonShow;
+    }
+
+    public Drawable getOptionsButtonBackground() {
+        return optionsButtonBackground != null ? optionsButtonBackground : getDrawable(R.drawable.settings);
+    }
+
+    public boolean isActiveBadgeShow() {
+        return activeBadgeShow;
+    }
+
+    public int getOptionsButtonTextSize() {
+        return optionsButtonTextSize;
+    }
+
+    public int getOptionsButtonWidth() {
+        return optionsButtonWidth;
+    }
+
+    public int getOptionsButtonHeight() {
+        return optionsButtonHeight;
+    }
+
 }
