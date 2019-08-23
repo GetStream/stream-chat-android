@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
@@ -57,6 +58,7 @@ public class MessageListView extends RecyclerView {
     private LinearLayoutManager layoutManager;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private UserClickListener userClickListener;
 
     private int firstVisible;
     private int lastVisible;
@@ -441,6 +443,19 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setUserClickListener(UserClickListener userClickListener) {
+        this.userClickListener = userClickListener;
+
+        if (adapter == null) return;
+
+        if (this.attachmentClickListener != null) {
+            adapter.setAttachmentClickListener(this.attachmentClickListener);
+        } else {
+            adapter.setAttachmentClickListener((message, attachment) -> {
+                showAttachment(message, attachment);
+            });
+        }
+    }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
@@ -459,6 +474,9 @@ public class MessageListView extends RecyclerView {
 
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
+    }
+    public interface UserClickListener {
+        void onUserClick(User user);
     }
 
     public interface BubbleHelper {
