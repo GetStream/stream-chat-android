@@ -73,11 +73,11 @@ public class MainActivity extends AppCompatActivity {
         // FilterObject filter = in("members", USER_ID);
 //        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
-        FilterObject filter = and(in("members", USER_ID), in("type", "messaging"));
-
+//        FilterObject filter = and(in("members", USER_ID), in("type", "messaging"));
+        FilterObject filter = in("type", "messaging");
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
-        viewModel.setChannelSort(new QuerySort().desc("updated_at"));
+//        viewModel.setChannelSort(new QuerySort().desc("updated_at"));
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
 

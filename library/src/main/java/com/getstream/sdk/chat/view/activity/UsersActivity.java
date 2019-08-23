@@ -156,9 +156,10 @@ public class UsersActivity extends AppCompatActivity {
     // endregion
 
     // region New Chat
+
     /**
      * Start private chat
-     * */
+     */
     public void createNewChat() {
         adapter.groupChatMode = false;
         adapter.notifyDataSetChanged();
@@ -256,24 +257,21 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
     }
+
     private JSONObject getUserQueryPayload() {
         Map<String, Object> payload = new HashMap<>();
 
         // Filter options
-        if (Global.component.user.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
-        }
+
+        payload.put("filter_conditions", new HashMap<>());
+
         // QuerySort options
-        if (Global.component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_active");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
+
+        Map<String, Object> sort = new HashMap<>();
+        sort.put("field", "last_active");
+        sort.put("direction", -1);
+        payload.put("sort", Collections.singletonList(sort));
+
 
 //        if (client.users.size() > 0)
 //            payload.put("offset", client.users.size());
@@ -284,6 +282,7 @@ public class UsersActivity extends AppCompatActivity {
         Log.d(TAG, "Payload: " + json);
         return json;
     }
+
     private void getChannel(List<User> users) {
 //        boolean isPrivateChannel = users.size() == 1;
 //        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
@@ -338,7 +337,7 @@ public class UsersActivity extends AppCompatActivity {
 
     /**
      * Start group chat
-     * */
+     */
     public void onClickCreateGroupChat(View view) {
         getChannel(groupUsers);
     }
