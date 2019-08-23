@@ -30,8 +30,6 @@ public class Global {
 
     public static Component component;
 
-    public static List<User> typingUsers = new ArrayList<>();
-
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
 

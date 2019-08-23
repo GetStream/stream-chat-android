@@ -397,12 +397,12 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
                         for (ChannelState channelState: response.body().getChannels()) {
                             Channel channel = channelState.getChannel();
+                            addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
                             if (getChannelByCid(channel.getCid()) != null) {
                                 channel = getChannelByCid(channel.getCid());
                             } else {
                                 addToActiveChannels(channel);
-                                addChannelConfig(channel.getType(), channel.getConfig());
                             }
                             channel.mergeWithState(channelState);
                             checkEphemeralMessages(channelState);
