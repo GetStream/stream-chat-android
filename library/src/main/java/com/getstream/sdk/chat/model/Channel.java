@@ -114,7 +114,7 @@ public class Channel {
     }
 
     public Config getConfig() {
-        return client.getChannelConfig(type);
+        return config;
     }
 
     public String getName() {

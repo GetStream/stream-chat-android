@@ -63,33 +63,10 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
 
-        viewModel.getChannelState().observe(lifecycleOwner, channelState -> setHeaderTitle(channelState));
-        viewModel.getChannelState().observe(lifecycleOwner, channelState -> setHeaderLastActive(channelState));
-        viewModel.getChannelState().observe(lifecycleOwner, channelState -> configHeaderAvatar(channelState));
+        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
+        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
+        viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
     }
-
-    private ViewChannelHeaderBinding initBinding(Context context) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
-        // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
-        return binding;
-    }
-
-
-    private void applyStyle() {
-        // Title
-        binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
-        binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
-        // Last Active
-        binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
-        binding.tvActive.setTextColor(style.getLastActiveTextColor());
-        binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
-        // back button
-        binding.tvBack.setVisibility(style.isShowBackButton() ? VISIBLE : INVISIBLE);
-    }
-
 
     protected void setHeaderTitle(ChannelState channelState){
         binding.setChannelName(channelState.getChannelNameOrMembers());
@@ -107,8 +84,50 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setChannelLastActive(String.format("Active %s", timeAgo));
     }
 
-    private void configHeaderAvatar(ChannelState channelState) {
+    protected void configHeaderAvatar(ChannelState channelState) {
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), channelState.getOtherUsers(), style);
     }
+
+    private ViewChannelHeaderBinding initBinding(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
+        // setup the onMessageClick listener for the back button
+        binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
+        return binding;
+    }
+
+    public void setHeaderOptionsClickListener(MessageListView.HeaderOptionsClickListener headerOptionsClickListener) {
+        binding.tvOption.setOnClickListener(view -> headerOptionsClickListener.onHeaderOptionsClick(viewModel.getChannel()));
+    }
+
+    public void setHeaderAvatarGroupClickListener(MessageListView.HeaderAvatarGroupClickListener headerOptionsClickListener) {
+        binding.avatarGroup.setOnClickListener(view -> headerOptionsClickListener.onHeaderAvatarGroupClick(viewModel.getChannel()));
+    }
+
+    private void applyStyle() {
+        // Title
+        binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
+        binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
+        binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        // Last Active
+        binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
+        binding.tvActive.setTextColor(style.getLastActiveTextColor());
+        binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
+        binding.tvActive.setVisibility(style.isLastActiveShow   () ? VISIBLE : INVISIBLE);
+        // Back Button
+        binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
+        binding.tvBack.setBackground(style.getBackButtonBackground());
+        // Avatar Group
+        binding.avatarGroup.setVisibility(style.isAvatarGroupShow() ? VISIBLE : INVISIBLE);
+        // Options Button
+        binding.tvOption.setVisibility(style.isOptionsButtonShow() ? VISIBLE : INVISIBLE);
+        binding.tvOption.setBackground(style.getOptionsButtonBackground());
+        binding.tvOption.setTextSize(style.getOptionsButtonTextSize());
+        binding.tvOption.setWidth(style.getOptionsButtonWidth());
+        binding.tvOption.setHeight(style.getOptionsButtonHeight());
+        // Active Badge
+        binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : INVISIBLE);
+    }
+
 }

@@ -464,6 +464,14 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public interface HeaderAvatarGroupClickListener {
+        void onHeaderAvatarGroupClick(Channel channel);
+    }
+
+    public interface HeaderOptionsClickListener {
+        void onHeaderOptionsClick(Channel channel);
+    }
+
     public interface MessageClickListener {
         void onMessageClick(Message message, int position);
     }
