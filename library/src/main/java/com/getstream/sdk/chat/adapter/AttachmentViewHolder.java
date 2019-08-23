@@ -26,10 +26,7 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.http.HEAD;
-
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
-
 
 
     // Attachment
@@ -37,7 +34,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-
 
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
@@ -58,10 +54,11 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
+                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
 
-
+        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
         configAttachment();
     }
 
@@ -125,7 +122,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
             Log.d(TAG, "Attach onMessageClick: " + position);
-                triggerClick(getMessage(), getAttachment());
+            triggerClick(getMessage(), getAttachment());
 
 
         });
@@ -207,6 +204,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             this.getLongClickListener().onMessageLongClick(message);
         }
     }
+
     private void triggerClick(Message message, Attachment attachment) {
         if (this.getClickListener() != null) {
             this.getClickListener().onAttachmentClick(message, attachment);

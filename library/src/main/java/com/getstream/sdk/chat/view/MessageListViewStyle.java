@@ -33,10 +33,22 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBottomLeftCornerRadiusTheirs;
     private int messageBackgroundColorMine;
     private int messageBackgroundColorTheirs;
-    private int messageStrokeColorMine;
-    private int messageStrokeColorTheirs;
-    private int messageStrokeWidthMine;
-    private int messageStrokeWidthTheirs;
+    private int messageBorderColorMine;
+    private int messageBorderColorTheirs;
+    private int messageBorderWidthMine;
+    private int messageBorderWidthTheirs;
+    // Attachment
+    private int attachmentTitleTextSize;
+    private int attachmentTitleTextColor;
+    private int attachmentTitleTextStyle;
+
+    private int attachmentDescriptionTextSize;
+    private int attachmentDescriptionTextColor;
+    private int attachmentDescriptionTextStyle;
+
+    private int attachmentFileSizeTextSize;
+    private int attachmentFileSizeTextColor;
+    private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean enableReaction;
     private boolean showUsersReactionDlg;
@@ -54,64 +66,77 @@ public class MessageListViewStyle extends BaseStyle {
                 R.styleable.MessageListView, 0, 0);
 
         // Message Text
-        messageTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTextSizeMine, getDimension(R.dimen.message_text_font_size));
-        messageTextColorMine = a.getColor(R.styleable.MessageListView_messageTextColorMine, Color.BLACK);
-        messageTextStyleMine = a.getColor(R.styleable.MessageListView_messageTextStyleMine, Typeface.NORMAL);
+        messageTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeMine, getDimension(R.dimen.message_text_font_size));
+        messageTextColorMine = a.getColor(R.styleable.MessageListView_streamMessageTextColorMine, Color.BLACK);
+        messageTextStyleMine = a.getColor(R.styleable.MessageListView_streamMessageTextStyleMine, Typeface.NORMAL);
 
-        messageTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTextSizeTheirs, getDimension(R.dimen.message_text_font_size));
-        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_messageTextColorTheirs, Color.BLACK);
-        messageTextStyleTheirs = a.getColor(R.styleable.MessageListView_messageTextStyleTheirs, Typeface.NORMAL);
+        messageTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeTheirs, getDimension(R.dimen.message_text_font_size));
+        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK);
+        messageTextStyleTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
         // Message Bubble
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableMine, -1));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_messageBubbleDrawableTheirs, -1));
+        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
+        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
 
-        messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
-        messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
-        messageBottomRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
-        messageBottomLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
+        messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
+        messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
+        messageBottomRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBottomRightCornerRadiusMine, getDimension(R.dimen.message_corner_radius2));
+        messageBottomLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBottomLeftCornerRadiusMine, getDimension(R.dimen.message_corner_radius1));
 
-        messageTopLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
-        messageTopRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageTopRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
-        messageBottomRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
-        messageBottomLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBottomLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
+        messageTopLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageTopRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageBottomRightCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBottomRightCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius1));
+        messageBottomLeftCornerRadiusTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBottomLeftCornerRadiusTheirs, getDimension(R.dimen.message_corner_radius2));
 
-        messageBackgroundColorMine = a.getColor(R.styleable.MessageListView_messageBackgroundColorMine, getColor(R.color.message_background_outgoing));
-        messageBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_messageBackgroundColorTheirs, getColor(R.color.message_background_incoming));
+        messageBackgroundColorMine = a.getColor(R.styleable.MessageListView_streamMessageBackgroundColorMine, getColor(R.color.message_background_outgoing));
+        messageBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageBackgroundColorTheirs, getColor(R.color.message_background_incoming));
 
-        messageStrokeColorMine = a.getColor(R.styleable.MessageListView_messageStrokeColorMine, getColor(R.color.message_stroke));
-        messageStrokeColorTheirs = a.getColor(R.styleable.MessageListView_messageStrokeColorTheirs, getColor(R.color.message_stroke));
+        messageBorderColorMine = a.getColor(R.styleable.MessageListView_streamMessageBorderColorMine, getColor(R.color.message_stroke));
+        messageBorderColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageBorderColorTheirs, getColor(R.color.message_stroke));
 
-        messageStrokeWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthMine, getDimension(R.dimen.message_stroke));
-        messageStrokeWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageStrokeWidthTheirs, getDimension(R.dimen.message_stroke));
+        messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.message_stroke));
+        messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.message_stroke));
+        // Attachment
+        attachmentTitleTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.attach_title_text));
+        attachmentTitleTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.attach_title_text));
+        attachmentTitleTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
+
+        attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.attach_description_text));
+        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.attach_description_text));
+        attachmentDescriptionTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
+
+        attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.attach_file_size_text));
+        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.attach_file_size_text));
+        attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
+
         // Reaction Dialog
-        enableReaction = a.getBoolean(R.styleable.MessageListView_enableReaction, true);
-        showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_showUsersReactionDlg, true);
-        reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_reactionDlgBgDrawable, -1));
-        reactionDlgBgColor = a.getColor(R.styleable.MessageListView_reactionDlgbgColor, getColor(R.color.reaction_dialog_background));
-        reactionDlgEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_reactionDlgEmojiSize, getDimension(R.dimen.reaction_dialog_emoji_size));
-        reactionDlgEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_reactionDlgEmojiMargin, getDimension(R.dimen.reaction_dialog_emoji_margin));
+        enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
+        showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_streamShowUsersReactionDlg, true);
+        reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_streamrReactionDlgBgDrawable, -1));
+        reactionDlgBgColor = a.getColor(R.styleable.MessageListView_streamReactionDlgbgColor, getColor(R.color.reaction_dialog_background));
+        reactionDlgEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionDlgEmojiSize, getDimension(R.dimen.reaction_dialog_emoji_size));
+        reactionDlgEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionDlgEmojiMargin, getDimension(R.dimen.reaction_dialog_emoji_margin));
         // Avatar
-        avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_userAvatarWidth, getDimension(R.dimen.message_avatar_width));
-        avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_userAvatarHeight, getDimension(R.dimen.message_avatar_height));
+        avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarWidth, getDimension(R.dimen.message_avatar_width));
+        avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarHeight, getDimension(R.dimen.message_avatar_height));
 
-        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.MessageListView_userAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
-        avatarBorderColor = a.getColor(R.styleable.MessageListView_userAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_userAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
+        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_userAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_userAvatarTextColor, Color.WHITE);
-        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_userAvatarTextStyle, Typeface.BOLD);
+        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD);
 
         // Read State
-        showReadState = a.getBoolean(R.styleable.MessageListView_userShowReadState, true);
-        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_userReadStateAvatarWidth, getDimension(R.dimen.read_state_avatar_width));
-        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_userReadStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
+        showReadState = a.getBoolean(R.styleable.MessageListView_streamShowReadState, true);
+        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarWidth, getDimension(R.dimen.read_state_avatar_width));
+        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
 
-        readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_userRreadStateTextSize, getDimension(R.dimen.read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.MessageListView_userReadStateTextColor, Color.WHITE);
-        readStateTextStyle = a.getColor(R.styleable.MessageListView_userReadStateTextStyle, Typeface.BOLD);
+        readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.read_state_text_size));
+        readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.WHITE);
+        readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
-        enableThread = a.getBoolean(R.styleable.MessageListView_enableThread, true);
+        enableThread = a.getBoolean(R.styleable.MessageListView_streamEnableThread, true);
         a.recycle();
     }
 
@@ -187,21 +212,59 @@ public class MessageListViewStyle extends BaseStyle {
         return messageBackgroundColorTheirs;
     }
 
-    public int getMessageStrokeColorMine() {
-        return messageStrokeColorMine;
+    public int getMessageBorderColorMine() {
+        return messageBorderColorMine;
     }
 
-    public int getMessageStrokeColorTheirs() {
-        return messageStrokeColorTheirs;
+    public int getMessageBorderColorTheirs() {
+        return messageBorderColorTheirs;
     }
 
-    public int getMessageStrokeWidthMine() {
-        return messageStrokeWidthMine;
+    public int getMessageBorderWidthMine() {
+        return messageBorderWidthMine;
     }
 
-    public int getMessageStrokeWidthTheirs() {
-        return messageStrokeWidthTheirs;
+    public int getMessageBorderWidthTheirs() {
+        return messageBorderWidthTheirs;
     }
+
+    // Attachment
+    public int getAttachmentTitleTextSize() {
+        return attachmentTitleTextSize;
+    }
+
+    public int getAttachmentTitleTextColor() {
+        return attachmentTitleTextColor;
+    }
+
+    public int getAttachmentTitleTextStyle() {
+        return attachmentTitleTextStyle;
+    }
+
+    public int getAttachmentDescriptionTextSize() {
+        return attachmentDescriptionTextSize;
+    }
+
+    public int getAttachmentDescriptionTextColor() {
+        return attachmentDescriptionTextColor;
+    }
+
+    public int getAttachmentDescriptionTextStyle() {
+        return attachmentDescriptionTextStyle;
+    }
+
+    public int getAttachmentFileSizeTextSize() {
+        return attachmentFileSizeTextSize;
+    }
+
+    public int getAttachmentFileSizeTextColor() {
+        return attachmentFileSizeTextColor;
+    }
+
+    public int getAttachmentFileSizeTextStyle() {
+        return attachmentFileSizeTextStyle;
+    }
+
 
     // Reaction Dialog
 

@@ -2,7 +2,6 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data>
 
         <variable
@@ -15,36 +14,38 @@
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.ChannelActivity">
 
+
         <com.getstream.sdk.chat.view.ChannelHeaderView
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:streamChannelHeaderBackButtonShow="true"
-            app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:streamChannelHeaderBackButtonShow="true">
 
-            <com.getstream.sdk.chat.view.MessageListView
-                android:id="@+id/messageList"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginBottom="10dp"
-
-                android:background="#f3f5f8"
-                app:messageBackgroundColorMine="#70af74"
-
-                app:messageBackgroundColorTheirs="@color/white"
-                app:messageTextColorMine="@color/white"
-                app:messageTextColorTheirs="#000" />
         </com.getstream.sdk.chat.view.ChannelHeaderView>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <com.getstream.sdk.chat.view.MessageListView
+            android:id="@+id/messageList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="10dp"
+            android:background="#f3f5f8"
+            app:layout_constraintBottom_toTopOf="@+id/message_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader"/>
+
+        <com.getstream.sdk.chat.view.MessageInputView
+            android:id="@+id/message_input"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="6dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
         <ProgressBar
             android:layout_width="wrap_content"
@@ -63,16 +64,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
-        <com.getstream.sdk.chat.view.MessageInputView
-            android:id="@+id/message_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/messageList" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

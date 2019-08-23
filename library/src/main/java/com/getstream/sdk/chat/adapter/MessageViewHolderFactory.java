@@ -100,7 +100,6 @@ public class MessageViewHolderFactory {
             return holder;
         } else {
             AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
-            Log.d(TAG,"Show AttachmentViewHolder");
             holder.setStyle(adapter.getStyle());
             return holder;
         }

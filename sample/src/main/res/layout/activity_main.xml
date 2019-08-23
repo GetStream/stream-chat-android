@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:stream="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -25,10 +24,7 @@
             android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            stream:channelReadStateAvatarHeight="15dp"
-            stream:channelReadStateAvatarWidth="15dp"
-            stream:channelRreadStateTextSize="9sp"
-            stream:channelShowReadState="true" />
+            />
 
         <ProgressBar
             android:layout_width="wrap_content"

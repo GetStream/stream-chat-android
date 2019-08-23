@@ -29,7 +29,7 @@
         android:maxLines="1"
         android:paddingEnd="10dp"
         android:text="adfsasd dsfasdfaasd"
-        android:textColor="@color/fileTitle"
+        android:textColor="@color/attach_title_text"
         android:textSize="14sp"
         app:layout_constrainedWidth="true"
         app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"

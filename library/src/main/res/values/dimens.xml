@@ -40,6 +40,10 @@
     <dimen name="attach_image_width">250dp</dimen>
     <dimen name="attach_image_height">200dp</dimen>
     <dimen name="attach_file_height">50dp</dimen>
+
+    <dimen name="attach_title_text">13dp</dimen>
+    <dimen name="attach_description_text">11sp</dimen>
+    <dimen name="attach_file_size_text">12sp</dimen>
     <!--Reaction-->
     <dimen name="reaction_corner_radius">12dp</dimen>
     <!--Thread-->

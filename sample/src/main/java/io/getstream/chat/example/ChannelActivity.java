@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -33,9 +34,10 @@ public class ChannelActivity extends AppCompatActivity
         implements MessageListView.MessageClickListener,
         MessageListView.MessageLongClickListener,
         MessageListView.AttachmentClickListener,
-        MessageInputView.OpenCameraViewListener,
         MessageListView.HeaderOptionsClickListener,
-        MessageListView.HeaderAvatarGroupClickListener {
+        MessageListView.HeaderAvatarGroupClickListener,
+        MessageListView.UserClickListener,
+        MessageInputView.OpenCameraViewListener {
 
     final String TAG = ChannelActivity.class.getSimpleName();
 
@@ -67,6 +69,7 @@ public class ChannelActivity extends AppCompatActivity
         // set listeners
         binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
+        binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
         binding.messageInput.setOpenCameraViewListener(this);
 
@@ -110,18 +113,22 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageClick(Message message, int position) {
-        ReactionDialog reactionDialog = new ReactionDialog(this,
-                viewModel.getChannel(), message, position, binding.messageList, binding.messageList.getStyle());
-        reactionDialog.show();
+        new ReactionDialog(this)
+                .setChannel(viewModel.getChannel())
+                .setMessage(message)
+                .setMessagePosition(position)
+                .setRecyclerView(binding.messageList)
+                .setStyle(binding.messageList.getStyle())
+                .show();
     }
 
     @Override
     public void onMessageLongClick(Message message) {
-        MoreActionDialog moreActionDialog = new MoreActionDialog(this,
-                viewModel.getChannel(),
-                message,
-                binding.messageList.getStyle());
-        moreActionDialog.show();
+        new MoreActionDialog(this)
+                .setChannel(viewModel.getChannel())
+                .setMessage(message)
+                .setStyle(binding.messageList.getStyle())
+                .show();
     }
 
     @Override
@@ -148,5 +155,10 @@ public class ChannelActivity extends AppCompatActivity
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(R.drawable.settings)
                 .show();
+    }
+
+    @Override
+    public void onUserClick(User user) {
+        // open your user profile
     }
 }

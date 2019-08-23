@@ -158,7 +158,7 @@ public class ChannelListView extends RecyclerView {
 
 
     public interface UserClickListener {
-        void onClick(User user);
+        void onUserClick(User user);
     }
 
     public interface ChannelClickListener {

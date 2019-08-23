@@ -127,10 +127,10 @@ public class ChannelState {
     // last time the channel had a message from another user or (when more recent) the time a watcher was last active
     public Date getLastActive() {
         Date lastActive = channel.getCreatedAt();
+        if (lastActive == null) lastActive = new Date();
         if (getLastKnownActiveWatcher().after(lastActive)) {
             lastActive = getLastKnownActiveWatcher();
         }
-
         Message message = getLastMessageFromOtherUser();
         if (message != null) {
             if (message.getCreatedAt().after(lastActive)) {
@@ -287,6 +287,7 @@ public class ChannelState {
             }
             if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
                 messages.add(newMessage);
+                return;
             }
         }
     }

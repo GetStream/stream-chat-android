@@ -597,7 +597,7 @@ public class Channel {
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
         message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
-//        channelState.addMessageSorted(message);
+        channelState.addMessageSorted(message);
         if (getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }

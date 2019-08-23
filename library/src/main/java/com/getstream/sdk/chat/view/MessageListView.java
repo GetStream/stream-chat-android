@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
@@ -57,6 +58,7 @@ public class MessageListView extends RecyclerView {
     private LinearLayoutManager layoutManager;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private UserClickListener userClickListener;
 
     private int firstVisible;
     private int lastVisible;
@@ -109,8 +111,8 @@ public class MessageListView extends RecyclerView {
                         return style.getMessageBubbleDrawableMine();
 
                     bgColor = style.getMessageBackgroundColorMine();
-                    strokeColor = style.getMessageStrokeColorMine();
-                    strokeWidth = style.getMessageStrokeWidthMine();
+                    strokeColor = style.getMessageBorderColorMine();
+                    strokeWidth = style.getMessageBorderWidthMine();
                     topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
                     topRightRadius = style.getMessageTopRightCornerRadiusMine();
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
@@ -136,8 +138,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
-                    strokeColor = style.getMessageStrokeColorTheirs();
-                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    strokeColor = style.getMessageBorderColorTheirs();
+                    strokeWidth = style.getMessageBorderWidthTheirs();
 
                     if (isDefaultBubble()) {
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
@@ -174,8 +176,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
                     bgColor = style.getMessageBackgroundColorMine();
-                    strokeColor = style.getMessageStrokeColorMine();
-                    strokeWidth = style.getMessageStrokeWidthMine();
+                    strokeColor = style.getMessageBorderColorMine();
+                    strokeWidth = style.getMessageBorderWidthMine();
                     if (isDefaultBubble()) {
                         try {
                             if (message.getAttachments() != null
@@ -206,8 +208,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
-                    strokeColor = style.getMessageStrokeColorTheirs();
-                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    strokeColor = style.getMessageBorderColorTheirs();
+                    strokeWidth = style.getMessageBorderWidthTheirs();
                     if (isDefaultBubble()) {
                         try {
                             if (message.getAttachments() != null
@@ -273,6 +275,7 @@ public class MessageListView extends RecyclerView {
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
+        setUserClickListener(userClickListener);
 
         adapter.setChannelState(getChannel().getChannelState());
 
@@ -328,7 +331,7 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
-                return;
+//                return;
             }
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
@@ -344,7 +347,8 @@ public class MessageListView extends RecyclerView {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
 
-                int newPosition = oldPosition + sizeGrewBy;
+                int newPosition;// = oldPosition + sizeGrewBy;
+                newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
                 layoutManager.scrollToPosition(newPosition);
                 Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
@@ -401,9 +405,13 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
             adapter.setMessageClickListener((message, position) -> {
-                ReactionDialog reactionDialog = new ReactionDialog(getContext(),
-                        viewModel.getChannel(), message, position, this, style);
-                reactionDialog.show();
+                new ReactionDialog(getContext())
+                        .setChannel(viewModel.getChannel())
+                        .setMessage(message)
+                        .setMessagePosition(position)
+                        .setRecyclerView(this)
+                        .setStyle(style)
+                        .show();
             });
         }
     }
@@ -417,11 +425,11 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message -> {
-                MoreActionDialog moreActionDialog = new MoreActionDialog(getContext(),
-                        viewModel.getChannel(),
-                        message,
-                        style);
-                moreActionDialog.show();
+                new MoreActionDialog(getContext())
+                        .setChannel(viewModel.getChannel())
+                        .setMessage(message)
+                        .setStyle(style)
+                        .show();
             });
         }
     }
@@ -440,6 +448,17 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setUserClickListener(UserClickListener userClickListener) {
+        this.userClickListener = userClickListener;
+
+        if (adapter == null) return;
+
+        if (this.userClickListener != null) {
+            adapter.setUserClickListener(this.userClickListener);
+        } else {
+
+        }
+    }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
@@ -466,6 +485,9 @@ public class MessageListView extends RecyclerView {
 
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
+    }
+    public interface UserClickListener {
+        void onUserClick(User user);
     }
 
     public interface BubbleHelper {

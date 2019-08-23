@@ -20,6 +20,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int channelTitleTextStyle;
     private int lastActiveTextStyle;
 
+
     private boolean backButtonShow;
     private boolean lastActiveShow;
 
@@ -31,8 +32,8 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int optionsButtonTextSize;
     private int optionsButtonWidth;
     private int optionsButtonHeight;
-
     private boolean activeBadgeShow;
+
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -45,10 +46,24 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD);
 
+
         // Last Active
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
+
+        // Avatar
+        avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
+        avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
+
+        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_streamAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
+
+        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamAvatarTextStyle, Typeface.BOLD);
+
         lastActiveShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true);
 
         // Back Button
@@ -56,16 +71,6 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         backButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonBackground);
 
         // Avatar
-        avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
-        avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
-
-        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
-        avatarBorderColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
-
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextColor, Color.WHITE);
-        avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarTextStyle, Typeface.BOLD);
 
         avatarGroupShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarShow, true);
 

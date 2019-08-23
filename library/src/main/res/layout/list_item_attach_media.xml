@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -15,6 +14,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:siSquare="true" />
+
+    <ImageView
+        android:id="@+id/iv_command_logo"
+        android:layout_width="50dp"
+        android:layout_height="18dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/logogiphy"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tv_media_play"
@@ -31,26 +39,20 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="9dp"
-        android:textColor="@color/fileTitle"
-        android:textSize="13sp"
-        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
         app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
         app:layout_constraintTop_toBottomOf="@+id/iv_media_thumb" />
 
     <TextView
         android:id="@+id/tv_media_des"
-        style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_media_title"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/tv_media_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_media_title" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -330,6 +330,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = messages.getValue();
         boolean removed = messagesCopy.remove(message);
+        messages.postValue(messagesCopy);
         return removed;
     }
 
@@ -387,8 +388,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 @Override
                 public void onError(String errMsg, int errCode) {
                     channelLoadingDone();
-                }
-            }
+
+                }}
         );
     }
 
@@ -406,7 +407,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
 
-        loadingMore.setValue(true);
         Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);

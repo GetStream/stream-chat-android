@@ -39,11 +39,14 @@
     <color name="user_intials_background">#CCCCA4D6</color>
     <color name="reaction_dialog_background">#292929</color>
 
+    <color name="attach_title_text">#026DFE</color>
+    <color name="attach_description_text">#989898</color>
+    <color name="attach_file_size_text">#989898</color>
     <!--Reaction-->
     <color name="reaction_background">#1B1B1B</color>
     <!--More Action-->
     <color name="destroy">#e94f4f</color>
-    <color name="fileTitle">#026DFE</color>
+
     <color name="attach_more">#4D000000</color>
     <!--Attachment file-->
     <color name="attachment_close">#80FFFFFF</color>
