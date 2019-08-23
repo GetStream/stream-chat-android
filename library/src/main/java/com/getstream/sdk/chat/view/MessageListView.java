@@ -344,7 +344,8 @@ public class MessageListView extends RecyclerView {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
 
-                int newPosition = oldPosition + sizeGrewBy;
+                int newPosition;// = oldPosition + sizeGrewBy;
+                newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
                 layoutManager.scrollToPosition(newPosition);
                 Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {

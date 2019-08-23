@@ -17,10 +17,6 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.http.HEAD;
 
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
