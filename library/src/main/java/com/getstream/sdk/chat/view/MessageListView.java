@@ -275,6 +275,7 @@ public class MessageListView extends RecyclerView {
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
+        setUserClickListener(userClickListener);
 
         adapter.setChannelState(getChannel().getChannelState());
 
@@ -452,12 +453,10 @@ public class MessageListView extends RecyclerView {
 
         if (adapter == null) return;
 
-        if (this.attachmentClickListener != null) {
-            adapter.setAttachmentClickListener(this.attachmentClickListener);
+        if (this.userClickListener != null) {
+            adapter.setUserClickListener(this.userClickListener);
         } else {
-            adapter.setAttachmentClickListener((message, attachment) -> {
-                showAttachment(message, attachment);
-            });
+
         }
     }
 

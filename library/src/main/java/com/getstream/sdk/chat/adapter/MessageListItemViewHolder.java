@@ -77,6 +77,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
+    private MessageListView.UserClickListener userClickListener;
 
     private int position;
     private boolean isThread;
@@ -147,7 +148,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      boolean isThread,
                      MessageListView.MessageClickListener messageClickListener,
                      MessageListView.MessageLongClickListener messageLongClickListener,
-                     MessageListView.AttachmentClickListener attachmentClickListener) {
+                     MessageListView.AttachmentClickListener attachmentClickListener,
+                     MessageListView.UserClickListener userClickListener) {
         // set binding
         this.context = context;
         this.channelState = channelState;
@@ -155,6 +157,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
+        this.userClickListener = userClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -264,6 +267,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             } else
                 tv_username.setVisibility(View.GONE);
             avatar.setUser(message.getUser(), style);
+            avatar.setOnClickListener(view -> {
+                if (userClickListener != null)
+                    userClickListener.onUserClick(message.getUser());
+            });
+
             if (message.getDate() == null) message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());
@@ -339,7 +347,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
         });
         tv_text.setOnLongClickListener(view -> {
-            Log.d(TAG, "Long onClick: " + position);
+            Log.d(TAG, "Long onUserClick: " + position);
             if (this.messageLongClickListener != null) {
                 view.setTag(String.valueOf(position));
                 this.messageLongClickListener.onMessageLongClick(message);

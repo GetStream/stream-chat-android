@@ -39,7 +39,15 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, MessageListItem messageListItem, int position, boolean isThread, MessageListView.MessageClickListener l1, MessageListView.MessageLongClickListener messageLongClickListener, MessageListView.AttachmentClickListener l2) {
+    public void bind(Context context,
+                     ChannelState channelState,
+                     MessageListItem messageListItem,
+                     int position, boolean isThread,
+                     MessageListView.MessageClickListener l1,
+                     MessageListView.MessageLongClickListener messageLongClickListener,
+                     MessageListView.AttachmentClickListener l2,
+                     MessageListView.UserClickListener userClickListener) {
+
         this.context = context;
 
         ll_typingusers.setVisibility(View.VISIBLE);

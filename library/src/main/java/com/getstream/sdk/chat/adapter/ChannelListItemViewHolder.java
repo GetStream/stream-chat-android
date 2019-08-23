@@ -157,7 +157,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         avatarGroupView.setOnClickListener(view -> {
             // if there is 1 user
             if (otherUsers.size() == 1 && this.userClickListener != null) {
-                this.userClickListener.onClick(otherUsers.get(0));
+                this.userClickListener.onUserClick(otherUsers.get(0));
             } else if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
 
