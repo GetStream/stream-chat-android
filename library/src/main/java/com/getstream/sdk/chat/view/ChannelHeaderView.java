@@ -68,22 +68,6 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, channelState -> configHeaderAvatar(channelState));
     }
 
-    protected void setHeaderTitle(ChannelState channelState){
-        binding.setChannelName(channelState.getChannelNameOrMembers());
-    }
-
-    protected void setHeaderLastActive(ChannelState channelState){
-        Date lastActive = channelState.getLastActive();
-        Date now = new Date();
-        String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
-
-        if (now.getTime() - lastActive.getTime() < 60000) {
-            timeAgo = "just now";
-        }
-
-        binding.setChannelLastActive(String.format("Active %s", timeAgo));
-    }
-
     private ViewChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
@@ -104,6 +88,23 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
         // back button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
+    }
+
+
+    protected void setHeaderTitle(ChannelState channelState){
+        binding.setChannelName(channelState.getChannelNameOrMembers());
+    }
+
+    protected void setHeaderLastActive(ChannelState channelState){
+        Date lastActive = channelState.getLastActive();
+        Date now = new Date();
+        String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
+
+        if (now.getTime() - lastActive.getTime() < 60000) {
+            timeAgo = "just now";
+        }
+
+        binding.setChannelLastActive(String.format("Active %s", timeAgo));
     }
 
     private void configHeaderAvatar(ChannelState channelState) {

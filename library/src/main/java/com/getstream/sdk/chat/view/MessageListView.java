@@ -328,8 +328,7 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
-                adapter.replaceEntities(entities);
-                return;
+//                return;
             }
             int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();

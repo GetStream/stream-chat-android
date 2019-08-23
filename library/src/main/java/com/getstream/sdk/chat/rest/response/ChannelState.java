@@ -115,6 +115,7 @@ public class ChannelState {
     // last time the channel had a message from another user
     public Date getLastActive() {
         Date lastActive = channel.getCreatedAt();
+        if (lastActive == null) lastActive = new Date();
         Message message = getLastMessageFromOtherUser();
         if (message != null) {
             if (message.getCreatedAt().after(lastActive)) {
