@@ -201,6 +201,6 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="backButtonShow" format="boolean" />
+        <attr name="showBackButton" format="boolean" />
     </declare-styleable>
 </resources>

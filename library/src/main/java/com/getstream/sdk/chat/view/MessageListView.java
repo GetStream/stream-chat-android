@@ -111,8 +111,8 @@ public class MessageListView extends RecyclerView {
                         return style.getMessageBubbleDrawableMine();
 
                     bgColor = style.getMessageBackgroundColorMine();
-                    strokeColor = style.getMessageStrokeColorMine();
-                    strokeWidth = style.getMessageStrokeWidthMine();
+                    strokeColor = style.getMessageBorderColorMine();
+                    strokeWidth = style.getMessageBorderWidthMine();
                     topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
                     topRightRadius = style.getMessageTopRightCornerRadiusMine();
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
@@ -138,8 +138,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
-                    strokeColor = style.getMessageStrokeColorTheirs();
-                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    strokeColor = style.getMessageBorderColorTheirs();
+                    strokeWidth = style.getMessageBorderWidthTheirs();
 
                     if (isDefaultBubble()) {
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
@@ -176,8 +176,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
                     bgColor = style.getMessageBackgroundColorMine();
-                    strokeColor = style.getMessageStrokeColorMine();
-                    strokeWidth = style.getMessageStrokeWidthMine();
+                    strokeColor = style.getMessageBorderColorMine();
+                    strokeWidth = style.getMessageBorderWidthMine();
                     if (isDefaultBubble()) {
                         try {
                             if (message.getAttachments() != null
@@ -208,8 +208,8 @@ public class MessageListView extends RecyclerView {
                     bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
                     bgColor = style.getMessageBackgroundColorTheirs();
-                    strokeColor = style.getMessageStrokeColorTheirs();
-                    strokeWidth = style.getMessageStrokeWidthTheirs();
+                    strokeColor = style.getMessageBorderColorTheirs();
+                    strokeWidth = style.getMessageBorderWidthTheirs();
                     if (isDefaultBubble()) {
                         try {
                             if (message.getAttachments() != null

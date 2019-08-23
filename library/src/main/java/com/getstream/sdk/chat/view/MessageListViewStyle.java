@@ -33,10 +33,10 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBottomLeftCornerRadiusTheirs;
     private int messageBackgroundColorMine;
     private int messageBackgroundColorTheirs;
-    private int messageStrokeColorMine;
-    private int messageStrokeColorTheirs;
-    private int messageStrokeWidthMine;
-    private int messageStrokeWidthTheirs;
+    private int messageBorderColorMine;
+    private int messageBorderColorTheirs;
+    private int messageBorderWidthMine;
+    private int messageBorderWidthTheirs;
     // Reaction
     private boolean enableReaction;
     private boolean showUsersReactionDlg;
@@ -78,11 +78,11 @@ public class MessageListViewStyle extends BaseStyle {
         messageBackgroundColorMine = a.getColor(R.styleable.MessageListView_messageBackgroundColorMine, getColor(R.color.message_background_outgoing));
         messageBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_messageBackgroundColorTheirs, getColor(R.color.message_background_incoming));
 
-        messageStrokeColorMine = a.getColor(R.styleable.MessageListView_messageBorderColorMine, getColor(R.color.message_stroke));
-        messageStrokeColorTheirs = a.getColor(R.styleable.MessageListView_messageBorderColorTheirs, getColor(R.color.message_stroke));
+        messageBorderColorMine = a.getColor(R.styleable.MessageListView_messageBorderColorMine, getColor(R.color.message_stroke));
+        messageBorderColorTheirs = a.getColor(R.styleable.MessageListView_messageBorderColorTheirs, getColor(R.color.message_stroke));
 
-        messageStrokeWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBorderWidthMine, getDimension(R.dimen.message_stroke));
-        messageStrokeWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBorderWidthTheirs, getDimension(R.dimen.message_stroke));
+        messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_messageBorderWidthMine, getDimension(R.dimen.message_stroke));
+        messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_messageBorderWidthTheirs, getDimension(R.dimen.message_stroke));
         // Reaction Dialog
         enableReaction = a.getBoolean(R.styleable.MessageListView_enableReaction, true);
         showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_showUsersReactionDlg, true);
@@ -187,20 +187,20 @@ public class MessageListViewStyle extends BaseStyle {
         return messageBackgroundColorTheirs;
     }
 
-    public int getMessageStrokeColorMine() {
-        return messageStrokeColorMine;
+    public int getMessageBorderColorMine() {
+        return messageBorderColorMine;
     }
 
-    public int getMessageStrokeColorTheirs() {
-        return messageStrokeColorTheirs;
+    public int getMessageBorderColorTheirs() {
+        return messageBorderColorTheirs;
     }
 
-    public int getMessageStrokeWidthMine() {
-        return messageStrokeWidthMine;
+    public int getMessageBorderWidthMine() {
+        return messageBorderWidthMine;
     }
 
-    public int getMessageStrokeWidthTheirs() {
-        return messageStrokeWidthTheirs;
+    public int getMessageBorderWidthTheirs() {
+        return messageBorderWidthTheirs;
     }
 
     // Reaction Dialog

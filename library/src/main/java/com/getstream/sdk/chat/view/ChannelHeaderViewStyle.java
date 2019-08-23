@@ -19,7 +19,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int channelTitleTextStyle;
     private int lastActiveTextStyle;
 
-    private boolean backButtonShow;
+    private boolean showBackButton;
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -35,7 +35,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_lastActiveTextColor, getColor(R.color.gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_lastActiveTextStyle, Typeface.NORMAL);
         // Back Button Show/Hide
-        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_backButtonShow, false);
+        showBackButton = a.getBoolean(R.styleable.ChannelHeaderView_showBackButton, false);
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_avatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_avatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
@@ -75,8 +75,8 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         return lastActiveTextStyle;
     }
 
-    public boolean isBackButtonShow() {
-        return backButtonShow;
+    public boolean isShowBackButton() {
+        return showBackButton;
     }
 
 }
