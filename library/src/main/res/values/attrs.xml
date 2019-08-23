@@ -1,57 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--AvatarGroupView-->
-    <attr name="avatarWidth" format="dimension|reference" />
-    <attr name="avatarHeight" format="dimension|reference" />
-    <attr name="avatarBorderWidth" format="dimension|reference" />
-    <attr name="avatarBorderColor" format="color|reference" />
-    <attr name="avatarBackGroundColor" format="color|reference" />
-    <attr name="avatarTextSize" format="dimension|reference" />
-    <attr name="avatarTextColor" format="color|reference" />
-    <attr name="avatarTextStyle">
+    <attr name="streamAvatarWidth" format="dimension|reference" />
+    <attr name="streamAvatarHeight" format="dimension|reference" />
+    <attr name="streamAvatarBorderWidth" format="dimension|reference" />
+    <attr name="streamAvatarBorderColor" format="color|reference" />
+    <attr name="streamAvatarBackGroundColor" format="color|reference" />
+    <attr name="streamAvatarTextSize" format="dimension|reference" />
+    <attr name="streamAvatarTextColor" format="color|reference" />
+    <attr name="streamAvatarTextStyle">
         <flag name="normal" value="0" />
         <flag name="bold" value="1" />
         <flag name="italic" value="2" />
     </attr>
 
     <!--ReadStateView-->
-    <attr name="showReadState" format="boolean" />
-    <attr name="readStateAvatarWidth" format="dimension|reference" />
-    <attr name="readStateAvatarHeight" format="dimension|reference" />
-    <attr name="readStateTextSize" format="dimension|reference" />
-    <attr name="readStateTextColor" format="color|reference" />
-    <attr name="readStateTextStyle">
+    <attr name="streamShowReadState" format="boolean" />
+    <attr name="streamReadStateAvatarWidth" format="dimension|reference" />
+    <attr name="streamReadStateAvatarHeight" format="dimension|reference" />
+    <attr name="streamReadStateTextSize" format="dimension|reference" />
+    <attr name="streamReadStateTextColor" format="color|reference" />
+    <attr name="streamReadStateTextStyle">
         <flag name="normal" value="0" />
         <flag name="bold" value="1" />
         <flag name="italic" value="2" />
     </attr>
+
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-        <attr name="avatarWidth"/>
-        <attr name="avatarHeight"/>
-        <attr name="avatarBorderWidth" />
-        <attr name="avatarBorderColor" />
-        <attr name="avatarBackGroundColor" />
-        <attr name="avatarTextSize" />
-        <attr name="avatarTextColor" />
-        <attr name="avatarTextStyle"/>
+        <attr name="streamAvatarWidth"/>
+        <attr name="streamAvatarHeight"/>
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextStyle"/>
 
         <!--ReadStateView-->
-        <attr name="showReadState"/>
-        <attr name="readStateAvatarWidth"/>
-        <attr name="readStateAvatarHeight"/>
-        <attr name="readStateTextSize"/>
-        <attr name="readStateTextColor"/>
-        <attr name="readStateTextStyle"/>
+        <attr name="streamShowReadState"/>
+        <attr name="streamReadStateAvatarWidth"/>
+        <attr name="streamReadStateAvatarHeight"/>
+        <attr name="streamReadStateTextSize"/>
+        <attr name="streamReadStateTextColor"/>
+        <attr name="streamReadStateTextStyle"/>
 
         <!--LastMessageDate-->
-        <attr name="dateTextColor" format="color|reference" />
-        <attr name="dateTextSize" format="dimension|reference" />
+        <attr name="streamLastMessageDateTextColor" format="color|reference" />
+        <attr name="streamLastMessageDateTextSize" format="dimension|reference" />
         <!--Title-->
-        <attr name="titleTextColor" format="color|reference" />
-        <attr name="titleTextSize" format="dimension|reference" />
-        <attr name="titleTextStyleChannel">
+        <attr name="streamTitleTextColor" format="color|reference" />
+        <attr name="streamTitleTextSize" format="dimension|reference" />
+        <attr name="streamTitleTextStyleChannel">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -113,22 +114,21 @@
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
         <!--AvatarGroupView-->
-        <attr name="avatarWidth"/>
-        <attr name="avatarHeight"/>
-        <attr name="avatarBorderWidth" />
-        <attr name="avatarBorderColor" />
-        <attr name="avatarBackGroundColor" />
-        <attr name="avatarTextSize" />
-        <attr name="avatarTextColor" />
-        <attr name="avatarTextStyle"/>
+        <attr name="streamAvatarWidth"/>
+        <attr name="streamAvatarHeight"/>
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextStyle"/>
         <!--ReadStateView-->
-        <!--ReadStateView-->
-        <attr name="showReadState"/>
-        <attr name="readStateAvatarWidth"/>
-        <attr name="readStateAvatarHeight"/>
-        <attr name="readStateTextSize"/>
-        <attr name="readStateTextColor"/>
-        <attr name="readStateTextStyle"/>
+        <attr name="streamShowReadState"/>
+        <attr name="streamReadStateAvatarWidth"/>
+        <attr name="streamReadStateAvatarHeight"/>
+        <attr name="streamReadStateTextSize"/>
+        <attr name="streamReadStateTextColor"/>
+        <attr name="streamReadStateTextStyle"/>
         <!--Reaction Dialog-->
         <attr name="enableReaction" format="boolean" />
         <attr name="showUsersReactionDlg" format="boolean" />
@@ -176,31 +176,33 @@
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
-        <attr name="avatarWidth"/>
-        <attr name="avatarHeight"/>
-        <attr name="avatarBorderWidth" />
-        <attr name="avatarBorderColor" />
-        <attr name="avatarBackGroundColor" />
-        <attr name="avatarTextSize" />
-        <attr name="avatarTextColor" />
-        <attr name="avatarTextStyle"/>
+        <attr name="streamAvatarWidth"/>
+        <attr name="streamAvatarHeight"/>
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextStyle"/>
 
-        <attr name="channelTitleTextSize" format="dimension|reference" />
-        <attr name="channelTitleTextColor" format="color|reference" />
-        <attr name="channelTitleTextStyle">
+        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="screamChannelHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="lastActiveTextSize" format="dimension|reference" />
-        <attr name="lastActiveTextColor" format="color|reference" />
-        <attr name="lastActiveTextStyle">
+        <attr name="streamChannelHeaderLastActiveTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderLastActiveTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderLastActiveTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="showBackButton" format="boolean" />
+        <attr name="streamChannelHeaderBackButtonBackground" format="reference" />
+        <attr name="streamChannelHeaderShowBackButton" format="boolean" />
+
     </declare-styleable>
 </resources>

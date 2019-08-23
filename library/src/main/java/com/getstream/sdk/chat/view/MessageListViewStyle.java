@@ -91,25 +91,25 @@ public class MessageListViewStyle extends BaseStyle {
         reactionDlgEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_reactionDlgEmojiSize, getDimension(R.dimen.reaction_dialog_emoji_size));
         reactionDlgEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_reactionDlgEmojiMargin, getDimension(R.dimen.reaction_dialog_emoji_margin));
         // Avatar
-        avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_avatarWidth, getDimension(R.dimen.message_avatar_width));
-        avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_avatarHeight, getDimension(R.dimen.message_avatar_height));
+        avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarWidth, getDimension(R.dimen.message_avatar_width));
+        avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarHeight, getDimension(R.dimen.message_avatar_height));
 
-        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.MessageListView_avatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
-        avatarBorderColor = a.getColor(R.styleable.MessageListView_avatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_avatarBackGroundColor, getColor(R.color.stream_gray_dark));
+        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.MessageListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_avatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_avatarTextColor, Color.WHITE);
-        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_avatarTextStyle, Typeface.BOLD);
+        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD);
 
         // Read State
-        showReadState = a.getBoolean(R.styleable.MessageListView_showReadState, true);
-        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_readStateAvatarWidth, getDimension(R.dimen.read_state_avatar_width));
-        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_readStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
+        showReadState = a.getBoolean(R.styleable.MessageListView_streamShowReadState, true);
+        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarWidth, getDimension(R.dimen.read_state_avatar_width));
+        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
 
-        readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_readStateTextSize, getDimension(R.dimen.read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.MessageListView_readStateTextColor, Color.WHITE);
-        readStateTextStyle = a.getColor(R.styleable.MessageListView_readStateTextStyle, Typeface.BOLD);
+        readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.read_state_text_size));
+        readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.WHITE);
+        readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         enableThread = a.getBoolean(R.styleable.MessageListView_enableThread, true);
         a.recycle();

@@ -27,7 +27,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFF"
-            app:showBackButton="true"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -42,16 +41,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-            app:messageBackgroundColorMine="#70af74"
-            app:messageBackgroundColorTheirs="@color/white"
-            app:messageTextColorMine="@color/white"
-            app:messageTextColorTheirs="#000"
-            app:avatarTextColor="#0017FF"
-            app:avatarTextSize="25dp"
-            app:avatarTextStyle="bold|italic"
-            app:avatarBorderColor="@color/black"
-            app:avatarBorderWidth="4dp"
-            app:avatarBackGroundColor="#FF5722"/>
+            />
 
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"

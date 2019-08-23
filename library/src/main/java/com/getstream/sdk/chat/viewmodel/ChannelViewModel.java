@@ -404,7 +404,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
 
-        loadingMore.setValue(true);
         Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);

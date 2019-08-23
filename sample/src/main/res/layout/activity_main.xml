@@ -24,14 +24,7 @@
             android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:readStateAvatarHeight="15dp"
-            app:readStateAvatarWidth="15dp"
-            app:readStateTextSize="9sp"
-            app:avatarTextColor="#FF0000"
-            app:avatarTextSize="20dp"
-            app:avatarTextStyle="italic"
-            app:avatarBackGroundColor="#8BC34A"
-            app:showReadState="true" />
+            />
 
         <ProgressBar
             android:layout_width="wrap_content"
