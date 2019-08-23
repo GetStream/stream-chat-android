@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--AvatarGroupView-->
+    <attr name="avatarWidth" format="dimension|reference" />
+    <attr name="avatarHeight" format="dimension|reference" />
+    <attr name="avatarBorderWidth" format="dimension|reference" />
+    <attr name="avatarBorderColor" format="color|reference" />
+    <attr name="avatarBackGroundColor" format="color|reference" />
+    <attr name="avatarTextSize" format="dimension|reference" />
+    <attr name="avatarTextColor" format="color|reference" />
+    <attr name="avatarTextStyle">
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
+    </attr>
+
+    <!--ReadStateView-->
+    <attr name="showReadState" format="boolean" />
+    <attr name="readStateAvatarWidth" format="dimension|reference" />
+    <attr name="readStateAvatarHeight" format="dimension|reference" />
+    <attr name="readStateTextSize" format="dimension|reference" />
+    <attr name="readStateTextColor" format="color|reference" />
+    <attr name="readStateTextStyle">
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
+    </attr>
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-        <attr name="avatarWidth" format="dimension|reference" />
-        <attr name="avatarHeight" format="dimension|reference" />
-        <attr name="avatarBorderWidth" format="dimension|reference" />
-        <attr name="avatarBorderColor" format="color|reference" />
-        <attr name="avatarBackGroundColor" format="color|reference" />
-        <attr name="avatarTextSize" format="dimension|reference" />
-        <attr name="avatarTextColor" format="color|reference" />
-        <attr name="avatarTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <attr name="avatarWidth"/>
+        <attr name="avatarHeight"/>
+        <attr name="avatarBorderWidth" />
+        <attr name="avatarBorderColor" />
+        <attr name="avatarBackGroundColor" />
+        <attr name="avatarTextSize" />
+        <attr name="avatarTextColor" />
+        <attr name="avatarTextStyle"/>
+
         <!--ReadStateView-->
-        <attr name="channelShowReadState" format="boolean" />
-        <attr name="channelReadStateAvatarWidth" format="dimension|reference" />
-        <attr name="channelReadStateAvatarHeight" format="dimension|reference" />
-        <attr name="channelRreadStateTextSize" format="dimension|reference" />
-        <attr name="channelReadStateTextColor" format="color|reference" />
-        <attr name="channelReadStateTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <attr name="showReadState"/>
+        <attr name="readStateAvatarWidth"/>
+        <attr name="readStateAvatarHeight"/>
+        <attr name="readStateTextSize"/>
+        <attr name="readStateTextColor"/>
+        <attr name="readStateTextStyle"/>
+
         <!--LastMessageDate-->
         <attr name="dateTextColor" format="color|reference" />
         <attr name="dateTextSize" format="dimension|reference" />
@@ -94,29 +113,22 @@
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
         <!--AvatarGroupView-->
-        <attr name="userAvatarWidth" format="dimension|reference" />
-        <attr name="userAvatarHeight" format="dimension|reference" />
-        <attr name="userAvatarBorderWidth" format="dimension|reference" />
-        <attr name="userAvatarBorderColor" format="color|reference" />
-        <attr name="userAvatarBackGroundColor" format="color|reference" />
-        <attr name="userAvatarTextSize" format="dimension|reference" />
-        <attr name="userAvatarTextColor" format="color|reference" />
-        <attr name="userAvatarTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <attr name="avatarWidth"/>
+        <attr name="avatarHeight"/>
+        <attr name="avatarBorderWidth" />
+        <attr name="avatarBorderColor" />
+        <attr name="avatarBackGroundColor" />
+        <attr name="avatarTextSize" />
+        <attr name="avatarTextColor" />
+        <attr name="avatarTextStyle"/>
         <!--ReadStateView-->
-        <attr name="userShowReadState" format="boolean" />
-        <attr name="userReadStateAvatarWidth" format="dimension|reference" />
-        <attr name="userReadStateAvatarHeight" format="dimension|reference" />
-        <attr name="userRreadStateTextSize" format="dimension|reference" />
-        <attr name="userReadStateTextColor" format="color|reference" />
-        <attr name="userReadStateTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <!--ReadStateView-->
+        <attr name="showReadState"/>
+        <attr name="readStateAvatarWidth"/>
+        <attr name="readStateAvatarHeight"/>
+        <attr name="readStateTextSize"/>
+        <attr name="readStateTextColor"/>
+        <attr name="readStateTextStyle"/>
         <!--Reaction Dialog-->
         <attr name="enableReaction" format="boolean" />
         <attr name="showUsersReactionDlg" format="boolean" />
@@ -154,28 +166,24 @@
 
         <attr name="messageBackgroundColorMine" format="color" />
         <attr name="messageBackgroundColorTheirs" format="color" />
-        <attr name="messageStrokeColorMine" format="color" />
-        <attr name="messageStrokeColorTheirs" format="color" />
-        <attr name="messageStrokeWidthMine" format="dimension|reference" />
-        <attr name="messageStrokeWidthTheirs" format="dimension|reference" />
+        <attr name="messageBorderColorMine" format="color" />
+        <attr name="messageBorderColorTheirs" format="color" />
+        <attr name="messageBorderWidthMine" format="dimension|reference" />
+        <attr name="messageBorderWidthTheirs" format="dimension|reference" />
         <!--Thread-->
         <attr name="enableThread" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
-        <attr name="channelHeaderAvatarWidth" format="dimension|reference" />
-        <attr name="channelHeaderAvatarHeight" format="dimension|reference" />
-        <attr name="channelHeaderAvatarBorderWidth" format="dimension|reference" />
-        <attr name="channelHeaderAvatarBorderColor" format="color|reference" />
-        <attr name="channelHeaderAvatarBackGroundColor" format="color|reference" />
-        <attr name="channelHeaderAvatarTextSize" format="dimension|reference" />
-        <attr name="channelHeaderAvatarTextColor" format="color|reference" />
-        <attr name="channelHeaderAvatarTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <attr name="avatarWidth"/>
+        <attr name="avatarHeight"/>
+        <attr name="avatarBorderWidth" />
+        <attr name="avatarBorderColor" />
+        <attr name="avatarBackGroundColor" />
+        <attr name="avatarTextSize" />
+        <attr name="avatarTextColor" />
+        <attr name="avatarTextStyle"/>
 
         <attr name="channelTitleTextSize" format="dimension|reference" />
         <attr name="channelTitleTextColor" format="color|reference" />
