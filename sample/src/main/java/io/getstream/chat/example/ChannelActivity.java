@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -110,18 +111,22 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageClick(Message message, int position) {
-        ReactionDialog reactionDialog = new ReactionDialog(this,
-                viewModel.getChannel(), message, position, binding.messageList, binding.messageList.getStyle());
-        reactionDialog.show();
+        new ReactionDialog(this)
+                .setChannel(viewModel.getChannel())
+                .setMessage(message)
+                .setMessagePosition(position)
+                .setRecyclerView(binding.messageList)
+                .setStyle(binding.messageList.getStyle())
+                .show();
     }
 
     @Override
     public void onMessageLongClick(Message message) {
-        MoreActionDialog moreActionDialog = new MoreActionDialog(this,
+        new MoreActionDialog(this,
                 viewModel.getChannel(),
                 message,
-                binding.messageList.getStyle());
-        moreActionDialog.show();
+                binding.messageList.getStyle())
+                .show();
     }
 
     @Override

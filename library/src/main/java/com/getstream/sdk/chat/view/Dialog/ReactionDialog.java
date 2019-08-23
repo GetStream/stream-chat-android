@@ -16,23 +16,74 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReactionDlgView;
 
 public class ReactionDialog extends Dialog {
-    public ReactionDialog(@NonNull Context context, Channel channel, Message message, int position, RecyclerView recyclerView, MessageListViewStyle style) {
+    Channel channel;
+    Message message;
+    int messagePosition;
+    RecyclerView recyclerView;
+    MessageListViewStyle style;
+
+    public ReactionDialog(@NonNull Context context) {
         super(context);
-        init(context, channel, message, position, recyclerView, style);
     }
 
-    public void init(Context context, Channel channel, Message message, int position, RecyclerView recyclerView, MessageListViewStyle style) {
+
+//
+//    public ReactionDialog(@NonNull Context context, Channel channel, Message message, int position, RecyclerView recyclerView, MessageListViewStyle style) {
+//        super(context);
+//        init(context, channel, message, position, recyclerView, style);
+//    }
+
+
+    public ReactionDialog setChannel(Channel channel) {
+        this.channel = channel;
+        init();
+        return this;
+    }
+
+    public ReactionDialog setMessage(Message message) {
+        this.message = message;
+        init();
+        return this;
+    }
+
+    public ReactionDialog setMessagePosition(int messagePosition) {
+        this.messagePosition = messagePosition;
+        init();
+        return this;
+    }
+
+    public ReactionDialog setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
+        init();
+        return this;
+    }
+
+    public ReactionDialog setStyle(MessageListViewStyle style) {
+        this.style = style;
+        init();
+        return this;
+    }
+
+    public void init() {
+        if (recyclerView == null ||
+                channel == null ||
+                message == null ||
+                style == null ||
+                messagePosition < 0
+        )
+            return;
+
         int firstListItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         final int lastListItemPosition = firstListItemPosition + recyclerView.getChildCount() - 1;
         int childIndex;
-        if (position < firstListItemPosition || position > lastListItemPosition) {
-            childIndex = position;
+        if (messagePosition < firstListItemPosition || messagePosition > lastListItemPosition) {
+            childIndex = messagePosition;
         } else {
-            childIndex = position - firstListItemPosition;
+            childIndex = messagePosition - firstListItemPosition;
         }
         int originY = recyclerView.getChildAt(childIndex).getBottom();
 
-        ReactionDlgView reactionDlgView = new ReactionDlgView(context);
+        ReactionDlgView reactionDlgView = new ReactionDlgView(getContext());
 
         reactionDlgView.setMessagewithStyle(channel,
                 message,
@@ -45,7 +96,7 @@ public class ReactionDialog extends Dialog {
         Window window = getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.x = 0;
-        int screenHeight = Utils.getScreenResolution(context);
+        int screenHeight = Utils.getScreenResolution(getContext());
         wlp.y = originY - screenHeight / 2;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
