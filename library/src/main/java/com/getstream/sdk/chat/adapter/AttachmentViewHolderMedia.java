@@ -1,12 +1,13 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
@@ -16,15 +17,14 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 
-
-public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
+public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     // Attachment
     private PorterShapeImageView iv_media_thumb;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-
-    private ConstraintLayout cl_video;
+    private ImageView iv_command_logo;
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
 
@@ -35,16 +35,19 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
+        iv_command_logo = itemView.findViewById(R.id.iv_command_logo);
     }
 
     @Override
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
+                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
+        applyStyle();
         configMediaAttach();
     }
 
@@ -88,6 +91,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
         tv_media_des.setText(getAttachment().getText());
 
 
+        if (attachment.getType().equals(ModelType.attach_giphy))
+            iv_command_logo.setVisibility(View.VISIBLE);
+        else
+            iv_command_logo.setVisibility(View.GONE);
+
         if (StringUtility.isNullOrEmpty(getAttachment().getText()))
             tv_media_des.setVisibility(View.GONE);
         else
@@ -102,5 +110,15 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder  {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
+    }
+
+    private void applyStyle() {
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentTitleTextSize());
+        tv_media_title.setTextColor(getStyle().getAttachmentTitleTextColor());
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentTitleTextStyle());
+
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
+        tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
     }
 }

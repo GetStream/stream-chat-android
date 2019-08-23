@@ -65,7 +65,12 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
         ((BaseAttachmentViewHolder) holder).setBubbleHelper(bubbleHelper);
-        ((BaseAttachmentViewHolder) holder).bind(this.context, messageListItem, attachment, attachmentClickListener, longClickListener);
+        ((BaseAttachmentViewHolder) holder).bind(this.context,
+                messageListItem,
+                attachment,
+                style,
+                attachmentClickListener,
+                longClickListener);
     }
 
     public MessageListViewStyle getStyle() {

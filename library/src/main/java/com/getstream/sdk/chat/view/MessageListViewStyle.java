@@ -37,6 +37,18 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderColorTheirs;
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
+    // Attachment
+    private int attachmentTitleTextSize;
+    private int attachmentTitleTextColor;
+    private int attachmentTitleTextStyle;
+
+    private int attachmentDescriptionTextSize;
+    private int attachmentDescriptionTextColor;
+    private int attachmentDescriptionTextStyle;
+
+    private int attachmentFileSizeTextSize;
+    private int attachmentFileSizeTextColor;
+    private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean enableReaction;
     private boolean showUsersReactionDlg;
@@ -83,6 +95,19 @@ public class MessageListViewStyle extends BaseStyle {
 
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.message_stroke));
+        // Attachment
+        attachmentTitleTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.attach_title_text));
+        attachmentTitleTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.attach_title_text));
+        attachmentTitleTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
+
+        attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.attach_description_text));
+        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.attach_description_text));
+        attachmentDescriptionTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
+
+        attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.attach_file_size_text));
+        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.attach_file_size_text));
+        attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
+
         // Reaction Dialog
         enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
         showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_streamShowUsersReactionDlg, true);
@@ -202,6 +227,44 @@ public class MessageListViewStyle extends BaseStyle {
     public int getMessageBorderWidthTheirs() {
         return messageBorderWidthTheirs;
     }
+
+    // Attachment
+    public int getAttachmentTitleTextSize() {
+        return attachmentTitleTextSize;
+    }
+
+    public int getAttachmentTitleTextColor() {
+        return attachmentTitleTextColor;
+    }
+
+    public int getAttachmentTitleTextStyle() {
+        return attachmentTitleTextStyle;
+    }
+
+    public int getAttachmentDescriptionTextSize() {
+        return attachmentDescriptionTextSize;
+    }
+
+    public int getAttachmentDescriptionTextColor() {
+        return attachmentDescriptionTextColor;
+    }
+
+    public int getAttachmentDescriptionTextStyle() {
+        return attachmentDescriptionTextStyle;
+    }
+
+    public int getAttachmentFileSizeTextSize() {
+        return attachmentFileSizeTextSize;
+    }
+
+    public int getAttachmentFileSizeTextColor() {
+        return attachmentFileSizeTextColor;
+    }
+
+    public int getAttachmentFileSizeTextStyle() {
+        return attachmentFileSizeTextStyle;
+    }
+
 
     // Reaction Dialog
 

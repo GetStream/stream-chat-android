@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +54,11 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
+                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
         configAttachment();
     }
 

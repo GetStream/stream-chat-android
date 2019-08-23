@@ -170,6 +170,30 @@
         <attr name="streamMessageBorderColorTheirs" format="color" />
         <attr name="streamMessageBorderWidthMine" format="dimension|reference" />
         <attr name="streamMessageBorderWidthTheirs" format="dimension|reference" />
+        <!-- Attachment-->
+        <attr name="streamAttachmentTitleTextSize" format="dimension|reference" />
+        <attr name="streamAttachmentTitleTextColor" format="color" />
+        <attr name="streamAttachmentTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference" />
+        <attr name="streamAttachmentDescriptionTextColor" format="color" />
+        <attr name="streamAttachmentDescriptionTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamAttachmentFileSizeTextSize" format="dimension|reference" />
+        <attr name="streamAttachmentFileSizeTextColor" format="color" />
+        <attr name="streamAttachmentFileSizeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
         <!--Thread-->
         <attr name="streamEnableThread" format="boolean" />
     </declare-styleable>
