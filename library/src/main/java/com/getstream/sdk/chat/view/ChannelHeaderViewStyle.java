@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import com.getstream.sdk.chat.R;
@@ -20,22 +21,28 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int lastActiveTextStyle;
 
     private boolean backButtonShow;
+    private Drawable backButtonBackground;
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
         setContext(c);
         TypedArray a = this.getContext().obtainStyledAttributes(attrs,
                 R.styleable.ChannelHeaderView, 0, 0);
+
         // Channel Title
-        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
-        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelTitleTextColor, getColor(R.color.stream_channel_initials));
-        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelTitleTextStyle, Typeface.BOLD);
+        channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
+        channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
+        channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderTitleTextStyle, Typeface.BOLD);
+
         // Last Active
-        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_lastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
-        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_lastActiveTextColor, getColor(R.color.gray_dark));
-        lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_lastActiveTextStyle, Typeface.NORMAL);
-        // Back Button Show/Hide
-        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_backButtonShow, false);
+        lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
+        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextColor, getColor(R.color.gray_dark));
+        lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_channelHeaderLastActiveTextStyle, Typeface.NORMAL);
+
+        // Back Button
+        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_channelHeaderBackButtonShow, false);
+        backButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_channelHeaderBackButtonBackground);
+
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_channelHeaderAvatarHeight, getDimension(R.dimen.stream_channel_avatar_height));
@@ -79,4 +86,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         return backButtonShow;
     }
 
+    public Drawable getBackButtonBackground() {
+        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.arrow_left);
+    }
 }

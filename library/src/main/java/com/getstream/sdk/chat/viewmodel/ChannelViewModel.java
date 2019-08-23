@@ -360,6 +360,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.postValue(messagesCopy);
     }
 
+    private void channelLoadingDone() {
+        initialized.set(true);
+        setLoadingDone();
+        channelState.postValue(channel.getChannelState());
+    }
+
     private void queryChannel() {
         int limit = 10; // Constant.DEFAULT_LIMIT
         if (!setLoading()) return;
@@ -371,19 +377,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             new QueryChannelCallback() {
                 @Override
                 public void onSuccess(ChannelState response) {
-                    initialized.set(true);
-                    setLoadingDone();
                     if (response.getMessages().size() < limit) {
                         reachedEndOfPagination = true;
                     }
                     addMessages(response.getMessages());
-                    channelState.postValue(channel.getChannelState());
+                    channelLoadingDone();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    initialized.set(true);
-                    setLoadingDone();
+                    channelLoadingDone();
                 }
             }
         );
@@ -550,7 +553,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                viewModel.queryChannel();
+                if (channel.getChannelState().getLastMessage() == null) {
+                    viewModel.queryChannel();
+                } else {
+                    channelLoadingDone();
+                }
             }
         }
     }

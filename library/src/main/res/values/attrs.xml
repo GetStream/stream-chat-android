@@ -177,22 +177,23 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="channelTitleTextSize" format="dimension|reference" />
-        <attr name="channelTitleTextColor" format="color|reference" />
-        <attr name="channelTitleTextStyle">
+        <attr name="channelHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="channelHeaderTitleTextColor" format="color|reference" />
+        <attr name="channelHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="lastActiveTextSize" format="dimension|reference" />
-        <attr name="lastActiveTextColor" format="color|reference" />
-        <attr name="lastActiveTextStyle">
+        <attr name="channelHeaderLastActiveTextSize" format="dimension|reference" />
+        <attr name="channelHeaderLastActiveTextColor" format="color|reference" />
+        <attr name="channelHeaderLastActiveTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="backButtonShow" format="boolean" />
+        <attr name="channelHeaderBackButtonBackground" format="reference" />
+        <attr name="channelHeaderBackButtonShow" format="boolean" />
     </declare-styleable>
 </resources>

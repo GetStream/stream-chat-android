@@ -19,8 +19,10 @@
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFF"
-            app:backButtonShow="true"
+            android:background="#10D0FF"
+            app:channelHeaderAvatarBackGroundColor="#9C27B0"
+            app:channelHeaderBackButtonShow="true"
+            app:channelHeaderTitleTextColor="#C020FF"
             app:layout_constraintEnd_toStartOf="@+id/messageList"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

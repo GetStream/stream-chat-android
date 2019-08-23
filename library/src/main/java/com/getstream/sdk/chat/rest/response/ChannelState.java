@@ -62,6 +62,15 @@ public class ChannelState {
         this.channel = channel;
     }
 
+    public Date getLastKnownActiveWatcher() {
+        if (lastKnownActiveWatcher == null) {
+            lastKnownActiveWatcher = new Date(0);
+        }
+        return lastKnownActiveWatcher;
+    }
+
+    private Date lastKnownActiveWatcher;
+
     // endregion
     public static void sortUserReads(List<ChannelUserRead> reads) {
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
@@ -78,6 +87,9 @@ public class ChannelState {
     public void removeWatcher(Watcher watcher){
         if (watchers == null) {
             watchers = new ArrayList<>();
+        }
+        if (watcher.getUser().getLastActive().after(getLastKnownActiveWatcher())) {
+            lastKnownActiveWatcher = watcher.getUser().getLastActive();
         }
         watchers.remove(watcher);
     }
@@ -112,13 +124,23 @@ public class ChannelState {
         return message.getId();
     }
 
-    // last time the channel had a message from another user
+    // last time the channel had a message from another user or (when more recent) the time a watcher was last active
     public Date getLastActive() {
         Date lastActive = channel.getCreatedAt();
+        if (getLastKnownActiveWatcher().after(lastActive)) {
+            lastActive = getLastKnownActiveWatcher();
+        }
+
         Message message = getLastMessageFromOtherUser();
         if (message != null) {
             if (message.getCreatedAt().after(lastActive)) {
                 lastActive = message.getCreatedAt();
+            }
+        }
+        for (Watcher watcher: getWatchers()) {
+            if (lastActive.before(watcher.getUser().getLastActive())) {
+                if (channel.getClient().fromCurrentUser(watcher)) continue;
+                lastActive = watcher.getUser().getLastActive();
             }
         }
         return lastActive;
@@ -292,10 +314,13 @@ public class ChannelState {
     }
 
     public void init(ChannelState incoming) {
-        //TODO: do an actual init instead of a replacement
         reads = incoming.reads;
         members = incoming.members;
         watcherCount = incoming.watcherCount;
+
+        if (watcherCount > 1) {
+            lastKnownActiveWatcher = new Date();
+        }
 
         if (incoming.messages != null) {
             addMessagesSorted(incoming.messages);
