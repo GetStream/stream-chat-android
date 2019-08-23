@@ -57,26 +57,26 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="unreadTitleTextColor" format="color|reference" />
-        <attr name="unreadTitleTextStyle">
+        <attr name="streamUnreadTitleTextColor" format="color|reference" />
+        <attr name="streamUnreadTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="messageTextColor" format="color|reference" />
-        <attr name="messageTextSize" format="dimension|reference" />
-        <attr name="messageTextStyle">
+        <attr name="streamMessageTextColor" format="color|reference" />
+        <attr name="streamMessageTextSize" format="dimension|reference" />
+        <attr name="streamMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="unreadMessageTextColor" format="color|reference" />
-        <attr name="unreadMessageTextStyle">
+        <attr name="streamUnreadMessageTextColor" format="color|reference" />
+        <attr name="streamUnreadMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="channelPreviewLayout" format="reference" />
+        <attr name="streamChannelPreviewLayout" format="reference" />
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
@@ -130,48 +130,48 @@
         <attr name="streamReadStateTextColor"/>
         <attr name="streamReadStateTextStyle"/>
         <!--Reaction Dialog-->
-        <attr name="enableReaction" format="boolean" />
-        <attr name="showUsersReactionDlg" format="boolean" />
-        <attr name="reactionDlgBgDrawable" format="reference" />
-        <attr name="reactionDlgbgColor" format="color" />
-        <attr name="reactionDlgEmojiSize" format="dimension|reference" />
-        <attr name="reactionDlgEmojiMargin" format="dimension|reference" />
+        <attr name="streamEnableReaction" format="boolean" />
+        <attr name="streamShowUsersReactionDlg" format="boolean" />
+        <attr name="streamrReactionDlgBgDrawable" format="reference" />
+        <attr name="streamReactionDlgbgColor" format="color" />
+        <attr name="streamReactionDlgEmojiSize" format="dimension|reference" />
+        <attr name="streamReactionDlgEmojiMargin" format="dimension|reference" />
         <!--Message-->
-        <attr name="messageTextSizeMine" format="dimension|reference" />
-        <attr name="messageTextSizeTheirs" format="dimension|reference" />
-        <attr name="messageTextColorMine" format="color" />
-        <attr name="messageTextColorTheirs" format="color" />
-        <attr name="messageTextStyleMine">
+        <attr name="streamMessageTextSizeMine" format="dimension|reference" />
+        <attr name="streamMessageTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamMessageTextColorMine" format="color" />
+        <attr name="streamMessageTextColorTheirs" format="color" />
+        <attr name="streamMessageTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="messageTextStyleTheirs">
+        <attr name="streamMessageTextStyleTheirs">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="messageBubbleDrawableMine" format="reference" />
-        <attr name="messageBubbleDrawableTheirs" format="reference" />
+        <attr name="streamMessageBubbleDrawableMine" format="reference" />
+        <attr name="streamMessageBubbleDrawableTheirs" format="reference" />
 
-        <attr name="messageTopLeftCornerRadiusMine" format="dimension|reference" />
-        <attr name="messageTopRightCornerRadiusMine" format="dimension|reference" />
-        <attr name="messageBottomRightCornerRadiusMine" format="dimension|reference" />
-        <attr name="messageBottomLeftCornerRadiusMine" format="dimension|reference" />
-        <attr name="messageTopLeftCornerRadiusTheirs" format="dimension|reference" />
-        <attr name="messageTopRightCornerRadiusTheirs" format="dimension|reference" />
-        <attr name="messageBottomRightCornerRadiusTheirs" format="dimension|reference" />
-        <attr name="messageBottomLeftCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageTopLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageTopRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageBottomRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageBottomLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageTopLeftCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageTopRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageBottomRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageBottomLeftCornerRadiusTheirs" format="dimension|reference" />
 
-        <attr name="messageBackgroundColorMine" format="color" />
-        <attr name="messageBackgroundColorTheirs" format="color" />
-        <attr name="messageBorderColorMine" format="color" />
-        <attr name="messageBorderColorTheirs" format="color" />
-        <attr name="messageBorderWidthMine" format="dimension|reference" />
-        <attr name="messageBorderWidthTheirs" format="dimension|reference" />
+        <attr name="streamMessageBackgroundColorMine" format="color" />
+        <attr name="streamMessageBackgroundColorTheirs" format="color" />
+        <attr name="streamMessageBorderColorMine" format="color" />
+        <attr name="streamMessageBorderColorTheirs" format="color" />
+        <attr name="streamMessageBorderWidthMine" format="dimension|reference" />
+        <attr name="streamMessageBorderWidthTheirs" format="dimension|reference" />
         <!--Thread-->
-        <attr name="enableThread" format="boolean" />
+        <attr name="streamEnableThread" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

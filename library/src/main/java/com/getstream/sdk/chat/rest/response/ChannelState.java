@@ -266,15 +266,16 @@ public class ChannelState {
             }
             if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
                 messages.add(newMessage);
+                return;
             }
         }
     }
 
-//    public void addMessageSorted(Message message){
-//        List<Message> diff = new ArrayList<>();
-//        diff.add(message);
-//        addMessagesSorted(diff);
-//    }
+    public void addMessageSorted(Message message){
+        List<Message> diff = new ArrayList<>();
+        diff.add(message);
+        addMessagesSorted(diff);
+    }
 
     private void addMessagesSorted(List<Message> messages){
         int initialSize = messages.size();
