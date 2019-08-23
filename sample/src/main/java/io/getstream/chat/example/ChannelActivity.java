@@ -21,7 +21,6 @@ import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
@@ -122,10 +121,10 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageLongClick(Message message) {
-        new MoreActionDialog(this,
-                viewModel.getChannel(),
-                message,
-                binding.messageList.getStyle())
+        new MoreActionDialog(this)
+                .setChannel(viewModel.getChannel())
+                .setMessage(message)
+                .setStyle(binding.messageList.getStyle())
                 .show();
     }
 

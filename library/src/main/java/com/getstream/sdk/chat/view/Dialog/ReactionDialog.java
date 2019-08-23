@@ -26,14 +26,6 @@ public class ReactionDialog extends Dialog {
         super(context);
     }
 
-
-//
-//    public ReactionDialog(@NonNull Context context, Channel channel, Message message, int position, RecyclerView recyclerView, MessageListViewStyle style) {
-//        super(context);
-//        init(context, channel, message, position, recyclerView, style);
-//    }
-
-
     public ReactionDialog setChannel(Channel channel) {
         this.channel = channel;
         init();

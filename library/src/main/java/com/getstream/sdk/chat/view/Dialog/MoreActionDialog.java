@@ -22,13 +22,37 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class MoreActionDialog extends Dialog {
-    public MoreActionDialog(@NonNull Context context, Channel channel, Message message, MessageListViewStyle style) {
+    Channel channel;
+    Message message;
+    MessageListViewStyle style;
+
+    public MoreActionDialog(@NonNull Context context) {
         super(context);
-        init(context, channel, message, style);
     }
 
-    public void init(Context context, Channel channel, Message message, MessageListViewStyle style) {
-        if (!message.getUserId().equals(StreamChat.getInstance(context).getUserId()))
+    public MoreActionDialog setChannel(Channel channel) {
+        this.channel = channel;
+        init();
+        return this;
+    }
+
+    public MoreActionDialog setMessage(Message message) {
+        this.message = message;
+        init();
+        return this;
+    }
+
+    public MoreActionDialog setStyle(MessageListViewStyle style) {
+        this.style = style;
+        init();
+        return this;
+    }
+
+    public void init() {
+        if (channel == null || message == null || style == null)
+            return;
+
+        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId()))
             setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);
         else {
             setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_outgoing);
@@ -61,7 +85,7 @@ public class MoreActionDialog extends Dialog {
         TextView tv_reply = findViewById(com.getstream.sdk.chat.R.id.tv_reply);
         TextView tv_cancel = findViewById(com.getstream.sdk.chat.R.id.tv_cancel);
         RecyclerView.LayoutManager mLayoutManager;
-        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel,
                 message,

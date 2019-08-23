@@ -424,11 +424,11 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message -> {
-                MoreActionDialog moreActionDialog = new MoreActionDialog(getContext(),
-                        viewModel.getChannel(),
-                        message,
-                        style);
-                moreActionDialog.show();
+                new MoreActionDialog(getContext())
+                        .setChannel(viewModel.getChannel())
+                        .setMessage(message)
+                        .setStyle(style)
+                        .show();
             });
         }
     }
