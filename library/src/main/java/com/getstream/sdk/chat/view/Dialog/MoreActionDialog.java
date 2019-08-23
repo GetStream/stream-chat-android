@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -16,7 +17,10 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class MoreActionDialog extends Dialog {
@@ -30,15 +34,27 @@ public class MoreActionDialog extends Dialog {
             setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);
         else {
             setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_outgoing);
-            TextView tv_edit = this.findViewById(com.getstream.sdk.chat.R.id.tv_edit);
-            TextView tv_delete = this.findViewById(com.getstream.sdk.chat.R.id.tv_delete);
-            tv_edit.setOnClickListener((View v) -> {
-                v.setTag(Constant.TAG_MOREACTION_EDIT);
+            TextView tv_edit = findViewById(com.getstream.sdk.chat.R.id.tv_edit);
+            TextView tv_delete = findViewById(com.getstream.sdk.chat.R.id.tv_delete);
+            tv_edit.setOnClickListener(view -> {
+
                 dismiss();
             });
-            tv_delete.setOnClickListener((View v) -> {
-                v.setTag(Constant.TAG_MOREACTION_DELETE);
-                dismiss();
+            tv_delete.setOnClickListener(view -> {
+                channel.deleteMessage(message,
+                        new MessageCallback() {
+                            @Override
+                            public void onSuccess(MessageResponse response) {
+                                Utils.showMessage(getContext(), "Deleted Successfully");
+                                dismiss();
+                            }
+
+                            @Override
+                            public void onError(String errMsg, int errCode) {
+                                Utils.showMessage(getContext(), errMsg);
+                                dismiss();
+                            }
+                        });
             });
         }
 
@@ -57,7 +73,7 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setAdapter(reactionAdapter);
 
         tv_reply.setOnClickListener((View v) -> {
-            v.setTag(Constant.TAG_MOREACTION_REPLY);
+
             dismiss();
         });
         tv_cancel.setOnClickListener((View v) -> dismiss());

@@ -330,6 +330,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = messages.getValue();
         boolean removed = messagesCopy.remove(message);
+        messages.postValue(messagesCopy);
         return removed;
     }
 
