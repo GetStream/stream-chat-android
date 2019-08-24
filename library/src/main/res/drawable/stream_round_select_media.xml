@@ -6,7 +6,7 @@
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
-        android:topLeftRadius="@dimen/thread_toolbar_radius"
-        android:topRightRadius="@dimen/thread_toolbar_radius" />
+        android:topLeftRadius="@dimen/stream_thread_toolbar_radius"
+        android:topRightRadius="@dimen/stream_thread_toolbar_radius" />
 </shape>
 

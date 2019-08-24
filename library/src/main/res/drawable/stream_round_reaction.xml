@@ -6,6 +6,6 @@
         android:color="@color/stream_reaction_background"/>
     <stroke android:color="@color/stream_reaction_background"
         android:width="1dp"/>
-    <corners android:radius="@dimen/reaction_corner_radius"/>
+    <corners android:radius="@dimen/stream_reaction_corner_radius"/>
 </shape>
 

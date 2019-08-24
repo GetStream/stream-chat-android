@@ -285,7 +285,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
-            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.message_failed_send : R.string.message_invalid_command;
+            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
             //TODO what does this do?
             // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
@@ -484,7 +484,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsUserAvatar() {
         if (avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
-        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
+        int marginStart = (int) context.getResources().getDimension(R.dimen.stream_message_avatar_margin);
         if (messageListItem.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);

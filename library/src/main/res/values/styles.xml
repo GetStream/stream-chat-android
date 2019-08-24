@@ -93,7 +93,7 @@
 
     <!--region Chat-->
     <style name="message_text">
-        <item name="android:textSize">@dimen/message_text_font_size</item>
+        <item name="android:textSize">@dimen/stream_message_text_font_size</item>
     </style>
     <!--endregion-->
 </resources>

@@ -17,8 +17,6 @@ import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 
-import java.util.List;
-
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class ReactionDlgView extends RelativeLayout {
@@ -70,7 +68,7 @@ public class ReactionDlgView extends RelativeLayout {
             this.setBackground(style.getReactionDlgBgDrawable());
             iv_bg.setBackgroundResource(0);
         } else {
-            @DimenRes int conerRadius = R.dimen.reaction_dialog_corner_radius;
+            @DimenRes int conerRadius = R.dimen.stream_reaction_dialog_corner_radius;
             Drawable drawable = new DrawableBuilder()
                     .rectangle()
                     .strokeColor(0)

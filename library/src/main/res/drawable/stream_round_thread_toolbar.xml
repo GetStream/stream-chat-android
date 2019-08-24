@@ -4,12 +4,12 @@
 
     <solid android:color="@color/stream_white" />
     <stroke
-        android:width="@dimen/message_stroke"
+        android:width="@dimen/stream_message_stroke"
         android:color="@color/stream_message_stroke" />
     <corners
         android:bottomLeftRadius="0dp"
         android:bottomRightRadius="0dp"
-        android:topLeftRadius="@dimen/thread_toolbar_radius"
-        android:topRightRadius="@dimen/thread_toolbar_radius" />
+        android:topLeftRadius="@dimen/stream_thread_toolbar_radius"
+        android:topRightRadius="@dimen/stream_thread_toolbar_radius" />
 </shape>
 

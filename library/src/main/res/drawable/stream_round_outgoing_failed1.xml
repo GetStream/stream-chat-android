@@ -5,9 +5,9 @@
     <solid android:color="@color/stream_message_failed" />
 
     <corners
-        android:bottomLeftRadius="@dimen/message_corner_radius1"
-        android:bottomRightRadius="@dimen/message_corner_radius2"
-        android:topLeftRadius="@dimen/message_corner_radius1"
-        android:topRightRadius="@dimen/message_corner_radius1" />
+        android:bottomLeftRadius="@dimen/stream_message_corner_radius1"
+        android:bottomRightRadius="@dimen/stream_message_corner_radius2"
+        android:topLeftRadius="@dimen/stream_message_corner_radius1"
+        android:topRightRadius="@dimen/stream_message_corner_radius1" />
 </shape>
 

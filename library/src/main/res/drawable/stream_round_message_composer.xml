@@ -4,6 +4,6 @@
 
     <solid android:color="@color/stream_input_message_box_background" />
 
-    <corners android:radius="@dimen/composer_corner_radius" />
+    <corners android:radius="@dimen/stream_composer_corner_radius" />
 </shape>
 

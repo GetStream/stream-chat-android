@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.R;
 public class ErrorChecker {
     public static void showErrorDialog(Context context, String error) {
         final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setTitle(R.string.title_error)
+                .setTitle(R.string.stream_title_error)
                 .setMessage(error)
                 .setPositiveButton(android.R.string.ok, null)
                 .create();

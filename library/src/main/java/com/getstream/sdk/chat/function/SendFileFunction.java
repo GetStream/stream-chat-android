@@ -426,7 +426,7 @@ public class SendFileFunction {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.command_title : R.string.mention_title);
+        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvCommandTitle.setText(title);
         binding.tvCommand.setText("");
         commandListItemAdapter = new CommandListItemAdapter(this.context, commands, isCommand);

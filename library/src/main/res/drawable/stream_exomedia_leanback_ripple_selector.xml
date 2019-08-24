@@ -11,8 +11,8 @@
                     <solid android:color="#66EEEEEE"/>
 
                     <size
-                        android:width="@dimen/exomedia_leanback_ripple_selector_size"
-                        android:height="@dimen/exomedia_leanback_ripple_selector_size"/>
+                        android:width="@dimen/stream_exomedia_leanback_ripple_selector_size"
+                        android:height="@dimen/stream_exomedia_leanback_ripple_selector_size"/>
                 </shape>
             </item>
         </selector>
