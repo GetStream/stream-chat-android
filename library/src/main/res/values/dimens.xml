@@ -8,51 +8,51 @@
     <dimen name="stream_channel_initials">14sp</dimen>
     <dimen name="stream_channel_header_initials">16sp</dimen>
     <!--Message Input-->
-    <dimen name="attachment_button_width">25dp</dimen>
-    <dimen name="attachment_button_height">25dp</dimen>
+    <dimen name="stream_attachment_button_width">25dp</dimen>
+    <dimen name="stream_attachment_button_height">25dp</dimen>
 
-    <dimen name="input_button_width">25dp</dimen>
-    <dimen name="input_button_height">25dp</dimen>
+    <dimen name="stream_input_button_width">25dp</dimen>
+    <dimen name="stream_input_button_height">25dp</dimen>
 
-    <dimen name="composer_stroke_width">2dp</dimen>
-    <dimen name="composer_corner_radius">10dp</dimen>
-    <dimen name="input_text_size">15sp</dimen>
+    <dimen name="stream_composer_stroke_width">2dp</dimen>
+    <dimen name="stream_composer_corner_radius">10dp</dimen>
+    <dimen name="stream_input_text_size">15sp</dimen>
 
-    <dimen name="read_state_avatar_height">14dp</dimen>
-    <dimen name="read_state_avatar_width">14dp</dimen>
+    <dimen name="stream_read_state_avatar_height">14dp</dimen>
+    <dimen name="stream_read_state_avatar_width">14dp</dimen>
     <!--Message Item-->
-    <dimen name="message_avatar_height">32dp</dimen>
-    <dimen name="message_avatar_width">32dp</dimen>
-    <dimen name="message_corner_radius1">16dp</dimen>
-    <dimen name="message_corner_radius2">2dp</dimen>
-    <dimen name="message_stroke">1dp</dimen>
-    <dimen name="message_margin_start">47dp</dimen>
-    <dimen name="message_gap">5px</dimen>
-    <dimen name="message_avatar_margin">10dp</dimen>
-    <dimen name="message_date_margin">5dp</dimen>
-    <dimen name="message_text_font_size">15sp</dimen>
-    <dimen name="read_state_text_size">8sp</dimen>
-    <dimen name="message_typing_indicator_size">30dp</dimen>
-    <dimen name="reaction_dialog_emoji_size">22sp</dimen>
-    <dimen name="reaction_dialog_emoji_margin">5sp</dimen>
-    <dimen name="reaction_dialog_corner_radius">30dp</dimen>
+    <dimen name="stream_message_avatar_height">32dp</dimen>
+    <dimen name="stream_message_avatar_width">32dp</dimen>
+    <dimen name="stream_message_corner_radius1">16dp</dimen>
+    <dimen name="stream_message_corner_radius2">2dp</dimen>
+    <dimen name="stream_message_stroke">1dp</dimen>
+    <dimen name="stream_message_margin_start">47dp</dimen>
+    <dimen name="stream_message_gap">5px</dimen>
+    <dimen name="stream_message_avatar_margin">10dp</dimen>
+    <dimen name="stream_message_date_margin">5dp</dimen>
+    <dimen name="stream_message_text_font_size">15sp</dimen>
+    <dimen name="stream_read_state_text_size">8sp</dimen>
+    <dimen name="stream_message_typing_indicator_size">30dp</dimen>
+    <dimen name="stream_reaction_dialog_emoji_size">22sp</dimen>
+    <dimen name="stream_reaction_dialog_emoji_margin">5sp</dimen>
+    <dimen name="stream_reaction_dialog_corner_radius">30dp</dimen>
     <!--Attachment Item-->
-    <dimen name="attach_image_width">250dp</dimen>
-    <dimen name="attach_image_height">200dp</dimen>
-    <dimen name="attach_file_height">50dp</dimen>
+    <dimen name="stream_attach_image_width">250dp</dimen>
+    <dimen name="stream_attach_image_height">200dp</dimen>
+    <dimen name="stream_attach_file_height">50dp</dimen>
 
-    <dimen name="attach_title_text">13dp</dimen>
-    <dimen name="attach_description_text">11sp</dimen>
-    <dimen name="attach_file_size_text">12sp</dimen>
+    <dimen name="stream_attach_title_text">13dp</dimen>
+    <dimen name="stream_attach_description_text">11sp</dimen>
+    <dimen name="stream_attach_file_size_text">12sp</dimen>
     <!--Reaction-->
-    <dimen name="reaction_corner_radius">12dp</dimen>
+    <dimen name="stream_reaction_corner_radius">12dp</dimen>
     <!--Thread-->
-    <dimen name="thread_toolbar_radius">10dp</dimen>
-    <dimen name="user_avatar_margin_left">15dp</dimen>
+    <dimen name="stream_thread_toolbar_radius">10dp</dimen>
+    <dimen name="stream_user_avatar_margin_left">15dp</dimen>
     <!--exomedia-->
-    <dimen name="exomedia_min_button_height">44dp</dimen>
-    <dimen name="exomedia_leanback_ripple_selector_size">90dp</dimen>
-    <dimen name="exomedia_leanback_controls_height">64dp</dimen>
-    <dimen name="exomedia_leanback_controls_bottom_margin">64dp</dimen>
-    <dimen name="exomedia_leanback_controls_horizontal_margin">132dp</dimen>
+    <dimen name="stream_exomedia_min_button_height">44dp</dimen>
+    <dimen name="stream_exomedia_leanback_ripple_selector_size">90dp</dimen>
+    <dimen name="stream_exomedia_leanback_controls_height">64dp</dimen>
+    <dimen name="stream_exomedia_leanback_controls_bottom_margin">64dp</dimen>
+    <dimen name="stream_exomedia_leanback_controls_horizontal_margin">132dp</dimen>
 </resources>

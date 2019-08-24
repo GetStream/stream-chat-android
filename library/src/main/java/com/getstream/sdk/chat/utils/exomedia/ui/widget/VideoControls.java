@@ -624,18 +624,18 @@ public abstract class VideoControls extends RelativeLayout implements VideoContr
      * Updates the drawables used for the buttons to AppCompatTintDrawables
      */
     protected void updateButtonDrawables() {
-        updateButtonDrawables(R.color.exomedia_default_controls_button_selector);
+        updateButtonDrawables(R.color.stream_exomedia_default_controls_button_selector);
     }
 
     protected void updateButtonDrawables(@ColorRes int tintList) {
-        playDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_play_arrow_white, tintList);
-        pauseDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_pause_white, tintList);
+        playDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_play_arrow_white, tintList);
+        pauseDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_pause_white, tintList);
         playPauseButton.setImageDrawable(playDrawable);
 
-        Drawable previousDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_skip_previous_white, tintList);
+        Drawable previousDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_skip_previous_white, tintList);
         previousButton.setImageDrawable(previousDrawable);
 
-        Drawable nextDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_skip_next_white, tintList);
+        Drawable nextDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_skip_next_white, tintList);
         nextButton.setImageDrawable(nextDrawable);
     }
 

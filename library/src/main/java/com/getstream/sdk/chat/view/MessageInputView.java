@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
+import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
 import com.getstream.sdk.chat.rest.Message;
@@ -56,7 +56,7 @@ public class MessageInputView extends RelativeLayout
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     // binding for this view
-    private ViewMessageInputBinding binding;
+    private StreamViewMessageInputBinding binding;
     private MessageInputStyle style;
     // listeners
     private SendMessageListener sendMessageListener;
@@ -97,9 +97,9 @@ public class MessageInputView extends RelativeLayout
     // endregion
 
     // region Init
-    private ViewMessageInputBinding initBinding(Context context) {
+    private StreamViewMessageInputBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        return ViewMessageInputBinding.inflate(inflater, this, true);
+        return StreamViewMessageInputBinding.inflate(inflater, this, true);
     }
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {

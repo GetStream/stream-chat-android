@@ -119,14 +119,14 @@ public class MessageListView extends RecyclerView {
                     bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
 
                     if (isDefaultBubble()) {
-                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         } else {
-                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         }
                     }
                 } else {
@@ -142,14 +142,14 @@ public class MessageListView extends RecyclerView {
                     strokeWidth = style.getMessageBorderWidthTheirs();
 
                     if (isDefaultBubble()) {
-                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         } else {
-                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         }
 //                        if (message.getAttachments() != null && !message.getAttachments().isEmpty()){
 //                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
@@ -187,17 +187,17 @@ public class MessageListView extends RecyclerView {
                             }
                         } catch (Exception e) {
                         }
-                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         } else {
-                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         }
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 } else {
                     if (style.getMessageBubbleDrawableTheirs() != null)
@@ -219,17 +219,17 @@ public class MessageListView extends RecyclerView {
                             }
                         } catch (Exception e) {
                         }
-                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
+                        topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius1);
-                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         } else {
-                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         }
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
 
                     }
                 }
@@ -245,14 +245,14 @@ public class MessageListView extends RecyclerView {
     }
 
     private boolean isDefaultBubble() {
-        return (style.getMessageTopLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageTopRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageBottomRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius2)) &&
-                (style.getMessageBottomLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageTopLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageTopRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageBottomRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius1)) &&
-                (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.message_corner_radius2));
+        return (style.getMessageTopLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageTopRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageBottomRightCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2)) &&
+                (style.getMessageBottomLeftCornerRadiusMine() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageTopLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageTopRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageBottomRightCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1)) &&
+                (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2));
     }
 
     private void initFresco() {
@@ -546,7 +546,7 @@ public class MessageListView extends RecyclerView {
 
     private void loadFile(Attachment attachment) {
         // Media
-        if (attachment.getMime_type().contains("audio") ||
+        if (attachment.getMime_type().contains("stream_ic_audio") ||
                 attachment.getMime_type().contains("video")) {
             Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
             intent.putExtra("type", attachment.getMime_type());

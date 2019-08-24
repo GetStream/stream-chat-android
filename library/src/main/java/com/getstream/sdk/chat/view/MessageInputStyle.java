@@ -59,38 +59,38 @@ class MessageInputStyle extends BaseStyle {
 
         attachmentButtonIcon = a.getResourceId(R.styleable.MessageInputView_streamAttachmentButtonIcon, -1);
         attachmentButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_streamAttachmentButtonDefaultIconColor,
-                getColor(R.color.gray_dark));
+                getColor(R.color.stream_gray_dark));
         attachmentButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_streamAttachmentButtonDefaultIconPressedColor,
-                getColor(R.color.white));
+                getColor(R.color.stream_white));
         attachmentButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_streamAttachmentButtonDefaultIconDisabledColor,
-                getColor(R.color.gray_light));
+                getColor(R.color.stream_gray_light));
         attachmentButtonSelectedIconColor = a.getColor(R.styleable.MessageInputView_streamAttachmentButtonDefaultIconDisabledColor,
-                getColor(R.color.black));
+                getColor(R.color.stream_black));
 
-        attachmentButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonWidth, getDimension(R.dimen.attachment_button_width));
-        attachmentButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonHeight, getDimension(R.dimen.attachment_button_height));
+        attachmentButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonWidth, getDimension(R.dimen.stream_attachment_button_width));
+        attachmentButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonHeight, getDimension(R.dimen.stream_attachment_button_height));
         // Send Button
         inputButtonIcon = a.getResourceId(R.styleable.MessageInputView_streamInputButtonIcon, -1);
         inputButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconColor,
-                getColor(R.color.input_message_send_button));
+                getColor(R.color.stream_input_message_send_button));
         inputButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconPressedColor,
-                getColor(R.color.white));
+                getColor(R.color.stream_white));
         inputButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconDisabledColor,
-                getColor(R.color.gray_dark));
+                getColor(R.color.stream_gray_dark));
 
-        inputButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputButtonWidth, getDimension(R.dimen.input_button_width));
-        inputButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputButtonHeight, getDimension(R.dimen.input_button_height));
+        inputButtonWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputButtonWidth, getDimension(R.dimen.stream_input_button_width));
+        inputButtonHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputButtonHeight, getDimension(R.dimen.stream_input_button_height));
         // Input Text
         inputHint = a.getString(R.styleable.MessageInputView_streamInputHint);
 
-        inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputTextSize, getDimension(R.dimen.input_text_size));
-        inputTextColor = a.getColor(R.styleable.MessageInputView_streamInputTextColor, getColor(R.color.black));
-        inputHintColor = a.getColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.gray_dark));
+        inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputTextSize, getDimension(R.dimen.stream_input_text_size));
+        inputTextColor = a.getColor(R.styleable.MessageInputView_streamInputTextColor, getColor(R.color.stream_black));
+        inputHintColor = a.getColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.stream_gray_dark));
         inputTextStyle = a.getInt(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL);
 
-        inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.round_message_composer));
-        inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.round_message_composer_select));
-        inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.round_message_composer_edit));
+        inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer));
+        inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select));
+        inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.stream_round_message_composer_edit));
 
         a.recycle();
     }
@@ -122,7 +122,7 @@ class MessageInputStyle extends BaseStyle {
             return getSelector(isSelected ? attachmentButtonSelectedIconColor : attachmentButtonDefaultIconColor,
                     attachmentButtonDefaultIconPressedColor,
                     attachmentButtonDefaultIconDisabledColor,
-                    R.drawable.ic_add_attachment);
+                    R.drawable.stream_ic_add_attachment);
         } else {
             return getDrawable(attachmentButtonIcon);
         }
@@ -140,7 +140,7 @@ class MessageInputStyle extends BaseStyle {
     public Drawable getInputButtonIcon() {
         if (inputButtonIcon == -1) {
             return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
-                    inputButtonDefaultIconDisabledColor, R.drawable.ic_send);
+                    inputButtonDefaultIconDisabledColor, R.drawable.stream_ic_send);
         } else {
             return getDrawable(inputButtonIcon);
         }
@@ -156,7 +156,7 @@ class MessageInputStyle extends BaseStyle {
 
     // Input Text
     public String getInputHint() {
-        return TextUtils.isEmpty(inputHint) ? context.getString(R.string.input_hint) : inputHint;
+        return TextUtils.isEmpty(inputHint) ? context.getString(R.string.stream_input_hint) : inputHint;
     }
 
     public int getInputTextSize() {

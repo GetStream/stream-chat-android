@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ListItemMentionBinding;
+import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.rest.User;
 
 import java.util.List;
@@ -44,13 +44,13 @@ public class MentionListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ListItemMentionBinding binding;
+        StreamItemMentionBinding binding;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_command, null);
+            convertView = layoutInflater.inflate(R.layout.stream_item_command, null);
             binding = DataBindingUtil.bind(convertView);
             convertView.setTag(binding);
         } else {
-            binding = (ListItemMentionBinding) convertView.getTag();
+            binding = (StreamItemMentionBinding) convertView.getTag();
         }
 
         User user = (User) users.get(position);

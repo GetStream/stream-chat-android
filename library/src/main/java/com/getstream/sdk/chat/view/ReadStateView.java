@@ -93,10 +93,10 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (isIncoming) {
             textParams.addRule(RelativeLayout.RIGHT_OF, imageView.getId());
-            textParams.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.composer_stroke_width));
+            textParams.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.stream_composer_stroke_width));
         } else {
             avatarParams.addRule(RelativeLayout.RIGHT_OF, textView.getId());
-            avatarParams.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.composer_stroke_width));
+            avatarParams.setMarginStart(getContext().getResources().getDimensionPixelOffset(R.dimen.stream_composer_stroke_width));
         }
         imageView.setLayoutParams(avatarParams);
         textView.setLayoutParams(textParams);

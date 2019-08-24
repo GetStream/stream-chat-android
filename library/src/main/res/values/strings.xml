@@ -1,28 +1,28 @@
 <resources>
     <string name="app_name">GetStreamChatSDK</string>
 
-    <string name="today">TODAY</string>
-    <string name="yesterday">YESTERDAY</string>
-    <string name="hint_enter_a_message">Type a message…</string>
+    <string name="stream_today">TODAY</string>
+    <string name="stream_yesterday">YESTERDAY</string>
+    <string name="stream_hint_enter_a_message">Type a message…</string>
     <!--Chat-->
-    <string name="no_connection">Connection failure, reconnecting now&#8230;</string>
-    <string name="command_title">Commands matching</string>
-    <string name="mention_title">Searching for people</string>
-    <string name="you">(you)</string>
+    <string name="stream_no_connection">Connection failure, reconnecting now&#8230;</string>
+    <string name="stream_command_title">Commands matching</string>
+    <string name="stream_mention_title">Searching for people</string>
+    <string name="stream_you">(you)</string>
     <!-- Menu actions -->
-    <string name="action_create_channel">Create activeChannel</string>
+    <string name="stream_action_create_channel">Create activeChannel</string>
     <!--MessageInput-->
-    <string name="input_hint">Write a message</string>
+    <string name="stream_input_hint">Write a message</string>
     <!-- Message Status -->
-    <string name="delete_message">This message was deleted.</string>
-    <string name="message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
-    <string name="message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
+    <string name="stream_delete_message">This message was deleted.</string>
+    <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
+    <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <!--Thread-->
-    <string name="reply_count">%d reply.</string>
-    <string name="replies_count">%d replies.</string>
+    <string name="stream_reply_count">%d reply.</string>
+    <string name="stream_replies_count">%d replies.</string>
     <!--Chat Screen-->
-    <string name="title_media">Select your photo or video</string>
-    <string name="title_file">Select your file</string>
+    <string name="stream_title_media">Select your photo or video</string>
+    <string name="stream_title_file">Select your file</string>
     <!--Error-->
-    <string name="title_error">Error!</string>
+    <string name="stream_title_error">Error!</string>
 </resources>

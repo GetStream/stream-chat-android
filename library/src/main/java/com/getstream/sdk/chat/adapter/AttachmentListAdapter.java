@@ -54,7 +54,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         final String type = attachment.getType();
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_attach_file, null);
+            convertView = layoutInflater.inflate(R.layout.stream_item_attach_file, null);
 
             holder = new ViewHolder();
             holder.iv_file_thumb = convertView.findViewById(R.id.iv_file_thumb);
@@ -93,40 +93,40 @@ public class AttachmentListAdapter extends BaseAdapter {
         int fileTyineRes = 0;
         switch (fileType) {
             case ModelType.attach_mime_pdf:
-                fileTyineRes = R.drawable.file_pdf;
+                fileTyineRes = R.drawable.stream_ic_file_pdf;
                 break;
             case ModelType.attach_mime_csv:
-                fileTyineRes = R.drawable.file_csv;
+                fileTyineRes = R.drawable.stream_ic_file_csv;
                 break;
             case ModelType.attach_mime_tar:
-                fileTyineRes = R.drawable.file_tar;
+                fileTyineRes = R.drawable.stream_ic_file_tar;
                 break;
             case ModelType.attach_mime_zip:
-                fileTyineRes = R.drawable.file_zip;
+                fileTyineRes = R.drawable.stream_ic_file_zip;
                 break;
             case ModelType.attach_mime_doc:
             case ModelType.attach_mime_docx:
             case ModelType.attach_mime_txt:
-                fileTyineRes = R.drawable.file_doc;
+                fileTyineRes = R.drawable.stream_ic_file_doc;
                 break;
             case ModelType.attach_mime_xlsx:
-                fileTyineRes = R.drawable.file_xls;
+                fileTyineRes = R.drawable.stream_ic_file_xls;
                 break;
             case ModelType.attach_mime_ppt:
-                fileTyineRes = R.drawable.file_ppt;
+                fileTyineRes = R.drawable.stream_ic_file_ppt;
                 break;
             case ModelType.attach_mime_mov:
             case ModelType.attach_mime_mp4:
-                fileTyineRes = R.drawable.file_mov;
+                fileTyineRes = R.drawable.stream_ic_file_mov;
                 break;
             case ModelType.attach_mime_mp3:
-                fileTyineRes = R.drawable.file_mp3;
+                fileTyineRes = R.drawable.stream_ic_file_mp3;
                 break;
             default:
-                if (attachment.getMime_type().contains("audio")) {
-                    fileTyineRes = R.drawable.file_mp3;
+                if (attachment.getMime_type().contains("stream_ic_audio")) {
+                    fileTyineRes = R.drawable.stream_ic_file_mp3;
                 } else if (attachment.getMime_type().contains("video")) {
-                    fileTyineRes = R.drawable.file_mov;
+                    fileTyineRes = R.drawable.stream_ic_file_mov;
                 }
                 break;
         }

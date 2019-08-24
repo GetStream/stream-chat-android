@@ -12,7 +12,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorPrimary">@color/stream_black</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -24,21 +24,21 @@
         <item name="android:background">@null</item>
         <item name="android:textCursorDrawable">@null</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:textColorHint">@color/gray_dark</item>>
+        <item name="android:textColorHint">@color/stream_gray_dark</item>>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/stream_white</item>
         <item name="android:maxLines">1</item>
         <item name="android:imeOptions">actionNext</item>
     </style>
 
     <style name="text">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
     </style>
 
     <style name="text_single_line">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
         <item name="android:ellipsize">end</item>
         <item name="android:ems">3</item>
         <item name="android:gravity">start</item>
@@ -48,19 +48,19 @@
 
     <style name="text_b">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="text_s">
         <item name="android:textSize">11sp</item>
-        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textColor">@color/stream_gray_dark</item>
     </style>
 
     <!--region Channel Preview-->
     <style name="channel_preview_initials">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -71,29 +71,29 @@
 
     <style name="channel_preview_channel_name">
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
     </style>
 
     <style name="channel_preview_channel_last_message">
         <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textColor">@color/stream_gray_dark</item>
     </style>
 
     <style name="channel_preview_channel_last_message_date">
         <item name="android:textSize">11sp</item>
-        <item name="android:textColor">@color/gray_dark</item>
+        <item name="android:textColor">@color/stream_gray_dark</item>
     </style>
 
     <style name="channel_preview_channel_unread_indicator">
         <item name="android:textSize">11sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/stream_black</item>
     </style>
     <!--endregion-->
 
     <!--region Chat-->
     <style name="message_text">
-        <item name="android:textSize">@dimen/message_text_font_size</item>
+        <item name="android:textSize">@dimen/stream_message_text_font_size</item>
     </style>
     <!--endregion-->
 </resources>

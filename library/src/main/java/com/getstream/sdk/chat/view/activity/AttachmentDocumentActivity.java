@@ -11,7 +11,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.Constant;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
@@ -24,7 +23,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attachment_document);
+        setContentView(R.layout.stream_activity_attachment_document);
         webView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
         configUIs();

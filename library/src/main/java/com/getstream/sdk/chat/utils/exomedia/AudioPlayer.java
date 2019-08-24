@@ -79,10 +79,10 @@ public class AudioPlayer {
     }
 
     /**
-     * Returns the audio session ID.
+     * Returns the stream_ic_audio session ID.
      *
-     * @return the audio session ID.
-     * Note that the audio session ID is 0 only if a problem occurred when the AudioPlayer was constructed or the audio stream hasn't been
+     * @return the stream_ic_audio session ID.
+     * Note that the stream_ic_audio session ID is 0 only if a problem occurred when the AudioPlayer was constructed or the stream_ic_audio stream hasn't been
      * instantiated.
      */
     public int getAudioSessionId() {
@@ -119,12 +119,12 @@ public class AudioPlayer {
     }
 
     /**
-     * Sets the audio stream type for this MediaPlayer. See {@link AudioManager}
+     * Sets the stream_ic_audio stream type for this MediaPlayer. See {@link AudioManager}
      * for a list of stream types. Must call this method before prepare() or
      * prepareAsync() in order for the target stream type to become effective
      * thereafter.
      *
-     * @param streamType The audio stream type
+     * @param streamType The stream_ic_audio stream type
      * @see android.media.AudioManager
      */
     public void setAudioStreamType(int streamType) {
@@ -132,10 +132,10 @@ public class AudioPlayer {
     }
 
     /**
-     * Sets the source path for the audio item.  This path can be a web address (e.g. http://) or
+     * Sets the source path for the stream_ic_audio item.  This path can be a web address (e.g. http://) or
      * an absolute local path (e.g. file://)
      *
-     * @param uri The Uri representing the path to the audio item
+     * @param uri The Uri representing the path to the stream_ic_audio item
      */
     public void setDataSource(@Nullable Uri uri) {
         audioPlayerImpl.setDataSource(uri);
@@ -143,11 +143,11 @@ public class AudioPlayer {
     }
 
     /**
-     * Sets the source path for the audio item.  This path can be a web address (e.g. http://) or
+     * Sets the source path for the stream_ic_audio item.  This path can be a web address (e.g. http://) or
      * an absolute local path (e.g. file://)
      *
-     * @param uri The Uri representing the path to the audio item
-     * @param mediaSource The MediaSource to use for audio playback
+     * @param uri The Uri representing the path to the stream_ic_audio item
+     * @param mediaSource The MediaSource to use for stream_ic_audio playback
      */
     public void setDataSource(@Nullable Uri uri, @Nullable MediaSource mediaSource) {
         audioPlayerImpl.setDataSource(uri, mediaSource);
@@ -195,7 +195,7 @@ public class AudioPlayer {
     }
 
     /**
-     * Sets the volume level for the audio playback.
+     * Sets the volume level for the stream_ic_audio playback.
      *
      * @param leftVolume The volume range [0.0 - 1.0]
      * @param rightVolume The volume range [0.0 - 1.0]
@@ -223,7 +223,7 @@ public class AudioPlayer {
     }
 
     /**
-     * Stops the current audio playback and resets the listener states
+     * Stops the current stream_ic_audio playback and resets the listener states
      * so that we receive the callbacks for events like onPrepared
      */
     public void reset() {
@@ -234,7 +234,7 @@ public class AudioPlayer {
     }
 
     /**
-     * Moves the current audio progress to the specified location.
+     * Moves the current stream_ic_audio progress to the specified location.
      * This method should only be called after the AudioPlayer is
      * prepared. (see {@link #setOnPreparedListener(OnPreparedListener)}
      *
@@ -245,16 +245,16 @@ public class AudioPlayer {
     }
 
     /**
-     * Returns if an audio item is currently in playback
+     * Returns if an stream_ic_audio item is currently in playback
      *
-     * @return True if an audio item is playing
+     * @return True if an stream_ic_audio item is playing
      */
     public boolean isPlaying() {
         return audioPlayerImpl.isPlaying();
     }
 
     /**
-     * Starts the playback for the audio item specified in {@link #setDataSource(Uri)}.
+     * Starts the playback for the stream_ic_audio item specified in {@link #setDataSource(Uri)}.
      * This should be called after the AudioPlayer is correctly prepared (see {@link #setOnPreparedListener(OnPreparedListener)})
      */
     public void start() {
@@ -262,14 +262,14 @@ public class AudioPlayer {
     }
 
     /**
-     * If an audio item is currently in playback, it will be paused
+     * If an stream_ic_audio item is currently in playback, it will be paused
      */
     public void pause() {
         audioPlayerImpl.pause();
     }
 
     /**
-     * If an audio item is currently in playback then the playback will be stopped
+     * If an stream_ic_audio item is currently in playback then the playback will be stopped
      */
     public void stopPlayback() {
         audioPlayerImpl.stopPlayback();
@@ -283,7 +283,7 @@ public class AudioPlayer {
     }
 
     /**
-     * Retrieves the duration of the current audio item.  This should only be called after
+     * Retrieves the duration of the current stream_ic_audio item.  This should only be called after
      * the item is prepared (see {@link #setOnPreparedListener(OnPreparedListener)}).
      * If {@link #overrideDuration(long)} is set then that value will be returned.
      *
@@ -299,8 +299,8 @@ public class AudioPlayer {
 
     /**
      * Setting this will override the duration that the item may actually be.  This method should
-     * only be used when the item doesn't return the correct duration such as with audio streams.
-     * This only overrides the current audio item.
+     * only be used when the item doesn't return the correct duration such as with stream_ic_audio streams.
+     * This only overrides the current stream_ic_audio item.
      *
      * @param duration The duration for the current media item or &lt; 0 to disable
      */
@@ -309,7 +309,7 @@ public class AudioPlayer {
     }
 
     /**
-     * Retrieves the current position of the audio playback.  If an audio item is not currently
+     * Retrieves the current position of the stream_ic_audio playback.  If an stream_ic_audio item is not currently
      * in playback then the value will be 0.  This should only be called after the item is
      * prepared (see {@link #setOnPreparedListener(OnPreparedListener)})
      *
@@ -320,8 +320,8 @@ public class AudioPlayer {
     }
 
     /**
-     * Retrieves the current buffer percent of the audio item.  If an audio item is not currently
-     * prepared or buffering the value will be 0.  This should only be called after the audio item is
+     * Retrieves the current buffer percent of the stream_ic_audio item.  If an stream_ic_audio item is not currently
+     * prepared or buffering the value will be 0.  This should only be called after the stream_ic_audio item is
      * prepared (see {@link #setOnPreparedListener(OnPreparedListener)})
      *
      * @return The integer percent that is buffered [0, 100] inclusive
@@ -344,7 +344,7 @@ public class AudioPlayer {
 
     /**
      * Determines if the current video player implementation supports
-     * track selection for audio or video tracks.
+     * track selection for stream_ic_audio or video tracks.
      *
      * @return True if tracks can be manually specified
      */

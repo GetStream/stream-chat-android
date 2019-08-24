@@ -34,9 +34,9 @@ public class PorterShapeImageView extends PorterImageView {
 
     private void setup(Context context, AttributeSet attrs, int defStyle) {
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShaderImageView, defStyle, 0);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Stream_ShaderImageView, defStyle, 0);
             if (shape == null)
-                shape = typedArray.getDrawable(R.styleable.ShaderImageView_siShape);
+                shape = typedArray.getDrawable(R.styleable.Stream_ShaderImageView_stream_siShape);
             typedArray.recycle();
         }
         matrix = new Matrix();

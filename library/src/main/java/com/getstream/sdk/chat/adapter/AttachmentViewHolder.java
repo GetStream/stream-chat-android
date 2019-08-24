@@ -131,7 +131,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             return true;
         });
 
-        float height = getContext().getResources().getDimension(R.dimen.attach_file_height);
+        float height = getContext().getResources().getDimension(R.dimen.stream_attach_file_height);
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
         params.height = (int) height * attachments.size();
         lv_attachment_file.setLayoutParams(params);

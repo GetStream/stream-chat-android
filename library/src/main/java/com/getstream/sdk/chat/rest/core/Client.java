@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.getstream.sdk.chat.component.Component;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.Token;
@@ -102,7 +101,6 @@ public class Client implements WSResponseHandler {
 
     public String clientID;
 
-    private Component component;
 
     public List<Channel> getActiveChannels() {
         return activeChannels;
@@ -147,18 +145,6 @@ public class Client implements WSResponseHandler {
         this.options = options;
     }
 
-    public Component getComponent() {
-        if (this.component == null) {
-            this.component = new Component();
-            Global.component = this.component;
-        }
-        return component;
-    }
-
-    public void setComponent(Component component) {
-        this.component = component;
-        Global.component = component;
-    }
 
     // Server-side Token
     public void setUser(User user, final TokenProvider provider) {

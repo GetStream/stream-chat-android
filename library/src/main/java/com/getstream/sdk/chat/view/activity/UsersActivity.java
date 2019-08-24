@@ -22,14 +22,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
-import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
+
+import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.Utils;
 
 import org.json.JSONObject;
@@ -50,7 +50,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private Client client;
 
-    private ActivityUsersBinding binding;
+    private StreamActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
     private List<User> groupUsers;
@@ -62,7 +62,7 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
+        binding = DataBindingUtil.setContentView(this, R.layout.stream_activity_users);
         try {
             setSupportActionBar(binding.header);
         } catch (Exception e) {
@@ -75,7 +75,7 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.new_chat, menu);
+        getMenuInflater().inflate(R.menu.stream_new_chat, menu);
         return true;
     }
 
@@ -156,9 +156,10 @@ public class UsersActivity extends AppCompatActivity {
     // endregion
 
     // region New Chat
+
     /**
      * Start private chat
-     * */
+     */
     public void createNewChat() {
         adapter.groupChatMode = false;
         adapter.notifyDataSetChanged();
@@ -256,24 +257,21 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
     }
+
     private JSONObject getUserQueryPayload() {
         Map<String, Object> payload = new HashMap<>();
 
         // Filter options
-        if (Global.component.user.getFilter() != null) {
-            payload.put("filter_conditions", Global.component.user.getFilter().getData());
-        } else {
-            payload.put("filter_conditions", new HashMap<>());
-        }
+
+        payload.put("filter_conditions", new HashMap<>());
+
         // QuerySort options
-        if (Global.component.user.getSortOptions() != null) {
-            payload.put("sort", Collections.singletonList(Global.component.user.getSortOptions()));
-        } else {
-            Map<String, Object> sort = new HashMap<>();
-            sort.put("field", "last_active");
-            sort.put("direction", -1);
-            payload.put("sort", Collections.singletonList(sort));
-        }
+
+        Map<String, Object> sort = new HashMap<>();
+        sort.put("field", "last_active");
+        sort.put("direction", -1);
+        payload.put("sort", Collections.singletonList(sort));
+
 
 //        if (client.users.size() > 0)
 //            payload.put("offset", client.users.size());
@@ -284,6 +282,7 @@ public class UsersActivity extends AppCompatActivity {
         Log.d(TAG, "Payload: " + json);
         return json;
     }
+
     private void getChannel(List<User> users) {
 //        boolean isPrivateChannel = users.size() == 1;
 //        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
@@ -338,7 +337,7 @@ public class UsersActivity extends AppCompatActivity {
 
     /**
      * Start group chat
-     * */
+     */
     public void onClickCreateGroupChat(View view) {
         getChannel(groupUsers);
     }

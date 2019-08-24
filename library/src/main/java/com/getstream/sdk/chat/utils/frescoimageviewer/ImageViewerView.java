@@ -106,7 +106,7 @@ class ImageViewerView extends RelativeLayout
     }
 
     private void init() {
-        inflate(getContext(), R.layout.image_viewer, this);
+        inflate(getContext(), R.layout.stream_image_viewer, this);
 
         backgroundView = findViewById(R.id.backgroundView);
         pager = (MultiTouchViewPager) findViewById(R.id.pager);

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.databinding.ListItemSelectPhotoBinding;
+import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
 
@@ -40,8 +40,8 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
         // create a new view
         LayoutInflater layoutInflater =
                 LayoutInflater.from(parent.getContext());
-        ListItemSelectPhotoBinding itemBinding =
-                ListItemSelectPhotoBinding.inflate(layoutInflater, parent, false);
+        StreamItemSelectPhotoBinding itemBinding =
+                StreamItemSelectPhotoBinding.inflate(layoutInflater, parent, false);
         return new MyViewHolder(itemBinding);
     }
 
@@ -56,8 +56,8 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private final ListItemSelectPhotoBinding binding;
-        public MyViewHolder(ListItemSelectPhotoBinding binding) {
+        private final StreamItemSelectPhotoBinding binding;
+        public MyViewHolder(StreamItemSelectPhotoBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

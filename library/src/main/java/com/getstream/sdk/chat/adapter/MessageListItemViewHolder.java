@@ -285,7 +285,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
-            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.message_failed_send : R.string.message_invalid_command;
+            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
             //TODO what does this do?
             // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
@@ -383,9 +383,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
         if (messageListItem.isMine())
-            iv_docket.setBackgroundResource(R.drawable.docket_incoming);
+            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
         else
-            iv_docket.setBackgroundResource(R.drawable.docket_outgoing);
+            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_outgoing);
     }
 
     private void configReplyView() {
@@ -484,7 +484,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsUserAvatar() {
         if (avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
-        int marginStart = (int) context.getResources().getDimension(R.dimen.message_avatar_margin);
+        int marginStart = (int) context.getResources().getDimension(R.dimen.stream_message_avatar_margin);
         if (messageListItem.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);
@@ -515,13 +515,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         // Set Constraint
         if (messageListItem.isTheirs()) {
-            iv_reply.setBackgroundResource(R.drawable.replies);
+            iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_incoming);
             params.horizontalBias = 0f;
             paramsText.endToEnd = cl_reply.getId();
             paramsArrow.startToStart = cl_reply.getId();
             paramsText.startToEnd = iv_reply.getId();
         } else {
-            iv_reply.setBackgroundResource(R.drawable.repliesout);
+            iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_outgoing);
             params.horizontalBias = 1f;
             paramsArrow.endToEnd = cl_reply.getId();
             paramsText.startToStart = cl_reply.getId();
