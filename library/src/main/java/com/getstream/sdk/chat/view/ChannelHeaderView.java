@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.databinding.ViewChannelHeaderBinding;
+import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -36,7 +36,7 @@ public class ChannelHeaderView extends RelativeLayout {
     final static String TAG = ChannelHeaderView.class.getSimpleName();
 
     // binding for this view
-    private ViewChannelHeaderBinding binding;
+    private StreamViewChannelHeaderBinding binding;
     private ChannelHeaderViewStyle style;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
@@ -89,9 +89,9 @@ public class ChannelHeaderView extends RelativeLayout {
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), channelState.getOtherUsers(), style);
     }
 
-    private ViewChannelHeaderBinding initBinding(Context context) {
+    private StreamViewChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ViewChannelHeaderBinding.inflate(inflater, this, true);
+        binding = StreamViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
         binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
         return binding;

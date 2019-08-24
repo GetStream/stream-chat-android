@@ -38,7 +38,7 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
                                                      int viewType) {
         // create a new view
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_reaction, parent, false);
+                .inflate(R.layout.stream_item_reaction, parent, false);
 
         MyViewHolder vh = new MyViewHolder(itemView);
         return vh;

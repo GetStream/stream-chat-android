@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ListItemGroupUserBinding;
+import com.getstream.sdk.chat.databinding.StreamItemGroupUserBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.Utils;
 
@@ -36,8 +36,8 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
         // create a new view
         LayoutInflater layoutInflater =
                 LayoutInflater.from(parent.getContext());
-        ListItemGroupUserBinding itemBinding =
-                ListItemGroupUserBinding.inflate(layoutInflater, parent, false);
+        StreamItemGroupUserBinding itemBinding =
+                StreamItemGroupUserBinding.inflate(layoutInflater, parent, false);
         return new MyViewHolder(itemBinding);
     }
 
@@ -52,9 +52,9 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private final ListItemGroupUserBinding binding;
+        private final StreamItemGroupUserBinding binding;
 
-        public MyViewHolder(ListItemGroupUserBinding binding) {
+        public MyViewHolder(StreamItemGroupUserBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }

@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ListItemUserBinding;
+import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
@@ -51,17 +51,17 @@ public class UserListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ListItemUserBinding binding;
-        ListItemUserBinding binding1;
+        final StreamItemUserBinding binding;
+        StreamItemUserBinding binding1;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_user, null);
+            convertView = layoutInflater.inflate(R.layout.stream_item_user, null);
             binding1 = DataBindingUtil.bind(convertView);
             convertView.setTag(binding1);
         } else {
             try {
-                binding1 = (ListItemUserBinding) convertView.getTag();
+                binding1 = (StreamItemUserBinding) convertView.getTag();
             } catch (Exception e) {
-                convertView = layoutInflater.inflate(R.layout.list_item_user, null);
+                convertView = layoutInflater.inflate(R.layout.stream_item_user, null);
                 binding1 = DataBindingUtil.bind(convertView);
             }
         }
@@ -73,7 +73,7 @@ public class UserListItemAdapter extends BaseAdapter {
         return binding.getRoot();
     }
 
-    private void configUIs(ListItemUserBinding binding, User user) {
+    private void configUIs(StreamItemUserBinding binding, User user) {
         TextView tv_initials = binding.viewUserAvator.findViewById(R.id.tv_initials);
         ImageView cv_avatar = binding.viewUserAvator.findViewById(R.id.cv_avatar);
         if (StringUtility.isValidImageUrl(user.getImage())) {

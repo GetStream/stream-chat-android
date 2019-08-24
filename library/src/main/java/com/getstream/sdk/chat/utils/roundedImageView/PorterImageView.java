@@ -55,8 +55,8 @@ public abstract class PorterImageView extends AppCompatImageView {
 
     private void setup(Context context, AttributeSet attrs, int defStyle) {
         if(attrs != null){
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ShaderImageView, defStyle, 0);
-            square = typedArray.getBoolean(R.styleable.ShaderImageView_siSquare, false);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Stream_ShaderImageView, defStyle, 0);
+            square = typedArray.getBoolean(R.styleable.Stream_ShaderImageView_stream_siSquare, false);
             typedArray.recycle();
         }
 

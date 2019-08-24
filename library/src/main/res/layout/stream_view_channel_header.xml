@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
+        <variable
+            name="channelLastActive"
+            type="String" />
+        <variable
+            name="channelName"
+            type="String" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="61dp">
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:textSize="25sp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_channel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@{channelName}"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_active"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_active"
+            style="@style/text_s"
+            app:layout_constraintVertical_chainStyle="packed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text='@{channelLastActive}'
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_channel_name" />
+
+        <com.getstream.sdk.chat.view.AvatarGroupView
+            android:id="@+id/avatar_group"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="18dp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_active_badge"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
+            app:layout_constraintEnd_toEndOf="@+id/avatar_group"
+            app:layout_constraintStart_toEndOf="@+id/avatar_group"
+            app:layout_constraintTop_toTopOf="@+id/avatar_group" />
+
+        <ImageView
+            android:id="@+id/iv_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/stream_gray"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_option"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="18dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/iv_separator"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

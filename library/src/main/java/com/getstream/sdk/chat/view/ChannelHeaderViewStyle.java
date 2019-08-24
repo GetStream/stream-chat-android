@@ -49,7 +49,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
         // Last Active
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
-        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.gray_dark));
+        lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
 
         // Avatar
@@ -116,7 +116,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public Drawable getBackButtonBackground() {
-        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.arrow_left);
+        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.stream_arrow_left);
     }
 
     public boolean isLastActiveShow() {
@@ -132,7 +132,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public Drawable getOptionsButtonBackground() {
-        return optionsButtonBackground != null ? optionsButtonBackground : getDrawable(R.drawable.settings);
+        return optionsButtonBackground != null ? optionsButtonBackground : getDrawable(R.drawable.stream_ic_settings);
     }
 
     public boolean isActiveBadgeShow() {

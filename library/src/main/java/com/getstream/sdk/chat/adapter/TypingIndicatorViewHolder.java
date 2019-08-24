@@ -54,19 +54,19 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         iv_typing_indicator.setVisibility(View.VISIBLE);
         ll_typingusers.removeAllViews();
         Resources resources = context.getResources();
-        float marginLeft = resources.getDimension(R.dimen.user_avatar_margin_left);
+        float marginLeft = resources.getDimension(R.dimen.stream_user_avatar_margin_left);
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         List<User> users = messageListItem.getUsers();
         int i = 0;
 
         for (User user : users) {
-            View v = vi.inflate(R.layout.view_user_avatar_initials, null);
+            View v = vi.inflate(R.layout.stream_view_user_avatar_initials, null);
             TextView textView = v.findViewById(R.id.tv_initials);
             ImageView imageView = v.findViewById(R.id.cv_avatar);
             textView.setText(user.getInitials());
             Utils.circleImageLoad(imageView, user.getImage());
-            int height = (int) context.getResources().getDimension(R.dimen.message_typing_indicator_size);
+            int height = (int) context.getResources().getDimension(R.dimen.stream_message_typing_indicator_size);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(height, height);
             if (i == 0) {
                 params.setMargins(0, 0, 0, 0);
@@ -78,7 +78,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             ll_typingusers.addView(v);
             i += 1;
         }
-        Glide.with(context).load(R.raw.typing).into(iv_typing_indicator);
+        Glide.with(context).load(R.raw.stream_typing).into(iv_typing_indicator);
     }
 
     @Override

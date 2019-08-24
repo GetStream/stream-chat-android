@@ -45,10 +45,10 @@ public class ChannelListViewStyle extends BaseStyle {
         titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamTitleTextSize, -1);
         messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamMessageTextSize, -1);
 
-        titleTextColor = a.getColor(R.styleable.ChannelListView_streamTitleTextColor, getColor(R.color.black));
-        unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadTitleTextColor, getColor(R.color.black));
-        messageTextColor = a.getColor(R.styleable.ChannelListView_streamMessageTextColor, getColor(R.color.gray_dark));
-        unreadMessageTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadMessageTextColor, getColor(R.color.black));
+        titleTextColor = a.getColor(R.styleable.ChannelListView_streamTitleTextColor, getColor(R.color.stream_black));
+        unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadTitleTextColor, getColor(R.color.stream_black));
+        messageTextColor = a.getColor(R.styleable.ChannelListView_streamMessageTextColor, getColor(R.color.stream_gray_dark));
+        unreadMessageTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadMessageTextColor, getColor(R.color.stream_black));
         dateTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageDateTextColor, -1);
 
         titleTextStyle = a.getInt(R.styleable.ChannelListView_streamTitleTextStyleChannel, Typeface.BOLD);
@@ -56,7 +56,7 @@ public class ChannelListViewStyle extends BaseStyle {
         messageTextStyle = a.getInt(R.styleable.ChannelListView_streamMessageTextStyle, Typeface.NORMAL);
         unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_streamUnreadMessageTextStyle, Typeface.BOLD);
 
-        channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.list_item_channel);
+        channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.stream_item_channel);
 
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
@@ -71,10 +71,10 @@ public class ChannelListViewStyle extends BaseStyle {
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_streamAvatarTextStyle, Typeface.BOLD);
         // Read State
         showReadState = a.getBoolean(R.styleable.ChannelListView_streamShowReadState, true);
-        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarWidth, getDimension(R.dimen.read_state_avatar_width));
-        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarHeight, getDimension(R.dimen.read_state_avatar_height));
+        readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarWidth, getDimension(R.dimen.stream_read_state_avatar_width));
+        readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
 
-        readStateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateTextSize, getDimension(R.dimen.read_state_text_size));
+        readStateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.ChannelListView_streamReadStateTextColor, Color.BLACK);
         readStateTextStyle = a.getColor(R.styleable.ChannelListView_streamReadStateTextStyle, Typeface.NORMAL);
 

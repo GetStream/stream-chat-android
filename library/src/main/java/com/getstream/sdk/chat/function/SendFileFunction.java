@@ -17,7 +17,7 @@ import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
-import com.getstream.sdk.chat.databinding.ViewMessageInputBinding;
+import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Command;
@@ -50,10 +50,10 @@ public class SendFileFunction {
     List<Object> commands = null;
 
     Context context;
-    ViewMessageInputBinding binding;
+    StreamViewMessageInputBinding binding;
     ChannelState channelResponse;
 
-    public SendFileFunction(Context context, ViewMessageInputBinding binding, ChannelViewModel viewModel) {
+    public SendFileFunction(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
@@ -426,7 +426,7 @@ public class SendFileFunction {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.command_title : R.string.mention_title);
+        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvCommandTitle.setText(title);
         binding.tvCommand.setText("");
         commandListItemAdapter = new CommandListItemAdapter(this.context, commands, isCommand);

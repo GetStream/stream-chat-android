@@ -53,9 +53,9 @@ public class MoreActionDialog extends Dialog {
             return;
 
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId()))
-            setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_incoming);
+            setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction_incoming);
         else {
-            setContentView(com.getstream.sdk.chat.R.layout.dialog_moreaction_outgoing);
+            setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction_outgoing);
             TextView tv_edit = findViewById(com.getstream.sdk.chat.R.id.tv_edit);
             TextView tv_delete = findViewById(com.getstream.sdk.chat.R.id.tv_delete);
             tv_edit.setOnClickListener(view -> {

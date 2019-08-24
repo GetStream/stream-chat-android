@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -28,8 +27,6 @@ import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerList
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 
-import java.util.List;
-
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
  */
@@ -44,7 +41,7 @@ public class AttachmentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attachment);
+        setContentView(R.layout.stream_activity_attachment);
 
         youtube_player_view = findViewById(R.id.youtube_player_view);
         webView = findViewById(R.id.webView);

@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 
-import android.util.Log;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
@@ -71,17 +70,17 @@ public class MessageViewHolderFactory {
 
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
         if (viewType == DATE_SEPARATOR) {
-            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.list_item_date_separator, parent);
+            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else if (viewType == MESSAGE) {
-            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.list_item_message, parent);
+            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
             return holder;
 
         } else if (viewType == TYPING) {
-            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.list_item_type_indicator, parent);
+            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
@@ -91,15 +90,15 @@ public class MessageViewHolderFactory {
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
-            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.list_item_attach_media, parent);
+            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else if (viewType == FILE_ATTACHMENT) {
-            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.list_item_attachment_file, parent);
+            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
-            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.stream_item_attachment, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         }

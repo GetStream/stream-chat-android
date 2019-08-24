@@ -8,7 +8,8 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.databinding.ChannelTypingIndicatorBinding;
+
+import com.getstream.sdk.chat.databinding.StreamChannelTypingIndicatorBinding;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 public class ChannelTypingIndicator extends RelativeLayout {
@@ -16,7 +17,7 @@ public class ChannelTypingIndicator extends RelativeLayout {
     final String TAG = ChannelTypingIndicator.class.getSimpleName();
 
     private ChannelViewModel viewModel;
-    private ChannelTypingIndicatorBinding binding;
+    private StreamChannelTypingIndicatorBinding binding;
 
     public ChannelTypingIndicator(Context context) {
         super(context);
@@ -39,9 +40,9 @@ public class ChannelTypingIndicator extends RelativeLayout {
         binding.setViewModel(viewModel);
     }
 
-    private ChannelTypingIndicatorBinding initBinding(Context context) {
+    private StreamChannelTypingIndicatorBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ChannelTypingIndicatorBinding.inflate(inflater, this, true);
+        binding = StreamChannelTypingIndicatorBinding.inflate(inflater, this, true);
         return binding;
     }
 }

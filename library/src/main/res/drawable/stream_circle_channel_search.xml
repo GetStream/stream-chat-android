@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke
+        android:width="@dimen/stream_message_stroke"
+        android:color="@color/stream_message_stroke" />
+    <solid android:color="@color/stream_gray" />
+    <corners android:radius="18dp" />
+</shape>
+

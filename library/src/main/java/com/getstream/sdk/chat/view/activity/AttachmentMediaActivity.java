@@ -11,16 +11,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.utils.Global;
-
-import java.util.List;
 
 /**
- * An Activity playing attachments such as audio and videos.
+ * An Activity playing attachments such as stream_ic_audio and videos.
  */
 public class AttachmentMediaActivity extends AppCompatActivity {
 
@@ -30,7 +25,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attachment_media);
+        setContentView(R.layout.stream_activity_attachment_media);
         videoView = findViewById(R.id.videoView);
         iv_audio = findViewById(R.id.iv_audio);
         init();
@@ -44,7 +39,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
             return;
         }
-        if (type.contains("audio"))
+        if (type.contains("stream_ic_audio"))
             iv_audio.setVisibility(View.VISIBLE);
         else
             iv_audio.setVisibility(View.GONE);

@@ -143,7 +143,7 @@ public class ChannelActivity extends AppCompatActivity
                 .setTitle("Options for channel " + channel.getName())
                 .setMessage("You pressed on the options, well done")
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.settings)
+                .setIcon(R.drawable.stream_ic_settings)
                 .show();
     }
 
@@ -153,7 +153,7 @@ public class ChannelActivity extends AppCompatActivity
                 .setTitle("Avatar group click for channel " + channel.getName())
                 .setMessage("You pressed on the avatar group, well done")
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.settings)
+                .setIcon(R.drawable.stream_ic_settings)
                 .show();
     }
 

@@ -84,7 +84,7 @@
         <TextView
             android:id="@+id/tv_gap_sameUser"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/message_gap"
+            android:layout_height="@dimen/stream_message_gap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_header" />
@@ -93,9 +93,9 @@
             android:id="@+id/rv_reaction"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
-            android:background="@drawable/round_reaction"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
+            android:background="@drawable/stream_round_reaction"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:visibility="visible"
@@ -103,7 +103,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"
-            tools:listitem="@layout/list_item_reaction" />
+            tools:listitem="@layout/stream_item_reaction" />
 
         <TextView
             android:id="@+id/tv_gap_reaction"
@@ -117,15 +117,15 @@
             android:id="@+id/cl_attachment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction">
 
             <include
                 android:id="@+id/cl_attachment_media"
-                layout="@layout/list_item_attach_media"
+                layout="@layout/stream_item_attach_media"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -135,7 +135,7 @@
             <TextView
                 android:id="@+id/tv_gap_media_file"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/message_gap"
+                android:layout_height="@dimen/stream_message_gap"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media" />
@@ -152,13 +152,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_gap_media_file"
-                tools:listitem="@layout/list_item_attach_file" />
+                tools:listitem="@layout/stream_item_attach_file" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tv_gap_attach"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/message_gap"
+            android:layout_height="@dimen/stream_message_gap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_attachment" />
@@ -167,14 +167,14 @@
             android:id="@+id/tv_deleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:paddingStart="10dp"
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
-            android:text="@string/delete_message"
-            android:textColor="@color/gray_dark"
+            android:text="@string/stream_delete_message"
+            android:textColor="@color/stream_gray_dark"
             android:textSize="13sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/tv_messagedate"
@@ -187,9 +187,9 @@
             android:id="@+id/ll_send_failed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
-            android:background="@drawable/round_outgoing_failed1"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
+            android:background="@drawable/stream_round_outgoing_failed1"
             android:gravity="right"
             android:orientation="vertical"
             app:layout_constrainedWidth="true"
@@ -207,7 +207,7 @@
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
-                android:text="@string/message_failed_send" />
+                android:text="@string/stream_message_failed_send" />
 
             <TextView
                 android:id="@+id/tv_failed_text"
@@ -225,8 +225,8 @@
             style="@style/message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:paddingStart="10dp"
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
@@ -241,8 +241,8 @@
             android:id="@+id/cl_reply"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_marginStart="@dimen/message_margin_start"
-            android:layout_marginEnd="@dimen/message_margin_start"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
@@ -252,9 +252,9 @@
                 android:id="@+id/iv_reply"
                 android:layout_width="20dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/message_corner_radius2"
+                android:layout_marginTop="@dimen/stream_message_corner_radius2"
                 android:layout_marginBottom="7dp"
-                android:background="@drawable/replies"
+                android:background="@drawable/stream_ic_reply_incoming"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -280,7 +280,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="23dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/docket_outgoing"
+            android:background="@drawable/stream_ic_docket_outgoing"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="@+id/rv_reaction"
             app:layout_constraintHorizontal_bias="0"
@@ -292,7 +292,7 @@
             style="@style/text_s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/message_margin_start"
+            android:layout_marginStart="@dimen/stream_message_margin_start"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -303,7 +303,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="@dimen/message_margin_start"
+            android:layout_marginEnd="@dimen/stream_message_margin_start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -313,7 +313,7 @@
 
         <include
             android:id="@+id/view_read_indicator"
-            layout="@layout/view_user_read_indicator"
+            layout="@layout/stream_view_user_read_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="3dp"
@@ -326,7 +326,7 @@
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_marginStart="10dp"
-            android:background="@drawable/circle_message_user_initials"
+            android:background="@drawable/stream_circle_message_user_initials"
             android:gravity="center"
             android:textSize="15sp"
             android:textStyle="bold"
