@@ -184,57 +184,6 @@ public class Global {
 
     // region Message
 
-    public static void setEphemeralMessage(String channelId, Message message) {
-//        List<Message> messages = client.ephemeralMessage.get(channelId);
-//        if (messages == null) messages = new ArrayList<>();
-//
-//        boolean isContain = false;
-//        for (Message message1 : messages) {
-//            if (message1.getId().equals(message.getId())) {
-//                messages.remove(message1);
-//                isContain = true;
-//                break;
-//            }
-//        }
-//        if (!isContain)
-//            messages.add(message);
-//
-//        client.ephemeralMessage.put(channelId, messages);
-    }
-
-    public static List<Message> getEphemeralMessages(String channelId, String parentId) {
-        return new ArrayList<>();
-//        List<Message> ephemeralMessages = client.ephemeralMessage.get(channelId);
-//        if (ephemeralMessages == null) return null;
-//
-//        List<Message> messages = new ArrayList<>();
-//        if (parentId == null) {
-//            for (Message message : ephemeralMessages) {
-//                if (message.getParentId() == null)
-//                    messages.add(message);
-//            }
-//        } else {
-//            for (Message message : ephemeralMessages) {
-//                if (message.getParentId() == null) continue;
-//                if (message.getParentId().equals(parentId))
-//                    messages.add(message);
-//            }
-//        }
-//        return messages;
-    }
-
-    public static void removeEphemeralMessage(String channelId, String messageId) {
-//        Log.d(TAG, "remove MessageId: " + messageId);
-//        List<Message> messages = client.ephemeralMessage.get(channelId);
-//        for (Message message : messages) {
-//            if (message.getId().equals(messageId)) {
-//                Log.d(TAG, "Message Removed!");
-//                messages.remove(message);
-//                break;
-//            }
-//        }
-    }
-
     public static String getMentionedText(Message message) {
         if (message == null) return null;
         String text = message.getText();

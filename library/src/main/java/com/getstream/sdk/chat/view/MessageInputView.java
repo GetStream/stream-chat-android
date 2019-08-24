@@ -30,7 +30,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -55,7 +54,7 @@ public class MessageInputView extends RelativeLayout
 
     final String TAG = MessageInputView.class.getSimpleName();
     // our connection to the channel scope
-    private ChannelViewModel channelViewModel;
+    private ChannelViewModel viewModel;
     // binding for this view
     private ViewMessageInputBinding binding;
     private MessageInputStyle style;
@@ -108,7 +107,7 @@ public class MessageInputView extends RelativeLayout
     }
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
-        this.channelViewModel = viewModel;
+        this.viewModel = viewModel;
         binding.setLifecycleOwner(lifecycleOwner);
         init();
         observeUIs(lifecycleOwner);
@@ -141,7 +140,7 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
 
-        setOnSendMessageListener(channelViewModel);
+        setOnSendMessageListener(viewModel);
         initAttachmentUI();
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
@@ -151,7 +150,7 @@ public class MessageInputView extends RelativeLayout
 
 
     private void observeUIs(LifecycleOwner lifecycleOwner) {
-        channelViewModel.getInputType().observe(lifecycleOwner, inputType -> {
+        viewModel.getInputType().observe(lifecycleOwner, inputType -> {
             switch (inputType) {
                 case DEFAULT:
                     binding.llComposer.setBackground(style.getInputBackground());
@@ -171,7 +170,7 @@ public class MessageInputView extends RelativeLayout
 
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        sendFileFunction = new SendFileFunction(getContext(), binding, this.channelViewModel);
+        sendFileFunction = new SendFileFunction(getContext(), binding, this.viewModel);
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
@@ -309,7 +308,7 @@ public class MessageInputView extends RelativeLayout
         if (!hasFocus) {
             this.stopTyping();
         }
-        channelViewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
+        viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
 
     private void onSendMessage(String input) {
@@ -322,33 +321,15 @@ public class MessageInputView extends RelativeLayout
                 @Override
                 public void onSuccess(MessageResponse response) {
                     binding.ivSend.setEnabled(true);
-                    progressSendMessage(response.getMessage(), null);
+                    initSendMessage();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
+                    initSendMessage();
                     binding.ivSend.setEnabled(true);
                 }
             });
-        }
-
-    }
-
-    public void progressSendMessage(Message message, String resendMessageId) {
-        initSendMessage();
-        if (resendMessageId != null) {
-            Global.removeEphemeralMessage(channelViewModel.getChannel().getId(), resendMessageId);
-            initSendMessage();
-        } else {
-//            if (Message.isCommandMessage(message) ||
-//                    message.getType().equals(ModelType.message_error)) {
-//                channelMessages.remove(ephemeralMessage);
-//                message.setDelivered(true);
-//            } else {
-//                ephemeralMessage.setId(message.getId());
-//            }
-//
-//            handleAction(message);
         }
     }
 
@@ -373,14 +354,14 @@ public class MessageInputView extends RelativeLayout
     // endregion
     private void stopTyping() {
         isTyping = false;
-        channelViewModel.getChannel().stopTyping();
+        viewModel.getChannel().stopTyping();
         if (typingListener != null) {
             typingListener.onStopTyping();
         }
     }
 
     private void keyStroke() {
-        channelViewModel.getChannel().keystroke();
+        viewModel.getChannel().keystroke();
         isTyping = true;
         if (typingListener != null) {
             typingListener.onKeystroke();

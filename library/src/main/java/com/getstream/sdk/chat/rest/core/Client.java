@@ -20,7 +20,6 @@ import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.BaseURL;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -337,22 +336,26 @@ public class Client implements WSResponseHandler {
         Date mostRecentDate = new Date(0);
         for (Channel channel: activeChannels) {
             cids.add(channel.getCid());
+            if (channel.getLastMessageDate() == null) continue;
             if (mostRecentDate.before(channel.getLastMessageDate())) {
                 mostRecentDate = channel.getLastMessageDate();
             }
         }
+        if (cids.size() > 0) {
+            queryChannels(new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at")), new QueryChannelListCallback() {
+                @Override
+                public void onSuccess(QueryChannelsResponse response) {
+                    onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                }
 
-        queryChannels(new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at")), new QueryChannelListCallback() {
-            @Override
-            public void onSuccess(QueryChannelsResponse response) {
-                onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                // TODO: probably the best is to make sure the client goes back offline and online again
-            }
-        });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    // TODO: probably the best is to make sure the client goes back offline and online again
+                }
+            });
+        } else {
+            onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+        }
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -405,7 +408,6 @@ public class Client implements WSResponseHandler {
                                 addToActiveChannels(channel);
                             }
                             channel.mergeWithState(channelState);
-                            checkEphemeralMessages(channelState);
                         }
                         callback.onSuccess(response.body());
                     }
@@ -422,19 +424,6 @@ public class Client implements WSResponseHandler {
 
             }
         });
-
-    }
-
-    private void checkEphemeralMessages(ChannelState response) {
-        if (response == null) return;
-        List<Message> ephemeralMainMessages = Global.getEphemeralMessages(response.getChannel().getId(), null);
-        if (ephemeralMainMessages != null && !ephemeralMainMessages.isEmpty()) {
-            for (int i = 0; i < ephemeralMainMessages.size(); i++) {
-                Message message = ephemeralMainMessages.get(i);
-                if (response.getMessages().contains(message)) continue;
-                response.getMessages().add(message);
-            }
-        }
     }
 
     /**

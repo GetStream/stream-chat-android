@@ -82,6 +82,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private LazyQueryChannelLiveData<List<ChannelUserRead>> reads;
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
+    private MutableLiveData<Boolean> online;
 
     public Channel getChannel() {
         return channel;
@@ -106,7 +107,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
-
+        online = new MutableLiveData<>();
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
@@ -139,6 +140,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     // region Getter
+
+    public LiveData<Boolean> getOnline() {
+        return online;
+    }
 
     public LiveData<ChannelState> getChannelState() {
         return channelState;
@@ -258,6 +263,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
                 List<ChannelUserRead> readsCopy = new ArrayList<>();
+                if (reads.getValue() == null) {
+                    return;
+                }
                 for (ChannelUserRead r : reads.getValue()) {
                     if (!r.getUser().equals(event.getUser())) {
                         readsCopy.add(r);
@@ -296,6 +304,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 typingUsers.postValue(getCleanedTypingUsers());
             }
         });
+    }
+
+    private void replaceMessage(Message oldMessage, Message newMessage) {
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(oldMessage);
+        if (index != -1) {
+            messagesCopy.set(index, newMessage);
+            messages.postValue(messagesCopy);
+        }
     }
 
     private boolean upsertMessage(Message message) {
@@ -394,6 +411,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void loadMore() {
+        if (!client().isConnected()) {
+            return;
+        }
+
         if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
             return;
@@ -442,26 +463,26 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         message.setUser(client().getUser());
         message.setCreatedAt(new Date());
         message.setType("regular");
+        message.setDelivered(false);
         String clientSideID = client().getUserId() + "-" + randomUUID().toString();
         message.setId(clientSideID);
         addMessage(message);
 
         // afterwards send the request
         channel.sendMessage(message,
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        callback.onSuccess(response);
-                        Message responseMessage = response.getMessage();
-                        Log.i(TAG, "onSuccess event for sending the message");
-                    }
+            new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    replaceMessage(message, response.getMessage());
+                    callback.onSuccess(response);
+                }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        callback.onError(errMsg, errCode);
-                        //binding.messageInput.setEnabled(true);
-                    }
-                });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    callback.onError(errMsg, errCode);
+                    //binding.messageInput.setEnabled(true);
+                }
+            });
     }
 
 
