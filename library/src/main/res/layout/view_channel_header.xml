@@ -73,7 +73,7 @@
             android:id="@+id/iv_active_badge"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/circle_user_online : @drawable/circle_user_offline}"
+            android:background="@{safeUnbox(viewModel.anyOtherUsersOnline) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
             app:layout_constraintEnd_toEndOf="@+id/avatar_group"
             app:layout_constraintStart_toEndOf="@+id/avatar_group"
             app:layout_constraintTop_toTopOf="@+id/avatar_group" />

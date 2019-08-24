@@ -18,7 +18,7 @@
             android:id="@+id/iv_select_mark"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/rectangle_attach_media"
+            android:background="@drawable/stream_rectangle_attach_media"
             app:layout_constraintBottom_toBottomOf="@id/iv_media"
             app:layout_constraintEnd_toEndOf="@+id/iv_media"
             app:layout_constraintStart_toStartOf="@+id/iv_media"

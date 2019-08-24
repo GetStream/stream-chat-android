@@ -18,7 +18,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/file_pdf"
+            android:src="@drawable/stream_ic_file_pdf"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +59,7 @@
             android:layout_marginTop="5dp"
             android:visibility="gone"
             android:layout_marginEnd="10dp"
-            android:background="@drawable/close_attach"
+            android:background="@drawable/stream_ic_close_attach"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -68,7 +68,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            android:background="@drawable/rectangle_attach_media"
+            android:background="@drawable/stream_rectangle_attach_media"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

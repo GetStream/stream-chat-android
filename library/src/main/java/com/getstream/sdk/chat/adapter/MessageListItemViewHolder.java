@@ -383,9 +383,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
         if (messageListItem.isMine())
-            iv_docket.setBackgroundResource(R.drawable.docket_incoming);
+            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
         else
-            iv_docket.setBackgroundResource(R.drawable.docket_outgoing);
+            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_outgoing);
     }
 
     private void configReplyView() {
@@ -515,13 +515,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         // Set Constraint
         if (messageListItem.isTheirs()) {
-            iv_reply.setBackgroundResource(R.drawable.replies);
+            iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_incoming);
             params.horizontalBias = 0f;
             paramsText.endToEnd = cl_reply.getId();
             paramsArrow.startToStart = cl_reply.getId();
             paramsText.startToEnd = iv_reply.getId();
         } else {
-            iv_reply.setBackgroundResource(R.drawable.repliesout);
+            iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_outgoing);
             params.horizontalBias = 1f;
             paramsArrow.endToEnd = cl_reply.getId();
             paramsText.startToStart = cl_reply.getId();

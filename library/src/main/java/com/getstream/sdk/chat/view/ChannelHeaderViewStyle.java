@@ -116,7 +116,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public Drawable getBackButtonBackground() {
-        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.arrow_left);
+        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.stream_arrow_left);
     }
 
     public boolean isLastActiveShow() {
@@ -132,7 +132,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public Drawable getOptionsButtonBackground() {
-        return optionsButtonBackground != null ? optionsButtonBackground : getDrawable(R.drawable.settings);
+        return optionsButtonBackground != null ? optionsButtonBackground : getDrawable(R.drawable.stream_ic_settings);
     }
 
     public boolean isActiveBadgeShow() {

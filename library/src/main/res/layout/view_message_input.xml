@@ -30,7 +30,7 @@
             android:id="@+id/cl_add_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_thread_toolbar"
+            android:background="@drawable/stream_round_thread_toolbar"
             android:paddingStart="20dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -53,7 +53,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginEnd="20dp"
-                android:background="@drawable/round_thread_close"
+                android:background="@drawable/stream_round_thread_close"
                 android:gravity="center"
                 android:text="×"
                 android:textSize="20sp"
@@ -78,14 +78,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/round_thread_close"
+                        android:background="@drawable/stream_round_thread_close"
                         android:gravity="center" />
 
                     <TextView
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/imageicon"
+                        android:background="@drawable/stream_ic_image"
                         android:gravity="center" />
                 </FrameLayout>
 
@@ -114,14 +114,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/round_thread_close"
+                        android:background="@drawable/stream_round_thread_close"
                         android:gravity="center" />
 
                     <TextView
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/cameraicon"
+                        android:background="@drawable/stream_ic_camera"
                         android:gravity="center" />
                 </FrameLayout>
 
@@ -152,14 +152,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/round_thread_close"
+                        android:background="@drawable/stream_round_thread_close"
                         android:gravity="center" />
 
                     <TextView
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/fileicon"
+                        android:background="@drawable/stream_ic_file"
                         android:gravity="center" />
                 </FrameLayout>
 
@@ -176,7 +176,7 @@
             android:id="@+id/cl_select_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_select_media"
+            android:background="@drawable/stream_round_select_media"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"
@@ -200,7 +200,7 @@
                 style="@style/text"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/round_thread_close"
+                android:background="@drawable/stream_round_thread_close"
                 android:gravity="center"
                 android:text="×"
                 android:textSize="20sp"
@@ -248,7 +248,7 @@
             android:id="@+id/cl_command"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_select_media"
+            android:background="@drawable/stream_round_select_media"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:paddingBottom="10dp"

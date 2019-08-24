@@ -20,5 +20,5 @@
         app:layout_constraintVertical_bias="0.45"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@drawable/audio"/>
+        android:background="@drawable/stream_ic_audio"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

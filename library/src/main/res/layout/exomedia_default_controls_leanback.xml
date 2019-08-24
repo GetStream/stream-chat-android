@@ -20,7 +20,7 @@
             android:id="@+id/exomedia_controls_text_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/exomedia_default_controls_text_background"
+            android:background="@drawable/stream_exomedia_default_controls_text_background"
             android:orientation="vertical"
             android:paddingBottom="16dp"
             android:paddingLeft="16dp"
@@ -104,7 +104,7 @@
                 android:layout_height="@dimen/exomedia_leanback_controls_height"
                 android:layout_centerHorizontal="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/exomedia_leanback_ripple_selector"
+                android:src="@drawable/stream_exomedia_leanback_ripple_selector"
                 tools:ignore="ContentDescription"/>
 
 
@@ -124,7 +124,7 @@
                     android:minHeight="@dimen/exomedia_min_button_height"
                     android:minWidth="@dimen/exomedia_min_button_height"
                     android:nextFocusRight="@+id/exomedia_controls_rewind_btn"
-                    android:src="@drawable/exomedia_ic_skip_previous_white"
+                    android:src="@drawable/stream_exomedia_ic_skip_previous_white"
                     android:visibility="gone"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible"/>
@@ -139,7 +139,7 @@
                     android:minWidth="@dimen/exomedia_min_button_height"
                     android:nextFocusLeft="@id/exomedia_controls_previous_btn"
                     android:nextFocusRight="@+id/exomedia_controls_play_pause_btn"
-                    android:src="@drawable/exomedia_ic_rewind_white"
+                    android:src="@drawable/stream_exomedia_ic_rewind_white"
                     android:visibility="gone"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible"/>
@@ -154,7 +154,7 @@
                     android:minWidth="@dimen/exomedia_min_button_height"
                     android:nextFocusLeft="@id/exomedia_controls_rewind_btn"
                     android:nextFocusRight="@+id/exomedia_controls_fast_forward_btn"
-                    android:src="@drawable/exomedia_ic_play_arrow_white"
+                    android:src="@drawable/stream_exomedia_ic_play_arrow_white"
                     tools:ignore="ContentDescription"/>
 
                 <ImageButton
@@ -167,7 +167,7 @@
                     android:minWidth="@dimen/exomedia_min_button_height"
                     android:nextFocusLeft="@id/exomedia_controls_play_pause_btn"
                     android:nextFocusRight="@+id/exomedia_controls_next_btn"
-                    android:src="@drawable/exomedia_ic_fast_forward_white"
+                    android:src="@drawable/stream_exomedia_ic_fast_forward_white"
                     android:visibility="gone"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible"/>
@@ -181,7 +181,7 @@
                     android:minHeight="@dimen/exomedia_min_button_height"
                     android:minWidth="@dimen/exomedia_min_button_height"
                     android:nextFocusLeft="@id/exomedia_controls_fast_forward_btn"
-                    android:src="@drawable/exomedia_ic_skip_next_white"
+                    android:src="@drawable/stream_exomedia_ic_skip_next_white"
                     android:visibility="gone"
                     tools:ignore="ContentDescription"
                     tools:visibility="visible"/>

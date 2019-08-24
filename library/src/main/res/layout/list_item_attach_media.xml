@@ -20,7 +20,7 @@
         android:layout_width="50dp"
         android:layout_height="18dp"
         android:layout_margin="10dp"
-        android:background="@drawable/logogiphy"
+        android:background="@drawable/stream_ic_giphy"
         app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -28,7 +28,7 @@
         android:id="@+id/tv_media_play"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/videoplay"
+        android:background="@drawable/stream_ic_videoplay"
         app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
         app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"

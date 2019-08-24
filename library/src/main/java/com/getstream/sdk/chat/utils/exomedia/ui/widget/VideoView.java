@@ -367,11 +367,11 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * Enables or Disables automatic handling of audio focus. By default this is enabled
-     * however in instances where a service handles playback of both audio and video it
+     * Enables or Disables automatic handling of stream_ic_audio focus. By default this is enabled
+     * however in instances where a service handles playback of both stream_ic_audio and video it
      * is recommended to disable this and manually handle it in the service for consistency
      *
-     * @param handleAudioFocus {@code true} to handle audio focus
+     * @param handleAudioFocus {@code true} to handle stream_ic_audio focus
      */
     public void setHandleAudioFocus(boolean handleAudioFocus) {
         audioFocusHelper.abandonFocus();
@@ -432,11 +432,11 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * Pauses the current video in playback, only abandoning the audio focus if
+     * Pauses the current video in playback, only abandoning the stream_ic_audio focus if
      * <code>transientFocusLoss</code> is <code>false</code>. Calling {@link #pause()} should
-     * be used in most cases unless the audio focus is being handled manually
+     * be used in most cases unless the stream_ic_audio focus is being handled manually
      *
-     * @param transientFocusLoss <code>true</code> if the pause is temporary and the audio focus should be retained
+     * @param transientFocusLoss <code>true</code> if the pause is temporary and the stream_ic_audio focus should be retained
      */
     public void pause(boolean transientFocusLoss) {
         if (!transientFocusLoss) {
@@ -492,7 +492,7 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * Retrieves the duration of the current audio item.  This should only be called after
+     * Retrieves the duration of the current stream_ic_audio item.  This should only be called after
      * the item is prepared (see {@link #setOnPreparedListener(OnPreparedListener)}).
      * If {@link #overrideDuration(long)} is set then that value will be returned.
      *
@@ -508,8 +508,8 @@ public class VideoView extends RelativeLayout {
 
     /**
      * Setting this will override the duration that the item may actually be.  This method should
-     * only be used when the item doesn't return the correct duration such as with audio streams.
-     * This only overrides the current audio item.
+     * only be used when the item doesn't return the correct duration such as with stream_ic_audio streams.
+     * This only overrides the current stream_ic_audio item.
      *
      * @param duration The duration for the current media item or &lt; 0 to disable
      */
@@ -518,7 +518,7 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * Retrieves the current position of the audio playback.  If an audio item is not currently
+     * Retrieves the current position of the stream_ic_audio playback.  If an stream_ic_audio item is not currently
      * in playback then the value will be 0.  This should only be called after the item is
      * prepared (see {@link #setOnPreparedListener(OnPreparedListener)})
      *
@@ -534,7 +534,7 @@ public class VideoView extends RelativeLayout {
 
     /**
      * Sets the amount of time to change the return value from {@link #getCurrentPosition()}.
-     * This value will be reset when a new audio item is selected.
+     * This value will be reset when a new stream_ic_audio item is selected.
      *
      * @param offset The millisecond value to offset the position
      */
@@ -543,7 +543,7 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * Restarts the audio position to the start if the position is being overridden (see {@link #overridePosition(boolean)}).
+     * Restarts the stream_ic_audio position to the start if the position is being overridden (see {@link #overridePosition(boolean)}).
      * This will be the value specified with {@link #setPositionOffset(long)} or 0 if it hasn't been set.
      */
     public void restartOverridePosition() {
@@ -653,7 +653,7 @@ public class VideoView extends RelativeLayout {
 
     /**
      * Determines if the current video player implementation supports
-     * track selection for audio or video tracks.
+     * track selection for stream_ic_audio or video tracks.
      *
      * @return True if tracks can be manually specified
      */
@@ -973,7 +973,7 @@ public class VideoView extends RelativeLayout {
     }
 
     /**
-     * A utility used to handle the audio focus for the {@link VideoView}
+     * A utility used to handle the stream_ic_audio focus for the {@link VideoView}
      * when enabled.
      */
     protected class AudioFocusHelper implements AudioManager.OnAudioFocusChangeListener {
@@ -1018,7 +1018,7 @@ public class VideoView extends RelativeLayout {
         }
 
         /**
-         * Requests to obtain the audio focus
+         * Requests to obtain the stream_ic_audio focus
          *
          * @return True if the focus was granted
          */
@@ -1050,7 +1050,7 @@ public class VideoView extends RelativeLayout {
         }
 
         /**
-         * Requests the system to drop the audio focus
+         * Requests the system to drop the stream_ic_audio focus
          *
          * @return True if the focus was lost
          */

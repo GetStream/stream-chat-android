@@ -13,7 +13,7 @@
         android:layout_alignRight="@+id/rv_reaction"
         android:layout_alignBottom="@+id/rv_reaction"
         android:layout_marginTop="10dp"
-        android:background="@drawable/round_dialog_reaction" />
+        android:background="@drawable/stream_round_dialog_reaction" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_reaction"

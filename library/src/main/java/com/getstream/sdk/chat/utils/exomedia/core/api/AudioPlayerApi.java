@@ -109,12 +109,12 @@ public interface AudioPlayerApi {
     float getPlaybackSpeed();
 
     /**
-     * Sets the audio stream type for this MediaPlayer. See {@link AudioManager}
+     * Sets the stream_ic_audio stream type for this MediaPlayer. See {@link AudioManager}
      * for a list of stream types. Must call this method before prepare() or
      * prepareAsync() in order for the target stream type to become effective
      * thereafter.
      *
-     * @param streamType The audio stream type
+     * @param streamType The stream_ic_audio stream type
      * @see android.media.AudioManager
      */
     void setAudioStreamType(int streamType);

@@ -88,9 +88,9 @@ class MessageInputStyle extends BaseStyle {
         inputHintColor = a.getColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.gray_dark));
         inputTextStyle = a.getInt(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL);
 
-        inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.round_message_composer));
-        inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.round_message_composer_select));
-        inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.round_message_composer_edit));
+        inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer));
+        inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select));
+        inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.stream_round_message_composer_edit));
 
         a.recycle();
     }
@@ -122,7 +122,7 @@ class MessageInputStyle extends BaseStyle {
             return getSelector(isSelected ? attachmentButtonSelectedIconColor : attachmentButtonDefaultIconColor,
                     attachmentButtonDefaultIconPressedColor,
                     attachmentButtonDefaultIconDisabledColor,
-                    R.drawable.ic_add_attachment);
+                    R.drawable.stream_ic_add_attachment);
         } else {
             return getDrawable(attachmentButtonIcon);
         }
@@ -140,7 +140,7 @@ class MessageInputStyle extends BaseStyle {
     public Drawable getInputButtonIcon() {
         if (inputButtonIcon == -1) {
             return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
-                    inputButtonDefaultIconDisabledColor, R.drawable.ic_send);
+                    inputButtonDefaultIconDisabledColor, R.drawable.stream_ic_send);
         } else {
             return getDrawable(inputButtonIcon);
         }

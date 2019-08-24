@@ -20,7 +20,7 @@
             android:id="@+id/iv_active_mark"
             android:layout_width="7dp"
             android:layout_height="7dp"
-            android:background="@drawable/circle_user_online"
+            android:background="@drawable/stream_circle_user_online"
             app:layout_constraintEnd_toEndOf="@+id/view_user_avator"
             app:layout_constraintStart_toEndOf="@+id/view_user_avator"
             app:layout_constraintTop_toTopOf="@+id/view_user_avator" />

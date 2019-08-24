@@ -29,7 +29,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="5dp"
-            android:background="@drawable/circle_message_user_initials"
+            android:background="@drawable/stream_circle_message_user_initials"
             android:gravity="center"
             android:text="@{!isCommand?user.initials:null}"
             android:textSize="14sp"

@@ -201,10 +201,10 @@ public class VideoControlsLeanback extends VideoControls {
     protected void updateButtonDrawables(int tintList) {
         super.updateButtonDrawables(tintList);
 
-        Drawable rewindDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_rewind_white, tintList);
+        Drawable rewindDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_rewind_white, tintList);
         rewindButton.setImageDrawable(rewindDrawable);
 
-        Drawable fastForwardDrawable = ResourceUtil.tintList(getContext(), R.drawable.exomedia_ic_fast_forward_white, tintList);
+        Drawable fastForwardDrawable = ResourceUtil.tintList(getContext(), R.drawable.stream_exomedia_ic_fast_forward_white, tintList);
         fastForwardButton.setImageDrawable(fastForwardDrawable);
     }
 

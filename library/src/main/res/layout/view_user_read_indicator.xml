@@ -10,7 +10,7 @@
         android:id="@+id/tv_indicator_initials"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/circle_message_user_initials"
+        android:background="@drawable/stream_circle_message_user_initials"
         android:gravity="center"
         android:textSize="10sp"
         android:textStyle="bold"
