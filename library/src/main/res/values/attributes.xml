@@ -20,12 +20,12 @@
     </declare-styleable>
     <!--exomedia-->
     <declare-styleable name="Stream_VideoView">
-        <attr name="useDefaultControls" format="boolean" />
-        <attr name="useTextureViewBacking" format="boolean" />
-        <attr name="videoViewApiImpl" format="reference" />
-        <attr name="videoViewApiImplLegacy" format="reference" />
-        <attr name="measureBasedOnAspectRatio" format="boolean" />
-        <attr name="videoScale" format="enum">
+        <attr name="stream_useDefaultControls" format="boolean" />
+        <attr name="stream_useTextureViewBacking" format="boolean" />
+        <attr name="stream_videoViewApiImpl" format="reference" />
+        <attr name="stream_videoViewApiImplLegacy" format="reference" />
+        <attr name="stream_measureBasedOnAspectRatio" format="boolean" />
+        <attr name="stream_videoScale" format="enum">
             <enum name="center" value="0" />
             <enum name="centerCrop" value="1" />
             <enum name="centerInside" value="2" />

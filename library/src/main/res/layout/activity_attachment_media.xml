@@ -10,7 +10,7 @@
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:useDefaultControls="true"/>
+        app:stream_useDefaultControls="true"/>
     <ImageView
         android:id="@+id/iv_audio"
         app:layout_constraintStart_toStartOf="parent"
