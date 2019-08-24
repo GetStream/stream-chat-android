@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0"
-            android:background="@color/attach_more"
+            android:background="@color/stream_attach_more"
             android:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -307,7 +307,7 @@
             android:id="@+id/tv_inputbox_back"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/chat_theme"
+            android:background="@color/stream_chat_theme"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@+id/ll_composer" />

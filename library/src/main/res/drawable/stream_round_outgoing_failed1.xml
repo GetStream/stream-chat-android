@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/message_failed" />
+    <solid android:color="@color/stream_message_failed" />
 
     <corners
         android:bottomLeftRadius="@dimen/message_corner_radius1"

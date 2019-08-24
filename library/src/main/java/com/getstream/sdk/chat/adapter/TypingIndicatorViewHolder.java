@@ -78,7 +78,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             ll_typingusers.addView(v);
             i += 1;
         }
-        Glide.with(context).load(R.raw.typing).into(iv_typing_indicator);
+        Glide.with(context).load(R.raw.stream_typing).into(iv_typing_indicator);
     }
 
     @Override

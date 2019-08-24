@@ -3,63 +3,55 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#2196F3</color>
-
-    <color name="stream_channel_preview_title">@color/black</color>
-    <color name="stream_channel_preview_last_message">@color/gray_dark</color>
-    <color name="stream_channel_preview_date">@color/gray_light</color>
-
-    <color name="stream_channel_initials">@color/black</color>
-
     <!--Default-->
-    <color name="gray">#ebebeb</color>
     <color name="stream_gray">#ebebeb</color>
     <color name="stream_gray_background">#F1F1F3</color>
     <color name="stream_gray_dark">#989898</color>
-    <color name="gray_light">#e8e8e8</color>
-    <color name="gray_transparent">#a6efefef</color>
-    <color name="gray_dark">#858585</color>
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
+    <color name="stream_gray_light">#e8e8e8</color>
+    <color name="stream_gray_transparent">#a6efefef</color>
+    <color name="stream_black">#000000</color>
+    <color name="stream_white">#FFFFFF</color>
     <!--Theme-->
-    <color name="chat_theme">#FFFFFF</color>
-    <color name="channel_theme">#FFFFFF</color>
+    <color name="stream_chat_theme">#FFFFFF</color>
+    <color name="stream_channel_theme">#FFFFFF</color>
     <!--Message Composer-->
-    <color name="input_message_send_button">#0076FF</color>
-    <color name="input_message_box_stroke_select">#0076FF</color>
-    <color name="input_message_box_stroke_edit">#0DD25E</color>
-    <color name="input_message_box_background">#0D000000</color>
-    <color name="chat_no_connection">#1AD0021B</color>
+    <color name="stream_channel_initials">@color/stream_black</color>
+    <color name="stream_input_message_send_button">#0076FF</color>
+    <color name="stream_input_message_box_stroke_select">#0076FF</color>
+    <color name="stream_input_message_box_stroke_edit">#0DD25E</color>
+    <color name="stream_input_message_box_background">#0D000000</color>
+    <color name="stream_chat_no_connection">#1AD0021B</color>
     <!--Message Item-->
-    <color name="message_background_incoming">#FFFFFF</color>
-    <color name="message_background_outgoing">#0D000000</color>
-    <color name="message_text_incoming">#000000</color>
-    <color name="message_text_outgoing">#000000</color>
-    <color name="message_stroke">#14000000</color>
-    <color name="message_failed">#1AD0021B</color>
-    <color name="user_intials_background">#CCCCA4D6</color>
-    <color name="reaction_dialog_background">#292929</color>
+    <color name="stream_message_background_incoming">#FFFFFF</color>
+    <color name="stream_message_background_outgoing">#0D000000</color>
+    <color name="stream_message_text_incoming">#000000</color>
+    <color name="stream_message_text_outgoing">#000000</color>
+    <color name="stream_message_stroke">#14000000</color>
+    <color name="stream_message_failed">#1AD0021B</color>
+    <color name="stream_user_intials_background">#CCCCA4D6</color>
+    <color name="stream_reaction_dialog_background">#292929</color>
 
-    <color name="attach_title_text">#026DFE</color>
-    <color name="attach_description_text">#989898</color>
-    <color name="attach_file_size_text">#989898</color>
+    <color name="stream_attach_title_text">#026DFE</color>
+    <color name="stream_attach_description_text">#989898</color>
+    <color name="stream_attach_file_size_text">#989898</color>
     <!--Reaction-->
-    <color name="reaction_background">#1B1B1B</color>
+    <color name="stream_reaction_background">#1B1B1B</color>
     <!--More Action-->
-    <color name="destroy">#e94f4f</color>
+    <color name="stream_destroy">#e94f4f</color>
 
-    <color name="attach_more">#4D000000</color>
+    <color name="stream_attach_more">#4D000000</color>
     <!--Attachment file-->
-    <color name="attachment_close">#80FFFFFF</color>
+    <color name="stream_attachment_close">#80FFFFFF</color>
 
     <!--exomedia-->
-    <color name="exomedia_default_controls_button_normal">#FFFFFFFF</color>
-    <color name="exomedia_default_controls_button_pressed">#FFE0E0E0</color>
-    <color name="exomedia_default_controls_button_disabled">#FF757575</color>
+    <color name="stream_exomedia_default_controls_button_normal">#FFFFFFFF</color>
+    <color name="stream_exomedia_default_controls_button_pressed">#FFE0E0E0</color>
+    <color name="stream_exomedia_default_controls_button_disabled">#FF757575</color>
 
     <!--ONLY_FOR_DEBUG-->
-    <color name="gap_header">#FE0909</color>
-    <color name="gap_reaction">#0971FE</color>
-    <color name="gap_message">#673AB7</color>
-    <color name="gap_media_file">#00FF00</color>
-    <color name="gap_attach">#FFEB3B</color>
+    <color name="stream_gap_header">#FE0909</color>
+    <color name="stream_gap_reaction">#0971FE</color>
+    <color name="stream_gap_message">#673AB7</color>
+    <color name="stream_gap_media_file">#00FF00</color>
+    <color name="stream_gap_attach">#FFEB3B</color>
 </resources>

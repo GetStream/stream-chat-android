@@ -97,7 +97,7 @@
                 android:paddingRight="10dp"
                 android:paddingBottom="3dp"
                 android:text="Done"
-                android:textColor="@color/white"
+                android:textColor="@color/stream_white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

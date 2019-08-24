@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".view.activity.AttachmentMediaActivity">
     <com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView
-        android:background="@color/black"
+        android:background="@color/stream_black"
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

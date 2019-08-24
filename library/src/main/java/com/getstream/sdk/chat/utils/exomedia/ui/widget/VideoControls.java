@@ -624,7 +624,7 @@ public abstract class VideoControls extends RelativeLayout implements VideoContr
      * Updates the drawables used for the buttons to AppCompatTintDrawables
      */
     protected void updateButtonDrawables() {
-        updateButtonDrawables(R.color.exomedia_default_controls_button_selector);
+        updateButtonDrawables(R.color.stream_exomedia_default_controls_button_selector);
     }
 
     protected void updateButtonDrawables(@ColorRes int tintList) {

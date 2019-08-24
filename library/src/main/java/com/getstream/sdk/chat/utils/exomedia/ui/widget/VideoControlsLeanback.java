@@ -194,7 +194,7 @@ public class VideoControlsLeanback extends VideoControls {
 
     @Override
     protected void updateButtonDrawables() {
-        updateButtonDrawables(R.color.exomedia_default_controls_leanback_button_selector);
+        updateButtonDrawables(R.color.stream_exomedia_default_controls_leanback_button_selector);
     }
 
     @Override

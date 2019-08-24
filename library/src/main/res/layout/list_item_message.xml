@@ -83,7 +83,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
             android:text="@string/delete_message"
-            android:textColor="@color/gray_dark"
+            android:textColor="@color/stream_gray_dark"
             android:textSize="13sp"
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/tv_messagedate"

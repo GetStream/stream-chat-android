@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="5dp"
-            android:textColor="@color/black"
+            android:textColor="@color/stream_black"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/checkbox"
             app:layout_constraintStart_toEndOf="@+id/view_user_avator"
@@ -44,7 +44,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:textColor="@color/gray_dark"
+            android:textColor="@color/stream_gray_dark"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/view_user_avator"
             app:layout_constraintEnd_toStartOf="@+id/checkbox"
@@ -67,7 +67,7 @@
             android:layout_height="1dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:background="@color/gray"
+            android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

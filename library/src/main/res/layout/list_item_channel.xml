@@ -73,7 +73,7 @@
             android:id="@+id/iv_separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray"
+            android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView

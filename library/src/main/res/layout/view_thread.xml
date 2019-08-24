@@ -17,7 +17,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/chat_theme"
+        android:background="@color/stream_chat_theme"
         app:isGone="@{!showThread}">
 
         <androidx.appcompat.widget.Toolbar
