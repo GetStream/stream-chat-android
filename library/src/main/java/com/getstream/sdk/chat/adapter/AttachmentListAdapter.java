@@ -54,7 +54,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         final String type = attachment.getType();
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_attach_file, null);
+            convertView = layoutInflater.inflate(R.layout.stream_item_attach_file, null);
 
             holder = new ViewHolder();
             holder.iv_file_thumb = convertView.findViewById(R.id.iv_file_thumb);

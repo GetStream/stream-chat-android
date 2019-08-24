@@ -22,7 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
-import com.getstream.sdk.chat.databinding.ActivityUsersBinding;
+
+import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
@@ -49,7 +50,7 @@ public class UsersActivity extends AppCompatActivity {
 
     private Client client;
 
-    private ActivityUsersBinding binding;
+    private StreamActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
     private List<User> groupUsers;
@@ -61,7 +62,7 @@ public class UsersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_users);
+        binding = DataBindingUtil.setContentView(this, R.layout.stream_activity_users);
         try {
             setSupportActionBar(binding.header);
         } catch (Exception e) {

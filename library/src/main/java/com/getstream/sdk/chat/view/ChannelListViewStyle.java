@@ -56,7 +56,7 @@ public class ChannelListViewStyle extends BaseStyle {
         messageTextStyle = a.getInt(R.styleable.ChannelListView_streamMessageTextStyle, Typeface.NORMAL);
         unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_streamUnreadMessageTextStyle, Typeface.BOLD);
 
-        channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.list_item_channel);
+        channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.stream_item_channel);
 
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));

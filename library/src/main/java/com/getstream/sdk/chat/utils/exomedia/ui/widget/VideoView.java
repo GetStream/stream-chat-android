@@ -915,7 +915,7 @@ public class VideoView extends RelativeLayout {
      * @param attributeContainer The attributes for retrieving custom backing implementations.
      */
     protected void inflateVideoView(@NonNull Context context, @NonNull AttributeContainer attributeContainer) {
-        View.inflate(context, R.layout.exomedia_video_view_layout, this);
+        View.inflate(context, R.layout.stream_exomedia_video_view_layout, this);
         ViewStub videoViewStub = findViewById(R.id.video_view_api_impl_stub);
 
         videoViewStub.setLayoutResource(getVideoViewApiImplementation(context, attributeContainer));
@@ -1195,14 +1195,14 @@ public class VideoView extends RelativeLayout {
          * The resource id that points to a custom implementation for the <code>ExoPlayer</code>
          * backed {@link VideoViewApi}
          */
-        public int apiImplResourceId = R.layout.exomedia_default_exo_texture_video_view;
+        public int apiImplResourceId = R.layout.stream_exomedia_default_exo_texture_video_view;
 
         /**
          * The resource id that points to a custom implementation for the Android {@link android.media.MediaPlayer}
          * backed {@link VideoViewApi}.  This will only be used on devices that do not support the
          * <code>ExoPlayer</code> (see {@link DeviceUtil#supportsExoPlayer(Context)} for details)
          */
-        public int apiImplLegacyResourceId = R.layout.exomedia_default_native_texture_video_view;
+        public int apiImplLegacyResourceId = R.layout.stream_exomedia_default_native_texture_video_view;
 
         /**
          * Specifies the scale that the {@link VideoView} should use. If this is <code>null</code>
@@ -1249,8 +1249,8 @@ public class VideoView extends RelativeLayout {
             }
 
             //Resets the default implementations based on useTextureViewBacking
-            apiImplResourceId = useTextureViewBacking ? R.layout.exomedia_default_exo_texture_video_view : R.layout.exomedia_default_exo_surface_video_view;
-            apiImplLegacyResourceId = useTextureViewBacking ? R.layout.exomedia_default_native_texture_video_view : R.layout.exomedia_default_native_surface_video_view;
+            apiImplResourceId = useTextureViewBacking ? R.layout.stream_exomedia_default_exo_texture_video_view : R.layout.stream_exomedia_default_exo_surface_video_view;
+            apiImplLegacyResourceId = useTextureViewBacking ? R.layout.stream_exomedia_default_native_texture_video_view : R.layout.stream_exomedia_default_native_surface_video_view;
 
             apiImplResourceId = typedArray.getResourceId(R.styleable.Stream_VideoView_stream_videoViewApiImpl, apiImplResourceId);
             apiImplLegacyResourceId = typedArray.getResourceId(R.styleable.Stream_VideoView_stream_videoViewApiImplLegacy, apiImplLegacyResourceId);

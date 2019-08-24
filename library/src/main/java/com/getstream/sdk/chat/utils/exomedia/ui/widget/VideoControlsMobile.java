@@ -64,7 +64,7 @@ public class VideoControlsMobile extends VideoControls {
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.exomedia_default_controls_mobile;
+        return R.layout.stream_exomedia_default_controls_mobile;
     }
 
     @Override

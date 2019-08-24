@@ -80,7 +80,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:listitem="@layout/list_item_message" />
+            tools:listitem="@layout/stream_item_message" />
 
         <TextView
             android:id="@+id/tv_startmark"
@@ -106,7 +106,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_startmark"
-            tools:listitem="@layout/list_item_message" />
+            tools:listitem="@layout/stream_item_message" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

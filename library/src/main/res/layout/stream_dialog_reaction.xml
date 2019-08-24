@@ -21,5 +21,5 @@
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        tools:listitem="@layout/list_item_dialog_reaction" />
+        tools:listitem="@layout/stream_item_dialog_reaction" />
 </RelativeLayout>

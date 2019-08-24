@@ -61,7 +61,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         int i = 0;
 
         for (User user : users) {
-            View v = vi.inflate(R.layout.view_user_avatar_initials, null);
+            View v = vi.inflate(R.layout.stream_view_user_avatar_initials, null);
             TextView textView = v.findViewById(R.id.tv_initials);
             ImageView imageView = v.findViewById(R.id.cv_avatar);
             textView.setText(user.getInitials());

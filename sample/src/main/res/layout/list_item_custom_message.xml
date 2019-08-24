@@ -103,7 +103,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"
-            tools:listitem="@layout/list_item_reaction" />
+            tools:listitem="@layout/stream_item_reaction" />
 
         <TextView
             android:id="@+id/tv_gap_reaction"
@@ -125,7 +125,7 @@
 
             <include
                 android:id="@+id/cl_attachment_media"
-                layout="@layout/list_item_attach_media"
+                layout="@layout/stream_item_attach_media"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -152,7 +152,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_gap_media_file"
-                tools:listitem="@layout/list_item_attach_file" />
+                tools:listitem="@layout/stream_item_attach_file" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -313,7 +313,7 @@
 
         <include
             android:id="@+id/view_read_indicator"
-            layout="@layout/view_user_read_indicator"
+            layout="@layout/stream_view_user_read_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="3dp"

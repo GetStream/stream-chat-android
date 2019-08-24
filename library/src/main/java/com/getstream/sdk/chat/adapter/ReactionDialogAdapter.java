@@ -53,7 +53,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                                            int viewType) {
         // create a new view
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_dialog_reaction, parent, false);
+                .inflate(R.layout.stream_item_dialog_reaction, parent, false);
 
         MyViewHolder vh = new MyViewHolder(itemView);
         return vh;

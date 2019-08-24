@@ -49,7 +49,7 @@ public class ReactionDlgView extends RelativeLayout {
     }
 
     private void initView() {
-        View view = inflate(getContext(), R.layout.dialog_reaction, null);
+        View view = inflate(getContext(), R.layout.stream_dialog_reaction, null);
         addView(view);
     }
 

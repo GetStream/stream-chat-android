@@ -218,7 +218,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_select_title"
-                tools:listitem="@layout/list_item_select_photo" />
+                tools:listitem="@layout/stream_item_select_photo" />
 
             <ListView
                 android:id="@+id/lv_file"
@@ -231,7 +231,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_select_title"
-                tools:listitem="@layout/list_item_attach_file" />
+                tools:listitem="@layout/stream_item_attach_file" />
 
             <ProgressBar
                 android:id="@+id/progressBar_file_loader"
@@ -290,14 +290,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:divider="@null"
-                    tools:listitem="@layout/list_item_command" />
+                    tools:listitem="@layout/stream_item_command" />
 
                 <ListView
                     android:id="@+id/lv_mention"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:divider="@null"
-                    tools:listitem="@layout/list_item_mention" />
+                    tools:listitem="@layout/stream_item_mention" />
             </FrameLayout>
 
 

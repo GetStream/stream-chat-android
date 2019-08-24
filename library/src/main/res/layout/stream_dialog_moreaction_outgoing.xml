@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/list_item_dialog_reaction" />
+        tools:listitem="@layout/stream_item_dialog_reaction" />
 
     <TextView
         android:id="@+id/tv_reply"

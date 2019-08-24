@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.ListItemCommandBinding;
+import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.rest.User;
 
@@ -46,13 +46,13 @@ public class CommandListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ListItemCommandBinding binding;
+        StreamItemCommandBinding binding;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_item_command, null);
+            convertView = layoutInflater.inflate(R.layout.stream_item_command, null);
             binding = DataBindingUtil.bind(convertView);
             convertView.setTag(binding);
         } else {
-            binding = (ListItemCommandBinding) convertView.getTag();
+            binding = (StreamItemCommandBinding) convertView.getTag();
         }
 
         binding.setIsCommand(this.isCommand);

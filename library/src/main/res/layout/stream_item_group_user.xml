@@ -9,7 +9,7 @@
 
         <include
             android:id="@+id/view_user_avator"
-            layout="@layout/view_user_avatar_initials"
+            layout="@layout/stream_view_user_avatar_initials"
             android:layout_width="60dp"
             android:layout_height="60dp"
             app:layout_constraintEnd_toEndOf="parent"
