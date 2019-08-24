@@ -104,7 +104,7 @@ public class CircularImageView
         TypedArray t = null;
         if (null != attrs) {
             t = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.CircularImageView, 0, 0);
+                    R.styleable.Stream_CircularImageView, 0, 0);
         }
 
         // Extract configurations
@@ -116,27 +116,27 @@ public class CircularImageView
 
         if (null != t) {
             // Border and background
-            mBorderWidth = t.getDimensionPixelSize(R.styleable.CircularImageView_ci_borderWidth, 0);
-            mBorderColor = t.getColor(R.styleable.CircularImageView_ci_borderColor,
+            mBorderWidth = t.getDimensionPixelSize(R.styleable.Stream_CircularImageView_stream_ci_borderWidth, 0);
+            mBorderColor = t.getColor(R.styleable.Stream_CircularImageView_stream_ci_borderColor,
                     DEFAULT_BORDER_COLOR);
-            mBackgroundColor = t.getColor(R.styleable.CircularImageView_ci_placeholderBackgroundColor,
+            mBackgroundColor = t.getColor(R.styleable.Stream_CircularImageView_stream_ci_placeholderBackgroundColor,
                     DEFAULT_BACKGROUND_COLOR);
 
             // Placeholder text
-            mText = t.getString(R.styleable.CircularImageView_ci_placeholderText);
-            mTextColor = t.getColor(R.styleable.CircularImageView_ci_placeholderTextColor,
+            mText = t.getString(R.styleable.Stream_CircularImageView_stream_ci_placeholderText);
+            mTextColor = t.getColor(R.styleable.Stream_CircularImageView_stream_ci_placeholderTextColor,
                     DEFAULT_TEXT_COLOR);
-            mTextSize = t.getDimensionPixelSize(R.styleable.CircularImageView_ci_placeholderTextSize, 0);
+            mTextSize = t.getDimensionPixelSize(R.styleable.Stream_CircularImageView_stream_ci_placeholderTextSize, 0);
 
             // Check state
-            mChecked = t.getBoolean(R.styleable.CircularImageView_ci_checked, false);
-            mCheckedBackgroundColor = t.getColor(R.styleable.CircularImageView_ci_checkedStateBackgroundColor,
+            mChecked = t.getBoolean(R.styleable.Stream_CircularImageView_stream_ci_checked, false);
+            mCheckedBackgroundColor = t.getColor(R.styleable.Stream_CircularImageView_stream_ci_checkedStateBackgroundColor,
                     DEFAULT_CHECKED_BACKGROUND_COLOR);
 
             // Shadow
-            mShadowRadius = Math.max(t.getFloat(R.styleable.CircularImageView_ci_shadowRadius,
+            mShadowRadius = Math.max(t.getFloat(R.styleable.Stream_CircularImageView_stream_ci_shadowRadius,
                     DEFAULT_SHADOW_RADIUS), 0);
-            mShadowColor = t.getColor(R.styleable.CircularImageView_ci_shadowColor,
+            mShadowColor = t.getColor(R.styleable.Stream_CircularImageView_stream_ci_shadowColor,
                     DEFAULT_SHADOW_COLOR);
 
             t.recycle();

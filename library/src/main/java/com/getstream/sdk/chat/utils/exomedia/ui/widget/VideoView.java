@@ -1232,28 +1232,28 @@ public class VideoView extends RelativeLayout {
                 return;
             }
 
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VideoView);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Stream_VideoView);
             if (typedArray == null) {
                 return;
             }
 
-            useDefaultControls = typedArray.getBoolean(R.styleable.VideoView_useDefaultControls, useDefaultControls);
-            useTextureViewBacking = typedArray.getBoolean(R.styleable.VideoView_useTextureViewBacking, useTextureViewBacking);
+            useDefaultControls = typedArray.getBoolean(R.styleable.Stream_VideoView_useDefaultControls, useDefaultControls);
+            useTextureViewBacking = typedArray.getBoolean(R.styleable.Stream_VideoView_useTextureViewBacking, useTextureViewBacking);
 
-            if (typedArray.hasValue(R.styleable.VideoView_videoScale)) {
-                scaleType = ScaleType.fromOrdinal(typedArray.getInt(R.styleable.VideoView_videoScale, -1));
+            if (typedArray.hasValue(R.styleable.Stream_VideoView_videoScale)) {
+                scaleType = ScaleType.fromOrdinal(typedArray.getInt(R.styleable.Stream_VideoView_videoScale, -1));
             }
 
-            if (typedArray.hasValue(R.styleable.VideoView_measureBasedOnAspectRatio)) {
-                measureBasedOnAspectRatio = typedArray.getBoolean(R.styleable.VideoView_measureBasedOnAspectRatio, false);
+            if (typedArray.hasValue(R.styleable.Stream_VideoView_measureBasedOnAspectRatio)) {
+                measureBasedOnAspectRatio = typedArray.getBoolean(R.styleable.Stream_VideoView_measureBasedOnAspectRatio, false);
             }
 
             //Resets the default implementations based on useTextureViewBacking
             apiImplResourceId = useTextureViewBacking ? R.layout.exomedia_default_exo_texture_video_view : R.layout.exomedia_default_exo_surface_video_view;
             apiImplLegacyResourceId = useTextureViewBacking ? R.layout.exomedia_default_native_texture_video_view : R.layout.exomedia_default_native_surface_video_view;
 
-            apiImplResourceId = typedArray.getResourceId(R.styleable.VideoView_videoViewApiImpl, apiImplResourceId);
-            apiImplLegacyResourceId = typedArray.getResourceId(R.styleable.VideoView_videoViewApiImplLegacy, apiImplLegacyResourceId);
+            apiImplResourceId = typedArray.getResourceId(R.styleable.Stream_VideoView_videoViewApiImpl, apiImplResourceId);
+            apiImplLegacyResourceId = typedArray.getResourceId(R.styleable.Stream_VideoView_videoViewApiImplLegacy, apiImplLegacyResourceId);
 
             typedArray.recycle();
         }
