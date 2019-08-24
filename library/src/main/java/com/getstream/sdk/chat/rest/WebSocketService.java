@@ -145,8 +145,10 @@ public class WebSocketService extends WebSocketListener {
     private void reconnect(){
         Log.i(TAG, "reconnecting...");
         if (isConnecting() || isHealthy()) {
+            Log.i(TAG, "nevermind, we are already connecting...");
             return;
         }
+        Log.i(TAG, "schedule reconnection in " + getRetryInterval() + "ms");
         mHandler.postDelayed(mReconnect, getRetryInterval());
     }
 
@@ -260,7 +262,8 @@ public class WebSocketService extends WebSocketListener {
                 // TODO: propagate this upstream
                 webSocket.close(code, reason);
             } else {
-                consecutiveFailures += 1;
+                consecutiveFailures++;
+                setConnecting(false);
                 setHealth(false);
                 reconnect();
                 webSocket.close(code, reason);
@@ -275,6 +278,7 @@ public class WebSocketService extends WebSocketListener {
                 e.printStackTrace();
             }
             consecutiveFailures++;
+            setConnecting(false);
             setHealth(false);
             reconnect();
         }
