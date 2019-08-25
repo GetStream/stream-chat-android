@@ -75,6 +75,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
+    private LazyQueryChannelLiveData<Message> updateMessage;
     private LiveData<Boolean> anyOtherUsersOnline;
     private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
@@ -118,8 +119,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.viewModel = this;
         reads.setValue(channel.getChannelState().getReads());
 
-        entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
-        reads.setValue(channel.getChannelState().getReads());
+        updateMessage = new LazyQueryChannelLiveData<>();
+        updateMessage.viewModel = this;
+        updateMessage.setValue(new Message());
+
+        entities = new MessageListItemLiveData(client().getUser(), messages, updateMessage, typingUsers, reads);
 
         typingState = new HashMap<>();
 
@@ -326,21 +330,25 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(message);
-        boolean updated = index != -1;
-        if (updated) {
-            messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
-        }
-        return updated;
+//        List<Message> messagesCopy = messages.getValue();
+//        int index = messagesCopy.indexOf(message);
+//        boolean updated = index != -1;
+//        if (updated) {
+//            messagesCopy.set(index, message);
+//            messages.postValue(messagesCopy);
+//        }
+//        return updated;
+        this.updateMessage.postValue(message);
+        return true;
     }
 
     private boolean deleteMessage(Message message) {
-        List<Message> messagesCopy = messages.getValue();
-        boolean removed = messagesCopy.remove(message);
-        messages.postValue(messagesCopy);
-        return removed;
+//        List<Message> messagesCopy = messages.getValue();
+//        boolean removed = messagesCopy.remove(message);
+//        messages.postValue(messagesCopy);
+//        return removed;
+        this.updateMessage.postValue(message);
+        return true;
     }
 
     private void addMessage(Message message) {

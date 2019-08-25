@@ -25,6 +25,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private final String TAG = MessageListItemLiveData.class.getSimpleName();
 
     private MutableLiveData<List<Message>> messages;
+    private MutableLiveData<Message> updateMessage;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
 
@@ -39,9 +40,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public MessageListItemLiveData(User currentUser,
                                    MutableLiveData<List<Message>> messages,
+                                   MutableLiveData<Message> updateMessage,
                                    MutableLiveData<List<User>> typing,
                                    MutableLiveData<List<ChannelUserRead>> reads) {
         this.messages = messages;
+        this.updateMessage = updateMessage;
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
@@ -125,7 +128,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (messages == null || messages.size() == 0) return;
             // update based on messages
             hasNewMessages = false;
-            String newlastMessageID = messages.get(messages.size() -1).getId();
+            String newlastMessageID = messages.get(messages.size() - 1).getId();
             if (!newlastMessageID.equals(lastMessageID)) {
                 hasNewMessages = true;
             }
@@ -134,12 +137,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             // iterate over messages and stick in the date entities
             Message previousMessage = null;
             int size = messages.size();
-            int topIndex = Math.max(0, size -1);
+            int topIndex = Math.max(0, size - 1);
             for (int i = 0; i < size; i++) {
                 Message message = messages.get(i);
                 Message nextMessage = null;
-                if (i +1 <= topIndex){
-                    nextMessage = messages.get(i+1);
+                if (i + 1 <= topIndex) {
+                    nextMessage = messages.get(i + 1);
                 }
 
                 // determine if the message is written by the current user
@@ -165,7 +168,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     entities.add(new MessageListItem(message.getCreatedAt()));
                 }
 
-                MessageListItem messageListItem = new MessageListItem(message,positions, mine);
+                MessageListItem messageListItem = new MessageListItem(message, positions, mine);
                 entities.add(messageListItem);
                 // set the previous message for the next iteration
                 previousMessage = message;
@@ -175,6 +178,22 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             broadcastValue();
         });
+
+        this.updateMessage.observe(owner, message -> {
+            if (message == null || message.getId() == null) return;
+            hasNewMessages = false;
+
+            int index = this.messages.getValue().indexOf(message);
+
+            MessageListItem messageListItem = this.messageEntities.get(index);
+            boolean mine = message.getUser().equals(currentUser);
+            MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), mine);
+
+            messages.getValue().set(index, message);
+            this.messageEntities.set(index, messageListItem_);
+            broadcastValue();
+        });
+
         this.typing.observe(owner, users -> {
             // update
             hasNewMessages = false;
@@ -186,7 +205,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             this.typingEntities = typingEntities;
             broadcastValue();
         });
-
     }
 
     public Boolean getHasNewMessages() {
