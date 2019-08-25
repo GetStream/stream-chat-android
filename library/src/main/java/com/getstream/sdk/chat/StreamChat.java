@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 
@@ -53,8 +54,6 @@ public class StreamChat {
             public void onConnectionChanged(Event event) {
                 Log.w(TAG, "connection status changed");
                 if (event.getOnline()) {
-                    onlineStatus.postValue(OnlineStatus.CONNECTED);
-                } else {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
                 }
             }
@@ -68,6 +67,7 @@ public class StreamChat {
                 } else {
                     Log.w(TAG, channels.size() + " channels to recover!");
                 }
+                onlineStatus.postValue(OnlineStatus.CONNECTED);
             }
 
             @Override
@@ -88,8 +88,7 @@ public class StreamChat {
         }
         synchronized (Client.class) {
             if (INSTANCE == null) {
-                INSTANCE = new Client(apiKey);
-
+                INSTANCE = new Client(apiKey, new ApiClientOptions(), new ConnectionLiveData(context));
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();
@@ -98,8 +97,8 @@ public class StreamChat {
                     @Override
                     public void onSuccess(User user) {
                         onlineStatus.postValue(OnlineStatus.CONNECTED);
-                        totalUnreadMessages.setValue(user.getTotalUnreadCount());
-                        unreadChannels.setValue(user.getUnreadChannels());
+                        totalUnreadMessages.postValue(user.getTotalUnreadCount());
+                        unreadChannels.postValue(user.getUnreadChannels());
                         setupEventListeners();
                     }
 

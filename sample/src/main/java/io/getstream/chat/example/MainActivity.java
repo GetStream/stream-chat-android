@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
@@ -19,7 +18,6 @@ import java.util.HashMap;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.in;
 
 
@@ -64,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
+//        viewModel.setChannelsPageSize(0);
 
         //ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
         //adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
@@ -80,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 //        viewModel.setChannelSort(new QuerySort().desc("updated_at"));
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
-
         binding.channelList.setOnChannelClickListener(channel -> {
             // open the channel activity
             Intent intent = new Intent(parent, ChannelActivity.class);

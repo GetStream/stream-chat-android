@@ -34,7 +34,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     private LazyQueryChannelLiveData<List<Channel>> channels;
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
-    private MutableLiveData<Boolean> online;
 
     private FilterObject filter;
     private QuerySort sort;
@@ -55,9 +54,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
     public LiveData<Boolean> getLoadingMore() {
         return loadingMore;
-    }
-    public LiveData<Boolean> getOnline() {
-        return online;
     }
     public void setChannelsPageSize(int pageSize) {
         this.pageSize = pageSize;
@@ -130,8 +126,6 @@ public class ChannelListViewModel extends AndroidViewModel {
         loading = new MutableLiveData<>(true);
         loadingMore = new MutableLiveData<>(false);
 
-        online = new MutableLiveData<>(client().isConnected());
-
         channels = new LazyQueryChannelLiveData<>();
         channels.viewModel = this;
         sort = new QuerySort().desc("last_message_at");
@@ -159,19 +153,12 @@ public class ChannelListViewModel extends AndroidViewModel {
                     }
                 }
                 if (changed) channels.postValue(channelCopy);
-                online.postValue(true);
             }
         });
     }
 
     private void initEventHandlers() {
         subscriptionId = client().addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onConnectionChanged(Event event) {
-                if (!event.getOnline()) {
-                    online.postValue(false);
-                }
-            }
 
             @Override
             public void onNotificationMessageNew(Event event) {
@@ -289,6 +276,9 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     public void loadMore() {
+        if (!client().isConnected()) {
+            return;
+        }
         if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
             return;

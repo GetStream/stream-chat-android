@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
-import android.util.Log;
+import android.text.TextUtils;
 
 import androidx.recyclerview.widget.DiffUtil;
 
@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.model.Channel;
 import java.util.List;
 
 public class ChannelListDiffCallback extends DiffUtil.Callback {
-    private final static String TAG = ChannelListDiffCallback.class.getSimpleName();
     private List<Channel> oldList, newList;
 
     public ChannelListDiffCallback(List<Channel> oldList, List<Channel> newList) {
@@ -34,14 +33,29 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        // read state
-        // last message
-        // channel members
-        // channel name
-        // channel extra data
-        // TODO: fix this
-        return false;
+        Channel oldChannel = oldList.get(oldItemPosition);
+        Channel newChannel = newList.get(newItemPosition);
 
+        if (oldChannel.getUpdatedAt() == null && newChannel.getUpdatedAt() != null) {
+            return false;
+        }
 
+        if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
+            return false;
+        }
+
+        if (!TextUtils.equals(oldChannel.getName(), newChannel.getName())) {
+            return false;
+        }
+
+        if (oldChannel.getLastMessageDate() == null && newChannel.getLastMessageDate() != null) {
+            return false;
+        }
+
+        if (newChannel.getLastMessageDate() != null && oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
+            return false;
+        }
+
+        return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
     }
 }

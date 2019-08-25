@@ -86,6 +86,22 @@ public class MainActivity extends AppCompatActivity {
 	}
 ```
 
+Make sure that your `AndroidManifest.xml` file include INTERNET and ACCESS_NETWORK_STATE permissions:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="...">
+
+    ... 
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    ...
+
+</manifest>    
+```
+
 ### Initialize Chat for a user
 
 1. Retrieve the chat client:
@@ -126,6 +142,15 @@ client.onSetUserCompleted(new ClientConnectionCallback() {
     public void onError(String errMsg, int errCode) {
     }
 });
+```
+
+## Online status
+
+Connection status to Chat is available via `StreamChat.getOnlineStatus()` which returns a LiveData object you can attach observers to.
+
+```java
+
+StreamChat.getOnlineStatus().observe(...);
 ```
 
 ## UI Components

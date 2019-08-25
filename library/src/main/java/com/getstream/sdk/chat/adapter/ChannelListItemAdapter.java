@@ -1,8 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
+
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.DiffUtil;
@@ -69,35 +68,19 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         style = s;
     }
 
-    public void deleteChannel(Channel channel) {
-        int index = 0;
-        for (Channel c : channels) {
-            Log.i(TAG, String.format("channel cid %s iter cid %s", channel.getCid(), c.getCid()));
-            if (TextUtils.equals(c.getCid(), channel.getCid())) {
-                channels.remove(index);
-                notifyItemChanged(index);
-                break;
-            }
-            index += 1;
-        }
-    }
-
-    public void upsertChannel(Channel channel) {
-        // try to remove
-        this.deleteChannel(channel);
-        // always add to the top of the list...
-        channels.add(0, channel);
-
-        notifyDataSetChanged();
-    }
-
     public void replaceChannels(List<Channel> channelList) {
+        List<Channel> cloneChannelList = new ArrayList<>();
+
+        for (Channel channel: channelList) {
+            cloneChannelList.add(channel.copy());
+        }
+
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-                new ChannelListDiffCallback(channels, channelList), true);
+                new ChannelListDiffCallback(channels, cloneChannelList), true);
 
         // only update those rows that change...
         result.dispatchUpdatesTo(this);
-        channels = channelList;
+        channels = cloneChannelList;
     }
 
     @Override

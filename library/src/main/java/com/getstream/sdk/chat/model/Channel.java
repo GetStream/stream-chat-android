@@ -49,7 +49,7 @@ import retrofit2.Response;
 /**
  * A channel
  */
-public class Channel {
+public class Channel implements Cloneable {
     private static final String TAG = Channel.class.getSimpleName();
 
     @SerializedName("id")
@@ -137,14 +137,6 @@ public class Channel {
         this.lastMessageDate = lastMessageDate;
     }
 
-    public void setCreatedByUser(User createdByUser) {
-        this.createdByUser = createdByUser;
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -155,12 +147,23 @@ public class Channel {
 
     public Channel copy() {
         Channel clone = new Channel(client, type, id);
-        clone.name = name;
-        clone.lastMessageDate = new Date(lastMessageDate.getTime());
-        // TODO: add all fields here
-        // TODO: copy
-        clone.channelState = channelState;
-        clone.channelState.setChannel(clone);
+        try {
+            clone = (Channel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        if (lastMessageDate!= null) {
+            clone.lastMessageDate = new Date(lastMessageDate.getTime());
+        }
+        if (createdAt != null) {
+            clone.createdAt = new Date(createdAt.getTime());
+        }
+        if (updatedAt != null) {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }
+        if (channelState != null) {
+            clone.channelState = channelState.copy();
+        }
         return clone;
     }
 
@@ -300,6 +303,10 @@ public class Channel {
         image = state.getChannel().image;
         channelState.init(state);
         config = state.getChannel().config;
+        lastMessageDate = state.getChannel().lastMessageDate;
+        extraData = state.getChannel().extraData;
+        createdAt = state.getChannel().createdAt;
+        updatedAt = state.getChannel().updatedAt;
     }
 
     /**

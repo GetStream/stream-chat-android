@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ChannelState {
+public class ChannelState implements Cloneable {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
@@ -71,8 +71,22 @@ public class ChannelState {
 
     private Date lastKnownActiveWatcher;
 
+    public ChannelState copy() {
+        ChannelState clone = new ChannelState(channel);
+        try {
+            clone = (ChannelState) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        clone.reads = new ArrayList<>();
+        for (ChannelUserRead read: getReads()) {
+            clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
+        }
+        return clone;
+    }
+
     // endregion
-    public static void sortUserReads(List<ChannelUserRead> reads) {
+    private static void sortUserReads(List<ChannelUserRead> reads) {
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
     }
 
@@ -199,6 +213,9 @@ public class ChannelState {
     }
 
     public List<ChannelUserRead> getReads() {
+        if (reads == null) {
+            return new ArrayList<>();
+        }
         return reads;
     }
 
@@ -258,25 +275,17 @@ public class ChannelState {
     }
 
     public User getLastReader() {
-        return null;
-//        if (this.reads == null || this.reads.isEmpty()) return null;
-//        User lastReadUser = null;
-//        try {
-//            if (!isSorted && this.reads != null) {
-//                Global.sortUserReads(this.reads);
-//                isSorted = true;
-//            }
-//            for (int i = reads.size() - 1; i >= 0; i--) {
-//                ChannelUserRead channelUserRead = reads.get(i);
-//                if (!channelUserRead.getUser().getId().equals(Global.client.user.getId())) {
-//                    lastReadUser = channelUserRead.getUser();
-//                    break;
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return lastReadUser;
+        if (this.reads == null || this.reads.isEmpty()) return null;
+        User lastReadUser = null;
+        sortUserReads(this.reads);
+        for (int i = reads.size() - 1; i >= 0; i--) {
+                ChannelUserRead channelUserRead = reads.get(i);
+                if (!channel.getClient().fromCurrentUser(channelUserRead)) {
+                    lastReadUser = channelUserRead.getUser();
+                    break;
+                }
+            }
+        return lastReadUser;
     }
 
     private void addOrUpdateMessage(Message newMessage) {
@@ -397,9 +406,7 @@ public class ChannelState {
             }
         }
         if (isNotSet) {
-            ChannelUserRead channelUserRead = new ChannelUserRead();
-            channelUserRead.setUser(user);
-            channelUserRead.setLastRead(readDate);
+            ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
             this.reads.add(channelUserRead);
         }
     }
