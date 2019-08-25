@@ -152,10 +152,18 @@ public class Channel implements Cloneable {
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        clone.lastMessageDate = new Date(lastMessageDate.getTime());
-        clone.createdAt = new Date(createdAt.getTime());
-        clone.updatedAt = new Date(updatedAt.getTime());
-        clone.channelState = channelState.copy();
+        if (lastMessageDate!= null) {
+            clone.lastMessageDate = new Date(lastMessageDate.getTime());
+        }
+        if (createdAt != null) {
+            clone.createdAt = new Date(createdAt.getTime());
+        }
+        if (updatedAt != null) {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }
+        if (channelState != null) {
+            clone.channelState = channelState.copy();
+        }
         return clone;
     }
 
@@ -295,6 +303,7 @@ public class Channel implements Cloneable {
         image = state.getChannel().image;
         channelState.init(state);
         config = state.getChannel().config;
+        lastMessageDate = state.getChannel().lastMessageDate;
     }
 
     /**

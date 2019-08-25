@@ -36,7 +36,11 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         Channel oldChannel = oldList.get(oldItemPosition);
         Channel newChannel = newList.get(newItemPosition);
 
-        if (oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
+        if (oldChannel.getUpdatedAt() == null && newChannel.getUpdatedAt() != null) {
+            return false;
+        }
+
+        if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
             return false;
         }
 
@@ -44,7 +48,11 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
 
-        if (oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
+        if (oldChannel.getLastMessageDate() == null && newChannel.getLastMessageDate() != null) {
+            return false;
+        }
+
+        if (newChannel.getLastMessageDate() != null && oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
             return false;
         }
 

@@ -86,7 +86,7 @@ public class ChannelState implements Cloneable {
     }
 
     // endregion
-    public static void sortUserReads(List<ChannelUserRead> reads) {
+    private static void sortUserReads(List<ChannelUserRead> reads) {
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
     }
 
@@ -213,6 +213,9 @@ public class ChannelState implements Cloneable {
     }
 
     public List<ChannelUserRead> getReads() {
+        if (reads == null) {
+            return new ArrayList<>();
+        }
         return reads;
     }
 
