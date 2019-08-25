@@ -79,4 +79,8 @@ public class MessageListItem {
     public void addMessageReadBy(ChannelUserRead r) {
         this.messageReadBy.add(r);
     }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
 }

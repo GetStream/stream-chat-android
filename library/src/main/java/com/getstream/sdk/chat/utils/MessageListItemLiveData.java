@@ -186,11 +186,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             int index = this.messages.getValue().indexOf(message);
 
             MessageListItem messageListItem = this.messageEntities.get(index);
-            boolean mine = message.getUser().equals(currentUser);
-            MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), mine);
 
+            messageListItem.setMessage(message);
             messages.getValue().set(index, message);
-            this.messageEntities.set(index, messageListItem_);
             broadcastValue();
         });
 
