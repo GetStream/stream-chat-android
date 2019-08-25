@@ -1,12 +1,8 @@
 package com.getstream.sdk.chat.utils;
 
-import android.text.TextUtils;
-
 import androidx.recyclerview.widget.DiffUtil;
 
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
-
 
 import java.util.List;
 

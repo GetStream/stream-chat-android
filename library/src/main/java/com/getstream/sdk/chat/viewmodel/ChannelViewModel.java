@@ -265,9 +265,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                         readsCopy.add(r);
                     }
                 }
-                ChannelUserRead newRead = new ChannelUserRead();
-                newRead.setUser(event.getUser());
-                newRead.setLastRead(event.getCreatedAt());
+                ChannelUserRead newRead = new ChannelUserRead(event.getUser(), event.getCreatedAt());
                 readsCopy.add(newRead);
                 reads.postValue(readsCopy);
             }

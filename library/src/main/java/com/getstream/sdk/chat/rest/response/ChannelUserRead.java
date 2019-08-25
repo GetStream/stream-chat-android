@@ -1,12 +1,13 @@
 package com.getstream.sdk.chat.rest.response;
 
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 
-public class ChannelUserRead {
+public class ChannelUserRead implements UserEntity {
     @SerializedName("user")
     @Expose
     private User user;
@@ -14,6 +15,11 @@ public class ChannelUserRead {
     @SerializedName("last_read")
     @Expose
     private Date lastRead;
+
+    public ChannelUserRead(User user, Date lastRead) {
+        this.user = user;
+        this.lastRead = lastRead;
+    }
 
     public User getUser() {
         return user;
@@ -29,5 +35,10 @@ public class ChannelUserRead {
 
     public void setLastRead(Date last_read) {
         this.lastRead = last_read;
+    }
+
+    @Override
+    public String getUserId() {
+        return user.getId();
     }
 }

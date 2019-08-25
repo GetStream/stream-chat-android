@@ -49,7 +49,7 @@ import retrofit2.Response;
 /**
  * A channel
  */
-public class Channel {
+public class Channel implements Cloneable {
     private static final String TAG = Channel.class.getSimpleName();
 
     @SerializedName("id")
@@ -137,14 +137,6 @@ public class Channel {
         this.lastMessageDate = lastMessageDate;
     }
 
-    public void setCreatedByUser(User createdByUser) {
-        this.createdByUser = createdByUser;
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -155,12 +147,15 @@ public class Channel {
 
     public Channel copy() {
         Channel clone = new Channel(client, type, id);
-        clone.name = name;
+        try {
+            clone = (Channel) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
         clone.lastMessageDate = new Date(lastMessageDate.getTime());
-        // TODO: add all fields here
-        // TODO: copy
-        clone.channelState = channelState;
-        clone.channelState.setChannel(clone);
+        clone.createdAt = new Date(createdAt.getTime());
+        clone.updatedAt = new Date(updatedAt.getTime());
+        clone.channelState = channelState.copy();
         return clone;
     }
 
