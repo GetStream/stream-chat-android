@@ -77,7 +77,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (r.getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
-            Log.i(TAG, "Setting read state for user: " + r.getUser().getId());
+//            Log.i(TAG, "Setting read state for user: " + r.getUser().getId());
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
                 // skip things that aren't messages
@@ -121,6 +121,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
         this.messages.observe(owner, messages -> {
+            Log.i(TAG, "observe messages");
             if (messages == null || messages.size() == 0) return;
             // update based on messages
             hasNewMessages = false;

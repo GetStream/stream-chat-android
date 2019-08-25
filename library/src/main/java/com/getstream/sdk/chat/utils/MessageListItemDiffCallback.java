@@ -32,12 +32,9 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        // read state
-        // last message
-        // channel members
-        // channel name
-        // TODO: fix this
-
+//        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
         return false;
     }
+
+
 }

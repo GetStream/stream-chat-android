@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -93,7 +93,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
             return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -121,16 +121,20 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
     }
+
     public void setChannelState(ChannelState channelState) {
         this.channelState = channelState;
     }
+
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         if (style.isEnableReaction())
             this.messageClickListener = messageClickListener;
     }
-    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener){
+
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
         this.messageLongClickListener = messageLongClickListener;
     }
+
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
     }
@@ -141,7 +145,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-
         return messageListItemList.size();
     }
 }

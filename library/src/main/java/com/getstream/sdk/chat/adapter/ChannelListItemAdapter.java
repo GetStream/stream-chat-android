@@ -3,8 +3,6 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.DiffUtil;
@@ -15,9 +13,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +22,10 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private Context context;
     private List<Channel> channels; // cached list of channels
-    public String filter;
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListView.UserClickListener userClickListener;
     private ChannelListViewStyle style;
-
-
 
     private ChannelViewHolderFactory viewHolderFactory;
 
@@ -142,8 +135,6 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public ChannelListViewStyle getStyle() {
         return style;
     }
-
-
 
     public void setViewHolderFactory(ChannelViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;

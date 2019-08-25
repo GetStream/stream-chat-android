@@ -332,7 +332,7 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
-
+            if (true) return;
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
@@ -356,6 +356,7 @@ public class MessageListView extends RecyclerView {
                 Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
                 if (newSize == 0) return;
+
                 // regular new message behaviour
                 // we scroll down all the way, unless you've scrolled up
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
