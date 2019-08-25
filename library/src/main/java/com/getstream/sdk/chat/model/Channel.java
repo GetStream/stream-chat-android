@@ -304,6 +304,9 @@ public class Channel implements Cloneable {
         channelState.init(state);
         config = state.getChannel().config;
         lastMessageDate = state.getChannel().lastMessageDate;
+        extraData = state.getChannel().extraData;
+        createdAt = state.getChannel().createdAt;
+        updatedAt = state.getChannel().updatedAt;
     }
 
     /**
