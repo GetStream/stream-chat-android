@@ -82,7 +82,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private LazyQueryChannelLiveData<List<ChannelUserRead>> reads;
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
-    private MutableLiveData<Boolean> online;
 
     public Channel getChannel() {
         return channel;
@@ -107,7 +106,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
-        online = new MutableLiveData<>();
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
@@ -140,10 +138,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     // region Getter
-
-    public LiveData<Boolean> getOnline() {
-        return online;
-    }
 
     public LiveData<ChannelState> getChannelState() {
         return channelState;

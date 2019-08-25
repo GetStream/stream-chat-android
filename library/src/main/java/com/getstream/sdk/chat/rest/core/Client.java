@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.Token;
@@ -54,7 +55,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.utils.Global;
 
 import org.json.JSONObject;
 
@@ -72,24 +72,153 @@ import retrofit2.Response;
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.in;
 
-
 public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
+    private String clientID;
+    private HashMap<String, User> knownUsers = new HashMap<>();
+    // Main Params
+    private String apiKey;
+    private User user;
+    private String userToken;
+    // Client params
+    private List<Channel> activeChannels = new ArrayList<>();
+    private boolean connected;
+    private List<ClientConnectionCallback> connectionWaiters;
+    private APIService mService;
+    private List<ChatEventHandler> eventSubscribers;
+    private Map<Number, ChatEventHandler> eventSubscribersBy;
+    private int subscribersSeq;
+    private Map<String, Config> channelTypeConfigs;
+    private WebSocketService WSConn;
+    private ApiClientOptions options;
+    // endregion
+    private ChatEventHandler builtinHandler =
+
+        new ChatEventHandler() {
+            @Override
+            public void onAnyEvent(Event event) {
+                if (event.getUser() != null) {
+                    trackUser(event.getUser());
+                }
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    trackUsersFromChannel(channel);
+                }
+            }
+
+            private void updateChannelMessage(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleMessageUpdatedOrDeleted(event);
+                }
+            }
+
+            @Override
+            public void onUserWatchingStart(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleWatcherStart(event);
+                }
+            }
+
+            @Override
+            public void onUserWatchingStop(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleWatcherStop(event);
+                }
+            }
+
+            @Override
+            public void onMessageNew(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleNewMessage(event);
+                }
+            }
+
+            @Override
+            public void onMessageUpdated(Event event) {
+                this.updateChannelMessage(event);
+            }
+
+            @Override
+            public void onMessageDeleted(Event event) {
+                this.updateChannelMessage(event);
+            }
+
+            @Override
+            public void onMessageRead(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleReadEvent(event);
+                }
+            }
+
+            @Override
+            public void onReactionNew(Event event) {
+                this.updateChannelMessage(event);
+            }
+
+            @Override
+            public void onReactionDeleted(Event event) {
+                this.updateChannelMessage(event);
+            }
+
+            @Override
+            public void onChannelUpdated(Event event) {
+                Channel channel = getChannelByCid(event.getCid());
+                if (channel != null) {
+                    channel.handleChannelUpdated(event);
+                }
+            }
+
+            @Override
+            public void onChannelDeleted(Event event) {
+                //TODO: remove channel from client activeChannels
+            }
+
+            @Override
+            public void onConnectionChanged(Event event) {
+                if (!event.getOnline()) {
+                    connected = false;
+                }
+            }
+    };
+
+    public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
+        connected = false;
+        this.apiKey = apiKey;
+        eventSubscribers = new ArrayList<>();
+        eventSubscribersBy = new HashMap<>();
+        connectionWaiters = new ArrayList<>();
+        channelTypeConfigs = new HashMap<>();
+        this.options = options;
+
+        if (connectionLiveData != null) {
+            connectionLiveData.observeForever(connectionModel -> {
+                if (connectionModel.getIsConnected() && !connected) {
+                    Log.i(TAG, "fast track connection discovery: UP");
+                    if (WSConn != null) {
+                        WSConn.reconnect();
+                    }
+                }
+            });
+        }
+    }
+
+    public Client(String apiKey, ApiClientOptions options) {
+        this(apiKey, new ApiClientOptions(), null);
+    }
 
     public String getApiKey() {
         return apiKey;
     }
 
-    // Main Params
-    private String apiKey;
-
     public User getUser() {
         return user;
     }
-
-    private User user;
-    private String userToken;
 
     public String getUserId() {
         return user.getId();
@@ -99,16 +228,9 @@ public class Client implements WSResponseHandler {
         return clientID;
     }
 
-    public String clientID;
-
-
     public List<Channel> getActiveChannels() {
         return activeChannels;
     }
-
-    // Client params
-    private List<Channel> activeChannels = new ArrayList<>();
-    public HashMap<String, User> knownUsers = new HashMap<>();
 
     public APIService getApiService() {
         return mService;
@@ -117,34 +239,6 @@ public class Client implements WSResponseHandler {
     public boolean isConnected() {
         return connected;
     }
-
-    private boolean connected;
-    private List<ClientConnectionCallback> connectionWaiters;
-
-    private APIService mService;
-
-    private List<ChatEventHandler> eventSubscribers;
-    private Map<Number, ChatEventHandler> eventSubscribersBy;
-    private int subscribersSeq;
-
-    private Map<String, Config> channelTypeConfigs;
-
-    private WebSocketService WSConn;
-    private ApiClientOptions options;
-
-    public Client(String apiKey) {
-        this(apiKey, new ApiClientOptions());
-    }
-
-    public Client(String apiKey, ApiClientOptions options) {
-        this.apiKey = apiKey;
-        eventSubscribers = new ArrayList<>();
-        eventSubscribersBy = new HashMap<>();
-        connectionWaiters = new ArrayList<>();
-        channelTypeConfigs = new HashMap<>();
-        this.options = options;
-    }
-
 
     // Server-side Token
     public void setUser(User user, final TokenProvider provider) {
@@ -205,14 +299,14 @@ public class Client implements WSResponseHandler {
         }
     }
 
+    // endregion
+
     // Hardcoded Code token
     public void setUser(User user, @NonNull String token) {
         this.user = user;
         this.userToken = token;
         connect();
     }
-
-    // endregion
 
     public boolean fromCurrentUser(UserEntity entity){
         String otherUserId = entity.getUserId();
@@ -358,6 +452,8 @@ public class Client implements WSResponseHandler {
         }
     }
 
+    // endregion
+
     public Channel getChannelByCid(String cid) {
         if (cid == null) {
             return null;
@@ -369,8 +465,6 @@ public class Client implements WSResponseHandler {
         }
         return null;
     }
-
-    // endregion
 
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
@@ -412,6 +506,8 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    // region Message
+
     /**
      * deleteChannel - Delete the given channel
      *
@@ -432,8 +528,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-    // region Message
 
     /**
      * sendMessage - Send a message to this channel
@@ -557,6 +651,9 @@ public class Client implements WSResponseHandler {
             }
         });
     }
+    // endregion
+
+    // region Thread
 
     /**
      * markAllRead - marks all channels for this user as read
@@ -579,7 +676,7 @@ public class Client implements WSResponseHandler {
     }
     // endregion
 
-    // region Thread
+    // region Reaction
 
     /**
      * getReplies - List the message replies for a parent message
@@ -620,9 +717,6 @@ public class Client implements WSResponseHandler {
         }
 
     }
-    // endregion
-
-    // region Reaction
 
     /**
      * sendReaction - Send a reaction about a message
@@ -648,6 +742,10 @@ public class Client implements WSResponseHandler {
             }
         });
     }
+
+    // endregion
+
+    // region Event
 
     /**
      * deleteReaction - Delete a reaction by user and type
@@ -676,8 +774,6 @@ public class Client implements WSResponseHandler {
 
     // endregion
 
-    // region Event
-
     /**
      * sendEvent - Send an event on this channel
      *
@@ -700,8 +796,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-    // endregion
 
     // region File
     public void sendImage(@NonNull String channelId,
@@ -738,6 +832,8 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    // region User
+
     // endregion
     public void sendAction(@NonNull String messageId,
                            @NonNull SendActionRequest request,
@@ -755,8 +851,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-    // region User
 
     /**
      * queryUsers - Query users and watch user presence
@@ -785,101 +879,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-    // endregion
-    private ChatEventHandler builtinHandler =
-
-        new ChatEventHandler() {
-            @Override
-            public void onAnyEvent(Event event) {
-                if (event.getUser() != null) {
-                    trackUser(event.getUser());
-                }
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    trackUsersFromChannel(channel);
-                }
-            }
-
-            private void updateChannelMessage(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleMessageUpdatedOrDeleted(event);
-                }
-            }
-
-            @Override
-            public void onUserWatchingStart(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleWatcherStart(event);
-                }
-            }
-
-            @Override
-            public void onUserWatchingStop(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleWatcherStop(event);
-                }
-            }
-
-            @Override
-            public void onMessageNew(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleNewMessage(event);
-                }
-            }
-
-            @Override
-            public void onMessageUpdated(Event event) {
-                this.updateChannelMessage(event);
-            }
-
-            @Override
-            public void onMessageDeleted(Event event) {
-                this.updateChannelMessage(event);
-            }
-
-            @Override
-            public void onMessageRead(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleReadEvent(event);
-                }
-            }
-
-            @Override
-            public void onReactionNew(Event event) {
-                this.updateChannelMessage(event);
-            }
-
-            @Override
-            public void onReactionDeleted(Event event) {
-                this.updateChannelMessage(event);
-            }
-
-            @Override
-            public void onChannelUpdated(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleChannelUpdated(event);
-                }
-            }
-
-            @Override
-            public void onChannelDeleted(Event event) {
-                //TODO: remove channel from client activeChannels
-            }
-
-            @Override
-            public void onConnectionChanged(Event event) {
-                if (!event.getOnline()) {
-                    connected = false;
-                }
-            }
-    };
 
     // region Device
 

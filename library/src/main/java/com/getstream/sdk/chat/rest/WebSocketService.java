@@ -27,8 +27,6 @@ public class WebSocketService extends WebSocketListener {
 
     private WSResponseHandler webSocketListener;
     private String wsURL;
-    private String clientID;
-    private String userID;
     private OkHttpClient httpClient;
     protected EchoWebSocketListener listener;
     private WebSocket webSocket;
@@ -89,7 +87,6 @@ public class WebSocketService extends WebSocketListener {
 
     public WebSocketService(String wsURL, String userID, WSResponseHandler webSocketListener) {
         this.wsURL = wsURL;
-        this.userID = userID;
         this.webSocketListener = webSocketListener;
     }
 
@@ -109,6 +106,11 @@ public class WebSocketService extends WebSocketListener {
 
         eventThread = new EventHandlerThread();
         eventThread.start();
+        eventThread.setName("WSS - event handler thread");
+    }
+
+    public void reconnect() {
+        reconnect(false);
     }
 
     // TODO: check previous state and clean up if needed
@@ -132,7 +134,7 @@ public class WebSocketService extends WebSocketListener {
         if (!healthy && isHealthy()) {
             setHealthy(false);
             Log.i(TAG, "spawn mOfflineNotifier");
-            mHandler.postDelayed(mOfflineNotifier, 5000);
+            eventThread.mHandler.postDelayed(mOfflineNotifier, 5000);
         }
     }
 
@@ -142,14 +144,14 @@ public class WebSocketService extends WebSocketListener {
         return (int) Math.floor(Math.random() * (max - min) + min);
     }
 
-    private void reconnect(){
+    private void reconnect(boolean delay){
         Log.i(TAG, "reconnecting...");
         if (isConnecting() || isHealthy()) {
             Log.i(TAG, "nevermind, we are already connecting...");
             return;
         }
         Log.i(TAG, "schedule reconnection in " + getRetryInterval() + "ms");
-        mHandler.postDelayed(mReconnect, getRetryInterval());
+        eventThread.mHandler.postDelayed(mReconnect, delay ? getRetryInterval() : 0);
     }
 
     private void sendEventToHandlerThread(Event event){
@@ -158,7 +160,7 @@ public class WebSocketService extends WebSocketListener {
         eventThread.mHandler.sendMessage(eventMsg);
     }
 
-    private Handler mHandler = new Handler();
+//    private Handler mHandler = new Handler();
 
     private Runnable mOfflineNotifier = new Runnable() {
         @Override
@@ -179,10 +181,10 @@ public class WebSocketService extends WebSocketListener {
                 if (millisNow - getLastEvent().getTime() > (healthCheckInterval + 10 * 1000)) {
                     consecutiveFailures += 1;
                     setHealth(false);
-                    reconnect();
+                    reconnect(true);
                 }
             }
-            mHandler.postDelayed(mHealthCheck, monitorInterval);
+            eventThread.mHandler.postDelayed(mHealthCheck, monitorInterval);
         }
     };
 
@@ -192,10 +194,9 @@ public class WebSocketService extends WebSocketListener {
             try {
                 Event event = new Event();
                 event.setType(EventType.HEALTH_CHECK);
-                event.setClientId(clientID);
                 webSocket.send(new Gson().toJson(event));
             } finally {
-                mHandler.postDelayed(mHealthCheck, healthCheckInterval);
+                eventThread.mHandler.postDelayed(mHealthCheck, healthCheckInterval);
             }
         }
     };
@@ -232,7 +233,7 @@ public class WebSocketService extends WebSocketListener {
             setConnecting(false);
             resetConsecutiveFailures();
             if (wsId > 1) {
-                mHandler.post(() -> webSocketListener.connectionRecovered());
+                eventThread.mHandler.post(() -> webSocketListener.connectionRecovered());
             }
             Log.d(TAG, "WebSocket Connected : " + response);
         }
@@ -247,7 +248,7 @@ public class WebSocketService extends WebSocketListener {
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);
             } else {
-                mHandler.post(() -> {
+                eventThread.mHandler.post(() -> {
                     webSocketListener.connectionResolved(event);
                     setConnectionResolved();
                 });
@@ -265,7 +266,7 @@ public class WebSocketService extends WebSocketListener {
                 consecutiveFailures++;
                 setConnecting(false);
                 setHealth(false);
-                reconnect();
+                reconnect(true);
                 webSocket.close(code, reason);
             }
         }
@@ -280,7 +281,7 @@ public class WebSocketService extends WebSocketListener {
             consecutiveFailures++;
             setConnecting(false);
             setHealth(false);
-            reconnect();
+            reconnect(true);
         }
     }
 
