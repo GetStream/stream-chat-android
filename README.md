@@ -4,6 +4,8 @@
 
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
+As a first step try the tutorial: [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java), [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin).
+
 You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
 This library includes both a low level chat SDK and a set of reusable UI components.
 Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
