@@ -26,6 +26,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private final String TAG = MessageListItemLiveData.class.getSimpleName();
 
     private MutableLiveData<List<Message>> messages;
+    private MutableLiveData<List<Message>> loadMoreMessages;
     private MutableLiveData<Message> upsertMessage;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
@@ -41,10 +42,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public MessageListItemLiveData(User currentUser,
                                    MutableLiveData<List<Message>> messages,
+                                   MutableLiveData<List<Message>> loadMoreMessages,
                                    MutableLiveData<Message> upsertMessage,
                                    MutableLiveData<List<User>> typing,
                                    MutableLiveData<List<ChannelUserRead>> reads) {
         this.messages = messages;
+        this.loadMoreMessages = loadMoreMessages;
         this.upsertMessage = upsertMessage;
         this.currentUser = currentUser;
         this.typing = typing;
@@ -127,11 +130,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         this.messages.observe(owner, messages -> {
             Log.i(TAG, "observe messages");
-            Log.i(TAG, "messages size: " + this.messages.getValue().size());
-            Log.i(TAG, "new messages size: " + messages.size());
             progressNewMessages(messages, false);
         });
 
+        this.loadMoreMessages.observe(owner, messages -> {
+            progressNewMessages(messages, true);
+        });
         this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
             Log.i(TAG, "observe upsertMessage");
@@ -167,7 +171,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
     }
 
-    private void progressNewMessages(List<Message> messages, boolean isLoadingMore) {
+    public void progressNewMessages(List<Message> messages, boolean isLoadMoreMessages) {
 
         if (messages == null || messages.size() == 0) return;
         // update based on messages
@@ -189,6 +193,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 previousMessage = this.messages.getValue().get(index - 1);
             }
         }
+
 //        if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
 
 
@@ -197,7 +202,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         for (int i = 0; i < size; i++) {
             Message message = messages.get(i);
-//            if (isNew && this.messages.getValue().indexOf(message) != -1) continue;
             Message nextMessage = null;
             if (i + 1 <= topIndex) {
                 nextMessage = messages.get(i + 1);
@@ -207,7 +211,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             boolean mine = message.getUser().equals(currentUser);
             // determine the position (top, middle, bottom)
             User user = message.getUser();
-            List<MessageViewHolderFactory.Position> positions = new ArrayList<MessageViewHolderFactory.Position>();
+            List<MessageViewHolderFactory.Position> positions = new ArrayList<>();
             if (previousMessage == null || !previousMessage.getUser().equals(user)) {
                 positions.add(MessageViewHolderFactory.Position.TOP);
             }
@@ -241,8 +245,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
 
             MessageListItem messageListItem = new MessageListItem(message, positions, mine);
-            if (isLoadingMore) {
-                this.messageEntities.set(0, messageListItem);
+            if (isLoadMoreMessages) {
+                this.messages.getValue().add(0, message);
+                this.messageEntities.add(0, messageListItem);
             } else {
                 this.messageEntities.add(messageListItem);
             }

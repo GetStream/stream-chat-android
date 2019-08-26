@@ -76,6 +76,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
+    private LazyQueryChannelLiveData<List<Message>> loadMoreMessages;
     private LazyQueryChannelLiveData<Message> upsertMessage;
     private LiveData<Boolean> anyOtherUsersOnline;
     private LiveData<Number> watcherCount;
@@ -112,6 +113,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
 
+        loadMoreMessages = new LazyQueryChannelLiveData<>();
+        loadMoreMessages.viewModel = this;
+        loadMoreMessages.setValue(new ArrayList<>());
+
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
         typingUsers.setValue(new ArrayList<>());
@@ -126,6 +131,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         entities = new MessageListItemLiveData(client().getUser(),
                 messages,
+                loadMoreMessages,
                 upsertMessage,
                 typingUsers,
                 reads);
@@ -333,15 +339,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
-        Log.d(TAG, "Add Message");
         List<Message> messagesCopy = messages.getValue();
         messagesCopy.add(message);
         messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
-
-        Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
@@ -423,7 +426,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                         List<Message> newMessages = new ArrayList<>(response.getMessages());
                         // used to modify the scroll behaviour...
                         entities.setIsLoadingMore(true);
-                        addMessages(newMessages);
+                        List<Message> messages_ = new ArrayList<>();
+                        // Reverse
+                        for (int i = newMessages.size() - 1; i >= 0; i--) {
+                            Message message = newMessages.get(i);
+                            messages_.add(message);
+                        }
+                        loadMoreMessages.postValue(messages_);
                         if (newMessages.size() < Constant.DEFAULT_LIMIT)
                             reachedEndOfPagination = true;
                         setLoadingMoreDone();
