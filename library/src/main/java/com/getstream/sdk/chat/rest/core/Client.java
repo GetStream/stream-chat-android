@@ -416,16 +416,11 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
-        Date mostRecentDate = new Date(0);
         for (Channel channel: activeChannels) {
             cids.add(channel.getCid());
-            if (channel.getLastMessageDate() == null) continue;
-            if (mostRecentDate.before(channel.getLastMessageDate())) {
-                mostRecentDate = channel.getLastMessageDate();
-            }
         }
         if (cids.size() > 0) {
-            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at"))
+            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
                     .withLimit(30)
                     .withMessageLimit(30);
             queryChannels(query, new QueryChannelListCallback() {
