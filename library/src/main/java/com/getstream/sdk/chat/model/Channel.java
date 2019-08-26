@@ -27,8 +27,8 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
@@ -395,7 +395,7 @@ public class Channel implements Cloneable {
                             @Nullable List<Attachment> attachments,
                             @Nullable String parentId,
                             MessageCallback callback) {
-        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelState, text);
+        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
         client.sendMessage(this.id, request, new MessageCallback() {
             @Override
@@ -412,7 +412,7 @@ public class Channel implements Cloneable {
     // region Message
     public void sendMessage(Message message,
                             MessageCallback callback) {
-        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelState, message.getText());
+        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request;
         if (message.getId() != null) {
             request = new SendMessageRequest(message.getId(), message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
@@ -437,7 +437,7 @@ public class Channel implements Cloneable {
                               @NonNull Message message,
                               @Nullable List<Attachment> attachments,
                               MessageCallback callback) {
-        List<String> mentionedUserIDs = Global.getMentionedUserIDs(channelState, text);
+        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
         message.setText(text);
         UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
 

@@ -26,8 +26,8 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -336,7 +336,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .usePlugin(CorePlugin.create())
                     .usePlugin(LinkifyPlugin.create())
                     .build();
-        markwon.setMarkdown(tv_text, Global.getMentionedText(message));
+        markwon.setMarkdown(tv_text, Utils.getMentionedText(message));
 
 
         // Set Click Listener

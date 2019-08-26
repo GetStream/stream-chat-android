@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest.request;
 
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.utils.Global;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

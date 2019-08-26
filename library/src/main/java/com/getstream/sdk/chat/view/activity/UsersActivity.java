@@ -271,10 +271,6 @@ public class UsersActivity extends AppCompatActivity {
         sort.put("field", "last_active");
         sort.put("direction", -1);
         payload.put("sort", Collections.singletonList(sort));
-
-
-//        if (client.users.size() > 0)
-//            payload.put("offset", client.users.size());
         payload.put("limit", Constant.USER_LIMIT);
 
         JSONObject json;
@@ -284,55 +280,6 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void getChannel(List<User> users) {
-//        boolean isPrivateChannel = users.size() == 1;
-//        if (isPrivateChannel && Global.getPrivateChannel(users.get(0)) != null) {
-//            navigateChatActivity(Global.getPrivateChannel(users.get(0)));
-//            return;
-//        }
-//
-//        binding.setShowMainProgressbar(true);
-//        HashMap<String, Object> extraData = new HashMap<>();
-//        extraData.put("members", users);
-//
-//        String channelId;
-//        if (isPrivateChannel){
-//            channelId = Global.client.user.getId() + "-" + users.get(0).getId();
-//        }else{
-//            String memberIds = "";
-//            for (User user : users) {
-//                memberIds += user.getId() + "-";
-//            }
-//            channelId = memberIds + getRandomHexString();
-//        }
-//
-//        Channel channel = new Channel(ModelType.channel_messaging, channelId, extraData);
-//
-//        Map<String, Object> messages = new HashMap<>();
-//        messages.put("limit", Constant.DEFAULT_LIMIT);
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("name", channel.getName());
-//        data.put("image", channel.getImage());
-//
-//        List<String> members = new ArrayList<>();
-//        members.add(Global.client.user.getId());
-//        for (User user : users) {
-//            members.add(user.getId());
-//        }
-//        data.put("members", members);
-//        data.put("group","sports");
-//
-//        Log.d(TAG, "Channel Connecting...");
-//        QueryChannelRequest request = new QueryChannelRequest(messages, data, true, true);
-//        Global.mRestController.channelDetailWithID(channel.getId(), request, (ChannelState response) -> {
-//            if (!response.getMessages().isEmpty())
-//                Global.setStartDay(response.getMessages(), null);
-//            Global.addChannelResponse(response);
-//            navigateChatActivity(response);
-//            binding.setShowMainProgressbar(false);
-//        }, (String errMsg, int errCode) -> {
-//            binding.setShowMainProgressbar(false);
-//            Utils.showMessage(this, errMsg);
-//        });
     }
 
     /**
