@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -25,7 +26,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private final String TAG = MessageListItemLiveData.class.getSimpleName();
 
     private MutableLiveData<List<Message>> messages;
-    private MutableLiveData<Message> updateMessage;
+    private MutableLiveData<Message> upsertMessage;
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<List<ChannelUserRead>> reads;
 
@@ -40,11 +41,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public MessageListItemLiveData(User currentUser,
                                    MutableLiveData<List<Message>> messages,
-                                   MutableLiveData<Message> updateMessage,
+                                   MutableLiveData<Message> upsertMessage,
                                    MutableLiveData<List<User>> typing,
                                    MutableLiveData<List<ChannelUserRead>> reads) {
         this.messages = messages;
-        this.updateMessage = updateMessage;
+        this.upsertMessage = upsertMessage;
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
@@ -118,77 +119,40 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;
             if (reads == null) {
-                reads = new ArrayList<ChannelUserRead>();
+                reads = new ArrayList<>();
             }
             listReads = reads;
             broadcastValue();
         });
+
         this.messages.observe(owner, messages -> {
             Log.i(TAG, "observe messages");
-            if (messages == null || messages.size() == 0) return;
-            // update based on messages
-            hasNewMessages = false;
-            String newlastMessageID = messages.get(messages.size() - 1).getId();
-            if (!newlastMessageID.equals(lastMessageID)) {
-                hasNewMessages = true;
-            }
-            lastMessageID = newlastMessageID;
-            List<MessageListItem> entities = new ArrayList<MessageListItem>();
-            // iterate over messages and stick in the date entities
-            Message previousMessage = null;
-            int size = messages.size();
-            int topIndex = Math.max(0, size - 1);
-            for (int i = 0; i < size; i++) {
-                Message message = messages.get(i);
-                Message nextMessage = null;
-                if (i + 1 <= topIndex) {
-                    nextMessage = messages.get(i + 1);
-                }
-
-                // determine if the message is written by the current user
-                Boolean mine = message.getUser().equals(currentUser);
-                // determine the position (top, middle, bottom)
-                User user = message.getUser();
-                List<MessageViewHolderFactory.Position> positions = new ArrayList<MessageViewHolderFactory.Position>();
-                if (previousMessage == null || !previousMessage.getUser().equals(user)) {
-                    positions.add(MessageViewHolderFactory.Position.TOP);
-                }
-
-                if (nextMessage == null || !nextMessage.getUser().equals(user)) {
-                    positions.add(MessageViewHolderFactory.Position.BOTTOM);
-                }
-
-                if (previousMessage != null && nextMessage != null) {
-                    if (previousMessage.getUser().equals(user) && nextMessage.getUser().equals(user)) {
-                        positions.add(MessageViewHolderFactory.Position.MIDDLE);
-                    }
-                }
-                // date separator
-                if (previousMessage != null && !isSameDay(previousMessage, message)) {
-                    entities.add(new MessageListItem(message.getCreatedAt()));
-                }
-
-                MessageListItem messageListItem = new MessageListItem(message, positions, mine);
-                entities.add(messageListItem);
-                // set the previous message for the next iteration
-                previousMessage = message;
-            }
-
-            this.messageEntities = entities;
-
-            broadcastValue();
+            Log.i(TAG, "messages size: " + this.messages.getValue().size());
+            Log.i(TAG, "new messages size: " + messages.size());
+            progressNewMessages(messages, false);
         });
 
-        this.updateMessage.observe(owner, message -> {
+        this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
+            Log.i(TAG, "observe upsertMessage");
+            Log.i(TAG, "messages1 size: " + this.messages.getValue().size());
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
+            if (index != -1){
+                MessageListItem messageListItem = null;
+                try {
+                    messageListItem = this.messageEntities.get(index);
+                    messageListItem.setMessage(message);
+                    messages.getValue().set(index, message);
+                }catch (Exception e){
 
-            MessageListItem messageListItem = this.messageEntities.get(index);
-
-            messageListItem.setMessage(message);
-            messages.getValue().set(index, message);
+                }
+                if (messageListItem == null)
+                    progressNewMessages(Arrays.asList(message),false);
+            }else{
+                progressNewMessages(Arrays.asList(message),false);
+            }
             broadcastValue();
         });
 
@@ -205,6 +169,68 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
     }
 
+    private void progressNewMessages(List<Message> messages, boolean isLoadingMore){
+
+        if (messages == null || messages.size() == 0) return;
+        // update based on messages
+        hasNewMessages = false;
+        String newlastMessageID = messages.get(messages.size() - 1).getId();
+        if (!newlastMessageID.equals(lastMessageID)) {
+            hasNewMessages = true;
+        }
+        lastMessageID = newlastMessageID;
+        List<MessageListItem> entities = new ArrayList<>();
+        // iterate over messages and stick in the date entities
+        Message previousMessage = null;
+        int size = messages.size();
+        int topIndex = Math.max(0, size - 1);
+
+        if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
+        if (previousMessage != null)
+            Log.i(TAG,"previousMessage: " + previousMessage.getText());
+        for (int i = 0; i < size; i++) {
+            Message message = messages.get(i);
+//            if (isNew && this.messages.getValue().indexOf(message) != -1) continue;
+            Message nextMessage = null;
+            if (i + 1 <= topIndex) {
+                nextMessage = messages.get(i + 1);
+            }
+
+            // determine if the message is written by the current user
+            boolean mine = message.getUser().equals(currentUser);
+            // determine the position (top, middle, bottom)
+            User user = message.getUser();
+            List<MessageViewHolderFactory.Position> positions = new ArrayList<MessageViewHolderFactory.Position>();
+            if (previousMessage == null || !previousMessage.getUser().equals(user)) {
+                positions.add(MessageViewHolderFactory.Position.TOP);
+            }
+
+            if (nextMessage == null || !nextMessage.getUser().equals(user)) {
+                positions.add(MessageViewHolderFactory.Position.BOTTOM);
+            }
+
+            if (previousMessage != null && nextMessage != null) {
+                if (previousMessage.getUser().equals(user) && nextMessage.getUser().equals(user)) {
+                    positions.add(MessageViewHolderFactory.Position.MIDDLE);
+                }
+            }
+            // date separator
+            if (previousMessage != null && !isSameDay(previousMessage, message)) {
+                entities.add(new MessageListItem(message.getCreatedAt()));
+            }
+
+            MessageListItem messageListItem = new MessageListItem(message, positions, mine);
+            if (isLoadingMore){
+                this.messageEntities.set(0, messageListItem);
+            }else{
+                this.messageEntities.add(messageListItem);
+            }
+
+            // set the previous message for the next iteration
+            previousMessage = message;
+        }
+        broadcastValue();
+    }
     public Boolean getHasNewMessages() {
         return hasNewMessages;
     }

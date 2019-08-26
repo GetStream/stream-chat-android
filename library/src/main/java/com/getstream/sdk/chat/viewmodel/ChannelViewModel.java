@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
-    private LazyQueryChannelLiveData<Message> updateMessage;
+    private LazyQueryChannelLiveData<Message> upsertMessage;
     private LiveData<Boolean> anyOtherUsersOnline;
     private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
@@ -88,7 +89,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return channel;
     }
 
-    public Client client(){
+    public Client client() {
         return StreamChat.getInstance(getApplication());
     }
 
@@ -119,11 +120,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.viewModel = this;
         reads.setValue(channel.getChannelState().getReads());
 
-        updateMessage = new LazyQueryChannelLiveData<>();
-        updateMessage.viewModel = this;
-        updateMessage.setValue(new Message());
+        upsertMessage = new LazyQueryChannelLiveData<>();
+        upsertMessage.viewModel = this;
+        upsertMessage.setValue(new Message());
 
-        entities = new MessageListItemLiveData(client().getUser(), messages, updateMessage, typingUsers, reads);
+        entities = new MessageListItemLiveData(client().getUser(),
+                messages,
+                upsertMessage,
+                typingUsers,
+                reads);
 
         typingState = new HashMap<>();
 
@@ -185,7 +190,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     // endregion
 
-    private boolean setLoading(){
+    private boolean setLoading() {
         if (isLoading.compareAndSet(false, true)) {
             loading.postValue(true);
             return true;
@@ -193,12 +198,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingDone(){
+    private void setLoadingDone() {
         if (isLoading.compareAndSet(true, false))
             loading.postValue(false);
     }
 
-    private boolean setLoadingMore(){
+    private boolean setLoadingMore() {
         if (isLoadingMore.compareAndSet(false, true)) {
             loadingMore.postValue(true);
             return true;
@@ -206,7 +211,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingMoreDone(){
+    private void setLoadingMoreDone() {
         if (isLoadingMore.compareAndSet(true, false))
             loadingMore.postValue(false);
     }
@@ -313,52 +318,41 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        Log.d(TAG,"messages Count:" + messages.getValue().size());
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(message);
-        Boolean updated = index != -1;
-        if (updated) {
-            messagesCopy.set(index, message);
-        } else {
-            messagesCopy.add(message);
-        }
-        Log.d(TAG,"New messages Count:" + messagesCopy.size());
-        messages.postValue(messagesCopy);
-        Log.d(TAG,"New messages Count:" + messages.getValue().size());
-        return updated;
-    }
-
-    private boolean updateMessage(Message message) {
-        // doesn't touch the message order, since message.created_at can't change
+//        Log.d(TAG,"messages Count:" + messages.getValue().size());
 //        List<Message> messagesCopy = messages.getValue();
 //        int index = messagesCopy.indexOf(message);
 //        boolean updated = index != -1;
 //        if (updated) {
 //            messagesCopy.set(index, message);
-//            messages.postValue(messagesCopy);
+//        } else {
+//            messagesCopy.add(message);
 //        }
-//        return updated;
-        this.updateMessage.postValue(message);
+//        messages.postValue(Arrays.asList(message));
+//
+//        Log.d(TAG, "New messages Count:" + messages.getValue().size());
+        this.upsertMessage.postValue(message);
+        return false;
+    }
+
+    private boolean updateMessage(Message message) {
+        this.upsertMessage.postValue(message);
         return true;
     }
 
     private boolean deleteMessage(Message message) {
-//        List<Message> messagesCopy = messages.getValue();
-//        boolean removed = messagesCopy.remove(message);
-//        messages.postValue(messagesCopy);
-//        return removed;
-        this.updateMessage.postValue(message);
+        this.upsertMessage.postValue(message);
         return true;
     }
 
     private void addMessage(Message message) {
-        Log.d(TAG,"Add Message");
+        Log.d(TAG, "Add Message");
         List<Message> messagesCopy = messages.getValue();
         messagesCopy.add(message);
         messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
+
         Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
@@ -376,6 +370,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             }
         }
         messages.postValue(messagesCopy);
+
     }
 
     private void channelLoadingDone() {
@@ -391,22 +386,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(limit);
 
         channel.query(
-            request,
-            new QueryChannelCallback() {
-                @Override
-                public void onSuccess(ChannelState response) {
-                    if (response.getMessages().size() < limit) {
-                        reachedEndOfPagination = true;
+                request,
+                new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        if (response.getMessages().size() < limit) {
+                            reachedEndOfPagination = true;
+                        }
+                        addMessages(response.getMessages());
+                        channelLoadingDone();
                     }
-                    addMessages(response.getMessages());
-                    channelLoadingDone();
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        channelLoadingDone();
+
+                    }
                 }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    channelLoadingDone();
-
-                }}
         );
     }
 
@@ -428,7 +424,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
 
-        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
 
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
 
@@ -470,19 +466,19 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         // afterwards send the request
         channel.sendMessage(message,
-            new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    replaceMessage(message, response.getMessage());
-                    callback.onSuccess(response);
-                }
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        replaceMessage(message, response.getMessage());
+                        callback.onSuccess(response);
+                    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    callback.onError(errMsg, errCode);
-                    //binding.messageInput.setEnabled(true);
-                }
-            });
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        callback.onError(errMsg, errCode);
+                        //binding.messageInput.setEnabled(true);
+                    }
+                });
     }
 
 
@@ -493,7 +489,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private List<User> getCleanedTypingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
-        for (Event event: typingState.values()){
+        for (Event event : typingState.values()) {
             // constants
             long TYPING_TIMEOUT = 10000;
             if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
@@ -535,7 +531,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             pendingMarkReadRequests = new AtomicInteger(0);
         }
 
-        public void markRead(){
+        public void markRead() {
             pendingMarkReadRequests.incrementAndGet();
         }
 

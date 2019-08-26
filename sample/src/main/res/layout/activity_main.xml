@@ -23,8 +23,7 @@
             android:layout_marginBottom="10dp"
             android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
