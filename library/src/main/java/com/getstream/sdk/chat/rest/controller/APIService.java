@@ -50,7 +50,7 @@ public interface APIService {
     Call<ChannelState> creatchatWithInvitation(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
     @POST("/channels/messaging/{id}/stop-watching")
-    Call<ChannelState> chatStopWatch(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, String> body);
+    Call<ChannelState> stopWatching(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, String> body);
 
     @POST("/channels/messaging/{id}")
     Call<ChannelState> acceptInvite(@Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);

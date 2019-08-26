@@ -20,16 +20,17 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-//TODO: thread-safety
 public class WebSocketService extends WebSocketListener {
-
     private final String TAG = WebSocketService.class.getSimpleName();
+
+    private static final int NORMAL_CLOSURE_STATUS = 1000;
 
     private WSResponseHandler webSocketListener;
     private String wsURL;
     private OkHttpClient httpClient;
-    protected EchoWebSocketListener listener;
+
     private WebSocket webSocket;
+    protected EchoWebSocketListener listener;
 
     /** The connection is considered resolved after the WS connection returned a good message */
     private boolean connectionResolved;
@@ -48,6 +49,8 @@ public class WebSocketService extends WebSocketListener {
 
     /** consecutive failures influence the duration of the timeout */
     private int consecutiveFailures;
+
+    private boolean shuttingDown;
 
     private int wsId;
 
@@ -90,7 +93,6 @@ public class WebSocketService extends WebSocketListener {
         this.webSocketListener = webSocketListener;
     }
 
-    // TODO: raise exceptions instead of silently continue
     public void connect() {
         Log.i(TAG, "connect...");
 
@@ -104,16 +106,25 @@ public class WebSocketService extends WebSocketListener {
         resetConsecutiveFailures();
         setupWS();
 
+        shuttingDown = false;
         eventThread = new EventHandlerThread();
         eventThread.start();
         eventThread.setName("WSS - event handler thread");
+    }
+
+    public void disconnect() {
+        shuttingDown = true;
+        eventThread.mHandler.removeCallbacksAndMessages(null);
+        webSocket.close(NORMAL_CLOSURE_STATUS, "");
+        webSocket = null;
+        listener = null;
+        httpClient = null;
     }
 
     public void reconnect() {
         reconnect(false);
     }
 
-    // TODO: check previous state and clean up if needed
     private void setupWS(){
         Log.i(TAG, "setupWS");
 
@@ -225,10 +236,10 @@ public class WebSocketService extends WebSocketListener {
     }
 
     private class EchoWebSocketListener extends WebSocketListener {
-        private static final int NORMAL_CLOSURE_STATUS = 1000;
 
         @Override
         public synchronized void onOpen(WebSocket webSocket, Response response) {
+            if (shuttingDown) return;
             setHealth(true);
             setConnecting(false);
             resetConsecutiveFailures();
@@ -240,8 +251,8 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
+            if (shuttingDown) return;
             Log.d(TAG, "WebSocket Response : " + text);
-
             Event event = GsonConverter.Gson().fromJson(text, Event.class);
             setLastEvent(new Date());
 
@@ -257,6 +268,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onClosing(WebSocket webSocket, int code, String reason) {
+            if (shuttingDown) return;
             Log.d(TAG, "Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
@@ -273,6 +285,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            if (shuttingDown) return;
             try {
                 Log.d(TAG, "Error: " + t.getMessage());
             } catch (Exception e) {
@@ -296,7 +309,7 @@ public class WebSocketService extends WebSocketListener {
 
 
     class EventHandlerThread extends Thread {
-        public Handler mHandler;
+        Handler mHandler;
 
         @SuppressLint("HandlerLeak")
         public void run() {

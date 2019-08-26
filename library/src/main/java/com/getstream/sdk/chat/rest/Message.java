@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.utils.Global;
+import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -134,7 +134,7 @@ public class Message implements UserEntity {
 
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
-        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        Utils.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         Calendar smsTime = Calendar.getInstance();
         smsTime.setTimeInMillis(message.getCreatedAt().getTime());
@@ -144,9 +144,9 @@ public class Message implements UserEntity {
         final String timeFormatString = "h:mm aa";
         final String dateTimeFormatString = "EEEE";
 
-        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Global.locale);
-        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Global.locale);
-        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Global.locale);
+        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Utils.locale);
+        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Utils.locale);
+        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Utils.locale);
 
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
@@ -163,8 +163,8 @@ public class Message implements UserEntity {
     }
 
     public static String convertDateToString(Date date) {
-        Global.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        String timeStr = Global.messageDateFormat.format(date);
+        Utils.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String timeStr = Utils.messageDateFormat.format(date);
         return timeStr;
     }
 
@@ -176,7 +176,7 @@ public class Message implements UserEntity {
         if (TextUtils.isEmpty(dateStr)) return null;
         Date lastActiveDate = null;
         try {
-            lastActiveDate = Global.messageDateFormat.parse(dateStr);
+            lastActiveDate = Utils.messageDateFormat.parse(dateStr);
         } catch (ParseException e) {
             e.printStackTrace();
             return null;

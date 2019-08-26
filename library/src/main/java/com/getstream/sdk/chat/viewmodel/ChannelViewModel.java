@@ -8,7 +8,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
@@ -16,6 +18,7 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
+import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
@@ -44,7 +47,7 @@ import static java.util.UUID.randomUUID;
  * - load more data
  * -
  */
-public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener {
+public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener, LifecycleHandler {
     private static final String TAG = ChannelViewModel.class.getSimpleName();
 
     private Channel channel;
@@ -57,6 +60,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private AtomicBoolean isLoadingMore;
     private boolean reachedEndOfPagination;
     private Date lastMarkRead;
+    private StreamLifecycleObserver lifecycleObserver;
 
     @Override
     protected void onCleared() {
@@ -149,7 +153,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper = new Looper(markRead);
         looper.start();
 
+        lifecycleObserver = new StreamLifecycleObserver(this);
         initEventHandlers();
+        setupConnectionRecovery();
     }
 
     // region Getter
@@ -513,6 +519,26 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void setHasNewMessages(Boolean hasNewMessages) {
         this.hasNewMessages.postValue(hasNewMessages);
+    }
+
+    @Override
+    public void resume() {
+        setLoading();
+    }
+
+    @Override
+    public void stopped() {
+
+    }
+
+    private void setupConnectionRecovery(){
+        client().addEventHandler(new ChatEventHandler() {
+            @Override
+            public void onConnectionRecovered(Event event) {
+                addMessages(channel.getChannelState().getMessages());
+                channelLoadingDone();
+            }
+        });
     }
 
     /**

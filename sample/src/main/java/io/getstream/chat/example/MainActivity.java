@@ -2,6 +2,7 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -18,6 +19,8 @@ import java.util.HashMap;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
+import static com.getstream.sdk.chat.enums.Filters.and;
+import static com.getstream.sdk.chat.enums.Filters.eq;
 import static com.getstream.sdk.chat.enums.Filters.in;
 
 
@@ -28,17 +31,19 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
-    final String USER_ID = "paranoid-android";
+    final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoicGFyYW5vaWQtYW5kcm9pZCJ9.zrhwtQei0wNyvDsX8kBNctvLVg7-OQLH1oB4oc0tc5c";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
-        Client client = StreamChat.getInstance(this.getApplication());
+        Client client = StreamChat.getInstance(getApplication());
+
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Paranoid Android");
-        extraData.put("image", "https://cdn.imgbin.com/3/9/6/imgbin-marvin-the-hitchhiker-s-guide-to-the-galaxy-robby-the-robot-paranoid-android-others-YrBap1yzzSaXs6vsPQ0tVVaKm.jpg");
+        extraData.put("name", "Bender");
+//        extraData.put("image", "https://imgix.ranker.com/user_node_img/50060/1001188616/original/bender-turns-into-a-criminal-in-the-first-episode-photo-u1?w=650&q=50&fm=pjpg&fit=crop&crop=faces");
+        extraData.put("image", "https://bit.ly/321RmWb");
         User user = new User(USER_ID, extraData);
         client.setUser(user, USER_TOKEN);
         return client;
@@ -46,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("MainActivity", "onCreate");
         super.onCreate(savedInstanceState);
 
         // setup the client
@@ -67,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         //ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
         //adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
         binding.channelList.setViewModel(viewModel, this);
-
         // query all channels where the current user is a member
         // FilterObject filter = in("members", USER_ID);
 //        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
 //        FilterObject filter = and(in("members", USER_ID), in("type", "messaging"));
-        FilterObject filter = in("type", "messaging");
+//        FilterObject filter = and(eq("name", "General"), in("type", "messaging"));
+        FilterObject filter = and(in("type", "messaging"), eq("example", 1));
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
 //        viewModel.setChannelSort(new QuerySort().desc("updated_at"));

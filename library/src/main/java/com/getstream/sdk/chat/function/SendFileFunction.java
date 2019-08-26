@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.utils.Global;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -121,7 +120,7 @@ public class SendFileFunction {
 
         binding.setIsAttachFile(!isMedia);
         if (isMedia) {
-            List<Attachment> attachments = Global.getAllShownImagesPath(context);
+            List<Attachment> attachments = Utils.getAllShownImagesPath(context);
             ((Activity) context).runOnUiThread(() -> {
                 mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
                     Attachment attachment = attachments.get(position);
@@ -138,8 +137,8 @@ public class SendFileFunction {
                 }
             });
         } else {
-            Global.attachments = new ArrayList<>();
-            List<Attachment> attachments = Global.Search_Dir(Environment.getExternalStorageDirectory());
+            Utils.attachments = new ArrayList<>();
+            List<Attachment> attachments = Utils.Search_Dir(Environment.getExternalStorageDirectory());
             ((Activity) context).runOnUiThread(() -> {
                 if (attachments.size() > 0) {
                     fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);

@@ -26,18 +26,18 @@ public class StreamChat {
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
     private static MutableLiveData<Number> unreadChannels;
-
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
     }
-
     public static LiveData<Number> getTotalUnreadMessages() {
         return totalUnreadMessages;
     }
-
     public static LiveData<Number> getUnreadChannels() {
         return unreadChannels;
     }
+
+    private static boolean lifecycleStopped;
+    private static boolean userWasInitialized;
 
     public static synchronized Client getInstance(final Context context) {
         if (INSTANCE == null) {
@@ -47,7 +47,6 @@ public class StreamChat {
         }
     }
 
-    //TODO: add cleanup state to lifecycle
     private static synchronized void setupEventListeners() {
         eventListener = INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
@@ -86,6 +85,7 @@ public class StreamChat {
         if (INSTANCE != null) {
             throw new RuntimeException("StreamChat is already initialized!");
         }
+
         synchronized (Client.class) {
             if (INSTANCE == null) {
                 INSTANCE = new Client(apiKey, new ApiClientOptions(), new ConnectionLiveData(context));
@@ -96,10 +96,31 @@ public class StreamChat {
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
+                        userWasInitialized = true;
                         onlineStatus.postValue(OnlineStatus.CONNECTED);
                         totalUnreadMessages.postValue(user.getTotalUnreadCount());
                         unreadChannels.postValue(user.getUnreadChannels());
                         setupEventListeners();
+
+                        new StreamLifecycleObserver(new LifecycleHandler() {
+                            @Override
+                            public void resume() {
+                                Log.i(TAG, "detected resume");
+                                if (lifecycleStopped && userWasInitialized) {
+                                    lifecycleStopped = false;
+                                    INSTANCE.reconnect();
+                                }
+                            }
+
+                            @Override
+                            public void stopped() {
+                                Log.i(TAG, "detected stop");
+                                lifecycleStopped = true;
+                                if (INSTANCE != null) {
+                                    INSTANCE.disconnect();
+                                }
+                            }
+                        });
                     }
 
                     @Override
@@ -111,5 +132,4 @@ public class StreamChat {
         }
         return true;
     }
-
 }

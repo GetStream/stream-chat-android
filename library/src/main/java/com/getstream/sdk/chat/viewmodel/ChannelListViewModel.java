@@ -8,7 +8,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
@@ -27,8 +29,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class ChannelListViewModel extends AndroidViewModel {
-
+public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
     private final String TAG = ChannelListViewModel.class.getSimpleName();
 
     private LazyQueryChannelLiveData<List<Channel>> channels;
@@ -45,6 +46,7 @@ public class ChannelListViewModel extends AndroidViewModel {
     private int pageSize;
     private int subscriptionId = 0;
     private int recoverySubscriptionId = 0;
+    private StreamLifecycleObserver lifecycleObserver;
 
     public LiveData<List<Channel>> getChannels() {
         return channels;
@@ -62,7 +64,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-
         if (subscriptionId != 0) {
             client().removeEventHandler(subscriptionId);
         }
@@ -132,12 +133,24 @@ public class ChannelListViewModel extends AndroidViewModel {
 
         setupConnectionRecovery();
         initEventHandlers();
+
+        lifecycleObserver = new StreamLifecycleObserver(this);
+    }
+
+    @Override
+    public void resume() {
+        setLoading();
+    }
+
+    @Override
+    public void stopped() {
     }
 
     private void setupConnectionRecovery(){
         recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
+                setLoadingDone();
                 Log.i(TAG, "onConnectionRecovered");
                 boolean changed = false;
                 List<Channel> channelCopy = channels.getValue();
@@ -149,7 +162,6 @@ public class ChannelListViewModel extends AndroidViewModel {
                     if (idx != -1) {
                         channelCopy.set(idx, channel);
                         changed = true;
-                        Log.i(TAG, "current channel size: " + channelCopy.get(idx).getChannelState().getMessages().size());
                     }
                 }
                 if (changed) channels.postValue(channelCopy);
@@ -321,7 +333,6 @@ public class ChannelListViewModel extends AndroidViewModel {
     }
 
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
-
         protected ChannelListViewModel viewModel;
 
         @Override
