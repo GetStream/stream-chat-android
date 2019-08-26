@@ -370,7 +370,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             }
         }
         messages.postValue(messagesCopy);
-
     }
 
     private void channelLoadingDone() {

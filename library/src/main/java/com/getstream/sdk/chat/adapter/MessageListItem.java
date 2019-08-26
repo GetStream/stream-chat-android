@@ -1,5 +1,9 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -82,5 +86,55 @@ public class MessageListItem {
 
     public void setMessage(Message message) {
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+
+        if (obj == null) return false;
+        if (this != obj) return false;
+
+        MessageListItem other = (MessageListItem) obj;
+
+        Message newMessage = this.getMessage();
+        Message oldMessage = other.getMessage();
+
+        if (oldMessage == null || newMessage == null) {
+            return false;
+        }
+
+
+        if (!oldMessage.equals(newMessage)) return false;
+
+        if (oldMessage.getUpdatedAt() != null && oldMessage.getUpdatedAt().getTime() < newMessage.getUpdatedAt().getTime()) {
+            return false;
+        }
+
+        if (oldMessage.getText() == null && newMessage.getText() != null){
+            return false;
+        }
+
+        if (!TextUtils.equals(oldMessage.getText(), newMessage.getText())){
+            return false;
+        }
+
+
+        if (oldMessage.getAttachments() == null && newMessage.getAttachments() != null){
+            return false;
+        }
+
+        if (!oldMessage.getAttachments().equals(newMessage.getAttachments())){
+            return false;
+        }
+
+        if (oldMessage.getReactionCounts() != null && oldMessage.getReactionCounts() == null && newMessage.getReactionCounts() != null){
+            return false;
+        }
+
+        if (oldMessage.getReactionCounts() != null && !oldMessage.getReactionCounts().equals(newMessage.getReactionCounts())){
+            return false;
+        }
+
+        return super.equals(obj);
     }
 }

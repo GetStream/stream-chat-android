@@ -339,7 +339,7 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
-                return;
+//                return;
             }
 
             if (oldSize == 0 && newSize != 0) {

@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -116,14 +117,16 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
-        this.reads.observe(owner, reads -> {
-            hasNewMessages = false;
-            if (reads == null) {
-                reads = new ArrayList<>();
-            }
-            listReads = reads;
-            broadcastValue();
-        });
+//        this.reads.observe(owner, reads -> {
+//            hasNewMessages = false;
+//            if (reads == null) {
+//                reads = new ArrayList<>();
+//            }
+//            listReads = reads;
+//            broadcastValue();
+////            new Handler().postDelayed(()->{broadcastValue();},500);
+//
+//        });
 
         this.messages.observe(owner, messages -> {
             Log.i(TAG, "observe messages");
@@ -140,26 +143,24 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             int index = this.messages.getValue().indexOf(message);
             if (index != -1){
-                MessageListItem messageListItem = null;
                 try {
-                    messageListItem = this.messageEntities.get(index);
-                    messageListItem.setMessage(message);
+                    MessageListItem messageListItem = this.messageEntities.get(index);
+                    MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
+                    messageEntities.set(index, messageListItem_);
+                    broadcastValue();
                 }catch (Exception e){
-
-                }
-                if (messageListItem == null)
                     progressNewMessages(Arrays.asList(message),false);
+                }
             }else{
                 progressNewMessages(Arrays.asList(message),false);
             }
-            broadcastValue();
         });
 
         this.typing.observe(owner, users -> {
             // update
             hasNewMessages = false;
-            List<MessageListItem> typingEntities = new ArrayList<MessageListItem>();
+            List<MessageListItem> typingEntities = new ArrayList<>();
             if (users.size() > 0) {
                 MessageListItem messageListItem = new MessageListItem(users);
                 typingEntities.add(messageListItem);
@@ -179,13 +180,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             hasNewMessages = true;
         }
         lastMessageID = newlastMessageID;
-        List<MessageListItem> entities = new ArrayList<>();
+//        List<MessageListItem> entities = new ArrayList<>();
         // iterate over messages and stick in the date entities
         Message previousMessage = null;
         int size = messages.size();
         int topIndex = Math.max(0, size - 1);
 
         if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
+
+
         if (previousMessage != null)
             Log.i(TAG,"previousMessage: " + previousMessage.getText());
         for (int i = 0; i < size; i++) {
@@ -216,7 +219,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
             // date separator
             if (previousMessage != null && !isSameDay(previousMessage, message)) {
-                entities.add(new MessageListItem(message.getCreatedAt()));
+                this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
             }
 
             MessageListItem messageListItem = new MessageListItem(message, positions, mine);
