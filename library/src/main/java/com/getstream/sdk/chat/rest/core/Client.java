@@ -337,7 +337,11 @@ public class Client implements WSResponseHandler {
 
     private JSONObject buildUserDetailJSON() {
         HashMap<String, Object> jsonParameter = new HashMap<>();
-        HashMap<String, Object> userDetails = new HashMap<>(user.getExtraData());
+        HashMap<String, Object> userDetails = new HashMap<>();
+
+        if (user.getExtraData() != null) {
+            userDetails = new HashMap<>(user.getExtraData());
+        }
 
         userDetails.put("id", this.user.getId());
         userDetails.put("name", this.user.getName());
@@ -411,7 +415,6 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void connectionRecovered() {
-        connected = true;
         List<String> cids = new ArrayList<>();
         Date mostRecentDate = new Date(0);
         for (Channel channel: activeChannels) {
@@ -422,9 +425,13 @@ public class Client implements WSResponseHandler {
             }
         }
         if (cids.size() > 0) {
-            queryChannels(new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at")), new QueryChannelListCallback() {
+            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("created_at"))
+                    .withLimit(30)
+                    .withMessageLimit(30);
+            queryChannels(query, new QueryChannelListCallback() {
                 @Override
                 public void onSuccess(QueryChannelsResponse response) {
+                    connected = true;
                     onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
                 }
 
@@ -953,6 +960,21 @@ public class Client implements WSResponseHandler {
     // endregion
 
     public void disconnect() {
+        Log.i(TAG, "disconnecting");
+        WSConn.disconnect();
+        connected = false;
+        WSConn = null;
+        clientID = null;
+        onWSEvent(new Event(false));
+    }
+
+    public void reconnect() {
+        if (user == null || userToken == null) {
+            Log.e(TAG, "Client reconnect called before setUser, this is probably an integration mistake.");
+            return;
+        }
+        connectionRecovered();
+        connect();
     }
 
     public void setAnonymousUser() {
@@ -1033,8 +1055,6 @@ public class Client implements WSResponseHandler {
             }
         });
     }
-
-
 
     public void flagUser(@NonNull String targetUserId,
                          FlagUserCallback callback) {
