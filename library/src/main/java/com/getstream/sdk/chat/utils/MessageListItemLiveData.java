@@ -103,6 +103,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
         MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
+        wrapper.setTyping(typingEntities.size()>0);
         setValue(wrapper);
         // isLoadingMore is only true once...
         if (isLoadingMore) {
@@ -194,8 +195,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
         }
 
-//        if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
-
+        isLoadingMore = isLoadMoreMessages;
+        if (isLoadMoreMessages){
+            hasNewMessages = true;
+        }
 
         if (previousMessage != null)
             Log.i(TAG, "previousMessage: " + previousMessage.getText());

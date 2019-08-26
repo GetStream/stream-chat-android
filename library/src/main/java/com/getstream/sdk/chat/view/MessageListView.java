@@ -333,13 +333,19 @@ public class MessageListView extends RecyclerView {
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
+            int currentLastVisible = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
+            if (messageListItemWrapper.isTyping() && layoutManager.getItemCount() >= currentLastVisible){
+                int newPosition = adapter.getItemCount() - 1;
+                layoutManager.scrollToPosition(newPosition);
+                return;
+            }
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
                 // read
                 // typing
                 // message updates
-//                return;
+                return;
             }
 
             if (oldSize == 0 && newSize != 0) {

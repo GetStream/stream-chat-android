@@ -8,6 +8,7 @@ public class MessageListItemWrapper {
     private List<MessageListItem> messageListItemList;
     private Boolean isLoadingMore;
     private Boolean hasNewMessages;
+    private boolean isTyping;
 
     MessageListItemWrapper(Boolean isLoadingMore, Boolean hasNewMessages, List<MessageListItem> messageListItemList) {
         this.isLoadingMore = isLoadingMore;
@@ -33,5 +34,13 @@ public class MessageListItemWrapper {
 
     public Boolean getHasNewMessages() {
         return hasNewMessages;
+    }
+
+    public boolean isTyping() {
+        return isTyping;
+    }
+
+    public void setTyping(boolean typing) {
+        isTyping = typing;
     }
 }
