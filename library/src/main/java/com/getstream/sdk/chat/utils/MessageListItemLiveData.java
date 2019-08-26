@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.utils;
 
-import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -117,16 +116,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
-//        this.reads.observe(owner, reads -> {
-//            hasNewMessages = false;
-//            if (reads == null) {
-//                reads = new ArrayList<>();
-//            }
-//            listReads = reads;
-//            broadcastValue();
-////            new Handler().postDelayed(()->{broadcastValue();},500);
-//
-//        });
+        this.reads.observe(owner, reads -> {
+            hasNewMessages = false;
+            if (reads == null) {
+                reads = new ArrayList<>();
+            }
+            listReads = reads;
+            broadcastValue();
+        });
 
         this.messages.observe(owner, messages -> {
             Log.i(TAG, "observe messages");
@@ -142,18 +139,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
-            if (index != -1){
+            if (index != -1) {
                 try {
                     MessageListItem messageListItem = this.messageEntities.get(index);
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
                     messageEntities.set(index, messageListItem_);
                     broadcastValue();
-                }catch (Exception e){
-                    progressNewMessages(Arrays.asList(message),false);
+                } catch (Exception e) {
+                    progressNewMessages(Arrays.asList(message), false);
                 }
-            }else{
-                progressNewMessages(Arrays.asList(message),false);
+            } else {
+                progressNewMessages(Arrays.asList(message), false);
             }
         });
 
@@ -170,7 +167,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
     }
 
-    private void progressNewMessages(List<Message> messages, boolean isLoadingMore){
+    private void progressNewMessages(List<Message> messages, boolean isLoadingMore) {
 
         if (messages == null || messages.size() == 0) return;
         // update based on messages
@@ -186,11 +183,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         int size = messages.size();
         int topIndex = Math.max(0, size - 1);
 
-        if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
+        if (messages.size() == 1) {
+            int index = this.messages.getValue().indexOf(messages.get(0));
+            if (index != -1) {
+                previousMessage = this.messages.getValue().get(index - 1);
+            }
+        }
+//        if (!isLoadingMore) previousMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
 
 
         if (previousMessage != null)
-            Log.i(TAG,"previousMessage: " + previousMessage.getText());
+            Log.i(TAG, "previousMessage: " + previousMessage.getText());
+
         for (int i = 0; i < size; i++) {
             Message message = messages.get(i);
 //            if (isNew && this.messages.getValue().indexOf(message) != -1) continue;
@@ -217,15 +221,29 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     positions.add(MessageViewHolderFactory.Position.MIDDLE);
                 }
             }
+
+            if (previousMessage != null && nextMessage == null) {
+                if (previousMessage.getUser().equals(user)) {
+                    int index = this.messages.getValue().indexOf(previousMessage);
+                    if (index != -1) {
+                        MessageListItem messageListItem = this.messageEntities.get(index);
+                        List<MessageViewHolderFactory.Position> positionList = Arrays.asList(MessageViewHolderFactory.Position.MIDDLE);
+                        MessageListItem messageListItem_ = new MessageListItem(previousMessage, positionList, messageListItem.isMine());
+                        messageEntities.set(index, messageListItem_);
+                    }
+                }
+            }
+
             // date separator
             if (previousMessage != null && !isSameDay(previousMessage, message)) {
                 this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
             }
 
+
             MessageListItem messageListItem = new MessageListItem(message, positions, mine);
-            if (isLoadingMore){
+            if (isLoadingMore) {
                 this.messageEntities.set(0, messageListItem);
-            }else{
+            } else {
                 this.messageEntities.add(messageListItem);
             }
 
@@ -234,6 +252,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
         broadcastValue();
     }
+
     public Boolean getHasNewMessages() {
         return hasNewMessages;
     }

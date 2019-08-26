@@ -135,6 +135,13 @@ public class MessageListItem {
             return false;
         }
 
-        return super.equals(obj);
+        if (other.getMessageReadBy().isEmpty() && !this.getMessageReadBy().isEmpty() )
+            return false;
+
+        if (!other.getMessageReadBy().isEmpty() && !other.getMessageReadBy().equals(this.getMessageReadBy())) {
+            return false;
+        }
+
+        return true;
     }
 }
