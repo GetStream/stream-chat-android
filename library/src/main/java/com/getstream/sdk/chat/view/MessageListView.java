@@ -61,7 +61,7 @@ public class MessageListView extends RecyclerView {
     private UserClickListener userClickListener;
 
     private int firstVisible;
-    private int lastVisible;
+    private static int fVPosition, lVPosition;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
@@ -287,17 +287,17 @@ public class MessageListView extends RecyclerView {
 
 
                 if (layoutManager != null) {
-                    firstVisible = layoutManager.findFirstVisibleItemPosition();
-                    lastVisible = layoutManager.findLastVisibleItemPosition();
-                    hasScrolledUp = lastVisible < (adapter.getItemCount() - 3);
+                    int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
+                    int currentLastVisible = layoutManager.findLastVisibleItemPosition();
+                    if (currentFirstVisible < fVPosition) {
+                        if (currentFirstVisible == 0) viewModel.loadMore();
+                    }
+                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    Boolean reachedTheBeginning = firstVisible <= 2;
-                    Log.i(TAG, String.format("Scroll: First visible is %d last visible is %s", firstVisible, lastVisible));
-                    if (reachedTheBeginning) {
-                        viewModel.loadMore();
-                    }
+                    fVPosition = currentFirstVisible;
+                    lVPosition = currentLastVisible;
                 }
             }
         });
@@ -333,8 +333,8 @@ public class MessageListView extends RecyclerView {
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
-            int currentLastVisible = ((LinearLayoutManager) getLayoutManager()).findLastVisibleItemPosition();
-            if (messageListItemWrapper.isTyping() && layoutManager.getItemCount() >= currentLastVisible){
+            int itemCount = adapter.getItemCount() - 2;
+            if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;

@@ -31,7 +31,6 @@ import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
