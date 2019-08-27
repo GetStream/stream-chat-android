@@ -319,12 +319,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void replaceMessage(Message oldMessage, Message newMessage) {
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(oldMessage);
+        int index = messages.getValue().indexOf(oldMessage);
         if (index != -1) {
-            messagesCopy.set(index, newMessage);
-            messages.postValue(messagesCopy);
+            messages.getValue().set(index, newMessage);
         }
+        upsertMessage.postValue(newMessage);
     }
 
     private boolean upsertMessage(Message message) {
@@ -344,9 +343,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
-        List<Message> messagesCopy = messages.getValue();
-        messagesCopy.add(message);
-        messages.postValue(messagesCopy);
+//        List<Message> messagesCopy = messages.getValue();
+//        messagesCopy.add(message);
+        upsertMessage.postValue(message);
+//        messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
@@ -530,7 +530,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     }
 
-    private void setupConnectionRecovery(){
+    private void setupConnectionRecovery() {
         client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {

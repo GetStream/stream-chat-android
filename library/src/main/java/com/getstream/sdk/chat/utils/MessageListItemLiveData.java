@@ -150,6 +150,13 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
                     messageEntities.set(index, messageListItem_);
+
+                    // refactor previous Message's Position
+                    Message previousMessage, nextMessage;
+                    previousMessage = (index > 0)? this.messages.getValue().get(index - 1) : null;
+                    nextMessage = (index < this.messages.getValue().size() - 1)? this.messages.getValue().get(index + 1) : null;
+                    setPreviousMessagePosition(previousMessage,message, nextMessage);
+
                     broadcastValue();
                 } catch (Exception e) {
                     progressNewMessages(Arrays.asList(message), false);
@@ -209,7 +216,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (i + 1 <= topIndex) {
                 nextMessage = messages.get(i + 1);
             }
-
+            if (isLoadMoreMessages){
+                try {
+                    previousMessage = messages.get(i + 1);
+                }catch (Exception e){
+                    previousMessage = null;
+                }
+                try {
+                    nextMessage = messages.get(i - 1);
+                }catch (Exception e){
+                    nextMessage = this.messages.getValue().get(this.messages.getValue().size() - 1);
+                }
+            }
             // determine if the message is written by the current user
             boolean mine = message.getUser().equals(currentUser);
             // determine the position (top, middle, bottom)
@@ -229,22 +247,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 }
             }
 
-            if (previousMessage != null && nextMessage == null) {
-                if (previousMessage.getUser().equals(user)) {
-                    int index = this.messages.getValue().indexOf(previousMessage);
-                    if (index != -1) {
-                        MessageListItem messageListItem = this.messageEntities.get(index);
-                        List<MessageViewHolderFactory.Position> positionList = Arrays.asList(MessageViewHolderFactory.Position.MIDDLE);
-                        MessageListItem messageListItem_ = new MessageListItem(previousMessage, positionList, messageListItem.isMine());
-                        messageEntities.set(index, messageListItem_);
-                    }
-                }
-            }
+            setPreviousMessagePosition(previousMessage, message, nextMessage);
 
             // date separator
-            if (previousMessage != null && !isSameDay(previousMessage, message)) {
-                this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
-            }
+//            if (previousMessage != null && !isSameDay(previousMessage, message)) {
+//                this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
+//            }
 
 
             MessageListItem messageListItem = new MessageListItem(message, positions, mine);
@@ -259,6 +267,20 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             previousMessage = message;
         }
         broadcastValue();
+    }
+
+    private void setPreviousMessagePosition(Message previousMessage, Message newMessage, Message nextMessage){
+        if (previousMessage != null && nextMessage == null) {
+            if (previousMessage.getUser().getId().equals(newMessage.getUser().getId())) {
+                int index = this.messages.getValue().indexOf(previousMessage);
+                if (index != -1) {
+                    MessageListItem messageListItem = this.messageEntities.get(index);
+                    List<MessageViewHolderFactory.Position> positionList = Arrays.asList(MessageViewHolderFactory.Position.MIDDLE);
+                    MessageListItem messageListItem_ = new MessageListItem(previousMessage, positionList, messageListItem.isMine());
+                    messageEntities.set(index, messageListItem_);
+                }
+            }
+        }
     }
 
     public Boolean getHasNewMessages() {

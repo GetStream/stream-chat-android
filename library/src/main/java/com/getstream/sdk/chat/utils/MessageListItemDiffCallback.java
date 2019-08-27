@@ -39,11 +39,15 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
         Message oldMessage = oldMessageItem.getMessage();
         Message newMessage = newMessageItem.getMessage();
 
+        if (oldMessage == null && newMessage == null) {
+            return true;
+        }
+
         if (oldMessage == null || newMessage == null) {
             return false;
         }
 
-        if (oldMessage != null && oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId())) {
+        if (oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId())) {
             return true;
         }
 
