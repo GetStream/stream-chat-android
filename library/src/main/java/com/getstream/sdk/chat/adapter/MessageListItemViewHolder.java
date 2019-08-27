@@ -77,6 +77,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
 
     private int position;
@@ -150,6 +151,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener attachmentClickListener,
                      MessageListView.UserClickListener userClickListener) {
+
         // set binding
         this.context = context;
         this.channelState = channelState;
@@ -157,26 +159,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
+        this.attachmentClickListener = attachmentClickListener;
         this.userClickListener = userClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
-
-        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            alv_attachments.setVisibility(View.GONE);
-        } else {
-            alv_attachments.setVisibility(View.VISIBLE);
-            alv_attachments.setViewHolderFactory(viewHolderFactory);
-            alv_attachments.setStyle(style);
-            alv_attachments.setEntity(this.messageListItem);
-            alv_attachments.setBubbleHelper(this.getBubbleHelper());
-            alv_attachments.setAttachmentClickListener(attachmentClickListener);
-            alv_attachments.setLongClickListener(messageLongClickListener);
-
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            alv_attachments.setBackground(background);
-        }
 
         // apply the style based on mine or theirs
         if (messageListItem.isMine()) {
@@ -185,18 +173,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             this.applyStyleTheirs();
         }
 
-        // apply position related style tweaks
-        this.applyPositionsStyle();
-
-
-        // TODO: hook up click and longclick
-
         // Configure UIs
         configSendFailed();
         configMessageText();
+        configAttachmentView();
         configReactionView();
         configReplyView();
 
+        // apply position related style tweaks
+        applyPositionsStyle();
+        configGaps();
         // Configure Laytout Params
 
         configParamsMessageText();
@@ -280,7 +266,33 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
+    private void configGaps() {
+        // Header Gap
+        if (positions.contains(MessageViewHolderFactory.Position.TOP))
+            tv_gap_header.setVisibility(View.VISIBLE);
+        else
+            tv_gap_header.setVisibility(View.GONE);
+        // Attach Gap
+        tv_gap_attach.setVisibility(alv_attachments.getVisibility());
+        if (alv_attachments.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
+            tv_gap_attach.setVisibility(View.GONE);
 
+        // Reaction Gap
+        tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
+
+        // ONLY_FOR_DEBUG
+        if (false) {
+            tv_gap_header.setBackgroundResource(R.color.stream_gap_header);
+            tv_gap_sameUser.setBackgroundResource(R.color.stream_gap_message);
+            try {
+                tv_gap_media_file.setBackgroundResource(R.color.stream_gap_media_file);
+            }catch (Exception e){
+            }
+            tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
+            tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
+
+        }
+    }
     private void configSendFailed() {
         if (message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
@@ -354,6 +366,23 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             return true;
         });
+    }
+
+    private void configAttachmentView(){
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            alv_attachments.setVisibility(View.GONE);
+        } else {
+            alv_attachments.setVisibility(View.VISIBLE);
+            alv_attachments.setViewHolderFactory(viewHolderFactory);
+            alv_attachments.setStyle(style);
+            alv_attachments.setEntity(this.messageListItem);
+            alv_attachments.setBubbleHelper(this.getBubbleHelper());
+            alv_attachments.setAttachmentClickListener(attachmentClickListener);
+            alv_attachments.setLongClickListener(messageLongClickListener);
+
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            alv_attachments.setBackground(background);
+        }
     }
 
     private void configReactionView() {

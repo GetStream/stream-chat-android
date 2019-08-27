@@ -72,6 +72,10 @@ public class MessageListItem {
         return positions;
     }
 
+    public void setPositions(List<MessageViewHolderFactory.Position> positions) {
+        this.positions = positions;
+    }
+
     public List<ChannelUserRead> getMessageReadBy() {
         return messageReadBy;
     }

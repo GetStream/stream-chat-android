@@ -140,7 +140,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
             Log.i(TAG, "observe upsertMessage");
-            Log.i(TAG, "messages1 size: " + this.messages.getValue().size());
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
@@ -156,6 +155,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     previousMessage = (index > 0)? this.messages.getValue().get(index - 1) : null;
                     nextMessage = (index < this.messages.getValue().size() - 1)? this.messages.getValue().get(index + 1) : null;
                     setPreviousMessagePosition(previousMessage,message, nextMessage);
+                    // set Pos
+                    try {
+                        if (nextMessage == null && previousMessage.getUserId().equals(message.getUserId())){
+                            List<MessageViewHolderFactory.Position>newPos = new ArrayList<>();
+                            newPos.add(MessageViewHolderFactory.Position.BOTTOM);
+                            messageListItem_.setPositions(newPos);
+                            messageEntities.set(index, messageListItem_);
+                        }
+                    }catch (Exception e){}
 
                     broadcastValue();
                 } catch (Exception e) {
