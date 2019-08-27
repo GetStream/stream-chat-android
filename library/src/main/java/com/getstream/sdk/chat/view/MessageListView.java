@@ -60,7 +60,7 @@ public class MessageListView extends RecyclerView {
     private AttachmentClickListener attachmentClickListener;
     private UserClickListener userClickListener;
 
-    private int firstVisible;
+//    private int firstVisible;
     private static int fVPosition, lVPosition;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
@@ -327,7 +327,6 @@ public class MessageListView extends RecyclerView {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
 
-            int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
@@ -359,7 +358,6 @@ public class MessageListView extends RecyclerView {
                 int newPosition;// = oldPosition + sizeGrewBy;
                 newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
                 layoutManager.scrollToPosition(newPosition);
-                Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
                 if (newSize == 0) return;
                 // regular new message behaviour

@@ -1,13 +1,17 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -212,9 +216,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     private void applyStyleMine() {
-        if (StringUtility.isEmoji(message.getText())){
+        if (StringUtility.isEmoji(message.getText())) {
             tv_text.setBackgroundResource(0);
-        }else{
+        } else {
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             tv_text.setBackground(background);
         }
@@ -224,9 +228,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void applyStyleTheirs() {
-        if (StringUtility.isEmoji(message.getText())){
+        if (StringUtility.isEmoji(message.getText())) {
             tv_text.setBackgroundResource(0);
-        }else{
+        } else {
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             tv_text.setBackground(background);
         }
@@ -357,7 +361,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReactionView() {
-        if (!style.isEnableReaction()){
+        if (!style.isEnableReaction()) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
@@ -447,18 +451,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_messagedate.setLayoutParams(params);
     }
 
-    private void configParamsReactionRecycleView() {
-        if (rv_reaction.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
-        if (messageListItem.isTheirs()) {
-            params.horizontalBias = 0f;
-        } else {
-            params.horizontalBias = 1f;
-        }
-        rv_reaction.setLayoutParams(params);
-    }
-
-
     private void configParamsDeliveredIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
 
@@ -470,8 +462,42 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
+    private void configParamsReactionRecycleView() {
+        if (rv_reaction.getVisibility() != View.VISIBLE) return;
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
+        if (messageListItem.isTheirs()) {
+            params.horizontalBias = 0f;
+        } else {
+            params.horizontalBias = 1f;
+        }
+        rv_reaction.setLayoutParams(params);
+    }
+
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
+
+
+        ConstraintLayout.LayoutParams params_;
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            params_ = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
+
+            ViewTreeObserver viewTreeObserver = tv_text.getViewTreeObserver();
+            if (viewTreeObserver.isAlive()) {
+                viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (iv_docket.getVisibility() != View.VISIBLE) return;
+                        tv_text.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        float viewWidth = tv_text.getWidth();
+
+                        Log.d(TAG, "viewWidth: " + viewWidth);
+                        Log.d(TAG, "text: " + tv_text.getText().toString());
+                    }
+                });
+            }
+        }
+
+
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
         if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
