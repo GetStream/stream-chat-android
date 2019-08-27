@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_header"
@@ -9,8 +8,8 @@
     android:layout_marginTop="20dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    >
+    app:layout_constraintTop_toTopOf="parent">
+
     <ImageView
         android:layout_width="0dp"
         android:layout_height="1px"
@@ -22,6 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/layout1"
         tools:ignore="ContentDescription" />
+
     <ImageView
         android:layout_width="0dp"
         android:layout_height="1px"
@@ -33,6 +33,7 @@
         app:layout_constraintStart_toEndOf="@+id/layout1"
         app:layout_constraintTop_toTopOf="@+id/layout1"
         tools:ignore="ContentDescription" />
+
     <LinearLayout
         android:id="@+id/layout1"
         android:layout_width="wrap_content"
@@ -55,11 +56,11 @@
             android:id="@+id/tv_header_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:text="AT 8:33PM"
-            android:textSize="12dp" />
-
+            android:textSize="12dp"
+            android:visibility="gone" />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

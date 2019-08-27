@@ -155,7 +155,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     previousMessage = (index > 0) ? this.messages.getValue().get(index - 1) : null;
                     nextMessage = (index < this.messages.getValue().size() - 1) ? this.messages.getValue().get(index + 1) : null;
                     messageListItem_.setPositions(setPositions(previousMessage, message, nextMessage));
-                    setPreviousMessagePosition(previousMessage, message, nextMessage);
+                    setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
                     messageEntities.set(index, messageListItem_);
                     broadcastValue();
 
@@ -215,26 +215,22 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
             if (isLoadMoreMessages) {
                 previousMessage = null;
-                if (i + 1 <= messages.size() -1)
+                if (i + 1 <= messages.size() - 1)
                     previousMessage = messages.get(i + 1);
 
 
-                if (i == 0){
+                if (i == 0) {
                     nextMessage = this.messages.getValue().get(0);
                     setNextMessagePosition(message.getUserId(), nextMessage);
-                }
-                else
+                } else
                     nextMessage = messages.get(i - 1);
             }
             // determine if the message is written by the current user
             boolean mine = message.getUser().equals(currentUser);
             // determine the position (top, middle, bottom)
             setPositions(previousMessage, message, nextMessage);
-            setPreviousMessagePosition(previousMessage, message, nextMessage);
-            // date separator
-//            if (previousMessage != null && !isSameDay(previousMessage, message)) {
-//                this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
-//            }
+            setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
+
 
             MessageListItem messageListItem = new MessageListItem(message,
                     setPositions(previousMessage, message, nextMessage),
@@ -243,7 +239,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (isLoadMoreMessages) {
                 this.messages.getValue().add(0, message);
                 this.messageEntities.add(0, messageListItem);
+                // date separator
+//                if (previousMessage != null && !isSameDay(previousMessage, message))
+//                    this.messageEntities.add(0, new MessageListItem(message.getCreatedAt()));
+
             } else {
+                // date separator
+//                if (previousMessage != null && !isSameDay(previousMessage, message))
+//                    this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
+
                 this.messageEntities.add(messageListItem);
             }
 
@@ -271,18 +275,21 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return positions;
     }
 
-    private void setPreviousMessagePosition(Message previousMessage, Message newMessage, Message nextMessage) {
-        if (!(previousMessage != null && nextMessage == null)) return;
-        if (!previousMessage.getUser().getId().equals(newMessage.getUser().getId())) return;
-        int index = this.messages.getValue().indexOf(previousMessage);
-        if (index == -1) return;
+    private void setPreviousMessagePosition(Message previousMessage, Message nextMessage, String useId) {
+        if (previousMessage != null && nextMessage == null){
+            if (TextUtils.isEmpty(useId)) return;
+            if (previousMessage.getUserId() == null) return;
 
-        MessageListItem messageListItem = this.messageEntities.get(index);
-        messageListItem.getPositions().remove(MessageViewHolderFactory.Position.BOTTOM);
-        messageListItem.getPositions().add(MessageViewHolderFactory.Position.MIDDLE);
-        MessageListItem messageListItem_ = new MessageListItem(previousMessage, messageListItem.getPositions(), messageListItem.isMine());
-        messageEntities.set(index, messageListItem_);
+            if (!previousMessage.getUserId().equals(useId)) return;
+            int index = this.messages.getValue().indexOf(previousMessage);
+            if (index == -1) return;
 
+            MessageListItem messageListItem = this.messageEntities.get(index);
+            messageListItem.getPositions().remove(MessageViewHolderFactory.Position.BOTTOM);
+            messageListItem.getPositions().add(MessageViewHolderFactory.Position.MIDDLE);
+            MessageListItem messageListItem_ = new MessageListItem(previousMessage, messageListItem.getPositions(), messageListItem.isMine());
+            messageEntities.set(index, messageListItem_);
+        }
     }
 
     private void setNextMessagePosition(String useId, Message nextMessage) {

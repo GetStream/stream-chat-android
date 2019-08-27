@@ -45,7 +45,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
-    private ConstraintLayout cl_message, headerView;
+    private ConstraintLayout cl_message;
     private TextView tv_text, tv_deleted;
     private RecyclerView rv_reaction;
 
@@ -59,8 +59,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     // Delivered Indicator
     private ReadStateView read_state;
-    private TextView tv_indicator_initials, tv_read_count;
-    private ImageView cv_indicator_avatar;
     private ProgressBar pb_indicator;
 
     private AttachmentListView alv_attachments;
@@ -74,7 +72,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageViewHolderFactory viewHolderFactory;
 
     private ChannelState channelState;
-    private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
@@ -131,10 +128,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         alv_attachments = itemView.findViewById(R.id.cl_attachment);
 
         read_state = itemView.findViewById(R.id.read_state);
-
-        tv_indicator_initials = itemView.findViewById(R.id.tv_indicator_initials);
-        tv_read_count = itemView.findViewById(R.id.tv_read_count);
-        cv_indicator_avatar = itemView.findViewById(R.id.cv_indicator_avatar);
         pb_indicator = itemView.findViewById(R.id.pb_indicator);
 
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
@@ -166,25 +159,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
 
-        // apply the style based on mine or theirs
-        if (messageListItem.isMine()) {
-            this.applyStyleMine();
-        } else {
-            this.applyStyleTheirs();
-        }
+        init();
+    }
 
+    private void init(){
         // Configure UIs
         configSendFailed();
         configMessageText();
         configAttachmentView();
         configReactionView();
         configReplyView();
-
         // apply position related style tweaks
-        applyPositionsStyle();
-        configGaps();
+        configPositionsStyle();
         // Configure Laytout Params
-
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
@@ -196,50 +183,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadState();
     }
     // endregion
-
-    private void applyStyleMine() {
-        if (StringUtility.isEmoji(message.getText())){
-            tv_text.setBackgroundResource(0);
-        }else{
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            tv_text.setBackground(background);
-        }
-        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-        tv_text.setTextColor(style.getMessageTextColorMine());
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
-    }
-
-    private void applyStyleTheirs() {
-        if (StringUtility.isEmoji(message.getText())){
-            tv_text.setBackgroundResource(0);
-        }else{
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            tv_text.setBackground(background);
-        }
-        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
-        tv_text.setTextColor(style.getMessageTextColorTheirs());
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
-    }
-
-    private void applyPositionsStyle() {
+    private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
         // BOTTOM position shows the user avatar & message time
-
-        // RESET the defaults
-        tv_username.setVisibility(View.GONE);
-        tv_messagedate.setVisibility(View.GONE);
-        avatar.setVisibility(View.GONE);
         tv_gap_header.setVisibility(View.GONE);
         tv_gap_sameUser.setVisibility(View.VISIBLE);
-
         // TOP
         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
             // extra spacing
             tv_gap_header.setVisibility(View.VISIBLE);
             tv_gap_sameUser.setVisibility(View.GONE);
-            // rounded corner
-
-
         }
         // BOTTOM
         if (positions.contains(MessageViewHolderFactory.Position.BOTTOM)) {
@@ -247,6 +200,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_username.setVisibility(View.VISIBLE);
             tv_messagedate.setVisibility(View.VISIBLE);
             avatar.setVisibility(View.VISIBLE);
+
             if (messageListItem.isTheirs()) {
                 tv_username.setVisibility(View.VISIBLE);
                 tv_username.setText(message.getUser().getName());
@@ -263,15 +217,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(message.getDate() + ", " + message.getTime());
+        }else{
+            tv_username.setVisibility(View.GONE);
+            tv_messagedate.setVisibility(View.GONE);
+            avatar.setVisibility(View.GONE);
         }
-    }
 
-    private void configGaps() {
-        // Header Gap
-        if (positions.contains(MessageViewHolderFactory.Position.TOP))
-            tv_gap_header.setVisibility(View.VISIBLE);
-        else
-            tv_gap_header.setVisibility(View.GONE);
         // Attach Gap
         tv_gap_attach.setVisibility(alv_attachments.getVisibility());
         if (alv_attachments.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
@@ -290,9 +241,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
             tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
-
         }
     }
+
     private void configSendFailed() {
         if (message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
@@ -349,8 +300,28 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .usePlugin(LinkifyPlugin.create())
                     .build();
         markwon.setMarkdown(tv_text, Utils.getMentionedText(message));
-
-
+        // background
+        if (messageListItem.isMine()) {
+            if (StringUtility.isEmoji(message.getText())){
+                tv_text.setBackgroundResource(0);
+            }else{
+                Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+                tv_text.setBackground(background);
+            }
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+            tv_text.setTextColor(style.getMessageTextColorMine());
+            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+        } else {
+            if (StringUtility.isEmoji(message.getText())){
+                tv_text.setBackgroundResource(0);
+            }else{
+                Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+                tv_text.setBackground(background);
+            }
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
+            tv_text.setTextColor(style.getMessageTextColorTheirs());
+            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
+        }
         // Set Click Listener
         tv_text.setOnClickListener(view -> {
             Log.d(TAG, "onMessageClick: " + position);
