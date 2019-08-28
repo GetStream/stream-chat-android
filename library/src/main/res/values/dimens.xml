@@ -26,7 +26,7 @@
     <dimen name="stream_message_corner_radius1">16dp</dimen>
     <dimen name="stream_message_corner_radius2">2dp</dimen>
     <dimen name="stream_message_stroke">1dp</dimen>
-    <dimen name="stream_message_margin_start">47dp</dimen>
+<!--    <dimen name="stream_message_margin_start">47dp</dimen>-->
     <dimen name="stream_message_gap">5px</dimen>
     <dimen name="stream_message_avatar_margin">10dp</dimen>
     <dimen name="stream_message_date_margin">5dp</dimen>

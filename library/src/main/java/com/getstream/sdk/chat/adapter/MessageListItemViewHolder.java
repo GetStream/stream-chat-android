@@ -132,7 +132,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_media_file = itemView.findViewById(R.id.tv_gap_media_file);
         tv_gap_attach = itemView.findViewById(R.id.tv_gap_attach);
 
-        alv_attachments = itemView.findViewById(R.id.cl_attachment);
+        alv_attachments = itemView.findViewById(R.id.attachmentview);
 
         read_state = itemView.findViewById(R.id.read_state);
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
@@ -181,6 +181,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // apply position related style tweaks
         configPositionsStyle();
         // Configure Laytout Params
+        configMarginStartEnd();
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
@@ -232,7 +233,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             tv_username.setVisibility(View.GONE);
             tv_messagedate.setVisibility(View.GONE);
-            avatar.setVisibility(View.GONE);
+            avatar.setVisibility(View.INVISIBLE);
         }
 
         // Attach Gap
@@ -450,6 +451,33 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     // region Layout Params
+    private void configMarginStartEnd(){
+        configMarginStartEnd_(tv_text);
+        configMarginStartEnd_(alv_attachments);
+        configMarginStartEnd_(tv_deleted);
+        configMarginStartEnd_(ll_send_failed);
+        configMarginStartEnd_(cl_reply);
+        configMarginStartEnd_(tv_username);
+        configMarginStartEnd_(tv_messagedate);
+    }
+
+    private void configMarginStartEnd_(View view){
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+        if (view.equals(tv_username)){
+            params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
+            view.setLayoutParams(params);
+            return;
+        }
+        if (view.equals(tv_messagedate)){
+            params.rightMargin = Utils.dpToPx(15 + 5) + avatarWidth;
+            view.setLayoutParams(params);
+            return;
+        }
+        params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
+        params.rightMargin = Utils.dpToPx(15 + 5) + avatarWidth;
+        view.setLayoutParams(params);
+    }
+
     private void configParamsMessageText() {
         if (tv_text.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
@@ -651,8 +679,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
 
-        params.leftMargin = 20;
-        params.rightMargin = 20;
+        params.leftMargin = Utils.dpToPx(3);
+        params.rightMargin = Utils.dpToPx(3);
         read_state.setLayoutParams(params);
     }
 

@@ -39,7 +39,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
-        cl_attachment = itemView.findViewById(R.id.cl_attachment);
+        cl_attachment = itemView.findViewById(R.id.attachmentview);
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
