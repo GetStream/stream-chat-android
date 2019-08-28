@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.utils;
 
 
+import android.util.Log;
+
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -40,16 +42,21 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
         Message newMessage = newMessageItem.getMessage();
 
         if (oldMessage == null && newMessage == null) {
+//            Log.i(TAG,"oldMessage == null && newMessage == null: true");
             return true;
         }
 
         if (oldMessage == null || newMessage == null) {
+//            Log.i(TAG,"oldMessage == null || newMessage == null: false");
             return false;
         }
 
         if (oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId())) {
+//            Log.i(TAG,"oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId(): true");
             return true;
         }
+        boolean equal = oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+//        Log.i(TAG,"default: " + equal);
 
         return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
@@ -58,6 +65,13 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         MessageListItem oldMessageItem = oldList.get(oldItemPosition);
         MessageListItem newMessageItem = newList.get(newItemPosition);
+
+        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
+        Log.i(TAG,"newItemPosition :" +newItemPosition);
+        try {
+            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
+            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
+        }catch (Exception e){}
 
         return newMessageItem.equals(oldMessageItem);
     }
