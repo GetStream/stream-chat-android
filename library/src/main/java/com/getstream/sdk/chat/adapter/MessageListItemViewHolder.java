@@ -35,6 +35,7 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -307,23 +308,22 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .build();
         markwon.setMarkdown(tv_text, Utils.getMentionedText(message));
         // background
+        if (StringUtility.isEmoji(message.getText())) {
+            tv_text.setBackgroundResource(0);
+        } else {
+            Drawable background;
+            if (message.getAttachments() != null && !message.getAttachments().isEmpty())
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
+            else
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+
+            tv_text.setBackground(background);
+        }
         if (messageListItem.isMine()) {
-            if (StringUtility.isEmoji(message.getText())) {
-                tv_text.setBackgroundResource(0);
-            } else {
-                Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-                tv_text.setBackground(background);
-            }
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
             tv_text.setTextColor(style.getMessageTextColorMine());
             tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
         } else {
-            if (StringUtility.isEmoji(message.getText())) {
-                tv_text.setBackgroundResource(0);
-            } else {
-                Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-                tv_text.setBackground(background);
-            }
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
             tv_text.setTextColor(style.getMessageTextColorTheirs());
             tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());

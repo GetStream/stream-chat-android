@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
     private MessageViewHolderFactory viewHolderFactory;
-
+    private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private MessageListViewStyle style;
     private Context context;
     private MessageListView.BubbleHelper bubbleHelper;
@@ -43,12 +43,12 @@ public class AttachmentListView extends RecyclerView {
 
     public AttachmentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        this.setLayoutManager(new LinearLayoutManager(context));
+        this.setLayoutManager(mLayoutManager);
         this.context = context;
     }
 
     public void setEntity(MessageListItem messageListItem) {
-        this.setLayoutManager(new LinearLayoutManager(context));
+        this.setLayoutManager(mLayoutManager);
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
         if (this.attachmentClickListener != null) {

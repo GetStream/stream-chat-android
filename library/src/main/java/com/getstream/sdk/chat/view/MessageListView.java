@@ -90,7 +90,6 @@ public class MessageListView extends RecyclerView {
         hasScrolledUp = false;
         initDefaultBubbleHelper();
     }
-
     // endregion
 
     // region Init
