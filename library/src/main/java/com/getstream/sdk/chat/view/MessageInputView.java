@@ -79,7 +79,7 @@ public class MessageInputView extends RelativeLayout
     };
     private AttachmentListener attachmentListener;
     // state
-    private Message editingMessage;
+//    private Message editingMessage;
     private boolean isTyping;
 
     // TODO Rename, it's not a function
@@ -175,7 +175,8 @@ public class MessageInputView extends RelativeLayout
 
     // Edit
     private void editMessage(Message message) {
-        binding.etMessage.setTag(message);
+        if (message == null) return;
+
         binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
             binding.etMessage.setText(message.getText());
@@ -259,7 +260,7 @@ public class MessageInputView extends RelativeLayout
 
 
     public boolean isEditing() {
-        return editingMessage != null;
+        return getEditMessage() != null;
     }
 
 //    public void editMessage(Message message) {
@@ -267,11 +268,11 @@ public class MessageInputView extends RelativeLayout
 //    }
 
     public Message getEditMessage() {
-        return editingMessage;
+        return viewModel.getEditMessage().getValue();
     }
 
     public void cancelEditMessage() {
-        editingMessage = null;
+        viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         this.clearFocus();
         sendFileFunction.fadeAnimationView(binding.ivBackAttachment, false);
@@ -300,7 +301,7 @@ public class MessageInputView extends RelativeLayout
         int id = v.getId();
         Log.i(TAG, "click click");
         if (id == R.id.iv_send) {
-            this.onSendMessage(binding.etMessage.getText().toString());
+            this.onSendMessage(binding.etMessage.getText().toString(), isEditing());
             this.stopTyping();
         } else if (id == R.id.iv_openAttach) {
             // open the attachment drawer
@@ -342,17 +343,35 @@ public class MessageInputView extends RelativeLayout
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
 
-    private void onSendMessage(String input) {
+    private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(sendFileFunction.getSelectedAttachments());
-        if (sendMessageListener != null) {
-            sendMessageListener.onSendMessage(m, new MessageCallback() {
+        if (!isEdit){
+            Message m = new Message();
+            m.setText(input);
+            m.setAttachments(sendFileFunction.getSelectedAttachments());
+            if (sendMessageListener != null) {
+                sendMessageListener.onSendMessage(m, new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        binding.ivSend.setEnabled(true);
+                        initSendMessage();
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        initSendMessage();
+                        binding.ivSend.setEnabled(true);
+                    }
+                });
+            }
+        }else{
+            getEditMessage().setText(input);
+            getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
+            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
-                    binding.ivSend.setEnabled(true);
                     initSendMessage();
+                    binding.ivSend.setEnabled(true);
                 }
 
                 @Override
@@ -362,6 +381,7 @@ public class MessageInputView extends RelativeLayout
                 }
             });
         }
+
     }
 
     private void initSendMessage() {
