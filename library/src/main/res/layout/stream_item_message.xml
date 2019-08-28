@@ -37,7 +37,7 @@
             android:background="@drawable/stream_round_reaction"
             android:paddingStart="@dimen/stream_reaction_margin"
             android:paddingEnd="@dimen/stream_reaction_margin"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"
@@ -184,8 +184,7 @@
             android:layout_width="18dp"
             android:layout_height="8dp"
             android:layout_marginTop="23dp"
-            android:background="@drawable/stream_ic_docket_outgoing"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/rv_reaction"
             app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
 
@@ -250,6 +249,5 @@
             app:layout_constraintTop_toTopOf="@id/avatar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

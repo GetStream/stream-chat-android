@@ -40,6 +40,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean hasNewMessages;
     private String lastMessageID;
 
+    List<MessageListItem> merged = new ArrayList<>();
 
     public MessageListItemLiveData(User currentUser,
                                    MutableLiveData<List<Message>> messages,
@@ -67,7 +68,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void broadcastValue() {
-        List<MessageListItem> merged = new ArrayList<>();
+        merged.clear();
         merged.addAll(messageEntities);
 
         // TODO replace with more efficient approach
@@ -127,6 +128,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new ArrayList<>();
             }
             listReads = reads;
+            try {
+                MessageListItem messageListItem = messageEntities.get(messageEntities.size() - 1);
+                MessageListItem readEntity = new MessageListItem(messageListItem.getMessage(), messageListItem.getPositions(), messageListItem.isMine());
+                messageEntities.set(messageEntities.size() - 1, readEntity);
+            }catch (Exception e){}
             broadcastValue();
         });
 
@@ -278,7 +284,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void setPreviousMessagePosition(Message previousMessage, Message nextMessage, String useId) {
-        if (previousMessage != null && nextMessage == null){
+        if (previousMessage != null && nextMessage == null) {
             if (TextUtils.isEmpty(useId)) return;
             if (previousMessage.getUserId() == null) return;
 
