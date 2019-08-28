@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -122,31 +123,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
-        this.reads.observe(owner, reads -> {
-            hasNewMessages = false;
-            if (reads == null) {
-                reads = new ArrayList<>();
-            }
-            listReads = reads;
-            try {
-                MessageListItem messageListItem = messageEntities.get(messageEntities.size() - 1);
-                MessageListItem readEntity = new MessageListItem(messageListItem.getMessage(), messageListItem.getPositions(), messageListItem.isMine());
-                messageEntities.set(messageEntities.size() - 1, readEntity);
-            }catch (Exception e){}
-            broadcastValue();
-        });
-
-        this.messages.observe(owner, messages -> {
-            Log.i(TAG, "observe messages");
-            progressNewMessages(messages, false);
-        });
-
-        this.loadMoreMessages.observe(owner, messages -> {
-            progressNewMessages(messages, true);
-        });
+        // message observe
+        this.messages.observe(owner, messages -> progressNewMessages(messages,false));
+        // upsertMessage observe
         this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
-            Log.i(TAG, "observe upsertMessage");
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
@@ -172,7 +153,26 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 progressNewMessages(Arrays.asList(message), false);
             }
         });
+        // reads observe
+        this.reads.observe(owner, reads -> {
+            hasNewMessages = false;
+            if (reads == null) {
+                reads = new ArrayList<>();
+            }
+            listReads = reads;
+            try {
+                MessageListItem messageListItem = messageEntities.get(messageEntities.size() - 1);
+                MessageListItem readEntity = new MessageListItem(messageListItem.getMessage(), messageListItem.getPositions(), messageListItem.isMine());
+                messageEntities.set(messageEntities.size() - 1, readEntity);
+            }catch (Exception e){}
+            new Handler().postDelayed(this::broadcastValue,200);
 
+        });
+        // loadMore observe
+        this.loadMoreMessages.observe(owner, messages -> {
+            progressNewMessages(messages, true);
+        });
+        // typing observe
         this.typing.observe(owner, users -> {
             // update
             hasNewMessages = false;

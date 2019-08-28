@@ -320,10 +320,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private void replaceMessage(Message oldMessage, Message newMessage) {
         int index = messages.getValue().indexOf(oldMessage);
+        newMessage.setDelivered(true);
         if (index != -1) {
             messages.getValue().set(index, newMessage);
         }
-        newMessage.setDelivered(true);
         upsertMessage.postValue(newMessage);
     }
 
