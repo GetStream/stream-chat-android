@@ -36,6 +36,7 @@
     <dimen name="stream_reaction_dialog_emoji_size">22sp</dimen>
     <dimen name="stream_reaction_dialog_emoji_margin">5sp</dimen>
     <dimen name="stream_reaction_dialog_corner_radius">30dp</dimen>
+    <dimen name="stream_reaction_margin">8dp</dimen>
     <!--Attachment Item-->
     <dimen name="stream_attach_image_width">250dp</dimen>
     <dimen name="stream_attach_image_height">200dp</dimen>

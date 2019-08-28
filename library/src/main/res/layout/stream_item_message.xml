@@ -37,8 +37,8 @@
             android:layout_marginStart="@dimen/stream_message_margin_start"
             android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:background="@drawable/stream_round_reaction"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
+            android:paddingStart="@dimen/stream_reaction_margin"
+            android:paddingEnd="@dimen/stream_reaction_margin"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"
@@ -184,7 +184,7 @@
 
         <TextView
             android:id="@+id/tv_reactiontail_space"
-            android:layout_width="1dp"
+            android:layout_width="1px"
             android:layout_height="3dp"
             app:layout_constraintStart_toEndOf="@+id/tv_text"
             app:layout_constraintTop_toTopOf="@+id/tv_text"/>

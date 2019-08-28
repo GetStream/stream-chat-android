@@ -8,7 +8,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -532,7 +531,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
             if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-                if (tv_text.getWidth() < rv_reaction.getWidth()) {
+                @DimenRes
+                int reactionMargin = context.getResources().getDimensionPixelSize(R.dimen.stream_reaction_margin);
+                if (tv_text.getWidth() + reactionMargin < rv_reaction.getWidth()) {
                     if (messageListItem.isMine())
                         params.endToEnd = R.id.tv_text;
                     else
