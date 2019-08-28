@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -96,12 +96,12 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         else
             iv_command_logo.setVisibility(View.GONE);
 
-        if (StringUtility.isNullOrEmpty(getAttachment().getText()))
+        if (TextUtils.isEmpty(getAttachment().getText()))
             tv_media_des.setVisibility(View.GONE);
         else
             tv_media_des.setVisibility(View.VISIBLE);
 
-        if (StringUtility.isNullOrEmpty(getAttachment().getTitle()))
+        if (TextUtils.isEmpty(getAttachment().getTitle()))
             tv_media_title.setVisibility(View.GONE);
         else
             tv_media_title.setVisibility(View.VISIBLE);

@@ -20,7 +20,7 @@
             android:layout_height="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_header" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_gap_sameUser"
@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/tv_gap_reaction"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
@@ -99,7 +99,7 @@
             android:layout_marginStart="@dimen/stream_message_margin_start"
             android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:background="@drawable/stream_round_outgoing_failed1"
-            android:gravity="right"
+            android:gravity="end"
             android:orientation="vertical"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
                 style="@style/text_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"

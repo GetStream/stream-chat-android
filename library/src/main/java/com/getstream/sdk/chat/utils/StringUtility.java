@@ -13,9 +13,6 @@ public class StringUtility {
         return sNumbers.toString();
     }
 
-    public static boolean isNullOrEmpty(String value) {
-        return value == null || value.length() == 0;
-    }
     public static boolean isValidImageUrl(@Nullable String url){
         if (TextUtils.isEmpty(url)) return false;
         return  !url.contains("svg");

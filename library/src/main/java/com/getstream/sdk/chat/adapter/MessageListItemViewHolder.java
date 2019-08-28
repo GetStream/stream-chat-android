@@ -238,7 +238,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
 
         // ONLY_FOR_DEBUG
-        if (false) {
+        if (true) {
             tv_gap_header.setBackgroundResource(R.color.stream_gap_header);
             tv_gap_sameUser.setBackgroundResource(R.color.stream_gap_message);
             try {
@@ -522,6 +522,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionRecycleView() {
         if (rv_reaction.getVisibility() != View.VISIBLE) return;
         rv_reaction.setVisibility(View.INVISIBLE);
+        iv_docket.setVisibility(View.INVISIBLE);
         rv_reaction.post(() -> {
             ConstraintSet set = new ConstraintSet();
             set.clone(cl_message);
@@ -552,6 +553,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             rv_reaction.setLayoutParams(params);
             rv_reaction.setVisibility(View.VISIBLE);
+            iv_docket.setVisibility(View.VISIBLE);
         });
     }
 
