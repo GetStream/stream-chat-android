@@ -114,7 +114,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 attachmentClickListener,
                 userClickListener);
 
-
     }
 
     public void setChannelState(ChannelState channelState) {
