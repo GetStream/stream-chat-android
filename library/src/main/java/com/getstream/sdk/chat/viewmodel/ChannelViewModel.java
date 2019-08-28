@@ -323,6 +323,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (index != -1) {
             messages.getValue().set(index, newMessage);
         }
+        newMessage.setDelivered(true);
         upsertMessage.postValue(newMessage);
     }
 

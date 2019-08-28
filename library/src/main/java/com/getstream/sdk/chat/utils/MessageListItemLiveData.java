@@ -227,6 +227,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
             // determine if the message is written by the current user
             boolean mine = message.getUser().equals(currentUser);
+            // set Delivered
+            if (mine && nextMessage != null)
+                message.setDelivered(true);
             // determine the position (top, middle, bottom)
             setPositions(previousMessage, message, nextMessage);
             setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
@@ -250,7 +253,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
                 this.messageEntities.add(messageListItem);
             }
-
             // set the previous message for the next iteration
             previousMessage = message;
         }

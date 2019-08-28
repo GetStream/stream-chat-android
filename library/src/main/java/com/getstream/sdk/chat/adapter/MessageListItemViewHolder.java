@@ -35,7 +35,6 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,7 +61,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     // Delivered Indicator
     private ReadStateView read_state;
-    private ProgressBar pb_indicator;
+    private ProgressBar pb_deliver;
+    private ImageView iv_deliver;
+
 
     private AttachmentListView alv_attachments;
     // Replay
@@ -89,6 +90,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private List<MessageViewHolderFactory.Position> positions;
 
+    @DimenRes int avatarWidth;
+
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
         style = s;
@@ -96,7 +99,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
-
+        avatarWidth = style.getAvatarWidth();
     }
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -132,7 +135,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         alv_attachments = itemView.findViewById(R.id.cl_attachment);
 
         read_state = itemView.findViewById(R.id.read_state);
-        pb_indicator = itemView.findViewById(R.id.pb_indicator);
+        pb_deliver = itemView.findViewById(R.id.pb_deliver);
+        iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
@@ -173,6 +177,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configAttachmentView();
         configReactionView();
         configReplyView();
+        configDelieveredIndicator();
         // apply position related style tweaks
         configPositionsStyle();
         // Configure Laytout Params
@@ -239,7 +244,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
 
         // ONLY_FOR_DEBUG
-        if (true) {
+        if (false) {
             tv_gap_header.setBackgroundResource(R.color.stream_gap_header);
             tv_gap_sameUser.setBackgroundResource(R.color.stream_gap_message);
             try {
@@ -248,6 +253,31 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
             tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
+        }
+    }
+
+    private void configDelieveredIndicator() {
+        iv_deliver.setVisibility(View.GONE);
+        pb_deliver.setVisibility(View.GONE);
+        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
+        if (!readBy.isEmpty() || !messageListItem.isMine()) return;
+        if (!messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM))
+            return;
+        if (message.isDelivered()) {
+            iv_deliver.setVisibility(View.VISIBLE);
+        } else {
+            pb_deliver.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void configParamsDeliveredIndicator() {
+        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
+
+        if (readBy.size() == 0) {
+            read_state.setVisibility(View.GONE);
+        } else {
+            read_state.setVisibility(View.VISIBLE);
+            read_state.setReads(readBy, messageListItem.isTheirs(), style);
         }
     }
 
@@ -330,13 +360,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         // Set Click Listener
         tv_text.setOnClickListener(view -> {
-            Log.d(TAG, "onMessageClick: " + position);
+            Log.i(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
                 messageClickListener.onMessageClick(message, position);
             }
         });
         tv_text.setOnLongClickListener(view -> {
-            Log.d(TAG, "Long onUserClick: " + position);
+            Log.i(TAG, "Long onUserClick: " + position);
             if (this.messageLongClickListener != null) {
                 view.setTag(String.valueOf(position));
                 this.messageLongClickListener.onMessageLongClick(message);
@@ -453,17 +483,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_messagedate.setLayoutParams(params);
     }
 
-    private void configParamsDeliveredIndicator() {
-        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-
-        if (readBy.size() == 0) {
-            read_state.setVisibility(View.GONE);
-        } else {
-            read_state.setVisibility(View.VISIBLE);
-            read_state.setReads(readBy, messageListItem.isTheirs(), style);
-        }
-    }
-
     private void configParamsReactionTailSpace() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintSet set = new ConstraintSet();
@@ -567,6 +586,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.setMarginEnd(0);
             params.horizontalBias = 0f;
         } else {
+            marginStart = Utils.dpToPx(15);
             params.setMarginStart(0);
             params.setMarginEnd(marginStart);
             params.horizontalBias = 1f;
