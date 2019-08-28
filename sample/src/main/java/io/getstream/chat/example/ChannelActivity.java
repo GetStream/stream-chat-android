@@ -68,7 +68,7 @@ public class ChannelActivity extends AppCompatActivity
 
         // set listeners
         binding.messageList.setMessageClickListener(this);
-        binding.messageList.setMessageLongClickListener(this);
+//        binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
         binding.messageInput.setOpenCameraViewListener(this);

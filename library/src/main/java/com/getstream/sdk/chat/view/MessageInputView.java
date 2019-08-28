@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +27,8 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
@@ -50,7 +53,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
  * - Data binding
  */
 public class MessageInputView extends RelativeLayout
-        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener, MessageListView.MessageEditListener {
 
     final String TAG = MessageInputView.class.getSimpleName();
     // our connection to the channel scope
@@ -166,6 +169,34 @@ public class MessageInputView extends RelativeLayout
                     break;
             }
         });
+
+        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+    }
+
+    // Edit
+    private void editMessage(Message message) {
+        binding.etMessage.setTag(message);
+        binding.etMessage.requestFocus();
+        if (!TextUtils.isEmpty(message.getText())) {
+            binding.etMessage.setText(message.getText());
+            binding.etMessage.setSelection(binding.etMessage.getText().length());
+        }
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            for (Attachment attachment : message.getAttachments())
+                attachment.config.setUploaded(true);
+
+            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                String fileType = message.getAttachments().get(0).getMime_type();
+                if (fileType.equals(ModelType.attach_mime_mov) ||
+                        fileType.equals(ModelType.attach_mime_mp4)) {
+                    sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+                } else {
+                    sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
+                }
+            } else {
+                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+            }
+        }
     }
 
     private void initAttachmentUI() {
@@ -231,9 +262,9 @@ public class MessageInputView extends RelativeLayout
         return editingMessage != null;
     }
 
-    public void editMessage(Message message) {
-        editingMessage = message;
-    }
+//    public void editMessage(Message message) {
+//        editingMessage = message;
+//    }
 
     public Message getEditMessage() {
         return editingMessage;
@@ -366,6 +397,11 @@ public class MessageInputView extends RelativeLayout
         if (typingListener != null) {
             typingListener.onKeystroke();
         }
+    }
+
+    @Override
+    public void onMessageEdit(Message message) {
+
     }
 
     // region Listeners

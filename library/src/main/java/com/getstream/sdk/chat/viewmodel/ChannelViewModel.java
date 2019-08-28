@@ -77,6 +77,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
+    private MutableLiveData<Message> editMessage;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LazyQueryChannelLiveData<List<Message>> loadMoreMessages;
@@ -141,6 +142,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         typingState = new HashMap<>();
 
+        editMessage = new MutableLiveData<>();
+
         channelState = new MutableLiveData<>(channel.getChannelState());
         watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
@@ -197,6 +200,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public LiveData<List<User>> getTypingUsers() {
         return typingUsers;
+    }
+
+    public MutableLiveData<Message> getEditMessage() {
+        return editMessage;
+    }
+
+    public void setEditMessage(Message editMessage) {
+        this.editMessage.postValue(editMessage);
     }
 
     // endregion

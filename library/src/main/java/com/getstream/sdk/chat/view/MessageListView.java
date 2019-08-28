@@ -50,14 +50,16 @@ public class MessageListView extends RecyclerView {
 
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
+    private LinearLayoutManager layoutManager;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
 
     private MessageClickListener messageClickListener;
-    private LinearLayoutManager layoutManager;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private MessageEditListener messageEditListener;
+    private ThreadListener threadListener;
     private UserClickListener userClickListener;
 
 //    private int firstVisible;
@@ -86,9 +88,21 @@ public class MessageListView extends RecyclerView {
     private void init(Context context) {
         layoutManager = new LinearLayoutManager(context);
         layoutManager.setStackFromEnd(true);
+
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
+        initListeners();
+    }
+
+    private void initListeners(){
+        messageEditListener = message -> {
+            viewModel.setEditMessage(message);
+        };
+
+        threadListener = message -> {
+
+        };
     }
     // endregion
 
@@ -275,7 +289,7 @@ public class MessageListView extends RecyclerView {
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
         setUserClickListener(userClickListener);
-
+        setMessageLongClickListener(messageLongClickListener);
         adapter.setChannelState(getChannel().getChannelState());
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -435,6 +449,8 @@ public class MessageListView extends RecyclerView {
                         .setChannel(viewModel.getChannel())
                         .setMessage(message)
                         .setStyle(style)
+                        .setMessageEditListener(messageEditListener)
+                        .setThreadListener(threadListener)
                         .show();
             });
         }
@@ -492,6 +508,15 @@ public class MessageListView extends RecyclerView {
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
     }
+
+    public interface MessageEditListener {
+        void onMessageEdit(Message message);
+    }
+
+    public interface ThreadListener {
+        void onThread(Message message);
+    }
+
     public interface UserClickListener {
         void onUserClick(User user);
     }

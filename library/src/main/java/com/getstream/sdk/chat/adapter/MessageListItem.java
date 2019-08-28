@@ -22,7 +22,6 @@ public class MessageListItem {
     private List<ChannelUserRead> messageReadBy;
     private List<MessageViewHolderFactory.Position> positions;
     private Date date;
-    private MessageViewHolderFactory.Position messagePosition;
     private Boolean messageMine;
     private List<User> users;
 
@@ -170,8 +169,8 @@ public class MessageListItem {
             Log.i(TAG,"case:12: false");// case:12
             return false;
         }
-        boolean equel = super.equals(obj);
-        Log.i(TAG,"default: " + equel);
+//        boolean equel = super.equals(obj);
+//        Log.i(TAG,"default: " + equel);
         return super.equals(obj);
     }
 }
