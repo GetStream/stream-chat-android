@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
 //        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
 //        FilterObject filter = and(in("members", USER_ID), in("type", "messaging"));
-//        FilterObject filter = and(eq("name", "General"), in("type", "messaging"));
-        FilterObject filter = and(in("type", "messaging"), eq("example", 1));
+        FilterObject filter = in("type", "messaging");
+//        FilterObject filter = and(in("type", "messaging"), eq("example", 1));
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
 //        viewModel.setChannelSort(new QuerySort().desc("updated_at"));
