@@ -379,6 +379,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configAttachmentView() {
+        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+            alv_attachments.setVisibility(View.GONE);
+            return;
+        }
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
         } else {

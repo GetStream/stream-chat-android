@@ -549,7 +549,8 @@ public class MessageListView extends RecyclerView {
                 } else {
                     List<String> imageUrls = new ArrayList<>();
                     for (Attachment a : message.getAttachments()) {
-                        imageUrls.add(a.getImageURL());
+                        if (a.getType().equals(ModelType.attach_image))
+                            imageUrls.add(a.getImageURL());
                     }
                     int position = message.getAttachments().indexOf(attachment);
 
