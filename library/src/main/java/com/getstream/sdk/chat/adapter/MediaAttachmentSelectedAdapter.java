@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,9 +14,12 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.utils.Utils;
 
 import java.io.File;
 import java.util.List;
+
+import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
@@ -65,6 +69,12 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
+            int cornerRadius = Utils.dpToPx(16);
+            binding.ivMedia.setShape(context, new DrawableBuilder()
+                    .rectangle()
+                    .solidColor(Color.BLACK)
+                    .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+                    .build());
             if (attachment.config.getFilePath() != null) {
                 File file = new File(attachment.config.getFilePath());
                 if (file.exists()) {

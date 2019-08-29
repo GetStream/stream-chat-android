@@ -41,18 +41,25 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
         Message oldMessage = oldMessageItem.getMessage();
         Message newMessage = newMessageItem.getMessage();
 
+//        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
+//        Log.i(TAG,"newItemPosition :" +newItemPosition);
+//        try {
+//            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
+//            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
+//        }catch (Exception e){}
+
         if (oldMessage == null && newMessage == null) {
-//            Log.i(TAG,"oldMessage == null && newMessage == null: true");
+//            Log.i(TAG,"case:0: true");
             return true;
         }
 
         if (oldMessage == null || newMessage == null) {
-//            Log.i(TAG,"oldMessage == null || newMessage == null: false");
+//            Log.i(TAG,"case:1: false");
             return false;
         }
 
         if (oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId())) {
-//            Log.i(TAG,"oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId(): true");
+//            Log.i(TAG,"case:2: true");
             return true;
         }
         boolean equal = oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
@@ -66,12 +73,12 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
         MessageListItem oldMessageItem = oldList.get(oldItemPosition);
         MessageListItem newMessageItem = newList.get(newItemPosition);
 
-        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
-        Log.i(TAG,"newItemPosition :" +newItemPosition);
-        try {
-            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
-            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
-        }catch (Exception e){}
+//        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
+//        Log.i(TAG,"newItemPosition :" +newItemPosition);
+//        try {
+//            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
+//            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
+//        }catch (Exception e){}
 
         return newMessageItem.equals(oldMessageItem);
     }

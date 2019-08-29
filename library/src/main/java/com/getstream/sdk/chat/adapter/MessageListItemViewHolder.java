@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -388,7 +389,17 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);
             alv_attachments.setLongClickListener(messageLongClickListener);
-
+            boolean hasBackground = false;
+            for (Attachment attachment : message.getAttachments()){
+                if(!TextUtils.isEmpty(attachment.getText())){
+                    hasBackground = true;
+                    break;
+                }
+            }
+            if (!hasBackground) {
+                alv_attachments.setBackgroundResource(0);
+                return;
+            }
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             alv_attachments.setBackground(background);
         }

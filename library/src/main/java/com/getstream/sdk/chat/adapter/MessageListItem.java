@@ -98,79 +98,76 @@ public class MessageListItem {
     @Override
     public boolean equals(@Nullable Object obj) {
 
-        if (obj == null) {// case:0
-            Log.i(TAG,"case:0: false");
+        if (obj == null) {
+//            Log.i(TAG,"case:0: false");
             return false;
         }
-//        if (!this.equals(obj)) {// case:1
-//            Log.i(TAG,"case:1: false");
-//            return false;
-//        }
 
         MessageListItem other = (MessageListItem) obj;
 
         Message newMessage = this.getMessage();
         Message oldMessage = other.getMessage();
 
-        if (oldMessage == null || newMessage == null) {// case:2
-            Log.i(TAG,"case:2: false");
+        if (oldMessage == null || newMessage == null) {
+//            Log.i(TAG,"case:2: false");
             return false;
         }
 
 
-        if (!oldMessage.equals(newMessage)) {// case:3
-            Log.i(TAG,"case:3: false");
+        if (!oldMessage.equals(newMessage)) {
+//            Log.i(TAG,"case:3: false");
             return false;
         }
 
         if (oldMessage.getUpdatedAt() != null && oldMessage.getUpdatedAt().getTime() < newMessage.getUpdatedAt().getTime()) {
-            Log.i(TAG,"case:4: false");// case:4
+//            Log.i(TAG,"case:4: false");
             return false;
         }
 
         if (oldMessage.getText() == null && newMessage.getText() != null){
-            Log.i(TAG,"case:5: false");// case:5
+//            Log.i(TAG,"case:5: false");
             return false;
         }
 
         if (!TextUtils.equals(oldMessage.getText(), newMessage.getText())){
-            Log.i(TAG,"case:6: false");// case:6
+//            Log.i(TAG,"case:6: false");
             return false;
         }
 
 
         if (oldMessage.getAttachments() == null && newMessage.getAttachments() != null){
-            Log.i(TAG,"case:7: false");// case:7
+//            Log.i(TAG,"case:7: false");
             return false;
         }
 
         if (!oldMessage.getAttachments().equals(newMessage.getAttachments())){
-            Log.i(TAG,"case:8: false");// case:8
+//            Log.i(TAG,"case:8: false");
             return false;
         }
 
         if (oldMessage.getReactionCounts() != null && oldMessage.getReactionCounts() == null && newMessage.getReactionCounts() != null){
-            Log.i(TAG,"case:9: false");// case:9
+//            Log.i(TAG,"case:9: false");
             return false;
         }
 
         if (oldMessage.getReactionCounts() != null && !oldMessage.getReactionCounts().equals(newMessage.getReactionCounts())){
-            Log.i(TAG,"case:10: false");// case:10
+//            Log.i(TAG,"case:10: false");
             return false;
         }
 
         if (other.getMessageReadBy().isEmpty() && !this.getMessageReadBy().isEmpty() ){
-            Log.i(TAG,"case:11: false");// case:11
+//            Log.i(TAG,"case:11: false");
             return false;
         }
 
 
         if (!other.getMessageReadBy().isEmpty() && !other.getMessageReadBy().equals(this.getMessageReadBy())) {
-            Log.i(TAG,"case:12: false");// case:12
+//            Log.i(TAG,"case:12: false");
             return false;
         }
-//        boolean equel = super.equals(obj);
+        boolean equel = super.equals(obj);
 //        Log.i(TAG,"default: " + equel);
+
         return super.equals(obj);
     }
 }

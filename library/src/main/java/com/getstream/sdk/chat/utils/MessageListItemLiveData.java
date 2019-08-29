@@ -188,7 +188,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public void progressNewMessages(List<Message> messages, boolean isLoadMoreMessages) {
 
-        if (messages == null || messages.size() == 0) return;
+        if (messages == null || messages.isEmpty()) return;
         // update based on messages
         hasNewMessages = false;
         String newlastMessageID = messages.get(messages.size() - 1).getId();
