@@ -456,6 +456,10 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setMessageEditListener(MessageEditListener messageEditListener) {
+        this.messageEditListener = messageEditListener;
+    }
+
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
 

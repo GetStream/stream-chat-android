@@ -55,6 +55,7 @@
             android:id="@+id/attachmentview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
@@ -120,7 +121,6 @@
 
         <TextView
             android:id="@+id/tv_text"
-            style="@style/message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="10dp"
@@ -206,13 +206,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_username"
-            app:layout_constraintTop_toBottomOf="@+id/cl_reply" />
+            app:layout_constraintTop_toBottomOf="@+id/cl_reply"
+            app:layout_constraintVertical_bias="1" />
 
         <com.getstream.sdk.chat.view.ReadStateView
             android:id="@+id/read_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/tv_text"
             app:layout_constraintEnd_toStartOf="@id/tv_text" />
 
