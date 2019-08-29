@@ -316,7 +316,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     private MessageListItem getMessageItemFromMessage(Message message){
         for (MessageListItem item : this.messageEntities){
-            if (item.getMessage() == null) continue;
+            if (item.getMessage() == null || TextUtils.isEmpty(item.getMessage().getId())) continue;
             if (item.getMessage().getId().equals(message.getId()))
                 return item;
         }
