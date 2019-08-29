@@ -447,7 +447,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     @Override
     public void onSendMessage(Message message, MessageCallback callback) {
-        Log.i(TAG, "onSendMessage handler called at viewmodel level");
+        // send typing.stop immediately
+        stopTyping();
+
         // immediately add the message
         message.setUser(client().getUser());
         message.setCreatedAt(new Date());
@@ -560,6 +562,19 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
+    public synchronized void stopTyping() {
+        lastKeystrokeAt = null;
+        channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+            }
+        });
+    }
+
     /**
      * Service thread to keep state neat and clean. Ticks twice per second
      */
@@ -586,16 +601,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
 
             if (timeSinceLastKeystroke > 5000) {
-                lastKeystrokeAt = null;
-                channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
-                    @Override
-                    public void onSuccess(EventResponse response) {
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                    }
-                });
+                stopTyping();
             }
         }
 
