@@ -132,21 +132,19 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             int index = this.messages.getValue().indexOf(message);
             if (index != -1) {
-                try {
-                    MessageListItem messageListItem = this.messageEntities.get(index);
+                MessageListItem messageListItem = getMessageItemFromMessage(message);
+                if (messageListItem != null){
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
-
                     // refactor previous Message's Position
                     Message previousMessage, nextMessage;
                     previousMessage = (index > 0) ? this.messages.getValue().get(index - 1) : null;
                     nextMessage = (index < this.messages.getValue().size() - 1) ? this.messages.getValue().get(index + 1) : null;
                     messageListItem_.setPositions(setPositions(previousMessage, message, nextMessage));
                     setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
-                    messageEntities.set(index, messageListItem_);
+                    messageEntities.set(this.messageEntities.indexOf(messageListItem), messageListItem_);
                     broadcastValue();
-
-                } catch (Exception e) {
+                }else{
                     progressNewMessages(Arrays.asList(message), false);
                 }
             } else {
@@ -292,11 +290,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             int index = this.messages.getValue().indexOf(previousMessage);
             if (index == -1) return;
 
-            MessageListItem messageListItem = this.messageEntities.get(index);
+            MessageListItem messageListItem = getMessageItemFromMessage(previousMessage);
+            if (messageListItem == null) return;
             messageListItem.getPositions().remove(MessageViewHolderFactory.Position.BOTTOM);
             messageListItem.getPositions().add(MessageViewHolderFactory.Position.MIDDLE);
             MessageListItem messageListItem_ = new MessageListItem(previousMessage, messageListItem.getPositions(), messageListItem.isMine());
-            messageEntities.set(index, messageListItem_);
+            messageEntities.set(messageEntities.indexOf(messageListItem), messageListItem_);
         }
     }
 
@@ -308,11 +307,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         int index = this.messages.getValue().indexOf(nextMessage);
         if (index == -1) return;
-
-        MessageListItem messageListItem = this.messageEntities.get(index);
+        MessageListItem messageListItem = getMessageItemFromMessage(nextMessage);
+        if (messageListItem == null) return;
         messageListItem.getPositions().remove(MessageViewHolderFactory.Position.TOP);
         MessageListItem messageListItem_ = new MessageListItem(nextMessage, messageListItem.getPositions(), messageListItem.isMine());
-        messageEntities.set(index, messageListItem_);
+        messageEntities.set(messageEntities.indexOf(messageListItem), messageListItem_);
     }
 
     private MessageListItem getMessageItemFromMessage(Message message){
