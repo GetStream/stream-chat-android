@@ -249,13 +249,13 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 this.messages.getValue().add(0, message);
                 this.messageEntities.add(0, messageListItem);
                 // date separator
-//                if (previousMessage != null && !isSameDay(previousMessage, message))
-//                    this.messageEntities.add(0, new MessageListItem(message.getCreatedAt()));
+                if (previousMessage != null && !isSameDay(previousMessage, message))
+                    this.messageEntities.add(0, new MessageListItem(message.getCreatedAt()));
 
             } else {
                 // date separator
-//                if (previousMessage != null && !isSameDay(previousMessage, message))
-//                    this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
+                if (previousMessage != null && !isSameDay(previousMessage, message))
+                    this.messageEntities.add(new MessageListItem(message.getCreatedAt()));
 
                 this.messageEntities.add(messageListItem);
             }
@@ -315,6 +315,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         messageEntities.set(index, messageListItem_);
     }
 
+    private MessageListItem getMessageItemFromMessage(Message message){
+        for (MessageListItem item : this.messageEntities){
+            if (item.getMessage() == null) continue;
+            if (item.getMessage().getId().equals(message.getId()))
+                return item;
+        }
+        return null;
+    }
     public Boolean getHasNewMessages() {
         return hasNewMessages;
     }
