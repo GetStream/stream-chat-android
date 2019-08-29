@@ -77,7 +77,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (r.getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
-            Log.i(TAG, "Setting read state for user: " + r.getUser().getId());
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
                 // skip things that aren't messages
@@ -86,11 +85,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 }
                 if (r.getLastRead().getTime() > e.getMessage().getCreatedAt().getTime()) {
                     // set the read state on this entity
+                    // TODO: race bomb here (e.addMessageReadBy), we need to change this into:
+                    // eCopy = e.copy();
+                    // eCopy.addMessageReadBy(r);
+                    // merged.set(i, eCopy);
                     e.addMessageReadBy(r);
                     // we only show it for the last message, so break
                     break;
                 }
-
             }
         }
 
@@ -118,6 +120,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new ArrayList<ChannelUserRead>();
             }
             listReads = reads;
+            Log.i(TAG, "broadcast because reads changed");
             broadcastValue();
         });
         this.messages.observe(owner, messages -> {
@@ -171,7 +174,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
 
             this.messageEntities = entities;
-
+            Log.i(TAG, "broadcast because messages changed");
             broadcastValue();
         });
         this.typing.observe(owner, users -> {
@@ -183,6 +186,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
+            Log.i(TAG, "broadcast because typing changed");
             broadcastValue();
         });
 

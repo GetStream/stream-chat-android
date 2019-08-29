@@ -11,6 +11,7 @@ import androidx.lifecycle.Transformations;
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
@@ -20,11 +21,13 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
@@ -59,20 +62,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private AtomicBoolean isLoadingMore;
     private boolean reachedEndOfPagination;
     private Date lastMarkRead;
-    private StreamLifecycleObserver lifecycleObserver;
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-
-        if (looper != null) {
-            looper.interrupt();
-        }
-
-        if (channelSubscriptionId != 0) {
-            channel.removeEventHandler(channelSubscriptionId);
-        }
-    }
+    private Date lastKeystrokeAt;
 
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
@@ -138,7 +129,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         looper = new Looper(markRead);
         looper.start();
 
-        lifecycleObserver = new StreamLifecycleObserver(this);
+        new StreamLifecycleObserver(this);
         initEventHandlers();
         setupConnectionRecovery();
     }
@@ -531,6 +522,19 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+
+        if (looper != null) {
+            looper.interrupt();
+        }
+
+        if (channelSubscriptionId != 0) {
+            channel.removeEventHandler(channelSubscriptionId);
+        }
+    }
+
     private void setupConnectionRecovery(){
         client().addEventHandler(new ChatEventHandler() {
             @Override
@@ -541,6 +545,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         });
     }
 
+    public synchronized void keystroke() {
+        if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
+            lastKeystrokeAt = new Date();
+            channel.sendEvent(EventType.TYPING_START, new EventCallback() {
+                @Override
+                public void onSuccess(EventResponse response) {
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                }
+            });
+        }
+    }
+
     /**
      * Service thread to keep state neat and clean. Ticks twice per second
      */
@@ -548,13 +567,36 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         private Callable<Void> markReadFn;
         private AtomicInteger pendingMarkReadRequests;
 
-        public Looper(Callable<Void> markReadFn) {
+        Looper(Callable<Void> markReadFn) {
             this.markReadFn = markReadFn;
             pendingMarkReadRequests = new AtomicInteger(0);
         }
 
-        public void markRead(){
+        void markRead(){
             pendingMarkReadRequests.incrementAndGet();
+        }
+
+        private void sendStoppedTyping(){
+
+            // typing did not start quit
+            if (lastKeystrokeAt == null) {
+                return;
+            }
+
+            long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
+
+            if (timeSinceLastKeystroke > 5000) {
+                lastKeystrokeAt = null;
+                channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
+                    @Override
+                    public void onSuccess(EventResponse response) {
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                    }
+                });
+            }
         }
 
         private void throttledMarkRead() {
@@ -574,6 +616,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             while (!Thread.currentThread().isInterrupted()) {
                 cleanupTypingUsers();
                 throttledMarkRead();
+                sendStoppedTyping();
 
                 try {
                     Thread.sleep(500);
