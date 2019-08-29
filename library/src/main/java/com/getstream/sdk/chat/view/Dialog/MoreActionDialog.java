@@ -21,23 +21,24 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 public class MoreActionDialog extends Dialog {
-    Channel channel;
+
     Message message;
+    ChannelViewModel viewModel;
     MessageListViewStyle style;
-    MessageListView.MessageEditListener messageEditListener;
-    MessageListView.ThreadListener threadListener;
 
     public MoreActionDialog(@NonNull Context context) {
         super(context);
     }
 
-    public MoreActionDialog setChannel(Channel channel) {
-        this.channel = channel;
+    public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
+        this.viewModel = viewModel;
         init();
         return this;
     }
+
 
     public MoreActionDialog setMessage(Message message) {
         this.message = message;
@@ -51,18 +52,10 @@ public class MoreActionDialog extends Dialog {
         return this;
     }
 
-    public MoreActionDialog setMessageEditListener(MessageListView.MessageEditListener messageEditListener) {
-        this.messageEditListener = messageEditListener;
-        return this;
-    }
 
-    public MoreActionDialog setThreadListener(MessageListView.ThreadListener threadListener) {
-        this.threadListener = threadListener;
-        return this;
-    }
 
     public void init() {
-        if (channel == null || message == null || style == null)
+        if (viewModel == null || message == null || style == null)
             return;
 
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId()))
@@ -72,12 +65,11 @@ public class MoreActionDialog extends Dialog {
             TextView tv_edit = findViewById(com.getstream.sdk.chat.R.id.tv_edit);
             TextView tv_delete = findViewById(com.getstream.sdk.chat.R.id.tv_delete);
             tv_edit.setOnClickListener(view -> {
-                if (messageEditListener != null)
-                    messageEditListener.onMessageEdit(message);
+                viewModel.setEditMessage(message);
                 dismiss();
             });
             tv_delete.setOnClickListener(view -> {
-                channel.deleteMessage(message,
+                viewModel.getChannel().deleteMessage(message,
                         new MessageCallback() {
                             @Override
                             public void onSuccess(MessageResponse response) {
@@ -101,7 +93,7 @@ public class MoreActionDialog extends Dialog {
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(channel,
+        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                 message,
                 false,
                 style,
@@ -109,9 +101,7 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setAdapter(reactionAdapter);
 
         tv_reply.setOnClickListener((View v) -> {
-            if (threadListener != null){
-                threadListener.onThread(message);
-            }
+
             dismiss();
         });
         tv_cancel.setOnClickListener((View v) -> dismiss());

@@ -53,7 +53,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
  * - Data binding
  */
 public class MessageInputView extends RelativeLayout
-        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener, MessageListView.MessageEditListener {
+        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
 
     final String TAG = MessageInputView.class.getSimpleName();
     // our connection to the channel scope
@@ -419,10 +419,6 @@ public class MessageInputView extends RelativeLayout
         }
     }
 
-    @Override
-    public void onMessageEdit(Message message) {
-
-    }
 
     // region Listeners
 

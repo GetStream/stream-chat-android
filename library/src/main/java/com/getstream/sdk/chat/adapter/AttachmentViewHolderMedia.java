@@ -83,7 +83,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         // Set Click Listener
         iv_media_thumb.setOnClickListener(this);
         iv_media_thumb.setOnLongClickListener(this);
-        if (!attachUrl.contains("https:"))
+        if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(getContext())
                 .load(attachUrl)

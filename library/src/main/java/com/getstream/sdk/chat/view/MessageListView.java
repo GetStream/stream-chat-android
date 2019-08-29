@@ -58,8 +58,6 @@ public class MessageListView extends RecyclerView {
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
-    private MessageEditListener messageEditListener;
-    private ThreadListener threadListener;
     private UserClickListener userClickListener;
 
 //    private int firstVisible;
@@ -92,18 +90,9 @@ public class MessageListView extends RecyclerView {
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
-        initListeners();
     }
 
-    private void initListeners(){
-        messageEditListener = message -> {
-            viewModel.setEditMessage(message);
-        };
 
-        threadListener = message -> {
-
-        };
-    }
     // endregion
 
     // region Init
@@ -446,19 +435,14 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageLongClickListener(message -> {
                 new MoreActionDialog(getContext())
-                        .setChannel(viewModel.getChannel())
+                        .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
-                        .setMessageEditListener(messageEditListener)
-                        .setThreadListener(threadListener)
                         .show();
             });
         }
     }
 
-    public void setMessageEditListener(MessageEditListener messageEditListener) {
-        this.messageEditListener = messageEditListener;
-    }
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
@@ -511,14 +495,6 @@ public class MessageListView extends RecyclerView {
 
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
-    }
-
-    public interface MessageEditListener {
-        void onMessageEdit(Message message);
-    }
-
-    public interface ThreadListener {
-        void onThread(Message message);
     }
 
     public interface UserClickListener {
