@@ -174,7 +174,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onNotificationMessageNew(Event event) {
-                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
+                Channel channel = client().getChannelByCid(event.getCid());
+                if (channel == null) return;
+                Message lastMessage = channel.getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
@@ -183,7 +185,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onMessageNew(Event event) {
-                Message lastMessage = event.getChannel().getChannelState().getLastMessage();
+                Channel channel = client().getChannelByCid(event.getCid());
+                if (channel == null) return;
+                Message lastMessage = channel.getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
@@ -203,7 +207,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Event: Message read by user " + event.getUser().getName());
-                List<ChannelUserRead> reads = event.getChannel().getChannelState().getLastMessageReads();
+                Channel channel = client().getChannelByCid(event.getCid());
+                if (channel == null) return;
+                List<ChannelUserRead> reads = channel.getChannelState().getLastMessageReads();
                 if (reads.size() > 0) {
                     Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
                 }
@@ -211,7 +217,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             }
             @Override
             public void onUserWatchingStart(Event event){
-//                Channel channel = client().getChannelByCid(event.getCid());
+                Channel channel = client().getChannelByCid(event.getCid());
             }
         });
     }
