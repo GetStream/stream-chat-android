@@ -23,9 +23,6 @@ import com.bumptech.glide.request.target.Target;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
-import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayer;
-import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView;
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -34,7 +31,7 @@ public class AttachmentActivity extends AppCompatActivity {
 
     private final String TAG = AttachmentActivity.class.getSimpleName();
     WebView webView;
-    YouTubePlayerView youtube_player_view;
+
     ImageView iv_image;
     ProgressBar progressBar;
 
@@ -43,7 +40,6 @@ public class AttachmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stream_activity_attachment);
 
-        youtube_player_view = findViewById(R.id.youtube_player_view);
         webView = findViewById(R.id.webView);
         iv_image = findViewById(R.id.iv_image);
         progressBar = findViewById(R.id.progressBar);
@@ -63,7 +59,6 @@ public class AttachmentActivity extends AppCompatActivity {
 
     private void configUIs() {
         iv_image.setVisibility(View.GONE);
-        youtube_player_view.setVisibility(View.GONE);
         webView.setVisibility(View.GONE);
         // WebView
         webView.getSettings().setJavaScriptEnabled(true);
@@ -77,8 +72,9 @@ public class AttachmentActivity extends AppCompatActivity {
     private void showAttachment(final String type, final String url) {
         switch (type) {
             case ModelType.attach_video:
-                if(url.toLowerCase().equals("youtube")){
-                    playYoutube(url);
+                if(url.toLowerCase().contains("youtube.com")){
+//                    playYoutube(url);
+                    loadUrlToWeb("https://www.youtube.com/embed/8X5gXIQmY-E");
                 }else{
                     loadUrlToWeb(url);
                 }
@@ -106,35 +102,12 @@ public class AttachmentActivity extends AppCompatActivity {
      */
     public void loadUrlToWeb(String url) {
         iv_image.setVisibility(View.GONE);
-        youtube_player_view.setVisibility(View.GONE);
         webView.setVisibility(View.VISIBLE);
-
         progressBar.setVisibility(View.VISIBLE);
         webView.loadUrl(url);
     }
 
 
-    /**
-     * Play youtube with url
-     *
-     * @param url youtube url
-     */
-    public void playYoutube(String url) {
-        iv_image.setVisibility(View.GONE);
-        youtube_player_view.setVisibility(View.VISIBLE);
-        webView.setVisibility(View.GONE);
-        String[] array = url.split("v=");
-        final String videoId = array[1];
-        youtube_player_view.initialize((final YouTubePlayer initializedYouTubePlayer) -> {
-            initializedYouTubePlayer.addListener(new AbstractYouTubePlayerListener() {
-                @Override
-                public void onReady() {
-                    initializedYouTubePlayer.loadVideo(videoId, 0);
-                    progressBar.setVisibility(View.GONE);
-                }
-            });
-        }, true);
-    }
 
     /**
      * Play giphy with url
@@ -147,7 +120,6 @@ public class AttachmentActivity extends AppCompatActivity {
             return;
         }
         iv_image.setVisibility(View.VISIBLE);
-        youtube_player_view.setVisibility(View.GONE);
         webView.setVisibility(View.GONE);
 
         progressBar.setVisibility(View.VISIBLE);

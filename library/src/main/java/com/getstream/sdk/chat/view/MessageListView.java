@@ -537,7 +537,7 @@ public class MessageListView extends RecyclerView {
                 }
                 break;
             case ModelType.attach_video:
-                url = attachment.getTitleLink();
+                url = attachment.getAssetURL();
                 break;
             case ModelType.attach_giphy:
                 url = attachment.getThumbURL();

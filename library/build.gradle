@@ -50,9 +50,6 @@ dependencies {
     implementation "io.noties.markwon:core:$markwon_version"
     implementation "io.noties.markwon:linkify:$markwon_version"
 
-
-    implementation 'com.github.PierfrancescoSoffritti:AndroidYouTubePlayer:7.0.1'
-
     implementation 'com.facebook.fresco:fresco:1.2.0'
     implementation 'me.relex:photodraweeview:1.1.0'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
