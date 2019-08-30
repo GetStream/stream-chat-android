@@ -45,6 +45,21 @@ public class MessageListItem {
         this.messageReadBy = new ArrayList<>();
     }
 
+    boolean samePositions(List<MessageViewHolderFactory.Position> a, List<MessageViewHolderFactory.Position> b) {
+        if ((a == null && b != null) || (a != null && b == null)) {
+            return false;
+        }
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!a.get(i).equals(b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public boolean equals(@Nullable Object obj) {
         if (getClass() != obj.getClass()) {
@@ -60,7 +75,7 @@ public class MessageListItem {
             case TYPING:
                 return false;
             case MESSAGE:
-                return Objects.equals(other.message, message);
+                return Objects.equals(other.message, message) && samePositions(other.positions, positions);
             case DATE_SEPARATOR:
                 return Objects.equals(other.date, date);
         }
