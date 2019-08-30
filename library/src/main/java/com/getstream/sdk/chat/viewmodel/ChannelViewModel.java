@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -332,10 +333,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private void replaceMessage(Message oldMessage, Message newMessage) {
         int index = messages.getValue().indexOf(oldMessage);
         newMessage.setDelivered(true);
+//        Log.i("MessageListItemLiveData","replaceMessage index: " + index);
+
         if (index != -1) {
             messages.getValue().set(index, newMessage);
         }
         upsertMessage.postValue(newMessage);
+//        Log.i("MessageListItemLiveData","New message Id: " + newMessage.getId());
+//        Log.i("MessageListItemLiveData","New message delivered: " + messages.getValue().get(index).isDelivered());
     }
 
     private boolean upsertMessage(Message message) {
@@ -352,13 +357,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean deleteMessage(Message message) {
         this.upsertMessage.postValue(message);
         return true;
-    }
-
-    private void addMessage(Message message) {
-//        List<Message> messagesCopy = messages.getValue();
-//        messagesCopy.add(message);
-        upsertMessage.postValue(message);
-//        messages.postValue(messagesCopy);
     }
 
     private void addMessages(List<Message> newMessages) {
@@ -475,13 +473,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         message.setDelivered(false);
         String clientSideID = client().getUserId() + "-" + randomUUID().toString();
         message.setId(clientSideID);
-        addMessage(message);
+//        Log.i("MessageListItemLiveData", "new MessageId: " + message.getId());
+        messages.getValue().add(message);
+        upsertMessage.postValue(message);
 
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
+//                        Log.i("MessageListItemLiveData", "new MessageId1: " + message.getId());
                         replaceMessage(message, response.getMessage());
                         callback.onSuccess(response);
                     }
@@ -489,7 +490,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     @Override
                     public void onError(String errMsg, int errCode) {
                         callback.onError(errMsg, errCode);
-                        //binding.messageInput.setEnabled(true);
                     }
                 });
     }

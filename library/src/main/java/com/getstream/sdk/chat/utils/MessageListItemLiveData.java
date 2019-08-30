@@ -124,16 +124,21 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         // message observe
-        this.messages.observe(owner, messages -> progressNewMessages(messages, false));
+        this.messages.observe(owner, messages -> {
+            init();
+            progressNewMessages(messages, false);
+        });
         // upsertMessage observe
         this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
+            Log.i(TAG,"observe upsertMessage: " + index);
             if (index != -1) {
                 MessageListItem messageListItem = getMessageItemFromMessage(message);
                 if (messageListItem != null) {
+                    Log.i(TAG,"messageListItem: " + message.getText());
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
                     // refactor previous Message's Position
@@ -145,9 +150,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     messageEntities.set(this.messageEntities.indexOf(messageListItem), messageListItem_);
                     broadcastValue();
                 } else {
+                    Log.i(TAG,"messageListItem: null");
                     progressNewMessages(Arrays.asList(message), false);
                 }
             } else {
+                Log.i(TAG,"new Message");
                 progressNewMessages(Arrays.asList(message), false);
             }
         });
@@ -188,8 +195,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         });
         // loadMore observe
-        this.loadMoreMessages.observe(owner, messages ->
-            progressNewMessages(messages, true)
+        this.loadMoreMessages.observe(owner, messages ->{
+                    Log.i(TAG,"observe loadMoreMessages");
+            progressNewMessages(messages, true);
+                }
+
         );
         // typing observe
         this.typing.observe(owner, users -> {
@@ -204,10 +214,16 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
     }
+    private void init(){
+        this.messageEntities.clear();
+        this.typingEntities.clear();
+        this.listReads.clear();
+    }
 
     public void progressNewMessages(List<Message> messages, boolean isLoadMoreMessages) {
 
         if (messages == null || messages.isEmpty()) return;
+        Log.i(TAG,"progressNewMessages");
         // update based on messages
         hasNewMessages = false;
         String newlastMessageID = messages.get(messages.size() - 1).getId();
@@ -259,6 +275,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             // set Delivered
             if (mine && nextMessage != null)
                 message.setDelivered(true);
+
             // determine the position (top, middle, bottom)
             setPositions(previousMessage, message, nextMessage);
             setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
@@ -307,16 +324,19 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void setPreviousMessagePosition(Message previousMessage, Message nextMessage, String useId) {
+        Log.i(TAG,"Set PreviousMessage");
         if (previousMessage != null && nextMessage == null) {
             if (TextUtils.isEmpty(useId)) return;
             if (previousMessage.getUserId() == null) return;
 
             if (!previousMessage.getUserId().equals(useId)) return;
             int index = this.messages.getValue().indexOf(previousMessage);
+            Log.i(TAG,"Set PreviousMessage: " + index);
             if (index == -1) return;
 
             MessageListItem messageListItem = getMessageItemFromMessage(previousMessage);
             if (messageListItem == null) return;
+            Log.i(TAG,"Set PreviousMessage1: " + previousMessage.getText());
             messageListItem.getPositions().remove(MessageViewHolderFactory.Position.BOTTOM);
             messageListItem.getPositions().add(MessageViewHolderFactory.Position.MIDDLE);
             MessageListItem messageListItem_ = new MessageListItem(previousMessage, messageListItem.getPositions(), messageListItem.isMine());
@@ -329,7 +349,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         if (nextMessage.getUserId() == null) return;
         if (TextUtils.isEmpty(useId)) return;
         if (!nextMessage.getUserId().equals(useId)) return;
-
+        Log.i(TAG,"setNextMessagePosition");
         int index = this.messages.getValue().indexOf(nextMessage);
         if (index == -1) return;
         MessageListItem messageListItem = getMessageItemFromMessage(nextMessage);
