@@ -186,7 +186,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
-        configParamsDeliveredIndicator();
+        configReadIndicator();
         configParamsReactionTailSpace();
         configParamsReactionSpace();
         configParamsReactionTail();
@@ -283,15 +283,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void configParamsDeliveredIndicator() {
+    private void configReadIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-
-        if (readBy.size() == 0) {
+        if (isDeletedOrFailedMessage() || readBy.isEmpty()) {
             read_state.setVisibility(View.GONE);
-        } else {
-            read_state.setVisibility(View.VISIBLE);
-            read_state.setReads(readBy, messageListItem.isTheirs(), style);
+            return;
         }
+        read_state.setVisibility(View.VISIBLE);
+        read_state.setReads(readBy, messageListItem.isTheirs(), style);
     }
 
     private void configSendFailed() {

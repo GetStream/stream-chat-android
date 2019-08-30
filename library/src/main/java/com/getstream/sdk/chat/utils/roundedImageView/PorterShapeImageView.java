@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.utils.roundedImageView;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -9,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import com.getstream.sdk.chat.R;
 
 
 public class PorterShapeImageView extends PorterImageView {
@@ -33,12 +31,6 @@ public class PorterShapeImageView extends PorterImageView {
     }
 
     private void setup(Context context, AttributeSet attrs, int defStyle) {
-        if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Stream_ShaderImageView, defStyle, 0);
-            if (shape == null)
-                shape = typedArray.getDrawable(R.styleable.Stream_ShaderImageView_stream_siShape);
-            typedArray.recycle();
-        }
         matrix = new Matrix();
     }
 

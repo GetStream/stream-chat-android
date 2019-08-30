@@ -413,15 +413,15 @@ public class MessageListView extends RecyclerView {
         if (this.messageClickListener != null) {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
-            adapter.setMessageClickListener((message, position) -> {
-                new ReactionDialog(getContext())
-                        .setChannel(viewModel.getChannel())
-                        .setMessage(message)
-                        .setMessagePosition(position)
-                        .setRecyclerView(this)
-                        .setStyle(style)
-                        .show();
-            });
+//            adapter.setMessageClickListener((message, position) -> {
+//                new ReactionDialog(getContext())
+//                        .setChannel(viewModel.getChannel())
+//                        .setMessage(message)
+//                        .setMessagePosition(position)
+//                        .setRecyclerView(this)
+//                        .setStyle(style)
+//                        .show();
+//            });
         }
     }
 
