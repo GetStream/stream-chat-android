@@ -87,7 +87,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (r.getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
-//            Log.i(TAG, "Setting read state for user: " + r.getUser().getId());
+
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
                 // skip things that aren't messages
@@ -134,11 +134,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             hasNewMessages = false;
 
             int index = this.messages.getValue().indexOf(message);
-            Log.i(TAG,"observe upsertMessage: " + index);
             if (index != -1) {
                 MessageListItem messageListItem = getMessageItemFromMessage(message);
                 if (messageListItem != null) {
-                    Log.i(TAG,"messageListItem: " + message.getText());
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
                     // refactor previous Message's Position
@@ -150,11 +148,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     messageEntities.set(this.messageEntities.indexOf(messageListItem), messageListItem_);
                     broadcastValue();
                 } else {
-                    Log.i(TAG,"messageListItem: null");
                     progressNewMessages(Arrays.asList(message), false);
                 }
             } else {
-                Log.i(TAG,"new Message");
                 progressNewMessages(Arrays.asList(message), false);
             }
         });
@@ -195,11 +191,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         });
         // loadMore observe
-        this.loadMoreMessages.observe(owner, messages ->{
-                    Log.i(TAG,"observe loadMoreMessages");
-            progressNewMessages(messages, true);
-                }
-
+        this.loadMoreMessages.observe(owner, messages ->
+                progressNewMessages(messages, true)
         );
         // typing observe
         this.typing.observe(owner, users -> {
@@ -223,7 +216,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void progressNewMessages(List<Message> messages, boolean isLoadMoreMessages) {
 
         if (messages == null || messages.isEmpty()) return;
-        Log.i(TAG,"progressNewMessages");
         // update based on messages
         hasNewMessages = false;
         String newlastMessageID = messages.get(messages.size() - 1).getId();
@@ -324,19 +316,17 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void setPreviousMessagePosition(Message previousMessage, Message nextMessage, String useId) {
-        Log.i(TAG,"Set PreviousMessage");
         if (previousMessage != null && nextMessage == null) {
             if (TextUtils.isEmpty(useId)) return;
             if (previousMessage.getUserId() == null) return;
 
             if (!previousMessage.getUserId().equals(useId)) return;
             int index = this.messages.getValue().indexOf(previousMessage);
-            Log.i(TAG,"Set PreviousMessage: " + index);
             if (index == -1) return;
 
             MessageListItem messageListItem = getMessageItemFromMessage(previousMessage);
             if (messageListItem == null) return;
-            Log.i(TAG,"Set PreviousMessage1: " + previousMessage.getText());
+
             messageListItem.getPositions().remove(MessageViewHolderFactory.Position.BOTTOM);
             messageListItem.getPositions().add(MessageViewHolderFactory.Position.MIDDLE);
             MessageListItem messageListItem_ = new MessageListItem(previousMessage, messageListItem.getPositions(), messageListItem.isMine());
@@ -349,7 +339,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         if (nextMessage.getUserId() == null) return;
         if (TextUtils.isEmpty(useId)) return;
         if (!nextMessage.getUserId().equals(useId)) return;
-        Log.i(TAG,"setNextMessagePosition");
+
         int index = this.messages.getValue().indexOf(nextMessage);
         if (index == -1) return;
         MessageListItem messageListItem = getMessageItemFromMessage(nextMessage);

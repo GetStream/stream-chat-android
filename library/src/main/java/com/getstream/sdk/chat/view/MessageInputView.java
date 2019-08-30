@@ -385,6 +385,7 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void initSendMessage() {
+        viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         sendFileFunction.initSendMessage();
     }

@@ -411,30 +411,4 @@ public class Message implements UserEntity {
         return user.getId();
     }
 
-//    public Message clone() {
-//        Message cloned = new Message();
-//        cloned.setId(id);
-//        cloned.setText(text);
-//        cloned.setUser(user);
-//        cloned.setHtml(html);
-//        cloned.setType(type);
-//        cloned.setAttachments(attachments);
-//        cloned.setLatestReactions(latestReactions);
-//        cloned.setOwnReactions(ownReactions);
-//        cloned.setReplyCount(replyCount);
-//        cloned.setCreatedAt(createdAt);
-//        cloned.setUpdatedAt(updatedAt);
-//        cloned.setDeletedAt(deletedAt);
-//        cloned.setMentionedUsers(mentionedUsers);
-//        cloned.setReactionCounts(reactionCounts);
-//        cloned.setParent_id(parentId);
-//        cloned.setCommand(command);
-//        cloned.setCommandInfo(commandInfo);
-//        cloned.setDelivered(isDelivered);
-//        cloned.setToday(isToday);
-//        cloned.setYesterday(isYesterday);
-//        cloned.setDate(date);
-//        cloned.setTime(time);
-//        return cloned;
-//    }
 }

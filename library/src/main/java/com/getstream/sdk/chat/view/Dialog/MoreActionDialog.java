@@ -119,13 +119,5 @@ public class MoreActionDialog extends Dialog {
             dismiss();
         });
         ll_copy.setOnClickListener((View v) -> dismiss());
-
-//        Window window = getWindow();
-//        WindowManager.LayoutParams wlp = window.getAttributes();
-//        wlp.gravity = Gravity.BOTTOM;
-//        wlp.width = WindowManager.LayoutParams.MATCH_PARENT;
-//
-//        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-//        window.setAttributes(wlp);
     }
 }
