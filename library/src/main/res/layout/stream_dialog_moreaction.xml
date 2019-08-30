@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <RelativeLayout
         android:id="@+id/rl_wrap"
         android:layout_width="0dp"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +36,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_wrap">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
 
         <LinearLayout
             android:id="@+id/ll_thread"
@@ -167,5 +169,9 @@
                 android:text="Delete"
                 android:textColor="#8A000000" />
         </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="19dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
