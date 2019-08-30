@@ -163,11 +163,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 return;
 
             // Update last two Items
+            if (messages.getValue() == null || messages.getValue().isEmpty()) return;
             Message lastMessage = messages.getValue().get(messages.getValue().size() - 1);
-            Message previousMessage = messages.getValue().get(messages.getValue().size() - 2);
-
             MessageListItem lastItem = getMessageItemFromMessage(lastMessage);
-            MessageListItem previousItem = getMessageItemFromMessage(previousMessage);
+
+            Message previousMessage;
+            MessageListItem previousItem = null;
+
+            try {
+                previousMessage = messages.getValue().get(messages.getValue().size() - 2);
+                previousItem = getMessageItemFromMessage(previousMessage);
+            }catch (Exception e){}
+
             if (lastItem != null) {
                 MessageListItem lastItem_ = new MessageListItem(lastItem.getMessage(), lastItem.getPositions(), lastItem.isMine());
                 messageEntities.set(this.messageEntities.indexOf(lastItem), lastItem_);
@@ -216,7 +223,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         if (messages.size() == 1) {
             int index = this.messages.getValue().indexOf(messages.get(0));
             if (index != -1) {
-                previousMessage = this.messages.getValue().get(index - 1);
+                try {
+                    previousMessage = this.messages.getValue().get(index - 1);
+                }catch (Exception e){
+                }
+
             }
         }
 

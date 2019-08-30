@@ -88,7 +88,7 @@ public class ReactionDialog extends Dialog {
         );
 
         setContentView(reactionDlgView);
-//        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         Window window = getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.x = 0;

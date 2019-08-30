@@ -262,7 +262,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configDelieveredIndicator() {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
-        if (message == null || TextUtils.isEmpty(message.getId())) return;;
+
+        if (isDeletedOrFailedMessage())  return;
+        if (message == null || TextUtils.isEmpty(message.getId())) return;
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (!readBy.isEmpty() || !messageListItem.isMine()) return;
 
@@ -387,7 +389,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configAttachmentView() {
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             alv_attachments.setVisibility(View.GONE);
             return;
         }
@@ -423,7 +425,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             iv_docket.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
@@ -454,7 +456,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             cl_reply.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
@@ -711,5 +713,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
+    }
+
+    private boolean isDeletedOrFailedMessage(){
+        return tv_deleted.getVisibility() == View.VISIBLE ||
+                ll_send_failed.getVisibility() == View.VISIBLE;
     }
 }
