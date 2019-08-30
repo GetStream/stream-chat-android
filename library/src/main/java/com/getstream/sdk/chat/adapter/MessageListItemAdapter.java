@@ -1,12 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
@@ -67,6 +66,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.viewHolderFactory = factory;
     }
 
+    @Override
+    public long getItemId(int position) {
+        return messageListItemList.get(position).getStableID();
+    }
 
     public MessageListItemAdapter(Context context) {
         this.context = context;

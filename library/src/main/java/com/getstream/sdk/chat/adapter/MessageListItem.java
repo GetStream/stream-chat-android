@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -7,6 +9,9 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public class MessageListItem {
     private MessageListItemAdapter.EntityType type;
@@ -40,11 +45,52 @@ public class MessageListItem {
         this.messageReadBy = new ArrayList<>();
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MessageListItem other = (MessageListItem) obj;
+
+        if (other.type != type) {
+            return false;
+        }
+
+        switch (type) {
+            case TYPING:
+                return false;
+            case MESSAGE:
+                return Objects.equals(other.message, message);
+            case DATE_SEPARATOR:
+                return Objects.equals(other.date, date);
+        }
+
+        return false;
+    }
+
+    long getStableID(){
+        Checksum checksum = new CRC32();
+        String plaintext = type.toString() + ":";
+        switch (type) {
+            case TYPING:
+                plaintext += "typing";
+                break;
+            case MESSAGE:
+                plaintext += message.getId();
+                break;
+            case DATE_SEPARATOR:
+                plaintext += date.toString();
+                break;
+        }
+        checksum.update(plaintext.getBytes(), 0, plaintext.getBytes().length);
+        return checksum.getValue();
+    }
+
     public boolean isMine() {
         return this.messageMine;
     }
 
-    public boolean isTheirs() {
+    boolean isTheirs() {
         return !this.messageMine;
     }
 

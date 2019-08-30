@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
+import android.util.Log;
+
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -32,12 +34,6 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        // read state
-        // last message
-        // channel members
-        // channel name
-        // TODO: fix this
-
-        return false;
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 }

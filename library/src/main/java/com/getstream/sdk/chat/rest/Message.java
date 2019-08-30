@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -93,17 +94,47 @@ public class Message implements UserEntity {
     @Expose
     private Map<String, String> commandInfo;
 
-    private boolean me;
-
     @Override
     public boolean equals(@Nullable Object obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        // we compare based on the CID
         Message otherMessage = (Message) obj;
-        return TextUtils.equals(this.getId(), otherMessage.getId());
+        if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
+            return false;
+        }
+        if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
+            return false;
+        }
+        if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
+            return false;
+        }
+        if (replyCount != otherMessage.replyCount) {
+            return false;
+        }
+        return true;
     }
+
+    public Message copy() {
+        Message clone = new Message();
+        clone.id = id;
+        clone.text = text;
+        clone.html = html;
+        clone.type = type;
+        clone.user = user;
+        clone.attachments = attachments;
+        clone.latestReactions = latestReactions;
+        clone.ownReactions = ownReactions;
+        clone.replyCount = replyCount;
+        clone.updatedAt = new Date(updatedAt.getTime());
+        clone.deletedAt = new Date(deletedAt.getTime());
+        clone.mentionedUsers = mentionedUsers;
+        clone.parentId = parentId;
+        clone.command = command;
+        clone.commandInfo = commandInfo;
+        return clone;
+    }
+
     // Additional Params
     private Map<String, Object> extraData;
     private boolean isStartDay = false;

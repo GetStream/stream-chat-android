@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class ChannelState implements Cloneable {
+public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
@@ -73,11 +73,6 @@ public class ChannelState implements Cloneable {
 
     public ChannelState copy() {
         ChannelState clone = new ChannelState(channel);
-        try {
-            clone = (ChannelState) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
         clone.reads = new ArrayList<>();
         for (ChannelUserRead read: getReads()) {
             clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));

@@ -313,6 +313,8 @@ public class MessageListView extends RecyclerView {
 
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
+        adapter.setHasStableIds(true);
+
         if (viewHolderFactory != null) {
             adapter.setFactory(viewHolderFactory);
         }
