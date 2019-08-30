@@ -72,12 +72,7 @@ public class AttachmentActivity extends AppCompatActivity {
     private void showAttachment(final String type, final String url) {
         switch (type) {
             case ModelType.attach_video:
-                if(url.toLowerCase().contains("youtube.com")){
-//                    playYoutube(url);
-                    loadUrlToWeb("https://www.youtube.com/embed/8X5gXIQmY-E");
-                }else{
-                    loadUrlToWeb(url);
-                }
+                loadUrlToWeb(url);
                 break;
             case ModelType.attach_giphy:
                 showGiphy(url);
