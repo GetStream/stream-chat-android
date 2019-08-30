@@ -75,7 +75,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // TODO replace with more efficient approach
         // remove the old read state
         for (MessageListItem i : merged) {
-            if (i.getMessageReadBy().size() != 0) {
+            if (!i.getMessageReadBy().isEmpty()) {
                 i.removeMessageReadBy();
             }
         }
@@ -124,7 +124,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         // message observe
-        this.messages.observe(owner, messages -> progressNewMessages(messages,false));
+        this.messages.observe(owner, messages -> progressNewMessages(messages, false));
         // upsertMessage observe
         this.upsertMessage.observe(owner, message -> {
             if (message == null || message.getId() == null) return;
@@ -133,7 +133,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             int index = this.messages.getValue().indexOf(message);
             if (index != -1) {
                 MessageListItem messageListItem = getMessageItemFromMessage(message);
-                if (messageListItem != null){
+                if (messageListItem != null) {
                     MessageListItem messageListItem_ = new MessageListItem(message, messageListItem.getPositions(), messageListItem.isMine());
                     messages.getValue().set(index, message);
                     // refactor previous Message's Position
@@ -144,7 +144,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     setPreviousMessagePosition(previousMessage, nextMessage, message.getUserId());
                     messageEntities.set(this.messageEntities.indexOf(messageListItem), messageListItem_);
                     broadcastValue();
-                }else{
+                } else {
                     progressNewMessages(Arrays.asList(message), false);
                 }
             } else {
@@ -158,18 +158,32 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new ArrayList<>();
             }
             listReads = reads;
-            try {
-                MessageListItem messageListItem = messageEntities.get(messageEntities.size() - 1);
-                MessageListItem readEntity = new MessageListItem(messageListItem.getMessage(), messageListItem.getPositions(), messageListItem.isMine());
-                messageEntities.set(messageEntities.size() - 1, readEntity);
-            }catch (Exception e){}
-            new Handler().postDelayed(this::broadcastValue,200);
+            // Check Current User read state
+            if (!listReads.isEmpty() && listReads.get(listReads.size() -1).getUserId().equals(currentUser.getId()))
+                return;
+
+            // Update last two Items
+            Message lastMessage = messages.getValue().get(messages.getValue().size() - 1);
+            Message previousMessage = messages.getValue().get(messages.getValue().size() - 2);
+
+            MessageListItem lastItem = getMessageItemFromMessage(lastMessage);
+            MessageListItem previousItem = getMessageItemFromMessage(previousMessage);
+            if (lastItem != null) {
+                MessageListItem lastItem_ = new MessageListItem(lastItem.getMessage(), lastItem.getPositions(), lastItem.isMine());
+                messageEntities.set(this.messageEntities.indexOf(lastItem), lastItem_);
+            }
+            if (previousItem != null) {
+                MessageListItem previousItem_ = new MessageListItem(previousItem.getMessage(), previousItem.getPositions(), previousItem.isMine());
+                messageEntities.set(this.messageEntities.indexOf(previousItem), previousItem_);
+            }
+            // Delay
+            new Handler().postDelayed(this::broadcastValue, 200);
 
         });
         // loadMore observe
-        this.loadMoreMessages.observe(owner, messages -> {
-            progressNewMessages(messages, true);
-        });
+        this.loadMoreMessages.observe(owner, messages ->
+            progressNewMessages(messages, true)
+        );
         // typing observe
         this.typing.observe(owner, users -> {
             // update
@@ -314,14 +328,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         messageEntities.set(messageEntities.indexOf(messageListItem), messageListItem_);
     }
 
-    private MessageListItem getMessageItemFromMessage(Message message){
-        for (MessageListItem item : this.messageEntities){
+    private MessageListItem getMessageItemFromMessage(Message message) {
+        for (MessageListItem item : this.messageEntities) {
             if (item.getMessage() == null || TextUtils.isEmpty(item.getMessage().getId())) continue;
             if (item.getMessage().getId().equals(message.getId()))
                 return item;
         }
         return null;
     }
+
     public Boolean getHasNewMessages() {
         return hasNewMessages;
     }

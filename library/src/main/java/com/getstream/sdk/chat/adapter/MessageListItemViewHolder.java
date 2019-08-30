@@ -262,8 +262,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configDelieveredIndicator() {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
+        if (message == null || TextUtils.isEmpty(message.getId())) return;;
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (!readBy.isEmpty() || !messageListItem.isMine()) return;
+
+//        channelState.getLastMessageReads()
+//            ChannelUserRead read = readBy.get(readBy.size() -1);
+//            if (message.getCreatedAt().getTime() < read.getLastRead().getTime())
+//                return;
+
+
         if (!messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM))
             return;
         if (message.isDelivered()) {

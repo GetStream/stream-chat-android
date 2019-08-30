@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -16,6 +17,9 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReactionDlgView;
 
 public class ReactionDialog extends Dialog {
+
+    private static final String TAG = ReactionDialog.class.getSimpleName();
+
     Channel channel;
     Message message;
     int messagePosition;
@@ -73,7 +77,7 @@ public class ReactionDialog extends Dialog {
         } else {
             childIndex = messagePosition - firstListItemPosition;
         }
-        int originY = recyclerView.getChildAt(childIndex).getBottom();
+        int originY = recyclerView.getChildAt(childIndex).getTop();
 
         ReactionDlgView reactionDlgView = new ReactionDlgView(getContext());
 
@@ -84,14 +88,21 @@ public class ReactionDialog extends Dialog {
         );
 
         setContentView(reactionDlgView);
-        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+//        getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         Window window = getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.x = 0;
         int screenHeight = Utils.getScreenResolution(getContext());
+        reactionDlgView.post(()->{
+            Log.i(TAG, "reactionDlgView Height: " + reactionDlgView.getHeight());
+        });
+        Log.i(TAG, "originY: " + originY);
+        Log.i(TAG, "screenHeight: " + screenHeight);
+
         wlp.y = originY - screenHeight / 2;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+
     }
 
 }

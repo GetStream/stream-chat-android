@@ -74,7 +74,7 @@ public class ReactionDlgView extends RelativeLayout {
                     .strokeColor(0)
                     .strokeWidth(0)
                     .solidColor(style.getReactionDlgBgColor())
-                    .cornerRadii(conerRadius, conerRadius, conerRadius, conerRadius) // the same as the two lines above
+                    .cornerRadii(conerRadius, conerRadius, conerRadius, conerRadius)
                     .build();
             iv_bg.setBackground(drawable);
         }

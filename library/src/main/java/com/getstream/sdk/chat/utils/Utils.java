@@ -95,7 +95,7 @@ public class Utils {
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-        return width;
+        return height;
     }
 
     public static void setButtonDelayEnable(View v) {
@@ -110,7 +110,7 @@ public class Utils {
                     .strokeColor(strokeColor)
                     .strokeWidth(strokeWidth)
                     .solidColor(solidColor)
-                    .cornerRadii(0, 0, 20, 20) // the same as the two lines above
+                    .cornerRadii(0, 0, 20, 20)
                     .build();
         else
             return new DrawableBuilder()
