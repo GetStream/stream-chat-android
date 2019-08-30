@@ -405,7 +405,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setLongClickListener(messageLongClickListener);
             boolean hasBackground = false;
             for (Attachment attachment : message.getAttachments()){
-                if(!TextUtils.isEmpty(attachment.getText())){
+                if(!TextUtils.isEmpty(attachment.getText()) || !TextUtils.isEmpty(attachment.getTitle())){
                     hasBackground = true;
                     break;
                 }

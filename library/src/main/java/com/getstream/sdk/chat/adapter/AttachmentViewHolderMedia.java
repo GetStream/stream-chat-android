@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
@@ -20,7 +18,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
-
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     // Attachment
@@ -60,6 +57,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(getContext(), background);
+        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configMediaAttach() {

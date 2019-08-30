@@ -18,7 +18,6 @@
             android:id="@+id/rv_reaction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="20dp"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +31,8 @@
         android:layout_height="wrap_content"
         android:background="#FAFAFA"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="19dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,15 +44,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/stream_ic_reply" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
             <TextView
@@ -70,15 +70,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/stream_ic_copy" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
             <TextView
@@ -96,15 +96,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/stream_ic_flag" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
             <TextView
@@ -122,15 +122,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/stream_ic_edit" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
             <TextView
@@ -148,15 +148,15 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="15dp">
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:src="@drawable/stream_ic_delete" />
 
             <TextView
-                android:layout_width="20dp"
+                android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
             <TextView

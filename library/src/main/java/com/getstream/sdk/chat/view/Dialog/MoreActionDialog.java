@@ -109,7 +109,7 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                 message,
-                false,
+                true,
                 style,
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);

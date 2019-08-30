@@ -71,31 +71,35 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             holder.tv_initials.setVisibility(View.GONE);
             holder.tv_count.setVisibility(View.GONE);
         } else {
-            holder.cv_avatar.setVisibility(View.INVISIBLE);
-            holder.tv_initials.setVisibility(View.INVISIBLE);
+            // added for new design
+            holder.cv_avatar.setVisibility(View.GONE);
+            holder.tv_initials.setVisibility(View.GONE);
+
+//            holder.cv_avatar.setVisibility(View.INVISIBLE);
+//            holder.tv_initials.setVisibility(View.INVISIBLE);
             holder.tv_count.setVisibility(View.VISIBLE);
         }
 
         if (message.getReactionCounts() == null) return;
         if (message.getReactionCounts().containsKey(key)) {
             holder.tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
-
-            User user = null;
-            for (Reaction reaction : message.getLatestReactions()) {
-                if (reaction.getType().equals(key)) {
-                    user = reaction.getUser();
-                    break;
-                }
-            }
-
-            if (user != null && showAvatar) {
-                String intials = user.getInitials();
-                holder.tv_initials.setVisibility(View.VISIBLE);
-                holder.cv_avatar.setVisibility(View.VISIBLE);
-                holder.tv_initials.setText(intials);
-                if (StringUtility.isValidImageUrl(user.getImage()))
-                    Utils.circleImageLoad(holder.cv_avatar, user.getImage());
-            }
+            // disabled for new design
+//            User user = null;
+//            for (Reaction reaction : message.getLatestReactions()) {
+//                if (reaction.getType().equals(key)) {
+//                    user = reaction.getUser();
+//                    break;
+//                }
+//            }
+//
+//            if (user != null && showAvatar) {
+//                String intials = user.getInitials();
+//                holder.tv_initials.setVisibility(View.VISIBLE);
+//                holder.cv_avatar.setVisibility(View.VISIBLE);
+//                holder.tv_initials.setText(intials);
+//                if (StringUtility.isValidImageUrl(user.getImage()))
+//                    Utils.circleImageLoad(holder.cv_avatar, user.getImage());
+//            }
         } else
             holder.tv_count.setText("");
     }

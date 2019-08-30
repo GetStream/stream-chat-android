@@ -73,12 +73,12 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
         MessageListItem oldMessageItem = oldList.get(oldItemPosition);
         MessageListItem newMessageItem = newList.get(newItemPosition);
 
-        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
-        Log.i(TAG,"newItemPosition :" +newItemPosition);
-        try {
-            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
-            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
-        }catch (Exception e){}
+//        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
+//        Log.i(TAG,"newItemPosition :" +newItemPosition);
+//        try {
+//            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
+//            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
+//        }catch (Exception e){}
 
         return newMessageItem.equals(oldMessageItem);
     }

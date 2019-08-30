@@ -99,7 +99,7 @@ public class MessageListItem {
     public boolean equals(@Nullable Object obj) {
 
         if (obj == null) {
-            Log.i(TAG,"case:0: false");
+//            Log.i(TAG,"case:0: false");
             return false;
         }
 
@@ -109,64 +109,64 @@ public class MessageListItem {
         Message oldMessage = other.getMessage();
 
         if (oldMessage == null || newMessage == null) {
-            Log.i(TAG,"case:2: false");
+//            Log.i(TAG,"case:2: false");
             return false;
         }
 
 
         if (!oldMessage.equals(newMessage)) {
-            Log.i(TAG,"case:3: false");
+//            Log.i(TAG,"case:3: false");
             return false;
         }
 
         if (oldMessage.getUpdatedAt() != null && oldMessage.getUpdatedAt().getTime() < newMessage.getUpdatedAt().getTime()) {
-            Log.i(TAG,"case:4: false");
+//            Log.i(TAG,"case:4: false");
             return false;
         }
 
         if (oldMessage.getText() == null && newMessage.getText() != null){
-            Log.i(TAG,"case:5: false");
+//            Log.i(TAG,"case:5: false");
             return false;
         }
 
         if (!TextUtils.equals(oldMessage.getText(), newMessage.getText())){
-            Log.i(TAG,"case:6: false");
+//            Log.i(TAG,"case:6: false");
             return false;
         }
 
 
         if (oldMessage.getAttachments() == null && newMessage.getAttachments() != null){
-            Log.i(TAG,"case:7: false");
+//            Log.i(TAG,"case:7: false");
             return false;
         }
 
         if (!oldMessage.getAttachments().equals(newMessage.getAttachments())){
-            Log.i(TAG,"case:8: false");
+//            Log.i(TAG,"case:8: false");
             return false;
         }
 
         if (oldMessage.getReactionCounts() != null && oldMessage.getReactionCounts() == null && newMessage.getReactionCounts() != null){
-            Log.i(TAG,"case:9: false");
+//            Log.i(TAG,"case:9: false");
             return false;
         }
 
         if (oldMessage.getReactionCounts() != null && !oldMessage.getReactionCounts().equals(newMessage.getReactionCounts())){
-            Log.i(TAG,"case:10: false");
+//            Log.i(TAG,"case:10: false");
             return false;
         }
 
         if (other.getMessageReadBy().isEmpty() && !this.getMessageReadBy().isEmpty() ){
-            Log.i(TAG,"case:11: false");
+//            Log.i(TAG,"case:11: false");
             return false;
         }
 
 
         if (!other.getMessageReadBy().isEmpty() && !other.getMessageReadBy().equals(this.getMessageReadBy())) {
-            Log.i(TAG,"case:12: false");
+//            Log.i(TAG,"case:12: false");
             return false;
         }
-        boolean equel = super.equals(obj);
-        Log.i(TAG,"default: " + equel);
+//        boolean equel = super.equals(obj);
+//        Log.i(TAG,"default: " + equel);
 
         return super.equals(obj);
     }
