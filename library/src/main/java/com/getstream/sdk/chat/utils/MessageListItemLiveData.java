@@ -85,13 +85,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             }
             for (int i = merged.size(); i-- > 0; ) {
                 MessageListItem e = merged.get(i);
+                ChannelUserRead userRead = entry.getValue();
                 // skip things that aren't messages
                 if (e.getType() != MessageListItemAdapter.EntityType.MESSAGE) {
                     continue;
                 }
-                if (entry.getValue().getLastRead().after(e.getMessage().getCreatedAt())) {
+                // skip message owner as reader
+                if (userRead.getUserId().equals(e.getMessage().getUserId())) {
+                    continue;
+                }
+                if (userRead.getLastRead().after(e.getMessage().getCreatedAt())) {
                     // set the read state on this entity
-                    e.addMessageReadBy(entry.getValue());
+                    e.addMessageReadBy(userRead);
                     // we only show it for the last message, so break
                     break;
                 }
