@@ -17,21 +17,23 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
-    private final String TAG = MessageListItemLiveData.class.getSimpleName();
+    private static final String TAG = MessageListItemLiveData.class.getSimpleName();
 
     private MutableLiveData<List<Message>> messages;
     private MutableLiveData<List<User>> typing;
-    private MutableLiveData<List<ChannelUserRead>> reads;
+    private MutableLiveData<Map<String, ChannelUserRead>> reads;
 
     private User currentUser;
     private List<MessageListItem> messageEntities;
     private List<MessageListItem> typingEntities;
-    private List<ChannelUserRead> listReads;
+    private Map<String, ChannelUserRead> readsByUser;
     private Boolean isLoadingMore;
     private Boolean hasNewMessages;
     private String lastMessageID;
@@ -40,14 +42,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public MessageListItemLiveData(User currentUser,
                                    MutableLiveData<List<Message>> messages,
                                    MutableLiveData<List<User>> typing,
-                                   MutableLiveData<List<ChannelUserRead>> reads) {
+                                   MutableLiveData<Map<String, ChannelUserRead>> reads) {
         this.messages = messages;
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
         this.messageEntities = new ArrayList<>();
         this.typingEntities = new ArrayList<>();
-        this.listReads = new ArrayList<>();
+        this.readsByUser = new HashMap<>();
         this.isLoadingMore = false;
         // scroll behaviour is only triggered for new messages
         this.lastMessageID = "";
@@ -58,10 +60,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         isLoadingMore = loading;
     }
 
-    private void broadcastValue() {
+    private synchronized void broadcastValue() {
         List<MessageListItem> merged = new ArrayList<>();
-        merged.addAll(messageEntities);
 
+        for (MessageListItem i: messageEntities) {
+            merged.add(i.copy());
+        }
+
+        // TODO no need to do this whole thing for typing changes!
         // TODO replace with more efficient approach
         // remove the old read state
         for (MessageListItem i : merged) {
@@ -72,9 +78,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // set the new read state
         // this wil become slow with many users and many messages
-        for (ChannelUserRead r : listReads) {
+        for (Map.Entry<String, ChannelUserRead> entry : readsByUser.entrySet()) {
             // we don't show read state for the current user
-            if (r.getUser().getId().equals(currentUser.getId())) {
+            if (entry.getValue().getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
             for (int i = merged.size(); i-- > 0; ) {
@@ -83,13 +89,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 if (e.getType() != MessageListItemAdapter.EntityType.MESSAGE) {
                     continue;
                 }
-                if (r.getLastRead().getTime() > e.getMessage().getCreatedAt().getTime()) {
+                if (entry.getValue().getLastRead().after(e.getMessage().getCreatedAt())) {
                     // set the read state on this entity
-                    // TODO: race bomb here (e.addMessageReadBy), we need to change this into:
-                    // eCopy = e.copy();
-                    // eCopy.addMessageReadBy(r);
-                    // merged.set(i, eCopy);
-                    e.addMessageReadBy(r);
+                    e.addMessageReadBy(entry.getValue());
                     // we only show it for the last message, so break
                     break;
                 }
@@ -117,9 +119,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;
             if (reads == null) {
-                reads = new ArrayList<ChannelUserRead>();
+                reads = new HashMap<>();
             }
-            listReads = reads;
+            readsByUser = reads;
             Log.i(TAG, "broadcast because reads changed");
             broadcastValue();
         });

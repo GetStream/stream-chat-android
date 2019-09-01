@@ -284,8 +284,6 @@ public class MessageListView extends RecyclerView {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-
                 if (layoutManager != null) {
                     firstVisible = layoutManager.findFirstVisibleItemPosition();
                     lastVisible = layoutManager.findLastVisibleItemPosition();

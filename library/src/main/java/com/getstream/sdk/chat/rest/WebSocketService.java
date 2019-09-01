@@ -287,7 +287,7 @@ public class WebSocketService extends WebSocketListener {
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             if (shuttingDown) return;
             try {
-                Log.d(TAG, "Error: " + t.getMessage());
+                Log.i(TAG, "Error: " + t.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
@@ -14,6 +16,8 @@ import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 public class MessageListItem {
+    private static final String TAG = MessageListItem.class.getSimpleName();
+
     private MessageListItemAdapter.EntityType type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
@@ -45,9 +49,42 @@ public class MessageListItem {
         this.messageReadBy = new ArrayList<>();
     }
 
+    public MessageListItem copy() {
+        MessageListItem clone = new MessageListItem(message, positions, messageMine);
+        clone.date = date;
+        clone.type = type;
+        clone.users = users;
+        clone.messageReadBy.addAll(messageReadBy);
+        return clone;
+    }
+
     boolean samePositions(List<MessageViewHolderFactory.Position> a, List<MessageViewHolderFactory.Position> b) {
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!a.get(i).equals(b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean sameReads(List<ChannelUserRead>a, List<ChannelUserRead> b){
+        if ((a == null && b != null) || (a != null && b == null)) {
+            return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        if (a.size() == 0 && b.size() == 0) {
+            return true;
         }
         if (a.size() != b.size()) {
             return false;
@@ -75,7 +112,10 @@ public class MessageListItem {
             case TYPING:
                 return false;
             case MESSAGE:
-                return Objects.equals(other.message, message) && samePositions(other.positions, positions);
+                boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
+                boolean samePositions = samePositions(other.positions, positions);
+                boolean sameMessage = Objects.equals(other.message, message);
+                return sameMessage && samePositions && sameReads;
             case DATE_SEPARATOR:
                 return Objects.equals(other.date, date);
         }
@@ -134,10 +174,11 @@ public class MessageListItem {
     }
 
     public void removeMessageReadBy() {
-        this.messageReadBy = new ArrayList<>();
+        messageReadBy = new ArrayList<>();
     }
 
     public void addMessageReadBy(ChannelUserRead r) {
-        this.messageReadBy.add(r);
+        messageReadBy.add(r);
     }
+
 }

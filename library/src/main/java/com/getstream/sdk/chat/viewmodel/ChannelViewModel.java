@@ -74,7 +74,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
     private LazyQueryChannelLiveData<List<User>> typingUsers;
-    private LazyQueryChannelLiveData<List<ChannelUserRead>> reads;
+    private LazyQueryChannelLiveData<Map<String, ChannelUserRead>> reads;
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
 
@@ -111,10 +111,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         reads = new LazyQueryChannelLiveData<>();
         reads.viewModel = this;
-        reads.setValue(channel.getChannelState().getReads());
+        reads.setValue(channel.getChannelState().getReadsByUser());
 
         entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
-        reads.setValue(channel.getChannelState().getReads());
+        reads.setValue(channel.getChannelState().getReadsByUser());
 
         typingState = new HashMap<>();
 
@@ -152,7 +152,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return loadingMore;
     }
 
-    public LiveData<List<ChannelUserRead>> getReads() {
+    public LiveData<Map<String, ChannelUserRead>> getReads() {
         return reads;
     }
 
@@ -253,18 +253,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             @Override
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
-                List<ChannelUserRead> readsCopy = new ArrayList<>();
-                if (reads.getValue() == null) {
-                    return;
-                }
-                for (ChannelUserRead r : reads.getValue()) {
-                    if (!r.getUser().equals(event.getUser())) {
-                        readsCopy.add(r);
-                    }
-                }
-                ChannelUserRead newRead = new ChannelUserRead(event.getUser(), event.getCreatedAt());
-                readsCopy.add(newRead);
-                reads.postValue(readsCopy);
+                reads.postValue(channel.getChannelState().getReadsByUser());
             }
 
             @Override
