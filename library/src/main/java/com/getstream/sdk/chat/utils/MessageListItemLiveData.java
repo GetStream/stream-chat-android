@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -105,11 +107,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
         MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
-        setValue(wrapper);
-        // isLoadingMore is only true once...
-        if (isLoadingMore) {
-            this.setIsLoadingMore(false);
-        }
+
+        // run setValue on main thread now that the whole computation is done
+        new Handler(Looper.getMainLooper()).post(() -> {
+            setValue(wrapper);
+            if (isLoadingMore) {
+                this.setIsLoadingMore(false);
+            }
+        });
     }
 
     private boolean isSameDay(Message a, Message b) {
