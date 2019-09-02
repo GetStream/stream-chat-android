@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
@@ -58,6 +56,7 @@ public class MessageListItem {
         return clone;
     }
 
+    // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
     boolean samePositions(List<MessageViewHolderFactory.Position> a, List<MessageViewHolderFactory.Position> b) {
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
@@ -76,6 +75,7 @@ public class MessageListItem {
         return true;
     }
 
+    // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
     boolean sameReads(List<ChannelUserRead>a, List<ChannelUserRead> b){
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
