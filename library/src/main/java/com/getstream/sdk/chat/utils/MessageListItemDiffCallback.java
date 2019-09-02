@@ -70,16 +70,8 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        MessageListItem oldMessageItem = oldList.get(oldItemPosition);
-        MessageListItem newMessageItem = newList.get(newItemPosition);
 
-//        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
-//        Log.i(TAG,"newItemPosition :" +newItemPosition);
-//        try {
-//            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
-//            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
-//        }catch (Exception e){}
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
 
-        return newMessageItem.equals(oldMessageItem);
     }
 }

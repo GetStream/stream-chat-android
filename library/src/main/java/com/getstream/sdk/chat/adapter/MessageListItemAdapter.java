@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
@@ -33,7 +33,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
-    private ArrayList<MessageListItem> messageListItemArrayList = new ArrayList<>();
+    private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
 
@@ -51,21 +51,30 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.viewHolderFactory = factory;
     }
 
+    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList) {
+        this.context = context;
+        this.viewHolderFactory = new MessageViewHolderFactory();
+        this.channelState = channelState;
+        this.messageListItemList = messageListItemList;
+    }
 
 
+    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList, MessageViewHolderFactory factory) {
+        this.context = context;
+        this.channelState = channelState;
+        this.messageListItemList = messageListItemList;
+        this.viewHolderFactory = factory;
+    }
 
-//    public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemArrayList, MessageViewHolderFactory factory) {
-//        this.context = context;
-//        this.channelState = channelState;
-//        this.messageListItemArrayList = messageListItemArrayList;
-//        this.viewHolderFactory = factory;
-//    }
-
+    @Override
+    public long getItemId(int position) {
+        return messageListItemList.get(position).getStableID();
+    }
 
     public MessageListItemAdapter(Context context) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
-//        this.messageListItemArrayList = new ArrayList<>();
+        this.messageListItemList = new ArrayList<>();
     }
 
     public void setStyle(MessageListViewStyle s) {
@@ -73,22 +82,21 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void replaceEntities(List<MessageListItem> newEntities) {
-
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
-                new MessageListItemDiffCallback(messageListItemArrayList, newEntities), true);
+                new MessageListItemDiffCallback(messageListItemList, newEntities), true);
 
         // only update those rows that change...
         result.dispatchUpdatesTo(this);
-        messageListItemArrayList.clear();
-        messageListItemArrayList.addAll(newEntities);
+        messageListItemList = newEntities;
+
     }
 
     @Override
     public int getItemViewType(int position) {
         try {
-            MessageListItem messageListItem = messageListItemArrayList.get(position);
+            MessageListItem messageListItem = messageListItemList.get(position);
             return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
-        } catch (IndexOutOfBoundsException e) {
+        } catch(IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -103,7 +111,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        MessageListItem messageListItem = messageListItemArrayList.get(position);
+        MessageListItem messageListItem = messageListItemList.get(position);
         ((BaseMessageListItemViewHolder) holder).setBubbleHelper(bubbleHelper);
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
@@ -114,21 +122,18 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 attachmentClickListener,
                 userClickListener);
 
-    }
 
+    }
     public void setChannelState(ChannelState channelState) {
         this.channelState = channelState;
     }
-
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         if (style.isEnableReaction())
             this.messageClickListener = messageClickListener;
     }
-
-    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener){
         this.messageLongClickListener = messageLongClickListener;
     }
-
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
     }
@@ -139,6 +144,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return messageListItemArrayList.size();
+
+        return messageListItemList.size();
     }
 }

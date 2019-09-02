@@ -286,8 +286,6 @@ public class MessageListView extends RecyclerView {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-
-
                 if (layoutManager != null) {
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
@@ -315,6 +313,8 @@ public class MessageListView extends RecyclerView {
 
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
+        adapter.setHasStableIds(true);
+
         if (viewHolderFactory != null) {
             adapter.setFactory(viewHolderFactory);
         }
@@ -369,11 +369,15 @@ public class MessageListView extends RecyclerView {
                 int layoutSize = layoutManager.getItemCount();
                 Log.i(TAG, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
-                if (!hasScrolledUp) {
+                if (hasScrolledUp) {
+                    // always scroll to bottom when current user posts a message
+                    if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
+                        layoutManager.scrollToPosition(newPosition);
+                    }
+                    viewModel.setHasNewMessages(true);
+                } else {
                     layoutManager.scrollToPosition(newPosition);
                     viewModel.setHasNewMessages(false);
-                } else {
-                    viewModel.setHasNewMessages(true);
                 }
                 // we want to mark read if there is a new message
                 // and this view is currently being displayed...

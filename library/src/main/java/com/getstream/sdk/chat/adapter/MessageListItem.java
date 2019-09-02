@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -12,6 +10,9 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 
 public class MessageListItem {
 
@@ -47,11 +48,105 @@ public class MessageListItem {
         this.messageReadBy = new ArrayList<>();
     }
 
+    public MessageListItem copy() {
+        MessageListItem clone = new MessageListItem(message, positions, messageMine);
+        clone.date = date;
+        clone.type = type;
+        clone.users = users;
+        clone.messageReadBy.addAll(messageReadBy);
+        return clone;
+    }
+
+    // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
+    boolean samePositions(List<MessageViewHolderFactory.Position> a, List<MessageViewHolderFactory.Position> b) {
+        if ((a == null && b != null) || (a != null && b == null)) {
+            return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!a.get(i).equals(b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
+    boolean sameReads(List<ChannelUserRead>a, List<ChannelUserRead> b){
+        if ((a == null && b != null) || (a != null && b == null)) {
+            return false;
+        }
+        if (a == null) {
+            return true;
+        }
+        if (a.size() == 0 && b.size() == 0) {
+            return true;
+        }
+        if (a.size() != b.size()) {
+            return false;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            if (!a.get(i).equals(b.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        MessageListItem other = (MessageListItem) obj;
+
+        if (other.type != type) {
+            return false;
+        }
+
+        switch (type) {
+            case TYPING:
+                return false;
+            case MESSAGE:
+                boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
+                boolean samePositions = samePositions(other.positions, positions);
+                boolean sameMessage = Objects.equals(other.message, message);
+                return sameMessage && samePositions && sameReads;
+            case DATE_SEPARATOR:
+                return Objects.equals(other.date, date);
+        }
+
+        return false;
+    }
+
+    long getStableID(){
+        Checksum checksum = new CRC32();
+        String plaintext = type.toString() + ":";
+        switch (type) {
+            case TYPING:
+                plaintext += "typing";
+                break;
+            case MESSAGE:
+                plaintext += message.getId();
+                break;
+            case DATE_SEPARATOR:
+                plaintext += date.toString();
+                break;
+        }
+        checksum.update(plaintext.getBytes(), 0, plaintext.getBytes().length);
+        return checksum.getValue();
+    }
+
     public boolean isMine() {
         return this.messageMine;
     }
 
-    public boolean isTheirs() {
+    boolean isTheirs() {
         return !this.messageMine;
     }
 
@@ -84,90 +179,11 @@ public class MessageListItem {
     }
 
     public void removeMessageReadBy() {
-        this.messageReadBy = new ArrayList<>();
+        messageReadBy = new ArrayList<>();
     }
 
     public void addMessageReadBy(ChannelUserRead r) {
-        this.messageReadBy.add(r);
+        messageReadBy.add(r);
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-
-        if (obj == null) {
-//            Log.i(TAG,"case:0: false");
-            return false;
-        }
-
-        MessageListItem other = (MessageListItem) obj;
-
-        Message newMessage = this.getMessage();
-        Message oldMessage = other.getMessage();
-
-        if (oldMessage == null || newMessage == null) {
-//            Log.i(TAG,"case:2: false");
-            return false;
-        }
-
-
-        if (!oldMessage.equals(newMessage)) {
-//            Log.i(TAG,"case:3: false");
-            return false;
-        }
-
-        if (oldMessage.getUpdatedAt() != null && oldMessage.getUpdatedAt().getTime() < newMessage.getUpdatedAt().getTime()) {
-//            Log.i(TAG,"case:4: false");
-            return false;
-        }
-
-        if (oldMessage.getText() == null && newMessage.getText() != null){
-//            Log.i(TAG,"case:5: false");
-            return false;
-        }
-
-        if (!TextUtils.equals(oldMessage.getText(), newMessage.getText())){
-//            Log.i(TAG,"case:6: false");
-            return false;
-        }
-
-
-        if (oldMessage.getAttachments() == null && newMessage.getAttachments() != null){
-//            Log.i(TAG,"case:7: false");
-            return false;
-        }
-
-        if (!oldMessage.getAttachments().equals(newMessage.getAttachments())){
-//            Log.i(TAG,"case:8: false");
-            return false;
-        }
-
-        if (oldMessage.getReactionCounts() != null && oldMessage.getReactionCounts() == null && newMessage.getReactionCounts() != null){
-//            Log.i(TAG,"case:9: false");
-            return false;
-        }
-
-        if (oldMessage.getReactionCounts() != null && !oldMessage.getReactionCounts().equals(newMessage.getReactionCounts())){
-//            Log.i(TAG,"case:10: false");
-            return false;
-        }
-
-        if (other.getMessageReadBy().isEmpty() && !this.getMessageReadBy().isEmpty() ){
-//            Log.i(TAG,"case:11: false");
-            return false;
-        }
-
-
-        if (!other.getMessageReadBy().isEmpty() && !other.getMessageReadBy().equals(this.getMessageReadBy())) {
-//            Log.i(TAG,"case:12: false");
-            return false;
-        }
-//        boolean equel = super.equals(obj);
-//        Log.i(TAG,"default: " + equel);
-
-        return super.equals(obj);
-    }
 }

@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ChannelState implements Cloneable {
+public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
@@ -73,11 +75,6 @@ public class ChannelState implements Cloneable {
 
     public ChannelState copy() {
         ChannelState clone = new ChannelState(channel);
-        try {
-            clone = (ChannelState) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
         clone.reads = new ArrayList<>();
         for (ChannelUserRead read: getReads()) {
             clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
@@ -214,9 +211,17 @@ public class ChannelState implements Cloneable {
 
     public List<ChannelUserRead> getReads() {
         if (reads == null) {
-            return new ArrayList<>();
+            reads = new ArrayList<>();
         }
         return reads;
+    }
+
+    public Map<String, ChannelUserRead> getReadsByUser() {
+        Map<String, ChannelUserRead> readsByUser = new HashMap<>();
+        for (ChannelUserRead r : getReads()) {
+            readsByUser.put(r.getUserId(), r);
+        }
+        return readsByUser;
     }
 
     public List<ChannelUserRead> getLastMessageReads() {
@@ -388,27 +393,18 @@ public class ChannelState implements Cloneable {
     }
 
     public void setReadDateOfChannelLastMessage(User user, Date readDate) {
-        if (this.reads == null || this.reads.isEmpty()) return;
-        boolean isNotSet = true;
-        for (ChannelUserRead userLastRead : this.reads) {
-            try {
-                User user_ = userLastRead.getUser();
-                if (user_.getId().equals(user.getId())) {
-                    userLastRead.setLastRead(readDate);
-                    // Change Order
-                    this.reads.remove(userLastRead);
-                    this.reads.add(userLastRead);
-                    isNotSet = false;
-                    break;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        for (int i = 0; i < getReads().size(); i++) {
+            ChannelUserRead current = reads.get(i);
+            if (current.getUserId().equals(user.getId())) {
+                reads.remove(i);
+                current.setLastRead(readDate);
+                reads.add(current);
+                return;
             }
         }
-        if (isNotSet) {
-            ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
-            this.reads.add(channelUserRead);
-        }
+
+        ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
+        reads.add(channelUserRead);
     }
 }
 

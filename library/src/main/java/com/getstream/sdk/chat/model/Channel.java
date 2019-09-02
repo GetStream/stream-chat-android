@@ -49,7 +49,7 @@ import retrofit2.Response;
 /**
  * A channel
  */
-public class Channel implements Cloneable {
+public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
     @SerializedName("id")
@@ -82,9 +82,6 @@ public class Channel implements Cloneable {
     @SerializedName("image")
     private String image;
 
-    private Date lastKeyStroke;
-    private Date lastTypingEvent;
-    boolean isTyping = false;
     private HashMap<String, Object> extraData;
     private Map<String, String>reactionTypes;
 
@@ -147,11 +144,6 @@ public class Channel implements Cloneable {
 
     public Channel copy() {
         Channel clone = new Channel(client, type, id);
-        try {
-            clone = (Channel) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
         if (lastMessageDate!= null) {
             clone.lastMessageDate = new Date(lastMessageDate.getTime());
         }
@@ -550,39 +542,6 @@ public class Channel implements Cloneable {
         });
     }
 
-    /**
-     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-     * Call this on every keystroke
-     */
-    public void keystroke(){
-        if (!getConfig().istypingEvents()) return;
-        Date now = new Date();
-        long diff;
-        if (this.lastKeyStroke == null)
-            diff = 2001;
-        else
-            diff = now.getTime() - this.lastKeyStroke.getTime();
-
-
-        this.lastKeyStroke = now;
-        this.isTyping = true;
-        // send a typing.start every 2 seconds
-        if (diff > 2000) {
-            this.lastTypingEvent = new Date();
-            sendEvent(EventType.TYPING_START, new EventCallback() {
-                @Override
-                public void onSuccess(EventResponse response) {
-
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-
-                }
-            });
-        }
-    }
-
     public void handleChannelUpdated(Event event){
         name = event.getChannel().name;
         image = event.getChannel().image;
@@ -626,39 +585,6 @@ public class Channel implements Cloneable {
     public void handleReadEvent(Event event) {
         channelState.setReadDateOfChannelLastMessage(event.getUser(), event.getCreatedAt());
         channelState.getChannel().setLastMessageDate(event.getCreatedAt());
-    }
-
-    /**
-     * stopTyping - Sets last typing to null and sends the typing.stop event
-     */
-    public void stopTyping(){
-        if (!getConfig().istypingEvents()) return;
-        this.lastTypingEvent = null;
-        this.isTyping = false;
-        sendEvent(EventType.TYPING_STOP, new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
-    }
-
-    /**
-     * Clean - Cleans the channel state and fires stop typing if needed
-     */
-    public void clean() {
-        if (this.lastKeyStroke != null) {
-            Date now = new Date();
-            long diff = now.getTime() - this.lastKeyStroke.getTime();
-            if (diff > 1000 && this.isTyping) {
-                this.stopTyping();
-            }
-        }
     }
 
     /**
