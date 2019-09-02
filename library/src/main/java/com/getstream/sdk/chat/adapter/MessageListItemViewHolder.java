@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -178,10 +179,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configAttachmentView();
         configReactionView();
         configReplyView();
-        configDelieveredIndicator();
+        configDeliveredIndicator();
         // apply position related style tweaks
         configPositionsStyle();
-        // Configure Laytout Params
+        // Configure Layout Params
         configMarginStartEnd();
         configParamsMessageText();
         configParamsDeletedMessage();
@@ -259,7 +260,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void configDelieveredIndicator() {
+    private void configDeliveredIndicator() {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
@@ -275,7 +276,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
                     && channelState.getLastMessage().getId().equals(message.getId())){
-                message.setDelivered(true);
+                message.setStatus(MessageStatus.RECEIVED);
                 iv_deliver.setVisibility(View.VISIBLE);
                 return;
             }
@@ -294,7 +295,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configSendFailed() {
-        if (message.getType().equals(ModelType.message_error)) {
+        if (message.getStatus() == MessageStatus.FAILED) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;

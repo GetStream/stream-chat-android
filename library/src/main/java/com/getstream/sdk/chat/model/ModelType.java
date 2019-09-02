@@ -13,6 +13,7 @@ public class ModelType {
     public static final String message_regular = "regular";
     public static final String message_ephemeral = "ephemeral";
     public static final String message_error = "error";
+    public static final String message_failed = "failed";
     public static final String message_reply = "reply";
     public static final String message_system = "system";
 

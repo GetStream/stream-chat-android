@@ -12,6 +12,8 @@ import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,11 +103,11 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+    @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
-        BaseMessageListItemViewHolder holder = this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
-        return holder;
+        return this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
     }
 
 

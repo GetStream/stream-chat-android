@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -452,7 +453,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         message.setUser(client().getUser());
         message.setCreatedAt(new Date());
         message.setType("regular");
-        message.setDelivered(false);
+        message.setStatus(MessageStatus.SENDING);
         String clientSideID = client().getUserId() + "-" + randomUUID().toString();
         message.setId(clientSideID);
         addMessage(message);
@@ -469,7 +470,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     @Override
                     public void onError(String errMsg, int errCode) {
                         callback.onError(errMsg, errCode);
-                        //binding.messageInput.setEnabled(true);
+                        message.setStatus(MessageStatus.FAILED);
                     }
                 });
     }

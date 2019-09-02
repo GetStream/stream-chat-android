@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
@@ -94,6 +95,12 @@ public class Message implements UserEntity {
     @Expose
     private Map<String, String> commandInfo;
 
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    private MessageStatus status = MessageStatus.RECEIVED;
+
     @Override
     public boolean equals(@Nullable Object obj) {
         if (getClass() != obj.getClass()) {
@@ -132,6 +139,7 @@ public class Message implements UserEntity {
         clone.parentId = parentId;
         clone.command = command;
         clone.commandInfo = commandInfo;
+        clone.status = status;
         return clone;
     }
 
@@ -283,11 +291,11 @@ public class Message implements UserEntity {
     }
 
     public boolean isDelivered() {
-        return isDelivered;
+        return status == MessageStatus.RECEIVED;
     }
 
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 
     public String getId() {
