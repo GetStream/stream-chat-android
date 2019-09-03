@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.model;
 
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.DateConverter;
+import com.getstream.sdk.chat.CommandListConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -13,11 +13,9 @@ import java.util.List;
 
 public class Config {
     @SerializedName("created_at")
-    @TypeConverters(DateConverter.class)
     private String created_at;
 
     @SerializedName("updated_at")
-    @TypeConverters(DateConverter.class)
     private String updated_at;
 
     @SerializedName("name")
@@ -54,6 +52,7 @@ public class Config {
     private String automod;
 
     @SerializedName("commands")
+    @TypeConverters(CommandListConverter.class)
     private List<Command>commands;
 
     public String getCreatedAt() {
@@ -110,5 +109,29 @@ public class Config {
 
     public List<Command> getCommands() {
         return commands;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getCreated_at() {
+       return this.created_at;
+    }
+
+    public String getUpdated_at() {
+        return this.updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public void setReadEvents(boolean readEvents) {
+        this.readEvents = readEvents;
+    }
+
+    public void setTypingEvents(boolean typingEvents) {
+        this.typingEvents = typingEvents;
     }
 }

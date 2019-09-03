@@ -72,6 +72,10 @@ public class Channel {
     public Date getCreatedAt() {
         return createdAt;
     }
+    public void setCreatedAt(Date d) {
+        this.createdAt = d;
+    }
+
 
     public Date getUpdatedAt() {
         return updatedAt;
