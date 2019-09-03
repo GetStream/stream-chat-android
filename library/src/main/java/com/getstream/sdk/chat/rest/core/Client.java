@@ -106,76 +106,53 @@ public class Client implements WSResponseHandler {
                 }
             }
 
-            private void updateChannelMessage(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleMessageUpdatedOrDeleted(event);
-                }
+            private void updateChannelMessage(Channel channel, Event event) {
+                channel.handleMessageUpdatedOrDeleted(event);
             }
 
             @Override
-            public void onUserWatchingStart(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleWatcherStart(event);
-                }
+            public void onUserWatchingStart(Channel channel, Event event) {
+                channel.handleWatcherStart(event);
             }
 
             @Override
-            public void onUserWatchingStop(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleWatcherStop(event);
-                }
+            public void onUserWatchingStop(Channel channel, Event event) {
+                channel.handleWatcherStop(event);
             }
 
             @Override
-            public void onMessageNew(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleNewMessage(event);
-                }
+            public void onMessageNew(Channel channel, Event event) {
+                channel.handleNewMessage(event);
             }
 
             @Override
-            public void onMessageUpdated(Event event) {
-                this.updateChannelMessage(event);
+            public void onMessageUpdated(Channel channel, Event event) {
+                this.updateChannelMessage(channel, event);
             }
 
             @Override
-            public void onMessageDeleted(Event event) {
-                this.updateChannelMessage(event);
+            public void onMessageDeleted(Channel channel, Event event) {
+                this.updateChannelMessage(channel, event);
             }
 
             @Override
-            public void onMessageRead(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleReadEvent(event);
-                }
+            public void onMessageRead(Channel channel, Event event) {
+                channel.handleReadEvent(event);
             }
 
             @Override
-            public void onReactionNew(Event event) {
-                this.updateChannelMessage(event);
+            public void onReactionNew(Channel channel, Event event) {
+                this.updateChannelMessage(channel, event);
             }
 
             @Override
-            public void onReactionDeleted(Event event) {
-                this.updateChannelMessage(event);
+            public void onReactionDeleted(Channel channel, Event event) {
+                this.updateChannelMessage(channel, event);
             }
 
             @Override
-            public void onChannelUpdated(Event event) {
-                Channel channel = getChannelByCid(event.getCid());
-                if (channel != null) {
-                    channel.handleChannelUpdated(event);
-                }
-            }
-
-            @Override
-            public void onChannelDeleted(Event event) {
-                //TODO: remove channel from client activeChannels
+            public void onChannelUpdated(Channel channel, Event event) {
+                channel.handleChannelUpdated(channel, event);
             }
 
             @Override
@@ -395,18 +372,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
-        builtinHandler.dispatchEvent(event);
-
-        Channel channel = getChannelByCid(event.getCid());
-        if (channel != null){
-            event.setChannel(channel);
-        }
+        builtinHandler.dispatchEvent(this, event);
 
         for (int i = eventSubscribers.size() - 1; i >= 0 ; i--) {
             ChatEventHandler handler = eventSubscribers.get(i);
-            handler.dispatchEvent(event);
+            handler.dispatchEvent(this, event);
         }
 
+        Channel channel = getChannelByCid(event.getCid());
         if (channel != null) {
             channel.handleChannelEvent(event);
         }

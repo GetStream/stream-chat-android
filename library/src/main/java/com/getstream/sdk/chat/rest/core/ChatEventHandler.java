@@ -1,48 +1,68 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 
 public abstract class ChatEventHandler {
 
     public void onUserPresenceChanged(Event event) {}
-    public void onUserWatchingStart(Event event) {}
-    public void onUserWatchingStop(Event event) {}
+    public void onUserWatchingStart(Channel channel, Event event) {}
+    public void onUserWatchingStop(Channel channel, Event event) {}
     public void onUserUpdated(Event event) {}
     public void onTypingStart(Event event) {}
     public void onTypingStop(Event event) {}
-    public void onMessageNew(Event event) {}
-    public void onMessageUpdated(Event event) {}
-    public void onMessageDeleted(Event event) {}
-    public void onMessageRead(Event event) {}
-    public void onMessageReaction(Event event) {}
-    public void onReactionNew(Event event) {}
-    public void onReactionDeleted(Event event) {}
-    public void onMemberAdded(Event event) {}
-    public void onMemberRemoved(Event event) {}
-    public void onChannelUpdated(Event event) {}
-    public void onChannelDeleted(Event event) {}
+    public void onMessageNew(Channel channel, Event event) {}
+    public void onMessageUpdated(Channel channel, Event event) {}
+    public void onMessageDeleted(Channel channel, Event event) {}
+    public void onMessageRead(Channel channel, Event event) {}
+    public void onReactionNew(Channel channel,Event event) {}
+    public void onReactionDeleted(Channel channel, Event event) {}
+    public void onMemberAdded(Channel channel, Event event) {}
+    public void onMemberRemoved(Channel channel, Event event) {}
+    public void onChannelUpdated(Channel channel, Event event) {}
+    public void onChannelDeleted(Channel channel, Event event) {}
     public void onHealthCheck(Event event) {}
     public void onConnectionChanged(Event event) {}
     public void onConnectionRecovered(Event event) {}
-    public void onNotificationMessageNew(Event event) {}
-    public void onNotificationMarkRead(Event event) {}
-    public void onNotificationInvited(Event event) {}
-    public void onNotificationInviteAccepted(Event event) {}
-    public void onNotificationAddedToChannel(Event event) {}
-    public void onNotificationRemovedFromChannel(Event event) {}
+    public void onNotificationMessageNew(Channel channel, Event event) {}
+    public void onNotificationMarkRead(Channel channel, Event event) {}
+    public void onNotificationInvited(Channel channel, Event event) {}
+    public void onNotificationInviteAccepted(Channel channel, Event event) {}
+    public void onNotificationAddedToChannel(Channel channel, Event event) {}
+    public void onNotificationRemovedFromChannel(Channel channel, Event event) {}
     public void onAnyEvent(Event event) {}
 
-    public final void dispatchEvent(Event event){
+    final Channel getChannel(Client client, Event event) {
+        if (event.getCid() == null) return null;
+        return client.getChannelByCid(event.getCid());
+    }
+
+    public void handleEventFromUnregisteredChannel(Client client, Event event) {}
+
+    private interface ChannelEvent {
+        void dispatch(Channel channel, Event event);
+    }
+
+    final void dispatchChannelEvent(Client client, Event event, ChannelEvent channelEventLambda) {
+        Channel channel = getChannel(client, event);
+        if (channel == null) {
+            handleEventFromUnregisteredChannel(client, event);
+        } else {
+            channelEventLambda.dispatch(channel, event);
+        }
+    }
+
+    final void dispatchEvent(Client client, Event event){
         onAnyEvent(event);
         switch (event.getType()) {
             case USER_PRESENCE_CHANGED:
                 onUserPresenceChanged(event);
                 break;
             case USER_WATCHING_START:
-                onUserWatchingStart(event);
+                dispatchChannelEvent(client, event, this::onUserWatchingStart);
                 break;
             case USER_WATCHING_STOP:
-                onUserWatchingStop(event);
+                dispatchChannelEvent(client, event, this::onUserWatchingStop);
                 break;
             case USER_UPDATED:
                 onUserUpdated(event);
@@ -54,37 +74,34 @@ public abstract class ChatEventHandler {
                 onTypingStop(event);
                 break;
             case MESSAGE_NEW:
-                onMessageNew(event);
+                dispatchChannelEvent(client, event, this::onMessageNew);
                 break;
             case MESSAGE_UPDATED:
-                onMessageUpdated(event);
+                dispatchChannelEvent(client, event, this::onMessageUpdated);
                 break;
             case MESSAGE_DELETED:
-                onMessageDeleted(event);
+                dispatchChannelEvent(client, event, this::onMessageDeleted);
                 break;
             case MESSAGE_READ:
-                onMessageRead(event);
-                break;
-            case MESSAGE_REACTION:
-                onMessageReaction(event);
+                dispatchChannelEvent(client, event, this::onMessageRead);
                 break;
             case REACTION_NEW:
-                onReactionNew(event);
+                dispatchChannelEvent(client, event, this::onReactionNew);
                 break;
             case REACTION_DELETED:
-                onReactionDeleted(event);
+                dispatchChannelEvent(client, event, this::onReactionDeleted);
                 break;
             case MEMBER_ADDED:
-                onMemberAdded(event);
+                dispatchChannelEvent(client, event, this::onMemberAdded);
                 break;
             case MEMBER_REMOVED:
-                onMemberRemoved(event);
+                dispatchChannelEvent(client, event, this::onMemberRemoved);
                 break;
             case CHANNEL_UPDATED:
-                onChannelUpdated(event);
+                dispatchChannelEvent(client, event, this::onChannelUpdated);
                 break;
             case CHANNEL_DELETED:
-                onChannelDeleted(event);
+                dispatchChannelEvent(client, event, this::onChannelDeleted);
                 break;
             case HEALTH_CHECK:
                 onHealthCheck(event);
@@ -96,22 +113,22 @@ public abstract class ChatEventHandler {
                 onConnectionRecovered(event);
                 break;
             case NOTIFICATION_MESSAGE_NEW:
-                onNotificationMessageNew(event);
+                dispatchChannelEvent(client, event, this::onNotificationMessageNew);
                 break;
             case NOTIFICATION_MARK_READ:
-                onNotificationMarkRead(event);
+                dispatchChannelEvent(client, event, this::onNotificationMarkRead);
                 break;
             case NOTIFICATION_INVITED:
-                onNotificationInvited(event);
+                dispatchChannelEvent(client, event, this::onNotificationInvited);
                 break;
             case NOTIFICATION_INVITE_ACCEPTED:
-                onNotificationInviteAccepted(event);
+                dispatchChannelEvent(client, event, this::onNotificationInviteAccepted);
                 break;
             case NOTIFICATION_ADDED_TO_CHANNEL:
-                onNotificationAddedToChannel(event);
+                dispatchChannelEvent(client, event, this::onNotificationAddedToChannel);
                 break;
             case NOTIFICATION_REMOVED_FROM_CHANNEL:
-                onNotificationRemovedFromChannel(event);
+                dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
                 break;
         }
     }
