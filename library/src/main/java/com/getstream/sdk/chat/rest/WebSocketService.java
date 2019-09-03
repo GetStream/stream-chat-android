@@ -246,7 +246,7 @@ public class WebSocketService extends WebSocketListener {
             if (wsId > 1) {
                 eventThread.mHandler.post(() -> webSocketListener.connectionRecovered());
             }
-            Log.d(TAG, "WebSocket Connected : " + response);
+            Log.d(TAG, "WebSocket #" + wsId + " Connected : " + response);
         }
 
         @Override
