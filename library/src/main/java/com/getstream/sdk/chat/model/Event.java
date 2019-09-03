@@ -49,10 +49,6 @@ public class Event implements UserEntity {
     @Expose
     private Reaction reaction;
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
     @SerializedName("channel")
     @Expose
     private Channel channel;

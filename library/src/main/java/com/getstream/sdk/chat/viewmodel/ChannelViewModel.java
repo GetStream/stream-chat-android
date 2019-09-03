@@ -237,17 +237,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onUserWatchingStart(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onUserWatchingStop(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onChannelUpdated(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
