@@ -265,13 +265,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
-        if (isDeletedOrFailedMessage())  return;
-        if (message == null || TextUtils.isEmpty(message.getId())) return;
-        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-        if (!readBy.isEmpty() || !messageListItem.isMine()) return;
-
-        if (!messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM))
+        if (isDeletedOrFailedMessage()
+                || message == null
+                || TextUtils.isEmpty(message.getId())
+                || message.getStatus() == MessageStatus.FAILED
+                || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
+                ||!messageListItem.getMessageReadBy().isEmpty()
+                || !messageListItem.isMine())
             return;
+
         if (message.isDelivered()) {
             iv_deliver.setVisibility(View.VISIBLE);
         } else {

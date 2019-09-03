@@ -184,8 +184,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 // set the previous message for the next iteration
                 previousMessage = message;
             }
-
-            this.messageEntities = entities;
+            this.messageEntities.clear();
+            this.messageEntities.addAll(entities);
             Log.i(TAG, "broadcast because messages changed");
             broadcastValue();
         });

@@ -115,13 +115,17 @@ public class MessageListItem {
             case MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);
-                boolean sameMessage = Objects.equals(other.message, message);
+                boolean sameMessage = Objects.equals(other.message, message) && sameStatus(other.message);
                 return sameMessage && samePositions && sameReads;
             case DATE_SEPARATOR:
                 return Objects.equals(other.date, date);
         }
 
         return false;
+    }
+
+    boolean sameStatus(Message other){
+        return other.getStatus() == message.getStatus();
     }
 
     long getStableID(){

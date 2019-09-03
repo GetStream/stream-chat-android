@@ -297,6 +297,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
+        Log.d(TAG,"New messages Count:" + messagesCopy.size());
         if (index != -1) {
             // Failed Message Progress
             if (oldMessage.getStatus() == MessageStatus.FAILED){
@@ -304,8 +305,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 messagesCopy.add(newMessage);
             }else{
                 messagesCopy.set(index, newMessage);
-                messages.postValue(messagesCopy);
             }
+            messages.postValue(messagesCopy);
+            Log.d(TAG,"New messages Count:" + messagesCopy.size());
         }
     }
 
@@ -482,8 +484,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        message.setStatus(MessageStatus.FAILED);
-                        updateMessage(message);
+                        Message clone = message.copy();
+                        clone.setStatus(MessageStatus.FAILED);
+                        updateMessage(clone);
                         callback.onError(errMsg, errCode);
                     }
                 });
