@@ -5,12 +5,18 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.AttachmentListConverter;
+import com.getstream.sdk.chat.CommandInfoConverter;
 import com.getstream.sdk.chat.DateConverter;
+import com.getstream.sdk.chat.ExtraDataConverter;
+import com.getstream.sdk.chat.MessageStatusConverter;
+import com.getstream.sdk.chat.ReactionCountConverter;
+import com.getstream.sdk.chat.ReactionListConverter;
+import com.getstream.sdk.chat.UserListConverter;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
@@ -61,17 +67,17 @@ public class Message implements UserEntity {
 
     @SerializedName("attachments")
     @Expose
-    @Embedded
+    @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
 
     @SerializedName("latest_reactions")
     @Expose
-    @Embedded
+    @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
 
     @SerializedName("own_reactions")
     @Expose
-    @Embedded
+    @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
     @SerializedName("reply_count")
@@ -95,12 +101,12 @@ public class Message implements UserEntity {
 
     @SerializedName("mentioned_users")
     @Expose
-    @Embedded
+    @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
     @SerializedName("reaction_counts")
     @Expose
-    @Embedded
+    @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
 
     @SerializedName("parent_id")
@@ -113,14 +119,14 @@ public class Message implements UserEntity {
 
     @SerializedName("command_info")
     @Expose
-    @Embedded
+    @TypeConverters(CommandInfoConverter.class)
     private Map<String, String> commandInfo;
 
     public MessageStatus getStatus() {
         return status;
     }
 
-    @Embedded
+    @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status = MessageStatus.RECEIVED;
 
     @Override
@@ -166,7 +172,7 @@ public class Message implements UserEntity {
     }
 
     // Additional Params
-    @Embedded
+    @TypeConverters(ExtraDataConverter.class)
     private Map<String, Object> extraData;
     private boolean isStartDay = false;
     private boolean isYesterday = false;
@@ -360,6 +366,7 @@ public class Message implements UserEntity {
         this.user = user;
     }
 
+    @TypeConverters(AttachmentListConverter.class)
     public List<Attachment> getAttachments() {
         if (attachments == null) {
             return new ArrayList<Attachment>();
@@ -472,4 +479,11 @@ public class Message implements UserEntity {
         return user.getId();
     }
 
+    public Map<String, Object> getExtraData() {
+        return extraData;
+    }
+
+    public void setExtraData(Map<String, Object> extraData) {
+        this.extraData = extraData;
+    }
 }

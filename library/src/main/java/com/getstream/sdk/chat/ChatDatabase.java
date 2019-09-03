@@ -9,7 +9,8 @@ import androidx.room.RoomDatabase;
 import com.getstream.sdk.chat.rest.Message;
 
 
-@Database(entities = {Message.class}, version = 1)
+// TODO: export schema
+@Database(entities = {Message.class}, version = 1, exportSchema = false)
 public abstract class ChatDatabase extends RoomDatabase {
 
     public abstract MessageDao messageDao();
