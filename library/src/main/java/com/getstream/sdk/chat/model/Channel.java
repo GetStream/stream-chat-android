@@ -541,10 +541,10 @@ public class Channel {
         });
     }
 
-    public void handleChannelUpdated(Event event){
-        name = event.getChannel().name;
-        image = event.getChannel().image;
-        extraData = event.getChannel().extraData;
+    public void handleChannelUpdated(Channel channel, Event event){
+        name = channel.name;
+        image = channel.image;
+        extraData = channel.extraData;
     }
 
     public void handleWatcherStart(Event event) {
