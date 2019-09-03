@@ -453,10 +453,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         message.setUser(client().getUser());
         message.setCreatedAt(new Date());
         message.setType("regular");
-        message.setStatus(MessageStatus.SENDING);
+        message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+
         String clientSideID = client().getUserId() + "-" + randomUUID().toString();
         message.setId(clientSideID);
         addMessage(message);
+
+        if (!client().isConnected()) {
+            callback.onError("no interent", -1);
+            return;
+        }
 
         // afterwards send the request
         channel.sendMessage(message,
@@ -469,8 +475,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        callback.onError(errMsg, errCode);
                         message.setStatus(MessageStatus.FAILED);
+                        updateMessage(message);
+                        callback.onError(errMsg, errCode);
                     }
                 });
     }

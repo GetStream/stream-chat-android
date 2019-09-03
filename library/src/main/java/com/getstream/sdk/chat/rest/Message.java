@@ -150,7 +150,6 @@ public class Message implements UserEntity {
     private boolean isToday = false;
 
     private String date, time;
-    private boolean isDelivered = false;
 
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {

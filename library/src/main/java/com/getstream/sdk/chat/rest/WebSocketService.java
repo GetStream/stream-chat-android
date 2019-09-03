@@ -173,13 +173,10 @@ public class WebSocketService extends WebSocketListener {
 
 //    private Handler mHandler = new Handler();
 
-    private Runnable mOfflineNotifier = new Runnable() {
-        @Override
-        public void run() {
-            if (!isHealthy()) {
-                Event wentOffline = new Event(false);
-                sendEventToHandlerThread(wentOffline);
-            }
+    private Runnable mOfflineNotifier = () -> {
+        if (!isHealthy()) {
+            Event wentOffline = new Event(false);
+            sendEventToHandlerThread(wentOffline);
         }
     };
 
@@ -258,10 +255,12 @@ public class WebSocketService extends WebSocketListener {
 
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);
+                Log.d(TAG, "isConnectionResolved");
             } else {
                 eventThread.mHandler.post(() -> {
                     webSocketListener.connectionResolved(event);
                     setConnectionResolved();
+                    Log.d(TAG, "setConnectionResolved");
                 });
             }
         }

@@ -180,6 +180,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configReactionView();
         configReplyView();
         configDeliveredIndicator();
+        configReadIndicator();
         // apply position related style tweaks
         configPositionsStyle();
         // Configure Layout Params
@@ -187,7 +188,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
-        configReadIndicator();
+
         configParamsReactionTailSpace();
         configParamsReactionSpace();
         configParamsReactionTail();
@@ -298,11 +299,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getStatus() == MessageStatus.FAILED) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
+            // Set Style
+            tv_failed_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+            tv_failed_text.setTextColor(style.getMessageTextColorMine());
+            tv_failed_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
-            //TODO what does this do?
-            // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
-            //ll_send_failed.setBackgroundResource(background);
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            ll_send_failed.setBackground(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
                 if (messageClickListener != null) {
@@ -325,6 +330,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
         if (message.getType().equals(ModelType.message_error)) {
+            tv_text.setVisibility(View.GONE);
+            tv_deleted.setVisibility(View.GONE);
+            return;
+        }
+        if (message.getStatus() == MessageStatus.FAILED) {
             tv_text.setVisibility(View.GONE);
             tv_deleted.setVisibility(View.GONE);
             return;

@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -111,8 +112,12 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
+                    if (message.getStatus() == MessageStatus.FAILED){
+                        bgColor = getResources().getColor(R.color.stream_message_failed);
+                    }else{
+                        bgColor = style.getMessageBackgroundColorMine();
+                    }
 
-                    bgColor = style.getMessageBackgroundColorMine();
                     strokeColor = style.getMessageBorderColorMine();
                     strokeWidth = style.getMessageBorderWidthMine();
                     topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
@@ -158,6 +163,7 @@ public class MessageListView extends RecyclerView {
 //                        }
                     }
                 }
+
                 return new DrawableBuilder()
                         .rectangle()
                         .strokeColor(strokeColor)

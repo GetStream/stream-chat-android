@@ -343,6 +343,7 @@ public class MessageInputView extends RelativeLayout
                     public void onError(String errMsg, int errCode) {
                         initSendMessage();
                         binding.ivSend.setEnabled(true);
+                        Utils.showMessage(getContext(), errMsg);
                     }
                 });
             }
