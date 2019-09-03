@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -63,6 +64,7 @@ public class Message implements UserEntity {
 
     @SerializedName("user")
     @Expose
+    @Embedded(prefix = "user_")
     private User user;
 
     @SerializedName("attachments")

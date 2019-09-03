@@ -1,13 +1,12 @@
 package com.getstream.sdk.chat;
 
-import android.util.ArrayMap;
-
 import androidx.room.TypeConverter;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExtraDataConverter {
@@ -16,7 +15,7 @@ public class ExtraDataConverter {
     @TypeConverter
     public static Map<String, Object> stringToMap(String data) {
         if (data == null) {
-            return new ArrayMap<>();
+            return new HashMap<>();
         }
 
         Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
