@@ -310,9 +310,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             ll_send_failed.setBackground(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
+                if (!channelState.getChannel().getClient().isConnected()) return;
                 if (messageClickListener != null) {
-                    String tag = TextUtils.isEmpty(message.getCommand()) ? Constant.TAG_MESSAGE_RESEND : Constant.TAG_MESSAGE_INVALID_COMMAND;
-                    v.setTag(new MessageTagModel(tag, position));
                     messageClickListener.onMessageClick(message, position);
                 }
             });
