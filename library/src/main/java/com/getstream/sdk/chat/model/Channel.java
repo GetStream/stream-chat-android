@@ -84,6 +84,39 @@ public class Channel {
     @SerializedName("created_at")
     @TypeConverters(DateConverter.class)
     private Date createdAt;
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
+    }
+
+    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
+        this.eventSubscribers = eventSubscribers;
+    }
+
+    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
+        this.eventSubscribersBy = eventSubscribersBy;
+    }
+
+    public void setSubscribersSeq(int subscribersSeq) {
+        this.subscribersSeq = subscribersSeq;
+    }
+
     @SerializedName("updated_at")
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
@@ -233,9 +266,9 @@ public class Channel {
     private ChannelState channelState;
 
     // this constructor is here for GSON to play fair
-//    public Channel() {
-//        this(null, "", "", new HashMap<>());
-//    }
+    public Channel() {
+        this(null, "", "", new HashMap<>());
+    }
 
     /**
      * constructor - Create a channel

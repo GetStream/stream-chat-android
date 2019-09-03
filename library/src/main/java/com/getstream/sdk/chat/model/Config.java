@@ -18,11 +18,20 @@ public class Config {
     @SerializedName("updated_at")
     private String updated_at;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @SerializedName("name")
     private String name;
 
     @SerializedName("typing_events")
     private boolean typingEvents;
+
+
+    public void setConnect_events(boolean connect_events) {
+        this.connect_events = connect_events;
+    }
 
     @SerializedName("read_events")
     private boolean readEvents;
@@ -36,6 +45,14 @@ public class Config {
     @SerializedName("reactions")
     private boolean reactions;
 
+    public void setInfinite(String infinite) {
+        this.infinite = infinite;
+    }
+
+    public void setMax_message_length(int max_message_length) {
+        this.max_message_length = max_message_length;
+    }
+
     @SerializedName("replies")
     private boolean replies;
 
@@ -47,6 +64,14 @@ public class Config {
 
     @SerializedName("max_message_length")
     private int max_message_length;
+
+    public void setAutomod(String automod) {
+        this.automod = automod;
+    }
+
+    public void setCommands(List<Command> commands) {
+        this.commands = commands;
+    }
 
     @SerializedName("automod")
     private String automod;
@@ -67,33 +92,14 @@ public class Config {
         return name;
     }
 
-    public boolean istypingEvents() {
-        return typingEvents;
-    }
+
+
 
     public boolean isReadEvents() {
         return readEvents;
     }
 
-    public boolean isConnect_events() {
-        return connect_events;
-    }
 
-    public boolean isSearch() {
-        return search;
-    }
-
-    public boolean isReactions() {
-        return reactions;
-    }
-
-    public boolean isReplies() {
-        return replies;
-    }
-
-    public boolean isMutes() {
-        return mutes;
-    }
 
     public String getInfinite() {
         return infinite;
@@ -133,5 +139,45 @@ public class Config {
 
     public void setTypingEvents(boolean typingEvents) {
         this.typingEvents = typingEvents;
+    }
+
+    public boolean isTypingEvents() {
+        return typingEvents;
+    }
+
+    public boolean isConnect_events() {
+        return connect_events;
+    }
+
+    public boolean isSearch() {
+        return search;
+    }
+
+    public void setSearch(boolean search) {
+        this.search = search;
+    }
+
+    public boolean isReactions() {
+        return reactions;
+    }
+
+    public void setReactions(boolean reactions) {
+        this.reactions = reactions;
+    }
+
+    public boolean isReplies() {
+        return replies;
+    }
+
+    public void setReplies(boolean replies) {
+        this.replies = replies;
+    }
+
+    public boolean isMutes() {
+        return mutes;
+    }
+
+    public void setMutes(boolean mutes) {
+        this.mutes = mutes;
     }
 }
