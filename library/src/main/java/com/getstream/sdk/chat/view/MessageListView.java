@@ -302,6 +302,8 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
+
+                    viewModel.setMessageListScrollUp(hasScrolledUp);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                 }

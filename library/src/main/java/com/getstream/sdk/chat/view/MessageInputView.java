@@ -160,6 +160,10 @@ public class MessageInputView extends RelativeLayout
         });
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+        viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup ->{
+//            if (messageListScrollup)
+//                Utils.hideSoftKeyboard((Activity) getContext());
+        });
     }
 
     // Edit
