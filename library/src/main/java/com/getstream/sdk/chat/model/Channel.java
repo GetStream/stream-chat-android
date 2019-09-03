@@ -5,7 +5,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.DateConverter;
+import com.getstream.sdk.chat.ExtraDataConverter;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
@@ -27,7 +34,6 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
@@ -49,14 +55,18 @@ import retrofit2.Response;
 /**
  * A channel
  */
+@Entity
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
+    @PrimaryKey
+    @NonNull
     @SerializedName("id")
     private String id;
     @SerializedName("type")
     private String type;
     @SerializedName("last_message_at")
+    @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
 
     public Date getCreatedAt() {
@@ -68,21 +78,27 @@ public class Channel {
     }
 
     @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
     private Date createdAt;
     @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
     private Date updatedAt;
     @SerializedName("created_by")
+    @Embedded(prefix = "user_")
     private User createdByUser;
     @SerializedName("frozen")
     private boolean frozen;
     @SerializedName("config")
+    @Embedded(prefix = "config_")
     private Config config;
     @SerializedName("name")
     private String name;
     @SerializedName("image")
     private String image;
 
+    @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+    @Ignore
     private Map<String, String>reactionTypes;
 
     // region Getter & Setter
@@ -189,8 +205,11 @@ public class Channel {
         return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
+    @Ignore
     private List<ChatChannelEventHandler> eventSubscribers;
+    @Ignore
     private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
+    @Ignore
     private int subscribersSeq;
 
     public HashMap<String, Object> getExtraData() {
@@ -204,7 +223,9 @@ public class Channel {
         this.client = client;
     }
 
+    @Ignore
     private Client client;
+    @Ignore
     private ChannelState channelState;
 
     // this constructor is here for GSON to play fair

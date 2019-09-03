@@ -1,5 +1,8 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.room.TypeConverters;
+
+import com.getstream.sdk.chat.DateConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -10,9 +13,11 @@ import java.util.List;
 
 public class Config {
     @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
     private String created_at;
 
     @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
     private String updated_at;
 
     @SerializedName("name")
