@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,6 +27,8 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
@@ -64,7 +67,9 @@ public class MessageInputView extends RelativeLayout
 
     private AttachmentListener attachmentListener;
     // state
+
     private Message editingMessage;
+
 
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
@@ -153,6 +158,35 @@ public class MessageInputView extends RelativeLayout
                     break;
             }
         });
+
+        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+    }
+
+    // Edit
+    private void editMessage(Message message) {
+        if (message == null) return;
+
+        binding.etMessage.requestFocus();
+        if (!TextUtils.isEmpty(message.getText())) {
+            binding.etMessage.setText(message.getText());
+            binding.etMessage.setSelection(binding.etMessage.getText().length());
+        }
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
+            for (Attachment attachment : message.getAttachments())
+                attachment.config.setUploaded(true);
+
+            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+                String fileType = message.getAttachments().get(0).getMime_type();
+                if (fileType.equals(ModelType.attach_mime_mov) ||
+                        fileType.equals(ModelType.attach_mime_mp4)) {
+                    sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+                } else {
+                    sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
+                }
+            } else {
+                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+            }
+        }
     }
 
     private void initAttachmentUI() {
@@ -215,19 +249,19 @@ public class MessageInputView extends RelativeLayout
 
 
     public boolean isEditing() {
-        return editingMessage != null;
+        return getEditMessage() != null;
     }
 
-    public void editMessage(Message message) {
-        editingMessage = message;
-    }
+//    public void editMessage(Message message) {
+//        editingMessage = message;
+//    }
 
     public Message getEditMessage() {
-        return editingMessage;
+        return viewModel.getEditMessage().getValue();
     }
 
     public void cancelEditMessage() {
-        editingMessage = null;
+        viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         this.clearFocus();
         sendFileFunction.fadeAnimationView(binding.ivBackAttachment, false);
@@ -255,7 +289,9 @@ public class MessageInputView extends RelativeLayout
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.iv_send) {
-            this.onSendMessage(binding.etMessage.getText().toString());
+
+            this.onSendMessage(binding.etMessage.getText().toString(), isEditing());
+
         } else if (id == R.id.iv_openAttach) {
             // open the attachment drawer
             binding.setIsAttachFile(true);
@@ -289,17 +325,36 @@ public class MessageInputView extends RelativeLayout
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
 
-    private void onSendMessage(String input) {
+    private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(sendFileFunction.getSelectedAttachments());
-        if (sendMessageListener != null) {
-            sendMessageListener.onSendMessage(m, new MessageCallback() {
+        if (!isEdit){
+            Message m = new Message();
+            m.setText(input);
+            m.setAttachments(sendFileFunction.getSelectedAttachments());
+            if (sendMessageListener != null) {
+                sendMessageListener.onSendMessage(m, new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        binding.ivSend.setEnabled(true);
+                        initSendMessage();
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        initSendMessage();
+                        binding.ivSend.setEnabled(true);
+                        Utils.showMessage(getContext(), errMsg);
+                    }
+                });
+            }
+        }else{
+            getEditMessage().setText(input);
+            getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
+            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
-                    binding.ivSend.setEnabled(true);
                     initSendMessage();
+                    binding.ivSend.setEnabled(true);
                 }
 
                 @Override
@@ -309,9 +364,11 @@ public class MessageInputView extends RelativeLayout
                 }
             });
         }
+
     }
 
     private void initSendMessage() {
+        viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         sendFileFunction.initSendMessage();
     }
@@ -324,6 +381,7 @@ public class MessageInputView extends RelativeLayout
     public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
         this.openCameraViewListener = openCameraViewListener;
     }
+
 
     // region Listeners
 

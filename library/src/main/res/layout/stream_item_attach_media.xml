@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -12,8 +13,7 @@
         android:layout_marginTop="1px"
         android:layout_marginEnd="1px"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:stream_siSquare="true" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/iv_command_logo"
@@ -36,7 +36,7 @@
 
     <TextView
         android:id="@+id/tv_media_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="9dp"
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
@@ -45,14 +45,12 @@
 
     <TextView
         android:id="@+id/tv_media_des"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="@+id/tv_media_title"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/tv_media_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_media_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

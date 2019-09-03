@@ -113,19 +113,19 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageClick(Message message, int position) {
-        new ReactionDialog(this)
-                .setChannel(viewModel.getChannel())
-                .setMessage(message)
-                .setMessagePosition(position)
-                .setRecyclerView(binding.messageList)
-                .setStyle(binding.messageList.getStyle())
-                .show();
+//        new ReactionDialog(this)
+//                .setChannel(viewModel.getChannel())
+//                .setMessage(message)
+//                .setMessagePosition(position)
+//                .setRecyclerView(binding.messageList)
+//                .setStyle(binding.messageList.getStyle())
+//                .show();
     }
 
     @Override
     public void onMessageLongClick(Message message) {
         new MoreActionDialog(this)
-                .setChannel(viewModel.getChannel())
+                .setChannelViewModel(viewModel)
                 .setMessage(message)
                 .setStyle(binding.messageList.getStyle())
                 .show();

@@ -372,12 +372,12 @@ public class Channel {
         } catch (Exception e) {
         }
 
-        if (!StringUtility.isNullOrEmpty(firstName) && StringUtility.isNullOrEmpty(lastName))
+        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase();
-        if (StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
+        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
             return lastName.substring(0, 1).toUpperCase();
 
-        if (!StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
+        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         return null;
     }
@@ -425,13 +425,11 @@ public class Channel {
         });
     }
 
-    public void updateMessage(String text,
-                              @NonNull Message message,
-                              @Nullable List<Attachment> attachments,
+    public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
-        message.setText(text);
-        UpdateMessageRequest request = new UpdateMessageRequest(message, attachments, mentionedUserIDs);
+        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
+
+        UpdateMessageRequest request = new UpdateMessageRequest(message, mentionedUserIDs);
 
         client.updateMessage(message.getId(), request, new MessageCallback() {
             @Override

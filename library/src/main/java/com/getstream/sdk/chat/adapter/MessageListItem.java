@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
+
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
@@ -14,6 +15,7 @@ import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 public class MessageListItem {
+
     private static final String TAG = MessageListItem.class.getSimpleName();
 
     private MessageListItemAdapter.EntityType type;
@@ -21,7 +23,6 @@ public class MessageListItem {
     private List<ChannelUserRead> messageReadBy;
     private List<MessageViewHolderFactory.Position> positions;
     private Date date;
-    private MessageViewHolderFactory.Position messagePosition;
     private Boolean messageMine;
     private List<User> users;
 
@@ -167,6 +168,10 @@ public class MessageListItem {
 
     public List<MessageViewHolderFactory.Position> getPositions() {
         return positions;
+    }
+
+    public void setPositions(List<MessageViewHolderFactory.Position> positions) {
+        this.positions = positions;
     }
 
     public List<ChannelUserRead> getMessageReadBy() {

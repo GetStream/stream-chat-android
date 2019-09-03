@@ -107,7 +107,6 @@
                 android:src="@drawable/stream_exomedia_leanback_ripple_selector"
                 tools:ignore="ContentDescription"/>
 
-
             <LinearLayout
                 android:id="@+id/exomedia_controls_interactive_container"
                 android:layout_width="match_parent"

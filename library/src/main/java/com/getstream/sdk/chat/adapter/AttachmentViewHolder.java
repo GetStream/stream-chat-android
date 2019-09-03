@@ -18,7 +18,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
-
 
     // Attachment
     private ConstraintLayout cl_attachment, cl_attachment_media;
@@ -41,7 +39,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
-        cl_attachment = itemView.findViewById(R.id.cl_attachment);
+        cl_attachment = itemView.findViewById(R.id.attachmentview);
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
@@ -183,12 +181,12 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             tv_media_title.setText(attachments.get(0).getTitle());
         tv_media_des.setText(attachments.get(0).getText());
 
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getText()))
+        if (TextUtils.isEmpty(attachments.get(0).getText()))
             tv_media_des.setVisibility(View.GONE);
         else
             tv_media_des.setVisibility(View.VISIBLE);
 
-        if (StringUtility.isNullOrEmpty(attachments.get(0).getTitle()))
+        if (TextUtils.isEmpty(attachments.get(0).getTitle()))
             tv_media_title.setVisibility(View.GONE);
         else
             tv_media_title.setVisibility(View.VISIBLE);

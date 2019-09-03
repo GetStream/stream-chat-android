@@ -202,12 +202,12 @@ public class User implements UserEntity {
         } catch (Exception e) {
         }
 
-        if (!StringUtility.isNullOrEmpty(firstName) && StringUtility.isNullOrEmpty(lastName))
+        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase();
-        if (StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
+        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
             return lastName.substring(0, 1).toUpperCase();
 
-        if (!StringUtility.isNullOrEmpty(firstName) && !StringUtility.isNullOrEmpty(lastName))
+        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
             return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
         return null;
     }

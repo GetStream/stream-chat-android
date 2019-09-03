@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.BaseStyle;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
@@ -71,7 +73,16 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         if (user != null) {
             configAvatar(user.getImage(), user.getInitials());
         } else if (!TextUtils.isEmpty(channel.getImage())) {
-            configAvatar(channel.getImage(), channel.getInitials());
+//            configAvatar(channel.getImage(), channel.getInitials());
+            ImageView imageView = new ImageView(context);
+            Utils.circleImageLoad(imageView, channel.getImage());
+
+            RelativeLayout.LayoutParams params_;
+            params_ = new RelativeLayout.LayoutParams(
+                    (style.getAvatarWidth()),
+                    (style.getAvatarHeight()));
+            imageView.setLayoutParams(params_);
+            this.addView(imageView);
         } else {
             configUserAvatars();
         }

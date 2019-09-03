@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -50,18 +51,18 @@ public class MessageListView extends RecyclerView {
 
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
+    private LinearLayoutManager layoutManager;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
 
     private MessageClickListener messageClickListener;
-    private LinearLayoutManager layoutManager;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
     private UserClickListener userClickListener;
 
-    private int firstVisible;
-    private int lastVisible;
+//    private int firstVisible;
+    private static int fVPosition, lVPosition;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
@@ -86,10 +87,12 @@ public class MessageListView extends RecyclerView {
     private void init(Context context) {
         layoutManager = new LinearLayoutManager(context);
         layoutManager.setStackFromEnd(true);
+
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
     }
+
 
     // endregion
 
@@ -109,8 +112,12 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
+                    if (message.getStatus() == MessageStatus.FAILED){
+                        bgColor = getResources().getColor(R.color.stream_message_failed);
+                    }else{
+                        bgColor = style.getMessageBackgroundColorMine();
+                    }
 
-                    bgColor = style.getMessageBackgroundColorMine();
                     strokeColor = style.getMessageBorderColorMine();
                     strokeWidth = style.getMessageBorderWidthMine();
                     topLeftRadius = style.getMessageTopLeftCornerRadiusMine();
@@ -156,6 +163,7 @@ public class MessageListView extends RecyclerView {
 //                        }
                     }
                 }
+
                 return new DrawableBuilder()
                         .rectangle()
                         .strokeColor(strokeColor)
@@ -276,7 +284,7 @@ public class MessageListView extends RecyclerView {
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
         setUserClickListener(userClickListener);
-
+        setMessageLongClickListener(messageLongClickListener);
         adapter.setChannelState(getChannel().getChannelState());
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -285,17 +293,17 @@ public class MessageListView extends RecyclerView {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (layoutManager != null) {
-                    firstVisible = layoutManager.findFirstVisibleItemPosition();
-                    lastVisible = layoutManager.findLastVisibleItemPosition();
-                    hasScrolledUp = lastVisible < (adapter.getItemCount() - 3);
+                    int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
+                    int currentLastVisible = layoutManager.findLastVisibleItemPosition();
+                    if (currentFirstVisible < fVPosition) {
+                        if (currentFirstVisible == 0) viewModel.loadMore();
+                    }
+                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    Boolean reachedTheBeginning = firstVisible <= 2;
-                    Log.i(TAG, String.format("Scroll: First visible is %d last visible is %s", firstVisible, lastVisible));
-                    if (reachedTheBeginning) {
-                        viewModel.loadMore();
-                    }
+                    fVPosition = currentFirstVisible;
+                    lVPosition = currentLastVisible;
                 }
             }
         });
@@ -327,12 +335,17 @@ public class MessageListView extends RecyclerView {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
 
-            int oldPosition = firstVisible;
             int oldSize = adapter.getItemCount();
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
+            int itemCount = adapter.getItemCount() - 2;
+            if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
+                int newPosition = adapter.getItemCount() - 1;
+                layoutManager.scrollToPosition(newPosition);
+                return;
+            }
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
@@ -353,7 +366,6 @@ public class MessageListView extends RecyclerView {
                 int newPosition;// = oldPosition + sizeGrewBy;
                 newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
                 layoutManager.scrollToPosition(newPosition);
-                Log.i(TAG, String.format("Scroll: Loading more old position %d and new position %d", oldPosition, newPosition));
             } else {
                 if (newSize == 0) return;
                 // regular new message behaviour
@@ -411,15 +423,15 @@ public class MessageListView extends RecyclerView {
         if (this.messageClickListener != null) {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
-            adapter.setMessageClickListener((message, position) -> {
-                new ReactionDialog(getContext())
-                        .setChannel(viewModel.getChannel())
-                        .setMessage(message)
-                        .setMessagePosition(position)
-                        .setRecyclerView(this)
-                        .setStyle(style)
-                        .show();
-            });
+//            adapter.setMessageClickListener((message, position) -> {
+//                new ReactionDialog(getContext())
+//                        .setChannel(viewModel.getChannel())
+//                        .setMessage(message)
+//                        .setMessagePosition(position)
+//                        .setRecyclerView(this)
+//                        .setStyle(style)
+//                        .show();
+//            });
         }
     }
 
@@ -433,13 +445,14 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageLongClickListener(message -> {
                 new MoreActionDialog(getContext())
-                        .setChannel(viewModel.getChannel())
+                        .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
                         .show();
             });
         }
     }
+
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
@@ -493,6 +506,7 @@ public class MessageListView extends RecyclerView {
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
     }
+
     public interface UserClickListener {
         void onUserClick(User user);
     }
@@ -521,7 +535,8 @@ public class MessageListView extends RecyclerView {
                 } else {
                     List<String> imageUrls = new ArrayList<>();
                     for (Attachment a : message.getAttachments()) {
-                        imageUrls.add(a.getImageURL());
+                        if (a.getType().equals(ModelType.attach_image))
+                            imageUrls.add(a.getImageURL());
                     }
                     int position = message.getAttachments().indexOf(attachment);
 
@@ -532,7 +547,7 @@ public class MessageListView extends RecyclerView {
                 }
                 break;
             case ModelType.attach_video:
-                url = attachment.getTitleLink();
+                url = attachment.getAssetURL();
                 break;
             case ModelType.attach_giphy:
                 url = attachment.getThumbURL();

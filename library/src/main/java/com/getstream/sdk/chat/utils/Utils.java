@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -109,7 +110,7 @@ public class Utils {
                     .strokeColor(strokeColor)
                     .strokeWidth(strokeWidth)
                     .solidColor(solidColor)
-                    .cornerRadii(0, 0, 20, 20) // the same as the two lines above
+                    .cornerRadii(0, 0, 20, 20)
                     .build();
         else
             return new DrawableBuilder()
@@ -122,6 +123,13 @@ public class Utils {
 
     }
 
+    public static int dpToPx(int dp) {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public static int pxToDp(int px) {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
 
     public static List<Attachment> Search_Dir(File dir) {
         String pdfPattern = ".pdf";

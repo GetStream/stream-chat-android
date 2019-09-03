@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -45,7 +48,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
-    private ConstraintLayout cl_message, headerView;
+    private ConstraintLayout cl_message;
     private TextView tv_text, tv_deleted;
     private RecyclerView rv_reaction;
 
@@ -53,15 +56,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private TextView tv_failed_text, tv_failed_des;
     private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_docket;
+    private TextView tv_reactiontail_space, tv_reaction_space;
 
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
     private TextView tv_username, tv_messagedate;
 
     // Delivered Indicator
     private ReadStateView read_state;
-    private TextView tv_indicator_initials, tv_read_count;
-    private ImageView cv_indicator_avatar;
-    private ProgressBar pb_indicator;
+    private ProgressBar pb_deliver;
+    private ImageView iv_deliver;
+
 
     private AttachmentListView alv_attachments;
     // Replay
@@ -74,9 +78,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageViewHolderFactory viewHolderFactory;
 
     private ChannelState channelState;
-    private List<Message> messageList;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
 
     private int position;
@@ -88,6 +92,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private List<MessageViewHolderFactory.Position> positions;
 
+    @DimenRes int avatarWidth;
+
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
         style = s;
@@ -95,7 +101,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
-
+        avatarWidth = style.getAvatarWidth();
     }
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -104,7 +110,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         cl_message = itemView.findViewById(R.id.cl_message);
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
         iv_docket = itemView.findViewById(R.id.iv_docket);
-
+        tv_reactiontail_space = itemView.findViewById(R.id.tv_reactiontail_space);
+        tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
 
         tv_text = itemView.findViewById(R.id.tv_text);
         tv_deleted = itemView.findViewById(R.id.tv_deleted);
@@ -127,14 +134,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_gap_media_file = itemView.findViewById(R.id.tv_gap_media_file);
         tv_gap_attach = itemView.findViewById(R.id.tv_gap_attach);
 
-        alv_attachments = itemView.findViewById(R.id.cl_attachment);
+        alv_attachments = itemView.findViewById(R.id.attachmentview);
 
         read_state = itemView.findViewById(R.id.read_state);
-
-        tv_indicator_initials = itemView.findViewById(R.id.tv_indicator_initials);
-        tv_read_count = itemView.findViewById(R.id.tv_read_count);
-        cv_indicator_avatar = itemView.findViewById(R.id.cv_indicator_avatar);
-        pb_indicator = itemView.findViewById(R.id.pb_indicator);
+        pb_deliver = itemView.findViewById(R.id.pb_deliver);
+        iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
@@ -150,6 +154,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener attachmentClickListener,
                      MessageListView.UserClickListener userClickListener) {
+
         // set binding
         this.context = context;
         this.channelState = channelState;
@@ -157,103 +162,53 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.isThread = isThread;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
+        this.attachmentClickListener = attachmentClickListener;
         this.userClickListener = userClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
 
-        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            alv_attachments.setVisibility(View.GONE);
-        } else {
-            alv_attachments.setVisibility(View.VISIBLE);
-            alv_attachments.setViewHolderFactory(viewHolderFactory);
-            alv_attachments.setStyle(style);
-            alv_attachments.setEntity(this.messageListItem);
-            alv_attachments.setBubbleHelper(this.getBubbleHelper());
-            alv_attachments.setAttachmentClickListener(attachmentClickListener);
-            alv_attachments.setLongClickListener(messageLongClickListener);
+        init();
+    }
 
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            alv_attachments.setBackground(background);
-        }
-
-        // apply the style based on mine or theirs
-        if (messageListItem.isMine()) {
-            this.applyStyleMine();
-        } else {
-            this.applyStyleTheirs();
-        }
-
-        // apply position related style tweaks
-        this.applyPositionsStyle();
-
-
-        // TODO: hook up click and longclick
-
+    private void init() {
         // Configure UIs
         configSendFailed();
         configMessageText();
+        configAttachmentView();
         configReactionView();
         configReplyView();
-
-        // Configure Laytout Params
-
+        configDeliveredIndicator();
+        configReadIndicator();
+        // apply position related style tweaks
+        configPositionsStyle();
+        // Configure Layout Params
+        configMarginStartEnd();
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
-        configParamsReactionRecycleView();
-        configParamsDeliveredIndicator();
+
+        configParamsReactionTailSpace();
+        configParamsReactionSpace();
         configParamsReactionTail();
+        configParamsReactionRecycleView();
         configParamsMessageDate();
         configParamsReply();
         configParamsReadState();
     }
     // endregion
 
-    private void applyStyleMine() {
-        if (StringUtility.isEmoji(message.getText())){
-            tv_text.setBackgroundResource(0);
-        }else{
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            tv_text.setBackground(background);
-        }
-        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-        tv_text.setTextColor(style.getMessageTextColorMine());
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
-    }
-
-    private void applyStyleTheirs() {
-        if (StringUtility.isEmoji(message.getText())){
-            tv_text.setBackgroundResource(0);
-        }else{
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            tv_text.setBackground(background);
-        }
-        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
-        tv_text.setTextColor(style.getMessageTextColorTheirs());
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
-    }
-
-    private void applyPositionsStyle() {
+    private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
         // BOTTOM position shows the user avatar & message time
-
-        // RESET the defaults
-        tv_username.setVisibility(View.GONE);
-        tv_messagedate.setVisibility(View.GONE);
-        avatar.setVisibility(View.GONE);
         tv_gap_header.setVisibility(View.GONE);
         tv_gap_sameUser.setVisibility(View.VISIBLE);
-
         // TOP
         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
             // extra spacing
             tv_gap_header.setVisibility(View.VISIBLE);
             tv_gap_sameUser.setVisibility(View.GONE);
-            // rounded corner
-
-
         }
         // BOTTOM
         if (positions.contains(MessageViewHolderFactory.Position.BOTTOM)) {
@@ -261,11 +216,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_username.setVisibility(View.VISIBLE);
             tv_messagedate.setVisibility(View.VISIBLE);
             avatar.setVisibility(View.VISIBLE);
+
             if (messageListItem.isTheirs()) {
                 tv_username.setVisibility(View.VISIBLE);
                 tv_username.setText(message.getUser().getName());
-            } else
+            } else {
                 tv_username.setVisibility(View.GONE);
+            }
             avatar.setUser(message.getUser(), style);
             avatar.setOnClickListener(view -> {
                 if (userClickListener != null)
@@ -277,19 +234,80 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(message.getDate() + ", " + message.getTime());
+        } else {
+            tv_username.setVisibility(View.GONE);
+            tv_messagedate.setVisibility(View.GONE);
+            avatar.setVisibility(View.GONE);
+        }
+
+        // Attach Gap
+        tv_gap_attach.setVisibility(alv_attachments.getVisibility());
+        if (alv_attachments.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
+            tv_gap_attach.setVisibility(View.GONE);
+
+        // Reaction Gap
+        tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
+
+        // ONLY_FOR_DEBUG
+        if (false) {
+            tv_gap_header.setBackgroundResource(R.color.stream_gap_header);
+            tv_gap_sameUser.setBackgroundResource(R.color.stream_gap_message);
+            try {
+                tv_gap_media_file.setBackgroundResource(R.color.stream_gap_media_file);
+            } catch (Exception e) {
+            }
+            tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
+            tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
         }
     }
 
+    private void configDeliveredIndicator() {
+        iv_deliver.setVisibility(View.GONE);
+        pb_deliver.setVisibility(View.GONE);
+
+        if (isDeletedOrFailedMessage())  return;
+        if (message == null || TextUtils.isEmpty(message.getId())) return;
+        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
+        if (!readBy.isEmpty() || !messageListItem.isMine()) return;
+
+        if (!messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM))
+            return;
+        if (message.isDelivered()) {
+            iv_deliver.setVisibility(View.VISIBLE);
+        } else {
+            if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
+                    && channelState.getLastMessage().getId().equals(message.getId())){
+                message.setStatus(MessageStatus.RECEIVED);
+                iv_deliver.setVisibility(View.VISIBLE);
+                return;
+            }
+            pb_deliver.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void configReadIndicator() {
+        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
+        if (isDeletedOrFailedMessage() || readBy.isEmpty()) {
+            read_state.setVisibility(View.GONE);
+            return;
+        }
+        read_state.setVisibility(View.VISIBLE);
+        read_state.setReads(readBy, messageListItem.isTheirs(), style);
+    }
 
     private void configSendFailed() {
-        if (message.getType().equals(ModelType.message_error)) {
+        if (message.getStatus() == MessageStatus.FAILED) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
+            // Set Style
+            tv_failed_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+            tv_failed_text.setTextColor(style.getMessageTextColorMine());
+            tv_failed_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
-            //TODO what does this do?
-            // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
-            //ll_send_failed.setBackgroundResource(background);
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            ll_send_failed.setBackground(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
                 if (messageClickListener != null) {
@@ -316,6 +334,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_deleted.setVisibility(View.GONE);
             return;
         }
+        if (message.getStatus() == MessageStatus.FAILED) {
+            tv_text.setVisibility(View.GONE);
+            tv_deleted.setVisibility(View.GONE);
+            return;
+        }
         if (TextUtils.isEmpty(message.getText())) {
             tv_text.setVisibility(View.GONE);
             tv_deleted.setVisibility(View.GONE);
@@ -337,17 +360,36 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .usePlugin(LinkifyPlugin.create())
                     .build();
         markwon.setMarkdown(tv_text, Utils.getMentionedText(message));
+        // background
+        if (StringUtility.isEmoji(message.getText())) {
+            tv_text.setBackgroundResource(0);
+        } else {
+            Drawable background;
+            if (message.getAttachments() != null && !message.getAttachments().isEmpty())
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
+            else
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
 
-
+            tv_text.setBackground(background);
+        }
+        if (messageListItem.isMine()) {
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+            tv_text.setTextColor(style.getMessageTextColorMine());
+            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+        } else {
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
+            tv_text.setTextColor(style.getMessageTextColorTheirs());
+            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
+        }
         // Set Click Listener
         tv_text.setOnClickListener(view -> {
-            Log.d(TAG, "onMessageClick: " + position);
+            Log.i(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
                 messageClickListener.onMessageClick(message, position);
             }
         });
         tv_text.setOnLongClickListener(view -> {
-            Log.d(TAG, "Long onUserClick: " + position);
+            Log.i(TAG, "Long onUserClick: " + position);
             if (this.messageLongClickListener != null) {
                 view.setTag(String.valueOf(position));
                 this.messageLongClickListener.onMessageLongClick(message);
@@ -356,13 +398,44 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
+    private void configAttachmentView() {
+        if (isDeletedOrFailedMessage()) {
+            alv_attachments.setVisibility(View.GONE);
+            return;
+        }
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            alv_attachments.setVisibility(View.GONE);
+        } else {
+            alv_attachments.setVisibility(View.VISIBLE);
+            alv_attachments.setViewHolderFactory(viewHolderFactory);
+            alv_attachments.setStyle(style);
+            alv_attachments.setEntity(this.messageListItem);
+            alv_attachments.setBubbleHelper(this.getBubbleHelper());
+            alv_attachments.setAttachmentClickListener(attachmentClickListener);
+            alv_attachments.setLongClickListener(messageLongClickListener);
+            boolean hasBackground = false;
+            for (Attachment attachment : message.getAttachments()){
+                if(!TextUtils.isEmpty(attachment.getText()) || !TextUtils.isEmpty(attachment.getTitle())){
+                    hasBackground = true;
+                    break;
+                }
+            }
+            if (!hasBackground) {
+                alv_attachments.setBackgroundResource(0);
+                return;
+            }
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            alv_attachments.setBackground(background);
+        }
+    }
+
     private void configReactionView() {
-        if (!style.isEnableReaction()){
+        if (!style.isEnableReaction()) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
@@ -393,7 +466,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             cl_reply.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
@@ -414,6 +487,33 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     // region Layout Params
+    private void configMarginStartEnd(){
+        configMarginStartEnd_(tv_text);
+        configMarginStartEnd_(alv_attachments);
+        configMarginStartEnd_(tv_deleted);
+        configMarginStartEnd_(ll_send_failed);
+        configMarginStartEnd_(cl_reply);
+        configMarginStartEnd_(tv_username);
+        configMarginStartEnd_(tv_messagedate);
+    }
+
+    private void configMarginStartEnd_(View view){
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+        if (view.equals(tv_username)){
+            params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
+            view.setLayoutParams(params);
+            return;
+        }
+        if (view.equals(tv_messagedate)){
+            params.rightMargin = Utils.dpToPx(15 + 5) + avatarWidth;
+            view.setLayoutParams(params);
+            return;
+        }
+        params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
+        params.rightMargin = Utils.dpToPx(15 + 5) + avatarWidth;
+        view.setLayoutParams(params);
+    }
+
     private void configParamsMessageText() {
         if (tv_text.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
@@ -447,38 +547,97 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_messagedate.setLayoutParams(params);
     }
 
-    private void configParamsReactionRecycleView() {
-        if (rv_reaction.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
-        if (messageListItem.isTheirs()) {
-            params.horizontalBias = 0f;
+    private void configParamsReactionTailSpace() {
+        if (iv_docket.getVisibility() != View.VISIBLE) return;
+        ConstraintSet set = new ConstraintSet();
+        set.clone(cl_message);
+        set.clear(R.id.tv_reactiontail_space, ConstraintSet.START);
+        set.clear(R.id.tv_reactiontail_space, ConstraintSet.END);
+        set.applyTo(cl_message);
+
+        @IdRes int layoutId;
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            layoutId = tv_text.getId();
         } else {
-            params.horizontalBias = 1f;
+            layoutId = alv_attachments.getId();
         }
-        rv_reaction.setLayoutParams(params);
+
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reactiontail_space.getLayoutParams();
+        if (messageListItem.isMine())
+            params.endToStart = layoutId;
+        else
+            params.startToEnd = layoutId;
+        tv_reactiontail_space.setLayoutParams(params);
     }
 
+    private void configParamsReactionSpace() {
+        if (iv_docket.getVisibility() != View.VISIBLE) return;
+        ConstraintSet set = new ConstraintSet();
+        set.clone(cl_message);
+        set.clear(R.id.tv_reaction_space, ConstraintSet.START);
+        set.clear(R.id.tv_reaction_space, ConstraintSet.END);
+        set.applyTo(cl_message);
 
-    private void configParamsDeliveredIndicator() {
-        List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-
-        if (readBy.size() == 0) {
-            read_state.setVisibility(View.GONE);
-        } else {
-            read_state.setVisibility(View.VISIBLE);
-            read_state.setReads(readBy, messageListItem.isTheirs(), style);
-        }
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reaction_space.getLayoutParams();
+        if (messageListItem.isMine())
+            params.endToStart = R.id.tv_reactiontail_space;
+        else
+            params.startToEnd = R.id.tv_reactiontail_space;
+        tv_reaction_space.setLayoutParams(params);
     }
 
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
+        ConstraintSet set = new ConstraintSet();
+        set.clone(cl_message);
+        set.clear(R.id.iv_docket, ConstraintSet.START);
+        set.clear(R.id.iv_docket, ConstraintSet.END);
+        set.applyTo(cl_message);
+
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
-        if (messageListItem.isTheirs()) {
-            params.horizontalBias = 0f;
-        } else {
-            params.horizontalBias = 1f;
-        }
+        if (messageListItem.isMine())
+            params.startToStart = tv_reactiontail_space.getId();
+        else
+            params.endToEnd = tv_reactiontail_space.getId();
         iv_docket.setLayoutParams(params);
+    }
+
+    private void configParamsReactionRecycleView() {
+        if (rv_reaction.getVisibility() != View.VISIBLE) return;
+        rv_reaction.setVisibility(View.INVISIBLE);
+        iv_docket.setVisibility(View.INVISIBLE);
+        rv_reaction.post(() -> {
+            ConstraintSet set = new ConstraintSet();
+            set.clone(cl_message);
+            set.clear(R.id.rv_reaction, ConstraintSet.START);
+            set.clear(R.id.rv_reaction, ConstraintSet.END);
+            set.applyTo(cl_message);
+
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
+            if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+                @DimenRes
+                int reactionMargin = context.getResources().getDimensionPixelSize(R.dimen.stream_reaction_margin);
+                if (tv_text.getWidth() + reactionMargin < rv_reaction.getWidth()) {
+                    if (messageListItem.isMine())
+                        params.endToEnd = R.id.tv_text;
+                    else
+                        params.startToStart = R.id.tv_text;
+                } else {
+                    if (messageListItem.isMine())
+                        params.startToStart = R.id.tv_reaction_space;
+                    else
+                        params.endToEnd = R.id.tv_reaction_space;
+                }
+            } else {
+                if (messageListItem.isMine())
+                    params.startToStart = R.id.tv_reaction_space;
+                else
+                    params.endToEnd = R.id.tv_reaction_space;
+            }
+            rv_reaction.setLayoutParams(params);
+            rv_reaction.setVisibility(View.VISIBLE);
+            iv_docket.setVisibility(View.VISIBLE);
+        });
     }
 
     private void configParamsUserAvatar() {
@@ -491,6 +650,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.setMarginEnd(0);
             params.horizontalBias = 0f;
         } else {
+            marginStart = Utils.dpToPx(15);
             params.setMarginStart(0);
             params.setMarginEnd(marginStart);
             params.horizontalBias = 1f;
@@ -555,13 +715,18 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
 
-        params.leftMargin = 20;
-        params.rightMargin = 20;
+        params.leftMargin = Utils.dpToPx(3);
+        params.rightMargin = Utils.dpToPx(3);
         read_state.setLayoutParams(params);
     }
 
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
+    }
+
+    private boolean isDeletedOrFailedMessage(){
+        return tv_deleted.getVisibility() == View.VISIBLE ||
+                ll_send_failed.getVisibility() == View.VISIBLE;
     }
 }

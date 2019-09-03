@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -68,6 +69,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
+    private MutableLiveData<Message> editMessage;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LiveData<Boolean> anyOtherUsersOnline;
@@ -117,6 +119,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.setValue(channel.getChannelState().getReadsByUser());
 
         typingState = new HashMap<>();
+        editMessage = new MutableLiveData<>();
 
         channelState = new MutableLiveData<>(channel.getChannelState());
         watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
@@ -176,6 +179,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return typingUsers;
     }
 
+    public MutableLiveData<Message> getEditMessage() {
+        return editMessage;
+    }
+
+    public void setEditMessage(Message editMessage) {
+        this.editMessage.postValue(editMessage);
+    }
     // endregion
 
     private boolean setLoading(){
@@ -369,22 +379,22 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(limit);
 
         channel.query(
-            request,
-            new QueryChannelCallback() {
-                @Override
-                public void onSuccess(ChannelState response) {
-                    if (response.getMessages().size() < limit) {
-                        reachedEndOfPagination = true;
+                request,
+                new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        if (response.getMessages().size() < limit) {
+                            reachedEndOfPagination = true;
+                        }
+                        addMessages(response.getMessages());
+                        channelLoadingDone();
                     }
-                    addMessages(response.getMessages());
-                    channelLoadingDone();
-                }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    channelLoadingDone();
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        channelLoadingDone();
 
-                }}
+                    }}
         );
     }
 
@@ -443,26 +453,33 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         message.setUser(client().getUser());
         message.setCreatedAt(new Date());
         message.setType("regular");
-        message.setDelivered(false);
+        message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+
         String clientSideID = client().getUserId() + "-" + randomUUID().toString();
         message.setId(clientSideID);
         addMessage(message);
 
+        if (!client().isConnected()) {
+            callback.onError("no interent", -1);
+            return;
+        }
+
         // afterwards send the request
         channel.sendMessage(message,
-            new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    replaceMessage(message, response.getMessage());
-                    callback.onSuccess(response);
-                }
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        replaceMessage(message, response.getMessage());
+                        callback.onSuccess(response);
+                    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    callback.onError(errMsg, errCode);
-                    //binding.messageInput.setEnabled(true);
-                }
-            });
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        message.setStatus(MessageStatus.FAILED);
+                        updateMessage(message);
+                        callback.onError(errMsg, errCode);
+                    }
+                });
     }
 
 

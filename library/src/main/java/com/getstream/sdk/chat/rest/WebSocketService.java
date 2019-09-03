@@ -173,13 +173,10 @@ public class WebSocketService extends WebSocketListener {
 
 //    private Handler mHandler = new Handler();
 
-    private Runnable mOfflineNotifier = new Runnable() {
-        @Override
-        public void run() {
-            if (!isHealthy()) {
-                Event wentOffline = new Event(false);
-                sendEventToHandlerThread(wentOffline);
-            }
+    private Runnable mOfflineNotifier = () -> {
+        if (!isHealthy()) {
+            Event wentOffline = new Event(false);
+            sendEventToHandlerThread(wentOffline);
         }
     };
 

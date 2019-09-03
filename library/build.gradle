@@ -23,6 +23,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 final def markwon_version = '4.1.0'
@@ -48,9 +49,6 @@ dependencies {
     implementation 'com.github.duanhong169:drawabletoolbox:1.0.7'
     implementation "io.noties.markwon:core:$markwon_version"
     implementation "io.noties.markwon:linkify:$markwon_version"
-
-
-    implementation 'com.github.PierfrancescoSoffritti:AndroidYouTubePlayer:7.0.1'
 
     implementation 'com.facebook.fresco:fresco:1.2.0'
     implementation 'me.relex:photodraweeview:1.1.0'

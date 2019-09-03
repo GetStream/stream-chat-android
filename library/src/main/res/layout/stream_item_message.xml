@@ -20,7 +20,7 @@
             android:layout_height="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_header" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_gap_sameUser"
@@ -34,14 +34,11 @@
             android:id="@+id/rv_reaction"
             android:layout_width="wrap_content"
             android:layout_height="24dp"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:background="@drawable/stream_round_reaction"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:visibility="visible"
+            android:paddingStart="@dimen/stream_reaction_margin"
+            android:paddingEnd="@dimen/stream_reaction_margin"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"
             tools:listitem="@layout/stream_item_reaction" />
@@ -49,17 +46,16 @@
         <TextView
             android:id="@+id/tv_gap_reaction"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
 
         <com.getstream.sdk.chat.view.AttachmentListView
-            android:id="@+id/cl_attachment"
+            android:id="@+id/attachmentview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
@@ -70,14 +66,12 @@
             android:layout_height="@dimen/stream_message_gap"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_attachment" />
+            app:layout_constraintTop_toBottomOf="@+id/attachmentview" />
 
         <TextView
             android:id="@+id/tv_deleted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:paddingStart="10dp"
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
@@ -88,7 +82,6 @@
             android:textStyle="italic"
             app:layout_constraintBottom_toTopOf="@+id/tv_messagedate"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_attach" />
 
@@ -96,10 +89,7 @@
             android:id="@+id/ll_send_failed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
-            android:background="@drawable/stream_round_outgoing_failed1"
-            android:gravity="right"
+            android:gravity="end"
             android:orientation="vertical"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +102,7 @@
                 style="@style/text_s"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:paddingStart="10dp"
                 android:paddingTop="5dp"
                 android:paddingEnd="10dp"
@@ -131,18 +121,15 @@
 
         <TextView
             android:id="@+id/tv_text"
-            style="@style/message_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
             android:paddingStart="10dp"
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
+            android:autoLink="web"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_send_failed" />
 
@@ -150,10 +137,7 @@
             android:id="@+id/cl_reply"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_text">
 
@@ -182,17 +166,26 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/tv_reactiontail_space"
+            android:layout_width="1px"
+            android:layout_height="3dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_text"
+            app:layout_constraintTop_toTopOf="@+id/tv_text" />
+
+        <TextView
+            android:id="@+id/tv_reaction_space"
+            android:layout_width="8dp"
+            android:layout_height="5dp"
+            app:layout_constraintStart_toEndOf="@+id/tv_text"
+            app:layout_constraintTop_toTopOf="@+id/tv_text" />
+
         <ImageView
             android:id="@+id/iv_docket"
             android:layout_width="18dp"
             android:layout_height="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="23dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/stream_ic_docket_outgoing"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="@+id/rv_reaction"
-            app:layout_constraintHorizontal_bias="0"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="@+id/rv_reaction"
             app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
 
@@ -201,7 +194,6 @@
             style="@style/text_s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/stream_message_margin_start"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -212,10 +204,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:layout_marginEnd="@dimen/stream_message_margin_start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@+id/tv_username"
             app:layout_constraintTop_toBottomOf="@+id/cl_reply"
             app:layout_constraintVertical_bias="1" />
@@ -224,7 +214,7 @@
             android:id="@+id/read_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@id/tv_text"
             app:layout_constraintEnd_toStartOf="@id/tv_text" />
 
@@ -233,13 +223,33 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/iv_deliver"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="2dp"
+            android:src="@drawable/stream_ic_delivered_unseen"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/avatar"
+            app:layout_constraintStart_toEndOf="@id/avatar"
+            app:layout_constraintTop_toTopOf="@id/avatar" />
 
+        <ProgressBar
+            android:id="@+id/pb_deliver"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="2dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/avatar"
+            app:layout_constraintStart_toEndOf="@id/avatar"
+            app:layout_constraintTop_toTopOf="@id/avatar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

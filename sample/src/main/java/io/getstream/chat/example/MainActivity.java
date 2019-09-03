@@ -69,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
         binding.channelList.setViewModel(viewModel, this);
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
+
         // just get all channels
         FilterObject filter = and(eq("type", "messaging"));
+
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
         // setup an onclick listener to capture clicks to the user profile or channel

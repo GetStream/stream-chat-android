@@ -17,16 +17,16 @@ public class UpdateMessageRequest {
     @Expose
     Map<String, Object> message;
 
-    public UpdateMessageRequest(Message message, List<Attachment> attachments, List<String> mentionedUserIDs) {
+    public UpdateMessageRequest(Message message, List<String> mentionedUserIDs) {
         Gson gson = new Gson();
         String json = gson.toJson(message);
         Map<String, Object> map = new HashMap<>();
         this.message = (Map<String, Object>) gson.fromJson(json, map.getClass());
 
-        if (attachments != null && !attachments.isEmpty()) {
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             Gson gson1 = new Gson();
             List<Map> attachmentMaps = new ArrayList<>();
-            for (Attachment attachment_ : attachments) {
+            for (Attachment attachment_ : message.getAttachments()) {
                 Map<String, Object> attachment;
                 String json1 = gson1.toJson(attachment_);
                 attachment = (Map<String, Object>) gson1.fromJson(json1, Map.class);
@@ -63,12 +63,12 @@ public class UpdateMessageRequest {
         this.message.remove("date");
         this.message.remove("time");
         this.message.remove("isIncoming");
-        this.message.remove("isDelivered");
         this.message.remove("convertDateToString");
         this.message.remove("isCommandMessage");
         this.message.remove("differentTime");
         this.message.remove("TimeElapsed");
         this.message.remove("equals");
         this.message.remove("getUserId");
+        this.message.remove("status");
     }
 }

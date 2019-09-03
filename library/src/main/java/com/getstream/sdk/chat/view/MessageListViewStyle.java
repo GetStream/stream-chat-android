@@ -133,7 +133,7 @@ public class MessageListViewStyle extends BaseStyle {
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
 
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.WHITE);
+        readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         enableThread = a.getBoolean(R.styleable.MessageListView_streamEnableThread, true);

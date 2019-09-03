@@ -64,10 +64,10 @@ public class ChannelListViewStyle extends BaseStyle {
 
         avatarBorderWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
         avatarBorderColor = a.getColor(R.styleable.ChannelListView_streamAvatarBorderColor, Color.WHITE);
-        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
+        avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_transparent));
 
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_streamAvatarTextColor, Color.BLACK);
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_streamAvatarTextStyle, Typeface.BOLD);
         // Read State
         showReadState = a.getBoolean(R.styleable.ChannelListView_streamShowReadState, true);

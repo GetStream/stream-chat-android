@@ -1,15 +1,20 @@
 package com.getstream.sdk.chat.utils;
 
+
 import android.util.Log;
 
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.rest.Message;
 
 
 import java.util.List;
 
 public class MessageListItemDiffCallback extends DiffUtil.Callback {
+
+    private static final String TAG = MessageListItemDiffCallback.class.getSimpleName();
+
     protected List<MessageListItem> oldList, newList;
 
     public MessageListItemDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {
