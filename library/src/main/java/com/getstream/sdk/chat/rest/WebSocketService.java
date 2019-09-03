@@ -255,12 +255,10 @@ public class WebSocketService extends WebSocketListener {
 
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);
-                Log.d(TAG, "isConnectionResolved");
             } else {
                 eventThread.mHandler.post(() -> {
                     webSocketListener.connectionResolved(event);
                     setConnectionResolved();
-                    Log.d(TAG, "setConnectionResolved");
                 });
             }
         }
