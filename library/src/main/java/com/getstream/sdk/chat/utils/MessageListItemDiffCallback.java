@@ -34,44 +34,11 @@ public class MessageListItemDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-
-        MessageListItem oldMessageItem = oldList.get(oldItemPosition);
-        MessageListItem newMessageItem = newList.get(newItemPosition);
-
-        Message oldMessage = oldMessageItem.getMessage();
-        Message newMessage = newMessageItem.getMessage();
-
-//        Log.i(TAG,"oldItemPosition :" +oldItemPosition);
-//        Log.i(TAG,"newItemPosition :" +newItemPosition);
-//        try {
-//            Log.i(TAG,"oldMessage :" +oldMessageItem.getMessage().getText());
-//            Log.i(TAG,"newMessage :" +newMessageItem.getMessage().getText());
-//        }catch (Exception e){}
-
-        if (oldMessage == null && newMessage == null) {
-//            Log.i(TAG,"case:0: true");
-            return true;
-        }
-
-        if (oldMessage == null || newMessage == null) {
-//            Log.i(TAG,"case:1: false");
-            return false;
-        }
-
-        if (oldMessage.getId() != null && oldMessage.getId().equals(newMessage.getId())) {
-//            Log.i(TAG,"case:2: true");
-            return true;
-        }
-        boolean equal = oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
-//        Log.i(TAG,"default: " + equal);
-
         return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-
         return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
-
     }
 }
