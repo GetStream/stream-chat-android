@@ -298,8 +298,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
-            messagesCopy.set(index, newMessage);
-            messages.postValue(messagesCopy);
+            // Failed Message Progress
+            if (oldMessage.getStatus() == MessageStatus.FAILED){
+                messagesCopy.remove(oldMessage);
+                messagesCopy.add(newMessage);
+            }else{
+                messagesCopy.set(index, newMessage);
+                messages.postValue(messagesCopy);
+            }
         }
     }
 
@@ -450,14 +456,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         stopTyping();
 
         // immediately add the message
-        message.setUser(client().getUser());
-        message.setCreatedAt(new Date());
-        message.setType("regular");
-        message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
-
-        String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-        message.setId(clientSideID);
-        addMessage(message);
+        if (message.getStatus() != MessageStatus.FAILED){
+            message.setUser(client().getUser());
+            message.setCreatedAt(new Date());
+            message.setType("regular");
+            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            addMessage(message);
+        }
 
         if (!client().isConnected()) {
             callback.onError("no interent", -1);
