@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
@@ -314,7 +313,7 @@ public class Channel {
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
+                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
@@ -389,7 +388,7 @@ public class Channel {
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this.id, request, new MessageCallback() {
+        client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -412,7 +411,7 @@ public class Channel {
             request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
         }
 
-        client.sendMessage(this.id, request, new MessageCallback() {
+        client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -466,7 +465,7 @@ public class Channel {
         if (isImage) {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this.channelState.getChannel().getId(), part, new SendFileCallback() {
+            client.sendImage(this, part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -480,7 +479,7 @@ public class Channel {
         } else {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this.channelState.getChannel().getId(), part, new SendFileCallback() {
+            client.sendFile(this, part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -600,7 +599,7 @@ public class Channel {
         event.put("type", eventType.label);
         SendEventRequest request = new SendEventRequest(event);
 
-        client.sendEvent(this.id, request, new EventCallback() {
+        client.sendEvent(this, request, new EventCallback() {
             @Override
             public void onSuccess(EventResponse response) {
                 callback.onSuccess(response);
