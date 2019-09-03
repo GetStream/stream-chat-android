@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -297,7 +298,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
-        Log.d(TAG,"New messages Count:" + messagesCopy.size());
         if (index != -1) {
             // Failed Message Progress
             if (oldMessage.getStatus() == MessageStatus.FAILED){
@@ -307,7 +307,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 messagesCopy.set(index, newMessage);
             }
             messages.postValue(messagesCopy);
-            Log.d(TAG,"New messages Count:" + messagesCopy.size());
         }
     }
 
@@ -337,7 +336,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy.set(index, message);
             messages.postValue(messagesCopy);
         }
+        Log.d(TAG,"updateMessage:" + updated);
         return updated;
+    }
+
+    private void updateFailedMessage(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        boolean updated = index != -1;
+        if (updated) {
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
     }
 
     private boolean deleteMessage(Message message) {
@@ -453,7 +466,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     @Override
-    public void onSendMessage(Message message, MessageCallback callback) {
+    public void onSendMessage(final Message message, @Nullable final MessageCallback callback) {
         // send typing.stop immediately
         stopTyping();
 
@@ -469,7 +482,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
 
         if (!client().isConnected()) {
-            callback.onError("no interent", -1);
+            if (callback != null)
+                callback.onError("no interent", -1);
             return;
         }
 
@@ -479,15 +493,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     @Override
                     public void onSuccess(MessageResponse response) {
                         replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
+                        if (callback != null)
+                            callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
                         Message clone = message.copy();
                         clone.setStatus(MessageStatus.FAILED);
-                        updateMessage(clone);
-                        callback.onError(errMsg, errCode);
+                        updateFailedMessage(clone);
+                        if (callback != null)
+                            callback.onError(errMsg, errCode);
                     }
                 });
     }

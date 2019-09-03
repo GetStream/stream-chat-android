@@ -426,19 +426,8 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getStatus() == MessageStatus.FAILED){
-                    viewModel.onSendMessage(message, new MessageCallback() {
-                        @Override
-                        public void onSuccess(MessageResponse response) {
-
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-
-                        }
-                    });
+                    viewModel.onSendMessage(message, null);
                 }
-
             });
         }
     }
