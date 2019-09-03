@@ -51,7 +51,7 @@ public class StreamChat {
         eventListener = INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
-                Log.w(TAG, "connection status changed");
+                Log.w(TAG, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
                 }

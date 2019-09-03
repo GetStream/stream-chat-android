@@ -59,7 +59,6 @@ import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -438,6 +437,7 @@ public class Client implements WSResponseHandler {
         } else {
             onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
         }
+        connect();
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -969,7 +969,6 @@ public class Client implements WSResponseHandler {
             return;
         }
         connectionRecovered();
-        connect();
     }
 
     public void setAnonymousUser() {
