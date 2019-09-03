@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -8,7 +9,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import com.getstream.sdk.chat.ChatDatabase;
 import com.getstream.sdk.chat.LifecycleHandler;
+import com.getstream.sdk.chat.MessageDao;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.EventType;
@@ -346,6 +349,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.postValue(messagesCopy);
     }
 
+    private static class insertAsyncTask extends AsyncTask<Message, Void, Void> {
+
+        private MessageDao mAsyncTaskDao;
+
+        insertAsyncTask(MessageDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Message... params) {
+            mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
     private void addMessages(List<Message> newMessages) {
         Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
@@ -353,10 +371,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy = new ArrayList<>();
         }
 
+        ChatDatabase db = ChatDatabase.getDatabase(getApplication());
+        MessageDao messageDao = db.messageDao();
+
+
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
             int index = messagesCopy.indexOf(message);
+            new insertAsyncTask(messageDao).execute(message);
             if (index == -1) {
                 messagesCopy.add(0, message);
             } else {

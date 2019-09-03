@@ -2,8 +2,15 @@ package com.getstream.sdk.chat.rest;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.DateConverter;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
@@ -26,9 +33,14 @@ import java.util.TimeZone;
 /**
  * A message
  */
+
+@Entity(tableName = "stream_message")
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     private String id;
 
     @SerializedName("text")
@@ -49,14 +61,17 @@ public class Message implements UserEntity {
 
     @SerializedName("attachments")
     @Expose
+    @Embedded
     private List<Attachment> attachments;
 
     @SerializedName("latest_reactions")
     @Expose
+    @Embedded
     private List<Reaction> latestReactions;
 
     @SerializedName("own_reactions")
     @Expose
+    @Embedded
     private List<Reaction> ownReactions;
 
     @SerializedName("reply_count")
@@ -65,22 +80,27 @@ public class Message implements UserEntity {
 
     @SerializedName("created_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date createdAt;
 
     @SerializedName("updated_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date updatedAt;
 
     @SerializedName("deleted_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date deletedAt;
 
     @SerializedName("mentioned_users")
     @Expose
+    @Embedded
     private List<User> mentionedUsers;
 
     @SerializedName("reaction_counts")
     @Expose
+    @Embedded
     private Map<String, Integer> reactionCounts;
 
     @SerializedName("parent_id")
@@ -93,12 +113,14 @@ public class Message implements UserEntity {
 
     @SerializedName("command_info")
     @Expose
+    @Embedded
     private Map<String, String> commandInfo;
 
     public MessageStatus getStatus() {
         return status;
     }
 
+    @Embedded
     private MessageStatus status = MessageStatus.RECEIVED;
 
     @Override
@@ -144,6 +166,7 @@ public class Message implements UserEntity {
     }
 
     // Additional Params
+    @Embedded
     private Map<String, Object> extraData;
     private boolean isStartDay = false;
     private boolean isYesterday = false;
