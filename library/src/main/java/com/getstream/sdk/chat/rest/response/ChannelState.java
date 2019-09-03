@@ -55,9 +55,15 @@ public class ChannelState {
 
     public ChannelState(Channel channel) {
         this.channel = channel;
-        messages = new ArrayList<>();
-        reads = new ArrayList<>();
-        members = new ArrayList<>();
+        if (channel == null || channel.getChannelState() == null){
+            messages = new ArrayList<>();
+            reads = new ArrayList<>();
+            members = new ArrayList<>();
+        }else{
+            messages = channel.getChannelState().messages;
+            reads = channel.getChannelState().reads;
+            members = channel.getChannelState().members;
+        }
     }
 
     public void setChannel(Channel channel) {
