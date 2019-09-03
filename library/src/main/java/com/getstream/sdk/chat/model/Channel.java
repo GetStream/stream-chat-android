@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
 
@@ -49,7 +48,7 @@ import retrofit2.Response;
 /**
  * A channel
  */
-public class Channel implements Cloneable {
+public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
     @SerializedName("id")
@@ -82,9 +81,6 @@ public class Channel implements Cloneable {
     @SerializedName("image")
     private String image;
 
-    private Date lastKeyStroke;
-    private Date lastTypingEvent;
-    boolean isTyping = false;
     private HashMap<String, Object> extraData;
     private Map<String, String>reactionTypes;
 
@@ -147,11 +143,6 @@ public class Channel implements Cloneable {
 
     public Channel copy() {
         Channel clone = new Channel(client, type, id);
-        try {
-            clone = (Channel) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
         if (lastMessageDate!= null) {
             clone.lastMessageDate = new Date(lastMessageDate.getTime());
         }
@@ -322,7 +313,7 @@ public class Channel implements Cloneable {
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        client.getApiService().queryChannel(channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
+                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
                             @Override
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
@@ -397,7 +388,7 @@ public class Channel implements Cloneable {
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
         SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this.id, request, new MessageCallback() {
+        client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -420,7 +411,7 @@ public class Channel implements Cloneable {
             request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
         }
 
-        client.sendMessage(this.id, request, new MessageCallback() {
+        client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
@@ -474,7 +465,7 @@ public class Channel implements Cloneable {
         if (isImage) {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this.channelState.getChannel().getId(), part, new SendFileCallback() {
+            client.sendImage(this, part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -488,7 +479,7 @@ public class Channel implements Cloneable {
         } else {
             RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this.channelState.getChannel().getId(), part, new SendFileCallback() {
+            client.sendFile(this, part, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     fileCallback.onSuccess(response);
@@ -550,43 +541,10 @@ public class Channel implements Cloneable {
         });
     }
 
-    /**
-     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-     * Call this on every keystroke
-     */
-    public void keystroke(){
-        if (!getConfig().istypingEvents()) return;
-        Date now = new Date();
-        long diff;
-        if (this.lastKeyStroke == null)
-            diff = 2001;
-        else
-            diff = now.getTime() - this.lastKeyStroke.getTime();
-
-
-        this.lastKeyStroke = now;
-        this.isTyping = true;
-        // send a typing.start every 2 seconds
-        if (diff > 2000) {
-            this.lastTypingEvent = new Date();
-            sendEvent(EventType.TYPING_START, new EventCallback() {
-                @Override
-                public void onSuccess(EventResponse response) {
-
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-
-                }
-            });
-        }
-    }
-
-    public void handleChannelUpdated(Event event){
-        name = event.getChannel().name;
-        image = event.getChannel().image;
-        extraData = event.getChannel().extraData;
+    public void handleChannelUpdated(Channel channel, Event event){
+        name = channel.name;
+        image = channel.image;
+        extraData = channel.extraData;
     }
 
     public void handleWatcherStart(Event event) {
@@ -629,39 +587,6 @@ public class Channel implements Cloneable {
     }
 
     /**
-     * stopTyping - Sets last typing to null and sends the typing.stop event
-     */
-    public void stopTyping(){
-        if (!getConfig().istypingEvents()) return;
-        this.lastTypingEvent = null;
-        this.isTyping = false;
-        sendEvent(EventType.TYPING_STOP, new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
-    }
-
-    /**
-     * Clean - Cleans the channel state and fires stop typing if needed
-     */
-    public void clean() {
-        if (this.lastKeyStroke != null) {
-            Date now = new Date();
-            long diff = now.getTime() - this.lastKeyStroke.getTime();
-            if (diff > 1000 && this.isTyping) {
-                this.stopTyping();
-            }
-        }
-    }
-
-    /**
      * sendEvent - Send an event on this channel
      *
      * @param eventType event for example {type: 'message.read'}
@@ -674,7 +599,7 @@ public class Channel implements Cloneable {
         event.put("type", eventType.label);
         SendEventRequest request = new SendEventRequest(event);
 
-        client.sendEvent(this.id, request, new EventCallback() {
+        client.sendEvent(this, request, new EventCallback() {
             @Override
             public void onSuccess(EventResponse response) {
                 callback.onSuccess(response);

@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.utils.roundedImageView;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,11 +9,12 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
+
 import androidx.appcompat.widget.AppCompatImageView;
+
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.getstream.sdk.chat.R;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class PorterImageView extends AppCompatImageView {
@@ -54,13 +54,8 @@ public abstract class PorterImageView extends AppCompatImageView {
     }
 
     private void setup(Context context, AttributeSet attrs, int defStyle) {
-        if(attrs != null){
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Stream_ShaderImageView, defStyle, 0);
-            square = typedArray.getBoolean(R.styleable.Stream_ShaderImageView_stream_siSquare, false);
-            typedArray.recycle();
-        }
-
-        if(getScaleType() == ScaleType.FIT_CENTER) {
+        square = true;
+        if (getScaleType() == ScaleType.FIT_CENTER) {
             setScaleType(ScaleType.CENTER_CROP);
         }
 
@@ -82,7 +77,7 @@ public abstract class PorterImageView extends AppCompatImageView {
     private void createMaskCanvas(int width, int height, int oldw, int oldh) {
         boolean sizeChanged = width != oldw || height != oldh;
         boolean isValid = width > 0 && height > 0;
-        if(isValid && (maskCanvas == null || sizeChanged)) {
+        if (isValid && (maskCanvas == null || sizeChanged)) {
             maskCanvas = new Canvas();
             maskBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             maskCanvas.setBitmap(maskBitmap);
@@ -110,7 +105,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     if (drawable != null) {
                         invalidated = false;
                         Matrix imageMatrix = getImageMatrix();
-                        if (imageMatrix == null){// && mPaddingTop == 0 && mPaddingLeft == 0) {
+                        if (imageMatrix == null) {// && mPaddingTop == 0 && mPaddingLeft == 0) {
                             drawable.draw(drawableCanvas);
                         } else {
                             int drawableSaveCount = drawableCanvas.getSaveCount();
@@ -145,7 +140,7 @@ public abstract class PorterImageView extends AppCompatImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if(square) {
+        if (square) {
             int width = getMeasuredWidth();
             int height = getMeasuredHeight();
             int dimen = Math.min(width, height);

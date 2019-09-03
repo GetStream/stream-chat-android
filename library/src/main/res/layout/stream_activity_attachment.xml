@@ -18,12 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerView
-        android:id="@+id/youtube_player_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints" />
-
     <ImageView
         android:id="@+id/iv_image"
         android:layout_width="match_parent"

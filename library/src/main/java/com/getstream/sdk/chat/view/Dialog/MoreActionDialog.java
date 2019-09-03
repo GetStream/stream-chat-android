@@ -2,26 +2,26 @@ package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.view.Gravity;
+import android.graphics.Color;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
+import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MoreActionDialog extends Dialog {
 
@@ -30,7 +30,7 @@ public class MoreActionDialog extends Dialog {
     MessageListViewStyle style;
 
     public MoreActionDialog(@NonNull Context context) {
-        super(context);
+        super(context, R.style.DialogTheme);
     }
 
     public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
@@ -58,17 +58,33 @@ public class MoreActionDialog extends Dialog {
         if (viewModel == null || message == null || style == null)
             return;
 
-        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId()))
-            setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction_incoming);
-        else {
-            setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction_outgoing);
-            TextView tv_edit = findViewById(com.getstream.sdk.chat.R.id.tv_edit);
-            TextView tv_delete = findViewById(com.getstream.sdk.chat.R.id.tv_delete);
-            tv_edit.setOnClickListener(view -> {
+        setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction);
+
+        RelativeLayout rl_wrap = findViewById(R.id.rl_wrap);
+        LinearLayout ll_thread = findViewById(R.id.ll_thread);
+        LinearLayout ll_copy = findViewById(R.id.ll_copy);
+        LinearLayout ll_flag = findViewById(R.id.ll_flag);
+        LinearLayout ll_edit = findViewById(R.id.ll_edit);
+        LinearLayout ll_delete = findViewById(R.id.ll_delete);
+
+        rl_wrap.setBackground(new DrawableBuilder()
+                .rectangle()
+                .solidColor(Color.BLACK)
+                .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
+                .build());
+
+        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())){
+            ll_edit.setVisibility(View.GONE);
+            ll_delete.setVisibility(View.GONE);
+            ll_flag.setOnClickListener(view -> {});
+        }else {
+            ll_flag.setVisibility(View.GONE);
+
+            ll_edit.setOnClickListener(view -> {
                 viewModel.setEditMessage(message);
                 dismiss();
             });
-            tv_delete.setOnClickListener(view -> {
+            ll_delete.setOnClickListener(view -> {
                 viewModel.getChannel().deleteMessage(message,
                         new MessageCallback() {
                             @Override
@@ -88,29 +104,20 @@ public class MoreActionDialog extends Dialog {
 
 
         RecyclerView rv_reaction = findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
-        TextView tv_reply = findViewById(com.getstream.sdk.chat.R.id.tv_reply);
-        TextView tv_cancel = findViewById(com.getstream.sdk.chat.R.id.tv_cancel);
         RecyclerView.LayoutManager mLayoutManager;
         mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                 message,
-                false,
+                true,
                 style,
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);
 
-        tv_reply.setOnClickListener((View v) -> {
+        ll_thread.setOnClickListener((View v) -> {
 
             dismiss();
         });
-        tv_cancel.setOnClickListener((View v) -> dismiss());
-
-        Window window = getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.BOTTOM;
-
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
+        ll_copy.setOnClickListener((View v) -> dismiss());
     }
 }

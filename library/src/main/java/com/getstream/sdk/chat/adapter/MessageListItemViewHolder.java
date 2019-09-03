@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -178,15 +179,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configAttachmentView();
         configReactionView();
         configReplyView();
-        configDelieveredIndicator();
+        configDeliveredIndicator();
+        configReadIndicator();
         // apply position related style tweaks
         configPositionsStyle();
-        // Configure Laytout Params
+        // Configure Layout Params
         configMarginStartEnd();
         configParamsMessageText();
         configParamsDeletedMessage();
         configParamsUserAvatar();
-        configParamsDeliveredIndicator();
+
         configParamsReactionTailSpace();
         configParamsReactionSpace();
         configParamsReactionTail();
@@ -259,40 +261,53 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void configDelieveredIndicator() {
+    private void configDeliveredIndicator() {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
+
+        if (isDeletedOrFailedMessage())  return;
+        if (message == null || TextUtils.isEmpty(message.getId())) return;
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (!readBy.isEmpty() || !messageListItem.isMine()) return;
+
         if (!messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM))
             return;
         if (message.isDelivered()) {
             iv_deliver.setVisibility(View.VISIBLE);
         } else {
+            if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
+                    && channelState.getLastMessage().getId().equals(message.getId())){
+                message.setStatus(MessageStatus.RECEIVED);
+                iv_deliver.setVisibility(View.VISIBLE);
+                return;
+            }
             pb_deliver.setVisibility(View.VISIBLE);
         }
     }
 
-    private void configParamsDeliveredIndicator() {
+    private void configReadIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-
-        if (readBy.size() == 0) {
+        if (isDeletedOrFailedMessage() || readBy.isEmpty()) {
             read_state.setVisibility(View.GONE);
-        } else {
-            read_state.setVisibility(View.VISIBLE);
-            read_state.setReads(readBy, messageListItem.isTheirs(), style);
+            return;
         }
+        read_state.setVisibility(View.VISIBLE);
+        read_state.setReads(readBy, messageListItem.isTheirs(), style);
     }
 
     private void configSendFailed() {
-        if (message.getType().equals(ModelType.message_error)) {
+        if (message.getStatus() == MessageStatus.FAILED) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
+            // Set Style
+            tv_failed_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+            tv_failed_text.setTextColor(style.getMessageTextColorMine());
+            tv_failed_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
-            //TODO what does this do?
-            // int background = containerStyleOne(position) ? R.drawable.round_outgoing_failed1 : R.drawable.round_outgoing_failed2;
-            //ll_send_failed.setBackgroundResource(background);
+            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            ll_send_failed.setBackground(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
                 if (messageClickListener != null) {
@@ -315,6 +330,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
         if (message.getType().equals(ModelType.message_error)) {
+            tv_text.setVisibility(View.GONE);
+            tv_deleted.setVisibility(View.GONE);
+            return;
+        }
+        if (message.getStatus() == MessageStatus.FAILED) {
             tv_text.setVisibility(View.GONE);
             tv_deleted.setVisibility(View.GONE);
             return;
@@ -379,7 +399,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configAttachmentView() {
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             alv_attachments.setVisibility(View.GONE);
             return;
         }
@@ -395,7 +415,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setLongClickListener(messageLongClickListener);
             boolean hasBackground = false;
             for (Attachment attachment : message.getAttachments()){
-                if(!TextUtils.isEmpty(attachment.getText())){
+                if(!TextUtils.isEmpty(attachment.getText()) || !TextUtils.isEmpty(attachment.getTitle())){
                     hasBackground = true;
                     break;
                 }
@@ -415,7 +435,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             iv_docket.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
@@ -446,7 +466,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             cl_reply.setVisibility(View.GONE);
             return;
         }
-        if (tv_deleted.getVisibility() == View.VISIBLE || ll_send_failed.getVisibility() == View.VISIBLE) {
+        if (isDeletedOrFailedMessage()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
@@ -703,5 +723,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
+    }
+
+    private boolean isDeletedOrFailedMessage(){
+        return tv_deleted.getVisibility() == View.VISIBLE ||
+                ll_send_failed.getVisibility() == View.VISIBLE;
     }
 }

@@ -14,6 +14,7 @@
             android:gravity="center"
             android:textSize="11sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"
             app:layout_constraintEnd_toEndOf="@+id/cv_avatar"
             app:layout_constraintStart_toStartOf="@+id/cv_avatar"
@@ -23,6 +24,7 @@
             android:id="@+id/cv_avatar"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/tv_emoji"
             app:layout_constraintStart_toStartOf="@+id/tv_emoji"
             app:layout_constraintTop_toTopOf="parent" />
@@ -31,12 +33,11 @@
             android:id="@+id/tv_emoji"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:gravity="center_vertical"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textColor="@color/stream_white"
-            android:textSize="52sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,13 +47,14 @@
             android:id="@+id/tv_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
+            android:layout_margin="2dp"
             android:gravity="center_vertical"
             android:textColor="@color/stream_white"
-            android:textSize="9sp"
+            android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/tv_emoji"
             app:layout_constraintStart_toStartOf="@+id/tv_emoji"
             app:layout_constraintTop_toBottomOf="@+id/tv_emoji" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

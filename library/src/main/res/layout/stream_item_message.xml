@@ -89,11 +89,11 @@
             android:id="@+id/ll_send_failed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/stream_round_outgoing_failed1"
             android:gravity="end"
             android:orientation="vertical"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_gap_attach">
 
@@ -127,6 +127,7 @@
             android:paddingTop="5dp"
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
+            android:autoLink="web"
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

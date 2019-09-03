@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Reaction;
@@ -19,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -93,17 +95,54 @@ public class Message implements UserEntity {
     @Expose
     private Map<String, String> commandInfo;
 
-    private boolean me;
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    private MessageStatus status = MessageStatus.RECEIVED;
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        // we compare based on the CID
         Message otherMessage = (Message) obj;
-        return TextUtils.equals(this.getId(), otherMessage.getId());
+        if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
+            return false;
+        }
+        if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
+            return false;
+        }
+        if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
+            return false;
+        }
+        if (replyCount != otherMessage.replyCount) {
+            return false;
+        }
+        return true;
     }
+
+    public Message copy() {
+        Message clone = new Message();
+        clone.id = id;
+        clone.text = text;
+        clone.html = html;
+        clone.type = type;
+        clone.user = user;
+        clone.attachments = attachments;
+        clone.latestReactions = latestReactions;
+        clone.ownReactions = ownReactions;
+        clone.replyCount = replyCount;
+        clone.updatedAt = new Date(updatedAt.getTime());
+        clone.deletedAt = new Date(deletedAt.getTime());
+        clone.mentionedUsers = mentionedUsers;
+        clone.parentId = parentId;
+        clone.command = command;
+        clone.commandInfo = commandInfo;
+        clone.status = status;
+        return clone;
+    }
+
     // Additional Params
     private Map<String, Object> extraData;
     private boolean isStartDay = false;
@@ -111,7 +150,6 @@ public class Message implements UserEntity {
     private boolean isToday = false;
 
     private String date, time;
-    private boolean isDelivered = false;
 
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
@@ -252,11 +290,11 @@ public class Message implements UserEntity {
     }
 
     public boolean isDelivered() {
-        return isDelivered;
+        return status == MessageStatus.RECEIVED;
     }
 
-    public void setDelivered(boolean delivered) {
-        isDelivered = delivered;
+    public void setStatus(MessageStatus status) {
+        this.status = status;
     }
 
     public String getId() {
@@ -411,30 +449,4 @@ public class Message implements UserEntity {
         return user.getId();
     }
 
-//    public Message clone() {
-//        Message cloned = new Message();
-//        cloned.setId(id);
-//        cloned.setText(text);
-//        cloned.setUser(user);
-//        cloned.setHtml(html);
-//        cloned.setType(type);
-//        cloned.setAttachments(attachments);
-//        cloned.setLatestReactions(latestReactions);
-//        cloned.setOwnReactions(ownReactions);
-//        cloned.setReplyCount(replyCount);
-//        cloned.setCreatedAt(createdAt);
-//        cloned.setUpdatedAt(updatedAt);
-//        cloned.setDeletedAt(deletedAt);
-//        cloned.setMentionedUsers(mentionedUsers);
-//        cloned.setReactionCounts(reactionCounts);
-//        cloned.setParent_id(parentId);
-//        cloned.setCommand(command);
-//        cloned.setCommandInfo(commandInfo);
-//        cloned.setDelivered(isDelivered);
-//        cloned.setToday(isToday);
-//        cloned.setYesterday(isYesterday);
-//        cloned.setDate(date);
-//        cloned.setTime(time);
-//        return cloned;
-//    }
 }

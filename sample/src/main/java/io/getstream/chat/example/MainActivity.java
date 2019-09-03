@@ -21,7 +21,6 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
-import static com.getstream.sdk.chat.enums.Filters.in;
 
 
 /**
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");
-//        extraData.put("image", "https://imgix.ranker.com/user_node_img/50060/1001188616/original/bender-turns-into-a-criminal-in-the-first-episode-photo-u1?w=650&q=50&fm=pjpg&fit=crop&crop=faces");
         extraData.put("image", "https://bit.ly/321RmWb");
         User user = new User(USER_ID, extraData);
         client.setUser(user, USER_TOKEN);
@@ -68,21 +66,15 @@ public class MainActivity extends AppCompatActivity {
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
-//        viewModel.setChannelsPageSize(0);
 
-        //ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
-        //adapter.setCustomViewHolder(ChannelListItemViewHolder.class);
         binding.channelList.setViewModel(viewModel, this);
-        // query all channels where the current user is a member
-        // FilterObject filter = in("members", USER_ID);
-//        FilterObject filter = and(eq("name", "general"),in("type", "messaging"));
         ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
-//        FilterObject filter = and(in("members", USER_ID), in("type", "messaging"));
-        FilterObject filter = eq("type", "messaging");
-//        FilterObject filter = and(in("type", "messaging"), eq("example", 1));
+
+        // just get all channels
+        FilterObject filter = and(eq("type", "messaging"));
+
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
-//        viewModel.setChannelSort(new QuerySort().desc("updated_at"));
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(channel -> {

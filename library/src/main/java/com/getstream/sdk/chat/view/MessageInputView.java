@@ -63,24 +63,13 @@ public class MessageInputView extends RelativeLayout
     private MessageInputStyle style;
     // listeners
     private SendMessageListener sendMessageListener;
-    private TypingListener typingListener;
     private OpenCameraViewListener openCameraViewListener;
 
-
-    private static final int DEFAULT_DELAY_TYPING_STATUS = 1500;
-    private Runnable typingTimerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (isTyping) {
-                isTyping = false;
-                stopTyping();
-            }
-        }
-    };
     private AttachmentListener attachmentListener;
     // state
-//    private Message editingMessage;
-    private boolean isTyping;
+
+    private Message editingMessage;
+
 
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
@@ -299,13 +288,12 @@ public class MessageInputView extends RelativeLayout
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        Log.i(TAG, "click click");
         if (id == R.id.iv_send) {
+
             this.onSendMessage(binding.etMessage.getText().toString(), isEditing());
-            this.stopTyping();
+
         } else if (id == R.id.iv_openAttach) {
             // open the attachment drawer
-            Log.i(TAG, "opening the attachment drawer");
             binding.setIsAttachFile(true);
         }
     }
@@ -325,10 +313,7 @@ public class MessageInputView extends RelativeLayout
         String messageText = this.getMessageText();
         Log.i(TAG, "Length is " + s.length());
         if (messageText.length() > 0) {
-            this.keyStroke();
-        } else {
-            removeCallbacks(typingTimerRunnable);
-            postDelayed(typingTimerRunnable, DEFAULT_DELAY_TYPING_STATUS);
+            viewModel.keystroke();
         }
         // detect commands
         sendFileFunction.checkCommand(messageText);
@@ -337,9 +322,6 @@ public class MessageInputView extends RelativeLayout
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (!hasFocus) {
-            this.stopTyping();
-        }
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
     }
 
@@ -361,6 +343,7 @@ public class MessageInputView extends RelativeLayout
                     public void onError(String errMsg, int errCode) {
                         initSendMessage();
                         binding.ivSend.setEnabled(true);
+                        Utils.showMessage(getContext(), errMsg);
                     }
                 });
             }
@@ -385,6 +368,7 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void initSendMessage() {
+        viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         sendFileFunction.initSendMessage();
     }
@@ -394,29 +378,8 @@ public class MessageInputView extends RelativeLayout
         this.sendMessageListener = l;
     }
 
-    public void setTypingListener(TypingListener l) {
-        this.typingListener = l;
-    }
-
     public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
         this.openCameraViewListener = openCameraViewListener;
-    }
-
-    // endregion
-    private void stopTyping() {
-        isTyping = false;
-        viewModel.getChannel().stopTyping();
-        if (typingListener != null) {
-            typingListener.onStopTyping();
-        }
-    }
-
-    private void keyStroke() {
-        viewModel.getChannel().keystroke();
-        isTyping = true;
-        if (typingListener != null) {
-            typingListener.onKeystroke();
-        }
     }
 
 
@@ -434,16 +397,6 @@ public class MessageInputView extends RelativeLayout
      */
     public interface AttachmentListener {
         void onAddAttachments();
-    }
-
-
-    /**
-     * A simple interface for typing events
-     */
-    public interface TypingListener {
-        void onKeystroke();
-
-        void onStopTyping();
     }
 
     public interface OpenCameraViewListener {

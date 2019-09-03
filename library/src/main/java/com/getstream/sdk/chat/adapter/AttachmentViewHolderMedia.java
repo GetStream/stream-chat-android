@@ -21,7 +21,6 @@ import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     // Attachment
     private PorterShapeImageView iv_media_thumb;
@@ -60,6 +59,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(getContext(), background);
+        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configMediaAttach() {
