@@ -95,7 +95,7 @@ public class Utils {
         int width = metrics.widthPixels;
         int height = metrics.heightPixels;
 
-        return width;
+        return height;
     }
 
     public static void setButtonDelayEnable(View v) {
