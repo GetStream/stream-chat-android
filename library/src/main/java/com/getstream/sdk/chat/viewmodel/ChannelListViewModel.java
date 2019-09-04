@@ -287,10 +287,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels " + errMsg);
+                if (attempt > 100) {
+                    Log.e(TAG, "tried more than 100 times, give up now");
+                    return;
+                }
                 if (!client().isConnected()) {
                     return;
                 }
-                int sleep = 500 * (attempt + 1);
+                int sleep = Math.min(500 * (attempt * attempt + 1), 30000);
                 Log.d(TAG, "retrying in " + sleep);
                 retryLooper.postDelayed (() -> {
                     queryChannelsInner(attempt + 1);
