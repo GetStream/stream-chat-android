@@ -28,7 +28,7 @@ import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.FlagUserCallback;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -47,6 +47,7 @@ import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
+import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -57,6 +58,7 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.storage.Storage;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -1036,7 +1038,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void flagUser(@NonNull String targetUserId,
-                         FlagUserCallback callback) {
+                         FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id",targetUserId);
@@ -1059,7 +1061,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void unFlagUser(@NonNull String targetUserId,
-                           FlagUserCallback callback) {
+                           FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id",targetUserId);
@@ -1082,7 +1084,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void flagMessage(@NonNull String targetMessageId,
-                            FlagUserCallback callback) {
+                            FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id",targetMessageId);
@@ -1099,13 +1101,17 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
     public void unFlagMessage(@NonNull String targetMessageId,
-                              FlagUserCallback callback) {
+                              FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id",targetMessageId);
