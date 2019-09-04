@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.storage.converter;
 
 import androidx.room.TypeConverter;
 

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.model;
 
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.CommandListConverter;
+import com.getstream.sdk.chat.storage.converter.CommandListConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;

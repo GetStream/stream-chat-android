@@ -10,8 +10,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.DateConverter;
-import com.getstream.sdk.chat.ExtraDataConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;

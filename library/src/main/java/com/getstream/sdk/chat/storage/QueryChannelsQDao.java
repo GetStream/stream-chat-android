@@ -1,9 +1,10 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.storage;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Channel;
 
 import java.util.List;

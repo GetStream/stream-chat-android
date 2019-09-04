@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.storage;
 
 import android.content.Context;
 
@@ -6,6 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;

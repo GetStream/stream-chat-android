@@ -9,8 +9,8 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.DateConverter;
-import com.getstream.sdk.chat.ExtraDataConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.google.gson.annotations.SerializedName;
 

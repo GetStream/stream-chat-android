@@ -1,12 +1,13 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.model;
 
 import androidx.room.Entity;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.storage.QueryChannelsQDao;
 
 import java.util.ArrayList;
 import java.util.Date;

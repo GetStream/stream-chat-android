@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -55,6 +56,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.storage.Storage;
 
 import org.json.JSONObject;
 
@@ -78,8 +80,10 @@ public class Client implements WSResponseHandler {
     private HashMap<String, User> knownUsers = new HashMap<>();
     // Main Params
     private String apiKey;
+    private Boolean offlineStorage;
     private User user;
     private String userToken;
+    private Context context;
     // Client params
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
@@ -171,6 +175,7 @@ public class Client implements WSResponseHandler {
         connectionWaiters = new ArrayList<>();
         channelTypeConfigs = new HashMap<>();
         this.options = options;
+        this.offlineStorage = false;
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -182,6 +187,10 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
+    }
+
+    public Storage storage() {
+        return Storage.getStorage(getContext(), this.offlineStorage);
     }
 
     public Client(String apiKey, ApiClientOptions options) {
@@ -1115,5 +1124,21 @@ public class Client implements WSResponseHandler {
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
+    }
+
+    public Boolean getOfflineStorage() {
+        return offlineStorage;
+    }
+
+    public void setOfflineStorage(Boolean offlineStorage) {
+        this.offlineStorage = offlineStorage;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

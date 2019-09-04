@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.storage;
 
 import androidx.room.Dao;
 import androidx.room.Insert;

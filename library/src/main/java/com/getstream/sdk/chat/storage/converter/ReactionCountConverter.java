@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.storage.converter;
 
 import android.util.ArrayMap;
 
@@ -10,22 +10,22 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class CommandInfoConverter {
+public class ReactionCountConverter {
     static Gson gson = new Gson();
 
     @TypeConverter
-    public static Map<String, String> stringToMap(String data) {
+    public static Map<String, Integer> stringToMap(String data) {
         if (data == null) {
             return new ArrayMap<>();
         }
 
-        Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Integer>>() {}.getType();
 
         return gson.fromJson(data, mapType);
     }
 
     @TypeConverter
-    public static String mapToString(Map<String, String> someObjects) {
+    public static String mapToString(Map<String, Integer> someObjects) {
         return gson.toJson(someObjects);
     }
 }

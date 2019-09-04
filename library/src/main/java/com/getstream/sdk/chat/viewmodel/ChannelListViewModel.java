@@ -8,11 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.getstream.sdk.chat.ChannelsDao;
-import com.getstream.sdk.chat.ChatDatabase;
 import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.QueryChannelsQ;
-import com.getstream.sdk.chat.QueryChannelsQDao;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -219,9 +215,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         List<Channel> channelCopy = channels.getValue();
         int idx = channelCopy.lastIndexOf(channel);
 
-        ChatDatabase db = ChatDatabase.getDatabase(getApplication());
-        ChannelsDao channelsDao = db.channelsDao();
-        channelsDao.insertChannel(channel);
+        client().storage().insertChannel(channel);
 
         if (idx != -1) {
             channelCopy.remove(channel);
@@ -267,16 +261,13 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
-        ChatDatabase db = ChatDatabase.getDatabase(getApplication());
-        ChannelsDao channelsDao = db.channelsDao();
-        QueryChannelsQDao queryChannelsQDao = db.queryChannelsQDao();
 
 
 
-        QueryChannelsQ query = queryChannelsQDao.select(request.query().getId());
+        List<ChannelState> offlineChannelStates = client().storage().selectChannelStates(request.query().getId(), 100);
         // add the offline copy if we have it...
-        if (query != null) {
-            addChannels(query.getChannelStates(queryChannelsQDao,100));
+        if (offlineChannelStates != null) {
+            addChannels(offlineChannelStates);
         }
 
 
@@ -288,7 +279,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
                 Log.i(TAG, "onSuccess for loading the channels");
                 addChannels(response.getChannelStates());
-                channelsDao.insertChannels(response.getChannels());
+                client().storage().insertChannels(response.getChannels());
+
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
@@ -311,8 +303,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             return;
         }
 
-        ChatDatabase db = ChatDatabase.getDatabase(getApplication());
-        ChannelsDao channelsDao = db.channelsDao();
         if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
             return;
@@ -340,7 +330,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Log.i(TAG, "onSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
-                channelsDao.insertChannels(response.getChannels());
+                client().storage().insertChannels(response.getChannels());
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
