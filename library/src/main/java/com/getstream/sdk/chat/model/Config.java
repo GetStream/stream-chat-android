@@ -5,6 +5,7 @@ import androidx.room.TypeConverters;
 import com.getstream.sdk.chat.CommandListConverter;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,10 +14,10 @@ import java.util.List;
 
 public class Config {
     @SerializedName("created_at")
-    private String created_at;
+    private Date created_at;
 
     @SerializedName("updated_at")
-    private String updated_at;
+    private Date updated_at;
 
     public void setName(String name) {
         this.name = name;
@@ -80,11 +81,11 @@ public class Config {
     @TypeConverters(CommandListConverter.class)
     private List<Command>commands;
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return created_at;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updated_at;
     }
 

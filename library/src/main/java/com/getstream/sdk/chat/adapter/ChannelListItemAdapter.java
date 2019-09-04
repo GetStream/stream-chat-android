@@ -71,7 +71,7 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void replaceChannels(List<Channel> channelList) {
         List<Channel> cloneChannelList = new ArrayList<>();
 
-        for (Channel channel: channelList) {
+        for (Channel channel: new ArrayList<>(channelList)) {
             cloneChannelList.add(channel.copy());
         }
 
