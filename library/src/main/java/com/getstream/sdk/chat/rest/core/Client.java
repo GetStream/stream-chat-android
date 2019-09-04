@@ -468,6 +468,7 @@ public class Client implements WSResponseHandler {
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
+                            channel.setLastState(channelState);
                             if (getChannelByCid(channel.getCid()) != null) {
                                 channel = getChannelByCid(channel.getCid());
                             } else {

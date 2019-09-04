@@ -114,4 +114,35 @@ public class Storage {
             return null;
         }
     }
+
+    private static class InsertQueryAsyncTask extends AsyncTask<QueryChannelsQ, Void, Void> {
+
+        private QueryChannelsQDao mDao;
+
+        public void insertAsyncTask(QueryChannelsQDao dao) {
+            mDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final QueryChannelsQ... params) {
+            mDao.insert(params[0]);
+            return null;
+        }
+    }
+
+
+    private static class InsertChannelAsyncTask extends AsyncTask<Channel, Void, Void> {
+
+        private ChannelsDao mDao;
+
+        public void insertAsyncTask(ChannelsDao dao) {
+            mDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Channel... params) {
+            mDao.insertChannels(params);
+            return null;
+        }
+    }
 }
