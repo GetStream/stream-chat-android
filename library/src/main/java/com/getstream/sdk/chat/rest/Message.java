@@ -99,8 +99,7 @@ public class Message implements UserEntity {
         return status;
     }
 
-    // TODO: messages received from APIs should have "received" status
-    private MessageStatus status;
+    private MessageStatus status = MessageStatus.RECEIVED;
 
     @Override
     public boolean equals(@Nullable Object obj) {

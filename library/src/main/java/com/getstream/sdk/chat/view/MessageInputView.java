@@ -346,6 +346,7 @@ public class MessageInputView extends RelativeLayout
             });
         } else {
             Message m = new Message();
+            m.setStatus(null);
             m.setText(input);
             m.setAttachments(sendFileFunction.getSelectedAttachments());
             if (sendMessageListener != null) {
