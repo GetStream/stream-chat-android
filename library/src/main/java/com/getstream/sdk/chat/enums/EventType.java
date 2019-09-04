@@ -14,7 +14,6 @@ public enum EventType {
     MESSAGE_UPDATED("message.updated"),
     MESSAGE_DELETED("message.deleted"),
     MESSAGE_READ("message.read"),
-    MESSAGE_REACTION("message.reaction"),
     REACTION_NEW("reaction.new"),
     REACTION_DELETED("reaction.deleted"),
     MEMBER_ADDED("member.added"),

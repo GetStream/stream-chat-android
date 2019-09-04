@@ -24,9 +24,10 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
@@ -302,6 +303,8 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
+
+                    viewModel.setMessageListScrollUp(currentFirstVisible < fVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                 }
@@ -423,15 +426,11 @@ public class MessageListView extends RecyclerView {
         if (this.messageClickListener != null) {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
-//            adapter.setMessageClickListener((message, position) -> {
-//                new ReactionDialog(getContext())
-//                        .setChannel(viewModel.getChannel())
-//                        .setMessage(message)
-//                        .setMessagePosition(position)
-//                        .setRecyclerView(this)
-//                        .setStyle(style)
-//                        .show();
-//            });
+            adapter.setMessageClickListener((message, position) -> {
+                if (message.getStatus() == MessageStatus.FAILED){
+                    viewModel.onSendMessage(message, null);
+                }
+            });
         }
     }
 

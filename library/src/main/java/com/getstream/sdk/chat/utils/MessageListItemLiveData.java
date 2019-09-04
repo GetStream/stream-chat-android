@@ -107,7 +107,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
         MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
-
+        wrapper.setTyping(!typingEntities.isEmpty());
         // run setValue on main thread now that the whole computation is done
         new Handler(Looper.getMainLooper()).post(() -> {
             setValue(wrapper);
@@ -184,8 +184,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 // set the previous message for the next iteration
                 previousMessage = message;
             }
-
-            this.messageEntities = entities;
+            this.messageEntities.clear();
+            this.messageEntities.addAll(entities);
             Log.i(TAG, "broadcast because messages changed");
             broadcastValue();
         });

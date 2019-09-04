@@ -128,8 +128,13 @@ public class Message implements UserEntity {
         return status;
     }
 
+<<<<<<< HEAD
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status = MessageStatus.RECEIVED;
+=======
+    // TODO: messages received from APIs should have "received" status
+    private MessageStatus status;
+>>>>>>> d25dbfd81f14c1e4ee0bfb5b776a33ea2f822dd8
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -163,8 +168,15 @@ public class Message implements UserEntity {
         clone.latestReactions = latestReactions;
         clone.ownReactions = ownReactions;
         clone.replyCount = replyCount;
-        clone.updatedAt = new Date(updatedAt.getTime());
-        clone.deletedAt = new Date(deletedAt.getTime());
+        clone.createdAt = new Date(createdAt.getTime());
+        try {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }catch (Exception e){}
+
+        try {
+            clone.deletedAt = new Date(deletedAt.getTime());
+        }catch (Exception e){}
+
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;
         clone.command = command;

@@ -10,7 +10,6 @@ public abstract class ChatChannelEventHandler {
     public void onMessageUpdated(Event event) {}
     public void onMessageDeleted(Event event) {}
     public void onMessageRead(Event event) {}
-    public void onMessageReaction(Event event) {}
     public void onReactionNew(Event event) {}
     public void onReactionDeleted(Event event) {}
     public void onMemberAdded(Event event) {}
@@ -40,9 +39,6 @@ public abstract class ChatChannelEventHandler {
                 break;
             case MESSAGE_READ:
                 onMessageRead(event);
-                break;
-            case MESSAGE_REACTION:
-                onMessageReaction(event);
                 break;
             case REACTION_NEW:
                 onReactionNew(event);

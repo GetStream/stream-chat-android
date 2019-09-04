@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -70,6 +71,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private Date lastKeystrokeAt;
 
     private MutableLiveData<Boolean> loading;
+    private MutableLiveData<Boolean> messageListScrollUp;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<Message> editMessage;
@@ -101,6 +103,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reachedEndOfPagination = false;
 
         loading = new MutableLiveData<>(false);
+        messageListScrollUp = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
@@ -189,6 +192,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void setEditMessage(Message editMessage) {
         this.editMessage.postValue(editMessage);
     }
+
+    public LiveData<Boolean> getMessageListScrollUp() {
+        return messageListScrollUp;
+    }
+
+    public void setMessageListScrollUp(Boolean messageListScrollUp) {
+        this.messageListScrollUp.postValue(messageListScrollUp);
+    }
+
     // endregion
 
     private boolean setLoading(){
@@ -240,17 +252,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onUserWatchingStart(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onUserWatchingStop(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onChannelUpdated(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
@@ -301,7 +313,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
-            messagesCopy.set(index, newMessage);
+            // Failed Message Progress
+            if (oldMessage.getStatus() == MessageStatus.FAILED){
+                messagesCopy.remove(oldMessage);
+                messagesCopy.add(newMessage);
+            }else{
+                messagesCopy.set(index, newMessage);
+            }
             messages.postValue(messagesCopy);
         }
     }
@@ -332,7 +350,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy.set(index, message);
             messages.postValue(messagesCopy);
         }
+        Log.d(TAG,"updateMessage:" + updated);
         return updated;
+    }
+
+    private void updateFailedMessage(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        boolean updated = index != -1;
+        if (updated) {
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
     }
 
     private boolean deleteMessage(Message message) {
@@ -468,22 +500,24 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     @Override
-    public void onSendMessage(Message message, MessageCallback callback) {
+    public void onSendMessage(final Message message, @Nullable final MessageCallback callback) {
         // send typing.stop immediately
         stopTyping();
 
-        // immediately add the message
-        message.setUser(client().getUser());
-        message.setCreatedAt(new Date());
-        message.setType("regular");
-        message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
-
-        String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-        message.setId(clientSideID);
-        addMessage(message);
+        if (message.getStatus() == null) {
+            message.setUser(client().getUser());
+            // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
+            message.setCreatedAt(new Date());
+            message.setType("regular");
+            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            addMessage(message);
+        }
 
         if (!client().isConnected()) {
-            callback.onError("no interent", -1);
+            if (callback != null)
+                callback.onError("no internet", -1);
             return;
         }
 
@@ -493,14 +527,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     @Override
                     public void onSuccess(MessageResponse response) {
                         replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
+                        if (callback != null)
+                            callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        message.setStatus(MessageStatus.FAILED);
-                        updateMessage(message);
-                        callback.onError(errMsg, errCode);
+                        Message clone = message.copy();
+                        clone.setStatus(MessageStatus.FAILED);
+                        updateFailedMessage(clone);
+                        if (callback != null)
+                            callback.onError(errMsg, errCode);
                     }
                 });
     }
@@ -592,6 +629,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public synchronized void stopTyping() {
+        if (lastKeystrokeAt == null) return;
         lastKeystrokeAt = null;
         channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
             @Override
