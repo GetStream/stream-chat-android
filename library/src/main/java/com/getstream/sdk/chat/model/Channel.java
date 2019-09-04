@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
@@ -25,6 +26,7 @@ import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
@@ -531,6 +533,34 @@ public class Channel {
         client.deleteReaction(mesageId, type, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
+        });
+    }
+
+    public void flagMessage(String messageId, FlagCallback callback){
+        client.flagMessage(messageId, new FlagCallback() {
+            @Override
+            public void onSuccess(FlagResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
+        });
+    }
+
+    public void unFlagMessage(String messageId, FlagCallback callback){
+        client.unFlagMessage(messageId, new FlagCallback() {
+            @Override
+            public void onSuccess(FlagResponse response) {
                 callback.onSuccess(response);
             }
 
