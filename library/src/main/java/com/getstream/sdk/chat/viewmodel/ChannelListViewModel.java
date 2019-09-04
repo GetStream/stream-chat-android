@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -43,10 +44,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private AtomicBoolean initialized;
     private AtomicBoolean isLoading;
     private AtomicBoolean isLoadingMore;
+    private boolean queryChannelDone;
     private int pageSize;
     private int subscriptionId = 0;
     private int recoverySubscriptionId = 0;
     private StreamLifecycleObserver lifecycleObserver;
+    private Handler retryLooper;
 
     public LiveData<List<Channel>> getChannels() {
         return channels;
@@ -135,6 +138,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         initEventHandlers();
 
         lifecycleObserver = new StreamLifecycleObserver(this);
+
+        retryLooper = new Handler();
     }
 
     @Override
@@ -143,15 +148,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     @Override
-    public void stopped() {
-    }
+    public void stopped() {}
 
     private void setupConnectionRecovery(){
         recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
-                setLoadingDone();
                 Log.i(TAG, "onConnectionRecovered");
+                if (!queryChannelDone) {
+                    queryChannelsInner(0);
+                    return;
+                }
+                setLoadingDone();
                 boolean changed = false;
                 List<Channel> channelCopy = channels.getValue();
                 for (Channel channel: client().getActiveChannels()) {
@@ -171,6 +179,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private void initEventHandlers() {
         subscriptionId = client().addEventHandler(new ChatEventHandler() {
+            @Override
+            public void onConnectionChanged(Event event) {
+                if (!event.getOnline()) {
+                    retryLooper.removeCallbacksAndMessages(null);
+                }
+            }
 
             @Override
             public void onNotificationMessageNew(Event event) {
@@ -262,18 +276,15 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(channelCopy);
     }
 
-    private void queryChannels() {
-        Log.i(TAG, "queryChannels for loading the channels");
-        if (!setLoading()) return;
-
+    private void queryChannelsInner(int attempt) {
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
-        client().queryChannels(request, new QueryChannelListCallback() {
+        QueryChannelListCallback queryCallback = new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
-                initialized.set(true);
+                queryChannelDone = true;
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
@@ -286,11 +297,24 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onError(String errMsg, int errCode) {
-                initialized.set(true);
-                setLoadingDone();
-                Log.e(TAG, "onError for loading the channels" + errMsg);
+                Log.e(TAG, "onError for loading the channels " + errMsg);
+                if (!client().isConnected()) {
+                    return;
+                }
+                int sleep = 500 * (attempt + 1);
+                Log.d(TAG, "retrying in " + sleep);
+                retryLooper.postDelayed (() -> {
+                    queryChannelsInner(attempt + 1);
+                }, sleep);
             }
-        });
+        };
+        client().queryChannels(request, queryCallback);
+    }
+
+    private void queryChannels() {
+        Log.i(TAG, "queryChannels for loading the channels");
+        if (!setLoading()) return;
+        queryChannelsInner(0);
     }
 
     public void loadMore() {
