@@ -99,7 +99,8 @@ public class Message implements UserEntity {
         return status;
     }
 
-    private MessageStatus status = MessageStatus.RECEIVED;
+    // TODO: messages received from APIs should have "received" status
+    private MessageStatus status;
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -133,8 +134,15 @@ public class Message implements UserEntity {
         clone.latestReactions = latestReactions;
         clone.ownReactions = ownReactions;
         clone.replyCount = replyCount;
-        clone.updatedAt = new Date(updatedAt.getTime());
-        clone.deletedAt = new Date(deletedAt.getTime());
+        clone.createdAt = new Date(createdAt.getTime());
+        try {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }catch (Exception e){}
+
+        try {
+            clone.deletedAt = new Date(deletedAt.getTime());
+        }catch (Exception e){}
+
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;
         clone.command = command;

@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -309,7 +310,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
-            messagesCopy.set(index, newMessage);
+            // Failed Message Progress
+            if (oldMessage.getStatus() == MessageStatus.FAILED){
+                messagesCopy.remove(oldMessage);
+                messagesCopy.add(newMessage);
+            }else{
+                messagesCopy.set(index, newMessage);
+            }
             messages.postValue(messagesCopy);
         }
     }
@@ -340,7 +347,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy.set(index, message);
             messages.postValue(messagesCopy);
         }
+        Log.d(TAG,"updateMessage:" + updated);
         return updated;
+    }
+
+    private void updateFailedMessage(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        boolean updated = index != -1;
+        if (updated) {
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
     }
 
     private boolean deleteMessage(Message message) {
@@ -456,22 +477,24 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     @Override
-    public void onSendMessage(Message message, MessageCallback callback) {
+    public void onSendMessage(final Message message, @Nullable final MessageCallback callback) {
         // send typing.stop immediately
         stopTyping();
 
-        // immediately add the message
-        message.setUser(client().getUser());
-        message.setCreatedAt(new Date());
-        message.setType("regular");
-        message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
-
-        String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-        message.setId(clientSideID);
-        addMessage(message);
+        if (message.getStatus() == null) {
+            message.setUser(client().getUser());
+            // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
+            message.setCreatedAt(new Date());
+            message.setType("regular");
+            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            addMessage(message);
+        }
 
         if (!client().isConnected()) {
-            callback.onError("no interent", -1);
+            if (callback != null)
+                callback.onError("no internet", -1);
             return;
         }
 
@@ -481,14 +504,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     @Override
                     public void onSuccess(MessageResponse response) {
                         replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
+                        if (callback != null)
+                            callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        message.setStatus(MessageStatus.FAILED);
-                        updateMessage(message);
-                        callback.onError(errMsg, errCode);
+                        Message clone = message.copy();
+                        clone.setStatus(MessageStatus.FAILED);
+                        updateFailedMessage(clone);
+                        if (callback != null)
+                            callback.onError(errMsg, errCode);
                     }
                 });
     }
@@ -580,6 +606,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public synchronized void stopTyping() {
+        if (lastKeystrokeAt == null) return;
         lastKeystrokeAt = null;
         channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
             @Override
