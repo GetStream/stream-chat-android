@@ -189,7 +189,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.editMessage.postValue(editMessage);
     }
 
-    public MutableLiveData<Boolean> getMessageListScrollUp() {
+    public LiveData<Boolean> getMessageListScrollUp() {
         return messageListScrollUp;
     }
 
