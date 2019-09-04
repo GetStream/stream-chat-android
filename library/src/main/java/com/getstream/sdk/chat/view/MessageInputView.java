@@ -327,7 +327,24 @@ public class MessageInputView extends RelativeLayout
 
     private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
-        if (!isEdit){
+
+        if (isEdit){
+            getEditMessage().setText(input);
+            getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
+            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    initSendMessage();
+                    binding.ivSend.setEnabled(true);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    initSendMessage();
+                    binding.ivSend.setEnabled(true);
+                }
+            });
+        } else {
             Message m = new Message();
             m.setText(input);
             m.setAttachments(sendFileFunction.getSelectedAttachments());
@@ -347,24 +364,7 @@ public class MessageInputView extends RelativeLayout
                     }
                 });
             }
-        }else{
-            getEditMessage().setText(input);
-            getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
-            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                }
-            });
         }
-
     }
 
     private void initSendMessage() {

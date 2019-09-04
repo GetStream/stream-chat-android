@@ -21,9 +21,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -268,9 +268,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (isDeletedOrFailedMessage()
                 || message == null
                 || TextUtils.isEmpty(message.getId())
-                || message.getStatus() == MessageStatus.FAILED
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
-                ||!messageListItem.getMessageReadBy().isEmpty()
+                || !messageListItem.getMessageReadBy().isEmpty()
                 || !messageListItem.isMine())
             return;
 
@@ -312,7 +311,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             ll_send_failed.setBackground(background);
 
             ll_send_failed.setOnClickListener((View v) -> {
-                if (!channelState.getChannel().getClient().isConnected()) return;
+                if (!StreamChat.getInstance(context).isConnected()) return;
                 if (messageClickListener != null) {
                     messageClickListener.onMessageClick(message, position);
                 }
@@ -727,7 +726,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private boolean isDeletedOrFailedMessage(){
-        return tv_deleted.getVisibility() == View.VISIBLE ||
-                ll_send_failed.getVisibility() == View.VISIBLE;
+        return message.getDeletedAt() != null || message.getStatus() == MessageStatus.FAILED;
     }
 }

@@ -470,9 +470,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         // send typing.stop immediately
         stopTyping();
 
-        // immediately add the message
-        if (message.getStatus() != MessageStatus.FAILED){
+        if (message.getStatus() == null) {
             message.setUser(client().getUser());
+            // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
             message.setCreatedAt(new Date());
             message.setType("regular");
             message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
@@ -483,7 +483,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         if (!client().isConnected()) {
             if (callback != null)
-                callback.onError("no interent", -1);
+                callback.onError("no internet", -1);
             return;
         }
 
@@ -595,6 +595,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public synchronized void stopTyping() {
+        if (lastKeystrokeAt == null) return;
         lastKeystrokeAt = null;
         channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
             @Override
