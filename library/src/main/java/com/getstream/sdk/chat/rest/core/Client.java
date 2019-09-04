@@ -1089,7 +1089,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                ErrorResponse response = new Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
                 if (response != null)
                     callback.onError(response.getMessage(), response.getCode());
                 else
