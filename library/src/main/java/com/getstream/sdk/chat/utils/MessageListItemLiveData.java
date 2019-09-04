@@ -107,7 +107,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
         MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
-
+        wrapper.setTyping(!typingEntities.isEmpty());
         // run setValue on main thread now that the whole computation is done
         new Handler(Looper.getMainLooper()).post(() -> {
             setValue(wrapper);

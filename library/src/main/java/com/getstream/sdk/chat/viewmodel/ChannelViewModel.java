@@ -68,6 +68,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private Date lastKeystrokeAt;
 
     private MutableLiveData<Boolean> loading;
+    private MutableLiveData<Boolean> messageListScrollUp;
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<Message> editMessage;
@@ -99,6 +100,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reachedEndOfPagination = false;
 
         loading = new MutableLiveData<>(false);
+        messageListScrollUp = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
@@ -187,6 +189,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void setEditMessage(Message editMessage) {
         this.editMessage.postValue(editMessage);
     }
+
+    public LiveData<Boolean> getMessageListScrollUp() {
+        return messageListScrollUp;
+    }
+
+    public void setMessageListScrollUp(Boolean messageListScrollUp) {
+        this.messageListScrollUp.postValue(messageListScrollUp);
+    }
+
     // endregion
 
     private boolean setLoading(){
@@ -238,17 +249,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
             @Override
             public void onUserWatchingStart(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onUserWatchingStop(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override
             public void onChannelUpdated(Event event) {
-                channelState.postValue(event.getChannel().getChannelState());
+                channelState.postValue(channel.getChannelState());
             }
 
             @Override

@@ -187,51 +187,40 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             }
 
             @Override
-            public void onNotificationMessageNew(Event event) {
-                Channel channel = client().getChannelByCid(event.getCid());
-                if (channel == null) return;
+            public void onNotificationMessageNew(Channel channel, Event event) {
                 Message lastMessage = channel.getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-                upsertChannel(event.getChannel());
+                Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
+                upsertChannel(channel);
             }
 
             @Override
-            public void onMessageNew(Event event) {
-                Channel channel = client().getChannelByCid(event.getCid());
-                if (channel == null) return;
+            public void onMessageNew(Channel channel, Event event) {
                 Message lastMessage = channel.getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                Log.i(TAG, "onMessageNew Unread Count " + event.getChannel().getChannelState().getCurrentUserUnreadMessageCount());
-                updateChannel(event.getChannel(), true);
+                Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
+                updateChannel(channel, true);
             }
 
             @Override
-            public void onChannelDeleted(Event event) {
-                deleteChannel(event.getChannel());
+            public void onChannelDeleted(Channel channel, Event event) {
+                deleteChannel(channel);
             }
 
             @Override
-            public void onChannelUpdated(Event event) {
-                updateChannel(event.getChannel(), false);
+            public void onChannelUpdated(Channel channel, Event event) {
+                updateChannel(channel, false);
             }
 
             @Override
-            public void onMessageRead(Event event) {
-                Log.i(TAG, "Event: Message read by user " + event.getUser().getName());
-                Channel channel = client().getChannelByCid(event.getCid());
-                if (channel == null) return;
+            public void onMessageRead(Channel channel, Event event) {
                 List<ChannelUserRead> reads = channel.getChannelState().getLastMessageReads();
                 if (reads.size() > 0) {
                     Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
                 }
-                updateChannel(event.getChannel(),false);
-            }
-            @Override
-            public void onUserWatchingStart(Event event){
-                Channel channel = client().getChannelByCid(event.getCid());
+                updateChannel(channel,false);
             }
         });
     }
