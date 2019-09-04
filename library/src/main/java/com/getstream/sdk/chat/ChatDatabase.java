@@ -12,10 +12,11 @@ import com.getstream.sdk.chat.rest.User;
 
 
 // TODO: export schema
-@Database(entities = {Message.class, User.class, Channel.class}, version = 1, exportSchema = false)
+@Database(entities = {Message.class, User.class, Channel.class, QueryChannelsQ.class}, version = 1, exportSchema = false)
 public abstract class ChatDatabase extends RoomDatabase {
 
     public abstract MessageDao messageDao();
+    public abstract QueryChannelsQDao queryChannelsQDao();
 
     private static volatile ChatDatabase INSTANCE;
 
