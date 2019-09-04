@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -10,10 +11,10 @@ import java.util.List;
 
 public class Config {
     @SerializedName("created_at")
-    private String created_at;
+    private Date created_at;
 
     @SerializedName("updated_at")
-    private String updated_at;
+    private Date updated_at;
 
     @SerializedName("name")
     private String name;
@@ -51,11 +52,11 @@ public class Config {
     @SerializedName("commands")
     private List<Command>commands;
 
-    public String getCreatedAt() {
+    public Date getCreatedAt() {
         return created_at;
     }
 
-    public String getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updated_at;
     }
 
