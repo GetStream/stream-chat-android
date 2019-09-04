@@ -477,6 +477,8 @@ public class Client implements WSResponseHandler {
                 String userID = user.getId();
                 String payload = GsonConverter.Gson().toJson(request);
 
+                // TODO: if offline read from offline storage...
+
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
