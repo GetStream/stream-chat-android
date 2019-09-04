@@ -455,7 +455,7 @@ public class Client implements WSResponseHandler {
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                        for (ChannelState channelState: response.body().getChannels()) {
+                        for (ChannelState channelState: response.body().getChannelStates()) {
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);

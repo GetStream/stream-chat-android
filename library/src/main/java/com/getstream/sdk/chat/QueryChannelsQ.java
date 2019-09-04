@@ -6,9 +6,13 @@ import androidx.room.TypeConverters;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity(tableName = "stream_queries")
 public class QueryChannelsQ {
@@ -17,8 +21,7 @@ public class QueryChannelsQ {
 
     private FilterObject filter;
     private QuerySort sort;
-
-    private List<Channel> channels;
+    private List<String> channelIDs;
 
     @TypeConverters({DateConverter.class})
     private Date createdAt;
@@ -63,12 +66,31 @@ public class QueryChannelsQ {
         computeID();
     }
 
-    public List<Channel> getChannels() {
-        return channels;
+    public List<ChannelState> getChannelStates(QueryChannelsQDao queryChannelsQDao, Integer limit) {
+        List<Channel> channels = getChannels(queryChannelsQDao, limit);
+        List<ChannelState> channelStates = new ArrayList<>();
+        for (Channel c: channels) {
+            channelStates.add(c.getLastState());
+        }
+        return channelStates;
     }
 
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
+    public List<Channel> getChannels(QueryChannelsQDao queryChannelsQDao, Integer limit) {
+        List<String> selectedChannelIDs = this.getChannelIDs();
+        // TODO: slice
+        List<Channel> channels = queryChannelsQDao.getChannels(selectedChannelIDs);
+        Map<String, Channel> channelMap = new HashMap<String, Channel>();
+        for (Channel c : channels) {
+            channelMap.put(c.getCid(), c);
+        }
+        // restore the original sort
+        List<Channel> selectedChannels = new ArrayList<>();
+        for (String cid: selectedChannelIDs) {
+            selectedChannels.add(channelMap.get(cid));
+        }
+
+        return selectedChannels;
+
     }
 
     public Date getCreatedAt() {
@@ -85,5 +107,13 @@ public class QueryChannelsQ {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<String> getChannelIDs() {
+        return channelIDs;
+    }
+
+    public void setChannelIDs(List<String> channelIDs) {
+        this.channelIDs = channelIDs;
     }
 }

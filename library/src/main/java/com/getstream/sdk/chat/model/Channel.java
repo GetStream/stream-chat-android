@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.DateConverter;
@@ -55,19 +54,24 @@ import retrofit2.Response;
 /**
  * A channel
  */
-@Entity
+@Entity(primaryKeys = {"id", "type"})
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
-    @PrimaryKey
+    // TODO: add a cid field and make that the primary key
+
     @NonNull
     @SerializedName("id")
     private String id;
+    @NonNull
     @SerializedName("type")
     private String type;
     @SerializedName("last_message_at")
     @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
+
+    @Embedded
+    private ChannelState lastState;
 
     public Date getCreatedAt() {
         return createdAt;
@@ -686,5 +690,13 @@ public class Channel {
                 Log.e(TAG, "mark read failed with error " + errMsg);
             }
         });
+    }
+
+    public ChannelState getLastState() {
+        return lastState;
+    }
+
+    public void setLastState(ChannelState lastState) {
+        this.lastState = lastState;
     }
 }

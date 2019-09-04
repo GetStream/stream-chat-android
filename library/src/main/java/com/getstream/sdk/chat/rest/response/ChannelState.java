@@ -3,6 +3,9 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -20,13 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity
 public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
+    // ignore since we always embed the channelstate in the channel
+    @Ignore
     @SerializedName("channel")
     private Channel channel;
 
+    // messages are stored separately
+    @Ignore
     @SerializedName("messages")
     private List<Message> messages;
 
@@ -43,6 +51,7 @@ public class ChannelState {
         return watchers;
     }
 
+    @Ignore
     @SerializedName("watchers")
     private List<Watcher> watchers;
 
@@ -50,6 +59,7 @@ public class ChannelState {
         return watcherCount;
     }
 
+    @Ignore
     @SerializedName("watcher_count")
     private int watcherCount;
 

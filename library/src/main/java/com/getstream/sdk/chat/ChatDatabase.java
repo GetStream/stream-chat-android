@@ -9,14 +9,16 @@ import androidx.room.RoomDatabase;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 
 
 // TODO: export schema
-@Database(entities = {Message.class, User.class, Channel.class, QueryChannelsQ.class}, version = 1, exportSchema = false)
+@Database(entities = {Message.class, User.class, Channel.class, QueryChannelsQ.class, ChannelState.class}, version = 1, exportSchema = false)
 public abstract class ChatDatabase extends RoomDatabase {
 
     public abstract MessageDao messageDao();
     public abstract QueryChannelsQDao queryChannelsQDao();
+    public abstract ChannelsDao channelsDao();
 
     private static volatile ChatDatabase INSTANCE;
 
@@ -26,6 +28,8 @@ public abstract class ChatDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             ChatDatabase.class, "stream_chat")
+                            // ensure we don't crash if migrations are missing
+                            .fallbackToDestructiveMigration()
                             .build();
                 }
             }
