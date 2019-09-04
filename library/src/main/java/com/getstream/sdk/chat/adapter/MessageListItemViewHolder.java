@@ -270,7 +270,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()
-                || !messageListItem.isMine())
+                || !messageListItem.isMine()
+                || message.getType().equals(ModelType.message_ephemeral))
             return;
 
         if (message.isDelivered()) {

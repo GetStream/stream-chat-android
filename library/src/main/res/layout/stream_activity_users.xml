@@ -89,7 +89,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
-                android:background="@drawable/stream_round_action_send"
                 android:gravity="center"
                 android:onClick="onClickCreateGroupChat"
                 android:paddingLeft="10dp"
