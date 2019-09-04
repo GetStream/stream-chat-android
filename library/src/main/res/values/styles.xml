@@ -5,7 +5,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@color/colorPrimary</item>
     </style>
 
     <style name="StreamChat.Themes.Dark" parent="Theme.AppCompat.Light.NoActionBar">
@@ -29,6 +28,7 @@
         <item name="colorPrimary">@color/stream_gray</item>
         <item name="colorPrimaryDark">@color/stream_gray_dark</item>
     </style>
+
     <!--Text, Edit Style-->
     <style name="text_edit">
         <item name="android:background">@null</item>
