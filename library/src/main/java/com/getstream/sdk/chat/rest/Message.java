@@ -5,11 +5,15 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.interfaces.UserEntity;
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
 import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -18,10 +22,6 @@ import com.getstream.sdk.chat.storage.converter.MessageStatusConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
-import com.getstream.sdk.chat.enums.MessageStatus;
-import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -64,8 +64,10 @@ public class Message implements UserEntity {
 
     @SerializedName("user")
     @Expose
-    @Embedded(prefix = "user_")
+    @Ignore
     private User user;
+
+    private Integer userID;
 
     @SerializedName("attachments")
     @Expose
@@ -128,13 +130,9 @@ public class Message implements UserEntity {
         return status;
     }
 
-<<<<<<< HEAD
+
     @TypeConverters({MessageStatusConverter.class})
-    private MessageStatus status = MessageStatus.RECEIVED;
-=======
-    // TODO: messages received from APIs should have "received" status
     private MessageStatus status;
->>>>>>> d25dbfd81f14c1e4ee0bfb5b776a33ea2f822dd8
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -499,5 +497,13 @@ public class Message implements UserEntity {
 
     public void setExtraData(Map<String, Object> extraData) {
         this.extraData = extraData;
+    }
+
+    public Integer getUserID() {
+        return userID;
+    }
+
+    public void setUserID(Integer userID) {
+        this.userID = userID;
     }
 }

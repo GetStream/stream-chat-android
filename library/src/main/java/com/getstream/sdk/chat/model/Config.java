@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.model;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.storage.converter.CommandListConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -13,10 +14,12 @@ import java.util.List;
  */
 
 public class Config {
+    @TypeConverters({DateConverter.class})
     @SerializedName("created_at")
     private Date created_at;
 
     @SerializedName("updated_at")
+    @TypeConverters({DateConverter.class})
     private Date updated_at;
 
     public void setName(String name) {
@@ -81,26 +84,13 @@ public class Config {
     @TypeConverters(CommandListConverter.class)
     private List<Command>commands;
 
-    public Date getCreatedAt() {
-        return created_at;
-    }
-
-    public Date getUpdatedAt() {
-        return updated_at;
-    }
-
     public String getName() {
         return name;
     }
 
-
-
-
     public boolean isReadEvents() {
         return readEvents;
     }
-
-
 
     public String getInfinite() {
         return infinite;
@@ -116,22 +106,6 @@ public class Config {
 
     public List<Command> getCommands() {
         return commands;
-    }
-
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
-    }
-
-    public String getCreated_at() {
-       return this.created_at;
-    }
-
-    public String getUpdated_at() {
-        return this.updated_at;
-    }
-
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
     }
 
     public void setReadEvents(boolean readEvents) {
@@ -180,5 +154,21 @@ public class Config {
 
     public void setMutes(boolean mutes) {
         this.mutes = mutes;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
     }
 }

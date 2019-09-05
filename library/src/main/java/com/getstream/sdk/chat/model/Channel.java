@@ -127,8 +127,9 @@ public class Channel {
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
     @SerializedName("created_by")
-    @Embedded(prefix = "user_")
+    @Ignore
     private User createdByUser;
+    private Integer createdByUserID;
     @SerializedName("frozen")
     private boolean frozen;
     @SerializedName("config")
@@ -728,5 +729,13 @@ public class Channel {
 
     public void setLastState(ChannelState lastState) {
         this.lastState = lastState;
+    }
+
+    public Integer getCreatedByUserID() {
+        return createdByUserID;
+    }
+
+    public void setCreatedByUserID(Integer createdByUserID) {
+        this.createdByUserID = createdByUserID;
     }
 }

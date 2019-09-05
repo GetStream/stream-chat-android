@@ -3,8 +3,11 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
@@ -13,6 +16,8 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
+import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -28,6 +33,18 @@ public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    @PrimaryKey
+    @NonNull
+    private String cid;
+
     // ignore since we always embed the channelstate in the channel
     @Ignore
     @SerializedName("channel")
@@ -39,9 +56,19 @@ public class ChannelState {
     private List<Message> messages;
 
     @SerializedName("read")
+    @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
 
+    public void setReads(List<ChannelUserRead> reads) {
+        this.reads = reads;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+
     @SerializedName("members")
+    @TypeConverters({MemberListConverter.class})
     private List<Member> members;
 
     public List<Watcher> getWatchers() {
@@ -62,6 +89,10 @@ public class ChannelState {
     @Ignore
     @SerializedName("watcher_count")
     private int watcherCount;
+
+    public ChannelState() {
+        this(null);
+    }
 
     public ChannelState(Channel channel) {
         this.channel = channel;
@@ -87,6 +118,7 @@ public class ChannelState {
         return lastKnownActiveWatcher;
     }
 
+    @Ignore
     private Date lastKnownActiveWatcher;
 
     public ChannelState copy() {

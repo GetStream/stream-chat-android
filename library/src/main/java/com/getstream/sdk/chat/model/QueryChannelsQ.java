@@ -1,13 +1,19 @@
 package com.getstream.sdk.chat.model;
 
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.QueryChannelsQDao;
+import com.getstream.sdk.chat.storage.converter.ChannelIdListConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.FilterObjectConverter;
+import com.getstream.sdk.chat.storage.converter.QuerySortConverter;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,10 +24,17 @@ import java.util.Map;
 @Entity(tableName = "stream_queries")
 public class QueryChannelsQ {
     // ID generation...
+    @PrimaryKey
+    @NotNull
     private String id;
 
+
+    @TypeConverters({FilterObjectConverter.class})
     private FilterObject filter;
+    @TypeConverters({QuerySortConverter.class})
     private QuerySort sort;
+    @TypeConverters({ChannelIdListConverter.class})
+
     private List<String> channelIDs;
 
     @TypeConverters({DateConverter.class})

@@ -60,28 +60,44 @@ public class Storage {
     public QueryChannelsQ selectQuery(String queryID) {
         if (!enabled) return null;
 
-        return queryChannelsQDao.select();
+        return queryChannelsQDao.select(queryID);
     }
 
     public void insertChannels(List<Channel> channels) {
         if (!enabled) return;
 
-        // TODO: wrap in task
-        channelsDao.insertChannels(channels);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                channelsDao.insertChannels(channels);
+                return null;
+            }
+        }.execute();
     }
 
     public void insertChannel(Channel channel) {
         if (!enabled) return;
 
-        // TODO: wrap in task
-        channelsDao.insertChannel(channel);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                channelsDao.insertChannel(channel);
+                return null;
+            }
+        }.execute();
     }
 
     public void insertMessages(List<Message> messages) {
         if (!enabled) return;
 
-        InsertMessageAsyncTask task = new InsertMessageAsyncTask(messageDao);
-        task.execute(messages);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                messageDao.insertMessages(messages);
+                return null;
+            }
+        }.execute();
+
     }
 
     public Context getContext() {
@@ -100,49 +116,4 @@ public class Storage {
         this.enabled = enabled;
     }
 
-    private static class InsertMessageAsyncTask extends AsyncTask<Message, Void, Void> {
-
-        private MessageDao mAsyncTaskDao;
-
-        public void insertAsyncTask(MessageDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Message... params) {
-            mAsyncTaskDao.insert(params[0]);
-            return null;
-        }
-    }
-
-    private static class InsertQueryAsyncTask extends AsyncTask<QueryChannelsQ, Void, Void> {
-
-        private QueryChannelsQDao mDao;
-
-        public void insertAsyncTask(QueryChannelsQDao dao) {
-            mDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final QueryChannelsQ... params) {
-            mDao.insert(params[0]);
-            return null;
-        }
-    }
-
-
-    private static class InsertChannelAsyncTask extends AsyncTask<Channel, Void, Void> {
-
-        private ChannelsDao mDao;
-
-        public void insertAsyncTask(ChannelsDao dao) {
-            mDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Channel... params) {
-            mDao.insertChannels(params);
-            return null;
-        }
-    }
 }
