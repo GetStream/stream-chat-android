@@ -3,6 +3,9 @@ package com.getstream.sdk.chat.storage;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
@@ -42,22 +45,21 @@ public class Storage {
         return INSTANCE;
     }
 
-    public List<Channel> selectChannels(String queryID, Integer limit) {
+    public MutableLiveData<List<ChannelState>> selectChannelStates(String queryID, Integer limit) {
         if (!enabled) return null;
 
-        QueryChannelsQ query = selectQuery(queryID);
-        List<Channel> channels = query.getChannels(queryChannelsQDao,100);
-        return channels;
-    }
-    public List<ChannelState> selectChannelStates(String queryID, Integer limit) {
-        if (!enabled) return null;
+        LiveData<QueryChannelsQ> queryLiveData = selectQuery(queryID);
+        MutableLiveData<List<ChannelState>> channelStates = new LiveData<>();
+        queryLiveData.observe(query -> {
+            List<ChannelState> channels = query.getChannelStates(queryChannelsQDao,100);
+            channelStates.setValue(channels);
+            return;
+        });
 
-        QueryChannelsQ query = selectQuery(queryID);
-        List<ChannelState> channels = query.getChannelStates(queryChannelsQDao,100);
-        return channels;
+        return channelStates;
     }
 
-    public QueryChannelsQ selectQuery(String queryID) {
+    public LiveData<QueryChannelsQ> selectQuery(String queryID) {
         if (!enabled) return null;
 
         return queryChannelsQDao.select(queryID);

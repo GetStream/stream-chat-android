@@ -264,10 +264,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
 
 
-        List<ChannelState> offlineChannelStates = client().storage().selectChannelStates(request.query().getId(), 100);
+        MutableLiveData<List<ChannelState>> channelStateLiveData = client().storage().selectChannelStates(request.query().getId(), 100);
         // add the offline copy if we have it...
-        if (offlineChannelStates != null) {
-            addChannels(offlineChannelStates);
+        if (channelStateLiveData != null) {
+            // TODO: fix me
+//            channelStateLiveData.observe(m, channelStates -> {
+//                addChannels(channelStates);
+//                return;
+//            });
         }
 
 

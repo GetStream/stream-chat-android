@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -185,7 +186,7 @@ public class Message implements UserEntity {
 
     // Additional Params
     @TypeConverters(ExtraDataConverter.class)
-    private Map<String, Object> extraData;
+    private HashMap<String, Object> extraData;
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -491,11 +492,11 @@ public class Message implements UserEntity {
         return user.getId();
     }
 
-    public Map<String, Object> getExtraData() {
+    public HashMap<String, Object> getExtraData() {
         return extraData;
     }
 
-    public void setExtraData(Map<String, Object> extraData) {
+    public void setExtraData(HashMap<String, Object> extraData) {
         this.extraData = extraData;
     }
 

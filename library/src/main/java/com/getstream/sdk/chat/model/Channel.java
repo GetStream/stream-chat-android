@@ -72,7 +72,7 @@ public class Channel {
     @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
 
-    @Embedded
+    @Embedded(prefix = "state_")
     private ChannelState lastState;
 
     public Date getCreatedAt() {
