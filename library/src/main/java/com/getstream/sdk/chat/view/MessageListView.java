@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -26,10 +25,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
@@ -38,9 +33,7 @@ import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -312,7 +305,7 @@ public class MessageListView extends RecyclerView {
                         viewModel.setHasNewMessages(false);
                     }
 
-                    viewModel.setMessageListScrollUp(currentFirstVisible < fVPosition);
+                    viewModel.setMessageListScrollUp(currentLastVisible < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                 }
