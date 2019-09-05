@@ -19,7 +19,6 @@ public interface QueryChannelsQDao {
     @Insert
     void insert(QueryChannelsQ query);
 
-
     @Query("SELECT * FROM stream_queries " +
             "WHERE stream_queries.id=:id")
     LiveData<QueryChannelsQ> select(final String id);

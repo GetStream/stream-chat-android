@@ -49,12 +49,13 @@ public class Storage {
         if (!enabled) return null;
 
         LiveData<QueryChannelsQ> queryLiveData = selectQuery(queryID);
-        MutableLiveData<List<ChannelState>> channelStates = new LiveData<>();
-        queryLiveData.observe(query -> {
-            List<ChannelState> channels = query.getChannelStates(queryChannelsQDao,100);
-            channelStates.setValue(channels);
-            return;
-        });
+        MutableLiveData<List<ChannelState>> channelStates = new MutableLiveData<>();
+        // TODO
+//        queryLiveData.observe(query -> {
+//            List<ChannelState> channels = query.getChannelStates(queryChannelsQDao,100);
+//            channelStates.setValue(channels);
+//            return;
+//        });
 
         return channelStates;
     }

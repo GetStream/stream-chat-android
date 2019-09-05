@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.storage;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
 
 import com.getstream.sdk.chat.model.Channel;
 
@@ -21,5 +22,10 @@ public interface ChannelsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertChannels(List<Channel> channels);
+
+
+    @Query("SELECT * FROM channel " +
+            "WHERE channel.id IN (:ids)")
+    List<Channel> getChannels(final List<String> ids);
 
 }

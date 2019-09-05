@@ -7,7 +7,7 @@ import androidx.room.TypeConverters;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.storage.QueryChannelsQDao;
+import com.getstream.sdk.chat.storage.ChannelsDao;
 import com.getstream.sdk.chat.storage.converter.ChannelIdListConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.FilterObjectConverter;
@@ -80,8 +80,8 @@ public class QueryChannelsQ {
         computeID();
     }
 
-    public List<ChannelState> getChannelStates(QueryChannelsQDao queryChannelsQDao, Integer limit) {
-        List<Channel> channels = getChannels(queryChannelsQDao, limit);
+    public List<ChannelState> getChannelStates(ChannelsDao channelsDao, Integer limit) {
+        List<Channel> channels = getChannels(channelsDao, limit);
         List<ChannelState> channelStates = new ArrayList<>();
         for (Channel c: channels) {
             channelStates.add(c.getLastState());
@@ -89,10 +89,10 @@ public class QueryChannelsQ {
         return channelStates;
     }
 
-    public List<Channel> getChannels(QueryChannelsQDao queryChannelsQDao, Integer limit) {
+    public List<Channel> getChannels(ChannelsDao channelsDao, Integer limit) {
         List<String> selectedChannelIDs = this.getChannelIDs();
         // TODO: slice
-        List<Channel> channels = queryChannelsQDao.getChannels(selectedChannelIDs);
+        List<Channel> channels = channelsDao.getChannels(selectedChannelIDs);
         Map<String, Channel> channelMap = new HashMap<String, Channel>();
         for (Channel c : channels) {
             channelMap.put(c.getCid(), c);
