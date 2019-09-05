@@ -79,32 +79,36 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     private void configAction() {
-        tv_action_send.setBackground(new DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(Color.WHITE)
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(getContext().getResources().getColor(R.color.stream_input_message_send_button))
-                .solidColorPressed(Color.LTGRAY)
-                .build());
-        tv_action_shuffle.setBackground(new DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(Color.WHITE)
-                .solidColorPressed(Color.LTGRAY)
-                .build());
-        tv_action_cancel.setBackground(new DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(Color.WHITE)
-                .solidColorPressed(Color.LTGRAY)
-                .build());
 
-        if (getMessage().getType().equals(ModelType.message_ephemeral)) {
+        if (getMessage().getType().equals(ModelType.message_ephemeral)
+                && getMessage().getCommand() != null
+                && getMessage().getCommand().equals(ModelType.attach_giphy)) {
+            // set Background
+            tv_action_send.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(Color.WHITE)
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(getContext().getResources().getColor(R.color.stream_input_message_send_button))
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+            tv_action_shuffle.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(Color.WHITE)
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+            tv_action_cancel.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(Color.WHITE)
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+
             cl_action.setVisibility(View.VISIBLE);
 
             tv_action_send.setOnClickListener((View v) -> {

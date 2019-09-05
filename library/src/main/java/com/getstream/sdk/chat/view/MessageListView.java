@@ -350,7 +350,7 @@ public class MessageListView extends RecyclerView {
                 layoutManager.scrollToPosition(newPosition);
                 return;
             }
-            // check lastmessage update for last outcoming message
+            // check outgoing lastmessage update
             if (!entities.isEmpty()){
                 Message lastMessage = entities.get(entities.size()-1).getMessage();
                 if(lastMessage != null
