@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
-import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
+import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
@@ -44,7 +44,7 @@ public class SendFileFunction {
     private List<Attachment> selectedAttachments = null;
 
 
-    CommandListItemAdapter commandListItemAdapter = null;
+    CommandMentionListItemAdapter commandMentionListItemAdapter = null;
     List<Object> commands = null;
 
     Context context;
@@ -409,8 +409,8 @@ public class SendFileFunction {
             if (!commands.isEmpty() && binding.clCommand.getVisibility() != View.VISIBLE)
                 openCommandView();
 
-            if (commandListItemAdapter != null)
-                commandListItemAdapter.notifyDataSetChanged();
+            if (commandMentionListItemAdapter != null)
+                commandMentionListItemAdapter.notifyDataSetChanged();
 
             if (commands.isEmpty())
                 closeCommandView();
@@ -426,8 +426,8 @@ public class SendFileFunction {
         String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvCommandTitle.setText(title);
         binding.tvCommand.setText("");
-        commandListItemAdapter = new CommandListItemAdapter(this.context, commands, isCommand);
-        binding.lvCommand.setAdapter(commandListItemAdapter);
+        commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, isCommand);
+        binding.lvCommand.setAdapter(commandMentionListItemAdapter);
         openCommandView();
         binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (isCommand) {
