@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -263,17 +264,13 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
 
 
-
-        MutableLiveData<List<ChannelState>> channelStateLiveData = client().storage().selectChannelStates(request.query().getId(), 100);
-        // add the offline copy if we have it...
-        if (channelStateLiveData != null) {
-            // TODO: fix me
-//            channelStateLiveData.observe(m, channelStates -> {
-//                addChannels(channelStates);
-//                return;
+        LiveData<QueryChannelsQ> queryLiveData = client().storage().selectQuery(request.query().getId());
+        if (queryLiveData != null) {
+//            queryLiveData.observe(this, query -> {
+//                List<ChannelState> channels = query.getChannelStates(client().storage().getChannelsDao(),100);
+//                addChannels(channels);
 //            });
         }
-
 
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override

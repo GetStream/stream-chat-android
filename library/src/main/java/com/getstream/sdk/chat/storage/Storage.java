@@ -2,25 +2,35 @@ package com.getstream.sdk.chat.storage;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.util.List;
 
 public class Storage {
+    final String TAG = Storage.class.getSimpleName();
 
     private static volatile Storage INSTANCE;
     private Boolean enabled;
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
+
+    public ChannelsDao getChannelsDao() {
+        return channelsDao;
+    }
+
     private ChannelsDao channelsDao;
+
+    public QueryChannelsQDao getQueryChannelsQDao() {
+        return queryChannelsQDao;
+    }
+
     private QueryChannelsQDao queryChannelsQDao;
 
     public Storage(Context context, Boolean enabled) {
@@ -45,20 +55,6 @@ public class Storage {
         return INSTANCE;
     }
 
-    public MutableLiveData<List<ChannelState>> selectChannelStates(String queryID, Integer limit) {
-        if (!enabled) return null;
-
-        LiveData<QueryChannelsQ> queryLiveData = selectQuery(queryID);
-        MutableLiveData<List<ChannelState>> channelStates = new MutableLiveData<>();
-        // TODO
-//        queryLiveData.observe(query -> {
-//            List<ChannelState> channels = query.getChannelStates(queryChannelsQDao,100);
-//            channelStates.setValue(channels);
-//            return;
-//        });
-
-        return channelStates;
-    }
 
     public LiveData<QueryChannelsQ> selectQuery(String queryID) {
         if (!enabled) return null;
@@ -72,6 +68,7 @@ public class Storage {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                Log.i(TAG, "writing channels to storage");
                 channelsDao.insertChannels(channels);
                 return null;
             }
