@@ -276,7 +276,7 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        giphySendListener = this::sendGiphy;
+        giphySendListener = viewModel::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -598,33 +598,4 @@ public class MessageListView extends RecyclerView {
     }
     // endregion
 
-    public void sendGiphy(Message message, GiphyAction action) {
-        Client client = StreamChat.getInstance(getContext());
-        Map<String, String> map = new HashMap<>();
-        switch (action){
-            case SEND:
-                map.put("image_action", ModelType.action_send);
-                break;
-            case SHUFFLE:
-                map.put("image_action", ModelType.action_shuffle);
-                break;
-            case CANCEL:
-                break;
-        }
-
-        SendActionRequest request = new SendActionRequest(getChannel().getId(), message.getId(), ModelType.channel_messaging, map);
-        client.sendAction(message.getId(), request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-//                handleAction(message);
-//                response.getMessage().setDelivered(true);
-//                handleAction(response.getMessage());
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.d(TAG, errMsg);
-            }
-        });
-    }
 }

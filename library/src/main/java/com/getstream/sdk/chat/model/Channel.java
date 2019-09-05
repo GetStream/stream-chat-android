@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
@@ -529,6 +530,22 @@ public class Channel {
      */
     public void deleteReaction(String mesageId, String type, MessageCallback callback){
         client.deleteReaction(mesageId, type, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg,errCode);
+            }
+        });
+    }
+    public void sendAction(@NonNull String messageId,
+                           @NonNull SendActionRequest request,
+                           MessageCallback callback) {
+
+        client.sendAction(messageId, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 callback.onSuccess(response);
