@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -126,6 +127,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
+
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;
             if (reads == null) {
@@ -135,12 +137,16 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             Log.i(TAG, "broadcast because reads changed");
             broadcastValue();
         });
+
         this.messages.observe(owner, messages -> {
             if (messages == null || messages.size() == 0) return;
             // update based on messages
             hasNewMessages = false;
-            String newlastMessageID = messages.get(messages.size() -1).getId();
-            if (!newlastMessageID.equals(lastMessageID)) {
+            Message lastMessage = messages.get(messages.size() -1);
+            String newlastMessageID = lastMessage.getId();
+            if (!newlastMessageID.equals(lastMessageID)
+                    || (lastMessage.getUser().equals(currentUser)
+                        && lastMessage.getType().equals(ModelType.message_ephemeral))) {
                 hasNewMessages = true;
             }
             lastMessageID = newlastMessageID;
