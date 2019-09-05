@@ -163,10 +163,12 @@ public class Storage {
 
 
             } catch (Exception e) {
-                mException = e;
+                throw e;
+
+                //mException = e;
             }
 
-            return null;
+            //return null;
         }
 
         @Override
