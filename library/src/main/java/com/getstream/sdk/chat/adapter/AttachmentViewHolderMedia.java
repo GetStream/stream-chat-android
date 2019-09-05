@@ -16,10 +16,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.MessageTagModel;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -37,6 +36,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     private ConstraintLayout cl_action;
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+    private MessageListView.GiphySendListener giphySendListener;
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -59,9 +59,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
+                     MessageListView.MessageLongClickListener longClickListener,
+                     MessageListView.GiphySendListener giphySendListener) {
 
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
         applyStyle();
         configMediaAttach();
         configAction();
@@ -89,7 +90,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_action_shuffle.setBackground(new DrawableBuilder()
                 .rectangle()
                 .rounded()
-                .strokeColor(getContext().getResources().getColor(R.color.stream_input_message_send_button))
+                .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
                 .strokeWidth(Utils.dpToPx(2))
                 .solidColor(Color.WHITE)
                 .solidColorPressed(Color.LTGRAY)
@@ -107,18 +108,17 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             cl_action.setVisibility(View.VISIBLE);
 
             tv_action_send.setOnClickListener((View v) -> {
-//                v.setTag(new MessageTagModel(Constant.TAG_ACTION_SEND, position));
-//                clickListener.onClick(v);
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SEND);
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
-//                tv_action_shuffle.setBackgroundResource(R.drawable.round_action_shuffle_select);
-//                v.setTag(new MessageTagModel(Constant.TAG_ACTION_SHUFFLE, position));
-//                clickListener.onClick(v);
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SHUFFLE);
             });
             tv_action_cancel.setOnClickListener((View v) -> {
-//                v.setTag(new MessageTagModel(Constant.TAG_ACTION_CANCEL, position));
-//                clickListener.onClick(v);
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.CANCEL);
             });
         } else {
             cl_action.setVisibility(View.GONE);
@@ -186,5 +186,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
         tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
         tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 }

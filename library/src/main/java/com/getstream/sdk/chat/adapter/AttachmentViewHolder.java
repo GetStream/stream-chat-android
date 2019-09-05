@@ -54,9 +54,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
+                     MessageListView.MessageLongClickListener longClickListener, MessageListView.GiphySendListener giphySendListener) {
 
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener, giphySendListener);
         configAttachment();
     }
 

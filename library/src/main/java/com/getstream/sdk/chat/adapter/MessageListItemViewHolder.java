@@ -90,6 +90,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Message message;
     private MessageListItem messageListItem;
     private MessageListViewStyle style;
+    private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
 
     @DimenRes int avatarWidth;
@@ -97,11 +98,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
         style = s;
-    }
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-        avatarWidth = style.getAvatarWidth();
     }
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -198,6 +194,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadState();
     }
     // endregion
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+        avatarWidth = style.getAvatarWidth();
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
+    }
 
     private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
@@ -410,6 +414,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             alv_attachments.setVisibility(View.VISIBLE);
             alv_attachments.setViewHolderFactory(viewHolderFactory);
             alv_attachments.setStyle(style);
+            alv_attachments.setGiphySendListener(giphySendListener);
             alv_attachments.setEntity(this.messageListItem);
             alv_attachments.setBubbleHelper(this.getBubbleHelper());
             alv_attachments.setAttachmentClickListener(attachmentClickListener);

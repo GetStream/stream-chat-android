@@ -15,16 +15,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
@@ -34,7 +38,9 @@ import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -60,6 +66,7 @@ public class MessageListView extends RecyclerView {
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private GiphySendListener giphySendListener;
     private UserClickListener userClickListener;
 
 //    private int firstVisible;
@@ -264,12 +271,12 @@ public class MessageListView extends RecyclerView {
                 (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2));
     }
 
-    private void initFresco() {
+    private void init() {
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
+        giphySendListener = this::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -281,6 +288,7 @@ public class MessageListView extends RecyclerView {
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
+        adapter.setGiphySendListener(giphySendListener);
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
@@ -315,7 +323,7 @@ public class MessageListView extends RecyclerView {
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
-        initFresco();
+        init();
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
 
@@ -506,6 +514,10 @@ public class MessageListView extends RecyclerView {
         void onAttachmentClick(Message message, Attachment attachment);
     }
 
+    public interface GiphySendListener {
+        void onGiphySend(Message message, GiphyAction action);
+    }
+
     public interface UserClickListener {
         void onUserClick(User user);
     }
@@ -585,4 +597,34 @@ public class MessageListView extends RecyclerView {
         }
     }
     // endregion
+
+    public void sendGiphy(Message message, GiphyAction action) {
+        Client client = StreamChat.getInstance(getContext());
+        Map<String, String> map = new HashMap<>();
+        switch (action){
+            case SEND:
+                map.put("image_action", ModelType.action_send);
+                break;
+            case SHUFFLE:
+                map.put("image_action", ModelType.action_shuffle);
+                break;
+            case CANCEL:
+                break;
+        }
+
+        SendActionRequest request = new SendActionRequest(getChannel().getId(), message.getId(), ModelType.channel_messaging, map);
+        client.sendAction(message.getId(), request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+//                handleAction(message);
+//                response.getMessage().setDelivered(true);
+//                handleAction(response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.d(TAG, errMsg);
+            }
+        });
+    }
 }
