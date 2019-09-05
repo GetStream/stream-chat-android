@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -304,7 +305,6 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-
                     viewModel.setMessageListScrollUp(currentLastVisible < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
@@ -343,19 +343,33 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
-
+            // check typing indicator
             int itemCount = adapter.getItemCount() - 2;
             if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;
             }
+            // check lastmessage update for last outcoming message
+            if (!entities.isEmpty()){
+                Message lastMessage = entities.get(entities.size()-1).getMessage();
+                if(lastMessage != null
+                        &&lastMessage.getUser().equals(StreamChat.getInstance(getContext()).getUser())
+                        &&lastMessage.getUpdatedAt() != null
+                        &&lastMessage.getUpdatedAt().getTime()>= getChannel().getChannelState().getLastActive().getTime()){
+                    int newPosition = adapter.getItemCount() - 1;
+                    layoutManager.scrollToPosition(newPosition);
+                    return;
+                }
+            }
+
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
                 // read
                 // typing
                 // message updates
+                Log.i(TAG, String.format("no Scroll no new message"));
                 return;
             }
 

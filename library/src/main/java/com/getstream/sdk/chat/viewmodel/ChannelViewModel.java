@@ -368,7 +368,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void shuffleGiphy(Message oldMessage, Message message) {
-        // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {

@@ -156,7 +156,6 @@ public class Message implements UserEntity {
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
-
     private String date, time;
 
     // region Set Date and Time

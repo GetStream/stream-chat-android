@@ -144,12 +144,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             hasNewMessages = false;
             Message lastMessage = messages.get(messages.size() -1);
             String newlastMessageID = lastMessage.getId();
-            if (!newlastMessageID.equals(lastMessageID)
-                    || (lastMessage.getUser().equals(currentUser)
-                        && lastMessage.getType().equals(ModelType.message_ephemeral))) {
+            if (!newlastMessageID.equals(lastMessageID)) {
                 hasNewMessages = true;
             }
             lastMessageID = newlastMessageID;
+
             List<MessageListItem> entities = new ArrayList<MessageListItem>();
             // iterate over messages and stick in the date entities
             Message previousMessage = null;
