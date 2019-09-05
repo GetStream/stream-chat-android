@@ -15,7 +15,6 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -24,6 +23,7 @@ import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -264,13 +264,21 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
 
 
-        LiveData<QueryChannelsQ> queryLiveData = client().storage().selectQuery(request.query().getId());
-        if (queryLiveData != null) {
-//            queryLiveData.observe(this, query -> {
-//                List<ChannelState> channels = query.getChannelStates(client().storage().getChannelsDao(),100);
-//                addChannels(channels);
-//            });
-        }
+        client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
+            @Override
+            public void onSuccess(List<ChannelState> channels) {
+                Log.i(TAG, "Read from local cache...");
+                if (channels != null) {
+                    addChannels(channels);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
+
 
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
@@ -280,6 +288,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
                 Log.i(TAG, "onSuccess for loading the channels");
                 addChannels(response.getChannelStates());
+                // TODO: set the channel ids on the query
+                client().storage().insertQuery(request.query());
+
                 client().storage().insertChannels(response.getChannels());
 
                 if (response.getChannelStates().size() < pageSize) {

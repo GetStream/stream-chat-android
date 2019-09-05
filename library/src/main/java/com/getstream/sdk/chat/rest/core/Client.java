@@ -58,7 +58,6 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.storage.Storage;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -460,8 +459,6 @@ public class Client implements WSResponseHandler {
             public void onSuccess(User user) {
                 String userID = user.getId();
                 String payload = GsonConverter.Gson().toJson(request);
-
-                // TODO: if offline read from offline storage...
 
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
