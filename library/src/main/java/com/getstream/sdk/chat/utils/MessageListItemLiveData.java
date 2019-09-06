@@ -109,8 +109,16 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
 
         merged.addAll(typingEntities);
+
         MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
+        // Typing
         wrapper.setTyping(!typingEntities.isEmpty());
+        // Thread
+        if (threadMessages.getValue() == null || threadMessages.getValue().isEmpty())
+            wrapper.setThread(false);
+        else
+            wrapper.setThread(true);
+
         // run setValue on main thread now that the whole computation is done
         new Handler(Looper.getMainLooper()).post(() -> {
             setValue(wrapper);
@@ -145,7 +153,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             progressMessages(messages);
         });
 
-        threadMessages.observe(owner, this::progressMessages);
+        threadMessages.observe(owner, messages->{
+            if (messages == null) return;
+            progressMessages(messages);
+        });
 
         this.typing.observe(owner, users -> {
             // update

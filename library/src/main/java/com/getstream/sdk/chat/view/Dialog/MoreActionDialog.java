@@ -135,9 +135,9 @@ public class MoreActionDialog extends Dialog {
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);
 
-        ll_thread.setOnClickListener((View v) -> {
-            viewModel.setThreadParentMessage(message);
+        ll_thread.setOnClickListener(view -> {
             dismiss();
+            viewModel.setThreadParentMessage(message);
         });
         ll_copy.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);

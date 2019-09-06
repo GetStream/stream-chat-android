@@ -339,6 +339,7 @@ public class MessageListView extends RecyclerView {
             Log.i(TAG, "Observe found this many entities: " + entities.size());
 
             int oldSize = adapter.getItemCount();
+            adapter.setThread(messageListItemWrapper.isThread());
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;

@@ -366,39 +366,62 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
-    private boolean upsertMessage(Message message) {
+    private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        Log.d(TAG,"messages Count:" + messages.getValue().size());
+        Log.d(TAG, "messages Count:" + messages.getValue().size());
         List<Message> messagesCopy = getMessages().getValue();
-        int index = messagesCopy.indexOf(message);
-        boolean updated = index != -1;
-        if (updated) {
-            messagesCopy.set(index, message);
-        } else {
-            messagesCopy.add(message);
-        }
-        Log.d(TAG,"New messages Count:" + messagesCopy.size());
 
-        if (message.getType().equals(ModelType.message_reply)){
-            if (isThreadMode() && message.getParentId().equals(threadParentMessage.getValue().getId()))
-                threadMessages.postValue(messagesCopy);
-        }else
+        Log.d(TAG, "New messages Count:" + messagesCopy.size());
+
+        if (message.getType().equals(ModelType.message_reply)) {
+            if (!isThreadMode()) return;
+            if (!message.getParentId().equals(threadParentMessage.getValue().getId())) return;
+
+            int index = messagesCopy.indexOf(message);
+            if (index != -1) {
+                messagesCopy.set(index, message);
+            } else {
+                messagesCopy.add(message);
+            }
+            threadMessages.postValue(messagesCopy);
+        } else {
+            int index = messagesCopy.indexOf(message);
+            if (index != -1) {
+                messagesCopy.set(index, message);
+            } else {
+                messagesCopy.add(message);
+            }
             messages.postValue(messagesCopy);
+        }
 
 //        Log.d(TAG,"New messages Count:" + messages.getValue().size());
-        return updated;
+
     }
 
     private boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(message);
-        boolean updated = index != -1;
-        if (updated) {
-            messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
+        List<Message> messagesCopy = getMessages().getValue();
+        boolean updated = false;
+        if (message.getType().equals(ModelType.message_reply)) {
+            if (!isThreadMode()) return updated;
+//            if (!message.getParentId().equals(threadParentMessage.getValue().getId()))
+//                return updated;
+
+            int index = messagesCopy.indexOf(message);
+            updated = index != -1;
+            if (updated) {
+                messagesCopy.set(index, message);
+                threadMessages.postValue(messagesCopy);
+            }
+        } else {
+            int index = messagesCopy.indexOf(message);
+            updated = index != -1;
+            if (updated) {
+                messagesCopy.set(index, message);
+                messages.postValue(messagesCopy);
+            }
+            Log.d(TAG, "updateMessage:" + updated);
         }
-        Log.d(TAG,"updateMessage:" + updated);
         return updated;
     }
 
@@ -416,10 +439,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private boolean deleteMessage(Message message) {
-        List<Message> messagesCopy = messages.getValue();
-        boolean removed = messagesCopy.remove(message);
-        messages.postValue(messagesCopy);
-        return removed;
+        List<Message> messagesCopy = getMessages().getValue();
+        if (message.getType().equals(ModelType.message_reply)) {
+            if (!isThreadMode()) return false;
+            boolean removed = messagesCopy.remove(message);
+            threadMessages.postValue(messagesCopy);
+            return removed;
+        }else{
+            boolean removed = messagesCopy.remove(message);
+            messages.postValue(messagesCopy);
+            return removed;
+        }
     }
 
     private void addMessage(Message message) {

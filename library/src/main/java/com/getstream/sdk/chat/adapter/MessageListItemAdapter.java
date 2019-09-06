@@ -118,7 +118,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
                 messageListItem,
-                position, isThread,
+                position,
+                isThread,
                 messageClickListener,
                 messageLongClickListener,
                 attachmentClickListener,
@@ -126,9 +127,15 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
     }
+
     public void setChannelState(ChannelState channelState) {
         this.channelState = channelState;
     }
+
+    public void setThread(boolean thread) {
+        isThread = thread;
+    }
+
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         if (style.isEnableReaction())
             this.messageClickListener = messageClickListener;

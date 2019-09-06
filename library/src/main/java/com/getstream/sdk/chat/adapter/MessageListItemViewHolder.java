@@ -463,6 +463,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
+        if (position == 0)
+            Log.d(TAG,"isThread :" + isThread);
+
         if (this.isThread) {
             cl_reply.setVisibility(View.GONE);
             return;
