@@ -49,6 +49,13 @@ public class MessageListItem {
         this.messageReadBy = new ArrayList<>();
     }
 
+    public MessageListItem(EntityType entityType) {
+        this.type = entityType;
+        this.date = new Date();
+        this.messageMine = false;
+        this.messageReadBy = new ArrayList<>();
+    }
+
     public MessageListItem copy() {
         MessageListItem clone = new MessageListItem(message, positions, messageMine);
         clone.date = date;
@@ -113,6 +120,8 @@ public class MessageListItem {
         switch (type) {
             case TYPING:
                 return false;
+            case THREAD_SEPARATOR:
+                return false;
             case MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);
@@ -131,6 +140,9 @@ public class MessageListItem {
         switch (type) {
             case TYPING:
                 plaintext += "typing";
+                break;
+            case THREAD_SEPARATOR:
+                plaintext += "Start of a new thread";
                 break;
             case MESSAGE:
                 plaintext += message.getId();

@@ -115,10 +115,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // Typing
         wrapper.setTyping(!typingEntities.isEmpty());
         // Thread
-        if (threadMessages.getValue() == null || threadMessages.getValue().isEmpty())
-            wrapper.setThread(false);
-        else
-            wrapper.setThread(true);
+        wrapper.setThread(isThread());
 
         // run setValue on main thread now that the whole computation is done
         new Handler(Looper.getMainLooper()).post(() -> {
@@ -134,6 +131,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
+    private boolean isThread(){
+        return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
+    }
     @Override
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
@@ -214,12 +214,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 }
             }
             // date separator
-            if (previousMessage != null && !isSameDay(previousMessage, message)) {
+            if (previousMessage != null && !isSameDay(previousMessage, message))
                 entities.add(new MessageListItem(message.getCreatedAt()));
-            }
 
             MessageListItem messageListItem = new MessageListItem(message,positions, mine);
             entities.add(messageListItem);
+            // Insert Thread Separator
+            if (isThread() && i == 0)
+                entities.add(new MessageListItem(EntityType.THREAD_SEPARATOR));
             // set the previous message for the next iteration
             previousMessage = message;
         }

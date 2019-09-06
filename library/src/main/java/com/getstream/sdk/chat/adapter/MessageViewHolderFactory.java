@@ -40,6 +40,8 @@ public class MessageViewHolderFactory {
             return EntityType.MESSAGE;
         } else if (entityType == EntityType.TYPING) {
             return EntityType.TYPING;
+        }else if (entityType == EntityType.THREAD_SEPARATOR) {
+            return EntityType.THREAD_SEPARATOR;
         }
         return EntityType.NOT_FOUND;
     }
@@ -80,7 +82,11 @@ public class MessageViewHolderFactory {
             TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        } else {
+        } else if (viewType == EntityType.THREAD_SEPARATOR) {
+            ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        }else {
             return null;
         }
     }

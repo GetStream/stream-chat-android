@@ -20,6 +20,7 @@
     <!--Thread-->
     <string name="stream_reply_count">%d reply.</string>
     <string name="stream_replies_count">%d replies.</string>
+    <string name="stream_thread_separator">Start of a new thread</string>
     <!--Chat Screen-->
     <string name="stream_title_media">Select your photo or video</string>
     <string name="stream_title_file">Select your file</string>
