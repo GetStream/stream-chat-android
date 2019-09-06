@@ -24,15 +24,18 @@ import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.EventResponse;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
@@ -72,8 +75,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<Boolean> loadingMore;
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<Message> editMessage;
+    private MutableLiveData<Message> threadParentMessage;
     private MutableLiveData<ChannelState> channelState;
     private LazyQueryChannelLiveData<List<Message>> messages;
+    private LazyQueryChannelLiveData<List<Message>> threadMessages;
     private LiveData<Boolean> anyOtherUsersOnline;
     private LiveData<Number> watcherCount;
     private MutableLiveData<Boolean> hasNewMessages;
@@ -100,6 +105,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reachedEndOfPagination = false;
 
         loading = new MutableLiveData<>(false);
+        threadParentMessage = new MutableLiveData<>();
         messageListScrollUp = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
@@ -110,6 +116,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
 
+        threadMessages = new LazyQueryChannelLiveData<>();
+        threadMessages.viewModel = this;
+        threadMessages.setValue(null);
+
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
         typingUsers.setValue(new ArrayList<>());
@@ -118,7 +128,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reads.viewModel = this;
         reads.setValue(channel.getChannelState().getReadsByUser());
 
-        entities = new MessageListItemLiveData(client().getUser(), messages, typingUsers, reads);
+        entities = new MessageListItemLiveData(client().getUser(), messages, threadMessages, typingUsers, reads);
         reads.setValue(channel.getChannelState().getReadsByUser());
 
         typingState = new HashMap<>();
@@ -182,7 +192,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return typingUsers;
     }
 
-    public MutableLiveData<Message> getEditMessage() {
+    public LiveData<Message> getEditMessage() {
         return editMessage;
     }
 
@@ -198,7 +208,29 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.messageListScrollUp.postValue(messageListScrollUp);
     }
 
-    // endregion
+    public LiveData<Message> getThreadParentMessage() {
+        return threadParentMessage;
+    }
+
+    public void setThreadParentMessage(Message threadParentMessage_) {
+        if (threadParentMessage_.getReplyCount() == 0) {
+            threadParentMessage.postValue(threadParentMessage_);
+        } else {
+            channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), new GetRepliesCallback() {
+                @Override
+                public void onSuccess(GetRepliesResponse response) {
+                    threadMessages.postValue(response.getMessages());
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
+        }
+    }
+
+// endregion
 
     private boolean setLoading(){
         if (isLoading.compareAndSet(false, true)) {

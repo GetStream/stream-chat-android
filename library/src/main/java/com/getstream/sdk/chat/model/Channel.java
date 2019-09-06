@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
@@ -27,6 +28,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
@@ -348,6 +350,27 @@ public class Channel {
      */
     public void query(QueryChannelCallback callback) {
         query(new ChannelQueryRequest().withData(this.extraData), callback);
+    }
+
+    /**
+     * getReplies - List the message replies for a parent message
+     *
+     * @param parentId The message parent id, ie the top of the thread
+     * @param limit   Pagination params, ie 10
+     * @return {object} Returns a getReplies response
+     */
+    public void getReplies(@NonNull String parentId, String limit, final GetRepliesCallback callback) {
+        client.getReplies(parentId, limit, null, new GetRepliesCallback() {
+            @Override
+            public void onSuccess(GetRepliesResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
     }
 
     public ChannelState getChannelState() {

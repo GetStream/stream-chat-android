@@ -7,6 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -24,8 +26,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
@@ -269,7 +269,7 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
+        onBackPressed();
     }
 
     // set the adapter and apply the style.
@@ -395,6 +395,8 @@ public class MessageListView extends RecyclerView {
             }
         });
 
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {});
+
         this.setAdapterWithStyle(adapter);
     }
 
@@ -416,6 +418,9 @@ public class MessageListView extends RecyclerView {
     }
     // endregion
 
+    // region Thread
+
+    // endregion
 
     // region Listener
     public void setMessageClickListener(MessageClickListener messageClickListener) {
@@ -427,8 +432,10 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
             adapter.setMessageClickListener((message, position) -> {
-                if (message.getStatus() == MessageStatus.FAILED){
+                if (message.getStatus() == MessageStatus.FAILED) {
                     viewModel.onSendMessage(message, null);
+                } else if (message.getReplyCount() > 0) {
+                    viewModel.setThreadParentMessage(message);
                 }
             });
         }
@@ -585,4 +592,40 @@ public class MessageListView extends RecyclerView {
         }
     }
     // endregion
+
+    private void onBackPressed() {
+        setFocusableInTouchMode(true);
+        requestFocus();
+        setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                // Close if File Attach View is opened.
+//                if (binding.clAddFile.getVisibility() == View.VISIBLE) {
+//                    sendFileFunction.onClickAttachmentViewClose(null);
+//                    return true;
+//                }
+//                // Close if Selecting Photo View is opened.
+//                if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
+//                    sendFileFunction.onClickSelectMediaViewClose(null);
+//                    return true;
+//                }
+//                // Close if Thread View is opened.
+//                if (isThreadMode()) {
+//                    onClickCloseThread(null);
+//                    return true;
+//                }
+//                // Cancel if editing message.
+//                if (binding.etMessage.getTag() != null) {
+//                    cancelEditMessage();
+//                    return true;
+//                }
+//                if (!singleConversation) {
+//                    finish();
+//                    return true;
+//                }
+                return true;
+            }
+            return false;
+        });
+    }
+
 }

@@ -136,7 +136,7 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setAdapter(reactionAdapter);
 
         ll_thread.setOnClickListener((View v) -> {
-
+            viewModel.setThreadParentMessage(message);
             dismiss();
         });
         ll_copy.setOnClickListener(view -> {

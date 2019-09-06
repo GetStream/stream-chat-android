@@ -270,7 +270,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()
-                || !messageListItem.isMine())
+                || !messageListItem.isMine()
+                || message.getCreatedAt().getTime() < channelState.getLastActive().getTime())
             return;
 
         if (message.isDelivered()) {
@@ -479,7 +480,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getReplyCount() > 1) tv_reply.setText(message.getReplyCount() + " replies");
 
         cl_reply.setOnClickListener((View v) -> {
-
+            if (messageClickListener != null) {
+                messageClickListener.onMessageClick(message, position);
+            }
         });
     }
 
