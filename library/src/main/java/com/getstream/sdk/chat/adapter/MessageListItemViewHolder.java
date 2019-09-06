@@ -290,7 +290,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configReadIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-        if (isDeletedOrFailedMessage() || readBy.isEmpty()) {
+        if (isDeletedOrFailedMessage()
+                || readBy.isEmpty()
+                || isThread) {
             read_state.setVisibility(View.GONE);
             return;
         }
