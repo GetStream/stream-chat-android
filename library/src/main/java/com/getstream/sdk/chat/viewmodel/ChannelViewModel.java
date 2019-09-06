@@ -403,15 +403,17 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()) return updated;
-//            if (!message.getParentId().equals(threadParentMessage.getValue().getId()))
-//                return updated;
+            if (!isThreadMode()
+                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
+                return updated;
 
-            int index = messagesCopy.indexOf(message);
-            updated = index != -1;
-            if (updated) {
-                messagesCopy.set(index, message);
-                threadMessages.postValue(messagesCopy);
+            for (int i = 0; i < threadMessages.getValue().size(); i++) {
+                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
+                    messagesCopy.set(i, message);
+                    threadMessages.postValue(messagesCopy);
+                    updated = true;
+                    break;
+                }
             }
         } else {
             int index = messagesCopy.indexOf(message);
@@ -441,10 +443,18 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()) return false;
-            boolean removed = messagesCopy.remove(message);
-            threadMessages.postValue(messagesCopy);
-            return removed;
+            if (!isThreadMode()
+                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
+                return false;
+
+            for (int i = 0; i < threadMessages.getValue().size(); i++) {
+                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
+                    messagesCopy.remove(i);
+                    threadMessages.postValue(messagesCopy);
+                    return true;
+                }
+            }
+            return false;
         }else{
             boolean removed = messagesCopy.remove(message);
             messages.postValue(messagesCopy);

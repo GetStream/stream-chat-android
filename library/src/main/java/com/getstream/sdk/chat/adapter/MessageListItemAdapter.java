@@ -132,6 +132,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.channelState = channelState;
     }
 
+    public boolean isThread() {
+        return isThread;
+    }
+
     public void setThread(boolean thread) {
         isThread = thread;
     }

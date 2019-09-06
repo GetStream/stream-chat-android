@@ -337,6 +337,10 @@ public class MessageListView extends RecyclerView {
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
+            if (adapter.isThread() != messageListItemWrapper.isThread()){
+                Log.d(TAG,"Change Thread");
+                adapter.replaceEntities(new ArrayList<>());
+            }
 
             int oldSize = adapter.getItemCount();
             adapter.setThread(messageListItemWrapper.isThread());
