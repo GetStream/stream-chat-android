@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.EntityType;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -17,10 +18,6 @@ import java.util.List;
 public class MessageViewHolderFactory {
     private static String TAG = MessageViewHolderFactory.class.getName();
 
-    private static int NOT_FOUND = 0;
-    private static int DATE_SEPARATOR = 1;
-    private static int MESSAGE = 2;
-    private static int TYPING = 3;
 
     private static int GENERIC_ATTACHMENT = 1;
     private static int IMAGE_ATTACHMENT = 2;
@@ -32,19 +29,19 @@ public class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 
-    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+    public EntityType getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
-        MessageListItemAdapter.EntityType entityType = messageListItem.getType();
-        if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
-            return DATE_SEPARATOR;
-        } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
-            return MESSAGE;
-        } else if (entityType == MessageListItemAdapter.EntityType.TYPING) {
-            return TYPING;
+        EntityType entityType = messageListItem.getType();
+        if (entityType == EntityType.DATE_SEPARATOR) {
+            return EntityType.DATE_SEPARATOR;
+        } else if (entityType == EntityType.MESSAGE) {
+            return EntityType.MESSAGE;
+        } else if (entityType == EntityType.TYPING) {
+            return EntityType.TYPING;
         }
-        return NOT_FOUND;
+        return EntityType.NOT_FOUND;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
@@ -68,18 +65,18 @@ public class MessageViewHolderFactory {
 
     }
 
-    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
-        if (viewType == DATE_SEPARATOR) {
+    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,EntityType viewType) {
+        if (viewType == EntityType.DATE_SEPARATOR) {
             DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        } else if (viewType == MESSAGE) {
+        } else if (viewType == EntityType.MESSAGE) {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
             return holder;
 
-        } else if (viewType == TYPING) {
+        } else if (viewType == EntityType.TYPING) {
             TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;

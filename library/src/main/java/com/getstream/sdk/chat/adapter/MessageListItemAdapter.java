@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.enums.EntityType;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -24,9 +25,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.bubbleHelper = bubbleHelper;
     }
 
-    public enum EntityType {
-        DATE_SEPARATOR, MESSAGE, TYPING
-    }
 
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
 
@@ -97,7 +95,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
-            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
+            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions()).ordinal();
         } catch(IndexOutOfBoundsException e) {
             return 0;
         }
@@ -107,7 +105,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
-        return this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
+        return this.viewHolderFactory.createMessageViewHolder(this, parent, EntityType.values()[viewType]);
     }
 
 
