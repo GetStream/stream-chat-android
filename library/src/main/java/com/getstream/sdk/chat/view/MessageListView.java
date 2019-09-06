@@ -598,34 +598,16 @@ public class MessageListView extends RecyclerView {
         requestFocus();
         setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                // Close if File Attach View is opened.
-//                if (binding.clAddFile.getVisibility() == View.VISIBLE) {
-//                    sendFileFunction.onClickAttachmentViewClose(null);
-//                    return true;
-//                }
-//                // Close if Selecting Photo View is opened.
-//                if (binding.clSelectPhoto.getVisibility() == View.VISIBLE) {
-//                    sendFileFunction.onClickSelectMediaViewClose(null);
-//                    return true;
-//                }
-//                // Close if Thread View is opened.
-//                if (isThreadMode()) {
-//                    onClickCloseThread(null);
-//                    return true;
-//                }
-//                // Cancel if editing message.
-//                if (binding.etMessage.getTag() != null) {
-//                    cancelEditMessage();
-//                    return true;
-//                }
-//                if (!singleConversation) {
-//                    finish();
-//                    return true;
-//                }
-                return true;
+                if (viewModel.isThreadMode()){
+                    viewModel.initThread();
+                    return true;
+                }
+
+                return false;
             }
             return false;
         });
     }
+
 
 }

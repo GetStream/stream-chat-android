@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
@@ -105,7 +106,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         reachedEndOfPagination = false;
 
         loading = new MutableLiveData<>(false);
-        threadParentMessage = new MutableLiveData<>();
+        threadParentMessage = new MutableLiveData<>(null);
         messageListScrollUp = new MutableLiveData<>(false);
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
@@ -157,7 +158,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public LiveData<List<Message>> getMessages() {
-        return messages;
+        return isThreadMode() ? threadMessages : messages;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -214,7 +215,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void setThreadParentMessage(Message threadParentMessage_) {
         if (threadParentMessage_.getReplyCount() == 0) {
-            threadParentMessage.postValue(threadParentMessage_);
+            threadMessages.postValue(new ArrayList<>());
         } else {
             channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), new GetRepliesCallback() {
                 @Override
@@ -230,6 +231,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
+    public boolean isThreadMode(){
+        return threadParentMessage.getValue() != null;
+    }
+    public void initThread(){
+        threadParentMessage.postValue(null);
+        threadMessages.postValue(null);
+        messages.postValue(channel.getChannelState().getMessages());
+    }
 // endregion
 
     private boolean setLoading(){
@@ -356,17 +365,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         Log.d(TAG,"messages Count:" + messages.getValue().size());
-        List<Message> messagesCopy = messages.getValue();
+        List<Message> messagesCopy = getMessages().getValue();
         int index = messagesCopy.indexOf(message);
-        Boolean updated = index != -1;
+        boolean updated = index != -1;
         if (updated) {
             messagesCopy.set(index, message);
         } else {
             messagesCopy.add(message);
         }
         Log.d(TAG,"New messages Count:" + messagesCopy.size());
-        messages.postValue(messagesCopy);
-        Log.d(TAG,"New messages Count:" + messages.getValue().size());
+
+        if (message.getType().equals(ModelType.message_reply)){
+            if (isThreadMode() && message.getParentId().equals(threadParentMessage.getValue().getId()))
+                threadMessages.postValue(messagesCopy);
+        }else
+            messages.postValue(messagesCopy);
+
+//        Log.d(TAG,"New messages Count:" + messages.getValue().size());
         return updated;
     }
 
