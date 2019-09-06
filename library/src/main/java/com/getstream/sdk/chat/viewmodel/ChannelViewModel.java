@@ -40,6 +40,7 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -215,12 +216,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void setThreadParentMessage(Message threadParentMessage_) {
         if (threadParentMessage_.getReplyCount() == 0) {
-            threadMessages.postValue(new ArrayList<>());
+            threadMessages.postValue(Arrays.asList(threadParentMessage_));
         } else {
             channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
-                    threadMessages.postValue(response.getMessages());
+                    List<Message> messages = new ArrayList<>(response.getMessages());
+                    messages.add(0, threadParentMessage_);
+                    threadMessages.postValue(messages);
                 }
 
                 @Override
@@ -229,6 +232,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 }
             });
         }
+        threadParentMessage.postValue(threadParentMessage_);
     }
 
     public boolean isThreadMode(){
