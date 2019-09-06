@@ -158,7 +158,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return channelState;
     }
 
-    public LiveData<List<Message>> getMessages() {
+    public MutableLiveData<List<Message>> getMessages() {
         return isThreadMode() ? threadMessages : messages;
     }
 
@@ -374,15 +374,19 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         Log.d(TAG, "New messages Count:" + messagesCopy.size());
 
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()) return;
-            if (!message.getParentId().equals(threadParentMessage.getValue().getId())) return;
+            if (!isThreadMode()
+                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
+                return;
 
-            int index = messagesCopy.indexOf(message);
-            if (index != -1) {
-                messagesCopy.set(index, message);
-            } else {
-                messagesCopy.add(message);
+            for (int i = 0; i < threadMessages.getValue().size(); i++) {
+                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
+                    messagesCopy.set(i, message);
+                    threadMessages.postValue(messagesCopy);
+                    return;
+                }
             }
+
+            messagesCopy.add(message);
             threadMessages.postValue(messagesCopy);
         } else {
             int index = messagesCopy.indexOf(message);
@@ -464,9 +468,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private void addMessage(Message message) {
         Log.d(TAG,"Add Message");
-        List<Message> messagesCopy = messages.getValue();
+        List<Message> messagesCopy = getMessages().getValue();
         messagesCopy.add(message);
-        messages.postValue(messagesCopy);
+        getMessages().postValue(messagesCopy);
+
     }
 
     private void addMessages(List<Message> newMessages) {
@@ -577,6 +582,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
             message.setCreatedAt(new Date());
             message.setType("regular");
+            if (isThreadMode())
+                message.setParentId(threadParentMessage.getValue().getId());
             message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);

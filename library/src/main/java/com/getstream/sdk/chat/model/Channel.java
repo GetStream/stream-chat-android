@@ -407,25 +407,6 @@ public class Channel {
     }
 
     // region Message
-    public void sendMessage(@Nullable String text,
-                            @Nullable List<Attachment> attachments,
-                            @Nullable String parentId,
-                            MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
-        SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
-    }
-    // region Message
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());

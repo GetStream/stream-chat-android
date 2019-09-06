@@ -429,10 +429,6 @@ public class Message implements UserEntity {
         return parentId;
     }
 
-    public void setParent_id(String parentId) {
-        this.parentId = parentId;
-    }
-
     public String getCommand() {
         return command;
     }

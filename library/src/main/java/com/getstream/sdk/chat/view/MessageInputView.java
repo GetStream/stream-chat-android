@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -131,7 +132,7 @@ public class MessageInputView extends RelativeLayout
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
-
+        onBackPressed();
         setOnSendMessageListener(viewModel);
         initAttachmentUI();
         KeyboardVisibilityEvent.setEventListener(
@@ -140,6 +141,21 @@ public class MessageInputView extends RelativeLayout
                 });
     }
 
+    private void onBackPressed() {
+        setFocusableInTouchMode(true);
+        requestFocus();
+        setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                Log.d(TAG, "isThreadMode: " + viewModel.isThreadMode());
+                if (viewModel.isThreadMode()){
+                    viewModel.initThread();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        });
+    }
 
     private void observeUIs(LifecycleOwner lifecycleOwner) {
         viewModel.getInputType().observe(lifecycleOwner, inputType -> {

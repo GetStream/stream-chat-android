@@ -265,7 +265,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
-        if (isDeletedOrFailedMessage()
+        if (isThread
+                || isDeletedOrFailedMessage()
                 || message == null
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)

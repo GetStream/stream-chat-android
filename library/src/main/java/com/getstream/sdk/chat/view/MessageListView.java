@@ -269,7 +269,6 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        onBackPressed();
     }
 
     // set the adapter and apply the style.
@@ -338,7 +337,7 @@ public class MessageListView extends RecyclerView {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
             if (adapter.isThread() != messageListItemWrapper.isThread()){
-                Log.d(TAG,"Change Thread");
+                Log.d(TAG,"Change Thread: " + messageListItemWrapper.isThread());
                 adapter.replaceEntities(new ArrayList<>());
             }
 
@@ -597,22 +596,4 @@ public class MessageListView extends RecyclerView {
         }
     }
     // endregion
-
-    private void onBackPressed() {
-        setFocusableInTouchMode(true);
-        requestFocus();
-        setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
-            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                if (viewModel.isThreadMode()){
-                    viewModel.initThread();
-                    return true;
-                }
-
-                return false;
-            }
-            return false;
-        });
-    }
-
-
 }
