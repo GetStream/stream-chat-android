@@ -241,12 +241,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), null, new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage_.getId(), String.valueOf(10), null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
                     newMessages.add(0, threadParentMessage_);
-                    reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+                    reachedEndOfPaginationThread = newMessages.size() < 10;
                     threadMessages.postValue(newMessages);
                 }
 
@@ -574,6 +574,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (isThread()){
             if (reachedEndOfPaginationThread) {
                 Log.i(TAG, "already reached end of pagination, skip loading more");
+                setLoadingMoreDone();
                 return;
             }
 
@@ -589,18 +590,18 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     threadMessages.postValue(messagesCopy);
                     reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
                     setLoadingMoreDone();
-                    loadingMore.setValue(false);
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-
+                    setLoadingMoreDone();
                 }
             });
         }else{
 
             if (reachedEndOfPagination) {
                 Log.i(TAG, "already reached end of pagination, skip loading more");
+                setLoadingMoreDone();
                 return;
             }
             ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
@@ -617,12 +618,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                             if (newMessages.size() < Constant.DEFAULT_LIMIT)
                                 reachedEndOfPagination = true;
                             setLoadingMoreDone();
-                            loadingMore.setValue(false);
                         }
 
                         @Override
                         public void onError(String errMsg, int errCode) {
-                            loadingMore.setValue(false);
                             setLoadingMoreDone();
                         }
                     }
