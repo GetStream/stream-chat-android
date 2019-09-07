@@ -294,7 +294,7 @@ public class MessageListView extends RecyclerView {
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
                     if (currentFirstVisible < fVPosition) {
-                        if (currentFirstVisible == 0 && !viewModel.isThreadMode()) viewModel.loadMore();
+                        if (currentFirstVisible == 0) viewModel.loadMore();
                     }
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {

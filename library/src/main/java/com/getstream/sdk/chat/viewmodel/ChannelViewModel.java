@@ -36,11 +36,9 @@ import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +67,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private AtomicBoolean isLoading;
     private AtomicBoolean isLoadingMore;
     private boolean reachedEndOfPagination;
+    private boolean reachedEndOfPaginationThread;
     private Date lastMarkRead;
 
     private Date lastKeystrokeAt;
@@ -160,7 +159,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public MutableLiveData<List<Message>> getMessages() {
-        return isThreadMode() ? threadMessages : messages;
+        return isThread() ? threadMessages : messages;
     }
 
     public LiveData<Boolean> getLoading() {
@@ -216,27 +215,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setThreadParentMessage(Message threadParentMessage_) {
-        if (threadParentMessage_.getReplyCount() == 0) {
-            threadMessages.postValue(new ArrayList<Message>(){
-                {
-                    add(threadParentMessage_);
-                }
-            });
-        } else {
-            channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), new GetRepliesCallback() {
-                @Override
-                public void onSuccess(GetRepliesResponse response) {
-                    List<Message> messages = new ArrayList<>(response.getMessages());
-                    messages.add(0, threadParentMessage_);
-                    threadMessages.postValue(messages);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-
-                }
-            });
-        }
+        configThread(threadParentMessage_);
         threadParentMessage.postValue(threadParentMessage_);
     }
 
@@ -245,17 +224,53 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setThreadParentPosition(int threadParentPosition) {
-        if (isThreadMode()) return;
+        if (isThread()) return;
         this.threadParentPosition = threadParentPosition;
     }
 
-    public boolean isThreadMode(){
+    public boolean isThread(){
         return threadParentMessage.getValue() != null;
     }
+
+    private void configThread(Message threadParentMessage_){
+        if (threadParentMessage_.getReplyCount() == 0) {
+            reachedEndOfPaginationThread = true;
+            threadMessages.postValue(new ArrayList<Message>(){
+                {
+                    add(threadParentMessage_);
+                }
+            });
+        } else {
+            channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), null, new GetRepliesCallback() {
+                @Override
+                public void onSuccess(GetRepliesResponse response) {
+                    List<Message> newMessages = new ArrayList<>(response.getMessages());
+                    newMessages.add(0, threadParentMessage_);
+                    reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+                    threadMessages.postValue(newMessages);
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
+        }
+    }
+
     public void initThread(){
         threadParentMessage.postValue(null);
         threadMessages.postValue(null);
         messages.postValue(channel.getChannelState().getMessages());
+        reachedEndOfPaginationThread = false;
+    }
+
+    private String getThreadOldestMessageId(){
+        String messageId = null;
+        if (threadMessages.getValue() != null)
+            return threadMessages.getValue().get(1).getId();
+
+        return messageId;
     }
 // endregion
 
@@ -388,7 +403,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         Log.d(TAG, "New messages Count:" + messagesCopy.size());
 
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()
+            if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return;
 
@@ -421,7 +436,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()
+            if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return updated;
 
@@ -461,7 +476,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThreadMode()
+            if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return false;
 
@@ -549,41 +564,70 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             Log.i(TAG, "already loading, skip loading more");
             return;
         }
-        if (reachedEndOfPagination) {
-            Log.i(TAG, "already reached end of pagination, skip loading more");
-            return;
-        }
+
         if (!setLoadingMore()) {
             Log.i(TAG, "already loading next page, skip loading more");
             return;
         }
 
         Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
+        if (isThread()){
+            if (reachedEndOfPaginationThread) {
+                Log.i(TAG, "already reached end of pagination, skip loading more");
+                return;
+            }
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
+            channel.getReplies(threadParentMessage.getValue().getId(), String.valueOf(Constant.DEFAULT_LIMIT), getThreadOldestMessageId(), new GetRepliesCallback() {
+                @Override
+                public void onSuccess(GetRepliesResponse response) {
+                    entities.setIsLoadingMore(true);
+                    List<Message> newMessages = new ArrayList<>(response.getMessages());
+                    List<Message> messagesCopy = threadMessages.getValue();
+                    for (int i = newMessages.size() - 1; i > -1; i--)
+                        messagesCopy.add(1, newMessages.get(i));
 
-        channel.query(
-                request,
-                new QueryChannelCallback() {
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        List<Message> newMessages = new ArrayList<>(response.getMessages());
-                        // used to modify the scroll behaviour...
-                        entities.setIsLoadingMore(true);
-                        addMessages(newMessages);
-                        if (newMessages.size() < Constant.DEFAULT_LIMIT)
-                            reachedEndOfPagination = true;
-                        setLoadingMoreDone();
-                        loadingMore.setValue(false);
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        loadingMore.setValue(false);
-                        setLoadingMoreDone();
-                    }
+                    threadMessages.postValue(messagesCopy);
+                    reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+                    setLoadingMoreDone();
+                    loadingMore.setValue(false);
                 }
-        );
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
+        }else{
+
+            if (reachedEndOfPagination) {
+                Log.i(TAG, "already reached end of pagination, skip loading more");
+                return;
+            }
+            ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
+
+            channel.query(
+                    request,
+                    new QueryChannelCallback() {
+                        @Override
+                        public void onSuccess(ChannelState response) {
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            // used to modify the scroll behaviour...
+                            entities.setIsLoadingMore(true);
+                            addMessages(newMessages);
+                            if (newMessages.size() < Constant.DEFAULT_LIMIT)
+                                reachedEndOfPagination = true;
+                            setLoadingMoreDone();
+                            loadingMore.setValue(false);
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            loadingMore.setValue(false);
+                            setLoadingMoreDone();
+                        }
+                    }
+            );
+        }
     }
 
     @Override
@@ -596,7 +640,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
             message.setCreatedAt(new Date());
             message.setType("regular");
-            if (isThreadMode())
+            if (isThread())
                 message.setParentId(threadParentMessage.getValue().getId());
             message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();

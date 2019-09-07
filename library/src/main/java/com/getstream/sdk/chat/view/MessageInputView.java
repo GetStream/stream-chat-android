@@ -149,7 +149,7 @@ public class MessageInputView extends RelativeLayout
         requestFocus();
         setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                if (viewModel.isThreadMode()){
+                if (viewModel.isThread()){
                     viewModel.initThread();
                     initSendMessage();
                     return true;
