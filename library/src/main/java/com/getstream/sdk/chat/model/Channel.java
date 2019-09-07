@@ -164,7 +164,7 @@ public class Channel {
 
     public Map<String, String> getReactionTypes() {
         if (reactionTypes == null){
-            return new HashMap<String, String>() {
+            reactionTypes = new HashMap<String, String>() {
                 {
                     put("like", "\uD83D\uDC4D");
                     put("love", "\u2764\uFE0F");

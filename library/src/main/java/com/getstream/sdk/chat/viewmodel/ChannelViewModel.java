@@ -216,7 +216,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void setThreadParentMessage(Message threadParentMessage_) {
         if (threadParentMessage_.getReplyCount() == 0) {
-            threadMessages.postValue(Arrays.asList(threadParentMessage_));
+            threadMessages.postValue(new ArrayList<Message>(){
+                {
+                    add(threadParentMessage_);
+                }
+            });
         } else {
             channel.getReplies(threadParentMessage_.getId(), String.valueOf(Constant.DEFAULT_LIMIT), new GetRepliesCallback() {
                 @Override

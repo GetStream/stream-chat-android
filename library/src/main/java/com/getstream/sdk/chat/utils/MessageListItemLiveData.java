@@ -194,6 +194,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 nextMessage = messages.get(i+1);
             }
 
+            // Thread
+            if (isThread() && i == 0)
+                nextMessage = null;
+
             // determine if the message is written by the current user
             Boolean mine = message.getUser().equals(currentUser);
             // determine the position (top, middle, bottom)
@@ -218,11 +222,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             MessageListItem messageListItem = new MessageListItem(message,positions, mine);
             entities.add(messageListItem);
-            // Insert Thread Separator
-            if (isThread() && i == 0)
-                entities.add(new MessageListItem(EntityType.THREAD_SEPARATOR));
             // set the previous message for the next iteration
             previousMessage = message;
+
+            // Insert Thread Separator
+            if (isThread() && i == 0) {
+                entities.add(new MessageListItem(EntityType.THREAD_SEPARATOR));
+                previousMessage = null;
+            }
         }
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
