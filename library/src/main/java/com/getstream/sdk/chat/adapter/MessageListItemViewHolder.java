@@ -336,7 +336,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .usePlugin(CorePlugin.create())
                     .usePlugin(LinkifyPlugin.create())
                     .build();
-        markwon.setMarkdown(tv_text, Utils.getDeletedOrMentionedText(message));
+        markwon.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
         if (message.getDeletedAt() != null){
             // background

@@ -137,7 +137,10 @@ public class MessageInputView extends RelativeLayout
         initAttachmentUI();
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
-                    if (!isOpen) binding.etMessage.clearFocus();
+                    if (!isOpen) {
+                        binding.etMessage.clearFocus();
+                        onBackPressed();
+                    }
                 });
     }
 
@@ -146,9 +149,9 @@ public class MessageInputView extends RelativeLayout
         requestFocus();
         setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                Log.d(TAG, "isThreadMode: " + viewModel.isThreadMode());
                 if (viewModel.isThreadMode()){
                     viewModel.initThread();
+                    initSendMessage();
                     return true;
                 }
                 return false;

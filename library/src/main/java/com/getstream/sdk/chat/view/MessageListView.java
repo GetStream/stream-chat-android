@@ -65,6 +65,7 @@ public class MessageListView extends RecyclerView {
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
+    private int backFromThreadPosition = 0;
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -294,7 +295,7 @@ public class MessageListView extends RecyclerView {
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
                     if (currentFirstVisible < fVPosition) {
-                        if (currentFirstVisible == 0) viewModel.loadMore();
+                        if (currentFirstVisible == 0 && !viewModel.isThreadMode()) viewModel.loadMore();
                     }
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
@@ -346,7 +347,9 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
 
             if (backFromThread){
-
+                Log.d(TAG,"backFromThreadPosition1: " + backFromThreadPosition);
+                layoutManager.scrollToPosition(backFromThreadPosition);
+                return;
             }
 
             int newSize = adapter.getItemCount();
@@ -445,6 +448,8 @@ public class MessageListView extends RecyclerView {
                     viewModel.onSendMessage(message, null);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
+                    backFromThreadPosition = lVPosition;
+                    Log.d(TAG,"backFromThreadPosition0: " + lVPosition);
                 }
             });
         }
