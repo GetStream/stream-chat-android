@@ -7,8 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -336,14 +334,21 @@ public class MessageListView extends RecyclerView {
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
+            boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()){
                 Log.d(TAG,"Change Thread: " + messageListItemWrapper.isThread());
                 adapter.replaceEntities(new ArrayList<>());
+                backFromThread = !messageListItemWrapper.isThread();
             }
 
             int oldSize = adapter.getItemCount();
             adapter.setThread(messageListItemWrapper.isThread());
             adapter.replaceEntities(entities);
+
+            if (backFromThread){
+
+            }
+
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
 
