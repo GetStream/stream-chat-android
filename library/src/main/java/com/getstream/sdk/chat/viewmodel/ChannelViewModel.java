@@ -64,6 +64,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private Map<String, Event> typingState;
 
     private int channelSubscriptionId = 0;
+    private int threadParentPosition = 0;
     private AtomicBoolean initialized;
     private AtomicBoolean isLoading;
     private AtomicBoolean isLoadingMore;
@@ -237,6 +238,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             });
         }
         threadParentMessage.postValue(threadParentMessage_);
+    }
+
+    public int getThreadParentPosition() {
+        return threadParentPosition;
+    }
+
+    public void setThreadParentPosition(int threadParentPosition) {
+        if (isThreadMode()) return;
+        this.threadParentPosition = threadParentPosition;
     }
 
     public boolean isThreadMode(){

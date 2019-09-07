@@ -65,7 +65,6 @@ public class MessageListView extends RecyclerView {
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
-    private int backFromThreadPosition = 0;
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -305,6 +304,7 @@ public class MessageListView extends RecyclerView {
                     viewModel.setMessageListScrollUp(currentFirstVisible < fVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
+                    viewModel.setThreadParentPosition(lVPosition);
                 }
             }
         });
@@ -347,8 +347,7 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
 
             if (backFromThread){
-                Log.d(TAG,"backFromThreadPosition1: " + backFromThreadPosition);
-                layoutManager.scrollToPosition(backFromThreadPosition);
+                layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
                 return;
             }
 
@@ -448,8 +447,6 @@ public class MessageListView extends RecyclerView {
                     viewModel.onSendMessage(message, null);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
-                    backFromThreadPosition = lVPosition;
-                    Log.d(TAG,"backFromThreadPosition0: " + lVPosition);
                 }
             });
         }
