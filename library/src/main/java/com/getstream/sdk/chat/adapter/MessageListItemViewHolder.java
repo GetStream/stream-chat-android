@@ -28,7 +28,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
@@ -49,7 +48,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
 
     private ConstraintLayout cl_message;
-    private TextView tv_text, tv_deleted;
+    private TextView tv_text;
     private RecyclerView rv_reaction;
 
     private LinearLayout ll_send_failed;
@@ -62,7 +61,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private TextView tv_username, tv_messagedate;
 
     // Delivered Indicator
-    private ReadStateView read_state;
+    private ReadStateView<MessageListViewStyle> read_state;
     private ProgressBar pb_deliver;
     private ImageView iv_deliver;
 
@@ -114,7 +113,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
 
         tv_text = itemView.findViewById(R.id.tv_text);
-        tv_deleted = itemView.findViewById(R.id.tv_deleted);
 
         ll_send_failed = itemView.findViewById(R.id.ll_send_failed);
         tv_failed_des = itemView.findViewById(R.id.tv_failed_des);
@@ -186,7 +184,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         // Configure Layout Params
         configMarginStartEnd();
         configParamsMessageText();
-        configParamsDeletedMessage();
         configParamsUserAvatar();
 
         configParamsReactionTailSpace();
@@ -314,56 +311,41 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             ll_send_failed.setBackground(background);
 
-            ll_send_failed.setOnClickListener((View v) -> {
+            ll_send_failed.setOnClickListener(view -> {
                 if (!StreamChat.getInstance(context).isConnected()) return;
-                if (messageClickListener != null) {
+                if (messageClickListener != null)
                     messageClickListener.onMessageClick(message, position);
-                }
             });
-
         } else {
             ll_send_failed.setVisibility(View.GONE);
         }
     }
 
     private void configMessageText() {
-        // Check Deleted Message
-        if (message.getDeletedAt() != null) {
+        if (message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error)
+                || TextUtils.isEmpty(message.getText())) {
             tv_text.setVisibility(View.GONE);
-            tv_deleted.setVisibility(View.VISIBLE);
             return;
         }
-        if (message.getType().equals(ModelType.message_error)) {
-            tv_text.setVisibility(View.GONE);
-            tv_deleted.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getStatus() == MessageStatus.FAILED) {
-            tv_text.setVisibility(View.GONE);
-            tv_deleted.setVisibility(View.GONE);
-            return;
-        }
-        if (TextUtils.isEmpty(message.getText())) {
-            tv_text.setVisibility(View.GONE);
-            tv_deleted.setVisibility(View.GONE);
-        } else {
-            if (message.getText().equals(Constant.MESSAGE_DELETED)) {
-                tv_text.setVisibility(View.GONE);
-                tv_deleted.setVisibility(View.VISIBLE);
-            } else {
-                tv_text.setVisibility(View.VISIBLE);
-                tv_deleted.setVisibility(View.GONE);
-            }
-        }
-        if (tv_text.getVisibility() != View.VISIBLE) return;
 
+        tv_text.setVisibility(View.VISIBLE);
         // Set Text
         if (markwon == null)
             markwon = Markwon.builder(context)
                     .usePlugin(CorePlugin.create())
                     .usePlugin(LinkifyPlugin.create())
                     .build();
-        markwon.setMarkdown(tv_text, Utils.getMentionedText(message));
+        markwon.setMarkdown(tv_text, Utils.getDeletedOrMentionedText(message));
+        // Deleted Message
+        if (message.getDeletedAt() != null){
+            // background
+            tv_text.setBackgroundResource(0);
+            // style
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size));
+            tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
+            return;
+        }
         // background
         if (StringUtility.isEmoji(message.getText())) {
             tv_text.setBackgroundResource(0);
@@ -376,6 +358,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
             tv_text.setBackground(background);
         }
+        // set style
         if (messageListItem.isMine()) {
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
             tv_text.setTextColor(style.getMessageTextColorMine());
@@ -403,53 +386,37 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configAttachmentView() {
-        if (isDeletedOrFailedMessage()) {
+        if (isDeletedOrFailedMessage()
+                || this.message.getAttachments() == null
+                || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
             return;
         }
-        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
-            alv_attachments.setVisibility(View.GONE);
-        } else {
-            alv_attachments.setVisibility(View.VISIBLE);
-            alv_attachments.setViewHolderFactory(viewHolderFactory);
-            alv_attachments.setStyle(style);
-            alv_attachments.setEntity(this.messageListItem);
-            alv_attachments.setBubbleHelper(this.getBubbleHelper());
-            alv_attachments.setAttachmentClickListener(attachmentClickListener);
-            alv_attachments.setLongClickListener(messageLongClickListener);
-            boolean hasBackground = false;
-            for (Attachment attachment : message.getAttachments()){
-                if(!TextUtils.isEmpty(attachment.getText()) || !TextUtils.isEmpty(attachment.getTitle())){
-                    hasBackground = true;
-                    break;
-                }
-            }
-            if (!hasBackground) {
-                alv_attachments.setBackgroundResource(0);
+
+        alv_attachments.setVisibility(View.VISIBLE);
+        alv_attachments.setViewHolderFactory(viewHolderFactory);
+        alv_attachments.setStyle(style);
+        alv_attachments.setEntity(this.messageListItem);
+        alv_attachments.setBubbleHelper(this.getBubbleHelper());
+        alv_attachments.setAttachmentClickListener(attachmentClickListener);
+        alv_attachments.setLongClickListener(messageLongClickListener);
+
+        for (Attachment attachment : message.getAttachments()) {
+            if (!TextUtils.isEmpty(attachment.getText())
+                    || !TextUtils.isEmpty(attachment.getTitle())) {
+                Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+                alv_attachments.setBackground(background);
                 return;
             }
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            alv_attachments.setBackground(background);
         }
+        alv_attachments.setBackgroundResource(0);
     }
 
     private void configReactionView() {
-        if (!style.isEnableReaction()) {
-            rv_reaction.setVisibility(View.GONE);
-            iv_docket.setVisibility(View.GONE);
-            return;
-        }
-        if (isDeletedOrFailedMessage()) {
-            rv_reaction.setVisibility(View.GONE);
-            iv_docket.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getReactionCounts() == null) {
-            rv_reaction.setVisibility(View.GONE);
-            iv_docket.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getReactionCounts().size() == 0) {
+        if (isDeletedOrFailedMessage()
+                || !style.isEnableReaction()
+                || message.getReactionCounts() == null
+                || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
             return;
@@ -466,29 +433,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
-        if (position == 0)
-            Log.d(TAG,"isThread :" + isThread);
+        if (isDeletedOrFailedMessage()
+                || isThread
+                || message.getReplyCount() == 0) {
+            cl_reply.setVisibility(View.GONE);
+            return;
+        }
 
-        if (this.isThread) {
-            cl_reply.setVisibility(View.GONE);
-            return;
-        }
-        if (isDeletedOrFailedMessage()) {
-            cl_reply.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getReplyCount() > 0) cl_reply.setVisibility(View.VISIBLE);
-        else {
-            cl_reply.setVisibility(View.GONE);
-            return;
-        }
-        if (message.getReplyCount() == 1) tv_reply.setText("1" + " reply");
-        if (message.getReplyCount() > 1) tv_reply.setText(message.getReplyCount() + " replies");
+        cl_reply.setVisibility(View.VISIBLE);
+        tv_reply.setText(message.getReplyCount() + (message.getReplyCount() == 1 ? " reply" : " replies"));
 
-        cl_reply.setOnClickListener((View v) -> {
-            if (messageClickListener != null) {
+        cl_reply.setOnClickListener(view -> {
+            if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
-            }
         });
     }
 
@@ -499,7 +456,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMarginStartEnd(){
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(alv_attachments);
-        configMarginStartEnd_(tv_deleted);
         configMarginStartEnd_(ll_send_failed);
         configMarginStartEnd_(cl_reply);
         configMarginStartEnd_(tv_username);
@@ -532,17 +488,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.horizontalBias = 1f;
         }
         tv_text.setLayoutParams(params);
-    }
-
-    private void configParamsDeletedMessage() {
-        if (tv_deleted.getVisibility() != View.VISIBLE) return;
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_deleted.getLayoutParams();
-        if (messageListItem.isTheirs()) {
-            params.horizontalBias = 0f;
-        } else {
-            params.horizontalBias = 1f;
-        }
-        tv_deleted.setLayoutParams(params);
     }
 
     private void configParamsMessageDate() {

@@ -263,9 +263,13 @@ public class Utils {
         return mentionedUserIDs;
     }
 
-    public static String getMentionedText(Message message) {
+    public static String getDeletedOrMentionedText(Message message) {
         if (message == null) return null;
         String text = message.getText();
+        if (message.getDeletedAt() != null) {
+            text = "_" + message.getText() + "_";
+            return text;
+        }
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
             for (User mentionedUser : message.getMentionedUsers()) {
                 String userName = mentionedUser.getName();
