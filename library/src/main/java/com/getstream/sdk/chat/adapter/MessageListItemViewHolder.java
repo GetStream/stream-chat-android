@@ -699,6 +699,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         set.clone(cl_message);
         set.clear(R.id.read_state, ConstraintSet.START);
         set.clear(R.id.read_state, ConstraintSet.END);
+        set.clear(R.id.read_state, ConstraintSet.BOTTOM);
         set.applyTo(cl_message);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
@@ -715,8 +716,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
 
-        params.leftMargin = Utils.dpToPx(3);
-        params.rightMargin = Utils.dpToPx(3);
+        params.bottomToBottom = layoutId;
+        params.leftMargin = Utils.dpToPx(8);
+        params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
 
