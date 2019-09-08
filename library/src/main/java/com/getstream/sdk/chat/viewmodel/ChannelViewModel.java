@@ -210,6 +210,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.messageListScrollUp.postValue(messageListScrollUp);
     }
 
+    // region Thread
     public LiveData<Message> getThreadParentMessage() {
         return threadParentMessage;
     }
@@ -272,7 +273,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         return messageId;
     }
-// endregion
+    // endregion
+
+    // endregion
 
     private boolean setLoading(){
         if (isLoading.compareAndSet(false, true)) {

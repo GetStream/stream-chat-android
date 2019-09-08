@@ -335,31 +335,34 @@ public class MessageListView extends RecyclerView {
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
+
+            // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()){
-                Log.d(TAG,"Change Thread: " + messageListItemWrapper.isThread());
                 adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
 
-            int oldSize = adapter.getItemCount();
             adapter.setThread(messageListItemWrapper.isThread());
             adapter.replaceEntities(entities);
 
+            // Scroll to origin position on return from thread
             if (backFromThread){
                 layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
                 return;
             }
 
-            int newSize = adapter.getItemCount();
-            int sizeGrewBy = newSize - oldSize;
-
+            // Scroll to bottom position for typing indicator
             int itemCount = adapter.getItemCount() - 2;
             if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;
             }
+
+            int oldSize = adapter.getItemCount();
+            int newSize = adapter.getItemCount();
+            int sizeGrewBy = newSize - oldSize;
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
