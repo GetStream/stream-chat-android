@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.getstream.sdk.chat.view.AvatarGroupView
+            android:id="@+id/avator"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_active_mark"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:background="@drawable/stream_circle_user_online"
+            app:layout_constraintEnd_toEndOf="@+id/avator"
+            app:layout_constraintStart_toEndOf="@+id/avator"
+            app:layout_constraintTop_toTopOf="@+id/avator" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            style="@style/text_single_line"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:textColor="@color/stream_black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/avator"
+            app:layout_constraintTop_toTopOf="@+id/avator" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
