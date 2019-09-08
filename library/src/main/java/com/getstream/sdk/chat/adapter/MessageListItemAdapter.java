@@ -35,6 +35,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
+    private MessageListView.ReadStateClickListener readStateClickListener;
     private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
@@ -122,7 +123,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 messageClickListener,
                 messageLongClickListener,
                 attachmentClickListener,
-                userClickListener);
+                userClickListener,
+                readStateClickListener);
 
 
     }
@@ -142,6 +144,10 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void setUserClickListener(MessageListView.UserClickListener userClickListener) {
         this.userClickListener = userClickListener;
+    }
+
+    public void setReadStateClickListener(MessageListView.ReadStateClickListener readStateClickListener) {
+        this.readStateClickListener = readStateClickListener;
     }
 
     @Override

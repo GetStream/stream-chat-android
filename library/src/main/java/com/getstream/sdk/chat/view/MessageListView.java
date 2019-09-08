@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
@@ -61,6 +62,7 @@ public class MessageListView extends RecyclerView {
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
     private UserClickListener userClickListener;
+    private ReadStateClickListener readStateClickListener;
 
 //    private int firstVisible;
     private static int fVPosition, lVPosition;
@@ -285,6 +287,7 @@ public class MessageListView extends RecyclerView {
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
         setUserClickListener(userClickListener);
+        setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
         adapter.setChannelState(getChannel().getChannelState());
 
@@ -479,6 +482,19 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setReadStateClickListener(ReadStateClickListener readStateClickListener) {
+        this.readStateClickListener = readStateClickListener;
+        if (adapter == null) return;
+
+        if (this.readStateClickListener != null) {
+            adapter.setReadStateClickListener(this.readStateClickListener);
+        } else {
+            adapter.setReadStateClickListener(reads ->  {
+                Log.d(TAG, "reads" + reads.size());
+            });
+        }
+    }
+
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
         if (adapter != null) {
@@ -508,6 +524,10 @@ public class MessageListView extends RecyclerView {
 
     public interface UserClickListener {
         void onUserClick(User user);
+    }
+
+    public interface ReadStateClickListener {
+        void onReadStateClick(List<ChannelUserRead> reads);
     }
 
     public interface BubbleHelper {

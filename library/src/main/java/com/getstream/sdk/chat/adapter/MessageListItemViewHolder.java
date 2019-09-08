@@ -82,6 +82,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
+    private MessageListView.ReadStateClickListener readStateClickListener;
 
     private int position;
     private boolean isThread;
@@ -153,7 +154,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageClickListener messageClickListener,
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener attachmentClickListener,
-                     MessageListView.UserClickListener userClickListener) {
+                     MessageListView.UserClickListener userClickListener,
+                     MessageListView.ReadStateClickListener readStateClickListener) {
 
         // set binding
         this.context = context;
@@ -164,6 +166,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
         this.userClickListener = userClickListener;
+        this.readStateClickListener = readStateClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -294,6 +297,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         read_state.setVisibility(View.VISIBLE);
         read_state.setReads(readBy, messageListItem.isTheirs(), style);
+        read_state.setOnClickListener(view -> {
+            if (readStateClickListener != null)
+                readStateClickListener.onReadStateClick(readBy);
+        });
     }
 
     private void configSendFailed() {

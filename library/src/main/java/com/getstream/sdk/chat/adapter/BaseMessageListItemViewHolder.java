@@ -25,7 +25,8 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
                               MessageListView.MessageClickListener messageClickListener,
                               MessageListView.MessageLongClickListener messageLongClickListener,
                               MessageListView.AttachmentClickListener attachmentClickListener,
-                              MessageListView.UserClickListener userClickListener);
+                              MessageListView.UserClickListener userClickListener,
+                              MessageListView.ReadStateClickListener readStateClickListener);
 
     public abstract void setStyle(MessageListViewStyle style);
 
