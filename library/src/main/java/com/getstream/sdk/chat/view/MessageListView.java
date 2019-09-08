@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
@@ -490,7 +491,11 @@ public class MessageListView extends RecyclerView {
             adapter.setReadStateClickListener(this.readStateClickListener);
         } else {
             adapter.setReadStateClickListener(reads ->  {
-                Log.d(TAG, "reads" + reads.size());
+                new ReadUsersDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setReads(reads)
+                        .setStyle(style)
+                        .show();
             });
         }
     }
