@@ -7,6 +7,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -118,44 +119,7 @@ public class QueryChannelsQ {
         computeID();
     }
 
-    public List<ChannelState> getChannelStates(ChannelsDao channelsDao, Integer limit) {
-        List<Channel> channels = getChannels(channelsDao, limit);
-        List<ChannelState> channelStates = new ArrayList<>();
-        for (Channel c: channels) {
-            ChannelState state = c.getLastState();
-            state.setChannel(c);
-            channelStates.add(state);
-        }
-        return channelStates;
-    }
 
-    public List<Channel> getChannels(ChannelsDao channelsDao, Integer limit) {
-        List<String> selectedChannelIDs = this.getChannelCIDs();
-        List<Channel> selectedChannels = new ArrayList<>();
-
-        if (selectedChannelIDs != null) {
-            Integer max = (limit > selectedChannelIDs.size()) ? selectedChannelIDs.size() : limit;
-            selectedChannelIDs = selectedChannelIDs.subList(0, max);
-            List<Channel> channels = channelsDao.getChannels(selectedChannelIDs);
-            Map<String, Channel> channelMap = new HashMap<String, Channel>();
-            for (Channel c : channels) {
-                channelMap.put(c.getCid(), c);
-            }
-            // restore the original sort
-            for (String cid: selectedChannelIDs) {
-                Channel channel = channelMap.get(cid);
-                if (channel==null) {
-                    Log.w(TAG, "Missing channel for cid " + cid);
-                } else {
-                    selectedChannels.add(channel);
-                }
-
-            }
-        }
-
-        return selectedChannels;
-
-    }
 
     public Date getCreatedAt() {
         return createdAt;

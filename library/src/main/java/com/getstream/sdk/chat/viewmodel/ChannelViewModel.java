@@ -232,7 +232,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
-        Message message = this.channel.getChannelState().getLastMessage();
+        Message message = this.channel.getChannelState().computeLastMessage();
         if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
             looper.markRead();
             lastMarkRead = message.getCreatedAt();
@@ -693,7 +693,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                if (channel.getChannelState().getLastMessage() == null) {
+                if (channel.getChannelState().computeLastMessage() == null) {
                     viewModel.queryChannel();
                 } else {
                     channelLoadingDone();

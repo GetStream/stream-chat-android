@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Transaction;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
@@ -18,6 +19,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Storage {
     final String TAG = Storage.class.getSimpleName();
@@ -103,6 +105,52 @@ public class Storage {
         usersDao.insertUsers(new ArrayList(userMap.values()));
     }
 
+    private void enrichUsers(List<Channel> channels) {
+        List<String> userIDs = new ArrayList<>();
+        // gather all the user ids
+
+        for (Channel c: channels) {
+
+            // gather the users from members, read, last message and created by
+            userIDs.add(c.getCreatedByUserID());
+            for (Member m : c.getLastState().getMembers()) {
+                userIDs.add(m.getUserId());
+            }
+            for (ChannelUserRead r : c.getLastState().getReads()) {
+                userIDs.add(r.getUserId());
+            }
+            Message lastMessage = c.getLastState().computeLastMessage();
+            if (lastMessage != null) {
+                userIDs.add(lastMessage.getUserId());
+            }
+        }
+
+        // query those users as a map
+        List<User> users = usersDao.getUsers(userIDs);
+        HashMap<String, User> userMap = new HashMap<String, User>();
+        for (User u: users) {
+            userMap.put(u.getId(), u);
+        }
+
+        // add the object, fun fun
+        for (Channel c: channels) {
+
+            // gather the users from members, read, last message and created by
+            c.setCreatedByUser(userMap.get(c.getCreatedByUserID()));
+            for (Member m : c.getLastState().getMembers()) {
+                m.setUser(userMap.get(m.getUserId()));
+            }
+            for (ChannelUserRead r : c.getLastState().getReads()) {
+                r.setUser(userMap.get(r.getUserId()));
+            }
+            Message lastMessage = c.getLastState().computeLastMessage();
+            if (lastMessage != null) {
+                lastMessage.setUser(userMap.get(lastMessage.getUserId()));
+            }
+        }
+
+    }
+
     public void insertQueryWithChannels(QueryChannelsQ query, List<Channel> channels) {
         if (!enabled) return;
 
@@ -122,7 +170,7 @@ public class Storage {
             for (ChannelUserRead r : c.getLastState().getReads()) {
                 users.add(r.getUser());
             }
-            Message lastMessage = c.getLastState().getLastMessage();
+            Message lastMessage = c.getLastState().computeLastMessage();
             if (lastMessage != null) {
                 users.add(lastMessage.getUser());
             }
@@ -198,6 +246,51 @@ public class Storage {
         public void onFailure(Exception e);
     }
 
+
+    public List<ChannelState> getChannelStates(QueryChannelsQ query, Integer limit) {
+        List<Channel> channels = getChannels(query, limit);
+        List<ChannelState> channelStates = new ArrayList<>();
+        for (Channel c: channels) {
+            ChannelState state = c.getLastState();
+            channelStates.add(state);
+        }
+        return channelStates;
+    }
+
+    public List<Channel> getChannels(QueryChannelsQ query, Integer limit) {
+        List<String> selectedChannelIDs = query.getChannelCIDs();
+        List<Channel> selectedChannels = new ArrayList<>();
+
+        if (selectedChannelIDs != null) {
+            Integer max = (limit > selectedChannelIDs.size()) ? selectedChannelIDs.size() : limit;
+            selectedChannelIDs = selectedChannelIDs.subList(0, max);
+            List<Channel> channels = channelsDao.getChannels(selectedChannelIDs);
+            Map<String, Channel> channelMap = new HashMap<String, Channel>();
+            for (Channel c : channels) {
+                channelMap.put(c.getCid(), c);
+            }
+            // restore the original sort
+            for (String cid: selectedChannelIDs) {
+                Channel channel = channelMap.get(cid);
+                channel.setChannelState(channel.getLastState());
+                channel.setClient(StreamChat.getInstance(context));
+                if (channel==null) {
+                    Log.w(TAG, "Missing channel for cid " + cid);
+                } else {
+                    ChannelState state = channel.getLastState();
+                    state.setChannel(channel);
+                    selectedChannels.add(channel);
+                }
+
+            }
+        }
+
+        return selectedChannels;
+
+    }
+
+
+
     public class QueryTask extends AsyncTask<String, Void, List<ChannelState>> {
 
         private OnQueryListener<List<ChannelState>> mCallBack;
@@ -214,8 +307,15 @@ public class Storage {
                 String queryID = params[0];
                 QueryChannelsQ query = selectQuery(queryID);
                 if (query != null) {
-                    List<ChannelState> channels = query.getChannelStates(channelsDao,100);
-                    return channels;
+                    List<Channel> channels = getChannels(query,100);
+                    enrichUsers(channels);
+                    List<ChannelState> channelStates = new ArrayList<>();
+                    for (Channel c: channels) {
+                        ChannelState state = c.getLastState();
+                        channelStates.add(state);
+                    }
+
+                    return channelStates;
                 } else {
                     return null;
                 }

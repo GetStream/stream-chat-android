@@ -190,7 +190,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onNotificationMessageNew(Channel channel, Event event) {
-                Message lastMessage = channel.getChannelState().getLastMessage();
+                Message lastMessage = channel.getChannelState().computeLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
@@ -199,7 +199,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onMessageNew(Channel channel, Event event) {
-                Message lastMessage = channel.getChannelState().getLastMessage();
+                Message lastMessage = channel.getChannelState().computeLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());

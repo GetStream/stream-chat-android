@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -55,6 +56,9 @@ public class ChannelState {
     @SerializedName("messages")
     private List<Message> messages;
 
+    @Embedded
+    private Message lastMessage;
+
     @SerializedName("read")
     @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
@@ -79,7 +83,9 @@ public class ChannelState {
     }
 
     public void preStorage() {
+
         this.cid = this.channel.getCid();
+        this.lastMessage = this.computeLastMessage();
     }
 
     @Ignore
@@ -108,6 +114,11 @@ public class ChannelState {
             messages = channel.getChannelState().messages;
             reads = channel.getChannelState().reads;
             members = channel.getChannelState().members;
+            // TODO: Here is the confusing/wrong bit...
+            if (messages != null && lastMessage == null) {
+                lastMessage = this.computeLastMessage();
+            }
+
         }
     }
 
@@ -301,6 +312,10 @@ public class ChannelState {
     }
 
     public Message getLastMessage() {
+        return lastMessage;
+    }
+
+    public Message computeLastMessage() {
         Message lastMessage = null;
         List<Message> messages = getMessages();
         for (int i = messages.size() - 1; i >= 0; i--) {
@@ -368,8 +383,6 @@ public class ChannelState {
 
     private void addMessagesSorted(List<Message> messages){
         int initialSize = messages.size();
-        Log.w(TAG, "initial size" + initialSize);
-        Log.w(TAG, "incoming size" + messages.size());
 
         for (Message m : messages) {
             if(m.getParentId() == null) {
@@ -459,6 +472,10 @@ public class ChannelState {
 
         ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
         reads.add(channelUserRead);
+    }
+
+    public void setLastMessage(Message lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }
 

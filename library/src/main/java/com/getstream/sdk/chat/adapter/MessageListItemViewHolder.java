@@ -277,7 +277,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             iv_deliver.setVisibility(View.VISIBLE);
         } else {
             if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
-                    && channelState.getLastMessage().getId().equals(message.getId())){
+                    && channelState.computeLastMessage().getId().equals(message.getId())){
                 message.setStatus(MessageStatus.RECEIVED);
                 iv_deliver.setVisibility(View.VISIBLE);
                 return;
