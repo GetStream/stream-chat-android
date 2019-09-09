@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -56,11 +57,14 @@ import retrofit2.Response;
 /**
  * A channel
  */
-@Entity(primaryKeys = {"id", "type"})
+@Entity
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
-    // TODO: add a cid field and make that the primary key
+    @PrimaryKey
+    @NonNull
+    @SerializedName("cid")
+    private String cid;
 
     @NonNull
     @SerializedName("id")
@@ -130,6 +134,7 @@ public class Channel {
     @Ignore
     private User createdByUser;
     private Integer createdByUserID;
+
     @SerializedName("frozen")
     private boolean frozen;
     @SerializedName("config")
@@ -151,7 +156,7 @@ public class Channel {
     }
 
     public String getCid() {
-        return getType() + ":" + getId();
+        return this.cid;
     }
 
     public String getType() {
@@ -180,6 +185,10 @@ public class Channel {
 
     public String getImage() {
         return image;
+    }
+
+    public void setCid(String id) {
+        this.cid = id;
     }
 
     public void setId(String id) {
@@ -289,6 +298,10 @@ public class Channel {
         this(client, type, id, new HashMap<>());
     }
 
+    public void preStorage() {
+        this.lastState = this.channelState;
+    }
+
     public Client getClient() {
         return this.client;
     }
@@ -306,6 +319,7 @@ public class Channel {
     public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
+        this.cid = String.format("%s:%s", type, id);
         this.client = client;
 
         if (extraData == null) {

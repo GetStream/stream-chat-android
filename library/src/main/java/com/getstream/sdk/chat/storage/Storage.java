@@ -72,6 +72,10 @@ public class Storage {
             @Override
             protected Void doInBackground(Void... voids) {
                 Log.i(TAG, "writing channels to storage");
+                for (Channel c: channels) {
+                    c.preStorage();
+                    c.getLastState().preStorage();
+                }
                 channelsDao.insertChannels(channels);
                 return null;
             }
@@ -148,14 +152,11 @@ public class Storage {
 
         @Override
         protected List<ChannelState> doInBackground(String... params) {
-            Log.i(TAG, "QT Running");
             try {
-                // todo try to do something dangerous
                 String queryID = params[0];
                 QueryChannelsQ query = selectQuery(queryID);
                 if (query != null) {
                     List<ChannelState> channels = query.getChannelStates(channelsDao,100);
-                    Log.i(TAG, "QT Return");
                     return channels;
                 } else {
                     return null;

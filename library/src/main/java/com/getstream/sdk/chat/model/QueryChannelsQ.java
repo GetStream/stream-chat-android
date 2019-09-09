@@ -39,7 +39,7 @@ public class QueryChannelsQ {
     private QuerySort sort;
     @TypeConverters({ChannelIdListConverter.class})
 
-    private List<String> channelIDs;
+    private List<String> channelCIDs;
 
     @TypeConverters({DateConverter.class})
     private Date createdAt;
@@ -80,9 +80,10 @@ public class QueryChannelsQ {
 
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+            this.id = "errorCreatingQueryID";
         }
 
-        this.id = "errorCreatingQueryID";
+
     }
 
     public String getId() {
@@ -115,13 +116,15 @@ public class QueryChannelsQ {
         List<Channel> channels = getChannels(channelsDao, limit);
         List<ChannelState> channelStates = new ArrayList<>();
         for (Channel c: channels) {
-            channelStates.add(c.getLastState());
+            ChannelState state = c.getLastState();
+            state.setChannel(c);
+            channelStates.add(state);
         }
         return channelStates;
     }
 
     public List<Channel> getChannels(ChannelsDao channelsDao, Integer limit) {
-        List<String> selectedChannelIDs = this.getChannelIDs();
+        List<String> selectedChannelIDs = this.getChannelCIDs();
         List<Channel> selectedChannels = new ArrayList<>();
 
         if (selectedChannelIDs != null) {
@@ -158,11 +161,11 @@ public class QueryChannelsQ {
         this.updatedAt = updatedAt;
     }
 
-    public List<String> getChannelIDs() {
-        return channelIDs;
+    public List<String> getChannelCIDs() {
+        return channelCIDs;
     }
 
-    public void setChannelIDs(List<String> channelIDs) {
-        this.channelIDs = channelIDs;
+    public void setChannelCIDs(List<String> channelCIDs) {
+        this.channelCIDs = channelCIDs;
     }
 }

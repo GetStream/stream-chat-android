@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -287,9 +288,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
-                addChannels(response.getChannelStates());
-                // TODO: set the channel ids on the query
-                client().storage().insertQuery(request.query());
+                //addChannels(response.getChannelStates());
+                // TODO: perhaps refactor this
+
+                QueryChannelsQ query = request.query();
+                List<String> channelIDs = new ArrayList<>();
+                for (Channel c : response.getChannels()) {
+                    channelIDs.add(c.getCid());
+                }
+                query.setChannelCIDs(channelIDs);
+
+                client().storage().insertQuery(query);
+
 
                 client().storage().insertChannels(response.getChannels());
 

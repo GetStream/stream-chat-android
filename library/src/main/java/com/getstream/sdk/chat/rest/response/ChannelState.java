@@ -78,6 +78,10 @@ public class ChannelState {
         return watchers;
     }
 
+    public void preStorage() {
+        this.cid = this.channel.getCid();
+    }
+
     @Ignore
     @SerializedName("watchers")
     private List<Watcher> watchers;
@@ -176,6 +180,8 @@ public class ChannelState {
     }
 
     public String getOldestMessageId() {
+
+        // TODO: we should ignore messages that haven't been sent yet
         Message message = getOldestMessage();
         if (message == null) {
             return null;
