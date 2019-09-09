@@ -5,12 +5,18 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
+import androidx.room.Transaction;
 
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Storage {
@@ -21,6 +27,8 @@ public class Storage {
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
+    private UsersDao usersDao;
+
     private ChannelsDao channelsDao;
     private QueryChannelsQDao queryChannelsQDao;
 
@@ -32,6 +40,7 @@ public class Storage {
             messageDao = db.messageDao();
             channelsDao = db.channelsDao();
             queryChannelsQDao = db.queryChannelsQDao();
+            usersDao = db.usersDao();
         }
     }
 
@@ -71,12 +80,59 @@ public class Storage {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                Log.i(TAG, "writing channels to storage");
-                for (Channel c: channels) {
-                    c.preStorage();
-                    c.getLastState().preStorage();
-                }
+
                 channelsDao.insertChannels(channels);
+                return null;
+            }
+        }.execute();
+    }
+
+    @Transaction
+    private void insertQueryWithChannelsTransaction(QueryChannelsQ query, List<Channel> channels) {
+
+        channelsDao.insertChannels(channels);
+        queryChannelsQDao.insertQuery(query);
+    }
+
+    private void insertUsersUnique(List<User> users) {
+        HashMap<String, User> userMap = new HashMap<>();
+        for (User u: users) {
+            userMap.put(u.getId(), u);
+        }
+
+        usersDao.insertUsers(new ArrayList(userMap.values()));
+    }
+
+    public void insertQueryWithChannels(QueryChannelsQ query, List<Channel> channels) {
+        if (!enabled) return;
+
+        List<User> users = new ArrayList<>();
+
+
+        Log.i(TAG, "writing channels to storage");
+        for (Channel c: channels) {
+            c.preStorage();
+            c.getLastState().preStorage();
+            // gather the users from members, read, last message and created by
+            users.add(c.getCreatedByUser());
+            for (Member m : c.getLastState().getMembers()) {
+                users.add(m.getUser());
+            }
+            // TODO: what if there are >1000 user reads on a channel...
+            for (ChannelUserRead r : c.getLastState().getReads()) {
+                users.add(r.getUser());
+            }
+            Message lastMessage = c.getLastState().getLastMessage();
+            if (lastMessage != null) {
+                users.add(lastMessage.getUser());
+            }
+        }
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                insertUsersUnique(users);
+                insertQueryWithChannelsTransaction(query, channels);
                 return null;
             }
         }.execute();
@@ -93,6 +149,8 @@ public class Storage {
             }
         }.execute();
     }
+
+
 
     public void insertQuery(QueryChannelsQ query) {
         if (!enabled) return;

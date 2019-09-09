@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.model;
 
+import android.util.Log;
+
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -27,6 +30,9 @@ import java.util.Map;
 
 @Entity(tableName = "stream_queries")
 public class QueryChannelsQ {
+    @Ignore
+    final String TAG = QueryChannelsQ.class.getSimpleName();
+
     // ID generation...
     @PrimaryKey
     @NotNull
@@ -137,7 +143,13 @@ public class QueryChannelsQ {
             }
             // restore the original sort
             for (String cid: selectedChannelIDs) {
-                selectedChannels.add(channelMap.get(cid));
+                Channel channel = channelMap.get(cid);
+                if (channel==null) {
+                    Log.w(TAG, "Missing channel for cid " + cid);
+                } else {
+                    selectedChannels.add(channel);
+                }
+
             }
         }
 

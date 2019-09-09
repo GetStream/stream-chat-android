@@ -292,10 +292,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 }
                 query.setChannelCIDs(channelIDs);
 
-                client().storage().insertQuery(query);
+                client().storage().insertQueryWithChannels(query, response.getChannels());
 
 
-                client().storage().insertChannels(response.getChannels());
 
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");

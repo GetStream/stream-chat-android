@@ -5,14 +5,15 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.storage.converter.DateConverter;
-import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
@@ -35,6 +36,8 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
@@ -57,7 +60,10 @@ import retrofit2.Response;
 /**
  * A channel
  */
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "created_by_user_id"), indices = {
+        @Index(value = {"created_by_user_id"})})
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
@@ -133,7 +139,9 @@ public class Channel {
     @SerializedName("created_by")
     @Ignore
     private User createdByUser;
-    private Integer createdByUserID;
+
+    @ColumnInfo(name = "created_by_user_id")
+    private String createdByUserID;
 
     @SerializedName("frozen")
     private boolean frozen;
@@ -300,6 +308,7 @@ public class Channel {
 
     public void preStorage() {
         this.lastState = this.channelState;
+        this.createdByUserID = this.createdByUser.getId();
     }
 
     public Client getClient() {
@@ -745,11 +754,11 @@ public class Channel {
         this.lastState = lastState;
     }
 
-    public Integer getCreatedByUserID() {
+    public String getCreatedByUserID() {
         return createdByUserID;
     }
 
-    public void setCreatedByUserID(Integer createdByUserID) {
+    public void setCreatedByUserID(String createdByUserID) {
         this.createdByUserID = createdByUserID;
     }
 }
