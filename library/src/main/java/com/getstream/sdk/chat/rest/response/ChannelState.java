@@ -137,6 +137,7 @@ public class ChannelState {
         for (ChannelUserRead read: getReads()) {
             clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
         }
+        clone.setLastMessage(getLastMessage());
         return clone;
     }
 
