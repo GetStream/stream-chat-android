@@ -114,11 +114,6 @@ public class ChannelState {
             messages = channel.getChannelState().messages;
             reads = channel.getChannelState().reads;
             members = channel.getChannelState().members;
-            // TODO: Here is the confusing/wrong bit...
-            if (messages != null && lastMessage == null) {
-                lastMessage = this.computeLastMessage();
-            }
-
         }
     }
 
@@ -312,6 +307,9 @@ public class ChannelState {
     }
 
     public Message getLastMessage() {
+        if (lastMessage == null) {
+            lastMessage = computeLastMessage();
+        }
         return lastMessage;
     }
 
