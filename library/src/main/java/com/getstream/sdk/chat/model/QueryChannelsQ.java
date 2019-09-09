@@ -6,15 +6,19 @@ import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.ChannelsDao;
 import com.getstream.sdk.chat.storage.converter.ChannelIdListConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.FilterObjectConverter;
 import com.getstream.sdk.chat.storage.converter.QuerySortConverter;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,8 +54,35 @@ public class QueryChannelsQ {
     }
 
     private void computeID() {
-        // TODO: hash the filter and sort
-        this.id = "myid";
+        Map<String, Object> data = new HashMap<>();
+        data.put("sort", this.getSort().getData());
+        data.put("filter", this.getFilter().getData());
+        Gson gson = GsonConverter.Gson();
+        String json = gson.toJson(data);
+
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(json.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            this.id = hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        this.id = "errorCreatingQueryID";
     }
 
     public String getId() {
@@ -91,16 +122,20 @@ public class QueryChannelsQ {
 
     public List<Channel> getChannels(ChannelsDao channelsDao, Integer limit) {
         List<String> selectedChannelIDs = this.getChannelIDs();
-        // TODO: slice
-        List<Channel> channels = channelsDao.getChannels(selectedChannelIDs);
-        Map<String, Channel> channelMap = new HashMap<String, Channel>();
-        for (Channel c : channels) {
-            channelMap.put(c.getCid(), c);
-        }
-        // restore the original sort
         List<Channel> selectedChannels = new ArrayList<>();
-        for (String cid: selectedChannelIDs) {
-            selectedChannels.add(channelMap.get(cid));
+
+        if (selectedChannelIDs != null) {
+            Integer max = (limit > selectedChannelIDs.size()) ? selectedChannelIDs.size() : limit;
+            selectedChannelIDs = selectedChannelIDs.subList(0, max);
+            List<Channel> channels = channelsDao.getChannels(selectedChannelIDs);
+            Map<String, Channel> channelMap = new HashMap<String, Channel>();
+            for (Channel c : channels) {
+                channelMap.put(c.getCid(), c);
+            }
+            // restore the original sort
+            for (String cid: selectedChannelIDs) {
+                selectedChannels.add(channelMap.get(cid));
+            }
         }
 
         return selectedChannels;
