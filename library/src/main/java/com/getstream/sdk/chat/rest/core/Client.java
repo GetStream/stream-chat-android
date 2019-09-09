@@ -20,7 +20,6 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
-import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -341,14 +340,12 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect() {
-        BaseURL baseURL = new BaseURL(options.getLocation());
-
         JSONObject json = buildUserDetailJSON();
-        String wsURL = baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
+        String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                 + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
 
-        mService = RetrofitClient.getAuthorizedClient(baseURL.url(BaseURL.Scheme.https), userToken).create(APIService.class);
+        mService = RetrofitClient.getAuthorizedClient(userToken, options).create(APIService.class);
         WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
     }
@@ -940,6 +937,7 @@ public class Client implements WSResponseHandler {
 
     public void disconnect() {
         Log.i(TAG, "disconnecting");
+        connectionWaiters.clear();
         WSConn.disconnect();
         connected = false;
         WSConn = null;

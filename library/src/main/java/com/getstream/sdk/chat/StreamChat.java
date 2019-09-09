@@ -82,6 +82,10 @@ public class StreamChat {
     }
 
     public static synchronized boolean init(String apiKey, Context context) {
+        return init(apiKey, new ApiClientOptions(), context);
+    }
+
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, Context context) {
         if (INSTANCE != null) {
             throw new RuntimeException("StreamChat is already initialized!");
         }
