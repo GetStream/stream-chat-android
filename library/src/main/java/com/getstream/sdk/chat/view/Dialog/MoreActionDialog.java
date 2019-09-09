@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -15,13 +17,17 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class MoreActionDialog extends Dialog {
 
@@ -76,7 +82,22 @@ public class MoreActionDialog extends Dialog {
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())){
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
-            ll_flag.setOnClickListener(view -> {});
+            ll_flag.setOnClickListener(view -> {
+                viewModel.getChannel().flagMessage(message.getId(), new FlagCallback() {
+                    @Override
+                    public void onSuccess(FlagResponse response) {
+                        Utils.showMessage(getContext(), "Message has been succesfully flagged");
+                        dismiss();
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Utils.showMessage(getContext(), errMsg);
+                        dismiss();
+                    }
+                });
+
+            });
         }else {
             ll_flag.setVisibility(View.GONE);
 
@@ -118,6 +139,11 @@ public class MoreActionDialog extends Dialog {
 
             dismiss();
         });
-        ll_copy.setOnClickListener((View v) -> dismiss());
+        ll_copy.setOnClickListener(view -> {
+            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("label", message.getText());
+            clipboard.setPrimaryClip(clip);
+            dismiss();
+        });
     }
 }

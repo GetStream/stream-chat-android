@@ -1,8 +1,10 @@
 package com.getstream.sdk.chat.rest.controller;
 
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -15,12 +17,15 @@ public class RetrofitClient {
 
     private static Retrofit retrofit = null;
 
-    public static Retrofit getAuthorizedClient(String baseURL, String userToken) {
+    public static Retrofit getAuthorizedClient(String userToken, ApiClientOptions options) {
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .writeTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .addInterceptor(chain -> {
                     Request request = chain.request();
                     Response response = chain.proceed(request);
@@ -42,11 +47,12 @@ public class RetrofitClient {
                     Response response = chain.proceed(request);
                     return response;
                 })
+                .followRedirects(false)
                 .build();
 
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(baseURL)
+                    .baseUrl(options.getHttpURL())
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
                     .build();

@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
-import com.getstream.sdk.chat.rest.BaseURL;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -27,7 +26,7 @@ import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.FlagUserCallback;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -46,6 +45,7 @@ import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
+import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -55,6 +55,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -182,10 +183,6 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
-    }
-
-    public Client(String apiKey, ApiClientOptions options) {
-        this(apiKey, new ApiClientOptions(), null);
     }
 
     public String getApiKey() {
@@ -331,14 +328,12 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect() {
-        BaseURL baseURL = new BaseURL(options.getLocation());
-
         JSONObject json = buildUserDetailJSON();
-        String wsURL = baseURL.url(BaseURL.Scheme.webSocket) + "connect?json=" + json + "&api_key="
+        String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                 + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         Log.d(TAG, "WebSocket URL : " + wsURL);
 
-        mService = RetrofitClient.getAuthorizedClient(baseURL.url(BaseURL.Scheme.https), userToken).create(APIService.class);
+        mService = RetrofitClient.getAuthorizedClient(userToken, options).create(APIService.class);
         WSConn = new WebSocketService(wsURL, user.getId(), this);
         WSConn.connect();
     }
@@ -929,6 +924,7 @@ public class Client implements WSResponseHandler {
 
     public void disconnect() {
         Log.i(TAG, "disconnecting");
+        connectionWaiters.clear();
         WSConn.disconnect();
         connected = false;
         WSConn = null;
@@ -1024,7 +1020,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void flagUser(@NonNull String targetUserId,
-                         FlagUserCallback callback) {
+                         FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id",targetUserId);
@@ -1047,7 +1043,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void unFlagUser(@NonNull String targetUserId,
-                           FlagUserCallback callback) {
+                           FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id",targetUserId);
@@ -1070,7 +1066,7 @@ public class Client implements WSResponseHandler {
     }
 
     public void flagMessage(@NonNull String targetMessageId,
-                            FlagUserCallback callback) {
+                            FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id",targetMessageId);
@@ -1087,13 +1083,17 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
 
     public void unFlagMessage(@NonNull String targetMessageId,
-                              FlagUserCallback callback) {
+                              FlagCallback callback) {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id",targetMessageId);
