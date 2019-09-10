@@ -28,4 +28,8 @@ public interface ChannelsDao {
             "WHERE channel.cid IN (:ids)")
     List<Channel> getChannels(final List<String> ids);
 
+    @Query("SELECT * FROM channel " +
+            "WHERE channel.cid IN (:cid)")
+    Channel getChannel(final String cid);
+
 }

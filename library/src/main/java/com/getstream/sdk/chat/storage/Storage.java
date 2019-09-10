@@ -307,6 +307,52 @@ public class Storage {
 
     }
 
+    public class ChannelQuery extends AsyncTask<String, Void, List<ChannelState>> {
+        private OnQueryListener<List<ChannelState>> mCallBack;
+        public Exception mException;
+
+        public ChannelQuery(OnQueryListener callback) {
+            mCallBack = callback;
+        }
+
+        @Override
+        protected List<ChannelState> doInBackground(String... params) {
+            try {
+                String channelID = params[0];
+                // get the channel
+                Channel channel = channelsDao.getChannel(channelID);
+                if (channel == null) {
+                    return null;
+                }
+
+                // fetch the message
+                List<Message> messages = messageDao.selectMessagesForChannel(channel.getCid(), 100);
+                ChannelState state = channel.getLastState();
+                state.setMessages(messages);
+                state.setChannel(channel);
+
+
+
+            } catch (Exception e) {
+                throw e;
+
+                //mException = e;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<ChannelState> result) {
+            if (mCallBack != null) {
+                if (mException == null) {
+                    mCallBack.onSuccess(result);
+                } else {
+                    mCallBack.onFailure(mException);
+                }
+            }
+        }
+    }
 
 
     public class QueryTask extends AsyncTask<String, Void, List<ChannelState>> {

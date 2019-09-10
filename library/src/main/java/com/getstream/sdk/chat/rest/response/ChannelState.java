@@ -51,6 +51,10 @@ public class ChannelState {
     @SerializedName("channel")
     private Channel channel;
 
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
     // messages are stored separately
     @Ignore
     @SerializedName("messages")

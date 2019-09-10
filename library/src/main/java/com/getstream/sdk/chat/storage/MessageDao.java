@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.storage;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
 
 import com.getstream.sdk.chat.rest.Message;
 
@@ -17,5 +18,10 @@ public interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertMessages(List<Message> messages);
+
+
+    @Query("SELECT * FROM stream_message " +
+            "WHERE stream_message.cid = :cid ORDER by created_at DESC LIMIT :limit")
+    List<Message> selectMessagesForChannel(final String cid, final Integer limit);
 
 }
