@@ -56,7 +56,7 @@ public class ChannelState {
     @SerializedName("messages")
     private List<Message> messages;
 
-    @Embedded
+    @Embedded(prefix = "last_message_")
     private Message lastMessage;
 
     @SerializedName("read")
@@ -266,6 +266,9 @@ public class ChannelState {
     public List<Message> getMessages() {
         if (messages == null) {
             return new ArrayList<>();
+        }
+        for (Message m: messages) {
+            m.setCid(getCid());
         }
         return messages;
     }

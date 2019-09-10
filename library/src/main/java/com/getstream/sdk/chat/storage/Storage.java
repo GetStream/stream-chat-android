@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -82,7 +83,7 @@ public class Storage {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-
+                Log.i(TAG, String.format("Inserted %d channels into offline storage", channels.size()));
                 channelsDao.insertChannels(channels);
                 return null;
             }
@@ -90,10 +91,12 @@ public class Storage {
     }
 
     @Transaction
-    private void insertQueryWithChannelsTransaction(QueryChannelsQ query, List<Channel> channels) {
-
+    private void insertChannelStateInTransaction(List<User> users, QueryChannelsQ query, List<Channel> channels, List<Message> messages) {
+        insertUsersUnique(users);
+        Log.i(TAG, String.format("Inserted %d channels, %d messages into offline storage for query with id %s", channels.size(), messages.size(), query.getId()));
         channelsDao.insertChannels(channels);
         queryChannelsQDao.insertQuery(query);
+        messageDao.insertMessages(messages);
     }
 
     private void insertUsersUnique(List<User> users) {
@@ -101,6 +104,8 @@ public class Storage {
         for (User u: users) {
             userMap.put(u.getId(), u);
         }
+
+        Log.i(TAG, String.format("Inserted %d users into offline storage", userMap.values().size()));
 
         usersDao.insertUsers(new ArrayList(userMap.values()));
     }
@@ -141,7 +146,9 @@ public class Storage {
                 m.setUser(userMap.get(m.getUserId()));
             }
             for (ChannelUserRead r : c.getLastState().getReads()) {
-                r.setUser(userMap.get(r.getUserId()));
+                User u = userMap.get(r.getUserId());
+                if (u == null) continue;
+                r.setUser(u);
             }
             Message lastMessage = c.getLastState().computeLastMessage();
             if (lastMessage != null) {
@@ -155,9 +162,9 @@ public class Storage {
         if (!enabled) return;
 
         List<User> users = new ArrayList<>();
+        List<Message> messages = new ArrayList<>();
 
 
-        Log.i(TAG, "writing channels to storage");
         for (Channel c: channels) {
             c.preStorage();
             c.getLastState().preStorage();
@@ -174,13 +181,23 @@ public class Storage {
             if (lastMessage != null) {
                 users.add(lastMessage.getUser());
             }
+            messages.addAll(c.getLastState().getMessages());
+            for (Message m: c.getLastState().getMessages()) {
+                users.add(m.getUser());
+                for (Reaction r: m.getOwnReactions()) {
+                    users.add(r.getUser());
+                }
+                for (Reaction r: m.getLatestReactions()) {
+                    users.add(r.getUser());
+                }
+            }
         }
+
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                insertUsersUnique(users);
-                insertQueryWithChannelsTransaction(query, channels);
+                insertChannelStateInTransaction(users, query, channels, messages);
                 return null;
             }
         }.execute();
@@ -218,6 +235,7 @@ public class Storage {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                Log.i(TAG, String.format("Inserted %d messages into offline storage", messages.size()));
                 messageDao.insertMessages(messages);
                 return null;
             }

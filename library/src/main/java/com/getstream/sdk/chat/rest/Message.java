@@ -6,13 +6,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
 import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
@@ -42,7 +45,15 @@ import java.util.TimeZone;
  * A message
  */
 
-@Entity(tableName = "stream_message")
+@Entity(tableName = "stream_message", foreignKeys =
+    {@ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "user_id"),
+    @ForeignKey(entity = Channel.class,
+        parentColumns = "cid",
+        childColumns = "cid")}
+        , indices = {
+        @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose
@@ -50,6 +61,9 @@ public class Message implements UserEntity {
     @NonNull
     @ColumnInfo(name = "id")
     private String id;
+
+    @NonNull
+    private String cid;
 
     @SerializedName("text")
     @Expose
@@ -68,6 +82,7 @@ public class Message implements UserEntity {
     @Ignore
     private User user;
 
+    @ColumnInfo(name="user_id")
     private Integer userID;
 
     @SerializedName("attachments")
@@ -90,6 +105,7 @@ public class Message implements UserEntity {
     private int replyCount;
 
     @SerializedName("created_at")
+    @ColumnInfo(name="created_at")
     @Expose
     @TypeConverters({DateConverter.class})
     private Date createdAt;
@@ -504,5 +520,14 @@ public class Message implements UserEntity {
 
     public void setUserID(Integer userID) {
         this.userID = userID;
+    }
+
+    @NonNull
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(@NonNull String cid) {
+        this.cid = cid;
     }
 }
