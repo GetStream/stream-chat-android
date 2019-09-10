@@ -82,8 +82,16 @@ public class Message implements UserEntity {
     @Ignore
     private User user;
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
     @ColumnInfo(name="user_id")
-    private Integer userID;
+    private String userID;
 
     @SerializedName("attachments")
     @Expose
@@ -224,6 +232,10 @@ public class Message implements UserEntity {
             setFormattedDate(message);
             message.setStartDay(!message.getDate().equals(preMessage.getDate()));
         }
+    }
+
+    public void preStorage() {
+        this.userID = this.getUser().getId();
     }
 
     private static void setFormattedDate(Message message) {
@@ -514,13 +526,6 @@ public class Message implements UserEntity {
         this.extraData = extraData;
     }
 
-    public Integer getUserID() {
-        return userID;
-    }
-
-    public void setUserID(Integer userID) {
-        this.userID = userID;
-    }
 
     @NonNull
     public String getCid() {

@@ -106,6 +106,9 @@ public class Storage {
         Log.i(TAG, String.format("Inserted %d channels, %d messages into offline storage for query with id %s", channels.size(), messages.size(), query.getId()));
         channelsDao.insertChannels(channels);
         queryChannelsQDao.insertQuery(query);
+        for (Message m: messages) {
+            m.preStorage();
+        }
         messageDao.insertMessages(messages);
     }
 
@@ -317,6 +320,43 @@ public class Storage {
 
     }
 
+    private void enrichUsers(Channel channel) {
+        List<String> userIDs = new ArrayList<>();
+
+        // the person who created the channel
+        userIDs.add(channel.getCreatedByUserID());
+        // iterate over messages and write the users
+        for (Message m: channel.getChannelState().getMessages()) {
+            userIDs.add(m.getUserID());
+            for (Reaction r: m.getLatestReactions()) {
+                userIDs.add(r.getUserID());
+            }
+            for (Reaction r: m.getOwnReactions()) {
+                userIDs.add(r.getUserID());
+            }
+        }
+
+        // query those users as a map
+        List<User> users = usersDao.getUsers(userIDs);
+        HashMap<String, User> userMap = new HashMap<String, User>();
+        for (User u: users) {
+            userMap.put(u.getId(), u);
+        }
+
+        //
+        for (Message m: channel.getChannelState().getMessages()) {
+            // add the user objects
+            User u = userMap.get(m.getUserId());
+            m.setUser(u);
+            for (Reaction r: m.getLatestReactions()) {
+                r.setUser(userMap.get(r.getUserID()));
+            }
+            for (Reaction r: m.getOwnReactions()) {
+                r.setUser(userMap.get(r.getUserID()));
+            }
+        }
+    }
+
     public class ChannelQuery extends AsyncTask<String, Void, ChannelState> {
         private OnQueryListener<ChannelState> mCallBack;
         public Exception mException;
@@ -340,6 +380,8 @@ public class Storage {
                 ChannelState state = channel.getLastState();
                 state.setMessages(messages);
                 state.setChannel(channel);
+                channel.setChannelState(state);
+                enrichUsers(channel);
                 return state;
 
 
