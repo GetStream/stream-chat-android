@@ -135,14 +135,12 @@ public class Message implements UserEntity {
         clone.ownReactions = ownReactions;
         clone.replyCount = replyCount;
         clone.createdAt = new Date(createdAt.getTime());
-        try {
+        if (updatedAt != null) {
             clone.updatedAt = new Date(updatedAt.getTime());
-        }catch (Exception e){}
-
-        try {
+        }
+        if (deletedAt != null) {
             clone.deletedAt = new Date(deletedAt.getTime());
-        }catch (Exception e){}
-
+        }
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;
         clone.command = command;
