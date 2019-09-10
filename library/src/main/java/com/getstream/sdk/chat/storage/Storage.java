@@ -139,7 +139,7 @@ public class Storage {
             }
             Message lastMessage = c.getLastState().computeLastMessage();
             if (lastMessage != null) {
-                userIDs.add(lastMessage.getUserId());
+                userIDs.add(lastMessage.getUser().getId());
             }
         }
 
@@ -165,7 +165,7 @@ public class Storage {
             }
             Message lastMessage = c.getLastState().computeLastMessage();
             if (lastMessage != null) {
-                lastMessage.setUser(userMap.get(lastMessage.getUserId()));
+                lastMessage.setUser(userMap.get(lastMessage.getUserID()));
             }
         }
 
@@ -346,7 +346,7 @@ public class Storage {
         //
         for (Message m: channel.getChannelState().getMessages()) {
             // add the user objects
-            User u = userMap.get(m.getUserId());
+            User u = userMap.get(m.getUserID());
             m.setUser(u);
             for (Reaction r: m.getLatestReactions()) {
                 r.setUser(userMap.get(r.getUserID()));

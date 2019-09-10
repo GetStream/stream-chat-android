@@ -21,7 +21,7 @@ public interface MessageDao {
 
 
     @Query("SELECT * FROM stream_message " +
-            "WHERE stream_message.cid = :cid ORDER by created_at DESC LIMIT :limit")
+            "WHERE stream_message.cid = :cid ORDER by created_at ASC LIMIT :limit")
     List<Message> selectMessagesForChannel(final String cid, final Integer limit);
 
 }
