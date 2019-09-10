@@ -58,6 +58,16 @@ public class Storage {
         return INSTANCE;
     }
 
+    public MutableLiveData<ChannelState> selectChannelState(String cid, OnQueryListener l) {
+        if (!enabled) return null;
+
+        MutableLiveData<ChannelState> channelStates = new MutableLiveData<>();
+
+        new ChannelQuery(l).execute(cid);
+
+        return channelStates;
+    }
+
     public MutableLiveData<List<ChannelState>> selectChannelStates(String queryID, Integer limit, OnQueryListener l) {
         if (!enabled) return null;
 
@@ -307,8 +317,8 @@ public class Storage {
 
     }
 
-    public class ChannelQuery extends AsyncTask<String, Void, List<ChannelState>> {
-        private OnQueryListener<List<ChannelState>> mCallBack;
+    public class ChannelQuery extends AsyncTask<String, Void, ChannelState> {
+        private OnQueryListener<ChannelState> mCallBack;
         public Exception mException;
 
         public ChannelQuery(OnQueryListener callback) {
@@ -316,7 +326,7 @@ public class Storage {
         }
 
         @Override
-        protected List<ChannelState> doInBackground(String... params) {
+        protected ChannelState doInBackground(String... params) {
             try {
                 String channelID = params[0];
                 // get the channel
@@ -330,6 +340,7 @@ public class Storage {
                 ChannelState state = channel.getLastState();
                 state.setMessages(messages);
                 state.setChannel(channel);
+                return state;
 
 
 
@@ -338,12 +349,10 @@ public class Storage {
 
                 //mException = e;
             }
-
-            return null;
         }
 
         @Override
-        protected void onPostExecute(List<ChannelState> result) {
+        protected void onPostExecute(ChannelState result) {
             if (mCallBack != null) {
                 if (mException == null) {
                     mCallBack.onSuccess(result);
