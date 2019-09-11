@@ -27,6 +27,13 @@ public class ReactionListConverter {
 
     @TypeConverter
     public static String someObjectListToString(List<Reaction> someObjects) {
+        for (Reaction r: someObjects) {
+            if (r.getUser() != null) {
+                r.setUserID(r.getUser().getId());
+                // dont serialize the full user object
+                r.setUser(null);
+            }
+        }
         return gson.toJson(someObjects);
     }
 }

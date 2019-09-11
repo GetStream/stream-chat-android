@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 
 
 // TODO: export schema
-@Database(entities = {Message.class, User.class, Channel.class, QueryChannelsQ.class, ChannelState.class}, version = 14, exportSchema = false)
+@Database(entities = {Message.class, User.class, Channel.class, QueryChannelsQ.class, ChannelState.class}, version = 15, exportSchema = false)
 public abstract class ChatDatabase extends RoomDatabase {
 
     public abstract MessageDao messageDao();
