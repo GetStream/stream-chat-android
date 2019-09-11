@@ -252,12 +252,30 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(channelCopy);
         return removed;
     }
+    private void setChannels(List<ChannelState> newChannelsState) {
+
+
+        // - offline loads first
+        // - after that we query the API and load more channels
+        // - it's possible that the offline results no longer match the query (so we should remove them)
+
+        List<Channel> newChannels = new ArrayList<>();
+        for (ChannelState chan: newChannelsState) {
+            newChannels.add(chan.getChannel());
+        }
+        channels.postValue(newChannels);
+    }
 
     private void addChannels(List<ChannelState> newChannelsState) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
         }
+
+        // - offline loads first
+        // - after that we query the API and load more channels
+        // - it's possible that the offline results no longer match the query (so we should remove them)
+
         List<Channel> newChannels = new ArrayList<>();
         for (ChannelState chan: newChannelsState) {
             newChannels.add(chan.getChannel());
@@ -279,7 +297,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
-                addChannels(response.getChannelStates());
+                // remove the offline channels before adding the new ones
+                setChannels(response.getChannelStates());
 
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
