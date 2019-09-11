@@ -5,6 +5,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -29,6 +37,8 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
@@ -51,40 +61,102 @@ import retrofit2.Response;
 /**
  * A channel
  */
+@Entity(foreignKeys = @ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "created_by_user_id"), indices = {
+        @Index(value = {"created_by_user_id"})})
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
+    @PrimaryKey
+    @NonNull
+    @SerializedName("cid")
+    private String cid;
+
+    @NonNull
     @SerializedName("id")
     private String id;
+    @NonNull
     @SerializedName("type")
     private String type;
     @SerializedName("last_message_at")
+    @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
+
+    @Embedded(prefix = "state_")
+    private ChannelState lastState;
 
     public Date getCreatedAt() {
         return createdAt;
     }
+    public void setCreatedAt(Date d) {
+        this.createdAt = d;
+    }
+
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
     @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
     private Date createdAt;
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
+    }
+
+    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
+        this.eventSubscribers = eventSubscribers;
+    }
+
+    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
+        this.eventSubscribersBy = eventSubscribersBy;
+    }
+
+    public void setSubscribersSeq(int subscribersSeq) {
+        this.subscribersSeq = subscribersSeq;
+    }
+
     @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
     private Date updatedAt;
     @SerializedName("created_by")
+    @Ignore
     private User createdByUser;
+
+    @ColumnInfo(name = "created_by_user_id")
+    private String createdByUserID;
+
     @SerializedName("frozen")
     private boolean frozen;
     @SerializedName("config")
+    @Embedded(prefix = "config_")
     private Config config;
     @SerializedName("name")
     private String name;
     @SerializedName("image")
     private String image;
 
+    @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+    @Ignore
     private Map<String, String>reactionTypes;
 
     // region Getter & Setter
@@ -93,7 +165,7 @@ public class Channel {
     }
 
     public String getCid() {
-        return getType() + ":" + getId();
+        return this.cid;
     }
 
     public String getType() {
@@ -122,6 +194,10 @@ public class Channel {
 
     public String getImage() {
         return image;
+    }
+
+    public void setCid(String id) {
+        this.cid = id;
     }
 
     public void setId(String id) {
@@ -191,8 +267,11 @@ public class Channel {
         return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
+    @Ignore
     private List<ChatChannelEventHandler> eventSubscribers;
+    @Ignore
     private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
+    @Ignore
     private int subscribersSeq;
 
     public HashMap<String, Object> getExtraData() {
@@ -206,13 +285,15 @@ public class Channel {
         this.client = client;
     }
 
+    @Ignore
     private Client client;
+    @Ignore
     private ChannelState channelState;
 
     // this constructor is here for GSON to play fair
-//    public Channel() {
-//        this(null, "", "", new HashMap<>());
-//    }
+    public Channel() {
+        this(null, "", "", new HashMap<>());
+    }
 
     /**
      * constructor - Create a channel
@@ -224,6 +305,11 @@ public class Channel {
      */
     public Channel(Client client, String type, String id) {
         this(client, type, id, new HashMap<>());
+    }
+
+    public void preStorage() {
+        this.lastState = this.channelState;
+        this.createdByUserID = this.createdByUser.getId();
     }
 
     public Client getClient() {
@@ -243,6 +329,7 @@ public class Channel {
     public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
+        this.cid = String.format("%s:%s", type, id);
         this.client = client;
 
         if (extraData == null) {
@@ -674,5 +761,21 @@ public class Channel {
                 Log.e(TAG, "mark read failed with error " + errMsg);
             }
         });
+    }
+
+    public ChannelState getLastState() {
+        return lastState;
+    }
+
+    public void setLastState(ChannelState lastState) {
+        this.lastState = lastState;
+    }
+
+    public String getCreatedByUserID() {
+        return createdByUserID;
+    }
+
+    public void setCreatedByUserID(String createdByUserID) {
+        this.createdByUserID = createdByUserID;
     }
 }

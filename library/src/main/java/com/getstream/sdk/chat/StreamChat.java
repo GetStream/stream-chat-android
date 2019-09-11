@@ -92,7 +92,8 @@ public class StreamChat {
 
         synchronized (Client.class) {
             if (INSTANCE == null) {
-                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
+                INSTANCE = new Client(apiKey, new ApiClientOptions(), new ConnectionLiveData(context));
+                INSTANCE.setContext(context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();

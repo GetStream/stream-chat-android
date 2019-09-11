@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.room.ColumnInfo;
+
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -9,9 +11,16 @@ public class Reaction {
     @Expose
     private String message_id;
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @SerializedName("user")
     @Expose
     private User user;
+
+    @ColumnInfo(name="user_id")
+    private String userID;
 
     @SerializedName("type")
     @Expose
@@ -29,4 +38,11 @@ public class Reaction {
         return type;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 }

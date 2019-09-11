@@ -34,6 +34,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -112,6 +113,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
         messages.setValue(channel.getChannelState().getMessages());
+
+        // fetch offline messages
+        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
+            @Override
+            public void onSuccess(ChannelState channelState) {
+                Log.i(TAG, "Read messages from local cache...");
+                if (channelState != null) {
+                    messages.setValue(channelState.getMessages());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
+
 
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
@@ -400,6 +418,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         messages.postValue(messagesCopy);
     }
 
+
+
     private void addMessages(List<Message> newMessages) {
         Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
@@ -407,10 +427,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy = new ArrayList<>();
         }
 
+
+
+        client().storage().insertMessages(newMessages);
+
+
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
             int index = messagesCopy.indexOf(message);
+
             if (index == -1) {
                 messagesCopy.add(0, message);
             } else {

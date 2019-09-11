@@ -64,6 +64,8 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
     testImplementation 'com.github.junit-team.junit5:junit-jupiter:r5.5.1'
     testImplementation 'com.github.junit-team.junit5:junit-bom:r5.5.1'
+    implementation 'androidx.room:room-runtime:2.1.0'
+    annotationProcessor 'androidx.room:room-compiler:2.1.0'
 }
 
 task javadoc(type: Javadoc) {
