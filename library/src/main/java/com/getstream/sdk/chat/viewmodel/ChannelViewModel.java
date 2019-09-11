@@ -158,7 +158,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return channelState;
     }
 
-    public MutableLiveData<List<Message>> getMessages() {
+    public LiveData<List<Message>> getMessages() {
         return isThread() ? threadMessages : messages;
     }
 
@@ -499,15 +499,16 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void addMessage(Message message) {
-        Log.d(TAG,"Add Message");
         List<Message> messagesCopy = getMessages().getValue();
         messagesCopy.add(message);
-        getMessages().postValue(messagesCopy);
+        if (isThread())
+            threadMessages.postValue(messagesCopy);
+        else
+            messages.postValue(messagesCopy);
 
     }
 
     private void addMessages(List<Message> newMessages) {
-        Log.d(TAG,"Add Messages");
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
