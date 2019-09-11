@@ -35,6 +35,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
@@ -44,10 +45,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
-
-    public MessageListViewStyle getStyle() {
-        return style;
-    }
 
     public void setFactory(MessageViewHolderFactory factory) {
         this.viewHolderFactory = factory;
@@ -79,8 +76,20 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.messageListItemList = new ArrayList<>();
     }
 
+    public MessageListViewStyle getStyle() {
+        return style;
+    }
+
     public void setStyle(MessageListViewStyle s) {
         style = s;
+    }
+
+    public MessageListView.GiphySendListener getGiphySendListener() {
+        return giphySendListener;
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public void replaceEntities(List<MessageListItem> newEntities) {

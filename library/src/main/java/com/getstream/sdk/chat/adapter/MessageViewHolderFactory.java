@@ -77,6 +77,7 @@ public class MessageViewHolderFactory {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
+            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
 
         } else if (viewType == TYPING) {
@@ -92,6 +93,7 @@ public class MessageViewHolderFactory {
         if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
             AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
             holder.setStyle(adapter.getStyle());
+            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         } else if (viewType == FILE_ATTACHMENT) {
             AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);

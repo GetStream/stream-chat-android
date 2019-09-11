@@ -13,11 +13,13 @@ import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
@@ -27,6 +29,7 @@ import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.EventResponse;
@@ -364,6 +367,25 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
+    private void shuffleGiphy(Message oldMessage, Message message) {
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(oldMessage);
+        if (index != -1) {
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
+    }
+
+    private void cancelGiphy(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        if (index != -1) {
+            messagesCopy.remove(message);
+            messages.postValue(messagesCopy);
+        }
+    }
+
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = messages.getValue();
         boolean removed = messagesCopy.remove(message);
@@ -519,6 +541,37 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 });
     }
 
+    public void sendGiphy(Message message, GiphyAction action) {
+        Map<String, String> map = new HashMap<>();
+        switch (action){
+            case SEND:
+                map.put("image_action", ModelType.action_send);
+                break;
+            case SHUFFLE:
+                map.put("image_action", ModelType.action_shuffle);
+                break;
+            case CANCEL:
+                cancelGiphy(message);
+                return;
+        }
+
+        SendActionRequest request = new SendActionRequest(getChannel().getId(),
+                message.getId(),
+                ModelType.channel_messaging,
+                map);
+        channel.sendAction(message.getId(), request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (action == GiphyAction.SHUFFLE)
+                    shuffleGiphy(message, response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.d(TAG, errMsg);
+            }
+        });
+    }
 
     public MessageListItemLiveData getEntities() {
         return entities;

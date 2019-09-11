@@ -15,9 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -32,6 +34,7 @@ import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -58,6 +61,7 @@ public class MessageListView extends RecyclerView {
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private GiphySendListener giphySendListener;
     private UserClickListener userClickListener;
 
 //    private int firstVisible;
@@ -262,12 +266,12 @@ public class MessageListView extends RecyclerView {
                 (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2));
     }
 
-    private void initFresco() {
+    private void init() {
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
+        giphySendListener = viewModel::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -279,6 +283,7 @@ public class MessageListView extends RecyclerView {
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
+        adapter.setGiphySendListener(giphySendListener);
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
@@ -301,8 +306,7 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-
-                    viewModel.setMessageListScrollUp(currentFirstVisible < fVPosition);
+                    viewModel.setMessageListScrollUp(currentLastVisible < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                 }
@@ -313,7 +317,7 @@ public class MessageListView extends RecyclerView {
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
-        initFresco();
+        init();
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
 
@@ -340,12 +344,22 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
             int newSize = adapter.getItemCount();
             int sizeGrewBy = newSize - oldSize;
-
-            int itemCount = adapter.getItemCount() - 2;
-            if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
+            // check typing indicator
+            if (messageListItemWrapper.isTyping() && scrolledBottom()){
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;
+            }
+            // check lastmessage update
+            if (!entities.isEmpty()) {
+                Message lastMessage = entities.get(entities.size() - 1).getMessage();
+                if (lastMessage != null
+                        && scrolledBottom()
+                        && justUpdated(lastMessage)) {
+                    int newPosition = adapter.getItemCount() - 1;
+                    layoutManager.scrollToPosition(newPosition);
+                    return;
+                }
             }
 
             if (!messageListItemWrapper.getHasNewMessages()) {
@@ -353,6 +367,7 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
+                Log.i(TAG, String.format("no Scroll no new message"));
                 return;
             }
 
@@ -412,6 +427,19 @@ public class MessageListView extends RecyclerView {
     public MessageListViewStyle getStyle() {
         return style;
     }
+
+    private boolean scrolledBottom(){
+        int itemCount = adapter.getItemCount() - 2;
+        return lVPosition >= itemCount;
+    }
+
+    private boolean justUpdated(Message message){
+        if (message.getUpdatedAt() == null) return false;
+        Date now = new Date();
+        long passedTime = now.getTime() - message.getUpdatedAt().getTime();
+        return message.getUpdatedAt() != null
+                && passedTime < 2000;
+    }
     // endregion
 
 
@@ -459,9 +487,7 @@ public class MessageListView extends RecyclerView {
         if (this.attachmentClickListener != null) {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         } else {
-            adapter.setAttachmentClickListener((message, attachment) -> {
-                showAttachment(message, attachment);
-            });
+            adapter.setAttachmentClickListener(this::showAttachment);
         }
     }
 
@@ -502,6 +528,10 @@ public class MessageListView extends RecyclerView {
 
     public interface AttachmentClickListener {
         void onAttachmentClick(Message message, Attachment attachment);
+    }
+
+    public interface GiphySendListener {
+        void onGiphySend(Message message, GiphyAction action);
     }
 
     public interface UserClickListener {
@@ -583,4 +613,5 @@ public class MessageListView extends RecyclerView {
         }
     }
     // endregion
+
 }

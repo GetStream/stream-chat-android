@@ -103,26 +103,6 @@ public class Utils {
         new Handler().postDelayed(() -> v.setEnabled(true), 1000);
     }
 
-    public static Drawable getDrawable(boolean isRect, int strokeColor, int strokeWidth, int solidColor, int topLeftRadius, int topRightRadius ) {
-        if (isRect)
-            return new DrawableBuilder()
-                    .rectangle()
-                    .strokeColor(strokeColor)
-                    .strokeWidth(strokeWidth)
-                    .solidColor(solidColor)
-                    .cornerRadii(0, 0, 20, 20)
-                    .build();
-        else
-            return new DrawableBuilder()
-                    .oval()
-                    .strokeColor(0)
-                    .strokeWidth(0)
-                    .cornerRadii(0, 0, 0, 0)
-                    .solidColor(0)
-                    .build();
-
-    }
-
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
     }
