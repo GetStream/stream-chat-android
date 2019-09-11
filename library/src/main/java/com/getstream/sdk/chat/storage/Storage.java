@@ -115,6 +115,7 @@ public class Storage {
     private void insertUsersUnique(List<User> users) {
         HashMap<String, User> userMap = new HashMap<>();
         for (User u: users) {
+            if (u == null) continue;
             userMap.put(u.getId(), u);
         }
 
@@ -290,10 +291,14 @@ public class Storage {
             m.preStorage();
 
             users.add(m.getUser());
-            for (Reaction r: m.getOwnReactions()) {
-                users.add(r.getUser());
+            List<Reaction> reactions = new ArrayList<>();
+            if (m.getOwnReactions() != null) {
+                reactions.addAll(m.getOwnReactions());
             }
-            for (Reaction r: m.getLatestReactions()) {
+            if (m.getLatestReactions() != null) {
+                reactions.addAll(m.getLatestReactions());
+            }
+            for (Reaction r: reactions) {
                 users.add(r.getUser());
             }
         }
