@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -231,8 +230,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         List<Channel> channelCopy = channels.getValue();
         int idx = channelCopy.lastIndexOf(channel);
 
-        client().storage().insertChannel(channel);
-
         if (idx != -1) {
             channelCopy.remove(channel);
             channelCopy.add(moveToTop ? 0 : idx, channel);
@@ -282,19 +279,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
-                //addChannels(response.getChannelStates());
-                // TODO: perhaps refactor this
-
-                QueryChannelsQ query = request.query();
-                List<String> channelIDs = new ArrayList<>();
-                for (Channel c : response.getChannels()) {
-                    channelIDs.add(c.getCid());
-                }
-                query.setChannelCIDs(channelIDs);
-
-                client().storage().insertQueryWithChannels(query, response.getChannels());
-
-
+                addChannels(response.getChannelStates());
 
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
@@ -377,7 +362,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Log.i(TAG, "onSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
-                client().storage().insertChannels(response.getChannels());
+
                 if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;

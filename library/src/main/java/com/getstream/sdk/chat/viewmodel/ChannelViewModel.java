@@ -429,9 +429,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
 
 
-        client().storage().insertMessages(newMessages);
-
-
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
@@ -532,13 +529,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (message.getStatus() == null) {
             message.setUser(client().getUser());
             // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
+            // TODO: Thierry: That doesn't make sense to me
             message.setCreatedAt(new Date());
             message.setType("regular");
             message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
+            message.preStorage();
+            client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
-            client().storage().insertMessage(message);
         }
 
         if (!client().isConnected()) {

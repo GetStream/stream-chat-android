@@ -174,6 +174,12 @@ public class Storage {
     public void insertQueryWithChannels(QueryChannelsQ query, List<Channel> channels) {
         if (!enabled) return;
 
+        List<String> channelIDs = new ArrayList<>();
+        for (Channel c : channels) {
+            channelIDs.add(c.getCid());
+        }
+        query.setChannelCIDs(channelIDs);
+
         List<User> users = new ArrayList<>();
         List<Message> messages = new ArrayList<>();
 
@@ -255,31 +261,52 @@ public class Storage {
 
     }
 
-    public void insertMessage(Message message) {
-        if (!enabled) return;
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                messageDao.insertMessage(message);
-                return null;
-            }
-        }.execute();
+    @Transaction
+    private void insertMessagesAndUsers(List<User> users, List<Message>messages) {
+        usersDao.insertUsers(users);
+        messageDao.insertMessages(messages);
+        Log.i(TAG, String.format("Inserted %d messages and %d users into offline storage", messages.size(), users.size()));
 
     }
 
-    public void insertMessages(List<Message> messages) {
+
+    public void insertMessageForChannel(Channel channel, Message message) {
         if (!enabled) return;
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(message);
+
+        insertMessagesForChannel(channel, messages);
+    }
+
+    public void insertMessagesForChannel(Channel channel, List<Message> messages) {
+        if (!enabled) return;
+
+        List<User> users = new ArrayList<>();
+
+        for (Message m : messages) {
+            m.setCid(channel.getCid());
+            m.preStorage();
+
+            users.add(m.getUser());
+            for (Reaction r: m.getOwnReactions()) {
+                users.add(r.getUser());
+            }
+            for (Reaction r: m.getLatestReactions()) {
+                users.add(r.getUser());
+            }
+        }
+
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                Log.i(TAG, String.format("Inserted %d messages into offline storage", messages.size()));
-                messageDao.insertMessages(messages);
+                insertMessagesAndUsers(users, messages);
+
                 return null;
             }
         }.execute();
-
     }
 
     public Context getContext() {

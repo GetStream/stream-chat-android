@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Member;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
@@ -463,6 +464,7 @@ public class Client implements WSResponseHandler {
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
+
                         for (ChannelState channelState: response.body().getChannelStates()) {
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
@@ -475,6 +477,14 @@ public class Client implements WSResponseHandler {
                             }
                             channel.mergeWithState(channelState);
                         }
+
+                        // store the results of the query
+                        QueryChannelsQ query = request.query();
+
+                        List<Channel> channels = response.body().getChannels();
+
+                        storage().insertQueryWithChannels(query, channels);
+                        // callback
                         callback.onSuccess(response.body());
                     }
 
