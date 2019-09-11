@@ -10,6 +10,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -54,6 +55,7 @@ import java.util.TimeZone;
         childColumns = "cid")}
         , indices = {
         @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose

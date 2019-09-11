@@ -19,8 +19,8 @@ public interface QueryChannelsQDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertQuery(QueryChannelsQ query);
 
-    @Query("SELECT * FROM stream_queries " +
-            "WHERE stream_queries.id=:id")
+    @Query("SELECT * FROM stream_query " +
+            "WHERE stream_query.id=:id")
     QueryChannelsQ select(final String id);
 
 

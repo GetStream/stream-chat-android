@@ -19,6 +19,11 @@ public interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertMessages(List<Message> messages);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public void insertMessage(Message message);
+
+    @Query("DELETE FROM stream_message WHERE stream_message.id = :id")
+    public void deleteMessage(String id);
 
     @Query("SELECT * FROM stream_message " +
             "WHERE stream_message.cid = :cid ORDER by created_at ASC LIMIT :limit")

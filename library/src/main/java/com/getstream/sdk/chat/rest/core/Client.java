@@ -159,6 +159,9 @@ public class Client implements WSResponseHandler {
                 channel.handleChannelUpdated(channel, event);
             }
 
+            // TODO: what about deleted channels?
+            // TODO: what about user update events?
+
             @Override
             public void onConnectionChanged(Event event) {
                 if (!event.getOnline()) {

@@ -24,12 +24,12 @@ public interface ChannelsDao {
     public void insertChannels(List<Channel> channels);
 
 
-    @Query("SELECT * FROM channel " +
-            "WHERE channel.cid IN (:ids)")
-    List<Channel> getChannels(final List<String> ids);
+    @Query("SELECT * FROM stream_channel " +
+            "WHERE stream_channel.cid IN (:cids)")
+    List<Channel> getChannels(final List<String> cids);
 
-    @Query("SELECT * FROM channel " +
-            "WHERE channel.cid IN (:cid)")
+    @Query("SELECT * FROM stream_channel " +
+            "WHERE stream_channel.cid IN (:cid)")
     Channel getChannel(final String cid);
 
 }

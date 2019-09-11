@@ -21,7 +21,7 @@ import java.util.HashMap;
  * A user
  */
 
-@Entity
+@Entity(tableName="stream_user")
 public class User implements UserEntity {
     @PrimaryKey
     @NonNull

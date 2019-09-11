@@ -12,6 +12,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.EventType;
@@ -61,10 +62,11 @@ import retrofit2.Response;
 /**
  * A channel
  */
-@Entity(foreignKeys = @ForeignKey(entity = User.class,
+@Entity(tableName="stream_channel", foreignKeys = @ForeignKey(entity = User.class,
         parentColumns = "id",
         childColumns = "created_by_user_id"), indices = {
         @Index(value = {"created_by_user_id"})})
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
@@ -679,6 +681,7 @@ public class Channel {
         name = channel.name;
         image = channel.image;
         extraData = channel.extraData;
+        getClient().storage().insertChannel(channel);
     }
 
     public void handleWatcherStart(Event event) {
@@ -698,6 +701,7 @@ public class Channel {
         if (getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }
+        getClient().storage().insertMessage(message);
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {
@@ -707,6 +711,7 @@ public class Channel {
                 if (event.getType().equals(EventType.MESSAGE_DELETED))
                     message.setText(Constant.MESSAGE_DELETED);
                 channelState.getMessages().set(i, message);
+                getClient().storage().insertMessage(message);
                 break;
             }
         }

@@ -8,6 +8,7 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.model.Channel;
@@ -29,7 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Entity
+@Entity(tableName="stream_channel_state")
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();

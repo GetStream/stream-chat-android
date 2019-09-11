@@ -242,6 +242,32 @@ public class Storage {
         }.execute();
     }
 
+    public void deleteMessage(String id) {
+        if (!enabled) return;
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                messageDao.deleteMessage(id);
+                return null;
+            }
+        }.execute();
+
+    }
+
+    public void insertMessage(Message message) {
+        if (!enabled) return;
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                messageDao.insertMessage(message);
+                return null;
+            }
+        }.execute();
+
+    }
+
     public void insertMessages(List<Message> messages) {
         if (!enabled) return;
 

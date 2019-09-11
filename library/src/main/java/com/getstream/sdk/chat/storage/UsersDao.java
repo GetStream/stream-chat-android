@@ -18,8 +18,8 @@ public interface UsersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertUsers(List<User> users);
 
-    @Query("SELECT * FROM user " +
-            "WHERE user.id IN (:ids)")
+    @Query("SELECT * FROM stream_user " +
+            "WHERE stream_user.id IN (:ids)")
     List<User> getUsers(final List<String> ids);
 
 }

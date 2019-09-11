@@ -1,18 +1,13 @@
 package com.getstream.sdk.chat.model;
 
-import android.util.Log;
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.storage.ChannelsDao;
 import com.getstream.sdk.chat.storage.converter.ChannelIdListConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.FilterObjectConverter;
@@ -23,13 +18,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Entity(tableName = "stream_queries")
+@Entity(tableName = "stream_query")
 public class QueryChannelsQ {
     @Ignore
     final String TAG = QueryChannelsQ.class.getSimpleName();

@@ -538,6 +538,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             addMessage(message);
+            client().storage().insertMessage(message);
         }
 
         if (!client().isConnected()) {
