@@ -8,9 +8,9 @@ import java.util.Map;
 public class SendEventRequest {
     @SerializedName("event")
     @Expose
-    Map<String,Object> event;
+    Map<String, Object> event;
 
-    public SendEventRequest(Map event){
-        this.event = event ;
+    public SendEventRequest(Map event) {
+        this.event = event;
     }
 }

@@ -15,7 +15,9 @@ import com.getstream.sdk.chat.utils.BaseStyle;
 public class ChannelListViewStyle extends BaseStyle {
     final String TAG = ChannelListViewStyle.class.getSimpleName();
     // dimensions
-
+    // layouts
+    public @LayoutRes
+    int channelPreviewLayout;
     private int dateTextSize;
     private int titleTextSize;
     private int messageTextSize;
@@ -30,10 +32,6 @@ public class ChannelListViewStyle extends BaseStyle {
     private int unreadTitleTextStyle;
     private int messageTextStyle;
     private int unreadMessageTextStyle;
-
-    // layouts
-    public @LayoutRes
-    int channelPreviewLayout;
 
 
     public ChannelListViewStyle(Context c, AttributeSet attrs) {

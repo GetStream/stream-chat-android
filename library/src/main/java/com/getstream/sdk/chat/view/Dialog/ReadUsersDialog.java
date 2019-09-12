@@ -7,7 +7,7 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.R;
 
-import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
+import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -55,7 +55,7 @@ public class ReadUsersDialog extends Dialog {
         for (ChannelUserRead read : reads){
             users.add(read.getUser());
         }
-        CommandListItemAdapter reactionAdapter = new CommandListItemAdapter(getContext(), users, false);
+        CommandMentionListItemAdapter reactionAdapter = new CommandMentionListItemAdapter(getContext(), users, false);
         lv_read_user.setAdapter(reactionAdapter);
     }
 }

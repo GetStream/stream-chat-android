@@ -21,13 +21,14 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.widget.MediaController;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
@@ -279,12 +280,12 @@ public class NativeSurfaceVideoView extends ResizingSurfaceView implements Nativ
     /**
      * Sets video URI using specific headers.
      *
-     * @param uri The Uri for the video to play
+     * @param uri     The Uri for the video to play
      * @param headers The headers for the URI request.
-     * Note that the cross domain redirection is allowed by default, but that can be
-     * changed with key/value pairs through the headers parameter with
-     * "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
-     * to disallow or allow cross domain redirection.
+     *                Note that the cross domain redirection is allowed by default, but that can be
+     *                changed with key/value pairs through the headers parameter with
+     *                "android-allow-cross-domain-redirect" as the key and "0" or "1" as the value
+     *                to disallow or allow cross domain redirection.
      */
     public void setVideoURI(Uri uri, @Nullable Map<String, String> headers) {
         delegate.setVideoURI(uri, headers);

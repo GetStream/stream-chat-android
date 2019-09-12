@@ -19,17 +19,18 @@ package com.getstream.sdk.chat.utils.exomedia.ui.widget;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.exomedia.util.TimeFormatUtil;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.BottomViewHideShowAnimation;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.TopViewHideShowAnimation;
+import com.getstream.sdk.chat.utils.exomedia.util.TimeFormatUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +85,7 @@ public class VideoControlsMobile extends VideoControls {
     @Override
     public void updateProgress(@IntRange(from = 0) long position, @IntRange(from = 0) long duration, @IntRange(from = 0, to = 100) int bufferPercent) {
         if (!userInteracting) {
-            seekBar.setSecondaryProgress((int) (seekBar.getMax() * ((float)bufferPercent / 100)));
+            seekBar.setSecondaryProgress((int) (seekBar.getMax() * ((float) bufferPercent / 100)));
             seekBar.setProgress((int) position);
 
             updateCurrentTime(position);

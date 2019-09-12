@@ -10,7 +10,7 @@ public class GetRepliesResponse {
 
     @SerializedName("messages")
     @Expose
-    private List<Message>messages;
+    private List<Message> messages;
 
     public List<Message> getMessages() {
         return messages;

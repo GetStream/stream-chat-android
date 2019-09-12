@@ -1,8 +1,12 @@
 package com.getstream.sdk.chat.utils;
 
 
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
+
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 
 public class StringUtility {
 
@@ -13,11 +17,12 @@ public class StringUtility {
         return sNumbers.toString();
     }
 
-    public static boolean isValidImageUrl(@Nullable String url){
+    public static boolean isValidImageUrl(@Nullable String url) {
         if (TextUtils.isEmpty(url)) return false;
-        return  !url.contains("svg");
+        return !url.contains("svg");
     }
-    public static boolean isEmoji(String message){
+
+    public static boolean isEmoji(String message) {
         return message.matches("(?:[\uD83C\uDF00-\uD83D\uDDFF]|[\uD83E\uDD00-\uD83E\uDDFF]|" +
                 "[\uD83D\uDE00-\uD83D\uDE4F]|[\uD83D\uDE80-\uD83D\uDEFF]|" +
                 "[\u2600-\u26FF]\uFE0F?|[\u2700-\u27BF]\uFE0F?|\u24C2\uFE0F?|" +
@@ -29,5 +34,21 @@ public class StringUtility {
                 "[\u203C\u2049]\uFE0F?|[\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE]\uFE0F?|" +
                 "[\u00A9\u00AE]\uFE0F?|[\u2122\u2139]\uFE0F?|\uD83C\uDC04\uFE0F?|\uD83C\uDCCF\uFE0F?|" +
                 "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
+    }
+
+    public static String getDeletedOrMentionedText(Message message) {
+        if (message == null) return null;
+        String text = message.getText();
+        if (message.getDeletedAt() != null) {
+            text = "_" + Constant.MESSAGE_DELETED + "_";
+            return text;
+        }
+        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
+            for (User mentionedUser : message.getMentionedUsers()) {
+                String userName = mentionedUser.getName();
+                text = text.replace("@" + userName, "**" + "@" + userName + "**");
+            }
+        }
+        return text;
     }
 }

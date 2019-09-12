@@ -9,11 +9,11 @@ import java.util.Map;
 public class ReactionRequest {
     @SerializedName("reaction")
     @Expose
-    Map<String,String> reaction;
+    Map<String, String> reaction;
 
-    public ReactionRequest(String reactionType){
-        Map<String,String>map = new HashMap<>();
-        map.put("type",reactionType);
+    public ReactionRequest(String reactionType) {
+        Map<String, String> map = new HashMap<>();
+        map.put("type", reactionType);
         this.reaction = map;
     }
 }

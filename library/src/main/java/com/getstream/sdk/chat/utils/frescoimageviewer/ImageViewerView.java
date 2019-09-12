@@ -1,8 +1,6 @@
 package com.getstream.sdk.chat.utils.frescoimageviewer;
 
 import android.content.Context;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -10,6 +8,9 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
+import androidx.core.view.GestureDetectorCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -109,9 +110,9 @@ class ImageViewerView extends RelativeLayout
         inflate(getContext(), R.layout.stream_image_viewer, this);
 
         backgroundView = findViewById(R.id.backgroundView);
-        pager = (MultiTouchViewPager) findViewById(R.id.pager);
+        pager = findViewById(R.id.pager);
 
-        dismissContainer = (ViewGroup) findViewById(R.id.container);
+        dismissContainer = findViewById(R.id.container);
         swipeDismissListener = new SwipeToDismissListener(findViewById(R.id.dismissView), this, this);
         dismissContainer.setOnTouchListener(swipeDismissListener);
 

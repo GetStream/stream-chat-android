@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
-    private List<ChannelUserRead> reads;
     STYLE style;
     boolean isIncoming;
+    private List<ChannelUserRead> reads;
 
     public ReadStateView(Context context) {
         super(context);

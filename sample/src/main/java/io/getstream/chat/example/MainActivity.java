@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
+        //client.enableOfflineStorage();
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");

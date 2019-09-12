@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -18,7 +19,7 @@ public class MessageListItem {
 
     private static final String TAG = MessageListItem.class.getSimpleName();
 
-    private MessageListItemAdapter.EntityType type;
+    private MessageListItemType type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
     private List<MessageViewHolderFactory.Position> positions;
@@ -27,14 +28,14 @@ public class MessageListItem {
     private List<User> users;
 
     public MessageListItem(Date date) {
-        this.type = MessageListItemAdapter.EntityType.DATE_SEPARATOR;
+        this.type = MessageListItemType.DATE_SEPARATOR;
         this.date = date;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
     public MessageListItem(Message message, List<MessageViewHolderFactory.Position> positions, Boolean messageMine) {
-        this.type = MessageListItemAdapter.EntityType.MESSAGE;
+        this.type = MessageListItemType.MESSAGE;
         this.message = message;
         this.positions = positions;
         this.messageMine = messageMine;
@@ -42,8 +43,15 @@ public class MessageListItem {
     }
 
     public MessageListItem(List<User> users) {
-        this.type = MessageListItemAdapter.EntityType.TYPING;
+        this.type = MessageListItemType.TYPING;
         this.users = users;
+        this.messageMine = false;
+        this.messageReadBy = new ArrayList<>();
+    }
+
+    public MessageListItem(MessageListItemType messageListItemType) {
+        this.type = messageListItemType;
+        this.date = new Date();
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
@@ -77,7 +85,7 @@ public class MessageListItem {
     }
 
     // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
-    boolean sameReads(List<ChannelUserRead>a, List<ChannelUserRead> b){
+    boolean sameReads(List<ChannelUserRead> a, List<ChannelUserRead> b) {
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
         }
@@ -112,6 +120,8 @@ public class MessageListItem {
         switch (type) {
             case TYPING:
                 return false;
+            case THREAD_SEPARATOR:
+                return false;
             case MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);
@@ -124,12 +134,15 @@ public class MessageListItem {
         return false;
     }
 
-    long getStableID(){
+    long getStableID() {
         Checksum checksum = new CRC32();
         String plaintext = type.toString() + ":";
         switch (type) {
             case TYPING:
                 plaintext += "typing";
+                break;
+            case THREAD_SEPARATOR:
+                plaintext += "Start of a new thread";
                 break;
             case MESSAGE:
                 plaintext += message.getId();
@@ -162,7 +175,7 @@ public class MessageListItem {
         return users;
     }
 
-    public MessageListItemAdapter.EntityType getType() {
+    public MessageListItemType getType() {
         return type;
     }
 

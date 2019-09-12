@@ -1,4 +1,3 @@
-
 package com.getstream.sdk.chat.utils.frescoimageviewer;
 
 import android.content.Context;
@@ -7,15 +6,14 @@ import android.view.ViewConfiguration;
 
 abstract class SwipeDirectionDetector {
 
-    public abstract void onDirectionDetected(Direction direction);
-
     private int touchSlop;
     private float startX, startY;
     private boolean isDetected;
-
     public SwipeDirectionDetector(Context context) {
         this.touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
+
+    public abstract void onDirectionDetected(Direction direction);
 
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {

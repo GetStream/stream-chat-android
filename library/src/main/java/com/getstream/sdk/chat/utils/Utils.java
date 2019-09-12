@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -27,8 +26,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.ByteArrayOutputStream;
@@ -40,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-
-import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class Utils {
 
@@ -101,26 +96,6 @@ public class Utils {
     public static void setButtonDelayEnable(View v) {
         v.setEnabled(false);
         new Handler().postDelayed(() -> v.setEnabled(true), 1000);
-    }
-
-    public static Drawable getDrawable(boolean isRect, int strokeColor, int strokeWidth, int solidColor, int topLeftRadius, int topRightRadius ) {
-        if (isRect)
-            return new DrawableBuilder()
-                    .rectangle()
-                    .strokeColor(strokeColor)
-                    .strokeWidth(strokeWidth)
-                    .solidColor(solidColor)
-                    .cornerRadii(0, 0, 20, 20)
-                    .build();
-        else
-            return new DrawableBuilder()
-                    .oval()
-                    .strokeColor(0)
-                    .strokeWidth(0)
-                    .cornerRadii(0, 0, 0, 0)
-                    .solidColor(0)
-                    .build();
-
     }
 
     public static int dpToPx(int dp) {
@@ -261,17 +236,5 @@ public class Utils {
             }
         }
         return mentionedUserIDs;
-    }
-
-    public static String getMentionedText(Message message) {
-        if (message == null) return null;
-        String text = message.getText();
-        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
-            for (User mentionedUser : message.getMentionedUsers()) {
-                String userName = mentionedUser.getName();
-                text = text.replace("@" + userName, "**" + "@" + userName + "**");
-            }
-        }
-        return text;
     }
 }

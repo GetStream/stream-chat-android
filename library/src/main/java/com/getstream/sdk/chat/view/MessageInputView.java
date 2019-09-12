@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -26,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.utils.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -56,6 +57,7 @@ public class MessageInputView extends RelativeLayout
         implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
 
     final String TAG = MessageInputView.class.getSimpleName();
+    Uri imageUri;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     // binding for this view
@@ -64,13 +66,9 @@ public class MessageInputView extends RelativeLayout
     // listeners
     private SendMessageListener sendMessageListener;
     private OpenCameraViewListener openCameraViewListener;
-
-    private AttachmentListener attachmentListener;
     // state
-
+    private AttachmentListener attachmentListener;
     private Message editingMessage;
-
-
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
 
@@ -79,6 +77,7 @@ public class MessageInputView extends RelativeLayout
         super(context);
         binding = initBinding(context);
     }
+    // endregion
 
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,7 +85,6 @@ public class MessageInputView extends RelativeLayout
         binding = initBinding(context);
         applyStyle();
     }
-    // endregion
 
     // region Init
     private StreamViewMessageInputBinding initBinding(Context context) {
@@ -131,15 +129,33 @@ public class MessageInputView extends RelativeLayout
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
-
+        onBackPressed();
         setOnSendMessageListener(viewModel);
         initAttachmentUI();
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
-                    if (!isOpen) binding.etMessage.clearFocus();
+                    if (!isOpen) {
+                        binding.etMessage.clearFocus();
+                        onBackPressed();
+                    }
                 });
     }
 
+    private void onBackPressed() {
+        setFocusableInTouchMode(true);
+        requestFocus();
+        setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
+            if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                if (viewModel.isThread()) {
+                    viewModel.initThread();
+                    initSendMessage();
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        });
+    }
 
     private void observeUIs(LifecycleOwner lifecycleOwner) {
         viewModel.getInputType().observe(lifecycleOwner, inputType -> {
@@ -160,7 +176,7 @@ public class MessageInputView extends RelativeLayout
         });
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
-        viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup ->{
+        viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
             if (messageListScrollup)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
@@ -231,7 +247,6 @@ public class MessageInputView extends RelativeLayout
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
-    Uri imageUri;
     // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -332,7 +347,7 @@ public class MessageInputView extends RelativeLayout
     private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
 
-        if (isEdit){
+        if (isEdit) {
             getEditMessage().setText(input);
             getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
             viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
@@ -350,6 +365,7 @@ public class MessageInputView extends RelativeLayout
             });
         } else {
             Message m = new Message();
+            m.setStatus(null);
             m.setText(input);
             m.setAttachments(sendFileFunction.getSelectedAttachments());
             if (sendMessageListener != null) {

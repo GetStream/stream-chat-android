@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-
 import com.getstream.sdk.chat.databinding.StreamChannelTypingIndicatorBinding;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 

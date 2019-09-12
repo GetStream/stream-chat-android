@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -20,47 +21,28 @@ import java.util.List;
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-    }
-
-    public enum EntityType {
-        DATE_SEPARATOR, MESSAGE, TYPING
-    }
-
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
-
     private ChannelState channelState;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
     private MessageListView.ReadStateClickListener readStateClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
-
     private Context context;
     private String className;
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
-
-    public MessageListViewStyle getStyle() {
-        return style;
-    }
-
-    public void setFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-    }
-
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
         this.channelState = channelState;
         this.messageListItemList = messageListItemList;
     }
-
 
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList, MessageViewHolderFactory factory) {
         this.context = context;
@@ -69,19 +51,39 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.viewHolderFactory = factory;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return messageListItemList.get(position).getStableID();
-    }
-
     public MessageListItemAdapter(Context context) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
         this.messageListItemList = new ArrayList<>();
     }
 
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
+
+    public void setFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return messageListItemList.get(position).getStableID();
+    }
+
+    public MessageListViewStyle getStyle() {
+        return style;
+    }
+
     public void setStyle(MessageListViewStyle s) {
         style = s;
+    }
+
+    public MessageListView.GiphySendListener getGiphySendListener() {
+        return giphySendListener;
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public void replaceEntities(List<MessageListItem> newEntities) {
@@ -98,8 +100,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
-            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
-        } catch(IndexOutOfBoundsException e) {
+            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions()).ordinal();
+        } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -108,7 +110,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
-        return this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
+        return this.viewHolderFactory.createMessageViewHolder(this, parent, MessageListItemType.values()[viewType]);
     }
 
 
@@ -119,7 +121,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
                 messageListItem,
-                position, isThread,
+                position,
+                isThread,
                 messageClickListener,
                 messageLongClickListener,
                 attachmentClickListener,
@@ -128,16 +131,28 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
     }
+
     public void setChannelState(ChannelState channelState) {
         this.channelState = channelState;
     }
+
+    public boolean isThread() {
+        return isThread;
+    }
+
+    public void setThread(boolean thread) {
+        isThread = thread;
+    }
+
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         if (style.isEnableReaction())
             this.messageClickListener = messageClickListener;
     }
-    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener){
+
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
         this.messageLongClickListener = messageLongClickListener;
     }
+
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
     }

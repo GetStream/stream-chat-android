@@ -93,7 +93,7 @@ public class ReactionDialog extends Dialog {
         WindowManager.LayoutParams wlp = window.getAttributes();
         wlp.x = 0;
         int screenHeight = Utils.getScreenResolution(getContext());
-        reactionDlgView.post(()->{
+        reactionDlgView.post(() -> {
             Log.i(TAG, "reactionDlgView Height: " + reactionDlgView.getHeight());
         });
         Log.i(TAG, "originY: " + originY);

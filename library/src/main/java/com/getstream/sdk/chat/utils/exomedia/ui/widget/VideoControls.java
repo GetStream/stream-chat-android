@@ -21,11 +21,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
-import androidx.annotation.ColorRes;
-import androidx.annotation.IntRange;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -34,6 +29,12 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.listener.VideoControlsButtonListener;
@@ -104,6 +105,27 @@ public abstract class VideoControls extends RelativeLayout implements VideoContr
 
     private long lastUpdatedPosition;
 
+    public VideoControls(Context context) {
+        super(context);
+        setup(context);
+    }
+
+    public VideoControls(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setup(context);
+    }
+
+    public VideoControls(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setup(context);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public VideoControls(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        setup(context);
+    }
+
     /**
      * Sets the current video position, updating the seek bar
      * and the current time field
@@ -143,27 +165,6 @@ public abstract class VideoControls extends RelativeLayout implements VideoContr
      * the controls visibility
      */
     protected abstract void updateTextContainerVisibility();
-
-    public VideoControls(Context context) {
-        super(context);
-        setup(context);
-    }
-
-    public VideoControls(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setup(context);
-    }
-
-    public VideoControls(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setup(context);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public VideoControls(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        setup(context);
-    }
 
     /***
      * Updates the current timestamp

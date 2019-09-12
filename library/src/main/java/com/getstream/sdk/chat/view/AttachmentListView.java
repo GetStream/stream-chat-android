@@ -22,14 +22,7 @@ public class AttachmentListView extends RecyclerView {
 
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
-
-    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
-        this.viewHolderFactory = viewHolderFactory;
-    }
+    private MessageListView.GiphySendListener giphySendListener;
 
     public AttachmentListView(Context context) {
         super(context);
@@ -47,16 +40,27 @@ public class AttachmentListView extends RecyclerView {
         this.context = context;
     }
 
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+    }
+
+    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
+        this.viewHolderFactory = viewHolderFactory;
+    }
+
     public void setEntity(MessageListItem messageListItem) {
         this.setLayoutManager(mLayoutManager);
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
-        if (this.attachmentClickListener != null) {
+        if (this.giphySendListener != null)
+            this.adapter.setGiphySendListener(giphySendListener);
+
+        if (this.attachmentClickListener != null)
             this.adapter.setAttachmentClickListener(attachmentClickListener);
-        }
-        if (this.bubbleHelper != null) {
+
+        if (this.bubbleHelper != null)
             this.adapter.setBubbleHelper(bubbleHelper);
-        }
+
         this.setAdapter(adapter);
     }
 
@@ -71,6 +75,10 @@ public class AttachmentListView extends RecyclerView {
         this.longClickListener = longClickListener;
         if (adapter != null)
             adapter.setLongClickListener(this.longClickListener);
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

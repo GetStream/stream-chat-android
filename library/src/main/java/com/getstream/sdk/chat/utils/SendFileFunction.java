@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.function;
+package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.widget.AdapterView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
-import com.getstream.sdk.chat.adapter.CommandListItemAdapter;
+import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
@@ -25,10 +25,7 @@ import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;
@@ -42,15 +39,15 @@ public class SendFileFunction {
     ChannelViewModel viewModel;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    private List<Attachment> selectedAttachments = null;
-
-
-    CommandListItemAdapter commandListItemAdapter = null;
+    CommandMentionListItemAdapter commandMentionListItemAdapter = null;
     List<Object> commands = null;
-
     Context context;
     StreamViewMessageInputBinding binding;
-    ChannelState channelResponse;
+    AttachmentListAdapter fileAttachmentAdapter = null;
+    AttachmentListAdapter selectedFileAttachmentAdapter = null;
+    private List<Attachment> selectedAttachments = null;
+
+    // region Attachment
 
     public SendFileFunction(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
@@ -61,8 +58,6 @@ public class SendFileFunction {
     public List<Attachment> getSelectedAttachments() {
         return selectedAttachments;
     }
-
-    // region Attachment
 
     public void onClickAttachmentViewOpen(View v) {
         // Permission Check
@@ -97,6 +92,10 @@ public class SendFileFunction {
         if (view.getVisibility() != View.VISIBLE) return;
         view.setVisibility(View.GONE);
     }
+
+    // endregion
+
+    // region Media
 
     public void fadeAnimationView(View view, boolean isFadeIn) {
         if (isFadeIn) {
@@ -165,10 +164,6 @@ public class SendFileFunction {
         }
     }
 
-    // endregion
-
-    // region Media
-
     public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
         binding.tvInputboxBack.setVisibility(View.VISIBLE);
@@ -179,6 +174,9 @@ public class SendFileFunction {
         closeAnimationView(binding.clSelectPhoto);
         fadeAnimationView(binding.ivBackAttachment, false);
     }
+    // endregion
+
+    // region File
 
     private void updateComposerViewBySelectedMedia(List<Attachment> attachments, Attachment attachment) {
         binding.rvComposer.setVisibility(View.VISIBLE);
@@ -255,12 +253,6 @@ public class SendFileFunction {
         });
         binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
     }
-    // endregion
-
-    // region File
-
-    AttachmentListAdapter fileAttachmentAdapter = null;
-    AttachmentListAdapter selectedFileAttachmentAdapter = null;
 
     public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
@@ -411,8 +403,8 @@ public class SendFileFunction {
             if (!commands.isEmpty() && binding.clCommand.getVisibility() != View.VISIBLE)
                 openCommandView();
 
-            if (commandListItemAdapter != null)
-                commandListItemAdapter.notifyDataSetChanged();
+            if (commandMentionListItemAdapter != null)
+                commandMentionListItemAdapter.notifyDataSetChanged();
 
             if (commands.isEmpty())
                 closeCommandView();
@@ -428,8 +420,8 @@ public class SendFileFunction {
         String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvCommandTitle.setText(title);
         binding.tvCommand.setText("");
-        commandListItemAdapter = new CommandListItemAdapter(this.context, commands, isCommand);
-        binding.lvCommand.setAdapter(commandListItemAdapter);
+        commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, isCommand);
+        binding.lvCommand.setAdapter(commandMentionListItemAdapter);
         openCommandView();
         binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
             if (isCommand) {
@@ -457,8 +449,8 @@ public class SendFileFunction {
     private void setCommands(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channelResponse.getChannel().getConfig().getCommands().size(); i++) {
-            Command command = channelResponse.getChannel().getConfig().getCommands().get(i);
+        for (int i = 0; i < viewModel.getChannel().getConfig().getCommands().size(); i++) {
+            Command command = viewModel.getChannel().getConfig().getCommands().get(i);
             if (command.getName().contains(string))
                 commands.add(command);
         }
@@ -467,8 +459,8 @@ public class SendFileFunction {
     private void setMentionUsers(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channelResponse.getMembers().size(); i++) {
-            Member member = channelResponse.getMembers().get(i);
+        for (int i = 0; i < viewModel.getChannel().getChannelState().getMembers().size(); i++) {
+            Member member = viewModel.getChannel().getChannelState().getMembers().get(i);
             User user = member.getUser();
             if (user.getName().contains(string))
                 commands.add(user);

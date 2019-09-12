@@ -23,14 +23,15 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.MatrixManager;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
@@ -48,9 +49,8 @@ import javax.microedition.khronos.egl.EGLSurface;
  * once we have a video
  */
 public class ResizingTextureView extends TextureView implements ClearableSurface {
-    private static final String TAG = "ResizingTextureView";
     protected static final int MAX_DEGREES = 360;
-
+    private static final String TAG = "ResizingTextureView";
     /**
      * A version of the EGL14.EGL_CONTEXT_CLIENT_VERSION so that we can
      * reference it without being on API 17+
@@ -85,11 +85,8 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
             EGL_CONTEXT_CLIENT_VERSION, 2,
             EGL10.EGL_NONE
     };
-
-    public interface OnSizeChangeListener {
-        void onVideoSurfaceSizeChange(int width, int height);
-    }
-
+    @NonNull
+    protected final ReentrantLock globalLayoutMatrixListenerLock = new ReentrantLock(true);
     @Nullable
     protected OnSizeChangeListener onSizeChangeListener;
 
@@ -105,14 +102,10 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
     protected AttachedListener attachedListener = new AttachedListener();
     @NonNull
     protected GlobalLayoutMatrixListener globalLayoutMatrixListener = new GlobalLayoutMatrixListener();
-    @NonNull
-    protected final ReentrantLock globalLayoutMatrixListenerLock = new ReentrantLock(true);
-
     @IntRange(from = 0, to = 359)
     protected int requestedUserRotation = 0;
     @IntRange(from = 0, to = 359)
     protected int requestedConfigurationRotation = 0;
-
     protected boolean measureBasedOnAspectRatio;
 
     public ResizingTextureView(Context context) {
@@ -252,7 +245,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
      * Updates the stored videoSize and updates the default buffer size
      * in the backing texture view.
      *
-     * @param width The width for the video
+     * @param width  The width for the video
      * @param height The height for the video
      * @return True if the surfaces DefaultBufferSize was updated
      */
@@ -269,7 +262,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
             SurfaceTexture surfaceTexture = getSurfaceTexture();
-            if(surfaceTexture != null) {
+            if (surfaceTexture != null) {
                 surfaceTexture.setDefaultBufferSize(width, height);
             } else {
                 return false;
@@ -280,15 +273,6 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
     }
 
     /**
-     * Sets the scaling method to use for the video
-     *
-     * @param scaleType The scale type to use
-     */
-    public void setScaleType(@NonNull ScaleType scaleType) {
-        matrixManager.scale(this, scaleType);
-    }
-
-    /**
      * Retrieves the current {@link ScaleType} being used
      *
      * @return The current {@link ScaleType} being used
@@ -296,6 +280,15 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
     @NonNull
     public ScaleType getScaleType() {
         return matrixManager.getCurrentScaleType();
+    }
+
+    /**
+     * Sets the scaling method to use for the video
+     *
+     * @param scaleType The scale type to use
+     */
+    public void setScaleType(@NonNull ScaleType scaleType) {
+        matrixManager.scale(this, scaleType);
     }
 
     /**
@@ -323,7 +316,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
      * Specifies the rotation that should be applied to the video for both the user
      * requested value and the value specified in the videos configuration.
      *
-     * @param userRotation The rotation the user wants to apply
+     * @param userRotation          The rotation the user wants to apply
      * @param configurationRotation The rotation specified in the configuration for the video
      */
     public void setVideoRotation(@IntRange(from = 0, to = 359) int userRotation, @IntRange(from = 0, to = 359) int configurationRotation) {
@@ -355,7 +348,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
      * Performs the functionality to notify the listener that the
      * size of the surface has changed filtering out duplicate calls.
      *
-     * @param width The new width
+     * @param width  The new width
      * @param height The new height
      */
     protected void notifyOnSizeChangeListener(int width, int height) {
@@ -371,6 +364,10 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
         if (onSizeChangeListener != null) {
             onSizeChangeListener.onVideoSurfaceSizeChange(width, height);
         }
+    }
+
+    public interface OnSizeChangeListener {
+        void onVideoSurfaceSizeChange(int width, int height);
     }
 
     /**

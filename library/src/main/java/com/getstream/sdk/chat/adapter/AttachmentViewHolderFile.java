@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -41,8 +40,9 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
+                     MessageListView.MessageLongClickListener longClickListener,
+                     MessageListView.GiphySendListener giphySendListener) {
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
         tv_file_size.setText(attachment.getFileSizeHumanized());
         // update the icon nicely
         iv_file_thumb.setImageResource(attachment.getIcon());

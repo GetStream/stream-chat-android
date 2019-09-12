@@ -20,6 +20,7 @@ import android.app.UiModeManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 
 import java.util.LinkedList;
@@ -86,12 +87,12 @@ public class DeviceUtil {
     }
 
     public static class NonCompatibleDevice {
+        private final String model;
+        private final String manufacturer;
         /***
          * True if we should treat all devices from the manufacturer as non compliant
          */
         private boolean ignoreModel;
-        private final String model;
-        private final String manufacturer;
 
         public NonCompatibleDevice(@NonNull String manufacturer) {
             this.manufacturer = manufacturer;

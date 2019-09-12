@@ -3,6 +3,14 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
+import androidx.room.TypeConverters;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -10,6 +18,9 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
+import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -20,21 +31,68 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity(tableName = "stream_channel_state")
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
-
+    @PrimaryKey
+    @NonNull
+    private String cid;
+    // ignore since we always embed the channelstate in the channel
+    @Ignore
     @SerializedName("channel")
     private Channel channel;
-
+    // messages are stored separately
+    @Ignore
     @SerializedName("messages")
     private List<Message> messages;
-
+    @Embedded(prefix = "last_message_")
+    private Message lastMessage;
     @SerializedName("read")
+    @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
-
     @SerializedName("members")
+    @TypeConverters({MemberListConverter.class})
     private List<Member> members;
+    @Ignore
+    @SerializedName("watchers")
+    private List<Watcher> watchers;
+    @Ignore
+    @SerializedName("watcher_count")
+    private int watcherCount;
+    @Ignore
+    private Date lastKnownActiveWatcher;
+
+    public ChannelState() {
+        this(null);
+    }
+
+    public ChannelState(Channel channel) {
+        this.channel = channel;
+        if (channel == null || channel.getChannelState() == null) {
+            messages = new ArrayList<>();
+            reads = new ArrayList<>();
+            members = new ArrayList<>();
+        } else {
+            messages = channel.getChannelState().messages;
+            reads = channel.getChannelState().reads;
+            members = channel.getChannelState().members;
+        }
+    }
+
+    // endregion
+    private static void sortUserReads(List<ChannelUserRead> reads) {
+        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
 
     public List<Watcher> getWatchers() {
         if (watchers == null) {
@@ -43,31 +101,18 @@ public class ChannelState {
         return watchers;
     }
 
-    @SerializedName("watchers")
-    private List<Watcher> watchers;
+    public void preStorage() {
+
+        this.cid = this.channel.getCid();
+        this.lastMessage = this.computeLastMessage();
+    }
 
     public int getWatcherCount() {
         return watcherCount;
     }
 
-    @SerializedName("watcher_count")
-    private int watcherCount;
-
-    public ChannelState(Channel channel) {
-        this.channel = channel;
-        if (channel == null || channel.getChannelState() == null){
-            messages = new ArrayList<>();
-            reads = new ArrayList<>();
-            members = new ArrayList<>();
-        }else{
-            messages = channel.getChannelState().messages;
-            reads = channel.getChannelState().reads;
-            members = channel.getChannelState().members;
-        }
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
+    public void setWatcherCount(int watcherCount) {
+        this.watcherCount = watcherCount;
     }
 
     public Date getLastKnownActiveWatcher() {
@@ -77,23 +122,17 @@ public class ChannelState {
         return lastKnownActiveWatcher;
     }
 
-    private Date lastKnownActiveWatcher;
-
     public ChannelState copy() {
         ChannelState clone = new ChannelState(channel);
         clone.reads = new ArrayList<>();
-        for (ChannelUserRead read: getReads()) {
+        for (ChannelUserRead read : getReads()) {
             clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
         }
+        clone.setLastMessage(getLastMessage());
         return clone;
     }
 
-    // endregion
-    private static void sortUserReads(List<ChannelUserRead> reads) {
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-    }
-
-    public synchronized void addWatcher(Watcher watcher){
+    public synchronized void addWatcher(Watcher watcher) {
         if (watchers == null) {
             watchers = new ArrayList<>();
         }
@@ -101,7 +140,7 @@ public class ChannelState {
         watchers.add(watcher);
     }
 
-    public void removeWatcher(Watcher watcher){
+    public void removeWatcher(Watcher watcher) {
         if (watchers == null) {
             watchers = new ArrayList<>();
         }
@@ -134,6 +173,8 @@ public class ChannelState {
     }
 
     public String getOldestMessageId() {
+
+        // TODO: we should ignore messages that haven't been sent yet
         Message message = getOldestMessage();
         if (message == null) {
             return null;
@@ -154,7 +195,7 @@ public class ChannelState {
                 lastActive = message.getCreatedAt();
             }
         }
-        for (Watcher watcher: getWatchers()) {
+        for (Watcher watcher : getWatchers()) {
             if (lastActive.before(watcher.getUser().getLastActive())) {
                 if (channel.getClient().fromCurrentUser(watcher)) continue;
                 lastActive = watcher.getUser().getLastActive();
@@ -166,7 +207,7 @@ public class ChannelState {
     public Boolean anyOtherUsersOnline() {
         Boolean online = false;
         List<User> users = this.getOtherUsers();
-        for (User u: users) {
+        for (User u : users) {
             if (u.getOnline()) {
                 online = true;
                 break;
@@ -201,18 +242,34 @@ public class ChannelState {
         return channel;
     }
 
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     public Message getOldestMessage() {
-        if (messages == null || messages.size() == 0) {
+        if (messages == null) {
             return null;
         }
-        return messages.get(0);
+        for (Message m : messages) {
+            if (m.getSyncStatus() == Sync.SYNCED) {
+                return m;
+            }
+        }
+        return null;
     }
 
     public List<Message> getMessages() {
         if (messages == null) {
             return new ArrayList<>();
         }
+        for (Message m : messages) {
+            m.setCid(getCid());
+        }
         return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 
     public List<ChannelUserRead> getReads() {
@@ -220,6 +277,10 @@ public class ChannelState {
             reads = new ArrayList<>();
         }
         return reads;
+    }
+
+    public void setReads(List<ChannelUserRead> reads) {
+        this.reads = reads;
     }
 
     public Map<String, ChannelUserRead> getReadsByUser() {
@@ -252,7 +313,22 @@ public class ChannelState {
         return members;
     }
 
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+
     public Message getLastMessage() {
+        if (lastMessage == null) {
+            lastMessage = computeLastMessage();
+        }
+        return lastMessage;
+    }
+
+    public void setLastMessage(Message lastMessage) {
+        this.lastMessage = lastMessage;
+    }
+
+    public Message computeLastMessage() {
         Message lastMessage = null;
         List<Message> messages = getMessages();
         for (int i = messages.size() - 1; i >= 0; i--) {
@@ -290,12 +366,12 @@ public class ChannelState {
         User lastReadUser = null;
         sortUserReads(this.reads);
         for (int i = reads.size() - 1; i >= 0; i--) {
-                ChannelUserRead channelUserRead = reads.get(i);
-                if (!channel.getClient().fromCurrentUser(channelUserRead)) {
-                    lastReadUser = channelUserRead.getUser();
-                    break;
-                }
+            ChannelUserRead channelUserRead = reads.get(i);
+            if (!channel.getClient().fromCurrentUser(channelUserRead)) {
+                lastReadUser = channelUserRead.getUser();
+                break;
             }
+        }
         return lastReadUser;
     }
 
@@ -312,26 +388,20 @@ public class ChannelState {
         }
     }
 
-    public void addMessageSorted(Message message){
+    public void addMessageSorted(Message message) {
         List<Message> diff = new ArrayList<>();
         diff.add(message);
         addMessagesSorted(diff);
     }
 
-    private void addMessagesSorted(List<Message> messages){
+    private void addMessagesSorted(List<Message> messages) {
         int initialSize = messages.size();
-        Log.w(TAG, "initial size" + initialSize);
-        Log.w(TAG, "incoming size" + messages.size());
 
         for (Message m : messages) {
-            if(m.getParentId() == null) {
+            if (m.getParentId() == null) {
                 addOrUpdateMessage(m);
             }
         }
-    }
-
-    public void setWatcherCount(int watcherCount) {
-        this.watcherCount = watcherCount;
     }
 
     public void init(ChannelState incoming) {
@@ -348,7 +418,7 @@ public class ChannelState {
         }
 
         if (incoming.watchers != null) {
-            for (Watcher watcher: incoming.watchers) {
+            for (Watcher watcher : incoming.watchers) {
                 addWatcher(watcher);
             }
         }

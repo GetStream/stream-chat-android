@@ -17,11 +17,12 @@
 package com.getstream.sdk.chat.utils.exomedia.core.api;
 
 import android.net.Uri;
+import android.view.View;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.View;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
@@ -42,10 +43,6 @@ import java.util.Map;
  * using the ExoPlayer.
  */
 public interface VideoViewApi {
-
-    interface OnSurfaceSizeChanged {
-        void onSurfaceSizeChanged(int width, int height);
-    }
 
     int getHeight();
 
@@ -135,6 +132,7 @@ public interface VideoViewApi {
 
     /**
      * Clear all selected tracks for the specified renderer.
+     *
      * @param type The renderer type
      */
     void clearSelectedTracks(@NonNull ExoMedia.RendererType type);
@@ -152,22 +150,23 @@ public interface VideoViewApi {
      * Enables or disables the track associated with the <code>type</code>. Note, by default all
      * tracks are enabled
      *
-     * @param type The {@link ExoMedia.RendererType} to enable or disable the track for
+     * @param type    The {@link ExoMedia.RendererType} to enable or disable the track for
      * @param enabled <code>true</code> if the track should be enabled.
      */
     void setRendererEnabled(@NonNull ExoMedia.RendererType type, boolean enabled);
 
     /**
      * Return true if at least one renderer for the given type is enabled
+     *
      * @param type The renderer type
      * @return true if at least one renderer for the given type is enabled
      */
     boolean isRendererEnabled(@NonNull ExoMedia.RendererType type);
 
-    void setScaleType(@NonNull ScaleType scaleType);
-
     @NonNull
     ScaleType getScaleType();
+
+    void setScaleType(@NonNull ScaleType scaleType);
 
     void setMeasureBasedOnAspectRatioEnabled(boolean doNotMeasureBasedOnAspectRatio);
 
@@ -186,4 +185,8 @@ public interface VideoViewApi {
     void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio);
 
     void setRepeatMode(@Player.RepeatMode int repeatMode);
+
+    interface OnSurfaceSizeChanged {
+        void onSurfaceSizeChanged(int width, int height);
+    }
 }

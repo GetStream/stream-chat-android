@@ -19,6 +19,7 @@ package com.getstream.sdk.chat.utils.exomedia.util;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 
@@ -29,27 +30,18 @@ import androidx.annotation.Nullable;
 public class StopWatch {
     protected static final String HANDLER_THREAD_NAME = "ExoMedia_StopWatch_HandlerThread";
     protected static final int DEFAULT_TICK_DELAY = 33; // ~30 fps
-
-    public interface TickListener {
-        void onStopWatchTick(long currentTime);
-    }
-
     protected volatile boolean isRunning = false;
     protected int tickDelay = DEFAULT_TICK_DELAY;
-
     protected Handler delayedHandler;
     protected HandlerThread handlerThread;
     protected boolean useHandlerThread = false;
-
     protected TickListener listener;
     protected TickRunnable tickRunnable = new TickRunnable();
-
     protected long startTime = 0;
     protected long currentTime = 0;
     protected long storedTime = 0;
     @FloatRange(from = 0F)
     protected float speedMultiplier = 1F;
-
     public StopWatch() {
         this(true);
     }
@@ -74,15 +66,6 @@ public class StopWatch {
     }
 
     /**
-     * Sets the approximate duration between time updates.
-     *
-     * @param milliSeconds The approximate duration between time updates [default: {@value #DEFAULT_TICK_DELAY}]
-     */
-    public void setTickDelay(int milliSeconds) {
-        tickDelay = milliSeconds;
-    }
-
-    /**
      * Retrieves the approximate duration between time updates.
      *
      * @return The approximate duration in milliseconds between time updates
@@ -92,14 +75,12 @@ public class StopWatch {
     }
 
     /**
-     * Sets the multiplier to use when calculating the passed duration. This
-     * won't affect the tick delay {@link #setTickDelay(int)} but will change
-     * the output for the current time.
+     * Sets the approximate duration between time updates.
      *
-     * @param multiplier The amount to multiply the duration between each tick by
+     * @param milliSeconds The approximate duration between time updates [default: {@value #DEFAULT_TICK_DELAY}]
      */
-    public void setSpeedMultiplier(@FloatRange(from = 0F) float multiplier) {
-        speedMultiplier = multiplier;
+    public void setTickDelay(int milliSeconds) {
+        tickDelay = milliSeconds;
     }
 
     /**
@@ -111,6 +92,17 @@ public class StopWatch {
     @FloatRange(from = 0F)
     public float getSpeedMultiplier() {
         return speedMultiplier;
+    }
+
+    /**
+     * Sets the multiplier to use when calculating the passed duration. This
+     * won't affect the tick delay {@link #setTickDelay(int)} but will change
+     * the output for the current time.
+     *
+     * @param multiplier The amount to multiply the duration between each tick by
+     */
+    public void setSpeedMultiplier(@FloatRange(from = 0F) float multiplier) {
+        speedMultiplier = multiplier;
     }
 
     /**
@@ -212,6 +204,10 @@ public class StopWatch {
      */
     public void setTickListener(@Nullable TickListener listener) {
         this.listener = listener;
+    }
+
+    public interface TickListener {
+        void onStopWatchTick(long currentTime);
     }
 
     protected class TickRunnable implements Runnable {
