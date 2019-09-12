@@ -402,7 +402,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     || !TextUtils.isEmpty(attachment.getTitle())) {
                 Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
                 alv_attachments.setBackground(background);
-                alv_attachments.setBackgroundResource(0);
                 return;
             }
         }
