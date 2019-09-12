@@ -25,8 +25,10 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
@@ -62,6 +64,7 @@ public class MessageListView extends RecyclerView {
     private AttachmentClickListener attachmentClickListener;
     private GiphySendListener giphySendListener;
     private UserClickListener userClickListener;
+    private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
@@ -284,6 +287,7 @@ public class MessageListView extends RecyclerView {
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
         setUserClickListener(userClickListener);
+        setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
         adapter.setChannelState(getChannel().getChannelState());
 
@@ -525,6 +529,23 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setReadStateClickListener(ReadStateClickListener readStateClickListener) {
+        this.readStateClickListener = readStateClickListener;
+        if (adapter == null) return;
+
+        if (this.readStateClickListener != null) {
+            adapter.setReadStateClickListener(this.readStateClickListener);
+        } else {
+            adapter.setReadStateClickListener(reads ->  {
+                new ReadUsersDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setReads(reads)
+                        .setStyle(style)
+                        .show();
+            });
+        }
+    }
+
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
         if (adapter != null) {
@@ -627,6 +648,10 @@ public class MessageListView extends RecyclerView {
 
     public interface UserClickListener {
         void onUserClick(User user);
+    }
+
+    public interface ReadStateClickListener {
+        void onReadStateClick(List<ChannelUserRead> reads);
     }
 
     public interface BubbleHelper {

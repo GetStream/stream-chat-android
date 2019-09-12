@@ -28,7 +28,6 @@
         <item name="colorPrimary">@color/stream_gray</item>
         <item name="colorPrimaryDark">@color/stream_gray_dark</item>
     </style>
-
     <!--Text, Edit Style-->
     <style name="text_edit">
         <item name="android:background">@null</item>
