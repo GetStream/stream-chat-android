@@ -267,11 +267,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private String getThreadOldestMessageId(){
-        String messageId = null;
-        if (threadMessages.getValue() != null)
+        List<Message> messages = threadMessages.getValue();
+        if (messages != null && messages.size() > 1)
             return threadMessages.getValue().get(1).getId();
-
-        return messageId;
+        return null;
     }
     // endregion
 
@@ -601,7 +600,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     setLoadingMoreDone();
                 }
             });
-        }else{
+        } else {
 
             if (reachedEndOfPagination) {
                 Log.i(TAG, "already reached end of pagination, skip loading more");
