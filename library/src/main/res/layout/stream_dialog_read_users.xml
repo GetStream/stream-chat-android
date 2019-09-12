@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@color/stream_white"
         android:divider="@null"
+        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/stream_item_command" />

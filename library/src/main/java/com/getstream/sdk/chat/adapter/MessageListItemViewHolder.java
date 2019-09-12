@@ -272,9 +272,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getStatus() == null)
             return;
 
-
-
-
         switch (message.getStatus()) {
             case SENDING:
                 pb_deliver.setVisibility(View.VISIBLE);
