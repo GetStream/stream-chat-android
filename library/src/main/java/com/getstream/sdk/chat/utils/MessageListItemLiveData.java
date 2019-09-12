@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.MessageListItemType;
@@ -231,6 +232,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 entities.add(new MessageListItem(MessageListItemType.THREAD_SEPARATOR));
                 previousMessage = null;
             }
+            // Insert No connection Separator
+            if (i == topIndex && !StreamChat.getInstance(null).isConnected())
+                entities.add(new MessageListItem(MessageListItemType.NO_CONNECTION));
+
         }
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);

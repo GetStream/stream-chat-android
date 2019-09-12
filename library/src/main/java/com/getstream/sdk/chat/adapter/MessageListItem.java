@@ -118,10 +118,6 @@ public class MessageListItem {
         }
 
         switch (type) {
-            case TYPING:
-                return false;
-            case THREAD_SEPARATOR:
-                return false;
             case MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);

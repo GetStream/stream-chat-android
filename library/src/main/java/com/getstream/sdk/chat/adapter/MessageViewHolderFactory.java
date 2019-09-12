@@ -36,6 +36,8 @@ public class MessageViewHolderFactory {
             return MessageListItemType.TYPING;
         } else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
             return MessageListItemType.THREAD_SEPARATOR;
+        }else if (messageListItemType == MessageListItemType.NO_CONNECTION) {
+            return MessageListItemType.NO_CONNECTION;
         }
         return MessageListItemType.NOT_FOUND;
     }
@@ -79,6 +81,10 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == MessageListItemType.THREAD_SEPARATOR) {
             ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        }else if (viewType == MessageListItemType.NO_CONNECTION) {
+            NoConnectionViewHolder holder = new NoConnectionViewHolder(R.layout.stream_item_no_connection, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
