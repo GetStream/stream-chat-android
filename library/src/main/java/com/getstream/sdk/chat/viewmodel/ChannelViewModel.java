@@ -211,7 +211,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setInputType(InputType inputType) {
-        this.inputType.postValue(inputType);
+        switch (inputType) {
+            case SELECT:
+                if (this.inputType.getValue() == InputType.DEFAULT)
+                    this.inputType.postValue(inputType);
+                break;
+            default:
+                this.inputType.postValue(inputType);
+                break;
+        }
     }
 
     public LiveData<List<User>> getTypingUsers() {
@@ -223,6 +231,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setEditMessage(Message editMessage) {
+        setInputType(InputType.EDIT);
         this.editMessage.postValue(editMessage);
     }
 
