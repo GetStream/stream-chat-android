@@ -483,6 +483,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 messagesCopy.set(index, message);
                 messages.postValue(messagesCopy);
             }
+
+            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())){
+                messagesCopy.set(0, message);
+                threadMessages.postValue(messagesCopy);
+            }
             Log.d(TAG, "updateMessage:" + updated);
         }
         return updated;
