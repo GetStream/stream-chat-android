@@ -89,6 +89,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Message message;
     private MessageListItem messageListItem;
     private MessageListViewStyle style;
+    private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
 
     @DimenRes int avatarWidth;
@@ -96,11 +97,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
         style = s;
-    }
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-        avatarWidth = style.getAvatarWidth();
     }
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -195,6 +191,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadState();
     }
     // endregion
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+        avatarWidth = style.getAvatarWidth();
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
+    }
 
     private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
@@ -262,14 +266,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
-        if (isThread
-                || isDeletedOrFailedMessage()
+        if (isDeletedOrFailedMessage()
                 || message == null
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()
                 || !messageListItem.isMine()
-                || message.getCreatedAt().getTime() < channelState.getLastActive().getTime())
+                || message.getType().equals(ModelType.message_ephemeral))
             return;
 
         if (message.isDelivered()) {
@@ -396,6 +399,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         alv_attachments.setVisibility(View.VISIBLE);
         alv_attachments.setViewHolderFactory(viewHolderFactory);
         alv_attachments.setStyle(style);
+        alv_attachments.setGiphySendListener(giphySendListener);
         alv_attachments.setEntity(this.messageListItem);
         alv_attachments.setBubbleHelper(this.getBubbleHelper());
         alv_attachments.setAttachmentClickListener(attachmentClickListener);
@@ -406,6 +410,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     || !TextUtils.isEmpty(attachment.getTitle())) {
                 Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
                 alv_attachments.setBackground(background);
+                alv_attachments.setBackgroundResource(0);
                 return;
             }
         }

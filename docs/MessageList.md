@@ -252,12 +252,12 @@ public class MessageViewHolderFactory {
         // typing
         // date
         // various message types
-        MessageListItemAdapter.EntityType entityType = messageListItem.getType();
-        if (entityType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
+        MessageListItemAdapter.EntityType messageListItemType = messageListItem.getType();
+        if (messageListItemType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
             return DATE_SEPARATOR;
-        } else if (entityType == MessageListItemAdapter.EntityType.MESSAGE) {
+        } else if (messageListItemType == MessageListItemAdapter.EntityType.MESSAGE) {
             return MESSAGE;
-        } else if (entityType == MessageListItemAdapter.EntityType.TYPING) {
+        } else if (messageListItemType == MessageListItemAdapter.EntityType.TYPING) {
             return TYPING;
         }
         return NOT_FOUND;

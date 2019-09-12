@@ -1,5 +1,5 @@
 package com.getstream.sdk.chat.enums;
 
-public enum EntityType {
+public enum MessageListItemType {
     DATE_SEPARATOR, MESSAGE, TYPING, THREAD_SEPARATOR, NOT_FOUND
 }

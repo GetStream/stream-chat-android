@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.storage.Storage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -251,12 +252,30 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(channelCopy);
         return removed;
     }
+    private void setChannels(List<ChannelState> newChannelsState) {
+
+
+        // - offline loads first
+        // - after that we query the API and load more channels
+        // - it's possible that the offline results no longer match the query (so we should remove them)
+
+        List<Channel> newChannels = new ArrayList<>();
+        for (ChannelState chan: newChannelsState) {
+            newChannels.add(chan.getChannel());
+        }
+        channels.postValue(newChannels);
+    }
 
     private void addChannels(List<ChannelState> newChannelsState) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
         }
+
+        // - offline loads first
+        // - after that we query the API and load more channels
+        // - it's possible that the offline results no longer match the query (so we should remove them)
+
         List<Channel> newChannels = new ArrayList<>();
         for (ChannelState chan: newChannelsState) {
             newChannels.add(chan.getChannel());
@@ -270,6 +289,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
+
         QueryChannelListCallback queryCallback = new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
@@ -277,8 +297,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 setLoadingDone();
 
                 Log.i(TAG, "onSuccess for loading the channels");
-                addChannels(response.getChannels());
-                if (response.getChannels().size() < pageSize) {
+                // remove the offline channels before adding the new ones
+                setChannels(response.getChannelStates());
+
+                if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
                 }
@@ -307,6 +329,23 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private void queryChannels() {
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) return;
+            QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
+                    .withLimit(pageSize)
+                    .withMessageLimit(20);
+        client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
+            @Override
+            public void onSuccess(List<ChannelState> channels) {
+                Log.i(TAG, "Read from local cache...");
+                if (channels != null) {
+                    addChannels(channels);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
         queryChannelsInner(0);
     }
 
@@ -314,6 +353,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (!client().isConnected()) {
             return;
         }
+
         if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
             return;
@@ -340,8 +380,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSuccess for loading more channels");
                 setLoadingMoreDone();
-                addChannels(response.getChannels());
-                if (response.getChannels().size() < pageSize) {
+                addChannels(response.getChannelStates());
+
+                if (response.getChannelStates().size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
                 }

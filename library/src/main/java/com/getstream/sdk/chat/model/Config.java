@@ -1,5 +1,9 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.room.TypeConverters;
+
+import com.getstream.sdk.chat.storage.converter.CommandListConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -10,17 +14,28 @@ import java.util.List;
  */
 
 public class Config {
+    @TypeConverters({DateConverter.class})
     @SerializedName("created_at")
     private Date created_at;
 
     @SerializedName("updated_at")
+    @TypeConverters({DateConverter.class})
     private Date updated_at;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @SerializedName("name")
     private String name;
 
     @SerializedName("typing_events")
     private boolean typingEvents;
+
+
+    public void setConnect_events(boolean connect_events) {
+        this.connect_events = connect_events;
+    }
 
     @SerializedName("read_events")
     private boolean readEvents;
@@ -34,6 +49,14 @@ public class Config {
     @SerializedName("reactions")
     private boolean reactions;
 
+    public void setInfinite(String infinite) {
+        this.infinite = infinite;
+    }
+
+    public void setMax_message_length(int max_message_length) {
+        this.max_message_length = max_message_length;
+    }
+
     @SerializedName("replies")
     private boolean replies;
 
@@ -46,50 +69,27 @@ public class Config {
     @SerializedName("max_message_length")
     private int max_message_length;
 
+    public void setAutomod(String automod) {
+        this.automod = automod;
+    }
+
+    public void setCommands(List<Command> commands) {
+        this.commands = commands;
+    }
+
     @SerializedName("automod")
     private String automod;
 
     @SerializedName("commands")
+    @TypeConverters(CommandListConverter.class)
     private List<Command>commands;
-
-    public Date getCreatedAt() {
-        return created_at;
-    }
-
-    public Date getUpdatedAt() {
-        return updated_at;
-    }
 
     public String getName() {
         return name;
     }
 
-    public boolean istypingEvents() {
-        return typingEvents;
-    }
-
     public boolean isReadEvents() {
         return readEvents;
-    }
-
-    public boolean isConnect_events() {
-        return connect_events;
-    }
-
-    public boolean isSearch() {
-        return search;
-    }
-
-    public boolean isReactions() {
-        return reactions;
-    }
-
-    public boolean isReplies() {
-        return replies;
-    }
-
-    public boolean isMutes() {
-        return mutes;
     }
 
     public String getInfinite() {
@@ -106,5 +106,69 @@ public class Config {
 
     public List<Command> getCommands() {
         return commands;
+    }
+
+    public void setReadEvents(boolean readEvents) {
+        this.readEvents = readEvents;
+    }
+
+    public void setTypingEvents(boolean typingEvents) {
+        this.typingEvents = typingEvents;
+    }
+
+    public boolean isTypingEvents() {
+        return typingEvents;
+    }
+
+    public boolean isConnect_events() {
+        return connect_events;
+    }
+
+    public boolean isSearch() {
+        return search;
+    }
+
+    public void setSearch(boolean search) {
+        this.search = search;
+    }
+
+    public boolean isReactions() {
+        return reactions;
+    }
+
+    public void setReactions(boolean reactions) {
+        this.reactions = reactions;
+    }
+
+    public boolean isReplies() {
+        return replies;
+    }
+
+    public void setReplies(boolean replies) {
+        this.replies = replies;
+    }
+
+    public boolean isMutes() {
+        return mutes;
+    }
+
+    public void setMutes(boolean mutes) {
+        this.mutes = mutes;
+    }
+
+    public Date getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Date created_at) {
+        this.created_at = created_at;
+    }
+
+    public Date getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(Date updated_at) {
+        this.updated_at = updated_at;
     }
 }

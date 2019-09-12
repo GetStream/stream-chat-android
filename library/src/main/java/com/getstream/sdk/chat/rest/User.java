@@ -2,10 +2,16 @@ package com.getstream.sdk.chat.rest;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -15,7 +21,10 @@ import java.util.HashMap;
  * A user
  */
 
+@Entity(tableName="stream_user")
 public class User implements UserEntity {
+    @PrimaryKey
+    @NonNull
     @SerializedName("id")
     private String id;
 
@@ -29,23 +38,29 @@ public class User implements UserEntity {
     private String role;
 
     @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
     private Date createdAt;
 
     @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
     private Date updatedAt;
 
     @SerializedName("last_active")
+    @TypeConverters(DateConverter.class)
     private Date lastActive;
 
     @SerializedName("online")
     private Boolean online;
 
     @SerializedName("total_unread_count")
-    private Number totalUnreadCount;
+    private Integer totalUnreadCount;
+
+
 
     @SerializedName("unread_channels")
-    private Number unreadChannels;
+    private Integer unreadChannels;
 
+    @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
     public Date getCreatedAt() {
@@ -112,11 +127,11 @@ public class User implements UserEntity {
         this.name = name;
     }
 
-    public Number getTotalUnreadCount() {
+    public Integer getTotalUnreadCount() {
         return totalUnreadCount;
     }
 
-    public Number getUnreadChannels() {
+    public Integer getUnreadChannels() {
         return unreadChannels;
     }
 
@@ -161,6 +176,7 @@ public class User implements UserEntity {
     * @param id User id
     * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
     * */
+    @Ignore
     public User(String id, HashMap<String,Object> extraData) {
         this.id = id;
         this.online = false;
@@ -188,6 +204,11 @@ public class User implements UserEntity {
     public HashMap<String, Object> getExtraData() {
         return extraData;
     }
+
+    public void setExtraData(HashMap<String, Object> data) {
+        this.extraData = data;
+    }
+
 
     public String getInitials() {
         if (this.name == null) {
@@ -219,5 +240,13 @@ public class User implements UserEntity {
 
     public String getUserId() {
         return id;
+    }
+
+    public void setTotalUnreadCount(Integer totalUnreadCount) {
+        this.totalUnreadCount = totalUnreadCount;
+    }
+
+    public void setUnreadChannels(Integer unreadChannels) {
+        this.unreadChannels = unreadChannels;
     }
 }

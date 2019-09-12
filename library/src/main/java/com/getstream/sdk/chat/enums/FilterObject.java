@@ -42,6 +42,7 @@ public class FilterObject {
         this.data = new HashMap<>();
     }
 
+
     public FilterObject(HashMap<String, Object> data) {
         this.data = data;
     }

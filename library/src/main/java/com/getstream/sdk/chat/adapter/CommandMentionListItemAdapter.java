@@ -2,6 +2,8 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,21 +11,20 @@ import android.widget.BaseAdapter;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
+import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.rest.User;
 
 import java.util.List;
 
-public class CommandListItemAdapter extends BaseAdapter {
+public class CommandMentionListItemAdapter extends BaseAdapter {
 
-    private final String TAG = CommandListItemAdapter.class.getSimpleName();
+    private final String TAG = CommandMentionListItemAdapter.class.getSimpleName();
     private LayoutInflater layoutInflater;
-    private Context context;
     private List<Object> commands;
     private boolean isCommand;
 
-    public CommandListItemAdapter(Context context, List commands, boolean isCommand) {
-        this.context = context;
+    public CommandMentionListItemAdapter(Context context, List commands, boolean isCommand) {
         this.layoutInflater = LayoutInflater.from(context);
         this.commands = commands;
         this.isCommand = isCommand;
@@ -46,22 +47,21 @@ public class CommandListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        StreamItemCommandBinding binding;
+        ViewDataBinding binding;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.stream_item_command, null);
+            convertView = layoutInflater.inflate(isCommand? R.layout.stream_item_command : R.layout.stream_item_mention, null);
             binding = DataBindingUtil.bind(convertView);
             convertView.setTag(binding);
         } else {
-            binding = (StreamItemCommandBinding) convertView.getTag();
+            binding = (ViewDataBinding) convertView.getTag();
         }
 
-        binding.setIsCommand(this.isCommand);
         if (isCommand){
             Command command = (Command) commands.get(position);
-            binding.setCommand(command);
+            ((StreamItemCommandBinding)binding).setCommand(command);
         }else{
             User user = (User) commands.get(position);
-            binding.setUser(user);
+            ((StreamItemMentionBinding)binding).setUser(user);
         }
         return binding.getRoot();
     }

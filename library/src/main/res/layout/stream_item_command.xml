@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
-        <variable
-            name="isCommand"
-            type="boolean" />
 
         <variable
             name="user"
@@ -24,34 +19,6 @@
         android:layout_height="wrap_content"
         android:padding="5dp">
 
-        <TextView
-            android:id="@+id/tv_initials"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="5dp"
-            android:background="@drawable/stream_circle_message_user_initials"
-            android:gravity="center"
-            android:text="@{!isCommand?user.initials:null}"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:isGone="@{isCommand}"
-            app:layout_constraintBottom_toBottomOf="@+id/cv_avatar"
-            app:layout_constraintEnd_toEndOf="@+id/cv_avatar"
-            app:layout_constraintStart_toStartOf="@+id/cv_avatar"
-            app:layout_constraintTop_toTopOf="@+id/cv_avatar" />
-
-        <ImageView
-            android:id="@+id/cv_avatar"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_margin="5dp"
-            android:scaleType="centerCrop"
-            app:circleImageFromUrl="@{!isCommand?user.image:null}"
-            app:isGone="@{isCommand}"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_command"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_command"
-            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tv_command"
@@ -59,8 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@{isCommand? command.name : user.name}"
-            app:layout_constraintStart_toEndOf="@+id/cv_avatar"
+            android:text="@{command.name}"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -68,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@{isCommand? command.args : user.me ? @string/stream_you : null}"
+            android:text="@{command.args}"
             app:layout_constraintBottom_toBottomOf="@+id/tv_command"
             app:layout_constraintStart_toEndOf="@+id/tv_command"
             app:layout_constraintTop_toTopOf="@+id/tv_command" />
@@ -80,7 +47,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="@{command.description}"
-            app:isGone="@{!isCommand}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0"

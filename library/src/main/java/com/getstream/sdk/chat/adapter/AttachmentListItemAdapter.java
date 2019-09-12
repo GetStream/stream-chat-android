@@ -26,6 +26,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
 
@@ -70,7 +71,8 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 attachment,
                 style,
                 attachmentClickListener,
-                longClickListener);
+                longClickListener,
+                giphySendListener);
     }
 
     public MessageListViewStyle getStyle() {
@@ -87,6 +89,14 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
         this.longClickListener = longClickListener;
+    }
+
+    public MessageListView.GiphySendListener getGiphySendListener() {
+        return giphySendListener;
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

@@ -2,12 +2,30 @@ package com.getstream.sdk.chat.rest;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
+import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
+import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
+import com.getstream.sdk.chat.storage.converter.MessageStatusConverter;
+import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
+import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
+import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -18,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,10 +45,27 @@ import java.util.TimeZone;
 /**
  * A message
  */
+
+@Entity(tableName = "stream_message", foreignKeys =
+    {@ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "user_id"),
+    @ForeignKey(entity = Channel.class,
+        parentColumns = "cid",
+        childColumns = "cid")}
+        , indices = {
+        @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     private String id;
+
+    @NonNull
+    private String cid;
 
     @SerializedName("text")
     @Expose
@@ -45,18 +81,33 @@ public class Message implements UserEntity {
 
     @SerializedName("user")
     @Expose
+    @Ignore
     private User user;
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    @ColumnInfo(name="user_id")
+    private String userID;
 
     @SerializedName("attachments")
     @Expose
+    @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
 
     @SerializedName("latest_reactions")
     @Expose
+    @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
 
     @SerializedName("own_reactions")
     @Expose
+    @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
     @SerializedName("reply_count")
@@ -64,23 +115,29 @@ public class Message implements UserEntity {
     private int replyCount;
 
     @SerializedName("created_at")
+    @ColumnInfo(name="created_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date createdAt;
 
     @SerializedName("updated_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date updatedAt;
 
     @SerializedName("deleted_at")
     @Expose
+    @TypeConverters({DateConverter.class})
     private Date deletedAt;
 
     @SerializedName("mentioned_users")
     @Expose
+    @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
     @SerializedName("reaction_counts")
     @Expose
+    @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
 
     @SerializedName("parent_id")
@@ -93,13 +150,15 @@ public class Message implements UserEntity {
 
     @SerializedName("command_info")
     @Expose
+    @TypeConverters(CommandInfoConverter.class)
     private Map<String, String> commandInfo;
 
     public MessageStatus getStatus() {
         return status;
     }
 
-    // TODO: messages received from APIs should have "received" status
+
+    @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
 
     @Override
@@ -150,11 +209,11 @@ public class Message implements UserEntity {
     }
 
     // Additional Params
-    private Map<String, Object> extraData;
+    @TypeConverters(ExtraDataConverter.class)
+    private HashMap<String, Object> extraData;
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
-
     private String date, time;
 
     // region Set Date and Time
@@ -174,6 +233,10 @@ public class Message implements UserEntity {
             setFormattedDate(message);
             message.setStartDay(!message.getDate().equals(preMessage.getDate()));
         }
+    }
+
+    public void preStorage() {
+        this.userID = this.getUser().getId();
     }
 
     private static void setFormattedDate(Message message) {
@@ -343,6 +406,7 @@ public class Message implements UserEntity {
         this.user = user;
     }
 
+    @TypeConverters(AttachmentListConverter.class)
     public List<Attachment> getAttachments() {
         if (attachments == null) {
             return new ArrayList<Attachment>();
@@ -451,4 +515,21 @@ public class Message implements UserEntity {
         return user.getId();
     }
 
+    public HashMap<String, Object> getExtraData() {
+        return extraData;
+    }
+
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
+    }
+
+
+    @NonNull
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(@NonNull String cid) {
+        this.cid = cid;
+    }
 }

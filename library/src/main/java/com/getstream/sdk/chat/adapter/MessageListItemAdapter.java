@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.enums.EntityType;
+import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.MessageListItemDiffCallback;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -33,6 +33,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
@@ -42,10 +43,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
-
-    public MessageListViewStyle getStyle() {
-        return style;
-    }
 
     public void setFactory(MessageViewHolderFactory factory) {
         this.viewHolderFactory = factory;
@@ -77,8 +74,20 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.messageListItemList = new ArrayList<>();
     }
 
+    public MessageListViewStyle getStyle() {
+        return style;
+    }
+
     public void setStyle(MessageListViewStyle s) {
         style = s;
+    }
+
+    public MessageListView.GiphySendListener getGiphySendListener() {
+        return giphySendListener;
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public void replaceEntities(List<MessageListItem> newEntities) {
@@ -105,7 +114,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
-        return this.viewHolderFactory.createMessageViewHolder(this, parent, EntityType.values()[viewType]);
+        return this.viewHolderFactory.createMessageViewHolder(this, parent, MessageListItemType.values()[viewType]);
     }
 
 

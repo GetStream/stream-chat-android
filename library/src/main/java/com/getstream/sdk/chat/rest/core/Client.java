@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,6 +18,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Member;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
@@ -55,7 +57,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.google.gson.Gson;
+import com.getstream.sdk.chat.storage.Storage;
 
 import org.json.JSONObject;
 
@@ -79,8 +81,10 @@ public class Client implements WSResponseHandler {
     private HashMap<String, User> knownUsers = new HashMap<>();
     // Main Params
     private String apiKey;
+    private Boolean offlineStorage;
     private User user;
     private String userToken;
+    private Context context;
     // Client params
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
@@ -156,6 +160,9 @@ public class Client implements WSResponseHandler {
                 channel.handleChannelUpdated(channel, event);
             }
 
+            // TODO: what about deleted channels?
+            // TODO: what about user update events?
+
             @Override
             public void onConnectionChanged(Event event) {
                 if (!event.getOnline()) {
@@ -172,6 +179,7 @@ public class Client implements WSResponseHandler {
         connectionWaiters = new ArrayList<>();
         channelTypeConfigs = new HashMap<>();
         this.options = options;
+        this.offlineStorage = false;
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -183,6 +191,14 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
+    }
+
+    public Storage storage() {
+        return Storage.getStorage(getContext(), this.offlineStorage);
+    }
+
+    public Client(String apiKey, ApiClientOptions options) {
+        this(apiKey, new ApiClientOptions(), null);
     }
 
     public String getApiKey() {
@@ -448,10 +464,12 @@ public class Client implements WSResponseHandler {
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
-                        for (ChannelState channelState: response.body().getChannels()) {
+
+                        for (ChannelState channelState: response.body().getChannelStates()) {
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
+                            channel.setLastState(channelState);
                             if (getChannelByCid(channel.getCid()) != null) {
                                 channel = getChannelByCid(channel.getCid());
                             } else {
@@ -459,6 +477,14 @@ public class Client implements WSResponseHandler {
                             }
                             channel.mergeWithState(channelState);
                         }
+
+                        // store the results of the query
+                        QueryChannelsQ query = request.query();
+
+                        List<Channel> channels = response.body().getChannels();
+
+                        storage().insertQueryWithChannels(query, channels);
+                        // callback
                         callback.onSuccess(response.body());
                     }
 
@@ -1113,5 +1139,21 @@ public class Client implements WSResponseHandler {
                 callback.onError(t.getLocalizedMessage(), -1);
             }
         });
+    }
+
+    public Boolean getOfflineStorage() {
+        return offlineStorage;
+    }
+
+    public void setOfflineStorage(Boolean offlineStorage) {
+        this.offlineStorage = offlineStorage;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }

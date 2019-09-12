@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.adapter;
 
 import androidx.annotation.Nullable;
 
-import com.getstream.sdk.chat.enums.EntityType;
+import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -19,7 +19,7 @@ public class MessageListItem {
 
     private static final String TAG = MessageListItem.class.getSimpleName();
 
-    private EntityType type;
+    private MessageListItemType type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
     private List<MessageViewHolderFactory.Position> positions;
@@ -28,14 +28,14 @@ public class MessageListItem {
     private List<User> users;
 
     public MessageListItem(Date date) {
-        this.type = EntityType.DATE_SEPARATOR;
+        this.type = MessageListItemType.DATE_SEPARATOR;
         this.date = date;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
     public MessageListItem(Message message, List<MessageViewHolderFactory.Position> positions, Boolean messageMine) {
-        this.type = EntityType.MESSAGE;
+        this.type = MessageListItemType.MESSAGE;
         this.message = message;
         this.positions = positions;
         this.messageMine = messageMine;
@@ -43,14 +43,14 @@ public class MessageListItem {
     }
 
     public MessageListItem(List<User> users) {
-        this.type = EntityType.TYPING;
+        this.type = MessageListItemType.TYPING;
         this.users = users;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
-    public MessageListItem(EntityType entityType) {
-        this.type = entityType;
+    public MessageListItem(MessageListItemType messageListItemType) {
+        this.type = messageListItemType;
         this.date = new Date();
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
@@ -175,7 +175,7 @@ public class MessageListItem {
         return users;
     }
 
-    public EntityType getType() {
+    public MessageListItemType getType() {
         return type;
     }
 

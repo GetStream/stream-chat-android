@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.enums.EntityType;
+import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -92,7 +92,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 MessageListItem e = merged.get(i);
                 ChannelUserRead userRead = entry.getValue();
                 // skip things that aren't messages
-                if (e.getType() != EntityType.MESSAGE) {
+                if (e.getType() != MessageListItemType.MESSAGE) {
                     continue;
                 }
                 // skip message owner as reader
@@ -170,7 +170,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             Log.i(TAG, "broadcast because typing changed");
             broadcastValue();
         });
-
     }
 
     public void progressMessages(List<Message>messages){
@@ -227,7 +226,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             // Insert Thread Separator
             if (isThread() && i == 0) {
-                entities.add(new MessageListItem(EntityType.THREAD_SEPARATOR));
+                entities.add(new MessageListItem(MessageListItemType.THREAD_SEPARATOR));
                 previousMessage = null;
             }
         }

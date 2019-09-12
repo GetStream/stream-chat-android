@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
@@ -29,11 +30,13 @@ import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -121,6 +124,22 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         threadMessages = new LazyQueryChannelLiveData<>();
         threadMessages.viewModel = this;
         threadMessages.setValue(null);
+
+        // fetch offline messages
+        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
+            @Override
+            public void onSuccess(ChannelState channelState) {
+                Log.i(TAG, "Read messages from local cache...");
+                if (channelState != null) {
+                    messages.setValue(channelState.getMessages());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
 
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
@@ -475,6 +494,25 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
+    private void shuffleGiphy(Message oldMessage, Message message) {
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(oldMessage);
+        if (index != -1) {
+            messagesCopy.set(index, message);
+            messages.postValue(messagesCopy);
+        }
+    }
+
+    private void cancelGiphy(Message message) {
+        // doesn't touch the message order, since message.created_at can't change
+        List<Message> messagesCopy = messages.getValue();
+        int index = messagesCopy.indexOf(message);
+        if (index != -1) {
+            messagesCopy.remove(message);
+            messages.postValue(messagesCopy);
+        }
+    }
+
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         if (message.getType().equals(ModelType.message_reply)) {
@@ -507,16 +545,21 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     }
 
+
+
     private void addMessages(List<Message> newMessages) {
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
         }
 
+
+
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
             int index = messagesCopy.indexOf(message);
+
             if (index == -1) {
                 messagesCopy.add(0, message);
             } else {
@@ -640,6 +683,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         if (message.getStatus() == null) {
             message.setUser(client().getUser());
             // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
+            // TODO: Thierry: That doesn't make sense to me
             message.setCreatedAt(new Date());
             message.setType("regular");
             if (isThread())
@@ -647,6 +691,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
+            message.preStorage();
+            client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
         }
 
@@ -677,6 +723,37 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 });
     }
 
+    public void sendGiphy(Message message, GiphyAction action) {
+        Map<String, String> map = new HashMap<>();
+        switch (action){
+            case SEND:
+                map.put("image_action", ModelType.action_send);
+                break;
+            case SHUFFLE:
+                map.put("image_action", ModelType.action_shuffle);
+                break;
+            case CANCEL:
+                cancelGiphy(message);
+                return;
+        }
+
+        SendActionRequest request = new SendActionRequest(getChannel().getId(),
+                message.getId(),
+                ModelType.channel_messaging,
+                map);
+        channel.sendAction(message.getId(), request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (action == GiphyAction.SHUFFLE)
+                    shuffleGiphy(message, response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.d(TAG, errMsg);
+            }
+        });
+    }
 
     public MessageListItemLiveData getEntities() {
         return entities;

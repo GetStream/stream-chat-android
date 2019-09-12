@@ -3,6 +3,14 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
+import androidx.room.TypeConverters;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -10,6 +18,8 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
+import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -20,20 +30,55 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Entity(tableName="stream_channel_state")
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
 
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    @PrimaryKey
+    @NonNull
+    private String cid;
+
+    // ignore since we always embed the channelstate in the channel
+    @Ignore
     @SerializedName("channel")
     private Channel channel;
 
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    // messages are stored separately
+    @Ignore
     @SerializedName("messages")
     private List<Message> messages;
 
+    @Embedded(prefix = "last_message_")
+    private Message lastMessage;
+
     @SerializedName("read")
+    @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
 
+    public void setReads(List<ChannelUserRead> reads) {
+        this.reads = reads;
+    }
+
+    public void setMembers(List<Member> members) {
+        this.members = members;
+    }
+
     @SerializedName("members")
+    @TypeConverters({MemberListConverter.class})
     private List<Member> members;
 
     public List<Watcher> getWatchers() {
@@ -43,6 +88,13 @@ public class ChannelState {
         return watchers;
     }
 
+    public void preStorage() {
+
+        this.cid = this.channel.getCid();
+        this.lastMessage = this.computeLastMessage();
+    }
+
+    @Ignore
     @SerializedName("watchers")
     private List<Watcher> watchers;
 
@@ -50,8 +102,13 @@ public class ChannelState {
         return watcherCount;
     }
 
+    @Ignore
     @SerializedName("watcher_count")
     private int watcherCount;
+
+    public ChannelState() {
+        this(null);
+    }
 
     public ChannelState(Channel channel) {
         this.channel = channel;
@@ -77,6 +134,7 @@ public class ChannelState {
         return lastKnownActiveWatcher;
     }
 
+    @Ignore
     private Date lastKnownActiveWatcher;
 
     public ChannelState copy() {
@@ -85,6 +143,7 @@ public class ChannelState {
         for (ChannelUserRead read: getReads()) {
             clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
         }
+        clone.setLastMessage(getLastMessage());
         return clone;
     }
 
@@ -134,6 +193,8 @@ public class ChannelState {
     }
 
     public String getOldestMessageId() {
+
+        // TODO: we should ignore messages that haven't been sent yet
         Message message = getOldestMessage();
         if (message == null) {
             return null;
@@ -212,6 +273,9 @@ public class ChannelState {
         if (messages == null) {
             return new ArrayList<>();
         }
+        for (Message m: messages) {
+            m.setCid(getCid());
+        }
         return messages;
     }
 
@@ -253,6 +317,13 @@ public class ChannelState {
     }
 
     public Message getLastMessage() {
+        if (lastMessage == null) {
+            lastMessage = computeLastMessage();
+        }
+        return lastMessage;
+    }
+
+    public Message computeLastMessage() {
         Message lastMessage = null;
         List<Message> messages = getMessages();
         for (int i = messages.size() - 1; i >= 0; i--) {
@@ -320,8 +391,6 @@ public class ChannelState {
 
     private void addMessagesSorted(List<Message> messages){
         int initialSize = messages.size();
-        Log.w(TAG, "initial size" + initialSize);
-        Log.w(TAG, "incoming size" + messages.size());
 
         for (Message m : messages) {
             if(m.getParentId() == null) {
@@ -411,6 +480,10 @@ public class ChannelState {
 
         ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
         reads.add(channelUserRead);
+    }
+
+    public void setLastMessage(Message lastMessage) {
+        this.lastMessage = lastMessage;
     }
 }
 

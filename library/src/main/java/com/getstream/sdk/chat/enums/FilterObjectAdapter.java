@@ -21,6 +21,9 @@ public class FilterObjectAdapter extends TypeAdapter<FilterObject> {
 
     @Override
     public FilterObject read(JsonReader in) throws IOException {
-        throw new IOException("not supported");
+            TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+            HashMap data = (HashMap<String, Object>) adapter.read(in);
+            FilterObject o = new FilterObject(data);
+            return o;
     }
 }
