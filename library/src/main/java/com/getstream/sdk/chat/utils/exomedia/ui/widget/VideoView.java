@@ -26,12 +26,6 @@ import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntRange;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -40,6 +34,13 @@ import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
@@ -306,7 +307,7 @@ public class VideoView extends RelativeLayout {
     /**
      * Sets the Uri location for the video to play
      *
-     * @param uri The video's Uri
+     * @param uri         The video's Uri
      * @param mediaSource MediaSource that should be used
      */
     public void setVideoURI(@Nullable Uri uri, @Nullable MediaSource mediaSource) {
@@ -665,7 +666,7 @@ public class VideoView extends RelativeLayout {
      * Changes to the track with <code>trackIndex</code> for the specified
      * <code>trackType</code>
      *
-     * @param trackType The type for the track to switch to the selected index
+     * @param trackType  The type for the track to switch to the selected index
      * @param trackIndex The index for the track to switch to
      * @deprecated Use {@link #setTrack(ExoMedia.RendererType, int, int)}
      */
@@ -678,7 +679,7 @@ public class VideoView extends RelativeLayout {
      * Changes to the track with <code>trackIndex</code> for the specified
      * <code>trackType</code>
      *
-     * @param trackType The type for the track to switch to the selected index
+     * @param trackType  The type for the track to switch to the selected index
      * @param groupIndex The index for the group in the {@link TrackGroupArray} specified by the <code>trackType</code>
      * @param trackIndex The index for the track to switch to
      */
@@ -692,6 +693,7 @@ public class VideoView extends RelativeLayout {
 
     /**
      * Clear all selected tracks for the specified renderer.
+     *
      * @param type The renderer type
      */
     public void clearSelectedTracks(@NonNull ExoMedia.RendererType type) {
@@ -713,7 +715,7 @@ public class VideoView extends RelativeLayout {
      * Enables or disables the track associated with the <code>type</code>. Note, by default all
      * tracks are enabled
      *
-     * @param type The {@link ExoMedia.RendererType} to enable or disable the track for
+     * @param type    The {@link ExoMedia.RendererType} to enable or disable the track for
      * @param enabled <code>true</code> if the track should be enabled.
      */
     public void setRendererEnabled(@NonNull ExoMedia.RendererType type, boolean enabled) {
@@ -722,6 +724,7 @@ public class VideoView extends RelativeLayout {
 
     /**
      * Return true if at least one renderer for the given type is enabled
+     *
      * @param type The renderer type
      * @return true if at least one renderer for the given type is enabled
      */
@@ -853,7 +856,7 @@ public class VideoView extends RelativeLayout {
      * determining the backing implementation and reading xml attributes
      *
      * @param context The context to use for setting up the view
-     * @param attrs The xml attributes associated with this instance
+     * @param attrs   The xml attributes associated with this instance
      */
     protected void setup(Context context, @Nullable AttributeSet attrs) {
         if (isInEditMode()) {
@@ -872,7 +875,7 @@ public class VideoView extends RelativeLayout {
      * backing layout, linking the implementation, and finding the necessary view
      * references.
      *
-     * @param context The context for the initialization
+     * @param context            The context for the initialization
      * @param attributeContainer The attributes associated with this instance
      */
     protected void initView(Context context, @NonNull AttributeContainer attributeContainer) {
@@ -911,7 +914,7 @@ public class VideoView extends RelativeLayout {
      * Inflates the video view layout, replacing the {@link ViewStub} with the
      * correct backing implementation.
      *
-     * @param context The context to use for inflating the correct video view
+     * @param context            The context to use for inflating the correct video view
      * @param attributeContainer The attributes for retrieving custom backing implementations.
      */
     protected void inflateVideoView(@NonNull Context context, @NonNull AttributeContainer attributeContainer) {
@@ -936,7 +939,7 @@ public class VideoView extends RelativeLayout {
      * <b>NOTE:</b> overriding the default implementations may cause inconsistencies and isn't
      * recommended.
      *
-     * @param context The Context to use when retrieving the backing video view implementation
+     * @param context            The Context to use when retrieving the backing video view implementation
      * @param attributeContainer The attributes to use for finding overridden video view implementations
      * @return The layout resource for the backing implementation on the current device
      */
@@ -1031,7 +1034,7 @@ public class VideoView extends RelativeLayout {
                 return false;
             }
             int status;
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 AudioFocusRequest.Builder afBuilder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN);
                 AudioAttributes.Builder aaBuilder = new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC);
@@ -1065,16 +1068,16 @@ public class VideoView extends RelativeLayout {
 
             startRequested = false;
             int status;
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if(lastFocusRequest != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (lastFocusRequest != null) {
                     status = audioManager.abandonAudioFocusRequest(lastFocusRequest);
-                    if(AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
+                    if (AudioManager.AUDIOFOCUS_REQUEST_GRANTED == status) {
                         // reset lastFocusRequest on success, there is no reason to try again
                         lastFocusRequest = null;
                     }
                 } else {
                     // no focus was requested, return success
-                    status = audioManager.AUDIOFOCUS_REQUEST_GRANTED;
+                    status = AudioManager.AUDIOFOCUS_REQUEST_GRANTED;
                 }
             } else {
                 status = audioManager.abandonAudioFocus(this);
@@ -1225,7 +1228,7 @@ public class VideoView extends RelativeLayout {
          * Reads the attributes associated with this view, setting any values found
          *
          * @param context The context to retrieve the styled attributes with
-         * @param attrs The {@link AttributeSet} to retrieve the values from
+         * @param attrs   The {@link AttributeSet} to retrieve the values from
          */
         public AttributeContainer(@NonNull Context context, @Nullable AttributeSet attrs) {
             if (attrs == null) {

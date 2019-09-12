@@ -85,7 +85,7 @@ public class MessageListItem {
     }
 
     // TODO: make this a little bit more compact (ie. ensure lists are not null higher up in the code)
-    boolean sameReads(List<ChannelUserRead>a, List<ChannelUserRead> b){
+    boolean sameReads(List<ChannelUserRead> a, List<ChannelUserRead> b) {
         if ((a == null && b != null) || (a != null && b == null)) {
             return false;
         }
@@ -134,7 +134,7 @@ public class MessageListItem {
         return false;
     }
 
-    long getStableID(){
+    long getStableID() {
         Checksum checksum = new CRC32();
         String plaintext = type.toString() + ":";
         switch (type) {

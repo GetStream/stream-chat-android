@@ -9,8 +9,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-
 public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private TextView tv_text;

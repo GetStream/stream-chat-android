@@ -68,7 +68,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private synchronized void broadcastValue() {
         List<MessageListItem> merged = new ArrayList<>();
 
-        for (MessageListItem i: messageEntities) {
+        for (MessageListItem i : messageEntities) {
             merged.add(i.copy());
         }
 
@@ -130,9 +130,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
-    private boolean isThread(){
+    private boolean isThread() {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
+
     @Override
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
@@ -148,12 +149,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observe(owner, messages->{
+        messages.observe(owner, messages -> {
             if (threadMessages.getValue() != null) return;
             progressMessages(messages);
         });
 
-        threadMessages.observe(owner, messages->{
+        threadMessages.observe(owner, messages -> {
             if (messages == null) return;
             progressMessages(messages);
         });
@@ -172,11 +173,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
     }
 
-    public void progressMessages(List<Message>messages){
+    public void progressMessages(List<Message> messages) {
         if (messages == null || messages.size() == 0) return;
         // update based on messages
         hasNewMessages = false;
-        String newlastMessageID = messages.get(messages.size() -1).getId();
+        String newlastMessageID = messages.get(messages.size() - 1).getId();
         if (!newlastMessageID.equals(lastMessageID)) {
             hasNewMessages = true;
         }
@@ -185,12 +186,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // iterate over messages and stick in the date entities
         Message previousMessage = null;
         int size = messages.size();
-        int topIndex = Math.max(0, size -1);
+        int topIndex = Math.max(0, size - 1);
         for (int i = 0; i < size; i++) {
             Message message = messages.get(i);
             Message nextMessage = null;
-            if (i +1 <= topIndex){
-                nextMessage = messages.get(i+1);
+            if (i + 1 <= topIndex) {
+                nextMessage = messages.get(i + 1);
             }
 
             // Thread
@@ -219,7 +220,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (previousMessage != null && !isSameDay(previousMessage, message))
                 entities.add(new MessageListItem(message.getCreatedAt()));
 
-            MessageListItem messageListItem = new MessageListItem(message,positions, mine);
+            MessageListItem messageListItem = new MessageListItem(message, positions, mine);
             entities.add(messageListItem);
             // set the previous message for the next iteration
             previousMessage = message;
@@ -235,6 +236,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         Log.i(TAG, "broadcast because messages changed");
         broadcastValue();
     }
+
     public Boolean getHasNewMessages() {
         return hasNewMessages;
     }

@@ -17,7 +17,8 @@ public class FilterObjectConverter {
             return new FilterObject();
         }
 
-        Type listType = new TypeToken<FilterObject>() {}.getType();
+        Type listType = new TypeToken<FilterObject>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

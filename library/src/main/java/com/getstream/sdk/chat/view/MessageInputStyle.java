@@ -1,4 +1,3 @@
-
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;

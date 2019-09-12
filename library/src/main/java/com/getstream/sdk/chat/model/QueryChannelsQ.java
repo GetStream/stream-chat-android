@@ -67,7 +67,7 @@ public class QueryChannelsQ {
             MessageDigest digest = java.security.MessageDigest
                     .getInstance(MD5);
             digest.update(json.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
 
             // Create Hex String
             StringBuilder hexString = new StringBuilder();
@@ -112,7 +112,6 @@ public class QueryChannelsQ {
         this.sort = sort;
         computeID();
     }
-
 
 
     public Date getCreatedAt() {

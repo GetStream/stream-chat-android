@@ -27,14 +27,12 @@ import java.util.List;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
+    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
     private ConstraintLayout cl_attachment, cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-
-
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
 
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -56,7 +54,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener, MessageListView.GiphySendListener giphySendListener) {
 
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener, giphySendListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
         configAttachment();
     }
 

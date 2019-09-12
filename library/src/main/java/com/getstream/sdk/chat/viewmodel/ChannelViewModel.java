@@ -92,14 +92,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public Client client(){
-        return StreamChat.getInstance(getApplication());
-    }
-
     public ChannelViewModel(Application application, Channel channel) {
         super(application);
         this.channel = channel;
@@ -171,6 +163,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         setupConnectionRecovery();
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public Client client() {
+        return StreamChat.getInstance(getApplication());
+    }
+
     // region Getter
 
     public LiveData<ChannelState> getChannelState() {
@@ -207,6 +207,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public LiveData<InputType> getInputType() {
         return inputType;
+    }
+
+    public void setInputType(InputType inputType) {
+        this.inputType.postValue(inputType);
     }
 
     public LiveData<List<User>> getTypingUsers() {
@@ -248,14 +252,14 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         this.threadParentPosition = threadParentPosition;
     }
 
-    public boolean isThread(){
+    public boolean isThread() {
         return threadParentMessage.getValue() != null;
     }
 
-    private void configThread(Message threadParentMessage_){
+    private void configThread(Message threadParentMessage_) {
         if (threadParentMessage_.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
-            threadMessages.postValue(new ArrayList<Message>(){
+            threadMessages.postValue(new ArrayList<Message>() {
                 {
                     add(threadParentMessage_);
                 }
@@ -278,24 +282,24 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
-    public void initThread(){
+    public void initThread() {
         threadParentMessage.postValue(null);
         threadMessages.postValue(null);
         messages.postValue(channel.getChannelState().getMessages());
         reachedEndOfPaginationThread = false;
     }
+    // endregion
 
-    private String getThreadOldestMessageId(){
+    // endregion
+
+    private String getThreadOldestMessageId() {
         List<Message> messages = threadMessages.getValue();
         if (messages != null && messages.size() > 1)
             return threadMessages.getValue().get(1).getId();
         return null;
     }
-    // endregion
 
-    // endregion
-
-    private boolean setLoading(){
+    private boolean setLoading() {
         if (isLoading.compareAndSet(false, true)) {
             loading.postValue(true);
             return true;
@@ -303,12 +307,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingDone(){
+    private void setLoadingDone() {
         if (isLoading.compareAndSet(true, false))
             loading.postValue(false);
     }
 
-    private boolean setLoadingMore(){
+    private boolean setLoadingMore() {
         if (isLoadingMore.compareAndSet(false, true)) {
             loadingMore.postValue(true);
             return true;
@@ -316,13 +320,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         return false;
     }
 
-    private void setLoadingMoreDone(){
+    private void setLoadingMoreDone() {
         if (isLoadingMore.compareAndSet(true, false))
             loadingMore.postValue(false);
-    }
-
-    public void setInputType(InputType inputType) {
-        this.inputType.postValue(inputType);
     }
 
     public void markLastMessageRead() {
@@ -406,10 +406,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
             // Failed Message Progress
-            if (oldMessage.getStatus() == MessageStatus.FAILED){
+            if (oldMessage.getStatus() == MessageStatus.FAILED) {
                 messagesCopy.remove(oldMessage);
                 messagesCopy.add(newMessage);
-            }else{
+            } else {
                 messagesCopy.set(index, newMessage);
             }
             messages.postValue(messagesCopy);
@@ -528,7 +528,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 }
             }
             return false;
-        }else{
+        } else {
             boolean removed = messagesCopy.remove(message);
             messages.postValue(messagesCopy);
             return removed;
@@ -546,13 +546,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
 
-
     private void addMessages(List<Message> newMessages) {
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
         }
-
 
 
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
@@ -597,7 +595,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                     public void onError(String errMsg, int errCode) {
                         channelLoadingDone();
 
-                    }}
+                    }
+                }
         );
     }
 
@@ -616,8 +615,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             return;
         }
 
-        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT,  channel.getChannelState().getOldestMessageId()));
-        if (isThread()){
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
+        if (isThread()) {
             if (reachedEndOfPaginationThread) {
                 Log.i(TAG, "already reached end of pagination, skip loading more");
                 setLoadingMoreDone();
@@ -725,7 +724,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void sendGiphy(Message message, GiphyAction action) {
         Map<String, String> map = new HashMap<>();
-        switch (action){
+        switch (action) {
             case SEND:
                 map.put("image_action", ModelType.action_send);
                 break;
@@ -762,7 +761,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     private List<User> getCleanedTypingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
-        for (Event event: typingState.values()){
+        for (Event event : typingState.values()) {
             // constants
             long TYPING_TIMEOUT = 10000;
             if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
@@ -815,7 +814,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
-    private void setupConnectionRecovery(){
+    private void setupConnectionRecovery() {
         client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
@@ -866,11 +865,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             pendingMarkReadRequests = new AtomicInteger(0);
         }
 
-        void markRead(){
+        void markRead() {
             pendingMarkReadRequests.incrementAndGet();
         }
 
-        private void sendStoppedTyping(){
+        private void sendStoppedTyping() {
 
             // typing did not start quit
             if (lastKeystrokeAt == null) {

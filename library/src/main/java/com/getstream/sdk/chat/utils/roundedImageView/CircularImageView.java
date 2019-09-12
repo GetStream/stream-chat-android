@@ -268,7 +268,6 @@ public class CircularImageView
         }
 
 
-
         // Invalidate the view if asked
         if (invalidate) {
             invalidate();
@@ -310,6 +309,10 @@ public class CircularImageView
         }
     }
 
+    public int getImageAlpha() {
+        return mAlpha;
+    }
+
     public void setImageAlpha(int alpha) {
         alpha &= 0xFF;
         if (mAlpha != alpha) {
@@ -322,10 +325,6 @@ public class CircularImageView
             if (null != mTextPaint) mTextPaint.setAlpha(alpha);
             invalidate();
         }
-    }
-
-    public int getImageAlpha() {
-        return mAlpha;
     }
 
     /**
@@ -420,13 +419,12 @@ public class CircularImageView
         }
         // Set the placeholder text color
 
-            if (text == null || mText == null || !text.equalsIgnoreCase(mText) ||
-                    (backgroundColor != mBackgroundColor) ||
-                    (textColor != mTextColor)) {
-                setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
-                invalidate = true;
-            }
-
+        if (text == null || mText == null || !text.equalsIgnoreCase(mText) ||
+                (backgroundColor != mBackgroundColor) ||
+                (textColor != mTextColor)) {
+            setPlaceholderTextInternal(text, textColor, mTextSize, 0, false);
+            invalidate = true;
+        }
 
 
         if (invalidate) {
@@ -664,6 +662,11 @@ public class CircularImageView
     // Checkable
 
     @Override
+    public boolean isChecked() {
+        return mChecked;
+    }
+
+    @Override
     public void setChecked(final boolean checked) {
         if (mChecked == checked)
             return;
@@ -690,11 +693,6 @@ public class CircularImageView
             mChecked = checked;
             invalidate();
         }
-    }
-
-    @Override
-    public boolean isChecked() {
-        return mChecked;
     }
 
     @Override

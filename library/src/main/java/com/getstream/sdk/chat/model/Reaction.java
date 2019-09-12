@@ -10,18 +10,11 @@ public class Reaction {
     @SerializedName("message_id")
     @Expose
     private String message_id;
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     @SerializedName("user")
     @Expose
     private User user;
-
-    @ColumnInfo(name="user_id")
+    @ColumnInfo(name = "user_id")
     private String userID;
-
     @SerializedName("type")
     @Expose
     private String type;
@@ -32,6 +25,10 @@ public class Reaction {
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getType() {

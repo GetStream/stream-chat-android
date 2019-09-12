@@ -17,6 +17,7 @@
 package com.getstream.sdk.chat.utils.exomedia.util;
 
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -36,7 +37,7 @@ public class MediaSourceUtil {
         int periodIndex = path.lastIndexOf('.');
         if (periodIndex == -1 && uri.getPathSegments().size() > 1) {
             //Checks the second to last segment to handle manifest urls (e.g. "TearsOfSteelTeaser.ism/manifest")
-            path = uri.getPathSegments().get(uri.getPathSegments().size() -2);
+            path = uri.getPathSegments().get(uri.getPathSegments().size() - 2);
             periodIndex = path.lastIndexOf('.');
         }
 

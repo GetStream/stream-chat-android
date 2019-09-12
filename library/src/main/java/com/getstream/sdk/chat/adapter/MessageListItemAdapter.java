@@ -21,13 +21,7 @@ import java.util.List;
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-    }
-
-
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
-
     private ChannelState channelState;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
@@ -37,24 +31,17 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private List<MessageListItem> messageListItemList;
     private boolean isThread;
     private MessageListViewStyle style;
-
     private Context context;
     private String className;
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
-
-    public void setFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-    }
-
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
         this.channelState = channelState;
         this.messageListItemList = messageListItemList;
     }
-
 
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList, MessageViewHolderFactory factory) {
         this.context = context;
@@ -63,15 +50,23 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.viewHolderFactory = factory;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return messageListItemList.get(position).getStableID();
-    }
-
     public MessageListItemAdapter(Context context) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
         this.messageListItemList = new ArrayList<>();
+    }
+
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
+
+    public void setFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return messageListItemList.get(position).getStableID();
     }
 
     public MessageListViewStyle getStyle() {
@@ -105,7 +100,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
             return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions()).ordinal();
-        } catch(IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             return 0;
         }
     }
@@ -151,9 +146,11 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (style.isEnableReaction())
             this.messageClickListener = messageClickListener;
     }
-    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener){
+
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
         this.messageLongClickListener = messageLongClickListener;
     }
+
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
     }

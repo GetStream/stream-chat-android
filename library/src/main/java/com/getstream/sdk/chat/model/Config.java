@@ -21,107 +21,94 @@ public class Config {
     @SerializedName("updated_at")
     @TypeConverters({DateConverter.class})
     private Date updated_at;
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @SerializedName("name")
     private String name;
-
     @SerializedName("typing_events")
     private boolean typingEvents;
-
-
-    public void setConnect_events(boolean connect_events) {
-        this.connect_events = connect_events;
-    }
-
     @SerializedName("read_events")
     private boolean readEvents;
-
     @SerializedName("connect_events")
     private boolean connect_events;
-
     @SerializedName("search")
     private boolean search;
-
     @SerializedName("reactions")
     private boolean reactions;
-
-    public void setInfinite(String infinite) {
-        this.infinite = infinite;
-    }
-
-    public void setMax_message_length(int max_message_length) {
-        this.max_message_length = max_message_length;
-    }
-
     @SerializedName("replies")
     private boolean replies;
-
     @SerializedName("mutes")
     private boolean mutes;
-
     @SerializedName("infinite")
     private String infinite;
-
     @SerializedName("max_message_length")
     private int max_message_length;
-
-    public void setAutomod(String automod) {
-        this.automod = automod;
-    }
-
-    public void setCommands(List<Command> commands) {
-        this.commands = commands;
-    }
-
     @SerializedName("automod")
     private String automod;
-
     @SerializedName("commands")
     @TypeConverters(CommandListConverter.class)
-    private List<Command>commands;
+    private List<Command> commands;
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isReadEvents() {
         return readEvents;
     }
 
+    public void setReadEvents(boolean readEvents) {
+        this.readEvents = readEvents;
+    }
+
     public String getInfinite() {
         return infinite;
+    }
+
+    public void setInfinite(String infinite) {
+        this.infinite = infinite;
     }
 
     public int getMax_message_length() {
         return max_message_length;
     }
 
+    public void setMax_message_length(int max_message_length) {
+        this.max_message_length = max_message_length;
+    }
+
     public String getAutomod() {
         return automod;
+    }
+
+    public void setAutomod(String automod) {
+        this.automod = automod;
     }
 
     public List<Command> getCommands() {
         return commands;
     }
 
-    public void setReadEvents(boolean readEvents) {
-        this.readEvents = readEvents;
-    }
-
-    public void setTypingEvents(boolean typingEvents) {
-        this.typingEvents = typingEvents;
+    public void setCommands(List<Command> commands) {
+        this.commands = commands;
     }
 
     public boolean isTypingEvents() {
         return typingEvents;
     }
 
+    public void setTypingEvents(boolean typingEvents) {
+        this.typingEvents = typingEvents;
+    }
+
     public boolean isConnect_events() {
         return connect_events;
+    }
+
+    public void setConnect_events(boolean connect_events) {
+        this.connect_events = connect_events;
     }
 
     public boolean isSearch() {

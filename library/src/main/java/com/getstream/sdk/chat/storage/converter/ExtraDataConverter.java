@@ -17,7 +17,8 @@ public class ExtraDataConverter {
             return new HashMap<>();
         }
 
-        Type mapType = new TypeToken<HashMap<String, Object>>() {}.getType();
+        Type mapType = new TypeToken<HashMap<String, Object>>() {
+        }.getType();
 
         return gson.fromJson(data, mapType);
     }

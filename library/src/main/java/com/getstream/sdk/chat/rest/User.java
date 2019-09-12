@@ -9,9 +9,9 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
-import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * A user
  */
 
-@Entity(tableName="stream_user")
+@Entity(tableName = "stream_user")
 public class User implements UserEntity {
     @PrimaryKey
     @NonNull
@@ -56,12 +56,51 @@ public class User implements UserEntity {
     private Integer totalUnreadCount;
 
 
-
     @SerializedName("unread_channels")
     private Integer unreadChannels;
 
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+
+    /**
+     * Constructor
+     *
+     * @param id User id
+     */
+    public User(String id) {
+        this(id, new HashMap<>());
+    }
+
+    /**
+     * Constructor
+     *
+     * @param id        User id
+     * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
+     */
+    @Ignore
+    public User(String id, HashMap<String, Object> extraData) {
+        this.id = id;
+        this.online = false;
+
+        if (extraData == null) {
+            this.extraData = new HashMap<>();
+        } else {
+            this.extraData = new HashMap<>(extraData);
+        }
+
+        // since name and image are very common fields, we are going to promote them as
+        Object image = this.extraData.remove("image");
+        if (image != null) {
+            this.image = image.toString();
+        }
+
+        Object name = this.extraData.remove("name");
+        if (name != null) {
+            this.name = name.toString();
+        }
+
+        this.extraData.remove("id");
+    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -131,17 +170,25 @@ public class User implements UserEntity {
         return totalUnreadCount;
     }
 
+    public void setTotalUnreadCount(Integer totalUnreadCount) {
+        this.totalUnreadCount = totalUnreadCount;
+    }
+
     public Integer getUnreadChannels() {
         return unreadChannels;
     }
 
-    public User shallowCopy(){
+    public void setUnreadChannels(Integer unreadChannels) {
+        this.unreadChannels = unreadChannels;
+    }
+
+    public User shallowCopy() {
         User copy = new User(id);
         copy.shallowUpdate(this);
         return copy;
     }
 
-    public void shallowUpdate(User user){
+    public void shallowUpdate(User user) {
         name = user.name;
         online = user.online;
         image = user.image;
@@ -163,44 +210,6 @@ public class User implements UserEntity {
         return TextUtils.equals(this.getId(), otherUser.getId());
     }
 
-    /**
-     * Constructor
-     * @param id User id
-     * */
-    public User(String id) {
-        this(id, new HashMap<>());
-    }
-
-    /**
-    * Constructor
-    * @param id User id
-    * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
-    * */
-    @Ignore
-    public User(String id, HashMap<String,Object> extraData) {
-        this.id = id;
-        this.online = false;
-
-        if (extraData == null) {
-            this.extraData = new HashMap<>();
-        } else {
-            this.extraData = new HashMap<>(extraData);
-        }
-
-        // since name and image are very common fields, we are going to promote them as
-        Object image = this.extraData.remove("image");
-        if (image != null) {
-            this.image = image.toString();
-        }
-
-        Object name = this.extraData.remove("name");
-        if (name != null) {
-            this.name = name.toString();
-        }
-
-        this.extraData.remove("id");
-    }
-
     public HashMap<String, Object> getExtraData() {
         return extraData;
     }
@@ -208,7 +217,6 @@ public class User implements UserEntity {
     public void setExtraData(HashMap<String, Object> data) {
         this.extraData = data;
     }
-
 
     public String getInitials() {
         if (this.name == null) {
@@ -234,19 +242,11 @@ public class User implements UserEntity {
     }
 
     // TODO: populate this from API
-    public boolean isMe(){
+    public boolean isMe() {
         return false;
     }
 
     public String getUserId() {
         return id;
-    }
-
-    public void setTotalUnreadCount(Integer totalUnreadCount) {
-        this.totalUnreadCount = totalUnreadCount;
-    }
-
-    public void setUnreadChannels(Integer unreadChannels) {
-        this.unreadChannels = unreadChannels;
     }
 }

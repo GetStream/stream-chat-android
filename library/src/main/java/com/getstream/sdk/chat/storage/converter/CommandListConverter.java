@@ -20,7 +20,8 @@ public class CommandListConverter {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<Command>>() {}.getType();
+        Type listType = new TypeToken<List<Command>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

@@ -20,7 +20,8 @@ public class ReactionListConverter {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<Reaction>>() {}.getType();
+        Type listType = new TypeToken<List<Reaction>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }
@@ -28,7 +29,7 @@ public class ReactionListConverter {
     @TypeConverter
     public static String someObjectListToString(List<Reaction> someObjects) {
         if (someObjects != null) {
-            for (Reaction r: someObjects) {
+            for (Reaction r : someObjects) {
                 if (r.getUser() != null) {
                     r.setUserID(r.getUser().getId());
                     // dont serialize the full user object

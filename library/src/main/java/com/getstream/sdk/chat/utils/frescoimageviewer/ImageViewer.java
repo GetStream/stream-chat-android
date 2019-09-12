@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.StyleRes;
-import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AlertDialog;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
+import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
@@ -32,6 +33,13 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
     protected ImageViewer(Builder builder) {
         this.builder = builder;
         createDialog();
+    }
+
+    /**
+     * Creates new {@code ImageRequestBuilder}.
+     */
+    public static ImageRequestBuilder createImageRequestBuilder() {
+        return ImageRequestBuilder.newBuilderWithSource(Uri.parse(""));
     }
 
     /**
@@ -109,11 +117,11 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
         return true;
     }
 
-    /**
-     * Creates new {@code ImageRequestBuilder}.
-     */
-    public static ImageRequestBuilder createImageRequestBuilder() {
-        return ImageRequestBuilder.newBuilderWithSource(Uri.parse(""));
+    private @StyleRes
+    int getDialogStyle() {
+        return builder.shouldStatusBarHide
+                ? android.R.style.Theme_Translucent_NoTitleBar_Fullscreen
+                : android.R.style.Theme_Translucent_NoTitleBar;
     }
 
     /**
@@ -128,13 +136,6 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
      */
     public interface OnDismissListener {
         void onDismiss();
-    }
-
-    private @StyleRes
-    int getDialogStyle() {
-        return builder.shouldStatusBarHide
-                ? android.R.style.Theme_Translucent_NoTitleBar_Fullscreen
-                : android.R.style.Theme_Translucent_NoTitleBar;
     }
 
     /**

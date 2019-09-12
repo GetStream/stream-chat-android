@@ -24,6 +24,5 @@ public interface QueryChannelsQDao {
     QueryChannelsQ select(final String id);
 
 
-
 }
 

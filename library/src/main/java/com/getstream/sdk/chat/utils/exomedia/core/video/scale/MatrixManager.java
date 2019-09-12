@@ -17,19 +17,19 @@
 package com.getstream.sdk.chat.utils.exomedia.core.video.scale;
 
 import android.graphics.Point;
+import android.util.Log;
+import android.view.View;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 
 import java.lang.ref.WeakReference;
 
 @SuppressWarnings("WeakerAccess")
 public class MatrixManager {
-    private static final String TAG = "MatrixManager";
     protected static final int QUARTER_ROTATION = 90;
-
+    private static final String TAG = "MatrixManager";
     @NonNull
     protected Point intrinsicVideoSize = new Point(0, 0);
     @IntRange(from = 0, to = 359)
@@ -100,7 +100,7 @@ public class MatrixManager {
     /**
      * Performs the requested scaling on the <code>view</code>'s matrix
      *
-     * @param view The View to alter the matrix to achieve the requested scale type
+     * @param view      The View to alter the matrix to achieve the requested scale type
      * @param scaleType The type of scaling to use for the specified view
      * @return True if the scale was applied
      */
@@ -217,7 +217,7 @@ public class MatrixManager {
     /**
      * Applies the specified scale modification to the view
      *
-     * @param view The view to scale
+     * @param view   The view to scale
      * @param xScale The scale to apply to the x axis
      * @param yScale The scale to apply to the y axis
      */

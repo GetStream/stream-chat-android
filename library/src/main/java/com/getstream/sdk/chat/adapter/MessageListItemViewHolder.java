@@ -46,42 +46,35 @@ import io.noties.markwon.linkify.LinkifyPlugin;
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
-
+    @DimenRes
+    int avatarWidth;
     private ConstraintLayout cl_message;
     private TextView tv_text;
     private RecyclerView rv_reaction;
-
     private LinearLayout ll_send_failed;
     private TextView tv_failed_text, tv_failed_des;
     private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_docket;
     private TextView tv_reactiontail_space, tv_reaction_space;
-
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
     private TextView tv_username, tv_messagedate;
-
     // Delivered Indicator
     private ReadStateView<MessageListViewStyle> read_state;
     private ProgressBar pb_deliver;
     private ImageView iv_deliver;
-
-
     private AttachmentListView alv_attachments;
     // Replay
     private ConstraintLayout cl_reply;
     private ImageView iv_reply;
     private TextView tv_reply;
-
     private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
     private MessageViewHolderFactory viewHolderFactory;
-
     private ChannelState channelState;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
-
     private int position;
     private boolean isThread;
     private boolean isThreadHeader = false;
@@ -91,8 +84,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
-
-    @DimenRes int avatarWidth;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
@@ -190,6 +181,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReply();
         configParamsReadState();
     }
+
     // endregion
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
@@ -230,7 +222,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     userClickListener.onUserClick(message.getUser());
             });
 
-            if (message.getDate() == null) message.setStartDay(Arrays.asList(message), null);
+            if (message.getDate() == null) Message.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
                 tv_messagedate.setText(message.getTime());
             else
@@ -279,7 +271,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             iv_deliver.setVisibility(View.VISIBLE);
         } else {
             if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
-                    && channelState.getLastMessage().getId().equals(message.getId())){
+                    && channelState.getLastMessage().getId().equals(message.getId())) {
                 message.setStatus(MessageStatus.RECEIVED);
                 iv_deliver.setVisibility(View.VISIBLE);
                 return;
@@ -341,7 +333,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     .build();
         markwon.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
-        if (message.getDeletedAt() != null){
+        if (message.getDeletedAt() != null) {
             // background
             tv_text.setBackgroundResource(0);
             // style
@@ -458,7 +450,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     // region Layout Params
-    private void configMarginStartEnd(){
+    private void configMarginStartEnd() {
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(alv_attachments);
         configMarginStartEnd_(ll_send_failed);
@@ -467,14 +459,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configMarginStartEnd_(tv_messagedate);
     }
 
-    private void configMarginStartEnd_(View view){
+    private void configMarginStartEnd_(View view) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-        if (view.equals(tv_username)){
+        if (view.equals(tv_username)) {
             params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
             view.setLayoutParams(params);
             return;
         }
-        if (view.equals(tv_messagedate)){
+        if (view.equals(tv_messagedate)) {
             params.rightMargin = Utils.dpToPx(15 + 5) + avatarWidth;
             view.setLayoutParams(params);
             return;
@@ -684,7 +676,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.viewHolderFactory = viewHolderFactory;
     }
 
-    private boolean isDeletedOrFailedMessage(){
+    private boolean isDeletedOrFailedMessage() {
         return message.getDeletedAt() != null || message.getStatus() == MessageStatus.FAILED;
     }
 }

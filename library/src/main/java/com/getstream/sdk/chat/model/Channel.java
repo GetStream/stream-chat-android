@@ -64,7 +64,7 @@ import retrofit2.Response;
 /**
  * A channel
  */
-@Entity(tableName="stream_channel", foreignKeys = @ForeignKey(entity = User.class,
+@Entity(tableName = "stream_channel", foreignKeys = @ForeignKey(entity = User.class,
         parentColumns = "id",
         childColumns = "created_by_user_id"), indices = {
         @Index(value = {"created_by_user_id"})})
@@ -89,65 +89,17 @@ public class Channel {
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(Date d) {
-        this.createdAt = d;
-    }
-
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
     @SerializedName("created_at")
     @TypeConverters(DateConverter.class)
     private Date createdAt;
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setCreatedByUser(User createdByUser) {
-        this.createdByUser = createdByUser;
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
-    public void setConfig(Config config) {
-        this.config = config;
-    }
-
-    public void setExtraData(HashMap<String, Object> extraData) {
-        this.extraData = extraData;
-    }
-
-    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
-        this.eventSubscribers = eventSubscribers;
-    }
-
-    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
-        this.eventSubscribersBy = eventSubscribersBy;
-    }
-
-    public void setSubscribersSeq(int subscribersSeq) {
-        this.subscribersSeq = subscribersSeq;
-    }
-
     @SerializedName("updated_at")
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
     @SerializedName("created_by")
     @Ignore
     private User createdByUser;
-
     @ColumnInfo(name = "created_by_user_id")
     private String createdByUserID;
-
     @SerializedName("frozen")
     private boolean frozen;
     @SerializedName("config")
@@ -157,138 +109,16 @@ public class Channel {
     private String name;
     @SerializedName("image")
     private String image;
-
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
     @Ignore
-    private Map<String, String>reactionTypes;
-
-    // region Getter & Setter
-    public String getId() {
-        return id;
-    }
-
-    public String getCid() {
-        return this.cid;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Date getLastMessageDate() {
-        return lastMessageDate;
-    }
-
-    public User getCreatedByUser() {
-        return createdByUser;
-    }
-
-    public boolean isFrozen() {
-        return frozen;
-    }
-
-    public Config getConfig() {
-        return config;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setCid(String id) {
-        this.cid = id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setLastMessageDate(Date lastMessageDate) {
-        this.lastMessageDate = lastMessageDate;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public Channel copy() {
-        Channel clone = new Channel(client, type, id);
-        if (lastMessageDate!= null) {
-            clone.lastMessageDate = new Date(lastMessageDate.getTime());
-        }
-        if (createdAt != null) {
-            clone.createdAt = new Date(createdAt.getTime());
-        }
-        if (updatedAt != null) {
-            clone.updatedAt = new Date(updatedAt.getTime());
-        }
-        if (channelState != null) {
-            clone.channelState = channelState.copy();
-        }
-        return clone;
-    }
-
-    public Map<String, String> getReactionTypes() {
-        if (reactionTypes == null){
-            reactionTypes = new HashMap<String, String>() {
-                {
-                    put("like", "\uD83D\uDC4D");
-                    put("love", "\u2764\uFE0F");
-                    put("haha", "\uD83D\uDE02");
-                    put("wow", "\uD83D\uDE32");
-                    put("sad", " \uD83D\uDE41");
-                    put("angry", "\uD83D\uDE21");
-                }
-            };
-        }
-        return reactionTypes;
-    }
-
-    public void setReactionTypes(Map<String, String> reactionTypes) {
-        this.reactionTypes = reactionTypes;
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        // we compare based on the CID
-        Channel otherChannel = (Channel) obj;
-        return TextUtils.equals(this.getCid(), otherChannel.getCid());
-    }
-
+    private Map<String, String> reactionTypes;
     @Ignore
     private List<ChatChannelEventHandler> eventSubscribers;
     @Ignore
     private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
     @Ignore
     private int subscribersSeq;
-
-    public HashMap<String, Object> getExtraData() {
-        return extraData;
-    }
-    // endregion
-
-    // region Constructor
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     @Ignore
     private Client client;
     @Ignore
@@ -298,36 +128,24 @@ public class Channel {
     public Channel() {
         this(null, "", "", new HashMap<>());
     }
-
     /**
      * constructor - Create a channel
      *
-     * @param client  the chat client
-     * @param type  the type of channel
-     * @param id  the id of the chat
+     * @param client the chat client
+     * @param type   the type of channel
+     * @param id     the id of the chat
      * @return Returns a new uninitialized channel
      */
     public Channel(Client client, String type, String id) {
         this(client, type, id, new HashMap<>());
     }
-
-    public void preStorage() {
-        this.lastState = this.channelState;
-        this.createdByUserID = this.createdByUser.getId();
-    }
-
-    public Client getClient() {
-        return this.client;
-    }
-
     /**
      * constructor - Create a channel
      *
-     * @param client  the chat client
-     * @param type  the type of channel
-     * @param id  the id of the chat
+     * @param client    the chat client
+     * @param type      the type of channel
+     * @param id        the id of the chat
      * @param extraData any additional custom params
-     *
      * @return Returns a new uninitialized channel
      */
     public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
@@ -358,11 +176,183 @@ public class Channel {
         channelState = new ChannelState(this);
     }
 
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date d) {
+        this.createdAt = d;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
+        this.eventSubscribers = eventSubscribers;
+    }
+
+    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
+        this.eventSubscribersBy = eventSubscribersBy;
+    }
+
+    public void setSubscribersSeq(int subscribersSeq) {
+        this.subscribersSeq = subscribersSeq;
+    }
+
+    // region Getter & Setter
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getCid() {
+        return this.cid;
+    }
+
+    public void setCid(String id) {
+        this.cid = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Date getLastMessageDate() {
+        return lastMessageDate;
+    }
+
+    public void setLastMessageDate(Date lastMessageDate) {
+        this.lastMessageDate = lastMessageDate;
+    }
+
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Channel copy() {
+        Channel clone = new Channel(client, type, id);
+        if (lastMessageDate != null) {
+            clone.lastMessageDate = new Date(lastMessageDate.getTime());
+        }
+        if (createdAt != null) {
+            clone.createdAt = new Date(createdAt.getTime());
+        }
+        if (updatedAt != null) {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }
+        if (channelState != null) {
+            clone.channelState = channelState.copy();
+        }
+        return clone;
+    }
+    // endregion
+
+    // region Constructor
+
+    public Map<String, String> getReactionTypes() {
+        if (reactionTypes == null) {
+            reactionTypes = new HashMap<String, String>() {
+                {
+                    put("like", "\uD83D\uDC4D");
+                    put("love", "\u2764\uFE0F");
+                    put("haha", "\uD83D\uDE02");
+                    put("wow", "\uD83D\uDE32");
+                    put("sad", " \uD83D\uDE41");
+                    put("angry", "\uD83D\uDE21");
+                }
+            };
+        }
+        return reactionTypes;
+    }
+
+    public void setReactionTypes(Map<String, String> reactionTypes) {
+        this.reactionTypes = reactionTypes;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        // we compare based on the CID
+        Channel otherChannel = (Channel) obj;
+        return TextUtils.equals(this.getCid(), otherChannel.getCid());
+    }
+
+    public HashMap<String, Object> getExtraData() {
+        return extraData;
+    }
+
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
+    }
+
+    public void preStorage() {
+        this.lastState = this.channelState;
+        this.createdByUserID = this.createdByUser.getId();
+    }
+
+    public Client getClient() {
+        return this.client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     // endregion
 
     public final synchronized int addEventHandler(ChatChannelEventHandler handler) {
         int id = ++subscribersSeq;
-        if (eventSubscribers == null){
+        if (eventSubscribers == null) {
             eventSubscribers = new ArrayList<>();
             eventSubscribersBy = new HashMap<>();
         }
@@ -376,14 +366,14 @@ public class Channel {
         eventSubscribers.remove(handler);
     }
 
-    public final synchronized void handleChannelEvent(Event event){
+    public final synchronized void handleChannelEvent(Event event) {
         if (eventSubscribers == null || eventSubscribers.isEmpty()) return;
-        for (ChatChannelEventHandler handler: eventSubscribers) {
+        for (ChatChannelEventHandler handler : eventSubscribers) {
             handler.dispatchEvent(event);
         }
     }
 
-    public void mergeWithState(ChannelState state){
+    public void mergeWithState(ChannelState state) {
         name = state.getChannel().name;
         image = state.getChannel().image;
         channelState.init(state);
@@ -398,7 +388,6 @@ public class Channel {
      * query - Query the API, get messages, members or other channel fields
      *
      * @param {object} options The query options
-     *
      * @return {object} Returns a query response
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
@@ -450,7 +439,7 @@ public class Channel {
      * getReplies - List the message replies for a parent message
      *
      * @param parentId The message parent id, ie the top of the thread
-     * @param limit   Pagination params, ie 10
+     * @param limit    Pagination params, ie 10
      * @return {object} Returns a getReplies response
      */
     public void getReplies(@NonNull String parentId, String limit, String firstMessageId, final GetRepliesCallback callback) {
@@ -559,7 +548,7 @@ public class Channel {
     }
 
     public void sendFile(Attachment attachment, boolean isImage,
-                          SendFileCallback fileCallback) {
+                         SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
 
         if (isImage) {
@@ -600,10 +589,9 @@ public class Channel {
      * @param {string} messageID the message id
      * @param {object} reaction the reaction object for instance {type: 'love'}
      * @param {string} user_id the id of the user (used only for server side request) default null
-     *
      * @return {object} The Server Response
      */
-    public void sendReaction(String mesageId, String type, MessageCallback callback){
+    public void sendReaction(String mesageId, String type, MessageCallback callback) {
         ReactionRequest request = new ReactionRequest(type);
         client.sendReaction(mesageId, request, new MessageCallback() {
             @Override
@@ -613,7 +601,7 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -624,10 +612,9 @@ public class Channel {
      * @param {string} messageID the id of the message from which te remove the reaction
      * @param {string} reactionType the type of reaction that should be removed
      * @param {string} user_id the id of the user (used only for server side request) default null
-     *
      * @return {object} The Server Response
      */
-    public void deleteReaction(String mesageId, String type, MessageCallback callback){
+    public void deleteReaction(String mesageId, String type, MessageCallback callback) {
         client.deleteReaction(mesageId, type, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
@@ -636,10 +623,11 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
+
     public void sendAction(@NonNull String messageId,
                            @NonNull SendActionRequest request,
                            MessageCallback callback) {
@@ -652,12 +640,12 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
-    public void flagMessage(String messageId, FlagCallback callback){
+    public void flagMessage(String messageId, FlagCallback callback) {
         client.flagMessage(messageId, new FlagCallback() {
             @Override
             public void onSuccess(FlagResponse response) {
@@ -666,12 +654,12 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
-    public void unFlagMessage(String messageId, FlagCallback callback){
+    public void unFlagMessage(String messageId, FlagCallback callback) {
         client.unFlagMessage(messageId, new FlagCallback() {
             @Override
             public void onSuccess(FlagResponse response) {
@@ -680,12 +668,12 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
-    public void handleChannelUpdated(Channel channel, Event event){
+    public void handleChannelUpdated(Channel channel, Event event) {
         name = channel.name;
         image = channel.image;
         extraData = channel.extraData;
@@ -704,7 +692,7 @@ public class Channel {
 
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
-        message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
+        Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         if (!message.getType().equals(ModelType.message_reply))
             channelState.addMessageSorted(message);
         if (getLastMessageDate().before(message.getCreatedAt())) {
@@ -738,11 +726,10 @@ public class Channel {
      * sendEvent - Send an event on this channel
      *
      * @param eventType event for example {type: 'message.read'}
-     *
      * @return The Server Response
      */
     // TODO: check this function
-    public void sendEvent(EventType eventType, final EventCallback callback){
+    public void sendEvent(EventType eventType, final EventCallback callback) {
         final Map<String, Object> event = new HashMap<>();
         event.put("type", eventType.label);
         SendEventRequest request = new SendEventRequest(event);
@@ -755,7 +742,7 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }

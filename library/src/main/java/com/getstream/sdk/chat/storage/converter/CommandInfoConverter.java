@@ -19,7 +19,8 @@ public class CommandInfoConverter {
             return new ArrayMap<>();
         }
 
-        Type mapType = new TypeToken<Map<String, String>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, String>>() {
+        }.getType();
 
         return gson.fromJson(data, mapType);
     }

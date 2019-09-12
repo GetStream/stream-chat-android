@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -49,23 +48,20 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
 public class MessageListView extends RecyclerView {
+    //    private int firstVisible;
+    private static int fVPosition, lVPosition;
     final String TAG = MessageListView.class.getSimpleName();
-
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     private LinearLayoutManager layoutManager;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
-
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
     private GiphySendListener giphySendListener;
     private UserClickListener userClickListener;
-
-//    private int firstVisible;
-    private static int fVPosition, lVPosition;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
@@ -115,9 +111,9 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
-                    if (message.getStatus() == MessageStatus.FAILED){
+                    if (message.getStatus() == MessageStatus.FAILED) {
                         bgColor = getResources().getColor(R.color.stream_message_failed);
-                    }else{
+                    } else {
                         bgColor = style.getMessageBackgroundColorMine();
                     }
 
@@ -343,7 +339,7 @@ public class MessageListView extends RecyclerView {
 
             // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
-            if (adapter.isThread() != messageListItemWrapper.isThread()){
+            if (adapter.isThread() != messageListItemWrapper.isThread()) {
                 adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
@@ -352,14 +348,14 @@ public class MessageListView extends RecyclerView {
             adapter.replaceEntities(entities);
 
             // Scroll to origin position on return from thread
-            if (backFromThread){
+            if (backFromThread) {
                 layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
                 return;
             }
 
             // Scroll to bottom position for typing indicator
             int itemCount = adapter.getItemCount() - 2;
-            if (messageListItemWrapper.isTyping() && scrolledBottom()){
+            if (messageListItemWrapper.isTyping() && scrolledBottom()) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;
@@ -426,7 +422,8 @@ public class MessageListView extends RecyclerView {
             }
         });
 
-        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {});
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {
+        });
 
         this.setAdapterWithStyle(adapter);
     }
@@ -448,12 +445,12 @@ public class MessageListView extends RecyclerView {
         return style;
     }
 
-    private boolean scrolledBottom(){
+    private boolean scrolledBottom() {
         int itemCount = adapter.getItemCount() - 2;
         return lVPosition >= itemCount;
     }
 
-    private boolean justUpdated(Message message){
+    private boolean justUpdated(Message message) {
         if (message.getUpdatedAt() == null) return false;
         Date now = new Date();
         long passedTime = now.getTime() - message.getUpdatedAt().getTime();
@@ -535,43 +532,6 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public interface HeaderAvatarGroupClickListener {
-        void onHeaderAvatarGroupClick(Channel channel);
-    }
-
-    public interface HeaderOptionsClickListener {
-        void onHeaderOptionsClick(Channel channel);
-    }
-
-    public interface MessageClickListener {
-        void onMessageClick(Message message, int position);
-    }
-
-    public interface MessageLongClickListener {
-        void onMessageLongClick(Message message);
-    }
-
-    public interface AttachmentClickListener {
-        void onAttachmentClick(Message message, Attachment attachment);
-    }
-
-    public interface GiphySendListener {
-        void onGiphySend(Message message, GiphyAction action);
-    }
-
-    public interface UserClickListener {
-        void onUserClick(User user);
-    }
-
-    public interface BubbleHelper {
-        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
-
-        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
-    }
-
-
-    // endregion
-
     // region View Attachment
     public void showAttachment(Message message, Attachment attachment) {
         String url = null;
@@ -636,6 +596,43 @@ public class MessageListView extends RecyclerView {
             intent.putExtra("url", attachment.getAssetURL());
             getContext().startActivity(intent);
         }
+    }
+
+    public interface HeaderAvatarGroupClickListener {
+        void onHeaderAvatarGroupClick(Channel channel);
+    }
+
+    public interface HeaderOptionsClickListener {
+        void onHeaderOptionsClick(Channel channel);
+    }
+
+    public interface MessageClickListener {
+        void onMessageClick(Message message, int position);
+    }
+
+    public interface MessageLongClickListener {
+        void onMessageLongClick(Message message);
+    }
+
+    public interface AttachmentClickListener {
+        void onAttachmentClick(Message message, Attachment attachment);
+    }
+
+    public interface GiphySendListener {
+        void onGiphySend(Message message, GiphyAction action);
+    }
+
+
+    // endregion
+
+    public interface UserClickListener {
+        void onUserClick(User user);
+    }
+
+    public interface BubbleHelper {
+        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+
+        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
     }
     // endregion
 

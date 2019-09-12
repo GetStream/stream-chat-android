@@ -41,14 +41,15 @@ public class SendFileFunction {
     ChannelViewModel viewModel;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    private List<Attachment> selectedAttachments = null;
-
-
     CommandMentionListItemAdapter commandMentionListItemAdapter = null;
     List<Object> commands = null;
-
     Context context;
     StreamViewMessageInputBinding binding;
+    AttachmentListAdapter fileAttachmentAdapter = null;
+    AttachmentListAdapter selectedFileAttachmentAdapter = null;
+    private List<Attachment> selectedAttachments = null;
+
+    // region Attachment
 
     public SendFileFunction(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
@@ -59,8 +60,6 @@ public class SendFileFunction {
     public List<Attachment> getSelectedAttachments() {
         return selectedAttachments;
     }
-
-    // region Attachment
 
     public void onClickAttachmentViewOpen(View v) {
         // Permission Check
@@ -95,6 +94,10 @@ public class SendFileFunction {
         if (view.getVisibility() != View.VISIBLE) return;
         view.setVisibility(View.GONE);
     }
+
+    // endregion
+
+    // region Media
 
     public void fadeAnimationView(View view, boolean isFadeIn) {
         if (isFadeIn) {
@@ -163,10 +166,6 @@ public class SendFileFunction {
         }
     }
 
-    // endregion
-
-    // region Media
-
     public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
         binding.tvInputboxBack.setVisibility(View.VISIBLE);
@@ -177,6 +176,9 @@ public class SendFileFunction {
         closeAnimationView(binding.clSelectPhoto);
         fadeAnimationView(binding.ivBackAttachment, false);
     }
+    // endregion
+
+    // region File
 
     private void updateComposerViewBySelectedMedia(List<Attachment> attachments, Attachment attachment) {
         binding.rvComposer.setVisibility(View.VISIBLE);
@@ -253,12 +255,6 @@ public class SendFileFunction {
         });
         binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
     }
-    // endregion
-
-    // region File
-
-    AttachmentListAdapter fileAttachmentAdapter = null;
-    AttachmentListAdapter selectedFileAttachmentAdapter = null;
 
     public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();

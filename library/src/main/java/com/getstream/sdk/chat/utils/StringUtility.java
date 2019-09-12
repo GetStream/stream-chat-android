@@ -1,8 +1,9 @@
 package com.getstream.sdk.chat.utils;
 
 
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -16,11 +17,12 @@ public class StringUtility {
         return sNumbers.toString();
     }
 
-    public static boolean isValidImageUrl(@Nullable String url){
+    public static boolean isValidImageUrl(@Nullable String url) {
         if (TextUtils.isEmpty(url)) return false;
-        return  !url.contains("svg");
+        return !url.contains("svg");
     }
-    public static boolean isEmoji(String message){
+
+    public static boolean isEmoji(String message) {
         return message.matches("(?:[\uD83C\uDF00-\uD83D\uDDFF]|[\uD83E\uDD00-\uD83E\uDDFF]|" +
                 "[\uD83D\uDE00-\uD83D\uDE4F]|[\uD83D\uDE80-\uD83D\uDEFF]|" +
                 "[\u2600-\u26FF]\uFE0F?|[\u2700-\u27BF]\uFE0F?|\u24C2\uFE0F?|" +

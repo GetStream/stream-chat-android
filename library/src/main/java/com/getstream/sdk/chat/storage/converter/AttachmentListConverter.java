@@ -20,7 +20,8 @@ public class AttachmentListConverter {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<Attachment>>() {}.getType();
+        Type listType = new TypeToken<List<Attachment>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

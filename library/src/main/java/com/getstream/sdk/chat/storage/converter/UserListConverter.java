@@ -20,7 +20,8 @@ public class UserListConverter {
             return Collections.emptyList();
         }
 
-        Type listType = new TypeToken<List<User>>() {}.getType();
+        Type listType = new TypeToken<List<User>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

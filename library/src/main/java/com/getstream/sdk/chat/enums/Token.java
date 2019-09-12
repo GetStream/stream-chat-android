@@ -8,12 +8,12 @@ public enum Token {
 
     private String value;
 
-    public void setToken(String value) {
-        this.value = value;
-    }
-
     public String getToken() {
         return value;
+    }
+
+    public void setToken(String value) {
+        this.value = value;
     }
 
     @Override

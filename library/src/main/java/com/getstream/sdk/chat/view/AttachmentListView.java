@@ -24,14 +24,6 @@ public class AttachmentListView extends RecyclerView {
     private MessageListView.MessageLongClickListener longClickListener;
     private MessageListView.GiphySendListener giphySendListener;
 
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
-
-    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
-        this.viewHolderFactory = viewHolderFactory;
-    }
-
     public AttachmentListView(Context context) {
         super(context);
         this.context = context;
@@ -46,6 +38,14 @@ public class AttachmentListView extends RecyclerView {
         super(context, attrs, defStyle);
         this.setLayoutManager(mLayoutManager);
         this.context = context;
+    }
+
+    public void setStyle(MessageListViewStyle style) {
+        this.style = style;
+    }
+
+    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
+        this.viewHolderFactory = viewHolderFactory;
     }
 
     public void setEntity(MessageListItem messageListItem) {

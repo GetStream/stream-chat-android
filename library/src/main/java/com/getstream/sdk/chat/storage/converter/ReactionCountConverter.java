@@ -19,7 +19,8 @@ public class ReactionCountConverter {
             return new ArrayMap<>();
         }
 
-        Type mapType = new TypeToken<Map<String, Integer>>() {}.getType();
+        Type mapType = new TypeToken<Map<String, Integer>>() {
+        }.getType();
 
         return gson.fromJson(data, mapType);
     }

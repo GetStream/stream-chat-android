@@ -59,7 +59,6 @@ public class MoreActionDialog extends Dialog {
     }
 
 
-
     public void init() {
         if (viewModel == null || message == null || style == null)
             return;
@@ -79,7 +78,7 @@ public class MoreActionDialog extends Dialog {
                 .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
                 .build());
 
-        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())){
+        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
@@ -98,7 +97,7 @@ public class MoreActionDialog extends Dialog {
                 });
 
             });
-        }else {
+        } else {
             ll_flag.setVisibility(View.GONE);
 
             ll_edit.setOnClickListener(view -> {

@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Storage {
-    final String TAG = Storage.class.getSimpleName();
-
     private static volatile Storage INSTANCE;
+    final String TAG = Storage.class.getSimpleName();
     private Boolean enabled;
     private Context context;
     private ChatDatabase db;
@@ -80,7 +79,6 @@ public class Storage {
     }
 
 
-
     public QueryChannelsQ selectQuery(String queryID) {
         if (!enabled) return null;
 
@@ -106,7 +104,7 @@ public class Storage {
         Log.i(TAG, String.format("Inserted %d channels, %d messages into offline storage for query with id %s", channels.size(), messages.size(), query.getId()));
         channelsDao.insertChannels(channels);
         queryChannelsQDao.insertQuery(query);
-        for (Message m: messages) {
+        for (Message m : messages) {
             m.preStorage();
         }
         messageDao.insertMessages(messages);
@@ -114,7 +112,7 @@ public class Storage {
 
     private void insertUsersUnique(List<User> users) {
         HashMap<String, User> userMap = new HashMap<>();
-        for (User u: users) {
+        for (User u : users) {
             if (u == null) continue;
             userMap.put(u.getId(), u);
         }
@@ -128,7 +126,7 @@ public class Storage {
         List<String> userIDs = new ArrayList<>();
         // gather all the user ids
 
-        for (Channel c: channels) {
+        for (Channel c : channels) {
 
             // gather the users from members, read, last message and created by
             userIDs.add(c.getCreatedByUserID());
@@ -147,12 +145,12 @@ public class Storage {
         // query those users as a map
         List<User> users = usersDao.getUsers(userIDs);
         HashMap<String, User> userMap = new HashMap<String, User>();
-        for (User u: users) {
+        for (User u : users) {
             userMap.put(u.getId(), u);
         }
 
         // add the object, fun fun
-        for (Channel c: channels) {
+        for (Channel c : channels) {
 
             // gather the users from members, read, last message and created by
             c.setCreatedByUser(userMap.get(c.getCreatedByUserID()));
@@ -185,7 +183,7 @@ public class Storage {
         List<Message> messages = new ArrayList<>();
 
 
-        for (Channel c: channels) {
+        for (Channel c : channels) {
             c.preStorage();
             c.getLastState().preStorage();
             // gather the users from members, read, last message and created by
@@ -202,12 +200,12 @@ public class Storage {
                 users.add(lastMessage.getUser());
             }
             messages.addAll(c.getLastState().getMessages());
-            for (Message m: c.getLastState().getMessages()) {
+            for (Message m : c.getLastState().getMessages()) {
                 users.add(m.getUser());
-                for (Reaction r: m.getOwnReactions()) {
+                for (Reaction r : m.getOwnReactions()) {
                     users.add(r.getUser());
                 }
-                for (Reaction r: m.getLatestReactions()) {
+                for (Reaction r : m.getLatestReactions()) {
                     users.add(r.getUser());
                 }
             }
@@ -234,7 +232,6 @@ public class Storage {
             }
         }.execute();
     }
-
 
 
     public void insertQuery(QueryChannelsQ query) {
@@ -264,7 +261,7 @@ public class Storage {
 
 
     @Transaction
-    private void insertMessagesAndUsers(List<User> users, List<Message>messages) {
+    private void insertMessagesAndUsers(List<User> users, List<Message> messages) {
         usersDao.insertUsers(users);
         messageDao.insertMessages(messages);
         Log.i(TAG, String.format("Inserted %d messages and %d users into offline storage", messages.size(), users.size()));
@@ -298,7 +295,7 @@ public class Storage {
             if (m.getLatestReactions() != null) {
                 reactions.addAll(m.getLatestReactions());
             }
-            for (Reaction r: reactions) {
+            for (Reaction r : reactions) {
                 users.add(r.getUser());
             }
         }
@@ -330,16 +327,10 @@ public class Storage {
         this.enabled = enabled;
     }
 
-    public interface OnQueryListener<T> {
-        public void onSuccess(T object);
-        public void onFailure(Exception e);
-    }
-
-
     public List<ChannelState> getChannelStates(QueryChannelsQ query, Integer limit) {
         List<Channel> channels = getChannels(query, limit);
         List<ChannelState> channelStates = new ArrayList<>();
-        for (Channel c: channels) {
+        for (Channel c : channels) {
             ChannelState state = c.getLastState();
             channelStates.add(state);
         }
@@ -359,11 +350,11 @@ public class Storage {
                 channelMap.put(c.getCid(), c);
             }
             // restore the original sort
-            for (String cid: selectedChannelIDs) {
+            for (String cid : selectedChannelIDs) {
                 Channel channel = channelMap.get(cid);
                 channel.setChannelState(channel.getLastState());
                 channel.setClient(StreamChat.getInstance(context));
-                if (channel==null) {
+                if (channel == null) {
                     Log.w(TAG, "Missing channel for cid " + cid);
                 } else {
                     ChannelState state = channel.getLastState();
@@ -384,12 +375,12 @@ public class Storage {
         // the person who created the channel
         userIDs.add(channel.getCreatedByUserID());
         // iterate over messages and write the users
-        for (Message m: channel.getChannelState().getMessages()) {
+        for (Message m : channel.getChannelState().getMessages()) {
             userIDs.add(m.getUserID());
-            for (Reaction r: m.getLatestReactions()) {
+            for (Reaction r : m.getLatestReactions()) {
                 userIDs.add(r.getUserID());
             }
-            for (Reaction r: m.getOwnReactions()) {
+            for (Reaction r : m.getOwnReactions()) {
                 userIDs.add(r.getUserID());
             }
         }
@@ -397,27 +388,33 @@ public class Storage {
         // query those users as a map
         List<User> users = usersDao.getUsers(userIDs);
         HashMap<String, User> userMap = new HashMap<String, User>();
-        for (User u: users) {
+        for (User u : users) {
             userMap.put(u.getId(), u);
         }
 
         //
-        for (Message m: channel.getChannelState().getMessages()) {
+        for (Message m : channel.getChannelState().getMessages()) {
             // add the user objects
             User u = userMap.get(m.getUserID());
             m.setUser(u);
-            for (Reaction r: m.getLatestReactions()) {
+            for (Reaction r : m.getLatestReactions()) {
                 r.setUser(userMap.get(r.getUserID()));
             }
-            for (Reaction r: m.getOwnReactions()) {
+            for (Reaction r : m.getOwnReactions()) {
                 r.setUser(userMap.get(r.getUserID()));
             }
         }
     }
 
+    public interface OnQueryListener<T> {
+        void onSuccess(T object);
+
+        void onFailure(Exception e);
+    }
+
     public class ChannelQuery extends AsyncTask<String, Void, ChannelState> {
-        private OnQueryListener<ChannelState> mCallBack;
         public Exception mException;
+        private OnQueryListener<ChannelState> mCallBack;
 
         public ChannelQuery(OnQueryListener callback) {
             mCallBack = callback;
@@ -443,7 +440,6 @@ public class Storage {
                 return state;
 
 
-
             } catch (Exception e) {
                 throw e;
 
@@ -466,8 +462,8 @@ public class Storage {
 
     public class QueryTask extends AsyncTask<String, Void, List<ChannelState>> {
 
-        private OnQueryListener<List<ChannelState>> mCallBack;
         public Exception mException;
+        private OnQueryListener<List<ChannelState>> mCallBack;
 
 
         public QueryTask(OnQueryListener callback) {
@@ -480,10 +476,10 @@ public class Storage {
                 String queryID = params[0];
                 QueryChannelsQ query = selectQuery(queryID);
                 if (query != null) {
-                    List<Channel> channels = getChannels(query,100);
+                    List<Channel> channels = getChannels(query, 100);
                     enrichUsers(channels);
                     List<ChannelState> channelStates = new ArrayList<>();
-                    for (Channel c: channels) {
+                    for (Channel c : channels) {
                         ChannelState state = c.getLastState();
                         channelStates.add(state);
                     }

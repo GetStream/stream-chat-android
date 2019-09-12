@@ -24,11 +24,6 @@ public class MessageViewHolderFactory {
     private static int VIDEO_ATTACHMENT = 3;
     private static int FILE_ATTACHMENT = 4;
 
-
-    public enum Position {
-        TOP, MIDDLE, BOTTOM
-    }
-
     public MessageListItemType getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
@@ -40,7 +35,7 @@ public class MessageViewHolderFactory {
             return MessageListItemType.MESSAGE;
         } else if (messageListItemType == MessageListItemType.TYPING) {
             return MessageListItemType.TYPING;
-        }else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
+        } else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
             return MessageListItemType.THREAD_SEPARATOR;
         }
         return MessageListItemType.NOT_FOUND;
@@ -87,7 +82,7 @@ public class MessageViewHolderFactory {
             ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        }else {
+        } else {
             return null;
         }
     }
@@ -107,5 +102,9 @@ public class MessageViewHolderFactory {
             holder.setStyle(adapter.getStyle());
             return holder;
         }
+    }
+
+    public enum Position {
+        TOP, MIDDLE, BOTTOM
     }
 }

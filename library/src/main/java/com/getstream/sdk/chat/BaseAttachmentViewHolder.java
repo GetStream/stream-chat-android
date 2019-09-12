@@ -51,6 +51,9 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         return bubbleHelper;
     }
 
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
 
     public MessageListViewStyle getStyle() {
         return style;
@@ -58,10 +61,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
-    }
-
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
     }
 
     public MessageListItem getMessageListItem() {
@@ -92,6 +91,10 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         return attachment;
     }
 
+    public void setAttachment(Attachment attachment) {
+        this.attachment = attachment;
+    }
+
     @Override
     public void onClick(View v) {
         if (this.clickListener != null) {
@@ -104,11 +107,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         if (longClickListener != null)
             longClickListener.onMessageLongClick(message);
         return true;
-    }
-
-
-    public void setAttachment(Attachment attachment) {
-        this.attachment = attachment;
     }
 
     public Message getMessage() {

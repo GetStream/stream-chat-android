@@ -3,23 +3,52 @@ package com.getstream.sdk.chat.rest.core;
 import com.getstream.sdk.chat.model.Event;
 
 public abstract class ChatChannelEventHandler {
-    public void onAnyEvent(Event event) {}
-    public void onTypingStart(Event event) {}
-    public void onTypingStop(Event event) {}
-    public void onMessageNew(Event event) {}
-    public void onMessageUpdated(Event event) {}
-    public void onMessageDeleted(Event event) {}
-    public void onMessageRead(Event event) {}
-    public void onReactionNew(Event event) {}
-    public void onReactionDeleted(Event event) {}
-    public void onMemberAdded(Event event) {}
-    public void onMemberRemoved(Event event) {}
-    public void onChannelUpdated(Event event) {}
-    public void onChannelDeleted(Event event) {}
-    public void onUserWatchingStart(Event event) {}
-    public void onUserWatchingStop(Event event) {}
+    public void onAnyEvent(Event event) {
+    }
 
-    public final void dispatchEvent(Event event){
+    public void onTypingStart(Event event) {
+    }
+
+    public void onTypingStop(Event event) {
+    }
+
+    public void onMessageNew(Event event) {
+    }
+
+    public void onMessageUpdated(Event event) {
+    }
+
+    public void onMessageDeleted(Event event) {
+    }
+
+    public void onMessageRead(Event event) {
+    }
+
+    public void onReactionNew(Event event) {
+    }
+
+    public void onReactionDeleted(Event event) {
+    }
+
+    public void onMemberAdded(Event event) {
+    }
+
+    public void onMemberRemoved(Event event) {
+    }
+
+    public void onChannelUpdated(Event event) {
+    }
+
+    public void onChannelDeleted(Event event) {
+    }
+
+    public void onUserWatchingStart(Event event) {
+    }
+
+    public void onUserWatchingStop(Event event) {
+    }
+
+    public final void dispatchEvent(Event event) {
         onAnyEvent(event);
         switch (event.getType()) {
             case TYPING_START:

@@ -18,6 +18,7 @@ package com.getstream.sdk.chat.utils.exomedia.core.renderer;
 
 import android.content.Context;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -107,7 +108,7 @@ public class RendererProvider {
         // Adds any registered classes
         List<String> classNames = ExoMedia.Data.registeredRendererClasses.get(ExoMedia.RendererType.AUDIO);
         if (classNames != null) {
-            for (String className: classNames) {
+            for (String className : classNames) {
                 try {
                     Class<?> clazz = Class.forName(className);
                     Constructor<?> constructor = clazz.getConstructor(Handler.class, AudioRendererEventListener.class);
@@ -131,7 +132,7 @@ public class RendererProvider {
         // Adds any registered classes
         List<String> classNames = ExoMedia.Data.registeredRendererClasses.get(ExoMedia.RendererType.VIDEO);
         if (classNames != null) {
-            for (String className: classNames) {
+            for (String className : classNames) {
                 try {
                     Class<?> clazz = Class.forName(className);
                     Constructor<?> constructor = clazz.getConstructor(boolean.class, long.class, Handler.class, VideoRendererEventListener.class, int.class);

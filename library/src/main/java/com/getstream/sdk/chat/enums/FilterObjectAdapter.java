@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 /**
  * FilterObjectAdapter makes it easier to serialize this to JSON via gson
-**/
+ **/
 public class FilterObjectAdapter extends TypeAdapter<FilterObject> {
     @Override
     public void write(JsonWriter out, FilterObject value) throws IOException {
@@ -21,9 +21,9 @@ public class FilterObjectAdapter extends TypeAdapter<FilterObject> {
 
     @Override
     public FilterObject read(JsonReader in) throws IOException {
-            TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
-            HashMap data = (HashMap<String, Object>) adapter.read(in);
-            FilterObject o = new FilterObject(data);
-            return o;
+        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        HashMap data = (HashMap<String, Object>) adapter.read(in);
+        FilterObject o = new FilterObject(data);
+        return o;
     }
 }

@@ -47,12 +47,12 @@ import java.util.TimeZone;
  */
 
 @Entity(tableName = "stream_message", foreignKeys =
-    {@ForeignKey(entity = User.class,
-        parentColumns = "id",
-        childColumns = "user_id"),
-    @ForeignKey(entity = Channel.class,
-        parentColumns = "cid",
-        childColumns = "cid")}
+        {@ForeignKey(entity = User.class,
+                parentColumns = "id",
+                childColumns = "user_id"),
+                @ForeignKey(entity = Channel.class,
+                        parentColumns = "cid",
+                        childColumns = "cid")}
         , indices = {
         @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
@@ -83,131 +83,56 @@ public class Message implements UserEntity {
     @Expose
     @Ignore
     private User user;
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    @ColumnInfo(name="user_id")
+    @ColumnInfo(name = "user_id")
     private String userID;
-
     @SerializedName("attachments")
     @Expose
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
-
     @SerializedName("latest_reactions")
     @Expose
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
-
     @SerializedName("own_reactions")
     @Expose
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
-
     @SerializedName("reply_count")
     @Expose
     private int replyCount;
-
     @SerializedName("created_at")
-    @ColumnInfo(name="created_at")
+    @ColumnInfo(name = "created_at")
     @Expose
     @TypeConverters({DateConverter.class})
     private Date createdAt;
-
     @SerializedName("updated_at")
     @Expose
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
-
     @SerializedName("deleted_at")
     @Expose
     @TypeConverters({DateConverter.class})
     private Date deletedAt;
-
     @SerializedName("mentioned_users")
     @Expose
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
-
     @SerializedName("reaction_counts")
     @Expose
     @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
-
     @SerializedName("parent_id")
     @Expose
     private String parentId;
-
     @SerializedName("command")
     @Expose
     private String command;
-
     @SerializedName("command_info")
     @Expose
     @TypeConverters(CommandInfoConverter.class)
     private Map<String, String> commandInfo;
-
-    public MessageStatus getStatus() {
-        return status;
-    }
-
-
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Message otherMessage = (Message) obj;
-        if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
-            return false;
-        }
-        if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
-            return false;
-        }
-        if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
-            return false;
-        }
-        if (replyCount != otherMessage.replyCount) {
-            return false;
-        }
-        return true;
-    }
-
-    public Message copy() {
-        Message clone = new Message();
-        clone.id = id;
-        clone.text = text;
-        clone.html = html;
-        clone.type = type;
-        clone.user = user;
-        clone.attachments = attachments;
-        clone.latestReactions = latestReactions;
-        clone.ownReactions = ownReactions;
-        clone.replyCount = replyCount;
-        clone.createdAt = new Date(createdAt.getTime());
-        if (updatedAt != null) {
-            clone.updatedAt = new Date(updatedAt.getTime());
-        }
-        if (deletedAt != null) {
-            clone.deletedAt = new Date(deletedAt.getTime());
-        }
-        clone.mentionedUsers = mentionedUsers;
-        clone.parentId = parentId;
-        clone.command = command;
-        clone.commandInfo = commandInfo;
-        clone.status = status;
-        return clone;
-    }
-
     // Additional Params
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
@@ -233,10 +158,6 @@ public class Message implements UserEntity {
             setFormattedDate(message);
             message.setStartDay(!message.getDate().equals(preMessage.getDate()));
         }
-    }
-
-    public void preStorage() {
-        this.userID = this.getUser().getId();
     }
 
     private static void setFormattedDate(Message message) {
@@ -307,15 +228,79 @@ public class Message implements UserEntity {
             elapsed = "Just now";
         } else if (seconds < 60 * 60) {
             int minutes = (int) (seconds / 60);
-            elapsed = String.valueOf(minutes) + " " + ((minutes > 1) ? "mins" : "min");
+            elapsed = minutes + " " + ((minutes > 1) ? "mins" : "min");
         } else if (seconds < 24 * 60 * 60) {
             int hours = (int) (seconds / (60 * 60));
-            elapsed = String.valueOf(hours) + " " + ((hours > 1) ? "hours" : "hour");
+            elapsed = hours + " " + ((hours > 1) ? "hours" : "hour");
         } else {
             int days = (int) (seconds / (24 * 60 * 60));
-            elapsed = String.valueOf(days) + " " + ((days > 1) ? "days" : "day");
+            elapsed = days + " " + ((days > 1) ? "days" : "day");
         }
         return elapsed;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public MessageStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MessageStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Message otherMessage = (Message) obj;
+        if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
+            return false;
+        }
+        if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
+            return false;
+        }
+        if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
+            return false;
+        }
+        return replyCount == otherMessage.replyCount;
+    }
+
+    public Message copy() {
+        Message clone = new Message();
+        clone.id = id;
+        clone.text = text;
+        clone.html = html;
+        clone.type = type;
+        clone.user = user;
+        clone.attachments = attachments;
+        clone.latestReactions = latestReactions;
+        clone.ownReactions = ownReactions;
+        clone.replyCount = replyCount;
+        clone.createdAt = new Date(createdAt.getTime());
+        if (updatedAt != null) {
+            clone.updatedAt = new Date(updatedAt.getTime());
+        }
+        if (deletedAt != null) {
+            clone.deletedAt = new Date(deletedAt.getTime());
+        }
+        clone.mentionedUsers = mentionedUsers;
+        clone.parentId = parentId;
+        clone.command = command;
+        clone.commandInfo = commandInfo;
+        clone.status = status;
+        return clone;
+    }
+
+    public void preStorage() {
+        this.userID = this.getUser().getId();
     }
 
     public boolean isYesterday() {
@@ -362,10 +347,6 @@ public class Message implements UserEntity {
         return status == MessageStatus.RECEIVED;
     }
 
-    public void setStatus(MessageStatus status) {
-        this.status = status;
-    }
-
     public String getId() {
         return id;
     }
@@ -374,12 +355,12 @@ public class Message implements UserEntity {
         this.id = id;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public String getText() {
         return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public String getHtml() {
@@ -467,12 +448,12 @@ public class Message implements UserEntity {
         this.createdAt = createdAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Date getDeletedAt() {
@@ -483,12 +464,12 @@ public class Message implements UserEntity {
         this.deletedAt = deletedAt;
     }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
     public String getParentId() {
         return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getCommand() {

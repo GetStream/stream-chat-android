@@ -3,17 +3,18 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.io.File;
@@ -24,15 +25,9 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
+    private final OnItemClickListener listener;
     private Context context;
     private List<Attachment> attachments;
-    private final OnItemClickListener listener;
-
     public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnItemClickListener listener) {
         this.context = context;
         this.attachments = attachments;
@@ -58,6 +53,10 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
     @Override
     public int getItemCount() {
         return attachments.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -106,9 +105,9 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 } else if (videoLeng < 60) {
                     videoLength = "00:" + videoLeng;
                 } else if (videoLeng < 600) {
-                    videoLength = "0" + (int) (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
+                    videoLength = "0" + (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
                 } else {
-                    videoLength = (int) (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
+                    videoLength = (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
                 }
                 binding.tvLength.setText(videoLength);
             } else {

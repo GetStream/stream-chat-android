@@ -17,7 +17,8 @@ public class QuerySortConverter {
             return new QuerySort();
         }
 
-        Type listType = new TypeToken<QuerySort>() {}.getType();
+        Type listType = new TypeToken<QuerySort>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

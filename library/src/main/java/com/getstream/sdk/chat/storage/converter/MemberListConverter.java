@@ -19,7 +19,8 @@ public class MemberListConverter {
             return new ArrayList<Member>();
         }
 
-        Type listType = new TypeToken<List<Member>>() {}.getType();
+        Type listType = new TypeToken<List<Member>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

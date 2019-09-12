@@ -18,10 +18,10 @@ public interface ChannelsDao {
      */
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertChannel(Channel channel);
+    void insertChannel(Channel channel);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertChannels(List<Channel> channels);
+    void insertChannels(List<Channel> channels);
 
 
     @Query("SELECT * FROM stream_channel " +

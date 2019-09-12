@@ -18,7 +18,8 @@ public class ChannelIdListConverter {
             return new ArrayList<String>();
         }
 
-        Type listType = new TypeToken<List<String>>() {}.getType();
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

@@ -1,13 +1,13 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
@@ -49,19 +49,19 @@ public class CommandMentionListItemAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewDataBinding binding;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(isCommand? R.layout.stream_item_command : R.layout.stream_item_mention, null);
+            convertView = layoutInflater.inflate(isCommand ? R.layout.stream_item_command : R.layout.stream_item_mention, null);
             binding = DataBindingUtil.bind(convertView);
             convertView.setTag(binding);
         } else {
             binding = (ViewDataBinding) convertView.getTag();
         }
 
-        if (isCommand){
+        if (isCommand) {
             Command command = (Command) commands.get(position);
-            ((StreamItemCommandBinding)binding).setCommand(command);
-        }else{
+            ((StreamItemCommandBinding) binding).setCommand(command);
+        } else {
             User user = (User) commands.get(position);
-            ((StreamItemMentionBinding)binding).setUser(user);
+            ((StreamItemMentionBinding) binding).setUser(user);
         }
         return binding.getRoot();
     }

@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.utils.frescoimageviewer.adapter.RecyclingPagerAdap
 import com.getstream.sdk.chat.utils.frescoimageviewer.adapter.ViewHolder;
 import com.getstream.sdk.chat.utils.frescoimageviewer.drawee.ZoomableDraweeView;
 
-
 import java.util.HashSet;
 
 import me.relex.photodraweeview.OnScaleChangeListener;

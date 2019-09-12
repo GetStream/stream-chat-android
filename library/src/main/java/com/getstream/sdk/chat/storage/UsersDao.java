@@ -13,10 +13,10 @@ import java.util.List;
 public interface UsersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertUser(User user);
+    void insertUser(User user);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertUsers(List<User> users);
+    void insertUsers(List<User> users);
 
     @Query("SELECT * FROM stream_user " +
             "WHERE stream_user.id IN (:ids)")

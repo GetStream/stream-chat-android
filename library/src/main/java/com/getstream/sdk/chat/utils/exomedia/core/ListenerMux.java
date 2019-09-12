@@ -18,10 +18,11 @@ package com.getstream.sdk.chat.utils.exomedia.core;
 
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.view.Surface;
+
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.Surface;
 
 import com.getstream.sdk.chat.utils.exomedia.core.exception.NativeMediaPlaybackException;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.ExoMediaPlayer;

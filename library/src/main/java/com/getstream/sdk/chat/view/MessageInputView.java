@@ -57,6 +57,7 @@ public class MessageInputView extends RelativeLayout
         implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
 
     final String TAG = MessageInputView.class.getSimpleName();
+    Uri imageUri;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     // binding for this view
@@ -65,13 +66,9 @@ public class MessageInputView extends RelativeLayout
     // listeners
     private SendMessageListener sendMessageListener;
     private OpenCameraViewListener openCameraViewListener;
-
-    private AttachmentListener attachmentListener;
     // state
-
+    private AttachmentListener attachmentListener;
     private Message editingMessage;
-
-
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
 
@@ -80,6 +77,7 @@ public class MessageInputView extends RelativeLayout
         super(context);
         binding = initBinding(context);
     }
+    // endregion
 
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -87,7 +85,6 @@ public class MessageInputView extends RelativeLayout
         binding = initBinding(context);
         applyStyle();
     }
-    // endregion
 
     // region Init
     private StreamViewMessageInputBinding initBinding(Context context) {
@@ -149,7 +146,7 @@ public class MessageInputView extends RelativeLayout
         requestFocus();
         setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                if (viewModel.isThread()){
+                if (viewModel.isThread()) {
                     viewModel.initThread();
                     initSendMessage();
                     return true;
@@ -179,7 +176,7 @@ public class MessageInputView extends RelativeLayout
         });
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
-        viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup ->{
+        viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
             if (messageListScrollup)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
@@ -250,7 +247,6 @@ public class MessageInputView extends RelativeLayout
         binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
-    Uri imageUri;
     // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -351,7 +347,7 @@ public class MessageInputView extends RelativeLayout
     private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
 
-        if (isEdit){
+        if (isEdit) {
             getEditMessage().setText(input);
             getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
             viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {

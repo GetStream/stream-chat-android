@@ -19,7 +19,8 @@ public class ChannelUserReadListConverter {
             return new ArrayList<ChannelUserRead>();
         }
 
-        Type listType = new TypeToken<List<ChannelUserRead>>() {}.getType();
+        Type listType = new TypeToken<List<ChannelUserRead>>() {
+        }.getType();
 
         return gson.fromJson(data, listType);
     }

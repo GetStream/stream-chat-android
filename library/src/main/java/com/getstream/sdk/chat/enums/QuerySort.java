@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 public class QuerySort {
-    private List<Map<String, Object>> mSort;
-
     private static int DESC = -1;
     private static int ASC = 1;
+    private List<Map<String, Object>> mSort;
 
     public List<Map<String, Object>> getData() {
         return mSort;
     }
 
-    public QuerySort clone (){
+    public QuerySort clone() {
         QuerySort _this = new QuerySort();
         if (mSort == null) {
             mSort = new ArrayList<>();
@@ -36,6 +35,7 @@ public class QuerySort {
     public QuerySort asc(String fieldName) {
         return add(fieldName, ASC);
     }
+
     public QuerySort desc(String fieldName) {
         return add(fieldName, DESC);
     }

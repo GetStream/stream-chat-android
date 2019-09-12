@@ -1,12 +1,12 @@
-
 package com.getstream.sdk.chat.utils.frescoimageviewer.drawee;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
+import androidx.annotation.NonNull;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -78,23 +78,23 @@ public class ZoomableDraweeView extends SimpleDraweeView implements IAttacher {
     }
 
     @Override
-    public float getMediumScale() {
-        return attacher.getMediumScale();
-    }
-
-    @Override
-    public float getMaximumScale() {
-        return attacher.getMaximumScale();
-    }
-
-    @Override
     public void setMinimumScale(float minimumScale) {
         attacher.setMinimumScale(minimumScale);
     }
 
     @Override
+    public float getMediumScale() {
+        return attacher.getMediumScale();
+    }
+
+    @Override
     public void setMediumScale(float mediumScale) {
         attacher.setMediumScale(mediumScale);
+    }
+
+    @Override
+    public float getMaximumScale() {
+        return attacher.getMaximumScale();
     }
 
     @Override
@@ -148,23 +148,23 @@ public class ZoomableDraweeView extends SimpleDraweeView implements IAttacher {
     }
 
     @Override
-    public void setOnPhotoTapListener(OnPhotoTapListener listener) {
-        attacher.setOnPhotoTapListener(listener);
-    }
-
-    @Override
-    public void setOnViewTapListener(OnViewTapListener listener) {
-        attacher.setOnViewTapListener(listener);
-    }
-
-    @Override
     public OnPhotoTapListener getOnPhotoTapListener() {
         return attacher.getOnPhotoTapListener();
     }
 
     @Override
+    public void setOnPhotoTapListener(OnPhotoTapListener listener) {
+        attacher.setOnPhotoTapListener(listener);
+    }
+
+    @Override
     public OnViewTapListener getOnViewTapListener() {
         return attacher.getOnViewTapListener();
+    }
+
+    @Override
+    public void setOnViewTapListener(OnViewTapListener listener) {
+        attacher.setOnViewTapListener(listener);
     }
 
     @Override
