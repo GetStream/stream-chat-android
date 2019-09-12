@@ -527,24 +527,22 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
-        if (message.getType().equals(ModelType.message_reply)) {
-            if (!isThread()
-                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
-                return false;
-
-            for (int i = 0; i < threadMessages.getValue().size(); i++) {
-                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
-                    messagesCopy.remove(i);
-                    threadMessages.postValue(messagesCopy);
-                    return true;
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            if (message.getId().equals(messagesCopy.get(i).getId())) {
+                messagesCopy.remove(i);
+                if (isThread()){
+                    if (i == 0)
+                        initThread();
+                    else
+                        threadMessages.postValue(messagesCopy);
                 }
+                else
+                    messages.postValue(messagesCopy);
+
+                return true;
             }
-            return false;
-        } else {
-            boolean removed = messagesCopy.remove(message);
-            messages.postValue(messagesCopy);
-            return removed;
         }
+        return false;
     }
 
     private void addMessage(Message message) {
