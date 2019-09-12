@@ -160,9 +160,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
 
         this.typing.observe(owner, users -> {
+            if (isThread()) return;
             // update
             hasNewMessages = false;
-            List<MessageListItem> typingEntities = new ArrayList<MessageListItem>();
+            List<MessageListItem> typingEntities = new ArrayList<>();
             if (users.size() > 0) {
                 MessageListItem messageListItem = new MessageListItem(users);
                 typingEntities.add(messageListItem);
