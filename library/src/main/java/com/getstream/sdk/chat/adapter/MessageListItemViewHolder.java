@@ -75,6 +75,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.UserClickListener userClickListener;
+    private MessageListView.ReadStateClickListener readStateClickListener;
+
     private int position;
     private boolean isThread;
     private boolean isThreadHeader = false;
@@ -138,7 +140,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageClickListener messageClickListener,
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener attachmentClickListener,
-                     MessageListView.UserClickListener userClickListener) {
+                     MessageListView.UserClickListener userClickListener,
+                     MessageListView.ReadStateClickListener readStateClickListener) {
 
         // set binding
         this.context = context;
@@ -149,6 +152,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
         this.userClickListener = userClickListener;
+        this.readStateClickListener = readStateClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -290,6 +294,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         read_state.setVisibility(View.VISIBLE);
         read_state.setReads(readBy, messageListItem.isTheirs(), style);
+        read_state.setOnClickListener(view -> {
+            if (readStateClickListener != null)
+                readStateClickListener.onReadStateClick(readBy);
+        });
     }
 
     private void configSendFailed() {
@@ -649,6 +657,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         set.clone(cl_message);
         set.clear(R.id.read_state, ConstraintSet.START);
         set.clear(R.id.read_state, ConstraintSet.END);
+        set.clear(R.id.read_state, ConstraintSet.BOTTOM);
         set.applyTo(cl_message);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
@@ -665,8 +674,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
 
-        params.leftMargin = Utils.dpToPx(3);
-        params.rightMargin = Utils.dpToPx(3);
+        params.bottomToBottom = layoutId;
+        params.leftMargin = Utils.dpToPx(8);
+        params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
 

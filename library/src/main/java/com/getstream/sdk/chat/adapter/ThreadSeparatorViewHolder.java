@@ -27,7 +27,8 @@ public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageClickListener l1,
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener l2,
-                     MessageListView.UserClickListener userClickListener) {
+                     MessageListView.UserClickListener userClickListener,
+                     MessageListView.ReadStateClickListener readStateClickListener) {
 
 //        tv_text.setText();
     }
