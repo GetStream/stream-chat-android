@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.function.SendFileFunction;
+import com.getstream.sdk.chat.utils.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;

@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageListView;

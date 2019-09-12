@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.view.MessageListView;
