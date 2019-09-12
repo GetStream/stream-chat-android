@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -681,8 +682,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
         if (message.getStatus() == null) {
             message.setUser(client().getUser());
-            // TODO: this should be set to last message + 1 just to be sure we don't have clock skew bugs
-            // TODO: Thierry: That doesn't make sense to me
             message.setCreatedAt(new Date());
             message.setType("regular");
             if (isThread())
@@ -691,6 +690,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             message.preStorage();
+            message.setSyncStatus(Sync.LOCAL_ONLY);
             client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
         }

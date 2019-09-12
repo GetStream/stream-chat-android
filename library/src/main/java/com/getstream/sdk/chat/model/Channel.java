@@ -40,6 +40,7 @@ import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
@@ -86,6 +87,17 @@ public class Channel {
     @SerializedName("last_message_at")
     @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
+
+    public @Sync.Status Integer getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(@Sync.Status Integer syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    private Integer syncStatus;
+
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
@@ -153,6 +165,7 @@ public class Channel {
         this.id = id;
         this.cid = String.format("%s:%s", type, id);
         this.client = client;
+        this.setSyncStatus(Sync.SYNCED);
 
         if (extraData == null) {
             this.extraData = new HashMap<>();

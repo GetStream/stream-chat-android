@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
 import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -78,6 +79,8 @@ public class Message implements UserEntity {
     @SerializedName("type")
     @Expose
     private String type;
+
+    private Integer syncStatus;
 
     @SerializedName("user")
     @Expose
@@ -512,5 +515,13 @@ public class Message implements UserEntity {
 
     public void setCid(@NonNull String cid) {
         this.cid = cid;
+    }
+
+    public @Sync.Status Integer getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(@Sync.Status Integer syncStatus) {
+        this.syncStatus = syncStatus;
     }
 }
