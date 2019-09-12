@@ -185,6 +185,7 @@ StreamChat.getOnlineStatus().observe(...);
 - UI customization
 - Threads
 - Slash commands
+- Offline support
 
 ## Getting started
 
