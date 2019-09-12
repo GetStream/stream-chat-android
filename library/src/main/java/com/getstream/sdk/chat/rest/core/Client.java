@@ -1145,6 +1145,14 @@ public class Client implements WSResponseHandler {
         return offlineStorage;
     }
 
+    public void enableOfflineStorage() {
+        setOfflineStorage(true);
+    }
+
+    public void disableOfflineStorage() {
+        setOfflineStorage(true);
+    }
+
     public void setOfflineStorage(Boolean offlineStorage) {
         this.offlineStorage = offlineStorage;
     }
