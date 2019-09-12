@@ -79,7 +79,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private int position;
     private boolean isThread;
-    private boolean isThreadHeader = false;
     private Context context;
     private Message message;
     private MessageListItem messageListItem;
@@ -268,19 +267,36 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()
                 || !messageListItem.isMine()
-                || message.getType().equals(ModelType.message_ephemeral))
+                || message.getCreatedAt().getTime() < channelState.getLastMessage().getCreatedAt().getTime()
+                || message.getType().equals(ModelType.message_ephemeral)
+                || message.getStatus() == null)
             return;
 
-        if (message.isDelivered()) {
-            iv_deliver.setVisibility(View.VISIBLE);
-        } else {
-            if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
-                    && channelState.getLastMessage().getId().equals(message.getId())) {
-                message.setStatus(MessageStatus.RECEIVED);
+
+
+
+        switch (message.getStatus()) {
+            case SENDING:
+                pb_deliver.setVisibility(View.VISIBLE);
+                iv_deliver.setVisibility(View.GONE);
+                break;
+            case RECEIVED:
+                pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.VISIBLE);
-                return;
-            }
-            pb_deliver.setVisibility(View.VISIBLE);
+                break;
+            case FAILED:
+                pb_deliver.setVisibility(View.GONE);
+                iv_deliver.setVisibility(View.GONE);
+                break;
+            default:
+                if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
+                        && channelState.getLastMessage().getId().equals(message.getId())) {
+                    message.setStatus(MessageStatus.RECEIVED);
+                    iv_deliver.setVisibility(View.VISIBLE);
+                    return;
+                }
+                pb_deliver.setVisibility(View.VISIBLE);
+                break;
         }
     }
 

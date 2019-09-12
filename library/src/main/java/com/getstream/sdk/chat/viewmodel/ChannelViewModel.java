@@ -403,17 +403,23 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     private void replaceMessage(Message oldMessage, Message newMessage) {
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(oldMessage);
-        if (index != -1) {
-            // Failed Message Progress
-            if (oldMessage.getStatus() == MessageStatus.FAILED) {
-                messagesCopy.remove(oldMessage);
-                messagesCopy.add(newMessage);
-            } else {
-                messagesCopy.set(index, newMessage);
+        List<Message> messagesCopy = getMessages().getValue();
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
+                newMessage.setStatus(MessageStatus.RECEIVED);
+                if (oldMessage.getStatus() == MessageStatus.FAILED) {
+                    messagesCopy.remove(oldMessage);
+                    messagesCopy.add(newMessage);
+                } else {
+                    messagesCopy.set(i, newMessage);
+                }
+                if (isThread())
+                    threadMessages.postValue(messagesCopy);
+                else
+                    messages.postValue(messagesCopy);
+
+                break;
             }
-            messages.postValue(messagesCopy);
         }
     }
 

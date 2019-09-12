@@ -350,10 +350,6 @@ public class Message implements UserEntity {
         this.time = time;
     }
 
-    public boolean isDelivered() {
-        return status == MessageStatus.RECEIVED;
-    }
-
     public String getId() {
         return id;
     }

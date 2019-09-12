@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.Token;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -466,6 +467,7 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
+                            channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);

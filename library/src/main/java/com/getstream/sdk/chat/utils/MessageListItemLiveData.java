@@ -202,7 +202,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             Boolean mine = message.getUser().equals(currentUser);
             // determine the position (top, middle, bottom)
             User user = message.getUser();
-            List<MessageViewHolderFactory.Position> positions = new ArrayList<MessageViewHolderFactory.Position>();
+            List<MessageViewHolderFactory.Position> positions = new ArrayList<>();
             if (previousMessage == null || !previousMessage.getUser().equals(user)) {
                 positions.add(MessageViewHolderFactory.Position.TOP);
             }
