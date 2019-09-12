@@ -20,6 +20,10 @@ public class Reaction {
     @Expose
     private String type;
 
+    public Reaction() {
+        this.setSyncStatus(Sync.SYNCED);
+    }
+
     private Integer syncStatus;
 
     public String getMessage_id() {
