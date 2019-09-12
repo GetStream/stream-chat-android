@@ -85,8 +85,14 @@ public class Storage {
         return queryChannelsQDao.select(queryID);
     }
 
+
     public void insertChannels(List<Channel> channels) {
         if (!enabled) return;
+
+        for (Channel c: channels) {
+            c.preStorage();
+            c.getLastState().preStorage();
+        }
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -224,15 +230,11 @@ public class Storage {
     public void insertChannel(Channel channel) {
         if (!enabled) return;
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                channelsDao.insertChannel(channel);
-                return null;
-            }
-        }.execute();
-    }
+        List<Channel> channels = new ArrayList<>();
+        channels.add(channel);
 
+        insertChannels(channels);
+    }
 
     public void insertQuery(QueryChannelsQ query) {
         if (!enabled) return;

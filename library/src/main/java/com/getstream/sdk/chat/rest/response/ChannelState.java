@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
 import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.SerializedName;
@@ -246,10 +247,15 @@ public class ChannelState {
     }
 
     public Message getOldestMessage() {
-        if (messages == null || messages.size() == 0) {
+        if (messages == null) {
             return null;
         }
-        return messages.get(0);
+        for (Message m : messages) {
+            if (m.getSyncStatus() == Sync.SYNCED) {
+                return m;
+            }
+        }
+        return null;
     }
 
     public List<Message> getMessages() {

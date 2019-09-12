@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.model;
 import androidx.room.ColumnInfo;
 
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -18,6 +19,8 @@ public class Reaction {
     @SerializedName("type")
     @Expose
     private String type;
+
+    private Integer syncStatus;
 
     public String getMessage_id() {
         return message_id;
@@ -41,5 +44,13 @@ public class Reaction {
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public @Sync.Status Integer getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(@Sync.Status Integer syncStatus) {
+        this.syncStatus = syncStatus;
     }
 }

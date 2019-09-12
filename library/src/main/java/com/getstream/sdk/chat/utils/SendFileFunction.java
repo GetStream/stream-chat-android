@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.function;
+package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,8 +26,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;

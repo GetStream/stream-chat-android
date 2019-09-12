@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageListView;

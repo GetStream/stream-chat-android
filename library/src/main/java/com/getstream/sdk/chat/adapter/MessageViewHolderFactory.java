@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.model.Attachment;

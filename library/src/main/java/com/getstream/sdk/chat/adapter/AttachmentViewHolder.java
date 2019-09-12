@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -93,11 +92,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configAttachViewBackground(View view) {
         Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = getStyle().getMessageBubbleDrawableTheirs();
-        } else {
+        if (getMessageListItem().isMine()) {
             background = getStyle().getMessageBubbleDrawableMine();
+        } else {
+            background = getStyle().getMessageBubbleDrawableTheirs();
         }
         view.setBackground(background);
     }
