@@ -78,6 +78,8 @@ public class MoreActionDialog extends Dialog {
                 .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
                 .build());
 
+        ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
+
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);

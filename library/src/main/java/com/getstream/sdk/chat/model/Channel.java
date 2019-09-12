@@ -16,6 +16,7 @@ import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -706,6 +707,7 @@ public class Channel {
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
+        message.setStatus(MessageStatus.RECEIVED);
         if (!message.getType().equals(ModelType.message_reply))
             channelState.addMessageSorted(message);
         if (getLastMessageDate().before(message.getCreatedAt())) {
