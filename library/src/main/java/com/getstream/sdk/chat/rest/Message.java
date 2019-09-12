@@ -144,6 +144,10 @@ public class Message implements UserEntity {
     private boolean isToday = false;
     private String date, time;
 
+    public Message() {
+        this.setSyncStatus(Sync.SYNCED);
+    }
+
     // region Set Date and Time
     public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
         if (messages == null) return;
