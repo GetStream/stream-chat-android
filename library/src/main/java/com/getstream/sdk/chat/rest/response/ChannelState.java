@@ -392,6 +392,7 @@ public class ChannelState {
         List<Message> diff = new ArrayList<>();
         diff.add(message);
         addMessagesSorted(diff);
+        setLastMessage(message);
     }
 
     private void addMessagesSorted(List<Message> messages) {

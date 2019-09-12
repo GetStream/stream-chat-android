@@ -354,6 +354,7 @@ public class MessageListView extends RecyclerView {
             // Scroll to origin position on return from thread
             if (backFromThread) {
                 layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
+                viewModel.markLastMessageRead();
                 return;
             }
 
