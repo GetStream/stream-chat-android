@@ -286,10 +286,8 @@ public class SendFileFunction {
 
         if (selectedAttachments.size() > 0) {
             viewModel.setInputType(InputType.SELECT);
-//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-//            binding.setActiveMessageComposer(false);
             viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
