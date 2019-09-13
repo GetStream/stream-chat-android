@@ -55,9 +55,11 @@ public class StringUtility {
     }
 
     public static String getSaltString(String s) {
+        String s_ = s.replaceAll("\\s+","");
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
-        salt.append(s);
+        int minIndex = Math.min(5, s_.length() - 1);
+        salt.append(s_.substring(0,minIndex));
         salt.append("-");
         Random rnd = new Random();
         while (salt.length() < 18) {

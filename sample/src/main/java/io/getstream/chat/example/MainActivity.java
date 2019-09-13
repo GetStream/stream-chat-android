@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +24,6 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
@@ -140,13 +140,8 @@ public class MainActivity extends AppCompatActivity {
         Client client = configureStreamClient();
 
         String channelId = StringUtility.getSaltString(channelName);
-        HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", channelName);
-        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
-
-
         Map<String, Object> data = new HashMap<>();
-        data.put("name", channel.getName());
+        data.put("name", channelName);
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
@@ -154,24 +149,33 @@ public class MainActivity extends AppCompatActivity {
         data.put("members", members);
 
         ChannelQueryRequest request = new ChannelQueryRequest().withData(data).withMessages(10);
-
+        viewModel.setLoading();
         client.getApiService().queryChannel(ModelType.channel_messaging, channelId, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
             @Override
             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                viewModel.setLoadingDone();
                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-
-                client.addChannelConfig(ModelType.channel_messaging, channel.getConfig());
-                client.addToActiveChannels(channel);
-                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                // offline storage
-
-                client.storage().insertMessagesForChannel(channel, response.body().getMessages());
-
+                ChannelState channelState = response.body();
+                Channel channel = channelState.getChannel();
+                client.addChannelConfig(channel.getType(), channel.getConfig());
+                channel.setClient(client);
+                channel.setLastState(channelState);
+                if (client.getChannelByCid(channel.getCid()) != null) {
+                    channel = client.getChannelByCid(channel.getCid());
+                } else {
+                    client.addToActiveChannels(channel);
+                }
+                channel.mergeWithState(channelState);
+                Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
+                intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
+                intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
+                startActivity(intent);
             }
 
             @Override
             public void onFailure(Call<ChannelState> call, Throwable t) {
-
+                viewModel.setLoadingDone();
+                Toast.makeText(MainActivity.this,t.getLocalizedMessage(),Toast.LENGTH_SHORT);
             }
         });
     }
