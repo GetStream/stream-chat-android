@@ -445,9 +445,9 @@ public class Channel {
      *
      * @return {object} Returns a query response
      */
-    public void query(QueryChannelCallback callback) {
-        query(new ChannelQueryRequest().withData(this.extraData), callback);
-    }
+//    public void query(QueryChannelCallback callback) {
+//        query(new ChannelQueryRequest().withData(this.extraData), callback);
+//    }
 
     /**
      * getReplies - List the message replies for a parent message

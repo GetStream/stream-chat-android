@@ -1,12 +1,13 @@
 package io.getstream.chat.example;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,14 +17,24 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -34,6 +45,7 @@ import static com.getstream.sdk.chat.enums.Filters.eq;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final String USER_ID = "bender";
@@ -94,30 +106,73 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(this::createNewChannel);
+        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
     }
 
-    void createNewChannel(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final EditText input = new EditText(MainActivity.this);
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        input.setLayoutParams(lp);
-        input.setHint("Channel name!");
-        builder.setView(input);
-        AlertDialog alert = builder.create();
-        builder.setTitle("Create a Channel")
-                .setMessage("Type a channel name")
-                .setCancelable(false)
-                .setPositiveButton("Create", (DialogInterface dialog, int id)-> {
-                    //do things
-                    Client client = configureStreamClient();
-                    String channelName = input.getText().toString();
+    void createNewChannelDialog(View view) {
 
+        final EditText inputName = new EditText(this);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setHint("Type a channel name");
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Create a Channel")
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setView(inputName);
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                String channelName = inputName.getText().toString();
+                if (TextUtils.isEmpty(channelName)) {
+                    inputName.setError("Invalid Name!");
+                    return;
+                }
+                createNewChannel(channelName);
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
+    }
 
-                })
-                .setNegativeButton("Cancel", (DialogInterface dialogInterface, int i) -> alert.dismiss())
-                .show();
+    void createNewChannel(String channelName){
+        Client client = configureStreamClient();
+
+        String channelId = "";
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", channelName);
+        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
+        Map<String, Object> messages = new HashMap<>();
+        messages.put("limit", Constant.DEFAULT_LIMIT);
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", channel.getName());
+        data.put("image", channel.getImage());
+
+        List<String> members = new ArrayList<>();
+        members.add(client.getUser().getId());
+
+        data.put("members", members);
+
+        ChannelQueryRequest request = new ChannelQueryRequest().withData(data);
+                    client.getApiService().queryChannel(ModelType.channel_messaging, channelId, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
+                        @Override
+                        public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                            Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+
+                            client.addChannelConfig(ModelType.channel_messaging, channel.getConfig());
+                            client.addToActiveChannels(channel);
+                            Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                            // offline storage
+
+                            client.storage().insertMessagesForChannel(channel, response.body().getMessages());
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<ChannelState> call, Throwable t) {
+
+                        }
+                    });
     }
 }
