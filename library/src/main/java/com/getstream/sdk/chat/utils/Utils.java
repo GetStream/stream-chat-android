@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -42,7 +43,7 @@ public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    public static String TAG = "Utils";
+    private static String TAG = Utils.class.getSimpleName();
     public static List<Attachment> attachments = new ArrayList<>();
 
     public static String readInputStream(InputStream inputStream) {
@@ -74,20 +75,21 @@ public class Utils {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void showSoftKeyboard(Context context) {
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+    public static void showSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (!inputMethodManager.isAcceptingText())
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        } catch (Exception e) {
-        }
     }
 
-    public static void hideSoftKeyboard(Context context) {
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), 0);
-        } catch (Exception e) {
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
         }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public static int getScreenResolution(Context context) {

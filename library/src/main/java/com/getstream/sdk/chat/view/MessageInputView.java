@@ -192,7 +192,7 @@ public class MessageInputView extends RelativeLayout
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
             if (messageListScrollup)
-                Utils.hideSoftKeyboard(getContext());
+                Utils.hideSoftKeyboard((Activity) getContext());
         });
     }
 
@@ -346,9 +346,9 @@ public class MessageInputView extends RelativeLayout
     public void onFocusChange(View v, boolean hasFocus) {
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
         if (hasFocus)
-            Utils.showSoftKeyboard(getContext());
+            Utils.showSoftKeyboard((Activity) getContext());
         else
-            Utils.hideSoftKeyboard(getContext());
+            Utils.hideSoftKeyboard((Activity) getContext());
     }
 
     private void onSendMessage(String input, boolean isEdit) {
@@ -362,12 +362,14 @@ public class MessageInputView extends RelativeLayout
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
+                    clearFocus();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
+                    clearFocus();
                 }
             });
         } else {
@@ -395,9 +397,9 @@ public class MessageInputView extends RelativeLayout
     }
 
     private void initSendMessage() {
+        messageInputClient.initSendMessage();
         viewModel.setEditMessage(null);
         binding.etMessage.setText("");
-        messageInputClient.initSendMessage();
     }
 
     // region Set Listeners

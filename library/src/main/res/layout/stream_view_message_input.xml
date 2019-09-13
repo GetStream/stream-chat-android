@@ -321,10 +321,10 @@
                     android:id="@+id/iv_openAttach"
                     android:layout_width="@dimen/stream_attachment_button_width"
                     android:layout_height="@dimen/stream_attachment_button_height"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginBottom="13dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="10dp" />
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <EditText
                     android:id="@+id/et_message"
@@ -335,21 +335,21 @@
                     android:background="@null"
                     android:maxLines="100"
                     android:padding="17dp"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
                     app:layout_constraintEnd_toStartOf="@+id/iv_send"
-                    android:textSize="15sp" />
+                    app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
                     android:id="@+id/iv_send"
                     android:layout_width="@dimen/stream_input_button_width"
                     android:layout_height="@dimen/stream_input_button_height"
                     android:layout_marginEnd="10dp"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="13dp"
+                    app:isGone="@{!activeMessageSend}"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:isGone="@{!activeMessageSend}" />
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
