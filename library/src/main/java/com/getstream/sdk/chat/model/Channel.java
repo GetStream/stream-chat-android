@@ -415,6 +415,12 @@ public class Channel {
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
                                 mergeWithState(response.body());
+
+                                if (channel.config == null)
+                                    channel.config = response.body().getChannel().getConfig();
+                                if (channel.channelState == null)
+                                    channel.channelState = response.body();
+
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
                                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
@@ -445,9 +451,9 @@ public class Channel {
      *
      * @return {object} Returns a query response
      */
-    public void query(QueryChannelCallback callback) {
-        query(new ChannelQueryRequest().withData(this.extraData), callback);
-    }
+//    public void query(QueryChannelCallback callback) {
+//        query(new ChannelQueryRequest().withData(this.extraData), callback);
+//    }
 
     /**
      * getReplies - List the message replies for a parent message
@@ -708,9 +714,11 @@ public class Channel {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         message.setStatus(MessageStatus.RECEIVED);
-        if (!message.getType().equals(ModelType.message_reply))
+        if (!message.getType().equals(ModelType.message_reply)){
             channelState.addMessageSorted(message);
-        if (getLastMessageDate().before(message.getCreatedAt())) {
+            channelState.setLastMessage(message);
+        }
+        if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }
         getClient().storage().insertMessageForChannel(this, message);
