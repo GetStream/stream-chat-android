@@ -64,14 +64,22 @@ public class SendFileFunction {
         PermissionChecker.permissionCheck((Activity) v.getContext(), null);
         if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
         openAnimationView(binding.clAddFile);
-        fadeAnimationView(binding.ivBackAttachment, true);
     }
 
     public void onClickAttachmentViewClose(View v) {
         closeAnimationView(binding.clAddFile);
         closeAnimationView(binding.clSelectPhoto);
         closeAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, false);
+    }
+
+    public void onClickEditViewOpen(View v) {
+        openAnimationView(binding.clEditMessage);
+    }
+
+    public void onClickEditViewClose(View v) {
+        closeAnimationView(binding.clEditMessage);
+        closeAnimationView(binding.clSelectPhoto);
+        closeAnimationView(binding.clCommand);
     }
 
     private void initLoadAttachemtView() {
@@ -112,7 +120,6 @@ public class SendFileFunction {
     private void configSelectAttachView(boolean isMedia, List<Attachment> editAttachments) {
         if (editAttachments != null) {
             selectedAttachments = editAttachments;
-            fadeAnimationView(binding.ivBackAttachment, true);
         } else {
             selectedAttachments = new ArrayList<>();
         }
@@ -172,7 +179,6 @@ public class SendFileFunction {
 
     public void onClickSelectMediaViewClose(View v) {
         closeAnimationView(binding.clSelectPhoto);
-        fadeAnimationView(binding.ivBackAttachment, false);
     }
     // endregion
 
@@ -378,13 +384,11 @@ public class SendFileFunction {
     // region Cammand
     private void openCommandView() {
         openAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, true);
         binding.tvInputboxBack.setVisibility(View.VISIBLE);
     }
 
     private void closeCommandView() {
         closeAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, false);
         commands = null;
     }
 

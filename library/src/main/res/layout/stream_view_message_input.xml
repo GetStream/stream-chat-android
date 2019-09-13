@@ -18,13 +18,42 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/iv_back_attachment"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_edit_message"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/stream_attach_more"
-            android:visibility="gone" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/stream_round_thread_toolbar"
+            android:paddingStart="20dp"
+            android:paddingBottom="15dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/tv_edit_title"
+                style="@style/text_b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Edit Message"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_close_edit"
+                style="@style/text"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/stream_round_thread_close"
+                android:gravity="center"
+                android:text="×"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_edit_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_edit_title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_add_file"

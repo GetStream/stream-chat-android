@@ -174,6 +174,7 @@ public class MessageInputView extends RelativeLayout
                     binding.llComposer.setBackground(style.getInputEditBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
                     binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
+                    sendFileFunction.onClickEditViewOpen(null);
                     break;
             }
         });
@@ -224,9 +225,12 @@ public class MessageInputView extends RelativeLayout
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
         binding.ivOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
-        binding.ivBackAttachment.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
         binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
+        binding.tvCloseEdit.setOnClickListener(v -> {
+            sendFileFunction.onClickEditViewClose(v);
+            cancelEditMessage();
+        });
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
             sendFileFunction.onClickAttachmentViewClose(v);
@@ -283,7 +287,6 @@ public class MessageInputView extends RelativeLayout
         viewModel.setEditMessage(null);
         binding.etMessage.setText("");
         this.clearFocus();
-        sendFileFunction.fadeAnimationView(binding.ivBackAttachment, false);
     }
 
     public void setEnabled(boolean enabled) {
