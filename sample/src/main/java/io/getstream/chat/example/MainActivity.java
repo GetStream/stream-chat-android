@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -138,41 +139,40 @@ public class MainActivity extends AppCompatActivity {
     void createNewChannel(String channelName){
         Client client = configureStreamClient();
 
-        String channelId = "";
+        String channelId = StringUtility.getSaltString(channelName);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
 
-        Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", Constant.DEFAULT_LIMIT);
+
         Map<String, Object> data = new HashMap<>();
         data.put("name", channel.getName());
-        data.put("image", channel.getImage());
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
 
         data.put("members", members);
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withData(data);
-                    client.getApiService().queryChannel(ModelType.channel_messaging, channelId, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
-                        @Override
-                        public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                            Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+        ChannelQueryRequest request = new ChannelQueryRequest().withData(data).withMessages(10);
 
-                            client.addChannelConfig(ModelType.channel_messaging, channel.getConfig());
-                            client.addToActiveChannels(channel);
-                            Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                            // offline storage
+        client.getApiService().queryChannel(ModelType.channel_messaging, channelId, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
+            @Override
+            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
 
-                            client.storage().insertMessagesForChannel(channel, response.body().getMessages());
+                client.addChannelConfig(ModelType.channel_messaging, channel.getConfig());
+                client.addToActiveChannels(channel);
+                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                // offline storage
 
-                        }
+                client.storage().insertMessagesForChannel(channel, response.body().getMessages());
 
-                        @Override
-                        public void onFailure(Call<ChannelState> call, Throwable t) {
+            }
 
-                        }
-                    });
+            @Override
+            public void onFailure(Call<ChannelState> call, Throwable t) {
+
+            }
+        });
     }
 }
