@@ -1,9 +1,14 @@
 package io.getstream.chat.example;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -11,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
@@ -88,6 +94,30 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
+        binding.ivAdd.setOnClickListener(this::createNewChannel);
+    }
 
+    void createNewChannel(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final EditText input = new EditText(MainActivity.this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        input.setHint("Channel name!");
+        builder.setView(input);
+        AlertDialog alert = builder.create();
+        builder.setTitle("Create a Channel")
+                .setMessage("Type a channel name")
+                .setCancelable(false)
+                .setPositiveButton("Create", (DialogInterface dialog, int id)-> {
+                    //do things
+                    Client client = configureStreamClient();
+                    String channelName = input.getText().toString();
+
+
+                })
+                .setNegativeButton("Cancel", (DialogInterface dialogInterface, int i) -> alert.dismiss())
+                .show();
     }
 }
