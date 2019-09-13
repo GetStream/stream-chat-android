@@ -415,6 +415,12 @@ public class Channel {
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
                                 mergeWithState(response.body());
+
+                                if (channel.config == null)
+                                    channel.config = response.body().getChannel().getConfig();
+                                if (channel.channelState == null)
+                                    channel.channelState = response.body();
+
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
                                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());

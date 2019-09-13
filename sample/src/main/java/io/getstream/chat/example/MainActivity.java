@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -33,9 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -140,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
         Client client = configureStreamClient();
 
         String channelId = StringUtility.getSaltString(channelName);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", channelName);
+        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
         Map<String, Object> data = new HashMap<>();
         data.put("name", channelName);
 
@@ -150,32 +152,21 @@ public class MainActivity extends AppCompatActivity {
 
         ChannelQueryRequest request = new ChannelQueryRequest().withData(data).withMessages(10);
         viewModel.setLoading();
-        client.getApiService().queryChannel(ModelType.channel_messaging, channelId, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
+        channel.query(request, new QueryChannelCallback() {
             @Override
-            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                viewModel.setLoadingDone();
-                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                ChannelState channelState = response.body();
-                Channel channel = channelState.getChannel();
-                client.addChannelConfig(channel.getType(), channel.getConfig());
-                channel.setClient(client);
-                channel.setLastState(channelState);
-                if (client.getChannelByCid(channel.getCid()) != null) {
-                    channel = client.getChannelByCid(channel.getCid());
-                } else {
-                    client.addToActiveChannels(channel);
-                }
-                channel.mergeWithState(channelState);
+            public void onSuccess(ChannelState response) {
+                Channel channel = response.getChannel();
                 Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
+                viewModel.setLoadingDone();
             }
 
             @Override
-            public void onFailure(Call<ChannelState> call, Throwable t) {
+            public void onError(String errMsg, int errCode) {
                 viewModel.setLoadingDone();
-                Toast.makeText(MainActivity.this,t.getLocalizedMessage(),Toast.LENGTH_SHORT);
+                Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
             }
         });
     }

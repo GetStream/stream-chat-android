@@ -55,9 +55,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-
     implementation 'ru.noties.markwon:core:3.0.0'
     implementation 'ru.noties.markwon:ext-strikethrough:3.0.0'
     implementation 'ru.noties.markwon:image-gif:3.0.0'
