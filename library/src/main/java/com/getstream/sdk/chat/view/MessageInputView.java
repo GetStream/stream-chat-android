@@ -153,8 +153,8 @@ public class MessageInputView extends RelativeLayout
                     return true;
                 }
                 if (viewModel.isEditing()){
-                    messageInputClient.onClickCloseBackGroundView(null);
-                    viewModel.initEditMessage();
+                    messageInputClient.onClickCloseBackGroundView();
+                    initSendMessage();
                     return true;
                 }
                 if (!TextUtils.isEmpty(binding.etMessage.getText().toString())){
@@ -199,8 +199,6 @@ public class MessageInputView extends RelativeLayout
     // Edit
     private void editMessage(Message message) {
         if (message == null) {
-            binding.etMessage.setText("");
-            this.clearFocus();
             return;
         }
 
@@ -237,12 +235,19 @@ public class MessageInputView extends RelativeLayout
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-        binding.tvClose.setOnClickListener(v -> messageInputClient.onClickCloseBackGroundView(v));
+        binding.tvClose.setOnClickListener(v -> {
+            messageInputClient.onClickCloseBackGroundView();
+            if (viewModel.isEditing()){
+                initSendMessage();
+                clearFocus();
+            }
+
+        });
         binding.llMedia.setOnClickListener(v -> messageInputClient.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
-            messageInputClient.onClickCloseBackGroundView(v);
+            messageInputClient.onClickCloseBackGroundView();
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues();

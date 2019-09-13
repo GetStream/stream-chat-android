@@ -66,6 +66,10 @@ public class MessageInputClient {
         binding.clTitle.setVisibility(View.VISIBLE);
         binding.tvClose.setVisibility(View.VISIBLE);
 
+        binding.clAddFile.setVisibility(View.GONE);
+        binding.clCommand.setVisibility(View.GONE);
+        binding.clSelectPhoto.setVisibility(View.GONE);
+
         String title = "";
         switch (type){
             case EDIT_MESSAGE:
@@ -78,12 +82,10 @@ public class MessageInputClient {
                 break;
             case UPLOAD_MEDIA:
                 title = "Select your photo or video";
-                binding.clAddFile.setVisibility(View.GONE);
                 binding.clSelectPhoto.setVisibility(View.VISIBLE);
                 break;
             case UPLOAD_FILE:
                 title = "Select your file";
-                binding.clAddFile.setVisibility(View.GONE);
                 binding.clSelectPhoto.setVisibility(View.VISIBLE);
                 break;
             case COMMAND:
@@ -94,36 +96,25 @@ public class MessageInputClient {
             case MENTION:
                 title = "Searching for people";
                 binding.tvClose.setVisibility(View.GONE);
+                binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
         binding.tvTitle.setText(title);
     }
 
 
-    public void onClickCloseBackGroundView(View v) {
+    public void onClickCloseBackGroundView() {
         binding.clTitle.setVisibility(View.GONE);
         binding.clAddFile.setVisibility(View.GONE);
         binding.clSelectPhoto.setVisibility(View.GONE);
         binding.clCommand.setVisibility(View.GONE);
         binding.getRoot().setBackgroundResource(0);
-        if (viewModel.isEditing())
-            viewModel.initEditMessage();
     }
 
     private void initLoadAttachemtView() {
         binding.rvComposer.setVisibility(View.GONE);
         binding.lvComposer.setVisibility(View.GONE);
         binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-    }
-
-    public void openAnimationView(View view) {
-        if (view.getVisibility() == View.VISIBLE) return;
-        view.setVisibility(View.VISIBLE);
-    }
-
-    public void closeAnimationView(View view) {
-        if (view.getVisibility() != View.VISIBLE) return;
-        view.setVisibility(View.GONE);
     }
 
     // endregion
@@ -189,9 +180,6 @@ public class MessageInputClient {
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
 
-    public void onClickSelectMediaViewClose(View v) {
-        closeAnimationView(binding.clSelectPhoto);
-    }
     // endregion
 
     // region File
@@ -262,7 +250,6 @@ public class MessageInputClient {
             }
 
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-//                binding.setActiveMessageComposer(false);
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
             }
@@ -302,10 +289,8 @@ public class MessageInputClient {
 
         if (selectedAttachments.size() > 0) {
             viewModel.setInputType(InputType.SELECT);
-//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-//            binding.setActiveMessageComposer(false);
             viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
@@ -331,7 +316,6 @@ public class MessageInputClient {
                 fileAttachmentAdapter.notifyDataSetChanged();
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
                 viewModel.setInputType(InputType.DEFAULT);
-//                binding.setActiveMessageComposer(false);
                 binding.setActiveMessageSend(false);
             }
         });
@@ -348,7 +332,7 @@ public class MessageInputClient {
         binding.rvComposer.setVisibility(View.GONE);
 
         selectedFileAttachmentAdapter = null;
-        onClickCloseBackGroundView(null);
+        onClickCloseBackGroundView();
     }
     // endregion
 
@@ -397,7 +381,7 @@ public class MessageInputClient {
     }
 
     private void closeCommandView() {
-        onClickCloseBackGroundView(null);
+        onClickCloseBackGroundView();
         commands = null;
     }
 
