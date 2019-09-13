@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -191,7 +192,7 @@ public class MessageInputView extends RelativeLayout
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
-            if (messageListScrollup)
+            if (messageListScrollup && !lockScrollUp)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
     }
@@ -341,13 +342,15 @@ public class MessageInputView extends RelativeLayout
         messageInputClient.checkCommand(messageText);
         binding.setActiveMessageSend(!(messageText.length() == 0));
     }
-
+    boolean lockScrollUp = false;
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
-        if (hasFocus)
+        if (hasFocus){
+            lockScrollUp = true;
+            new Handler().postDelayed(()->lockScrollUp = false, 500);
             Utils.showSoftKeyboard((Activity) getContext());
-        else
+        }else
             Utils.hideSoftKeyboard((Activity) getContext());
     }
 
