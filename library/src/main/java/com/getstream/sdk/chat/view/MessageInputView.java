@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.SendFileFunction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -151,8 +152,10 @@ public class MessageInputView extends RelativeLayout
                     return true;
                 }
                 if (viewModel.isEditing()){
-                    sendFileFunction.onClickEditViewClose(null);
-                    cancelEditMessage();
+                    sendFileFunction.onClickCloseBackGroundView(null);
+                    viewModel.cancelEditMessage();
+                    binding.etMessage.setText("");
+                    this.clearFocus();
                     return true;
                 }
                 if (!TextUtils.isEmpty(binding.etMessage.getText().toString())){
@@ -182,7 +185,7 @@ public class MessageInputView extends RelativeLayout
                     binding.llComposer.setBackground(style.getInputEditBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
                     binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
-                    sendFileFunction.onClickEditViewOpen(null);
+                    sendFileFunction.onClickOpenBackGroundView(SendFileFunction.MessageInputType.EDIT_MESSAGE);;
                     break;
             }
         });
@@ -232,16 +235,17 @@ public class MessageInputView extends RelativeLayout
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
 
-        binding.ivOpenAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewOpen(v));
-        binding.tvCloseAttach.setOnClickListener(v -> sendFileFunction.onClickAttachmentViewClose(v));
-        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
-        binding.tvCloseEdit.setOnClickListener(v -> {
-            sendFileFunction.onClickEditViewClose(v);
-            cancelEditMessage();
+        binding.ivOpenAttach.setOnClickListener(v -> {
+            // Permission Check
+            PermissionChecker.permissionCheck((Activity) v.getContext(), null);
+            sendFileFunction.onClickOpenBackGroundView(SendFileFunction.MessageInputType.ADD_FILE);
         });
+        binding.tvClose.setOnClickListener(v -> sendFileFunction.onClickCloseBackGroundView(v));
+        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
+
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
-            sendFileFunction.onClickAttachmentViewClose(v);
+            sendFileFunction.onClickCloseBackGroundView(v);
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues();
@@ -259,7 +263,6 @@ public class MessageInputView extends RelativeLayout
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
         binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
-        binding.tvMediaClose.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewClose(v));
     }
 
     // endregion
@@ -283,12 +286,6 @@ public class MessageInputView extends RelativeLayout
 
     public Message getEditMessage() {
         return viewModel.getEditMessage().getValue();
-    }
-
-    public void cancelEditMessage() {
-        viewModel.setEditMessage(null);
-        binding.etMessage.setText("");
-        this.clearFocus();
     }
 
     public void setEnabled(boolean enabled) {

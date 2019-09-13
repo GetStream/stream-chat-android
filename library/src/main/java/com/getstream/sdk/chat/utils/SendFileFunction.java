@@ -59,27 +59,46 @@ public class SendFileFunction {
         return selectedAttachments;
     }
 
-    public void onClickAttachmentViewOpen(View v) {
-        // Permission Check
-        PermissionChecker.permissionCheck((Activity) v.getContext(), null);
-        if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
-        openAnimationView(binding.clAddFile);
+    public void onClickOpenBackGroundView(MessageInputType type) {
+
+        binding.getRoot().setBackgroundResource(R.drawable.stream_round_thread_toolbar);
+        binding.clTitle.setVisibility(View.VISIBLE);
+        binding.tvClose.setVisibility(View.VISIBLE);
+
+        String title = "";
+        switch (type){
+            case EDIT_MESSAGE:
+                title = "Edit a message";
+                break;
+            case ADD_FILE:
+                title = "Add a file";
+                if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
+                binding.clAddFile.setVisibility(View.VISIBLE);
+                break;
+            case UPLOAD_MEDIA:
+                title = "Select your photo or video";
+                break;
+            case COMMAND:
+                title = "Commands matching";
+                binding.tvClose.setVisibility(View.GONE);
+                break;
+            case MENTION:
+                title = "Searching for people";
+                binding.tvClose.setVisibility(View.GONE);
+                break;
+        }
+        binding.tvTitle.setText(title);
     }
 
-    public void onClickAttachmentViewClose(View v) {
-        closeAnimationView(binding.clAddFile);
-        closeAnimationView(binding.clSelectPhoto);
-        closeAnimationView(binding.clCommand);
-    }
 
-    public void onClickEditViewOpen(View v) {
-        openAnimationView(binding.clEditMessage);
-    }
-
-    public void onClickEditViewClose(View v) {
-        closeAnimationView(binding.clEditMessage);
-        closeAnimationView(binding.clSelectPhoto);
-        closeAnimationView(binding.clCommand);
+    public void onClickCloseBackGroundView(View v) {
+        binding.clTitle.setVisibility(View.GONE);
+        binding.clAddFile.setVisibility(View.GONE);
+        binding.clSelectPhoto.setVisibility(View.GONE);
+        binding.clCommand.setVisibility(View.GONE);
+        binding.getRoot().setBackgroundResource(0);
+        if (viewModel.isEditing())
+            viewModel.initThread();
     }
 
     private void initLoadAttachemtView() {
@@ -96,7 +115,6 @@ public class SendFileFunction {
     }
 
     public void closeAnimationView(View view) {
-
         if (view.getVisibility() != View.VISIBLE) return;
         view.setVisibility(View.GONE);
     }
@@ -161,7 +179,6 @@ public class SendFileFunction {
 
     public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
     }
 
@@ -210,11 +227,9 @@ public class SendFileFunction {
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-//            binding.setActiveMessageComposer(false);
             viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
@@ -250,7 +265,6 @@ public class SendFileFunction {
 
     public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
     }
 
@@ -326,7 +340,7 @@ public class SendFileFunction {
         binding.rvComposer.setVisibility(View.GONE);
 
         selectedFileAttachmentAdapter = null;
-        onClickAttachmentViewClose(null);
+        onClickCloseBackGroundView(null);
     }
     // endregion
 
@@ -372,7 +386,6 @@ public class SendFileFunction {
     // region Cammand
     private void openCommandView() {
         openAnimationView(binding.clCommand);
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
     }
 
     private void closeCommandView() {
@@ -409,8 +422,8 @@ public class SendFileFunction {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
-        binding.tvCommandTitle.setText(title);
+        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
+        binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
         commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, isCommand);
         binding.lvCommand.setAdapter(commandMentionListItemAdapter);
@@ -463,4 +476,7 @@ public class SendFileFunction {
     // region Mention
 
     // endregion
+    public enum MessageInputType {
+        EDIT_MESSAGE, ADD_FILE, UPLOAD_MEDIA, UPLOAD_CAMERA, UPLOAD_FILE, COMMAND, MENTION
+    }
 }
