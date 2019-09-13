@@ -229,7 +229,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void setEditMessage(Message editMessage) {
         this.editMessage.postValue(editMessage);
     }
-    public void cancelEditMessage() {
+    public void initEditMessage() {
         setEditMessage(null);
     }
 

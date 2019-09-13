@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
@@ -32,9 +33,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SendFileFunction {
+public class MessageInputClient {
 
-    private static final String TAG = SendFileFunction.class.getSimpleName();
+    private static final String TAG = MessageInputClient.class.getSimpleName();
 
     ChannelViewModel viewModel;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
@@ -49,7 +50,7 @@ public class SendFileFunction {
 
     // region Attachment
 
-    public SendFileFunction(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
+    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
@@ -77,10 +78,18 @@ public class SendFileFunction {
                 break;
             case UPLOAD_MEDIA:
                 title = "Select your photo or video";
+                binding.clAddFile.setVisibility(View.GONE);
+                binding.clSelectPhoto.setVisibility(View.VISIBLE);
+                break;
+            case UPLOAD_FILE:
+                title = "Select your file";
+                binding.clAddFile.setVisibility(View.GONE);
+                binding.clSelectPhoto.setVisibility(View.VISIBLE);
                 break;
             case COMMAND:
                 title = "Commands matching";
                 binding.tvClose.setVisibility(View.GONE);
+                binding.clCommand.setVisibility(View.VISIBLE);
                 break;
             case MENTION:
                 title = "Searching for people";
@@ -98,15 +107,13 @@ public class SendFileFunction {
         binding.clCommand.setVisibility(View.GONE);
         binding.getRoot().setBackgroundResource(0);
         if (viewModel.isEditing())
-            viewModel.initThread();
+            viewModel.initEditMessage();
     }
 
     private void initLoadAttachemtView() {
         binding.rvComposer.setVisibility(View.GONE);
         binding.lvComposer.setVisibility(View.GONE);
         binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-        closeAnimationView(binding.clAddFile);
-        openAnimationView(binding.clSelectPhoto);
     }
 
     public void openAnimationView(View view) {
@@ -129,7 +136,6 @@ public class SendFileFunction {
         } else {
             selectedAttachments = new ArrayList<>();
         }
-
         binding.setIsAttachFile(!isMedia);
         if (isMedia) {
             List<Attachment> attachments = Utils.getAllShownImagesPath(context);
@@ -177,9 +183,10 @@ public class SendFileFunction {
         }
     }
 
-    public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
+        onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
 
     public void onClickSelectMediaViewClose(View v) {
@@ -263,9 +270,10 @@ public class SendFileFunction {
         binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
     }
 
-    public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
+        onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
     }
 
     private void updateComposerViewBySelectedFile(List<Attachment> attachments, Attachment attachment) {
@@ -385,11 +393,11 @@ public class SendFileFunction {
 
     // region Cammand
     private void openCommandView() {
-        openAnimationView(binding.clCommand);
+        onClickOpenBackGroundView(MessageInputType.COMMAND);
     }
 
     private void closeCommandView() {
-        closeAnimationView(binding.clCommand);
+        onClickCloseBackGroundView(null);
         commands = null;
     }
 
@@ -472,11 +480,4 @@ public class SendFileFunction {
         }
     }
     // endregion
-
-    // region Mention
-
-    // endregion
-    public enum MessageInputType {
-        EDIT_MESSAGE, ADD_FILE, UPLOAD_MEDIA, UPLOAD_CAMERA, UPLOAD_FILE, COMMAND, MENTION
-    }
 }

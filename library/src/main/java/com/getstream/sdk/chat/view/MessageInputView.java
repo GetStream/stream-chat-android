@@ -27,8 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.SendFileFunction;
+import com.getstream.sdk.chat.utils.MessageInputClient;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -69,7 +70,7 @@ public class MessageInputView extends RelativeLayout
     private OpenCameraViewListener openCameraViewListener;
 
     // TODO Rename, it's not a function
-    private SendFileFunction sendFileFunction;
+    private MessageInputClient messageInputClient;
 
     // region Constructor
     public MessageInputView(Context context) {
@@ -152,10 +153,8 @@ public class MessageInputView extends RelativeLayout
                     return true;
                 }
                 if (viewModel.isEditing()){
-                    sendFileFunction.onClickCloseBackGroundView(null);
-                    viewModel.cancelEditMessage();
-                    binding.etMessage.setText("");
-                    this.clearFocus();
+                    messageInputClient.onClickCloseBackGroundView(null);
+                    viewModel.initEditMessage();
                     return true;
                 }
                 if (!TextUtils.isEmpty(binding.etMessage.getText().toString())){
@@ -185,7 +184,7 @@ public class MessageInputView extends RelativeLayout
                     binding.llComposer.setBackground(style.getInputEditBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
                     binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
-                    sendFileFunction.onClickOpenBackGroundView(SendFileFunction.MessageInputType.EDIT_MESSAGE);;
+                    messageInputClient.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE);
                     break;
             }
         });
@@ -199,7 +198,11 @@ public class MessageInputView extends RelativeLayout
 
     // Edit
     private void editMessage(Message message) {
-        if (message == null) return;
+        if (message == null) {
+            binding.etMessage.setText("");
+            this.clearFocus();
+            return;
+        }
 
         binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
@@ -214,19 +217,19 @@ public class MessageInputView extends RelativeLayout
                 String fileType = message.getAttachments().get(0).getMime_type();
                 if (fileType.equals(ModelType.attach_mime_mov) ||
                         fileType.equals(ModelType.attach_mime_mp4)) {
-                    sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+                    messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
                 } else {
-                    sendFileFunction.onClickSelectFileViewOpen(null, message.getAttachments());
+                    messageInputClient.onClickOpenSelectFileView(null, message.getAttachments());
                 }
             } else {
-                sendFileFunction.onClickSelectMediaViewOpen(null, message.getAttachments());
+                messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
             }
         }
     }
 
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        sendFileFunction = new SendFileFunction(getContext(), binding, this.viewModel);
+        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel);
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
@@ -234,18 +237,12 @@ public class MessageInputView extends RelativeLayout
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-
-        binding.ivOpenAttach.setOnClickListener(v -> {
-            // Permission Check
-            PermissionChecker.permissionCheck((Activity) v.getContext(), null);
-            sendFileFunction.onClickOpenBackGroundView(SendFileFunction.MessageInputType.ADD_FILE);
-        });
-        binding.tvClose.setOnClickListener(v -> sendFileFunction.onClickCloseBackGroundView(v));
-        binding.llMedia.setOnClickListener(v -> sendFileFunction.onClickSelectMediaViewOpen(v, null));
+        binding.tvClose.setOnClickListener(v -> messageInputClient.onClickCloseBackGroundView(v));
+        binding.llMedia.setOnClickListener(v -> messageInputClient.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
             Utils.setButtonDelayEnable(v);
-            sendFileFunction.onClickCloseBackGroundView(v);
+            messageInputClient.onClickCloseBackGroundView(v);
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues();
@@ -262,7 +259,7 @@ public class MessageInputView extends RelativeLayout
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> sendFileFunction.onClickSelectFileViewOpen(v, null));
+        binding.llFile.setOnClickListener(v -> messageInputClient.onClickOpenSelectFileView(v, null));
     }
 
     // endregion
@@ -273,10 +270,10 @@ public class MessageInputView extends RelativeLayout
                 Uri uri = data.getData();
                 if (uri == null) {
                     if (imageUri != null)
-                        sendFileFunction.progressCapturedMedia(getContext(), imageUri, true);
+                        messageInputClient.progressCapturedMedia(getContext(), imageUri, true);
                     imageUri = null;
                 } else {
-                    sendFileFunction.progressCapturedMedia(getContext(), uri, false);
+                    messageInputClient.progressCapturedMedia(getContext(), uri, false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -310,12 +307,11 @@ public class MessageInputView extends RelativeLayout
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.iv_send) {
-
             this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
-
         } else if (id == R.id.iv_openAttach) {
-            // open the attachment drawer
             binding.setIsAttachFile(true);
+            PermissionChecker.permissionCheck((Activity) v.getContext(), null);
+            messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
         }
     }
 
@@ -337,7 +333,7 @@ public class MessageInputView extends RelativeLayout
             viewModel.keystroke();
         }
         // detect commands
-        sendFileFunction.checkCommand(messageText);
+        messageInputClient.checkCommand(messageText);
         binding.setActiveMessageSend(!(messageText.length() == 0));
     }
 
@@ -355,7 +351,7 @@ public class MessageInputView extends RelativeLayout
 
         if (isEdit) {
             getEditMessage().setText(input);
-            getEditMessage().setAttachments(sendFileFunction.getSelectedAttachments());
+            getEditMessage().setAttachments(messageInputClient.getSelectedAttachments());
             viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
@@ -373,7 +369,7 @@ public class MessageInputView extends RelativeLayout
             Message m = new Message();
             m.setStatus(null);
             m.setText(input);
-            m.setAttachments(sendFileFunction.getSelectedAttachments());
+            m.setAttachments(messageInputClient.getSelectedAttachments());
             if (sendMessageListener != null) {
                 sendMessageListener.onSendMessage(m, new MessageCallback() {
                     @Override
@@ -396,7 +392,7 @@ public class MessageInputView extends RelativeLayout
     private void initSendMessage() {
         viewModel.setEditMessage(null);
         binding.etMessage.setText("");
-        sendFileFunction.initSendMessage();
+        messageInputClient.initSendMessage();
     }
 
     // region Set Listeners
