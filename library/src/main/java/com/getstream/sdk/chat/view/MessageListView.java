@@ -354,11 +354,11 @@ public class MessageListView extends RecyclerView {
             // Scroll to origin position on return from thread
             if (backFromThread) {
                 layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
+                viewModel.markLastMessageRead();
                 return;
             }
 
             // Scroll to bottom position for typing indicator
-            int itemCount = adapter.getItemCount() - 2;
             if (messageListItemWrapper.isTyping() && scrolledBottom()) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
@@ -372,6 +372,7 @@ public class MessageListView extends RecyclerView {
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     layoutManager.scrollToPosition(newPosition);
+                    Log.i(TAG, String.format("just update last message"));
                     return;
                 }
             }

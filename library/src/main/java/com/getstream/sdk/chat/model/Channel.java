@@ -523,12 +523,14 @@ public class Channel {
         client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
+                if (callback != null)
+                    callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
+                if (callback != null)
+                    callback.onError(errMsg, errCode);
             }
         });
     }
