@@ -110,7 +110,7 @@ public class MessageInputView extends RelativeLayout
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
         // Send Button
-        binding.ivSend.setImageDrawable(style.getInputButtonIcon());
+        binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
         binding.ivSend.getLayoutParams().width = style.getInputButtonWidth();
         binding.ivSend.getLayoutParams().height = style.getInputButtonHeight();
         // Input Background
@@ -163,14 +163,17 @@ public class MessageInputView extends RelativeLayout
                 case DEFAULT:
                     binding.llComposer.setBackground(style.getInputBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing()));
                     break;
                 case SELECT:
                     binding.llComposer.setBackground(style.getInputSelectedBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
                     break;
                 case EDIT:
                     binding.llComposer.setBackground(style.getInputEditBackground());
                     binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
                     break;
             }
         });
@@ -267,9 +270,6 @@ public class MessageInputView extends RelativeLayout
     }
 
 
-    public boolean isEditing() {
-        return getEditMessage() != null;
-    }
 
 //    public void editMessage(Message message) {
 //        editingMessage = message;
@@ -309,7 +309,7 @@ public class MessageInputView extends RelativeLayout
         int id = v.getId();
         if (id == R.id.iv_send) {
 
-            this.onSendMessage(binding.etMessage.getText().toString(), isEditing());
+            this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
 
         } else if (id == R.id.iv_openAttach) {
             // open the attachment drawer

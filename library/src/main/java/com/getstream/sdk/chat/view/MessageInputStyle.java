@@ -33,6 +33,7 @@ class MessageInputStyle extends BaseStyle {
 
     private int inputButtonIcon;
     private int inputButtonDefaultIconColor;
+    private int inputButtonEditIconColor;
     private int inputButtonDefaultIconPressedColor;
     private int inputButtonDefaultIconDisabledColor;
 
@@ -72,6 +73,8 @@ class MessageInputStyle extends BaseStyle {
         inputButtonIcon = a.getResourceId(R.styleable.MessageInputView_streamInputButtonIcon, -1);
         inputButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconColor,
                 getColor(R.color.stream_input_message_send_button));
+        inputButtonEditIconColor = a.getColor(R.styleable.MessageInputView_streamInputButtonEditIconColor,
+                getColor(R.color.stream_input_message_box_stroke_edit));
         inputButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconPressedColor,
                 getColor(R.color.stream_white));
         inputButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconDisabledColor,
@@ -136,9 +139,9 @@ class MessageInputStyle extends BaseStyle {
     }
 
     // Send Button
-    public Drawable getInputButtonIcon() {
+    public Drawable getInputButtonIcon(boolean isEdit) {
         if (inputButtonIcon == -1) {
-            return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
+            return getSelector(isEdit ? inputButtonEditIconColor : inputButtonDefaultIconColor , inputButtonDefaultIconPressedColor,
                     inputButtonDefaultIconDisabledColor, R.drawable.stream_ic_send);
         } else {
             return getDrawable(inputButtonIcon);

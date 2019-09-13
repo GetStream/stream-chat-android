@@ -211,15 +211,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setInputType(InputType inputType) {
-        switch (inputType) {
-            case SELECT:
-                if (this.inputType.getValue() == InputType.DEFAULT)
-                    this.inputType.postValue(inputType);
-                break;
-            default:
-                this.inputType.postValue(inputType);
-                break;
+        if (inputType == InputType.SELECT && isEditing()) {
+            this.inputType.postValue(InputType.EDIT);
+            return;
         }
+        this.inputType.postValue(inputType);
     }
 
     public LiveData<List<User>> getTypingUsers() {
@@ -231,7 +227,6 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public void setEditMessage(Message editMessage) {
-        setInputType(InputType.EDIT);
         this.editMessage.postValue(editMessage);
     }
 
@@ -241,6 +236,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     public void setMessageListScrollUp(Boolean messageListScrollUp) {
         this.messageListScrollUp.postValue(messageListScrollUp);
+    }
+
+    public boolean isEditing() {
+        return getEditMessage().getValue() != null;
     }
 
     // region Thread
