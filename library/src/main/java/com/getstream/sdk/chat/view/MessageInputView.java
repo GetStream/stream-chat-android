@@ -151,6 +151,15 @@ public class MessageInputView extends RelativeLayout
                     initSendMessage();
                     return true;
                 }
+                if (viewModel.isEditing()){
+                    sendFileFunction.onClickEditViewClose(null);
+                    cancelEditMessage();
+                    return true;
+                }
+                if (!TextUtils.isEmpty(binding.etMessage.getText().toString())){
+                    initSendMessage();
+                    return true;
+                }
                 return false;
             }
             return false;

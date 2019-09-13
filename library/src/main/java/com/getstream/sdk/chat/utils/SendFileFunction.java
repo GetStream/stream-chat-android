@@ -105,18 +105,6 @@ public class SendFileFunction {
 
     // region Media
 
-    public void fadeAnimationView(View view, boolean isFadeIn) {
-        if (isFadeIn) {
-            if (view.getVisibility() == View.VISIBLE) return;
-
-            view.setVisibility(View.VISIBLE);
-            view.setClickable(true);
-        } else {
-            if (view.getVisibility() == View.GONE) return;
-            view.setVisibility(View.GONE);
-        }
-    }
-
     private void configSelectAttachView(boolean isMedia, List<Attachment> editAttachments) {
         if (editAttachments != null) {
             selectedAttachments = editAttachments;
