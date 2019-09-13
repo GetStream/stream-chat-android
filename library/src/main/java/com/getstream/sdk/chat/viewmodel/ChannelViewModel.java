@@ -810,7 +810,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     @Override
     public void resume() {
-        setLoading();
+        if (channel.getChannelState().getLastMessage() != null)
+            setLoading();
     }
 
     @Override
