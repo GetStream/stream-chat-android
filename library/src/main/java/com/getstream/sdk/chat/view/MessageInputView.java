@@ -66,9 +66,7 @@ public class MessageInputView extends RelativeLayout
     // listeners
     private SendMessageListener sendMessageListener;
     private OpenCameraViewListener openCameraViewListener;
-    // state
-    private AttachmentListener attachmentListener;
-    private Message editingMessage;
+
     // TODO Rename, it's not a function
     private SendFileFunction sendFileFunction;
 
@@ -129,6 +127,7 @@ public class MessageInputView extends RelativeLayout
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
+
         onBackPressed();
         setOnSendMessageListener(viewModel);
         initAttachmentUI();
@@ -191,7 +190,7 @@ public class MessageInputView extends RelativeLayout
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
             if (messageListScrollup)
-                Utils.hideSoftKeyboard((Activity) getContext());
+                Utils.hideSoftKeyboard(getContext());
         });
     }
 
@@ -282,12 +281,6 @@ public class MessageInputView extends RelativeLayout
         }
     }
 
-
-
-//    public void editMessage(Message message) {
-//        editingMessage = message;
-//    }
-
     public Message getEditMessage() {
         return viewModel.getEditMessage().getValue();
     }
@@ -354,6 +347,10 @@ public class MessageInputView extends RelativeLayout
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
+        if (hasFocus)
+            Utils.showSoftKeyboard(getContext());
+        else
+            Utils.hideSoftKeyboard(getContext());
     }
 
     private void onSendMessage(String input, boolean isEdit) {

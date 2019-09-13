@@ -74,10 +74,18 @@ public class Utils {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
 
-    public static void hideSoftKeyboard(Activity activity) {
+    public static void showSoftKeyboard(Context context) {
         try {
-            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        } catch (Exception e) {
+        }
+    }
+
+    public static void hideSoftKeyboard(Context context) {
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), 0);
         } catch (Exception e) {
         }
     }
