@@ -714,8 +714,10 @@ public class Channel {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         message.setStatus(MessageStatus.RECEIVED);
-        if (!message.getType().equals(ModelType.message_reply))
+        if (!message.getType().equals(ModelType.message_reply)){
             channelState.addMessageSorted(message);
+            channelState.setLastMessage(message);
+        }
         if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }

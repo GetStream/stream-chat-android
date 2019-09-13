@@ -271,7 +271,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return removed;
     }
 
-    private void addChannels(List<ChannelState> newChannelsState) {
+    public void addChannels(List<ChannelState> newChannelsState) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();

@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
+                viewModel.addChannels(Arrays.asList(response));
                 viewModel.setLoadingDone();
             }
 
