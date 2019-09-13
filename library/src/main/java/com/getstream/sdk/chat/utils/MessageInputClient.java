@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
@@ -32,9 +33,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SendFileFunction {
+public class MessageInputClient {
 
-    private static final String TAG = SendFileFunction.class.getSimpleName();
+    private static final String TAG = MessageInputClient.class.getSimpleName();
 
     ChannelViewModel viewModel;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
@@ -49,7 +50,7 @@ public class SendFileFunction {
 
     // region Attachment
 
-    public SendFileFunction(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
+    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
@@ -59,64 +60,73 @@ public class SendFileFunction {
         return selectedAttachments;
     }
 
-    public void onClickAttachmentViewOpen(View v) {
-        // Permission Check
-        PermissionChecker.permissionCheck((Activity) v.getContext(), null);
-        if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
-        openAnimationView(binding.clAddFile);
-        fadeAnimationView(binding.ivBackAttachment, true);
+    public void onClickOpenBackGroundView(MessageInputType type) {
+
+        binding.getRoot().setBackgroundResource(R.drawable.stream_round_thread_toolbar);
+        binding.clTitle.setVisibility(View.VISIBLE);
+        binding.tvClose.setVisibility(View.VISIBLE);
+
+        binding.clAddFile.setVisibility(View.GONE);
+        binding.clCommand.setVisibility(View.GONE);
+        binding.clSelectPhoto.setVisibility(View.GONE);
+
+        String title = "";
+        switch (type){
+            case EDIT_MESSAGE:
+                title = "Edit a message";
+                break;
+            case ADD_FILE:
+                title = "Add a file";
+                if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
+                binding.clAddFile.setVisibility(View.VISIBLE);
+                break;
+            case UPLOAD_MEDIA:
+                title = "Select your photo or video";
+                binding.clSelectPhoto.setVisibility(View.VISIBLE);
+                break;
+            case UPLOAD_FILE:
+                title = "Select your file";
+                binding.clSelectPhoto.setVisibility(View.VISIBLE);
+                break;
+            case COMMAND:
+                title = "Commands matching";
+                binding.tvClose.setVisibility(View.GONE);
+                binding.clCommand.setVisibility(View.VISIBLE);
+                break;
+            case MENTION:
+                title = "Searching for people";
+                binding.tvClose.setVisibility(View.GONE);
+                binding.clCommand.setVisibility(View.VISIBLE);
+                break;
+        }
+        binding.tvTitle.setText(title);
     }
 
-    public void onClickAttachmentViewClose(View v) {
-        closeAnimationView(binding.clAddFile);
-        closeAnimationView(binding.clSelectPhoto);
-        closeAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, false);
+
+    public void onClickCloseBackGroundView() {
+        binding.clTitle.setVisibility(View.GONE);
+        binding.clAddFile.setVisibility(View.GONE);
+        binding.clSelectPhoto.setVisibility(View.GONE);
+        binding.clCommand.setVisibility(View.GONE);
+        binding.getRoot().setBackgroundResource(0);
     }
 
     private void initLoadAttachemtView() {
         binding.rvComposer.setVisibility(View.GONE);
         binding.lvComposer.setVisibility(View.GONE);
         binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-        closeAnimationView(binding.clAddFile);
-        openAnimationView(binding.clSelectPhoto);
-    }
-
-    public void openAnimationView(View view) {
-        if (view.getVisibility() == View.VISIBLE) return;
-        view.setVisibility(View.VISIBLE);
-    }
-
-    public void closeAnimationView(View view) {
-
-        if (view.getVisibility() != View.VISIBLE) return;
-        view.setVisibility(View.GONE);
     }
 
     // endregion
 
     // region Media
 
-    public void fadeAnimationView(View view, boolean isFadeIn) {
-        if (isFadeIn) {
-            if (view.getVisibility() == View.VISIBLE) return;
-
-            view.setVisibility(View.VISIBLE);
-            view.setClickable(true);
-        } else {
-            if (view.getVisibility() == View.GONE) return;
-            view.setVisibility(View.GONE);
-        }
-    }
-
     private void configSelectAttachView(boolean isMedia, List<Attachment> editAttachments) {
         if (editAttachments != null) {
             selectedAttachments = editAttachments;
-            fadeAnimationView(binding.ivBackAttachment, true);
         } else {
             selectedAttachments = new ArrayList<>();
         }
-
         binding.setIsAttachFile(!isMedia);
         if (isMedia) {
             List<Attachment> attachments = Utils.getAllShownImagesPath(context);
@@ -164,16 +174,12 @@ public class SendFileFunction {
         }
     }
 
-    public void onClickSelectMediaViewOpen(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
+        onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
 
-    public void onClickSelectMediaViewClose(View v) {
-        closeAnimationView(binding.clSelectPhoto);
-        fadeAnimationView(binding.ivBackAttachment, false);
-    }
     // endregion
 
     // region File
@@ -216,11 +222,9 @@ public class SendFileFunction {
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-//            binding.setActiveMessageComposer(true);
             binding.setActiveMessageSend(true);
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
-//            binding.setActiveMessageComposer(false);
             viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }
@@ -246,7 +250,6 @@ public class SendFileFunction {
             }
 
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-//                binding.setActiveMessageComposer(false);
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
             }
@@ -254,10 +257,10 @@ public class SendFileFunction {
         binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
     }
 
-    public void onClickSelectFileViewOpen(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
         initLoadAttachemtView();
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
+        onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
     }
 
     private void updateComposerViewBySelectedFile(List<Attachment> attachments, Attachment attachment) {
@@ -313,7 +316,6 @@ public class SendFileFunction {
                 fileAttachmentAdapter.notifyDataSetChanged();
             if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
                 viewModel.setInputType(InputType.DEFAULT);
-//                binding.setActiveMessageComposer(false);
                 binding.setActiveMessageSend(false);
             }
         });
@@ -330,7 +332,7 @@ public class SendFileFunction {
         binding.rvComposer.setVisibility(View.GONE);
 
         selectedFileAttachmentAdapter = null;
-        onClickAttachmentViewClose(null);
+        onClickCloseBackGroundView();
     }
     // endregion
 
@@ -375,14 +377,11 @@ public class SendFileFunction {
 
     // region Cammand
     private void openCommandView() {
-        openAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, true);
-        binding.tvInputboxBack.setVisibility(View.VISIBLE);
+        onClickOpenBackGroundView(MessageInputType.COMMAND);
     }
 
     private void closeCommandView() {
-        closeAnimationView(binding.clCommand);
-        fadeAnimationView(binding.ivBackAttachment, false);
+        onClickCloseBackGroundView();
         commands = null;
     }
 
@@ -415,8 +414,8 @@ public class SendFileFunction {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvCommandTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
-        binding.tvCommandTitle.setText(title);
+        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
+        binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
         commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, isCommand);
         binding.lvCommand.setAdapter(commandMentionListItemAdapter);
@@ -464,9 +463,5 @@ public class SendFileFunction {
                 commands.add(user);
         }
     }
-    // endregion
-
-    // region Mention
-
     // endregion
 }
