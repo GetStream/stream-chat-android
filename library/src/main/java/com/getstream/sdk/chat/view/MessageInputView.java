@@ -153,15 +153,22 @@ public class MessageInputView extends RelativeLayout
                     initSendMessage();
                     return true;
                 }
-                if (viewModel.isEditing()){
+                if (viewModel.isEditing()) {
                     messageInputClient.onClickCloseBackGroundView();
                     initSendMessage();
                     return true;
                 }
-                if (!TextUtils.isEmpty(binding.etMessage.getText().toString())){
+                if (!TextUtils.isEmpty(binding.etMessage.getText().toString())) {
                     initSendMessage();
                     return true;
                 }
+
+                if (binding.clTitle.getVisibility() == VISIBLE) {
+                    messageInputClient.onClickCloseBackGroundView();
+                    initSendMessage();
+                    return true;
+                }
+
                 return false;
             }
             return false;
