@@ -10,7 +10,6 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.BaseStyle;
 
 public class ChannelListViewStyle extends BaseStyle {
     final String TAG = ChannelListViewStyle.class.getSimpleName();

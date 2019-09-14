@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.BaseStyle;
 
 public class MessageListViewStyle extends BaseStyle {
     private static final String TAG = MessageListViewStyle.class.getSimpleName();

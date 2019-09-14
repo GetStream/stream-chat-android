@@ -13,7 +13,6 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.Collections;

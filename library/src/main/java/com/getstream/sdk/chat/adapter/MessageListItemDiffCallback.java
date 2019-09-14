@@ -1,9 +1,7 @@
-package com.getstream.sdk.chat.utils;
+package com.getstream.sdk.chat.adapter;
 
 
 import androidx.recyclerview.widget.DiffUtil;
-
-import com.getstream.sdk.chat.adapter.MessageListItem;
 
 import java.util.List;
 

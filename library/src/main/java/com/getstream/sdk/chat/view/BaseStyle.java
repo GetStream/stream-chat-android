@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils;
+package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.res.Resources;
