@@ -62,6 +62,7 @@ public class CommandMentionListItemAdapter extends BaseAdapter {
         } else {
             User user = (User) commands.get(position);
             ((StreamItemMentionBinding) binding).setUser(user);
+//            ((StreamItemMentionBinding) binding).avatar.setUser(user);
         }
         return binding.getRoot();
     }
