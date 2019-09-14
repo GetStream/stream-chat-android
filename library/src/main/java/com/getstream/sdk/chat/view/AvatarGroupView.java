@@ -29,6 +29,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
     public AvatarGroupView(Context context) {
         super(context);
+        this.context = context;
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs) {
@@ -65,9 +66,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
-        params.width = style.getAvatarWidth();
-        params.height = style.getAvatarHeight();
-        this.setLayoutParams(params);
+        if (params != null){
+            params.width = style.getAvatarWidth();
+            params.height = style.getAvatarHeight();
+            this.setLayoutParams(params);
+        }
 
         removeAllViews();
         if (user != null) {

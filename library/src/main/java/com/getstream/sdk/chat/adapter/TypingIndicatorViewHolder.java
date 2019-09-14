@@ -1,31 +1,24 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
-
-import java.util.List;
-
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     // Tying
     private ImageView iv_typing_indicator;
     private LinearLayout ll_typingusers;
-    private Context context;
 
     public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
@@ -49,34 +42,26 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.UserClickListener userClickListener,
                      MessageListView.ReadStateClickListener readStateClickListener) {
 
-        this.context = context;
-
         ll_typingusers.setVisibility(View.VISIBLE);
         iv_typing_indicator.setVisibility(View.VISIBLE);
         ll_typingusers.removeAllViews();
-        Resources resources = context.getResources();
-        float marginLeft = resources.getDimension(R.dimen.stream_user_avatar_margin_left);
-        LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        List<User> users = messageListItem.getUsers();
         int i = 0;
 
-        for (User user : users) {
-            View v = vi.inflate(R.layout.stream_view_user_avatar_initials, null);
-            TextView textView = v.findViewById(R.id.tv_initials);
-            ImageView imageView = v.findViewById(R.id.cv_avatar);
-            textView.setText(user.getInitials());
-            Utils.circleImageLoad(imageView, user.getImage());
-            int height = (int) context.getResources().getDimension(R.dimen.stream_message_typing_indicator_size);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(height, height);
-            if (i == 0) {
+        for (User user : messageListItem.getUsers()) {
+            AvatarGroupView<MessageListViewStyle> avatarView = new AvatarGroupView<>(context);
+            avatarView.setUser(user, style);
+            int height = style.getAvatarHeight();
+            int width = style.getAvatarWidth();
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, height);
+            if (i == 0)
                 params.setMargins(0, 0, 0, 0);
-            } else {
-                params.setMargins(-(int) marginLeft, 0, 0, 0);
-            }
+            else
+                params.setMargins(- width/2, 0, 0, 0);
 
-            v.setLayoutParams(params);
-            ll_typingusers.addView(v);
+
+            avatarView.setLayoutParams(params);
+            ll_typingusers.addView(avatarView);
             i += 1;
         }
         Glide.with(context).asGif().load(R.raw.stream_typing).into(iv_typing_indicator);

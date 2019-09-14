@@ -50,7 +50,6 @@
     <dimen name="stream_reaction_corner_radius">12dp</dimen>
     <!--Thread-->
     <dimen name="stream_thread_toolbar_radius">10dp</dimen>
-    <dimen name="stream_user_avatar_margin_left">15dp</dimen>
     <!--exomedia-->
     <dimen name="stream_exomedia_min_button_height">44dp</dimen>
     <dimen name="stream_exomedia_leanback_ripple_selector_size">90dp</dimen>
