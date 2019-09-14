@@ -73,10 +73,8 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     destinationDir = file("../docs/")
     exclude '**/utils'
-    exclude '**/adapter'
+    exclude '**/storage'
     exclude '**/interfaces'
-    exclude '**/rest'
-    exclude '**/BaseActivity.java'
     exclude '**/Command.java'
     exclude '**/Device.java'
     exclude '**/TokenService.java'

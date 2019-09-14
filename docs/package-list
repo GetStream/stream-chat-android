@@ -1,8 +1,13 @@
 com.getstream.sdk.chat
+com.getstream.sdk.chat.adapter
 com.getstream.sdk.chat.enums
 com.getstream.sdk.chat.model
-com.getstream.sdk.chat.storage
-com.getstream.sdk.chat.storage.converter
+com.getstream.sdk.chat.rest
+com.getstream.sdk.chat.rest.codecs
+com.getstream.sdk.chat.rest.controller
+com.getstream.sdk.chat.rest.core
+com.getstream.sdk.chat.rest.request
+com.getstream.sdk.chat.rest.response
 com.getstream.sdk.chat.view
 com.getstream.sdk.chat.view.Dialog
 com.getstream.sdk.chat.view.activity
