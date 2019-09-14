@@ -65,7 +65,7 @@ public class ReadUsersDialog extends Dialog {
         for (ChannelUserRead read : reads){
             users.add(read.getUser());
         }
-        CommandMentionListItemAdapter reactionAdapter = new CommandMentionListItemAdapter(getContext(), users, false);
+        CommandMentionListItemAdapter reactionAdapter = new CommandMentionListItemAdapter(getContext(), users, style, false);
         lv_read_user.setAdapter(reactionAdapter);
     }
 }

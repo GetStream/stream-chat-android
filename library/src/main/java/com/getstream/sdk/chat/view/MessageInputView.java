@@ -242,7 +242,7 @@ public class MessageInputView extends RelativeLayout
 
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel);
+        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel, style);
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));

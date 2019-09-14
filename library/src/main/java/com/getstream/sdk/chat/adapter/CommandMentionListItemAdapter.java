@@ -14,19 +14,22 @@ import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.view.BaseStyle;
 
 import java.util.List;
 
-public class CommandMentionListItemAdapter extends BaseAdapter {
+public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends BaseAdapter {
 
     private final String TAG = CommandMentionListItemAdapter.class.getSimpleName();
     private LayoutInflater layoutInflater;
     private List<Object> commands;
     private boolean isCommand;
+    private STYLE style;
 
-    public CommandMentionListItemAdapter(Context context, List commands, boolean isCommand) {
+    public CommandMentionListItemAdapter(Context context, List<Object> commands, STYLE style, boolean isCommand) {
         this.layoutInflater = LayoutInflater.from(context);
         this.commands = commands;
+        this.style = style;
         this.isCommand = isCommand;
     }
 
@@ -61,8 +64,9 @@ public class CommandMentionListItemAdapter extends BaseAdapter {
             ((StreamItemCommandBinding) binding).setCommand(command);
         } else {
             User user = (User) commands.get(position);
-            ((StreamItemMentionBinding) binding).setUser(user);
-//            ((StreamItemMentionBinding) binding).avatar.setUser(user);
+            StreamItemMentionBinding mentionBinding = (StreamItemMentionBinding) binding;
+            mentionBinding.setUser(user);
+            mentionBinding.avatar.setUser(user, style);
         }
         return binding.getRoot();
     }
