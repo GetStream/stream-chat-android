@@ -74,16 +74,12 @@ task javadoc(type: Javadoc) {
     destinationDir = file("../docs/")
     exclude '**/utils'
     exclude '**/adapter'
-    exclude '**/function'
     exclude '**/interfaces'
     exclude '**/rest'
     exclude '**/BaseActivity.java'
-    exclude '**/viewmodel'
-    exclude '**/Location.java'
     exclude '**/Command.java'
     exclude '**/Device.java'
     exclude '**/TokenService.java'
     exclude '**/ModelType.java'
-    exclude '**/MessageTagModel.java'
     failOnError false
 }
