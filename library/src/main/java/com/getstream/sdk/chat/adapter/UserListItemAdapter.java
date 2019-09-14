@@ -1,13 +1,14 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
@@ -20,11 +21,11 @@ import java.util.List;
 public class UserListItemAdapter extends BaseAdapter {
 
     private final String TAG = UserListItemAdapter.class.getSimpleName();
+    public List<User> selectUsers;
+    public boolean groupChatMode = false;
     private LayoutInflater layoutInflater;
     private Context context;
     private List<User> users;
-    public List<User> selectUsers;
-    public boolean groupChatMode = false;
     private View.OnClickListener checkedChangeListener;
 
     public UserListItemAdapter(Context context, List users, View.OnClickListener checkedChangeListener) {

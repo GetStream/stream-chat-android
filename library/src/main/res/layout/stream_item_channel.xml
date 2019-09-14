@@ -54,7 +54,7 @@
         <TextView
             android:id="@+id/tv_date"
             style="@style/channel_preview_channel_last_message_date"
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_marginEnd="12dp"

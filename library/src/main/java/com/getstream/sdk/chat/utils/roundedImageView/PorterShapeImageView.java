@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 
-
 public class PorterShapeImageView extends PorterImageView {
     private Drawable shape;
     private Matrix matrix;

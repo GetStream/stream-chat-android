@@ -26,18 +26,20 @@ public class StreamChat {
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
     private static MutableLiveData<Number> unreadChannels;
+    private static boolean lifecycleStopped;
+    private static boolean userWasInitialized;
+
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
     }
+
     public static LiveData<Number> getTotalUnreadMessages() {
         return totalUnreadMessages;
     }
+
     public static LiveData<Number> getUnreadChannels() {
         return unreadChannels;
     }
-
-    private static boolean lifecycleStopped;
-    private static boolean userWasInitialized;
 
     public static synchronized Client getInstance(final Context context) {
         if (INSTANCE == null) {
@@ -92,7 +94,8 @@ public class StreamChat {
 
         synchronized (Client.class) {
             if (INSTANCE == null) {
-                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
+                INSTANCE = new Client(apiKey, new ApiClientOptions(), new ConnectionLiveData(context));
+                INSTANCE.setContext(context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();

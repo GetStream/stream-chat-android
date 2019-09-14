@@ -15,21 +15,21 @@ public class ConnectionLiveData extends LiveData<ConnectionLiveData.ConnectionMo
     private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getExtras()!=null) {
+            if (intent.getExtras() != null) {
                 NetworkInfo activeNetwork = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
                 boolean isConnected = activeNetwork != null &&
                         activeNetwork.isConnectedOrConnecting();
-                if(isConnected) {
-                    switch (activeNetwork.getType()){
+                if (isConnected) {
+                    switch (activeNetwork.getType()) {
                         case ConnectivityManager.TYPE_WIFI:
-                            postValue(new ConnectionModel(ConnectivityManager.TYPE_WIFI,true));
+                            postValue(new ConnectionModel(ConnectivityManager.TYPE_WIFI, true));
                             break;
                         case ConnectivityManager.TYPE_MOBILE:
-                            postValue(new ConnectionModel(ConnectivityManager.TYPE_MOBILE,true));
+                            postValue(new ConnectionModel(ConnectivityManager.TYPE_MOBILE, true));
                             break;
                     }
                 } else {
-                    postValue(new ConnectionModel(0,false));
+                    postValue(new ConnectionModel(0, false));
                 }
             }
         }

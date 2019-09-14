@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
-    private List<ChannelUserRead> reads;
     STYLE style;
     boolean isIncoming;
+    private List<ChannelUserRead> reads;
 
     public ReadStateView(Context context) {
         super(context);
@@ -44,14 +44,12 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
     @SuppressLint("ResourceType")
     private void init() {
         removeAllViews();
-
-        if (!style.isShowReadState()) return;
-        if (reads == null || reads.isEmpty()) return;
+        if (!style.isShowReadState()
+                || reads == null
+                || reads.isEmpty()) return;
 
         // Show the icon of the user who was last to read...
         Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o2.getLastRead().compareTo(o1.getLastRead()));
-
-
 
         User user = reads.get(0).getUser();
         String image = user.getImage();
@@ -77,7 +75,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 (style.getReadStateAvatarHeight()));
         imageView.setId(1);
 
-        if (reads.size()<2){
+        if (reads.size() < 2) {
             imageView.setLayoutParams(avatarParams);
             addView(imageView);
             return;

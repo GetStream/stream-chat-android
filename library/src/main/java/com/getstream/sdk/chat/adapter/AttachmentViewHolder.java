@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -27,14 +26,12 @@ import java.util.List;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
+    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
     private ConstraintLayout cl_attachment, cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
-
-
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
 
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -54,9 +51,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
+                     MessageListView.MessageLongClickListener longClickListener, MessageListView.GiphySendListener giphySendListener) {
 
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
         configAttachment();
     }
 
@@ -95,11 +92,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configAttachViewBackground(View view) {
         Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = getStyle().getMessageBubbleDrawableTheirs();
-        } else {
+        if (getMessageListItem().isMine()) {
             background = getStyle().getMessageBubbleDrawableMine();
+        } else {
+            background = getStyle().getMessageBubbleDrawableTheirs();
         }
         view.setBackground(background);
     }

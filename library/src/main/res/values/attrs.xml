@@ -91,6 +91,7 @@
         <attr name="streamAttachmentButtonHeight" format="dimension|reference" />
         <!--Send Button-->
         <attr name="streamInputButtonDefaultIconColor" format="color|reference" />
+        <attr name="streamInputButtonEditIconColor" format="color|reference" />
         <attr name="streamInputButtonDefaultIconPressedColor" format="color|reference" />
         <attr name="streamInputButtonDefaultIconDisabledColor" format="color|reference" />
         <attr name="streamInputButtonIcon" format="reference" />

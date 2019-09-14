@@ -10,8 +10,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 
 import java.util.List;
 
@@ -158,9 +158,9 @@ public class AttachmentListAdapter extends BaseAdapter {
             } else {
                 holder.iv_select_mark.setVisibility(View.GONE);
                 holder.tv_close.setVisibility(View.VISIBLE);
-                if (attachment.config.isUploaded()){
+                if (attachment.config.isUploaded()) {
                     holder.progressBar.setVisibility(View.GONE);
-                }else{
+                } else {
                     holder.progressBar.setVisibility(View.VISIBLE);
                 }
             }
@@ -176,7 +176,7 @@ public class AttachmentListAdapter extends BaseAdapter {
     // endregion
     public class ViewHolder {
         ImageView iv_file_thumb, iv_select_mark;
-        TextView tv_file_title, tv_file_size,  tv_close;
+        TextView tv_file_title, tv_file_size, tv_close;
         ProgressBar progressBar;
     }
 }

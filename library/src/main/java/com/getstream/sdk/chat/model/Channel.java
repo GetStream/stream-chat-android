@@ -5,27 +5,45 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.room.RoomWarnings;
+import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.FlagResponse;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.SerializedName;
@@ -48,93 +66,225 @@ import retrofit2.Response;
 /**
  * A channel
  */
+@Entity(tableName = "stream_channel", foreignKeys = @ForeignKey(entity = User.class,
+        parentColumns = "id",
+        childColumns = "created_by_user_id"), indices = {
+        @Index(value = {"created_by_user_id"})})
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
+    @PrimaryKey
+    @NonNull
+    @SerializedName("cid")
+    private String cid;
+
+    @NonNull
     @SerializedName("id")
     private String id;
+    @NonNull
     @SerializedName("type")
     private String type;
     @SerializedName("last_message_at")
+    @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
+
+    public @Sync.Status Integer getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(@Sync.Status Integer syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    private Integer syncStatus;
+
+
+    @Embedded(prefix = "state_")
+    private ChannelState lastState;
+    @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
+    private Date createdAt;
+    @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
+    private Date updatedAt;
+    @SerializedName("created_by")
+    @Ignore
+    private User createdByUser;
+    @ColumnInfo(name = "created_by_user_id")
+    private String createdByUserID;
+    @SerializedName("frozen")
+    private boolean frozen;
+    @SerializedName("config")
+    @Embedded(prefix = "config_")
+    private Config config;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("image")
+    private String image;
+    @TypeConverters(ExtraDataConverter.class)
+    private HashMap<String, Object> extraData;
+    @Ignore
+    private Map<String, String> reactionTypes;
+    @Ignore
+    private List<ChatChannelEventHandler> eventSubscribers;
+    @Ignore
+    private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
+    @Ignore
+    private int subscribersSeq;
+    @Ignore
+    private Client client;
+    @Ignore
+    private ChannelState channelState;
+
+    // this constructor is here for GSON to play fair
+    public Channel() {
+        this(null, "", "", new HashMap<>());
+    }
+    /**
+     * constructor - Create a channel
+     *
+     * @param client the chat client
+     * @param type   the type of channel
+     * @param id     the id of the chat
+     * @return Returns a new uninitialized channel
+     */
+    public Channel(Client client, String type, String id) {
+        this(client, type, id, new HashMap<>());
+    }
+    /**
+     * constructor - Create a channel
+     *
+     * @param client    the chat client
+     * @param type      the type of channel
+     * @param id        the id of the chat
+     * @param extraData any additional custom params
+     * @return Returns a new uninitialized channel
+     */
+    public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
+        this.type = type;
+        this.id = id;
+        this.cid = String.format("%s:%s", type, id);
+        this.client = client;
+        this.setSyncStatus(Sync.SYNCED);
+
+        if (extraData == null) {
+            this.extraData = new HashMap<>();
+        } else {
+            this.extraData = new HashMap<>(extraData);
+        }
+
+        // since name and image are very common fields, we are going to promote them as
+        Object image = this.extraData.remove("image");
+        if (image != null) {
+            this.image = image.toString();
+        }
+
+        Object name = this.extraData.remove("name");
+        if (name != null) {
+            this.name = name.toString();
+        }
+        this.extraData.remove("id");
+        eventSubscribers = new ArrayList<>();
+        eventSubscribersBy = new HashMap<>();
+        channelState = new ChannelState(this);
+    }
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(Date d) {
+        this.createdAt = d;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    @SerializedName("created_at")
-    private Date createdAt;
-    @SerializedName("updated_at")
-    private Date updatedAt;
-    @SerializedName("created_by")
-    private User createdByUser;
-    @SerializedName("frozen")
-    private boolean frozen;
-    @SerializedName("config")
-    private Config config;
-    @SerializedName("name")
-    private String name;
-    @SerializedName("image")
-    private String image;
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-    private HashMap<String, Object> extraData;
-    private Map<String, String>reactionTypes;
+    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
+        this.eventSubscribers = eventSubscribers;
+    }
+
+    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
+        this.eventSubscribersBy = eventSubscribersBy;
+    }
+
+    public void setSubscribersSeq(int subscribersSeq) {
+        this.subscribersSeq = subscribersSeq;
+    }
 
     // region Getter & Setter
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getCid() {
-        return getType() + ":" + getId();
+        return this.cid;
+    }
+
+    public void setCid(String id) {
+        this.cid = id;
     }
 
     public String getType() {
         return type;
     }
 
-    public Date getLastMessageDate() {
-        return lastMessageDate;
-    }
-
-    public User getCreatedByUser() {
-        return createdByUser;
-    }
-
-    public boolean isFrozen() {
-        return frozen;
-    }
-
-    public Config getConfig() {
-        return config;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Date getLastMessageDate() {
+        return lastMessageDate;
     }
 
     public void setLastMessageDate(Date lastMessageDate) {
         this.lastMessageDate = lastMessageDate;
     }
 
+    public User getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(User createdByUser) {
+        this.createdByUser = createdByUser;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
     }
 
     public void setImage(String image) {
@@ -143,7 +293,7 @@ public class Channel {
 
     public Channel copy() {
         Channel clone = new Channel(client, type, id);
-        if (lastMessageDate!= null) {
+        if (lastMessageDate != null) {
             clone.lastMessageDate = new Date(lastMessageDate.getTime());
         }
         if (createdAt != null) {
@@ -157,10 +307,13 @@ public class Channel {
         }
         return clone;
     }
+    // endregion
+
+    // region Constructor
 
     public Map<String, String> getReactionTypes() {
-        if (reactionTypes == null){
-            return new HashMap<String, String>() {
+        if (reactionTypes == null) {
+            reactionTypes = new HashMap<String, String>() {
                 {
                     put("like", "\uD83D\uDC4D");
                     put("love", "\u2764\uFE0F");
@@ -188,87 +341,32 @@ public class Channel {
         return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
-    private List<ChatChannelEventHandler> eventSubscribers;
-    private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
-    private int subscribersSeq;
-
     public HashMap<String, Object> getExtraData() {
         return extraData;
     }
-    // endregion
 
-    // region Constructor
-
-    public void setClient(Client client) {
-        this.client = client;
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
     }
 
-    private Client client;
-    private ChannelState channelState;
-
-    // this constructor is here for GSON to play fair
-//    public Channel() {
-//        this(null, "", "", new HashMap<>());
-//    }
-
-    /**
-     * constructor - Create a channel
-     *
-     * @param client  the chat client
-     * @param type  the type of channel
-     * @param id  the id of the chat
-     * @return Returns a new uninitialized channel
-     */
-    public Channel(Client client, String type, String id) {
-        this(client, type, id, new HashMap<>());
+    public void preStorage() {
+        this.lastState = this.channelState;
+        this.createdByUserID = this.createdByUser.getId();
     }
 
     public Client getClient() {
         return this.client;
     }
 
-    /**
-     * constructor - Create a channel
-     *
-     * @param client  the chat client
-     * @param type  the type of channel
-     * @param id  the id of the chat
-     * @param extraData any additional custom params
-     *
-     * @return Returns a new uninitialized channel
-     */
-    public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
-        this.type = type;
-        this.id = id;
+    public void setClient(Client client) {
         this.client = client;
-
-        if (extraData == null) {
-            this.extraData = new HashMap<>();
-        } else {
-            this.extraData = new HashMap<>(extraData);
-        }
-
-        // since name and image are very common fields, we are going to promote them as
-        Object image = this.extraData.remove("image");
-        if (image != null) {
-            this.image = image.toString();
-        }
-
-        Object name = this.extraData.remove("name");
-        if (name != null) {
-            this.name = name.toString();
-        }
-        this.extraData.remove("id");
-        eventSubscribers = new ArrayList<>();
-        eventSubscribersBy = new HashMap<>();
-        channelState = new ChannelState(this);
     }
 
     // endregion
 
     public final synchronized int addEventHandler(ChatChannelEventHandler handler) {
         int id = ++subscribersSeq;
-        if (eventSubscribers == null){
+        if (eventSubscribers == null) {
             eventSubscribers = new ArrayList<>();
             eventSubscribersBy = new HashMap<>();
         }
@@ -282,14 +380,14 @@ public class Channel {
         eventSubscribers.remove(handler);
     }
 
-    public final synchronized void handleChannelEvent(Event event){
+    public final synchronized void handleChannelEvent(Event event) {
         if (eventSubscribers == null || eventSubscribers.isEmpty()) return;
-        for (ChatChannelEventHandler handler: eventSubscribers) {
+        for (ChatChannelEventHandler handler : eventSubscribers) {
             handler.dispatchEvent(event);
         }
     }
 
-    public void mergeWithState(ChannelState state){
+    public void mergeWithState(ChannelState state) {
         name = state.getChannel().name;
         image = state.getChannel().image;
         channelState.init(state);
@@ -304,7 +402,6 @@ public class Channel {
      * query - Query the API, get messages, members or other channel fields
      *
      * @param {object} options The query options
-     *
      * @return {object} Returns a query response
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
@@ -318,9 +415,19 @@ public class Channel {
                             public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                                 Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
                                 mergeWithState(response.body());
+
+                                if (channel.config == null)
+                                    channel.config = response.body().getChannel().getConfig();
+                                if (channel.channelState == null)
+                                    channel.channelState = response.body();
+
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
                                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                                // offline storage
+
+                                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
+
                                 callback.onSuccess(response.body());
                             }
 
@@ -344,8 +451,29 @@ public class Channel {
      *
      * @return {object} Returns a query response
      */
-    public void query(QueryChannelCallback callback) {
-        query(new ChannelQueryRequest().withData(this.extraData), callback);
+//    public void query(QueryChannelCallback callback) {
+//        query(new ChannelQueryRequest().withData(this.extraData), callback);
+//    }
+
+    /**
+     * getReplies - List the message replies for a parent message
+     *
+     * @param parentId The message parent id, ie the top of the thread
+     * @param limit    Pagination params, ie 10
+     * @return {object} Returns a getReplies response
+     */
+    public void getReplies(@NonNull String parentId, String limit, String firstMessageId, final GetRepliesCallback callback) {
+        client.getReplies(parentId, limit, firstMessageId, new GetRepliesCallback() {
+            @Override
+            public void onSuccess(GetRepliesResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
     }
 
     public ChannelState getChannelState() {
@@ -382,25 +510,6 @@ public class Channel {
     }
 
     // region Message
-    public void sendMessage(@Nullable String text,
-                            @Nullable List<Attachment> attachments,
-                            @Nullable String parentId,
-                            MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, text);
-        SendMessageRequest request = new SendMessageRequest(text, attachments, parentId, false, mentionedUserIDs);
-        client.sendMessage(this, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
-    }
-    // region Message
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
@@ -414,12 +523,14 @@ public class Channel {
         client.sendMessage(this, request, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
+                if (callback != null)
+                    callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
+                if (callback != null)
+                    callback.onError(errMsg, errCode);
             }
         });
     }
@@ -459,7 +570,7 @@ public class Channel {
     }
 
     public void sendFile(Attachment attachment, boolean isImage,
-                          SendFileCallback fileCallback) {
+                         SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
 
         if (isImage) {
@@ -500,10 +611,9 @@ public class Channel {
      * @param {string} messageID the message id
      * @param {object} reaction the reaction object for instance {type: 'love'}
      * @param {string} user_id the id of the user (used only for server side request) default null
-     *
      * @return {object} The Server Response
      */
-    public void sendReaction(String mesageId, String type, MessageCallback callback){
+    public void sendReaction(String mesageId, String type, MessageCallback callback) {
         ReactionRequest request = new ReactionRequest(type);
         client.sendReaction(mesageId, request, new MessageCallback() {
             @Override
@@ -513,7 +623,7 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -524,10 +634,9 @@ public class Channel {
      * @param {string} messageID the id of the message from which te remove the reaction
      * @param {string} reactionType the type of reaction that should be removed
      * @param {string} user_id the id of the user (used only for server side request) default null
-     *
      * @return {object} The Server Response
      */
-    public void deleteReaction(String mesageId, String type, MessageCallback callback){
+    public void deleteReaction(String mesageId, String type, MessageCallback callback) {
         client.deleteReaction(mesageId, type, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
@@ -536,15 +645,61 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
 
-    public void handleChannelUpdated(Channel channel, Event event){
+    public void sendAction(@NonNull String messageId,
+                           @NonNull SendActionRequest request,
+                           MessageCallback callback) {
+
+        client.sendAction(messageId, request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void flagMessage(String messageId, FlagCallback callback) {
+        client.flagMessage(messageId, new FlagCallback() {
+            @Override
+            public void onSuccess(FlagResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void unFlagMessage(String messageId, FlagCallback callback) {
+        client.unFlagMessage(messageId, new FlagCallback() {
+            @Override
+            public void onSuccess(FlagResponse response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void handleChannelUpdated(Channel channel, Event event) {
         name = channel.name;
         image = channel.image;
         extraData = channel.extraData;
+        getClient().storage().insertChannel(channel);
     }
 
     public void handleWatcherStart(Event event) {
@@ -559,11 +714,16 @@ public class Channel {
 
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
-        message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
-        channelState.addMessageSorted(message);
-        if (getLastMessageDate().before(message.getCreatedAt())) {
+        Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
+        message.setStatus(MessageStatus.RECEIVED);
+        if (!message.getType().equals(ModelType.message_reply)){
+            channelState.addMessageSorted(message);
+            channelState.setLastMessage(message);
+        }
+        if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }
+        getClient().storage().insertMessageForChannel(this, message);
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {
@@ -573,6 +733,7 @@ public class Channel {
                 if (event.getType().equals(EventType.MESSAGE_DELETED))
                     message.setText(Constant.MESSAGE_DELETED);
                 channelState.getMessages().set(i, message);
+                getClient().storage().insertMessageForChannel(this, message);
                 break;
             }
         }
@@ -590,11 +751,10 @@ public class Channel {
      * sendEvent - Send an event on this channel
      *
      * @param eventType event for example {type: 'message.read'}
-     *
      * @return The Server Response
      */
     // TODO: check this function
-    public void sendEvent(EventType eventType, final EventCallback callback){
+    public void sendEvent(EventType eventType, final EventCallback callback) {
         final Map<String, Object> event = new HashMap<>();
         event.put("type", eventType.label);
         SendEventRequest request = new SendEventRequest(event);
@@ -607,7 +767,7 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg,errCode);
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -627,5 +787,21 @@ public class Channel {
                 Log.e(TAG, "mark read failed with error " + errMsg);
             }
         });
+    }
+
+    public ChannelState getLastState() {
+        return lastState;
+    }
+
+    public void setLastState(ChannelState lastState) {
+        this.lastState = lastState;
+    }
+
+    public String getCreatedByUserID() {
+        return createdByUserID;
+    }
+
+    public void setCreatedByUserID(String createdByUserID) {
+        this.createdByUserID = createdByUserID;
     }
 }

@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.rest.request;
 import com.google.gson.annotations.SerializedName;
 
 
-public abstract class BaseQueryChannelRequest <T extends BaseQueryChannelRequest <T>> {
+public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<T>> {
 
     @SerializedName("state")
     protected boolean state;

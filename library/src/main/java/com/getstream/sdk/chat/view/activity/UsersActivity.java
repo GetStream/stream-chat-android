@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
-
 import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -47,16 +46,14 @@ import java.util.Random;
 public class UsersActivity extends AppCompatActivity {
 
     private static final String TAG = UsersActivity.class.getSimpleName();
-
+    boolean isLastPage = false;
+    RecyclerView.LayoutManager mLayoutManager;
+    boolean isCalling;
     private Client client;
-
     private StreamActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
     private List<User> groupUsers;
-    boolean isLastPage = false;
-
-    RecyclerView.LayoutManager mLayoutManager;
 
     // region LifeCycle
     @Override
@@ -78,6 +75,7 @@ public class UsersActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.stream_new_chat, menu);
         return true;
     }
+    // endregion
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
@@ -91,7 +89,6 @@ public class UsersActivity extends AppCompatActivity {
         }
         return false;
     }
-    // endregion
 
     // region Init
     private void init() {
@@ -108,6 +105,9 @@ public class UsersActivity extends AppCompatActivity {
     public void onClickBackFinish(View v) {
         finish();
     }
+    // endregion
+
+    // region New Chat
 
     private void configChannelListView() {
 //        adapter = new UserListItemAdapter(this, client.users, (View view) -> {
@@ -153,9 +153,6 @@ public class UsersActivity extends AppCompatActivity {
 //            }
 //        });
     }
-    // endregion
-
-    // region New Chat
 
     /**
      * Start private chat
@@ -189,6 +186,10 @@ public class UsersActivity extends AppCompatActivity {
         binding.tvDone.setVisibility(groupUsers.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
+    // endregion
+
+    // region Get Users and Channel
+
     private void inputGroupName() {
         final EditText inputName = new EditText(this);
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
@@ -214,12 +215,6 @@ public class UsersActivity extends AppCompatActivity {
         });
         alertDialog.show();
     }
-
-    // endregion
-
-    // region Get Users and Channel
-
-    boolean isCalling;
 
     private void getUsers() {
         Log.d(TAG, "queryUsers");

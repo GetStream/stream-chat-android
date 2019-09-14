@@ -20,7 +20,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import androidx.annotation.IntRange;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +29,8 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
+import androidx.annotation.IntRange;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.BottomViewHideShowAnimation;
@@ -107,7 +108,7 @@ public class VideoControlsLeanback extends VideoControls {
 
     @Override
     public void updateProgress(@IntRange(from = 0) long position, @IntRange(from = 0) long duration, @IntRange(from = 0, to = 100) int bufferPercent) {
-        progressBar.setSecondaryProgress((int) (progressBar.getMax() * ((float)bufferPercent / 100)));
+        progressBar.setSecondaryProgress((int) (progressBar.getMax() * ((float) bufferPercent / 100)));
         progressBar.setProgress((int) position);
 
         updateCurrentTime(position);

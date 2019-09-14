@@ -18,6 +18,18 @@ public class ApiClientOptions {
         this(defaultURL, defaultTimeout);
     }
 
+    public String getHttpURL() {
+        return "https://" + baseURL + "/";
+    }
+
+    public String getWssURL() {
+        return "wss://" + baseURL + "/";
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
     public static class Builder {
         private ApiClientOptions options;
 
@@ -38,17 +50,5 @@ public class ApiClientOptions {
         public ApiClientOptions build() {
             return options;
         }
-    }
-
-    public String getHttpURL() {
-        return "https://" + baseURL + "/";
-    }
-
-    public String getWssURL() {
-        return "wss://" + baseURL + "/";
-    }
-
-    public int getTimeout() {
-        return timeout;
     }
 }

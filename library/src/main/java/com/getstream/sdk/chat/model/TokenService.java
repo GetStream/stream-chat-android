@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.model;
 
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 
 public class TokenService {
 
@@ -19,7 +22,7 @@ public class TokenService {
 
         payloadJson.put("user_id", userId);
         String payload = payloadJson.toString();
-        String payloadBase64 = Base64.encodeToString(payload.getBytes("UTF-8"), Base64.NO_WRAP);
+        String payloadBase64 = Base64.encodeToString(payload.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         String devSignature = "devtoken";
 
         String[] a = new String[3];

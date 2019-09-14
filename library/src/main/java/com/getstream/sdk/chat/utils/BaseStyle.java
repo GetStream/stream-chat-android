@@ -18,6 +18,20 @@ public class BaseStyle {
 
     protected Context context;
     protected Resources resources;
+    protected int avatarWidth;
+    protected int avatarHeight;
+    protected int avatarBorderWidth;
+    protected int avatarBorderColor;
+    protected int avatarBackGroundColor;
+    protected int avatarInitialTextSize;
+    protected int avatarInitialTextColor;
+    protected int avatarInitialTextStyle;
+    protected boolean showReadState;
+    protected int readStateAvatarWidth;
+    protected int readStateAvatarHeight;
+    protected int readStateTextSize;
+    protected int readStateTextColor;
+    protected int readStateTextStyle;
 
     public Context getContext() {
         return context;
@@ -74,26 +88,6 @@ public class BaseStyle {
     protected final Drawable getVectorDrawable(@DrawableRes int drawable) {
         return ContextCompat.getDrawable(context, drawable);
     }
-
-    protected int avatarWidth;
-    protected int avatarHeight;
-
-    protected int avatarBorderWidth;
-    protected int avatarBorderColor;
-    protected int avatarBackGroundColor;
-
-    protected int avatarInitialTextSize;
-    protected int avatarInitialTextColor;
-    protected int avatarInitialTextStyle;
-
-    protected boolean showReadState;
-
-    protected int readStateAvatarWidth;
-    protected int readStateAvatarHeight;
-
-    protected int readStateTextSize;
-    protected int readStateTextColor;
-    protected int readStateTextStyle;
 
     public int getAvatarWidth() {
         return avatarWidth;

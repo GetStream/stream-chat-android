@@ -1,10 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -25,16 +26,16 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
                               MessageListView.MessageClickListener messageClickListener,
                               MessageListView.MessageLongClickListener messageLongClickListener,
                               MessageListView.AttachmentClickListener attachmentClickListener,
-                              MessageListView.UserClickListener userClickListener);
+                              MessageListView.UserClickListener userClickListener,
+                              MessageListView.ReadStateClickListener readStateClickListener);
 
     public abstract void setStyle(MessageListViewStyle style);
 
+    public MessageListView.BubbleHelper getBubbleHelper() {
+        return bubbleHelper;
+    }
 
     public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
-    }
-
-    public MessageListView.BubbleHelper getBubbleHelper() {
-        return bubbleHelper;
     }
 }

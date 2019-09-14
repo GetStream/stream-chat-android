@@ -26,6 +26,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     STYLE style;
     List<User> lastActiveUsers;
     User user;
+    double factor = 1.7;
 
     public AvatarGroupView(Context context) {
         super(context);
@@ -88,8 +89,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         }
     }
 
-    double factor = 1.7;
-
     private void configUserAvatars() {
         double factor_;
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
@@ -111,7 +110,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     RelativeLayout.LayoutParams params;
                     factor_ = factor;
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
-                            (int) style.getAvatarBorderWidth());
+                            style.getAvatarBorderWidth());
                     imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
                             (int) (style.getAvatarInitialTextSize() / factor_),
                             style.getAvatarInitialTextStyle());

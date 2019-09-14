@@ -17,8 +17,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Map;
@@ -134,9 +132,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             for (Reaction reaction : message.getLatestReactions()) {
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
-                        if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
-                            isReactioned = true;
-                            break;
+                    if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
+                        isReactioned = true;
+                        break;
                     }
                 }
             }

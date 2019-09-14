@@ -1,9 +1,13 @@
 package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -15,13 +19,17 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class MoreActionDialog extends Dialog {
 
@@ -31,6 +39,10 @@ public class MoreActionDialog extends Dialog {
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
     public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
@@ -53,13 +65,12 @@ public class MoreActionDialog extends Dialog {
     }
 
 
-
     public void init() {
         if (viewModel == null || message == null || style == null)
             return;
 
         setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction);
-
+        setCanceledOnTouchOutside(true);
         RelativeLayout rl_wrap = findViewById(R.id.rl_wrap);
         LinearLayout ll_thread = findViewById(R.id.ll_thread);
         LinearLayout ll_copy = findViewById(R.id.ll_copy);
@@ -73,11 +84,28 @@ public class MoreActionDialog extends Dialog {
                 .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
                 .build());
 
-        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())){
+        ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
+
+        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
-            ll_flag.setOnClickListener(view -> {});
-        }else {
+            ll_flag.setOnClickListener(view -> {
+                viewModel.getChannel().flagMessage(message.getId(), new FlagCallback() {
+                    @Override
+                    public void onSuccess(FlagResponse response) {
+                        Utils.showMessage(getContext(), "Message has been succesfully flagged");
+                        dismiss();
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Utils.showMessage(getContext(), errMsg);
+                        dismiss();
+                    }
+                });
+
+            });
+        } else {
             ll_flag.setVisibility(View.GONE);
 
             ll_edit.setOnClickListener(view -> {
@@ -114,10 +142,21 @@ public class MoreActionDialog extends Dialog {
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);
 
-        ll_thread.setOnClickListener((View v) -> {
-
+        ll_thread.setOnClickListener(view -> {
+            dismiss();
+            viewModel.setThreadParentMessage(message);
+        });
+        ll_copy.setOnClickListener(view -> {
+            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("label", message.getText());
+            clipboard.setPrimaryClip(clip);
             dismiss();
         });
-        ll_copy.setOnClickListener((View v) -> dismiss());
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        dismiss();
+        return false;
     }
 }

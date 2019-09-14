@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat;
+package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -21,6 +20,7 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
     // Action
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private MessageListItem messageListItem;
 
     private MessageListView.BubbleHelper bubbleHelper;
@@ -30,11 +30,12 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
     }
 
     public void bind(Context context,
-                              MessageListItem messageListItem,
-                              Attachment attachment,
-                              MessageListViewStyle style,
-                              MessageListView.AttachmentClickListener clickListener,
-                              MessageListView.MessageLongClickListener longClickListener) {
+                     MessageListItem messageListItem,
+                     Attachment attachment,
+                     MessageListViewStyle style,
+                     MessageListView.AttachmentClickListener clickListener,
+                     MessageListView.MessageLongClickListener longClickListener,
+                     MessageListView.GiphySendListener giphySendListener) {
         this.context = context;
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
@@ -42,12 +43,16 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         this.message = messageListItem.getMessage();
         this.attachment = attachment;
         this.style = style;
+        this.giphySendListener = giphySendListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {
         return bubbleHelper;
     }
 
+    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
+        this.bubbleHelper = bubbleHelper;
+    }
 
     public MessageListViewStyle getStyle() {
         return style;
@@ -55,10 +60,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
-    }
-
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
     }
 
     public MessageListItem getMessageListItem() {
@@ -89,6 +90,10 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         return attachment;
     }
 
+    public void setAttachment(Attachment attachment) {
+        this.attachment = attachment;
+    }
+
     @Override
     public void onClick(View v) {
         if (this.clickListener != null) {
@@ -101,11 +106,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         if (longClickListener != null)
             longClickListener.onMessageLongClick(message);
         return true;
-    }
-
-
-    public void setAttachment(Attachment attachment) {
-        this.attachment = attachment;
     }
 
     public Message getMessage() {
