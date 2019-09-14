@@ -5,7 +5,7 @@
     <string name="stream_yesterday">YESTERDAY</string>
     <string name="stream_hint_enter_a_message">Type a message…</string>
     <!--Chat-->
-    <string name="stream_no_connection">Connection failure, reconnecting now&#8230;</string>
+    <string name="stream_no_connection">Trying to reconnect&#8230;</string>
     <string name="stream_command_title">Commands matching</string>
     <string name="stream_mention_title">Searching for people</string>
     <string name="stream_you">(you)</string>

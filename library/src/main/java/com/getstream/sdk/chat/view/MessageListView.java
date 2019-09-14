@@ -306,7 +306,7 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    viewModel.setMessageListScrollUp(currentLastVisible < lVPosition);
+                    viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                     viewModel.setThreadParentPosition(lVPosition);
@@ -319,8 +319,6 @@ public class MessageListView extends RecyclerView {
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
         init();
-        Channel c = this.viewModel.getChannel();
-        Log.i(TAG, "MessageListView is attaching a listener on the channel object");
 
 
         // Setup a default adapter and pass the style
@@ -354,11 +352,11 @@ public class MessageListView extends RecyclerView {
             // Scroll to origin position on return from thread
             if (backFromThread) {
                 layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
+                viewModel.markLastMessageRead();
                 return;
             }
 
             // Scroll to bottom position for typing indicator
-            int itemCount = adapter.getItemCount() - 2;
             if (messageListItemWrapper.isTyping() && scrolledBottom()) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
@@ -372,6 +370,7 @@ public class MessageListView extends RecyclerView {
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     layoutManager.scrollToPosition(newPosition);
+                    Log.i(TAG, String.format("just update last message"));
                     return;
                 }
             }

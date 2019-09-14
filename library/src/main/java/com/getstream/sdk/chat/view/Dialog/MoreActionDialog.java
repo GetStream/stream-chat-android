@@ -5,7 +5,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -37,6 +39,10 @@ public class MoreActionDialog extends Dialog {
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
     public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
@@ -64,7 +70,7 @@ public class MoreActionDialog extends Dialog {
             return;
 
         setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction);
-
+        setCanceledOnTouchOutside(true);
         RelativeLayout rl_wrap = findViewById(R.id.rl_wrap);
         LinearLayout ll_thread = findViewById(R.id.ll_thread);
         LinearLayout ll_copy = findViewById(R.id.ll_copy);
@@ -146,5 +152,11 @@ public class MoreActionDialog extends Dialog {
             clipboard.setPrimaryClip(clip);
             dismiss();
         });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        dismiss();
+        return false;
     }
 }

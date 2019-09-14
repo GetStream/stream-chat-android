@@ -2,6 +2,9 @@ package com.getstream.sdk.chat.view.Dialog;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.view.Gravity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -24,7 +27,14 @@ public class ReadUsersDialog extends Dialog {
     MessageListViewStyle style;
 
     public ReadUsersDialog(@NonNull Context context) {
-        super(context, R.style.DialogTheme);
+        super(context);
+
+        Window window = getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.BOTTOM;
+
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
     }
 
     public ReadUsersDialog setReads(List<ChannelUserRead> reads) {

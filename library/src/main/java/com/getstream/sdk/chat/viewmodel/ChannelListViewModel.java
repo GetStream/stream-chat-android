@@ -118,7 +118,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         }
     }
 
-    private boolean setLoading() {
+    public boolean setLoading() {
         if (isLoading.compareAndSet(false, true)) {
             loading.postValue(true);
             return true;
@@ -126,7 +126,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return false;
     }
 
-    private void setLoadingDone() {
+    public void setLoadingDone() {
         if (isLoading.compareAndSet(true, false))
             loading.postValue(false);
     }
@@ -271,7 +271,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return removed;
     }
 
-    private void addChannels(List<ChannelState> newChannelsState) {
+    public void addChannels(List<ChannelState> newChannelsState) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();

@@ -417,7 +417,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 newMessage.setStatus(MessageStatus.RECEIVED);
                 if (oldMessage.getStatus() == MessageStatus.FAILED) {
                     messagesCopy.remove(oldMessage);
-                    messagesCopy.add(newMessage);
+//                    messagesCopy.add(newMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
                 }
@@ -810,7 +810,8 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     @Override
     public void resume() {
-        setLoading();
+        if (channel.getChannelState().getLastMessage() != null)
+            setLoading();
     }
 
     @Override
@@ -842,6 +843,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public synchronized void keystroke() {
+        if (isThread()) return;
         if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
             lastKeystrokeAt = new Date();
             channel.sendEvent(EventType.TYPING_START, new EventCallback() {
@@ -857,7 +859,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     }
 
     public synchronized void stopTyping() {
-        if (lastKeystrokeAt == null) return;
+        if (lastKeystrokeAt == null || isThread()) return;
         lastKeystrokeAt = null;
         channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
             @Override

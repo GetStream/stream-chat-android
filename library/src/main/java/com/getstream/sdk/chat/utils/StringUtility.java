@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.util.Random;
+
 public class StringUtility {
 
     public static String stringFromNumbers(int... numbers) {
@@ -50,5 +52,20 @@ public class StringUtility {
             }
         }
         return text;
+    }
+
+    public static String getSaltString(String s) {
+        String s_ = s.replaceAll("\\s+","");
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        int minIndex = Math.min(5, s_.length() - 1);
+        salt.append(s_.substring(0,minIndex));
+        salt.append("-");
+        Random rnd = new Random();
+        while (salt.length() < 18) {
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        return salt.toString();
     }
 }

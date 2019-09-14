@@ -202,6 +202,12 @@ public class MessageInputView extends RelativeLayout
             if (messageListScrollup && !lockScrollUp)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage ->{
+            if (threadParentMessage == null) {
+                initSendMessage();
+                Utils.hideSoftKeyboard((Activity) getContext());
+            }
+        });
     }
 
     // Edit
@@ -228,7 +234,8 @@ public class MessageInputView extends RelativeLayout
                     messageInputClient.onClickOpenSelectFileView(null, message.getAttachments());
                 }
             } else {
-//                messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
+                if (!message.getAttachments().get(0).getType().equals(ModelType.attach_giphy))
+                    messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
             }
         }
     }
