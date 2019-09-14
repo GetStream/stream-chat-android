@@ -6,9 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include
+        <com.getstream.sdk.chat.view.AvatarGroupView
             android:id="@+id/view_user_avator"
-            layout="@layout/stream_view_user_avatar_initials"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_margin="10dp"
