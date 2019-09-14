@@ -228,7 +228,8 @@ public class MessageInputView extends RelativeLayout
                     messageInputClient.onClickOpenSelectFileView(null, message.getAttachments());
                 }
             } else {
-//                messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
+                if (!message.getAttachments().get(0).getType().equals(ModelType.attach_giphy))
+                    messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
             }
         }
     }
