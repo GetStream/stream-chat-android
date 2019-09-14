@@ -93,7 +93,12 @@ public class ChannelHeaderView extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = StreamViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
+        binding.tvBack.setOnClickListener(view ->{
+            if(viewModel.isThread())
+                viewModel.initThread();
+            else
+                ((Activity) getContext()).finish();
+        });
         return binding;
     }
 

@@ -417,7 +417,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 newMessage.setStatus(MessageStatus.RECEIVED);
                 if (oldMessage.getStatus() == MessageStatus.FAILED) {
                     messagesCopy.remove(oldMessage);
-                    messagesCopy.add(newMessage);
+//                    messagesCopy.add(newMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
                 }
