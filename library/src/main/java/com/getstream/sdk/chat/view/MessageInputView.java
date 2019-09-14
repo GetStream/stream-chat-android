@@ -202,6 +202,12 @@ public class MessageInputView extends RelativeLayout
             if (messageListScrollup && !lockScrollUp)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage ->{
+            if (threadParentMessage == null) {
+                initSendMessage();
+                Utils.hideSoftKeyboard((Activity) getContext());
+            }
+        });
     }
 
     // Edit
