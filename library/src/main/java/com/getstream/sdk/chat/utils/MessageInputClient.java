@@ -433,11 +433,11 @@ public class MessageInputClient {
 
     private void setCommandsMentionUsers(String string) {
         String string_ = string.replace(string.substring(0, 1), "");
-        binding.tvCommand.setText(string_);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
             setCommands(string_);
+            binding.tvCommand.setText(string_);
         } else {
             setMentionUsers(string_);
         }
