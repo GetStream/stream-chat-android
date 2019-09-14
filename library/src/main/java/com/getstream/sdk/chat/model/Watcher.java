@@ -10,24 +10,23 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 public class Watcher implements UserEntity {
-    public User getUser() {
-        return user;
-    }
+    @SerializedName("user")
+    @Expose
+    private User user;
+    private Date createdAt;
 
     public Watcher(User user, Date createdAt) {
         this.user = user;
         this.createdAt = createdAt;
     }
 
-    @SerializedName("user")
-    @Expose
-    private User user;
+    public User getUser() {
+        return user;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
     }
-
-    private Date createdAt;
 
     @Override
     public boolean equals(@Nullable Object obj) {

@@ -2,8 +2,15 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -11,11 +18,21 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
@@ -28,6 +45,7 @@ import static com.getstream.sdk.chat.enums.Filters.eq;
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final String USER_ID = "bender";
@@ -38,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
+        //client.enableOfflineStorage();
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");
@@ -87,6 +106,70 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
+        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
+    }
 
+    void createNewChannelDialog(View view) {
+
+        final EditText inputName = new EditText(this);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setHint("Type a channel name");
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Create a Channel")
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setView(inputName);
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                String channelName = inputName.getText().toString();
+                if (TextUtils.isEmpty(channelName)) {
+                    inputName.setError("Invalid Name!");
+                    return;
+                }
+                createNewChannel(channelName);
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
+    }
+
+    void createNewChannel(String channelName){
+        Client client = configureStreamClient();
+
+        String channelId = StringUtility.getSaltString(channelName);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", channelName);
+        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", channelName);
+
+        List<String> members = new ArrayList<>();
+        members.add(client.getUser().getId());
+
+        data.put("members", members);
+
+        ChannelQueryRequest request = new ChannelQueryRequest().withData(data).withMessages(10);
+        viewModel.setLoading();
+        channel.query(request, new QueryChannelCallback() {
+            @Override
+            public void onSuccess(ChannelState response) {
+                Channel channel = response.getChannel();
+                Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
+                intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
+                intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
+                startActivity(intent);
+                viewModel.addChannels(Arrays.asList(response));
+                viewModel.setLoadingDone();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                viewModel.setLoadingDone();
+                Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

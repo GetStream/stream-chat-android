@@ -18,21 +18,24 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
+import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -47,22 +50,21 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
 public class MessageListView extends RecyclerView {
+    //    private int firstVisible;
+    private static int fVPosition, lVPosition;
     final String TAG = MessageListView.class.getSimpleName();
-
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     private LinearLayoutManager layoutManager;
     // our connection to the channel scope
     private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
-
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
+    private GiphySendListener giphySendListener;
     private UserClickListener userClickListener;
-
-//    private int firstVisible;
-    private static int fVPosition, lVPosition;
+    private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
 
@@ -112,9 +114,9 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
-                    if (message.getStatus() == MessageStatus.FAILED){
+                    if (message.getStatus() == MessageStatus.FAILED) {
                         bgColor = getResources().getColor(R.color.stream_message_failed);
-                    }else{
+                    } else {
                         bgColor = style.getMessageBackgroundColorMine();
                     }
 
@@ -263,12 +265,12 @@ public class MessageListView extends RecyclerView {
                 (style.getMessageBottomLeftCornerRadiusTheirs() == getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2));
     }
 
-    private void initFresco() {
+    private void init() {
         try {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-
+        giphySendListener = viewModel::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -280,10 +282,12 @@ public class MessageListView extends RecyclerView {
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
+        adapter.setGiphySendListener(giphySendListener);
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
         setUserClickListener(userClickListener);
+        setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
         adapter.setChannelState(getChannel().getChannelState());
 
@@ -302,10 +306,10 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-
-                    viewModel.setMessageListScrollUp(currentFirstVisible < fVPosition);
+                    viewModel.setMessageListScrollUp(currentLastVisible < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
+                    viewModel.setThreadParentPosition(lVPosition);
                 }
             }
         });
@@ -314,7 +318,7 @@ public class MessageListView extends RecyclerView {
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
-        initFresco();
+        init();
         Channel c = this.viewModel.getChannel();
         Log.i(TAG, "MessageListView is attaching a listener on the channel object");
 
@@ -337,23 +341,52 @@ public class MessageListView extends RecyclerView {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
             Log.i(TAG, "Observe found this many entities: " + entities.size());
 
-            int oldSize = adapter.getItemCount();
-            adapter.replaceEntities(entities);
-            int newSize = adapter.getItemCount();
-            int sizeGrewBy = newSize - oldSize;
+            // Adapter initialization for channel and thread swapping
+            boolean backFromThread = false;
+            if (adapter.isThread() != messageListItemWrapper.isThread()) {
+                adapter.replaceEntities(new ArrayList<>());
+                backFromThread = !messageListItemWrapper.isThread();
+            }
 
-            int itemCount = adapter.getItemCount() - 2;
-            if (messageListItemWrapper.isTyping() && lVPosition >= itemCount){
+            adapter.setThread(messageListItemWrapper.isThread());
+            adapter.replaceEntities(entities);
+
+            // Scroll to origin position on return from thread
+            if (backFromThread) {
+                layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
+                viewModel.markLastMessageRead();
+                return;
+            }
+
+            // Scroll to bottom position for typing indicator
+            if (messageListItemWrapper.isTyping() && scrolledBottom()) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
                 return;
             }
+            // check lastmessage update
+            if (!entities.isEmpty()) {
+                Message lastMessage = entities.get(entities.size() - 1).getMessage();
+                if (lastMessage != null
+                        && scrolledBottom()
+                        && justUpdated(lastMessage)) {
+                    int newPosition = adapter.getItemCount() - 1;
+                    layoutManager.scrollToPosition(newPosition);
+                    Log.i(TAG, String.format("just update last message"));
+                    return;
+                }
+            }
+
+            int oldSize = adapter.getItemCount();
+            int newSize = adapter.getItemCount();
+            int sizeGrewBy = newSize - oldSize;
 
             if (!messageListItemWrapper.getHasNewMessages()) {
                 // we only touch scroll for new messages, we ignore
                 // read
                 // typing
                 // message updates
+                Log.i(TAG, String.format("no Scroll no new message"));
                 return;
             }
 
@@ -394,6 +427,9 @@ public class MessageListView extends RecyclerView {
             }
         });
 
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {
+        });
+
         this.setAdapterWithStyle(adapter);
     }
 
@@ -413,8 +449,24 @@ public class MessageListView extends RecyclerView {
     public MessageListViewStyle getStyle() {
         return style;
     }
+
+    private boolean scrolledBottom() {
+        int itemCount = adapter.getItemCount() - 2;
+        return lVPosition >= itemCount;
+    }
+
+    private boolean justUpdated(Message message) {
+        if (message.getUpdatedAt() == null) return false;
+        Date now = new Date();
+        long passedTime = now.getTime() - message.getUpdatedAt().getTime();
+        return message.getUpdatedAt() != null
+                && passedTime < 2000;
+    }
     // endregion
 
+    // region Thread
+
+    // endregion
 
     // region Listener
     public void setMessageClickListener(MessageClickListener messageClickListener) {
@@ -425,15 +477,13 @@ public class MessageListView extends RecyclerView {
         if (this.messageClickListener != null) {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
-//            adapter.setMessageClickListener((message, position) -> {
-//                new ReactionDialog(getContext())
-//                        .setChannel(viewModel.getChannel())
-//                        .setMessage(message)
-//                        .setMessagePosition(position)
-//                        .setRecyclerView(this)
-//                        .setStyle(style)
-//                        .show();
-//            });
+            adapter.setMessageClickListener((message, position) -> {
+                if (message.getStatus() == MessageStatus.FAILED) {
+                    viewModel.onSendMessage(message, null);
+                } else if (message.getReplyCount() > 0) {
+                    viewModel.setThreadParentMessage(message);
+                }
+            });
         }
     }
 
@@ -464,9 +514,7 @@ public class MessageListView extends RecyclerView {
         if (this.attachmentClickListener != null) {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         } else {
-            adapter.setAttachmentClickListener((message, attachment) -> {
-                showAttachment(message, attachment);
-            });
+            adapter.setAttachmentClickListener(this::showAttachment);
         }
     }
 
@@ -482,45 +530,29 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setReadStateClickListener(ReadStateClickListener readStateClickListener) {
+        this.readStateClickListener = readStateClickListener;
+        if (adapter == null) return;
+
+        if (this.readStateClickListener != null) {
+            adapter.setReadStateClickListener(this.readStateClickListener);
+        } else {
+            adapter.setReadStateClickListener(reads ->  {
+                new ReadUsersDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setReads(reads)
+                        .setStyle(style)
+                        .show();
+            });
+        }
+    }
+
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
         if (adapter != null) {
             adapter.setBubbleHelper(bubbleHelper);
         }
     }
-
-    public interface HeaderAvatarGroupClickListener {
-        void onHeaderAvatarGroupClick(Channel channel);
-    }
-
-    public interface HeaderOptionsClickListener {
-        void onHeaderOptionsClick(Channel channel);
-    }
-
-    public interface MessageClickListener {
-        void onMessageClick(Message message, int position);
-    }
-
-    public interface MessageLongClickListener {
-        void onMessageLongClick(Message message);
-    }
-
-    public interface AttachmentClickListener {
-        void onAttachmentClick(Message message, Attachment attachment);
-    }
-
-    public interface UserClickListener {
-        void onUserClick(User user);
-    }
-
-    public interface BubbleHelper {
-        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
-
-        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
-    }
-
-
-    // endregion
 
     // region View Attachment
     public void showAttachment(Message message, Attachment attachment) {
@@ -587,5 +619,47 @@ public class MessageListView extends RecyclerView {
             getContext().startActivity(intent);
         }
     }
+
+    public interface HeaderAvatarGroupClickListener {
+        void onHeaderAvatarGroupClick(Channel channel);
+    }
+
+    public interface HeaderOptionsClickListener {
+        void onHeaderOptionsClick(Channel channel);
+    }
+
+    public interface MessageClickListener {
+        void onMessageClick(Message message, int position);
+    }
+
+    public interface MessageLongClickListener {
+        void onMessageLongClick(Message message);
+    }
+
+    public interface AttachmentClickListener {
+        void onAttachmentClick(Message message, Attachment attachment);
+    }
+
+    public interface GiphySendListener {
+        void onGiphySend(Message message, GiphyAction action);
+    }
+
+
     // endregion
+
+    public interface UserClickListener {
+        void onUserClick(User user);
+    }
+
+    public interface ReadStateClickListener {
+        void onReadStateClick(List<ChannelUserRead> reads);
+    }
+
+    public interface BubbleHelper {
+        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+
+        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+    }
+    // endregion
+
 }

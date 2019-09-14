@@ -2,10 +2,16 @@ package com.getstream.sdk.chat.rest;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -15,7 +21,10 @@ import java.util.HashMap;
  * A user
  */
 
+@Entity(tableName = "stream_user")
 public class User implements UserEntity {
+    @PrimaryKey
+    @NonNull
     @SerializedName("id")
     private String id;
 
@@ -29,24 +38,69 @@ public class User implements UserEntity {
     private String role;
 
     @SerializedName("created_at")
+    @TypeConverters(DateConverter.class)
     private Date createdAt;
 
     @SerializedName("updated_at")
+    @TypeConverters(DateConverter.class)
     private Date updatedAt;
 
     @SerializedName("last_active")
+    @TypeConverters(DateConverter.class)
     private Date lastActive;
 
     @SerializedName("online")
     private Boolean online;
 
     @SerializedName("total_unread_count")
-    private Number totalUnreadCount;
+    private Integer totalUnreadCount;
+
 
     @SerializedName("unread_channels")
-    private Number unreadChannels;
+    private Integer unreadChannels;
 
+    @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+
+    /**
+     * Constructor
+     *
+     * @param id User id
+     */
+    public User(String id) {
+        this(id, new HashMap<>());
+    }
+
+    /**
+     * Constructor
+     *
+     * @param id        User id
+     * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
+     */
+    @Ignore
+    public User(String id, HashMap<String, Object> extraData) {
+        this.id = id;
+        this.online = false;
+
+        if (extraData == null) {
+            this.extraData = new HashMap<>();
+        } else {
+            this.extraData = new HashMap<>(extraData);
+        }
+
+        // since name and image are very common fields, we are going to promote them as
+        Object image = this.extraData.remove("image");
+        if (image != null) {
+            this.image = image.toString();
+        }
+
+        Object name = this.extraData.remove("name");
+        if (name != null) {
+            this.name = name.toString();
+        }
+
+        this.extraData.remove("id");
+    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -112,21 +166,29 @@ public class User implements UserEntity {
         this.name = name;
     }
 
-    public Number getTotalUnreadCount() {
+    public Integer getTotalUnreadCount() {
         return totalUnreadCount;
     }
 
-    public Number getUnreadChannels() {
+    public void setTotalUnreadCount(Integer totalUnreadCount) {
+        this.totalUnreadCount = totalUnreadCount;
+    }
+
+    public Integer getUnreadChannels() {
         return unreadChannels;
     }
 
-    public User shallowCopy(){
+    public void setUnreadChannels(Integer unreadChannels) {
+        this.unreadChannels = unreadChannels;
+    }
+
+    public User shallowCopy() {
         User copy = new User(id);
         copy.shallowUpdate(this);
         return copy;
     }
 
-    public void shallowUpdate(User user){
+    public void shallowUpdate(User user) {
         name = user.name;
         online = user.online;
         image = user.image;
@@ -148,45 +210,12 @@ public class User implements UserEntity {
         return TextUtils.equals(this.getId(), otherUser.getId());
     }
 
-    /**
-     * Constructor
-     * @param id User id
-     * */
-    public User(String id) {
-        this(id, new HashMap<>());
-    }
-
-    /**
-    * Constructor
-    * @param id User id
-    * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
-    * */
-    public User(String id, HashMap<String,Object> extraData) {
-        this.id = id;
-        this.online = false;
-
-        if (extraData == null) {
-            this.extraData = new HashMap<>();
-        } else {
-            this.extraData = new HashMap<>(extraData);
-        }
-
-        // since name and image are very common fields, we are going to promote them as
-        Object image = this.extraData.remove("image");
-        if (image != null) {
-            this.image = image.toString();
-        }
-
-        Object name = this.extraData.remove("name");
-        if (name != null) {
-            this.name = name.toString();
-        }
-
-        this.extraData.remove("id");
-    }
-
     public HashMap<String, Object> getExtraData() {
         return extraData;
+    }
+
+    public void setExtraData(HashMap<String, Object> data) {
+        this.extraData = data;
     }
 
     public String getInitials() {
@@ -213,7 +242,7 @@ public class User implements UserEntity {
     }
 
     // TODO: populate this from API
-    public boolean isMe(){
+    public boolean isMe() {
         return false;
     }
 

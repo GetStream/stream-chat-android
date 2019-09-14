@@ -22,14 +22,15 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.TypedValue;
+
 import androidx.annotation.AnyRes;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.appcompat.widget.AppCompatDrawableManager;
-import android.util.TypedValue;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 /**
  * A Utility for handling the changes in the Android Resources API
@@ -41,9 +42,9 @@ public class ResourceUtil {
      * <code>colorRes</code> to correctly tint it before returning the Drawable
      * object.
      *
-     * @param context The context to use for retrieving the drawable
+     * @param context     The context to use for retrieving the drawable
      * @param drawableRes The resource id for the drawable to retrieve
-     * @param colorRes The resource id for the color to use for tinting
+     * @param colorRes    The resource id for the color to use for tinting
      * @return The tinted drawable
      */
     public static Drawable tint(Context context, @DrawableRes int drawableRes, @ColorRes int colorRes) {
@@ -57,7 +58,7 @@ public class ResourceUtil {
      * <code>colorRes</code> to correctly tint it before returning the Drawable
      * object.
      *
-     * @param context The context to use for retrieving the drawable
+     * @param context  The context to use for retrieving the drawable
      * @param drawable The Drawable to tint
      * @param colorRes The resource id for the color to use for tinting
      * @return The tinted drawable
@@ -74,7 +75,7 @@ public class ResourceUtil {
      * <code>tintListRes</code> to correctly tint it before returning the Drawable
      * object.
      *
-     * @param context The context to use for retrieving the drawable
+     * @param context     The context to use for retrieving the drawable
      * @param drawableRes The resource id for the drawable to retrieve
      * @param tintListRes The resource id for the ColorStateList to use for tinting
      * @return The tinted drawable
@@ -90,8 +91,8 @@ public class ResourceUtil {
      * <code>tintListRes</code> to correctly tint it before returning the Drawable
      * object.
      *
-     * @param context The context to use for retrieving the drawable
-     * @param drawable The Drawable to tint
+     * @param context     The context to use for retrieving the drawable
+     * @param drawable    The Drawable to tint
      * @param tintListRes The resource id for the ColorStateList to use for tinting
      * @return The tinted drawable
      */
@@ -106,7 +107,7 @@ public class ResourceUtil {
      * Retrieves the drawable specified with the <code>resourceId</code>.  This
      * is a helper method to deal with the API differences for retrieving drawables
      *
-     * @param context The context to use when retrieving the drawable
+     * @param context            The context to use when retrieving the drawable
      * @param drawableResourceId The id for the drawable to retrieve
      * @return The drawable associated with <code>resourceId</code>
      */
@@ -123,7 +124,7 @@ public class ResourceUtil {
      * Resolves the reference to an attribute, returning the root resource id.
      *
      * @param context The context to use when determining the root id
-     * @param attr The attribute to resolve
+     * @param attr    The attribute to resolve
      * @return The resource id pointing to the de-referenced attribute
      */
     @AnyRes
@@ -143,7 +144,7 @@ public class ResourceUtil {
      * Retrieves the color specified with the <code>colorRes</code>.  This
      * is a helper method to deal with the API differences for retrieving colors.
      *
-     * @param context The context to use when retrieving the color
+     * @param context  The context to use when retrieving the color
      * @param colorRes The id for the color to retrieve
      * @return The color associated with <code>colorRes</code>
      */
@@ -161,7 +162,7 @@ public class ResourceUtil {
      * Retrieves the ColorStateList specified with the <code>colorRes</code>.  This
      * is a helper method to deal with the API differences for retrieving colors.
      *
-     * @param context The context to use when retrieving the color
+     * @param context  The context to use when retrieving the color
      * @param colorRes The id for the ColorStateList to retrieve
      * @return The ColorStateList associated with <code>colorRes</code>
      */

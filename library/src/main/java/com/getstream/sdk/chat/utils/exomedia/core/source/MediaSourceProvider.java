@@ -21,6 +21,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -44,15 +45,6 @@ public class MediaSourceProvider {
     @SuppressLint("DefaultLocale")
     protected String userAgent = String.format(USER_AGENT_FORMAT, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE, Build.VERSION.RELEASE, Build.MODEL);
 
-    @NonNull
-    public MediaSource generate(@NonNull Context context, @NonNull Handler handler, @NonNull Uri uri, @Nullable TransferListener transferListener ) {
-        SourceTypeBuilder sourceTypeBuilder = findByProviders(uri);
-
-        // If a registered builder wasn't found then use the default
-        MediaSourceBuilder builder = sourceTypeBuilder != null ? sourceTypeBuilder.builder : new DefaultMediaSourceBuilder();
-        return builder.build(context, uri, userAgent, handler, transferListener);
-    }
-
     @Nullable
     protected static SourceTypeBuilder findByProviders(@NonNull Uri uri) {
         // Uri Scheme (e.g. rtsp)
@@ -69,11 +61,7 @@ public class MediaSourceProvider {
 
         // Regex
         sourceTypeBuilder = findByLooseComparison(uri);
-        if (sourceTypeBuilder != null) {
-             return sourceTypeBuilder;
-        }
-
-        return null;
+        return sourceTypeBuilder;
     }
 
     @Nullable
@@ -117,6 +105,15 @@ public class MediaSourceProvider {
         }
 
         return null;
+    }
+
+    @NonNull
+    public MediaSource generate(@NonNull Context context, @NonNull Handler handler, @NonNull Uri uri, @Nullable TransferListener transferListener) {
+        SourceTypeBuilder sourceTypeBuilder = findByProviders(uri);
+
+        // If a registered builder wasn't found then use the default
+        MediaSourceBuilder builder = sourceTypeBuilder != null ? sourceTypeBuilder.builder : new DefaultMediaSourceBuilder();
+        return builder.build(context, uri, userAgent, handler, transferListener);
     }
 
     public static class SourceTypeBuilder {

@@ -22,14 +22,15 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.MatrixManager;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
@@ -47,9 +48,8 @@ import javax.microedition.khronos.egl.EGLSurface;
  * once we have a video
  */
 public class ResizingSurfaceView extends SurfaceView implements ClearableSurface {
-    private static final String TAG = "ResizingSurfaceView";
     protected static final int MAX_DEGREES = 360;
-
+    private static final String TAG = "ResizingSurfaceView";
     /**
      * A version of the EGL14.EGL_CONTEXT_CLIENT_VERSION so that we can
      * reference it without being on API 17+
@@ -84,11 +84,8 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
             EGL_CONTEXT_CLIENT_VERSION, 2,
             EGL10.EGL_NONE
     };
-
-    public interface OnSizeChangeListener {
-        void onVideoSurfaceSizeChange(int width, int height);
-    }
-
+    @NonNull
+    protected final ReentrantLock globalLayoutMatrixListenerLock = new ReentrantLock(true);
     @Nullable
     protected OnSizeChangeListener onSizeChangeListener;
 
@@ -104,14 +101,10 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
     protected AttachedListener attachedListener = new AttachedListener();
     @NonNull
     protected GlobalLayoutMatrixListener globalLayoutMatrixListener = new GlobalLayoutMatrixListener();
-    @NonNull
-    protected final ReentrantLock globalLayoutMatrixListenerLock = new ReentrantLock(true);
-
     @IntRange(from = 0, to = 359)
     protected int requestedUserRotation = 0;
     @IntRange(from = 0, to = 359)
     protected int requestedConfigurationRotation = 0;
-
     // This is purposefully true to support older devices (below API 21) which
     // isn't needed by the ResizingTextureView (which is false be default)
     protected boolean measureBasedOnAspectRatio = true;
@@ -249,7 +242,7 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
      * Updates the stored videoSize and updates the default buffer size
      * in the backing texture view.
      *
-     * @param width The width for the video
+     * @param width  The width for the video
      * @param height The height for the video
      * @return True if the surfaces DefaultBufferSize was updated
      */
@@ -264,15 +257,6 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
     }
 
     /**
-     * Sets the scaling method to use for the video
-     *
-     * @param scaleType The scale type to use
-     */
-    public void setScaleType(@NonNull ScaleType scaleType) {
-        matrixManager.scale(this, scaleType);
-    }
-
-    /**
      * Retrieves the current {@link ScaleType} being used
      *
      * @return The current {@link ScaleType} being used
@@ -280,6 +264,15 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
     @NonNull
     public ScaleType getScaleType() {
         return matrixManager.getCurrentScaleType();
+    }
+
+    /**
+     * Sets the scaling method to use for the video
+     *
+     * @param scaleType The scale type to use
+     */
+    public void setScaleType(@NonNull ScaleType scaleType) {
+        matrixManager.scale(this, scaleType);
     }
 
     /**
@@ -307,7 +300,7 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
      * Specifies the rotation that should be applied to the video for both the user
      * requested value and the value specified in the videos configuration.
      *
-     * @param userRotation The rotation the user wants to apply
+     * @param userRotation          The rotation the user wants to apply
      * @param configurationRotation The rotation specified in the configuration for the video
      */
     public void setVideoRotation(@IntRange(from = 0, to = 359) int userRotation, @IntRange(from = 0, to = 359) int configurationRotation) {
@@ -339,7 +332,7 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
      * Performs the functionality to notify the listener that the
      * size of the surface has changed filtering out duplicate calls.
      *
-     * @param width The new width
+     * @param width  The new width
      * @param height The new height
      */
     protected void notifyOnSizeChangeListener(int width, int height) {
@@ -355,6 +348,10 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
         if (onSizeChangeListener != null) {
             onSizeChangeListener.onVideoSurfaceSizeChange(width, height);
         }
+    }
+
+    public interface OnSizeChangeListener {
+        void onVideoSurfaceSizeChange(int width, int height);
     }
 
     /**

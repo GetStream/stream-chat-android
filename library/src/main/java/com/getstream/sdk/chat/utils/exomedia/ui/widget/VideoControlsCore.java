@@ -22,7 +22,7 @@ import androidx.annotation.NonNull;
 /**
  * An Interface that represents the core VideoControl functionality that
  * the {@link VideoView} uses to inform the controls of updated states, etc.
- *
+ * <p>
  * Note: To preserve backwards compatibility this is being called *Core,
  * On the next major release we should rename this to VideoControls and
  * call the abstract class something else.

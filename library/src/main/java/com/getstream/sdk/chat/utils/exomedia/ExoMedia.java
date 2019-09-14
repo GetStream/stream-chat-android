@@ -17,6 +17,7 @@
 package com.getstream.sdk.chat.utils.exomedia;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -42,32 +43,11 @@ import java.util.Map;
  */
 public class ExoMedia {
     /**
-     * @deprecated Use {@link DataSourceFactoryProvider} instead
-     */
-    @Deprecated
-    public interface HttpDataSourceFactoryProvider {
-        @NonNull
-        HttpDataSource.BaseFactory provide(@NonNull String userAgent, @Nullable TransferListener listener);
-    }
-
-    public interface DataSourceFactoryProvider {
-        @NonNull
-        DataSource.Factory provide(@NonNull String userAgent, @Nullable TransferListener listener);
-    }
-
-    public enum RendererType {
-        AUDIO,
-        VIDEO,
-        CLOSED_CAPTION,
-        METADATA
-    }
-
-    /**
      * Registers additional customized {@link com.google.android.exoplayer2.Renderer}s
      * that will be used by the {@link com.google.android.exoplayer2.source.MediaSource}s to
      * correctly play media.
      *
-     * @param type The type for the renderer
+     * @param type  The type for the renderer
      * @param clazz The class of the customized Renderer
      */
     public static void registerRenderer(@NonNull RendererType type, @NonNull Class<? extends Renderer> clazz) {
@@ -125,6 +105,27 @@ public class ExoMedia {
         Data.loadControl = loadControl;
     }
 
+    public enum RendererType {
+        AUDIO,
+        VIDEO,
+        CLOSED_CAPTION,
+        METADATA
+    }
+
+    /**
+     * @deprecated Use {@link DataSourceFactoryProvider} instead
+     */
+    @Deprecated
+    public interface HttpDataSourceFactoryProvider {
+        @NonNull
+        HttpDataSource.BaseFactory provide(@NonNull String userAgent, @Nullable TransferListener listener);
+    }
+
+    public interface DataSourceFactoryProvider {
+        @NonNull
+        DataSource.Factory provide(@NonNull String userAgent, @Nullable TransferListener listener);
+    }
+
     public static class Data {
         @NonNull
         public static final Map<RendererType, List<String>> registeredRendererClasses = new HashMap<>();
@@ -166,7 +167,7 @@ public class ExoMedia {
             // Adds the HLS, SmoothStream, and MPEG Dash registrations
             sourceTypeBuilders.add(new MediaSourceProvider.SourceTypeBuilder(new HlsMediaSourceBuilder(), null, ".m3u8", ".*\\.m3u8.*"));
             sourceTypeBuilders.add(new MediaSourceProvider.SourceTypeBuilder(new DashMediaSourceBuilder(), null, ".mpd", ".*\\.mpd.*"));
-            sourceTypeBuilders.add(new MediaSourceProvider.SourceTypeBuilder(new SsMediaSourceBuilder(), null,".ism", ".*\\.ism.*"));
+            sourceTypeBuilders.add(new MediaSourceProvider.SourceTypeBuilder(new SsMediaSourceBuilder(), null, ".ism", ".*\\.ism.*"));
         }
     }
 }

@@ -24,13 +24,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.util.Log;
+import android.view.Surface;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 import androidx.collection.ArrayMap;
-import android.util.Log;
-import android.view.Surface;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia.RendererType;
@@ -110,13 +111,13 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
     @NonNull
     private final AtomicBoolean stopped = new AtomicBoolean();
+    @FloatRange(from = 0.0, to = 1.0)
+    protected float requestedVolume = 1.0f;
     private boolean prepared = false;
-
     @NonNull
     private StateStore stateStore = new StateStore();
     @NonNull
     private Repeater bufferRepeater = new Repeater();
-
     @Nullable
     private Surface surface;
     @Nullable
@@ -127,7 +128,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     private List<Renderer> renderers;
     @NonNull
     private DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-
     @Nullable
     private CaptionListener captionListener;
     @Nullable
@@ -136,17 +136,11 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     private InternalErrorListener internalErrorListener;
     @Nullable
     private OnBufferUpdateListener bufferUpdateListener;
-
     @Nullable
     private PowerManager.WakeLock wakeLock = null;
-
     @NonNull
     private CapabilitiesListener capabilitiesListener = new CapabilitiesListener();
     private int audioSessionId = C.AUDIO_SESSION_ID_UNSET;
-
-    @FloatRange(from = 0.0, to = 1.0)
-    protected float requestedVolume = 1.0f;
-
     @NonNull
     private AnalyticsCollector analyticsCollector;
 
@@ -247,14 +241,14 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
         metadataListener = listener;
     }
 
-    public void setSurface(@Nullable Surface surface) {
-        this.surface = surface;
-        sendMessage(C.TRACK_TYPE_VIDEO, C.MSG_SET_SURFACE, surface, false);
-    }
-
     @Nullable
     public Surface getSurface() {
         return surface;
+    }
+
+    public void setSurface(@Nullable Surface surface) {
+        this.surface = surface;
+        sendMessage(C.TRACK_TYPE_VIDEO, C.MSG_SET_SURFACE, surface, false);
     }
 
     @NonNull
@@ -463,6 +457,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
     /**
      * Return true if at least one renderer for the given type is enabled
+     *
      * @param type The renderer type
      * @return true if at least one renderer for the given type is enabled
      */
@@ -478,14 +473,14 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
         return false;
     }
 
-    public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
-        requestedVolume = volume;
-        sendMessage(C.TRACK_TYPE_AUDIO, C.MSG_SET_VOLUME, requestedVolume);
-    }
-
     @FloatRange(from = 0.0, to = 1.0)
     public float getVolume() {
         return requestedVolume;
+    }
+
+    public void setVolume(@FloatRange(from = 0.0, to = 1.0) float volume) {
+        requestedVolume = volume;
+        sendMessage(C.TRACK_TYPE_AUDIO, C.MSG_SET_VOLUME, requestedVolume);
     }
 
     public void setAudioStreamType(int streamType) {
@@ -527,11 +522,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             player.setPlayWhenReady(false);
             player.stop();
         }
-    }
-
-    public void setPlayWhenReady(boolean playWhenReady) {
-        player.setPlayWhenReady(playWhenReady);
-        stayAwake(playWhenReady);
     }
 
     public void seekTo(long positionMs) {
@@ -700,6 +690,11 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
         return player.getPlayWhenReady();
     }
 
+    public void setPlayWhenReady(boolean playWhenReady) {
+        player.setPlayWhenReady(playWhenReady);
+        stayAwake(playWhenReady);
+    }
+
     /**
      * This function has the MediaPlayer access the low-level power manager
      * service to control the device's power usage while playing is occurring.
@@ -800,27 +795,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             }
         }
         return new ExoPlayerRendererTracksInfo(exoPlayerRendererTrackIndexes, exoPlayerRendererTrackIndex, exoPlayerRendererTrackGroupIndex);
-    }
-
-    class ExoPlayerRendererTracksInfo {
-        /**
-         * The exo player renderer track indexes
-         */
-        final List<Integer> rendererTrackIndexes;
-        /**
-         * The renderer track index related to the requested <code>groupIndex</code>
-         */
-        final int rendererTrackIndex;
-        /**
-         * The corrected exoplayer group index which may be used to obtain proper track group from the renderer
-         */
-        final int rendererTrackGroupIndex;
-
-        public ExoPlayerRendererTracksInfo(List<Integer> rendererTrackIndexes, int rendererTrackIndex, int rendererTrackGroupIndex) {
-            this.rendererTrackIndexes = Collections.unmodifiableList(rendererTrackIndexes);
-            this.rendererTrackIndex = rendererTrackIndex;
-            this.rendererTrackGroupIndex = rendererTrackGroupIndex;
-        }
     }
 
     protected void sendMessage(int renderType, int messageType, Object message) {
@@ -1012,6 +986,27 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             }
 
             return flag;
+        }
+    }
+
+    class ExoPlayerRendererTracksInfo {
+        /**
+         * The exo player renderer track indexes
+         */
+        final List<Integer> rendererTrackIndexes;
+        /**
+         * The renderer track index related to the requested <code>groupIndex</code>
+         */
+        final int rendererTrackIndex;
+        /**
+         * The corrected exoplayer group index which may be used to obtain proper track group from the renderer
+         */
+        final int rendererTrackGroupIndex;
+
+        public ExoPlayerRendererTracksInfo(List<Integer> rendererTrackIndexes, int rendererTrackIndex, int rendererTrackGroupIndex) {
+            this.rendererTrackIndexes = Collections.unmodifiableList(rendererTrackIndexes);
+            this.rendererTrackIndex = rendererTrackIndex;
+            this.rendererTrackGroupIndex = rendererTrackGroupIndex;
         }
     }
 

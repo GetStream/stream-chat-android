@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -31,8 +30,7 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
  * Show the messages for a channel
  */
 public class ChannelActivity extends AppCompatActivity
-        implements MessageListView.MessageClickListener,
-        MessageListView.MessageLongClickListener,
+        implements MessageListView.MessageLongClickListener,
         MessageListView.AttachmentClickListener,
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
@@ -67,7 +65,6 @@ public class ChannelActivity extends AppCompatActivity
         ).get(ChannelViewModel.class);
 
         // set listeners
-        binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
@@ -109,17 +106,6 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void openCameraView(Intent intent, int REQUEST_CODE) {
         startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    @Override
-    public void onMessageClick(Message message, int position) {
-//        new ReactionDialog(this)
-//                .setChannel(viewModel.getChannel())
-//                .setMessage(message)
-//                .setMessagePosition(position)
-//                .setRecyclerView(binding.messageList)
-//                .setStyle(binding.messageList.getStyle())
-//                .show();
     }
 
     @Override

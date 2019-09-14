@@ -2,34 +2,31 @@ package com.getstream.sdk.chat.utils.frescoimageviewer.adapter;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.viewpager.widget.PagerAdapter;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RecyclingPagerAdapter<VH extends ViewHolder> extends PagerAdapter {
 
+    private static final String STATE = RecyclingPagerAdapter.class.getSimpleName();
+    private static final String TAG = RecyclingPagerAdapter.class.getSimpleName();
+    public static boolean DEBUG = false;
+    private SparseArray<RecycleCache> mRecycleTypeCaches = new SparseArray<>();
+    private SparseArray<Parcelable> mSavedStates = new SparseArray<>();
+
+    public RecyclingPagerAdapter() {
+    }
+
     public abstract int getItemCount();
 
     public abstract void onBindViewHolder(VH holder, int position);
 
     public abstract VH onCreateViewHolder(ViewGroup parent, int viewType);
-
-    private static final String STATE = RecyclingPagerAdapter.class.getSimpleName();
-
-    private static final String TAG = RecyclingPagerAdapter.class.getSimpleName();
-
-    public static boolean DEBUG = false;
-
-    private SparseArray<RecycleCache> mRecycleTypeCaches = new SparseArray<>();
-
-    private SparseArray<Parcelable> mSavedStates = new SparseArray<>();
-
-    public RecyclingPagerAdapter() {
-    }
 
     @Override
     public void destroyItem(ViewGroup parent, int position, Object object) {

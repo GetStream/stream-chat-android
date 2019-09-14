@@ -1,4 +1,3 @@
-
 package com.getstream.sdk.chat.utils.frescoimageviewer.drawee;
 
 import android.view.ViewParent;

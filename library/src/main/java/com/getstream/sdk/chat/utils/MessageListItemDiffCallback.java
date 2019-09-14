@@ -1,13 +1,9 @@
 package com.getstream.sdk.chat.utils;
 
 
-import android.util.Log;
-
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.rest.Message;
-
 
 import java.util.List;
 

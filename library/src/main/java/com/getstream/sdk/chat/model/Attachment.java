@@ -10,67 +10,52 @@ import java.text.DecimalFormat;
  * An attachment
  */
 public class Attachment {
+    public Config config = new Config(); // Local file Attach Config
     @SerializedName("title")
     @Expose
     private String title;
-
     @SerializedName("author_name")
     @Expose
     private String author;
-
     @SerializedName("text")
     @Expose
     private String text;
-
     @SerializedName("type")
     @Expose
     private String type;
-
     @SerializedName("image")
     @Expose
     private String image;
-
     @SerializedName("url")
     @Expose
     private String url;
-
     @SerializedName("name")
     @Expose
     private String name;
-
     @SerializedName("title_link")
     @Expose
     private String titleLink;
-
     @SerializedName("thumb_url")
     @Expose
     private String thumbURL;
-
     @SerializedName("fallback")
     @Expose
     private String fallback;
-
     @SerializedName("image_url")
     @Expose
     private String imageURL;
-
     @SerializedName("asset_url")
     @Expose
     private String assetURL;
-
     @SerializedName("og_scrape_url")
     @Expose
     private String ogURL;
-
     @SerializedName("mime_type")
     @Expose
     private String mime_type;
-
     @SerializedName("file_size")
     @Expose
     private int file_size;
-
-    public Config config = new Config(); // Local file Attach Config
 
     public String getTitle() {
         return title;
@@ -180,6 +165,10 @@ public class Attachment {
         return mime_type;
     }
 
+    public void setMime_type(String mime_type) {
+        this.mime_type = mime_type;
+    }
+
     public int getIcon() {
         int fileTyineRes = 0;
         switch (this.getMime_type()) {
@@ -224,24 +213,20 @@ public class Attachment {
         return fileTyineRes;
     }
 
-    public void setMime_type(String mime_type) {
-        this.mime_type = mime_type;
+    public int getFile_size() {
+        return file_size;
     }
 
     public void setFile_size(int file_size) {
         this.file_size = file_size;
     }
 
-    public int getFile_size() {
-        return file_size;
-    }
-
     public String getFileSizeHumanized() {
         int size = getFile_size();
-        if(size <= 0) return "0";
-        final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
-        int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
     public class Config {

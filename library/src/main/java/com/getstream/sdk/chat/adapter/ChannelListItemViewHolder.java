@@ -51,10 +51,11 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         userClickListener = l;
     }
 
-    public void setChannelClickListener(ChannelListView.ChannelClickListener l ) {
+    public void setChannelClickListener(ChannelListView.ChannelClickListener l) {
         channelClickListener = l;
     }
-    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l ) {
+
+    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l) {
         channelLongClickListener = l;
     }
 
@@ -98,7 +99,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_name.setTypeface(tv_name.getTypeface(), style.getUnreadTitleTextStyle());
 
         // last message
-        tv_last_message.setTypeface(tv_last_message.getTypeface(),  style.getUnreadMessageTextStyle());
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getUnreadMessageTextStyle());
         tv_last_message.setTextColor(style.getUnreadMessageTextColor());
     }
 
@@ -144,7 +145,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         // read indicators
-        read_state.setReads(lastMessageReads,true, style);
+        read_state.setReads(lastMessageReads, true, style);
 
         // apply unread style or read style
         if (unreadCount == 0) {
@@ -167,7 +168,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
-            new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
+            new Handler().postDelayed(() -> tv_click.setBackgroundColor(0), 500);
             if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
             }

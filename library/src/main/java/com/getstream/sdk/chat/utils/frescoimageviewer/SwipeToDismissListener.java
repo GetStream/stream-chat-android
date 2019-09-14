@@ -1,4 +1,3 @@
-
 package com.getstream.sdk.chat.utils.frescoimageviewer;
 
 import android.animation.Animator;
@@ -18,16 +17,14 @@ class SwipeToDismissListener implements View.OnTouchListener {
     private int translationLimit;
     private OnDismissListener dismissListener;
     private OnViewMoveListener moveListener;
-
+    private boolean tracking = false;
+    private float startY;
     public SwipeToDismissListener(View swipeView, OnDismissListener dismissListener,
                                   OnViewMoveListener moveListener) {
         this.swipeView = swipeView;
         this.dismissListener = dismissListener;
         this.moveListener = moveListener;
     }
-
-    private boolean tracking = false;
-    private float startY;
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {

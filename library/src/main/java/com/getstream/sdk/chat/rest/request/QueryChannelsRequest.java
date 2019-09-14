@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.google.gson.annotations.SerializedName;
 
 public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsRequest> {
@@ -32,6 +33,10 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
         if (sort != null) {
             this.sort = sort.clone();
         }
+    }
+
+    public QueryChannelsQ query() {
+        return new QueryChannelsQ(filter, sort);
     }
 
     protected QueryChannelsRequest cloneOpts() {

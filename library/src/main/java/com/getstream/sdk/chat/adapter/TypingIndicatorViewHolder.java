@@ -46,7 +46,8 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageClickListener l1,
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener l2,
-                     MessageListView.UserClickListener userClickListener) {
+                     MessageListView.UserClickListener userClickListener,
+                     MessageListView.ReadStateClickListener readStateClickListener) {
 
         this.context = context;
 
@@ -78,7 +79,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
             ll_typingusers.addView(v);
             i += 1;
         }
-        Glide.with(context).load(R.raw.stream_typing).into(iv_typing_indicator);
+        Glide.with(context).asGif().load(R.raw.stream_typing1).into(iv_typing_indicator);
     }
 
     @Override

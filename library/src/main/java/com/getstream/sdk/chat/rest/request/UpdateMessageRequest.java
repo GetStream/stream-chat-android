@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.Message;
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

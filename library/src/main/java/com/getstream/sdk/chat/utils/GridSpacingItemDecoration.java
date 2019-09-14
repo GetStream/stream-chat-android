@@ -2,8 +2,9 @@ package com.getstream.sdk.chat.utils;
 
 
 import android.graphics.Rect;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     private int spanCount;
