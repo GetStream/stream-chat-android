@@ -274,12 +274,12 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), String.valueOf(10), null, new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage_.getId(), String.valueOf(30), null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
                     newMessages.add(0, threadParentMessage_);
-                    reachedEndOfPaginationThread = newMessages.size() < 10;
+                    reachedEndOfPaginationThread = newMessages.size() < 30;
                     threadMessages.postValue(newMessages);
                 }
 
@@ -433,16 +433,13 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
 
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        Log.d(TAG, "messages Count:" + messages.getValue().size());
-        List<Message> messagesCopy = getMessages().getValue();
-
-        Log.d(TAG, "New messages Count:" + messagesCopy.size());
 
         if (message.getType().equals(ModelType.message_reply)) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return;
 
+            List<Message> messagesCopy = threadMessages.getValue();
             for (int i = 0; i < threadMessages.getValue().size(); i++) {
                 if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
                     messagesCopy.set(i, message);
@@ -454,6 +451,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
             messagesCopy.add(message);
             threadMessages.postValue(messagesCopy);
         } else {
+            List<Message> messagesCopy = messages.getValue();
             int index = messagesCopy.indexOf(message);
             if (index != -1) {
                 messagesCopy.set(index, message);
