@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -55,6 +57,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
         configAttachment();
+        applyStyle();
     }
 
     private void configAttachment() {
@@ -82,6 +85,23 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             configFileAttach();
         } else {
             lv_attachment_file.setVisibility(View.GONE);
+        }
+
+        if (!hasMedia && !hasFile) {
+            iv_media_thumb.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(getAttachment().getTitle())) {
+                cl_attachment_media.setVisibility(View.VISIBLE);
+                tv_media_title.setVisibility(View.VISIBLE);
+                tv_media_title.setText(getAttachment().getTitle());
+            }else
+                tv_media_title.setVisibility(View.GONE);
+
+            if (!TextUtils.isEmpty(getAttachment().getText())) {
+                cl_attachment_media.setVisibility(View.VISIBLE);
+                tv_media_des.setVisibility(View.VISIBLE);
+                tv_media_des.setText(getAttachment().getText());
+            }else
+                tv_media_des.setVisibility(View.GONE);
         }
     }
 
@@ -205,5 +225,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
     }
 
+    private void applyStyle() {
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentTitleTextSize());
+        tv_media_title.setTextColor(getStyle().getAttachmentTitleTextColor());
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentTitleTextStyle());
 
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
+        tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+    }
 }

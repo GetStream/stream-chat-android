@@ -597,7 +597,7 @@ public class MessageListView extends RecyclerView {
 
     private void loadFile(Attachment attachment) {
         // Media
-        if (attachment.getMime_type().contains("stream_ic_audio") ||
+        if (attachment.getMime_type().contains("audio") ||
                 attachment.getMime_type().contains("video")) {
             Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
             intent.putExtra("type", attachment.getMime_type());
