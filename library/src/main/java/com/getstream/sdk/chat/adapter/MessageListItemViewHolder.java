@@ -338,7 +338,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMessageText() {
         if (message.getStatus() == MessageStatus.FAILED
                 || message.getType().equals(ModelType.message_error)
-                || TextUtils.isEmpty(message.getText())) {
+                || (TextUtils.isEmpty(message.getText()) && message.getDeletedAt() == null)) {
             tv_text.setVisibility(View.GONE);
             return;
         }
