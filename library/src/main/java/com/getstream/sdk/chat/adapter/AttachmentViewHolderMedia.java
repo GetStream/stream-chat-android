@@ -74,7 +74,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(getContext(), background);
-        iv_media_thumb.setBackgroundDrawable(background);
+//        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configAction() {
@@ -153,6 +153,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             attachUrl = "https:" + attachUrl;
         Glide.with(getContext())
                 .load(attachUrl)
+                .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());
