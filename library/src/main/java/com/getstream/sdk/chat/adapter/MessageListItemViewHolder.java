@@ -48,7 +48,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
     @DimenRes
     int avatarWidth;
-    private ConstraintLayout cl_message;
     private TextView tv_text;
     private RecyclerView rv_reaction;
     private LinearLayout ll_send_failed;
@@ -94,7 +93,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
 
-        cl_message = itemView.findViewById(R.id.cl_message);
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
         iv_docket = itemView.findViewById(R.id.iv_docket);
         tv_reactiontail_space = itemView.findViewById(R.id.tv_reactiontail_space);
@@ -519,10 +517,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionTailSpace() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintSet set = new ConstraintSet();
-        set.clone(cl_message);
+        set.clone((ConstraintLayout) itemView);
         set.clear(R.id.tv_reactiontail_space, ConstraintSet.START);
         set.clear(R.id.tv_reactiontail_space, ConstraintSet.END);
-        set.applyTo(cl_message);
+        set.applyTo((ConstraintLayout) itemView);
 
         @IdRes int layoutId;
         if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
@@ -542,10 +540,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionSpace() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintSet set = new ConstraintSet();
-        set.clone(cl_message);
+        set.clone((ConstraintLayout) itemView);
         set.clear(R.id.tv_reaction_space, ConstraintSet.START);
         set.clear(R.id.tv_reaction_space, ConstraintSet.END);
-        set.applyTo(cl_message);
+        set.applyTo((ConstraintLayout) itemView);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reaction_space.getLayoutParams();
         if (messageListItem.isMine())
@@ -558,10 +556,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
         ConstraintSet set = new ConstraintSet();
-        set.clone(cl_message);
+        set.clone((ConstraintLayout) itemView);
         set.clear(R.id.iv_docket, ConstraintSet.START);
         set.clear(R.id.iv_docket, ConstraintSet.END);
-        set.applyTo(cl_message);
+        set.applyTo((ConstraintLayout) itemView);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
         if (messageListItem.isMine())
@@ -577,10 +575,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_docket.setVisibility(View.INVISIBLE);
         rv_reaction.post(() -> {
             ConstraintSet set = new ConstraintSet();
-            set.clone(cl_message);
+            set.clone((ConstraintLayout) itemView);
             set.clear(R.id.rv_reaction, ConstraintSet.START);
             set.clear(R.id.rv_reaction, ConstraintSet.END);
-            set.applyTo(cl_message);
+            set.applyTo((ConstraintLayout) itemView);
 
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
             if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
@@ -665,11 +663,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (read_state.getVisibility() != View.VISIBLE) return;
 
         ConstraintSet set = new ConstraintSet();
-        set.clone(cl_message);
+        set.clone((ConstraintLayout) itemView);
         set.clear(R.id.read_state, ConstraintSet.START);
         set.clear(R.id.read_state, ConstraintSet.END);
         set.clear(R.id.read_state, ConstraintSet.BOTTOM);
-        set.applyTo(cl_message);
+        set.applyTo((ConstraintLayout) itemView);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) read_state.getLayoutParams();
 
