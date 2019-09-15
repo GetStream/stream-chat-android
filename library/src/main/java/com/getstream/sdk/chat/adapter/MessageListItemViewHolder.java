@@ -392,11 +392,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
         });
         tv_text.setOnLongClickListener(view -> {
-            Log.i(TAG, "Long onUserClick: " + position);
-            if (this.messageLongClickListener != null) {
-                view.setTag(String.valueOf(position));
+            if (this.messageLongClickListener != null)
                 this.messageLongClickListener.onMessageLongClick(message);
-            }
+
             return true;
         });
     }
