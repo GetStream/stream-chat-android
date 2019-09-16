@@ -146,15 +146,16 @@ public class MessageInputView extends RelativeLayout
                     return false;
                 }
             }
-            Log.d(TAG, "getLinkUri:" + inputContentInfo.getLinkUri());
+            String url = inputContentInfo.getLinkUri().toString();
+            Log.d(TAG, "getLinkUri:" + url);
             Log.d(TAG, "getContentUri:" + inputContentInfo.getContentUri());
             Attachment attachment = new Attachment();
-            attachment.setThumbURL(inputContentInfo.getLinkUri().toString());
-            attachment.setTitleLink(inputContentInfo.getLinkUri().toString());
+            attachment.setThumbURL(url);
+            attachment.setTitleLink(url);
             attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
             attachment.setType(ModelType.attach_giphy);
             messageInputClient.setSelectedAttachments(Arrays.asList(attachment));
-            onSendMessage("", false);
+            onSendMessage("", viewModel.isEditing());
             return true;
         });
 
