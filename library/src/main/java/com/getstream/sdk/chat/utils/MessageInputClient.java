@@ -63,6 +63,10 @@ public class MessageInputClient {
         return selectedAttachments;
     }
 
+    public void setSelectedAttachments(List<Attachment> selectedAttachments) {
+        this.selectedAttachments = selectedAttachments;
+    }
+
     public void onClickOpenBackGroundView(MessageInputType type) {
 
         binding.getRoot().setBackgroundResource(R.drawable.stream_round_thread_toolbar);
