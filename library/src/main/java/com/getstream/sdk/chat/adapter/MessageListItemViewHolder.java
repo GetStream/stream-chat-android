@@ -84,7 +84,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
-
+    private ConstraintSet set;
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
         style = s;
@@ -154,7 +154,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
-
+        this.set = new ConstraintSet();
         init();
     }
 
@@ -180,7 +180,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReactionRecycleView();
         configParamsMessageDate();
         configParamsReply();
-        configParamsReadState();
+        configParamsReadIndicator();
     }
 
     // endregion
@@ -519,7 +519,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configParamsReactionTailSpace() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
-        ConstraintSet set = new ConstraintSet();
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.tv_reactiontail_space, ConstraintSet.START);
         set.clear(R.id.tv_reactiontail_space, ConstraintSet.END);
@@ -542,7 +541,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configParamsReactionSpace() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
-        ConstraintSet set = new ConstraintSet();
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.tv_reaction_space, ConstraintSet.START);
         set.clear(R.id.tv_reaction_space, ConstraintSet.END);
@@ -558,7 +556,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configParamsReactionTail() {
         if (iv_docket.getVisibility() != View.VISIBLE) return;
-        ConstraintSet set = new ConstraintSet();
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.iv_docket, ConstraintSet.START);
         set.clear(R.id.iv_docket, ConstraintSet.END);
@@ -577,7 +574,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.setVisibility(View.INVISIBLE);
         iv_docket.setVisibility(View.INVISIBLE);
         rv_reaction.post(() -> {
-            ConstraintSet set = new ConstraintSet();
             set.clone((ConstraintLayout) itemView);
             set.clear(R.id.rv_reaction, ConstraintSet.START);
             set.clear(R.id.rv_reaction, ConstraintSet.END);
@@ -631,7 +627,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReply() {
         if (cl_reply.getVisibility() != View.VISIBLE) return;
         // Clear Constraint
-        ConstraintSet set = new ConstraintSet();
         set.clone(cl_reply);
         set.clear(R.id.tv_reply, ConstraintSet.START);
         set.clear(R.id.tv_reply, ConstraintSet.END);
@@ -662,10 +657,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reply.setLayoutParams(paramsText);
     }
 
-    public void configParamsReadState() {
+    public void configParamsReadIndicator() {
         if (read_state.getVisibility() != View.VISIBLE) return;
 
-        ConstraintSet set = new ConstraintSet();
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.read_state, ConstraintSet.START);
         set.clear(R.id.read_state, ConstraintSet.END);
@@ -687,8 +681,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.startToEnd = layoutId;
 
         params.bottomToBottom = layoutId;
-        params.leftMargin = Utils.dpToPx(8);
-        params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
 
