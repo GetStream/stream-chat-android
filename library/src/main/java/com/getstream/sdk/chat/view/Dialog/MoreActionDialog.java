@@ -88,7 +88,7 @@ public class MoreActionDialog extends Dialog {
                 .build());
 
         ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
-        ll_copy.setVisibility(avaliableCopyMessage() ? View.VISIBLE : View.GONE);
+        ll_copy.setVisibility(copyableMessage() ? View.VISIBLE : View.GONE);
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
@@ -156,10 +156,11 @@ public class MoreActionDialog extends Dialog {
         });
     }
 
-    private boolean avaliableCopyMessage() {
+    private boolean copyableMessage() {
         return !(message.getDeletedAt() != null
                 || message.getStatus() == MessageStatus.FAILED
                 || message.getType().equals(ModelType.message_error)
+                || message.getType().equals(ModelType.message_ephemeral)
                 || TextUtils.isEmpty(message.getText()));
     }
 
