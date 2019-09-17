@@ -681,6 +681,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.startToEnd = layoutId;
 
         params.bottomToBottom = layoutId;
+        params.leftMargin = Utils.dpToPx(8);
+        params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
 
