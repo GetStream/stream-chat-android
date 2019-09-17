@@ -274,7 +274,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), String.valueOf(30), null, new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage_.getId(), 30, null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
@@ -639,7 +639,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 return;
             }
 
-            channel.getReplies(threadParentMessage.getValue().getId(), String.valueOf(Constant.DEFAULT_LIMIT), getThreadOldestMessageId(), new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage.getValue().getId(), Constant.DEFAULT_LIMIT, getThreadOldestMessageId(), new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     entities.setIsLoadingMore(true);
