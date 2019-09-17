@@ -70,8 +70,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 attachment,
                 style,
                 attachmentClickListener,
-                longClickListener,
-                giphySendListener);
+                longClickListener);
     }
 
     public MessageListViewStyle getStyle() {

@@ -58,10 +58,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener,
-                     MessageListView.GiphySendListener giphySendListener) {
+                     MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
         configAction();

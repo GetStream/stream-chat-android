@@ -30,7 +30,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
-    private ConstraintLayout cl_attachment, cl_attachment_media;
+    private ConstraintLayout cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
@@ -38,7 +38,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
-        cl_attachment = itemView.findViewById(R.id.attachmentview);
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
@@ -53,9 +52,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener, MessageListView.GiphySendListener giphySendListener) {
+                     MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         configAttachment();
         applyStyle();
     }

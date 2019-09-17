@@ -40,9 +40,8 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener,
-                     MessageListView.GiphySendListener giphySendListener) {
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
+                     MessageListView.MessageLongClickListener longClickListener) {
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         tv_file_size.setText(attachment.getFileSizeHumanized());
         // update the icon nicely
         iv_file_thumb.setImageResource(attachment.getIcon());
