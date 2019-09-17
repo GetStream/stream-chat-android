@@ -144,6 +144,7 @@
         android:id="@+id/tv_reactiontail_space"
         android:layout_width="1px"
         android:layout_height="3dp"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/tv_text"
         app:layout_constraintTop_toTopOf="@+id/tv_text" />
 
@@ -151,6 +152,7 @@
         android:id="@+id/tv_reaction_space"
         android:layout_width="8dp"
         android:layout_height="5dp"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/tv_text"
         app:layout_constraintTop_toTopOf="@+id/tv_text" />
 

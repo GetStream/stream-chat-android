@@ -432,12 +432,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
             iv_docket.setVisibility(View.GONE);
+            tv_reactiontail_space.setVisibility(View.GONE);
+            tv_reaction_space.setVisibility(View.GONE);
             return;
         }
 
         rv_reaction.setVisibility(View.VISIBLE);
         iv_docket.setVisibility(View.VISIBLE);
-
+        tv_reactiontail_space.setVisibility(View.VISIBLE);
+        tv_reaction_space.setVisibility(View.VISIBLE);
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
         if (messageListItem.isMine())
             iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
