@@ -27,17 +27,20 @@ public class AttachmentListView extends RecyclerView {
     public AttachmentListView(Context context) {
         super(context);
         this.context = context;
+        setHasFixedSize(true);
     }
 
     public AttachmentListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        setHasFixedSize(true);
     }
 
     public AttachmentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.setLayoutManager(mLayoutManager);
         this.context = context;
+        setHasFixedSize(true);
     }
 
     public void setStyle(MessageListViewStyle style) {

@@ -93,6 +93,8 @@ public class MessageListView extends RecyclerView {
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
+        setHasFixedSize(true);
+        setItemViewCacheSize(20);
     }
 
 

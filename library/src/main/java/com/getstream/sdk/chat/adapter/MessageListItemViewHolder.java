@@ -126,6 +126,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
+        rv_reaction.setHasFixedSize(true);
     }
 
     @Override
