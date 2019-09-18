@@ -26,6 +26,8 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
 
     public BaseAttachmentViewHolder(int resId, ViewGroup parent) {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
+        itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
     }
 
     public void bind(Context context,

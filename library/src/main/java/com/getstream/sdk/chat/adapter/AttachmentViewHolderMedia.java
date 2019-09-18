@@ -146,8 +146,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         configImageThumbBackground(getAttachment());
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener(this);
-        iv_media_thumb.setOnLongClickListener(this);
+//        iv_media_thumb.setOnClickListener(this);
+//        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(getContext())

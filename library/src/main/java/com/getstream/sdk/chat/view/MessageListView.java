@@ -556,6 +556,10 @@ public class MessageListView extends RecyclerView {
     public void showAttachment(Message message, Attachment attachment) {
         String url = null;
         String type = null;
+        if (attachment == null
+                || attachment.getType() == null)
+            return;
+
         switch (attachment.getType()) {
             case ModelType.attach_file:
                 loadFile(attachment);
