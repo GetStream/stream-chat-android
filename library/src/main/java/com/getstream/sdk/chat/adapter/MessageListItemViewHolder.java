@@ -574,6 +574,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.setVisibility(View.INVISIBLE);
         iv_docket.setVisibility(View.INVISIBLE);
         rv_reaction.post(() -> {
+            if (rv_reaction.getVisibility() == View.GONE) return;
             set.clone((ConstraintLayout) itemView);
             set.clear(R.id.rv_reaction, ConstraintSet.START);
             set.clear(R.id.rv_reaction, ConstraintSet.END);
