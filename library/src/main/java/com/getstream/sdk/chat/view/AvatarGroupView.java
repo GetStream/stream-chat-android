@@ -20,6 +20,8 @@ import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 import java.util.List;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
+
+    private static final String TAG = AvatarGroupView.class.getSimpleName();
     Context context;
     Channel channel;
     STYLE style;
@@ -105,9 +107,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     imageView.setPlaceholder(user_.getInitials(),
                             style.getAvatarBackGroundColor(),
                             style.getAvatarInitialTextColor());
-                    Glide.with(context)
-                            .load(user_.getImage())
-                            .into(imageView);
+                    if (!Utils.isSVGImage(user_.getImage())){
+                        Glide.with(context)
+                                .load(user_.getImage())
+                                .into(imageView);
+                    }
 
                     RelativeLayout.LayoutParams params;
                     factor_ = factor;
@@ -163,9 +167,13 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         imageView.setPlaceholder(initial,
                 style.getAvatarBackGroundColor(),
                 style.getAvatarInitialTextColor());
-        Glide.with(context)
-                .load(image)
-                .into(imageView);
+
+        if (!Utils.isSVGImage(image)){
+            Glide.with(context)
+                    .load(image)
+                    .into(imageView);
+        }
+
 
         RelativeLayout.LayoutParams params;
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,

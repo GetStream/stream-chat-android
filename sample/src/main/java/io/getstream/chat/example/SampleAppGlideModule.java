@@ -11,6 +11,6 @@ import com.bumptech.glide.module.AppGlideModule;
 public class SampleAppGlideModule extends AppGlideModule {
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
-        builder.setLogLevel(Log.ERROR);
+        builder.setLogLevel(Log.VERBOSE);
     }
 }

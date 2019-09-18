@@ -71,6 +71,10 @@ public class Utils {
         });
     }
 
+    public static boolean isSVGImage(String url){
+        return url.contains("https://getstream.io/random_svg/");
+    }
+
     public static void showMessage(Context mContext, String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
