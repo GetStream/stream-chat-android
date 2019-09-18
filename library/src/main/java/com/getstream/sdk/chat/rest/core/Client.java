@@ -683,7 +683,7 @@ public class Client implements WSResponseHandler {
      * @return {type} A channelResponse with a list of messages
      */
     public void getReplies(@NonNull String parentId,
-                           String limit,
+                           int limit,
                            String firstId,
                            GetRepliesCallback callback) {
 
