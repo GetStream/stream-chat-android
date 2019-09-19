@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
@@ -24,6 +25,10 @@ import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
@@ -40,6 +45,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
+
+    private Markwon markwon;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -137,7 +144,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         if (lastMessage != null) {
             // set the lastMessage and last messageDate
-            tv_last_message.setText(lastMessage.getText());
+            if (markwon == null)
+                markwon = Markwon.builder(context)
+                        .usePlugin(CorePlugin.create())
+                        .usePlugin(LinkifyPlugin.create())
+                        .build();
+            markwon.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
             else

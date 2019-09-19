@@ -93,6 +93,8 @@ public class MessageListView extends RecyclerView {
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
         initDefaultBubbleHelper();
+        setHasFixedSize(true);
+        setItemViewCacheSize(20);
     }
 
 
@@ -556,6 +558,10 @@ public class MessageListView extends RecyclerView {
     public void showAttachment(Message message, Attachment attachment) {
         String url = null;
         String type = null;
+        if (attachment == null
+                || attachment.getType() == null)
+            return;
+
         switch (attachment.getType()) {
             case ModelType.attach_file:
                 loadFile(attachment);
@@ -597,7 +603,7 @@ public class MessageListView extends RecyclerView {
 
     private void loadFile(Attachment attachment) {
         // Media
-        if (attachment.getMime_type().contains("stream_ic_audio") ||
+        if (attachment.getMime_type().contains("audio") ||
                 attachment.getMime_type().contains("video")) {
             Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
             intent.putExtra("type", attachment.getMime_type());

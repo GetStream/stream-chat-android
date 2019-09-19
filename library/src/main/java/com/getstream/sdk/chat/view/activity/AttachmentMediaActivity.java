@@ -38,7 +38,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
             return;
         }
-        if (type.contains("stream_ic_audio"))
+        if (type.contains("audio"))
             iv_audio.setVisibility(View.VISIBLE);
         else
             iv_audio.setVisibility(View.GONE);

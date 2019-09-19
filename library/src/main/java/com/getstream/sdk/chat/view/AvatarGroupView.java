@@ -20,6 +20,8 @@ import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 import java.util.List;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
+
+    private static final String TAG = AvatarGroupView.class.getSimpleName();
     Context context;
     Channel channel;
     STYLE style;
@@ -105,6 +107,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     imageView.setPlaceholder(user_.getInitials(),
                             style.getAvatarBackGroundColor(),
                             style.getAvatarInitialTextColor());
+
                     if (!Utils.isSVGImage(user_.getImage()))
                         Glide.with(context)
                                 .load(user_.getImage())

@@ -58,10 +58,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                      Attachment attachment,
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener,
-                     MessageListView.GiphySendListener giphySendListener) {
+                     MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener, giphySendListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
         configAction();
@@ -74,7 +73,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(getContext(), background);
-        iv_media_thumb.setBackgroundDrawable(background);
+//        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configAction() {
@@ -147,12 +146,13 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         configImageThumbBackground(getAttachment());
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener(this);
-        iv_media_thumb.setOnLongClickListener(this);
+//        iv_media_thumb.setOnClickListener(this);
+//        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(getContext())
                 .load(attachUrl)
+                .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());

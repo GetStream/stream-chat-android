@@ -203,7 +203,7 @@ public class Attachment {
                 fileTyineRes = R.drawable.stream_ic_file_mp3;
                 break;
             default:
-                if (this.getMime_type().contains("stream_ic_audio")) {
+                if (this.getMime_type().contains("audio")) {
                     fileTyineRes = R.drawable.stream_ic_file_mp3;
                 } else if (this.getMime_type().contains("video")) {
                     fileTyineRes = R.drawable.stream_ic_file_mov;
