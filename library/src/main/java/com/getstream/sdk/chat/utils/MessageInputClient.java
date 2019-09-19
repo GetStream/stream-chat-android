@@ -77,36 +77,24 @@ public class MessageInputClient {
         binding.clCommand.setVisibility(View.GONE);
         binding.clSelectPhoto.setVisibility(View.GONE);
 
-        String title = "";
         switch (type){
             case EDIT_MESSAGE:
-                title = "Edit a message";
                 break;
             case ADD_FILE:
-                title = "Add a file";
                 if (selectedAttachments != null && !selectedAttachments.isEmpty()) return;
                 binding.clAddFile.setVisibility(View.VISIBLE);
                 break;
             case UPLOAD_MEDIA:
-                title = "Select your photo or video";
-                binding.clSelectPhoto.setVisibility(View.VISIBLE);
-                break;
             case UPLOAD_FILE:
-                title = "Select your file";
                 binding.clSelectPhoto.setVisibility(View.VISIBLE);
                 break;
             case COMMAND:
-                title = "Commands matching";
-                binding.tvClose.setVisibility(View.GONE);
-                binding.clCommand.setVisibility(View.VISIBLE);
-                break;
             case MENTION:
-                title = "Searching for people";
                 binding.tvClose.setVisibility(View.GONE);
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
-        binding.tvTitle.setText(title);
+        binding.tvTitle.setText(type.label);
     }
 
 
@@ -388,17 +376,22 @@ public class MessageInputClient {
     }
 
     private void closeCommandView() {
-        onClickCloseBackGroundView();
+        if (isCommandOrMention())
+            onClickCloseBackGroundView();
         commands = null;
     }
 
-    public void checkCommand(String text) {
-        if (TextUtils.isEmpty(text) || (!text.startsWith("/") && !text.contains("@"))) {
-            closeCommandView();
-            return;
-        }
+    private boolean isCommandOrMention(){
+        String title = binding.tvTitle.getText().toString();
+        return title.equals(MessageInputType.COMMAND.label)
+                || title.equals(MessageInputType.MENTION.label);
+    }
 
-        if (text.length() == 1) {
+    public void checkCommand(String text) {
+        if (TextUtils.isEmpty(text)
+                || (!text.startsWith("/") && !text.contains("@"))) {
+            closeCommandView();
+        }else if (text.length() == 1) {
             onClickCommandViewOpen(text.startsWith("/"));
         } else if (text.endsWith("@") && binding.clCommand.getVisibility() != View.VISIBLE) {
             onClickCommandViewOpen(false);
