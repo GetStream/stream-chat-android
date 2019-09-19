@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.Collections;
@@ -61,9 +62,10 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
                 (style.getReadStateTextSize()),
                 style.getAvatarInitialTextStyle());
-        Glide.with(getContext())
-                .load(image)
-                .into(imageView);
+        if (!Utils.isSVGImage(image))
+            Glide.with(getContext())
+                    .load(image)
+                    .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(
                 (style.getReadStateAvatarWidth()),
