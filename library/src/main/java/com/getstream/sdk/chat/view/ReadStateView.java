@@ -65,8 +65,8 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
-                .load(image)
-                .into(imageView);
+                    .load(image)
+                    .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(
                 (style.getReadStateAvatarWidth()),

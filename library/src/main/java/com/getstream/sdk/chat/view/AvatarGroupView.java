@@ -107,11 +107,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     imageView.setPlaceholder(user_.getInitials(),
                             style.getAvatarBackGroundColor(),
                             style.getAvatarInitialTextColor());
-                    if (!Utils.isSVGImage(user_.getImage())){
+
+                    if (!Utils.isSVGImage(user_.getImage()))
                         Glide.with(context)
                                 .load(user_.getImage())
                                 .into(imageView);
-                    }
 
                     RelativeLayout.LayoutParams params;
                     factor_ = factor;
@@ -168,12 +168,10 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                 style.getAvatarBackGroundColor(),
                 style.getAvatarInitialTextColor());
 
-        if (!Utils.isSVGImage(image)){
+        if (!Utils.isSVGImage(image))
             Glide.with(context)
                     .load(image)
                     .into(imageView);
-        }
-
 
         RelativeLayout.LayoutParams params;
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,

@@ -462,7 +462,7 @@ public class Channel {
      * @param limit    Pagination params, ie 10
      * @return {object} Returns a getReplies response
      */
-    public void getReplies(@NonNull String parentId, String limit, String firstMessageId, final GetRepliesCallback callback) {
+    public void getReplies(@NonNull String parentId, int limit, String firstMessageId, final GetRepliesCallback callback) {
         client.getReplies(parentId, limit, firstMessageId, new GetRepliesCallback() {
             @Override
             public void onSuccess(GetRepliesResponse response) {

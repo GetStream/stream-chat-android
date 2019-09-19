@@ -29,6 +29,7 @@ public class SendMessageRequest {
                               List<String> mentionedUserIDs) {
         message = new HashMap<>();
         message.put("text", text);
+
         if (parentId != null) {
             message.put("parent_id", parentId);
             message.put("show_in_channel", showInChannel);
@@ -36,18 +37,25 @@ public class SendMessageRequest {
         if (attachments != null && !attachments.isEmpty()) {
             Gson gson = new Gson();
             List<Map> attachmentMaps = new ArrayList<>();
+            boolean isGiphy = false;
             for (Attachment attachment_ : attachments) {
                 Map<String, Object> attachment;
                 String json = gson.toJson(attachment_);
                 attachment = (Map<String, Object>) gson.fromJson(json, Map.class);
                 attachment.remove("config");
                 attachmentMaps.add(attachment);
-                if (attachment_.getType().equals(ModelType.attach_image)) {
-                    attachment.remove("asset_url");
-                    attachment.remove("file_size");
-                }
+                attachment.remove("asset_url");
+                attachment.remove("file_size");
+                if (!isGiphy && attachment_.getType().equals(ModelType.attach_giphy))
+                    isGiphy = true;
             }
             message.put("attachments", attachmentMaps);
+            if (isGiphy){
+                message.put("command", ModelType.attach_giphy);
+                Map<String, String> commandInfo = new HashMap<>();
+                commandInfo.put("name","Giphy");
+                message.put("command_info", commandInfo);
+            }
         }
 
         if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
