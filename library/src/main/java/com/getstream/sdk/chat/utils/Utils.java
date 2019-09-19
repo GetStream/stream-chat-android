@@ -72,7 +72,7 @@ public class Utils {
     }
 
     public static boolean isSVGImage(String url){
-        return url.contains("random_svg");
+        return (TextUtils.isEmpty(url) || url.contains("random_svg"));
     }
 
     public static void showMessage(Context mContext, String message) {
