@@ -27,6 +27,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;
@@ -38,6 +39,7 @@ public class MessageInputClient {
     private static final String TAG = MessageInputClient.class.getSimpleName();
 
     ChannelViewModel viewModel;
+    MessageInputStyle style;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
     CommandMentionListItemAdapter commandMentionListItemAdapter = null;
@@ -50,14 +52,19 @@ public class MessageInputClient {
 
     // region Attachment
 
-    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel) {
+    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel, MessageInputStyle style) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
+        this.style = style;
     }
 
     public List<Attachment> getSelectedAttachments() {
         return selectedAttachments;
+    }
+
+    public void setSelectedAttachments(List<Attachment> selectedAttachments) {
+        this.selectedAttachments = selectedAttachments;
     }
 
     public void onClickOpenBackGroundView(MessageInputType type) {
@@ -417,7 +424,7 @@ public class MessageInputClient {
         String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
-        commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, isCommand);
+        commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
         binding.lvCommand.setAdapter(commandMentionListItemAdapter);
         openCommandView();
         binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {

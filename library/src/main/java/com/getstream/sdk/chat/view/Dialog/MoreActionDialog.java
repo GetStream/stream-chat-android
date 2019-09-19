@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
+import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -85,7 +88,7 @@ public class MoreActionDialog extends Dialog {
                 .build());
 
         ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
-
+        ll_copy.setVisibility(copyableMessage() ? View.VISIBLE : View.GONE);
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
@@ -137,7 +140,6 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                 message,
-                true,
                 style,
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);
@@ -154,8 +156,16 @@ public class MoreActionDialog extends Dialog {
         });
     }
 
+    private boolean copyableMessage() {
+        return !(message.getDeletedAt() != null
+                || message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error)
+                || message.getType().equals(ModelType.message_ephemeral)
+                || TextUtils.isEmpty(message.getText()));
+    }
+
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         dismiss();
         return false;
     }

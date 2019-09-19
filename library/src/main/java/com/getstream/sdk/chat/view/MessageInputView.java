@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -20,6 +21,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
+import androidx.core.os.BuildCompat;
+import androidx.core.view.inputmethod.InputConnectionCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,6 +46,8 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+
+import java.util.Arrays;
 
 
 /**
@@ -130,6 +136,28 @@ public class MessageInputView extends RelativeLayout
         binding.ivOpenAttach.setOnClickListener(this);
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
+        binding.etMessage.setCallback((InputContentInfoCompat inputContentInfo,
+                                       int flags, Bundle opts)-> {
+            if (BuildCompat.isAtLeastQ()
+                    && (flags & InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
+                try {
+                    inputContentInfo.requestPermission();
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+            String url = inputContentInfo.getLinkUri().toString();
+            Log.d(TAG, "getLinkUri:" + url);
+            Log.d(TAG, "getContentUri:" + inputContentInfo.getContentUri());
+            Attachment attachment = new Attachment();
+            attachment.setThumbURL(url);
+            attachment.setTitleLink(url);
+            attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
+            attachment.setType(ModelType.attach_giphy);
+            messageInputClient.setSelectedAttachments(Arrays.asList(attachment));
+            onSendMessage("", viewModel.isEditing());
+            return true;
+        });
 
         onBackPressed();
         setOnSendMessageListener(viewModel);
@@ -242,7 +270,7 @@ public class MessageInputView extends RelativeLayout
 
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel);
+        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel, style);
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
@@ -256,8 +284,8 @@ public class MessageInputView extends RelativeLayout
                 initSendMessage();
                 clearFocus();
             }
-
         });
+
         binding.llMedia.setOnClickListener(v -> messageInputClient.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
@@ -344,6 +372,7 @@ public class MessageInputView extends RelativeLayout
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         //noop
     }
+
 
     @Override
     public void afterTextChanged(Editable s) {
