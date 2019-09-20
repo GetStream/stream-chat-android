@@ -22,14 +22,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_gap_header" />
 
     <TextView
-        android:id="@+id/tv_reactiontail_space"
-        android:layout_width="10px"
-        android:layout_height="3dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/tv_text"
-        app:layout_constraintTop_toTopOf="@+id/tv_text" />
-
-    <TextView
         android:id="@+id/tv_reaction_space"
         android:layout_width="8dp"
         android:layout_height="5dp"
@@ -38,7 +30,7 @@
         app:layout_constraintTop_toTopOf="@+id/tv_text" />
 
     <ImageView
-        android:id="@+id/iv_docket"
+        android:id="@+id/iv_tail"
         android:layout_width="23dp"
         android:layout_height="24dp"
         android:layout_marginTop="8dp"
