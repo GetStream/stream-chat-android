@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -42,6 +43,7 @@ import java.util.List;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
+import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
@@ -443,6 +445,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reactiontail_space.setVisibility(View.VISIBLE);
         tv_reaction_space.setVisibility(View.VISIBLE);
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
+        rv_reaction.setBackground(new DrawableBuilder()
+                .rectangle()
+                .rounded()
+                .solidColor(style.getReactionDlgBgColor())
+                .solidColorPressed(Color.LTGRAY)
+                .build());
         if (messageListItem.isMine())
             iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
         else

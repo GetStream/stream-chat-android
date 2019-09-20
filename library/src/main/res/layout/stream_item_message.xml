@@ -25,7 +25,6 @@
         android:id="@+id/rv_reaction"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:background="@drawable/stream_round_reaction"
         android:paddingStart="@dimen/stream_reaction_margin"
         android:paddingEnd="@dimen/stream_reaction_margin"
         android:visibility="gone"
