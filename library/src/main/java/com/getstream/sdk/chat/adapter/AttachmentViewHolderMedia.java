@@ -151,18 +151,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
 
-        if (attachment.getType().equals(ModelType.attach_giphy)){
-            Glide.with(getContext())
-                    .asGif()
-                    .load(attachUrl)
-                    .placeholder(R.drawable.stream_placeholder)
-                    .into(iv_media_thumb);
-        }else{
-            Glide.with(getContext())
-                    .load(attachUrl)
-                    .placeholder(R.drawable.stream_placeholder)
-                    .into(iv_media_thumb);
-        }
+        Glide.with(getContext())
+                .load(attachUrl)
+                .placeholder(R.drawable.stream_placeholder)
+                .into(iv_media_thumb);
 
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());
