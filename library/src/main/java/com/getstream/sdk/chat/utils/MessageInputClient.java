@@ -48,6 +48,7 @@ public class MessageInputClient {
     StreamViewMessageInputBinding binding;
     AttachmentListAdapter fileAttachmentAdapter = null;
     AttachmentListAdapter selectedFileAttachmentAdapter = null;
+    MessageInputType messageInputType;
     private List<Attachment> selectedAttachments = null;
 
     // region Attachment
@@ -95,6 +96,7 @@ public class MessageInputClient {
                 break;
         }
         binding.tvTitle.setText(type.label);
+        messageInputType = type;
     }
 
 
@@ -104,6 +106,7 @@ public class MessageInputClient {
         binding.clSelectPhoto.setVisibility(View.GONE);
         binding.clCommand.setVisibility(View.GONE);
         binding.getRoot().setBackgroundResource(0);
+        messageInputType = null;
     }
 
     private void initLoadAttachemtView() {
@@ -382,9 +385,8 @@ public class MessageInputClient {
     }
 
     private boolean isCommandOrMention(){
-        String title = binding.tvTitle.getText().toString();
-        return title.equals(MessageInputType.COMMAND.label)
-                || title.equals(MessageInputType.MENTION.label);
+        return messageInputType != null && ((messageInputType == MessageInputType.COMMAND)
+                || (messageInputType == MessageInputType.MENTION));
     }
 
     public void checkCommand(String text) {
