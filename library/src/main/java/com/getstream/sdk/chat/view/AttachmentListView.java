@@ -22,6 +22,26 @@ public class AttachmentListView extends RecyclerView {
 
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
+
+    public AttachmentListView(Context context) {
+        super(context);
+        this.context = context;
+        setHasFixedSize(true);
+    }
+
+    public AttachmentListView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        this.context = context;
+        setHasFixedSize(true);
+    }
+
+    public AttachmentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        this.setLayoutManager(mLayoutManager);
+        this.context = context;
+        setHasFixedSize(true);
+    }
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
@@ -31,32 +51,19 @@ public class AttachmentListView extends RecyclerView {
         this.viewHolderFactory = viewHolderFactory;
     }
 
-    public AttachmentListView(Context context) {
-        super(context);
-        this.context = context;
-    }
-
-    public AttachmentListView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        this.context = context;
-    }
-
-    public AttachmentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        this.setLayoutManager(mLayoutManager);
-        this.context = context;
-    }
-
     public void setEntity(MessageListItem messageListItem) {
         this.setLayoutManager(mLayoutManager);
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
-        if (this.attachmentClickListener != null) {
+        if (this.giphySendListener != null)
+            this.adapter.setGiphySendListener(giphySendListener);
+
+        if (this.attachmentClickListener != null)
             this.adapter.setAttachmentClickListener(attachmentClickListener);
-        }
-        if (this.bubbleHelper != null) {
+
+        if (this.bubbleHelper != null)
             this.adapter.setBubbleHelper(bubbleHelper);
-        }
+
         this.setAdapter(adapter);
     }
 
@@ -71,6 +78,10 @@ public class AttachmentListView extends RecyclerView {
         this.longClickListener = longClickListener;
         if (adapter != null)
             adapter.setLongClickListener(this.longClickListener);
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

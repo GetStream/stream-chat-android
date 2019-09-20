@@ -1,9 +1,9 @@
-
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -14,12 +14,11 @@ import androidx.annotation.DrawableRes;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.BaseStyle;
 
 /**
  * Style for MessageInputStyle customization by xml attributes
  */
-class MessageInputStyle extends BaseStyle {
+public class MessageInputStyle extends BaseStyle {
 
     private boolean showAttachmentButton;
 
@@ -34,6 +33,7 @@ class MessageInputStyle extends BaseStyle {
 
     private int inputButtonIcon;
     private int inputButtonDefaultIconColor;
+    private int inputButtonEditIconColor;
     private int inputButtonDefaultIconPressedColor;
     private int inputButtonDefaultIconDisabledColor;
 
@@ -73,6 +73,8 @@ class MessageInputStyle extends BaseStyle {
         inputButtonIcon = a.getResourceId(R.styleable.MessageInputView_streamInputButtonIcon, -1);
         inputButtonDefaultIconColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconColor,
                 getColor(R.color.stream_input_message_send_button));
+        inputButtonEditIconColor = a.getColor(R.styleable.MessageInputView_streamInputButtonEditIconColor,
+                getColor(R.color.stream_input_message_box_stroke_edit));
         inputButtonDefaultIconPressedColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconPressedColor,
                 getColor(R.color.stream_white));
         inputButtonDefaultIconDisabledColor = a.getColor(R.styleable.MessageInputView_streamInputButtonDefaultIconDisabledColor,
@@ -92,6 +94,17 @@ class MessageInputStyle extends BaseStyle {
         inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select));
         inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.stream_round_message_composer_edit));
 
+        // Avatar
+        avatarWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width));
+        avatarHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height));
+
+        avatarBorderWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width));
+        avatarBorderColor = a.getColor(R.styleable.MessageInputView_streamAvatarBorderColor, Color.WHITE);
+        avatarBackGroundColor = a.getColor(R.styleable.MessageInputView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
+
+        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
+        avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
         a.recycle();
     }
 
@@ -137,9 +150,9 @@ class MessageInputStyle extends BaseStyle {
     }
 
     // Send Button
-    public Drawable getInputButtonIcon() {
+    public Drawable getInputButtonIcon(boolean isEdit) {
         if (inputButtonIcon == -1) {
-            return getSelector(inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
+            return getSelector(isEdit ? inputButtonEditIconColor : inputButtonDefaultIconColor , inputButtonDefaultIconPressedColor,
                     inputButtonDefaultIconDisabledColor, R.drawable.stream_ic_send);
         } else {
             return getDrawable(inputButtonIcon);

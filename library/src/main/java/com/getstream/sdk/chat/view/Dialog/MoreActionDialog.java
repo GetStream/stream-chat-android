@@ -5,8 +5,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
+import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -38,6 +42,10 @@ public class MoreActionDialog extends Dialog {
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
     public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
@@ -60,13 +68,12 @@ public class MoreActionDialog extends Dialog {
     }
 
 
-
     public void init() {
         if (viewModel == null || message == null || style == null)
             return;
 
         setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction);
-
+        setCanceledOnTouchOutside(true);
         RelativeLayout rl_wrap = findViewById(R.id.rl_wrap);
         LinearLayout ll_thread = findViewById(R.id.ll_thread);
         LinearLayout ll_copy = findViewById(R.id.ll_copy);
@@ -80,7 +87,9 @@ public class MoreActionDialog extends Dialog {
                 .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
                 .build());
 
-        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())){
+        ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
+        ll_copy.setVisibility(copyableMessage() ? View.VISIBLE : View.GONE);
+        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
@@ -94,13 +103,12 @@ public class MoreActionDialog extends Dialog {
                     @Override
                     public void onError(String errMsg, int errCode) {
                         Utils.showMessage(getContext(), errMsg);
-                        Log.d("MoreActionDialog","flag Error: " + errMsg);
                         dismiss();
                     }
                 });
 
             });
-        }else {
+        } else {
             ll_flag.setVisibility(View.GONE);
 
             ll_edit.setOnClickListener(view -> {
@@ -132,14 +140,13 @@ public class MoreActionDialog extends Dialog {
         rv_reaction.setLayoutManager(mLayoutManager);
         ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                 message,
-                true,
                 style,
                 (View v) -> dismiss());
         rv_reaction.setAdapter(reactionAdapter);
 
-        ll_thread.setOnClickListener((View v) -> {
-
+        ll_thread.setOnClickListener(view -> {
             dismiss();
+            viewModel.setThreadParentMessage(message);
         });
         ll_copy.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
@@ -147,5 +154,19 @@ public class MoreActionDialog extends Dialog {
             clipboard.setPrimaryClip(clip);
             dismiss();
         });
+    }
+
+    private boolean copyableMessage() {
+        return !(message.getDeletedAt() != null
+                || message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error)
+                || message.getType().equals(ModelType.message_ephemeral)
+                || TextUtils.isEmpty(message.getText()));
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        dismiss();
+        return false;
     }
 }

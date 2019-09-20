@@ -21,38 +21,93 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
 public class WebSocketService extends WebSocketListener {
-    private final String TAG = WebSocketService.class.getSimpleName();
-
     private static final int NORMAL_CLOSURE_STATUS = 1000;
-
+    private final String TAG = WebSocketService.class.getSimpleName();
+    protected EchoWebSocketListener listener;
     private WSResponseHandler webSocketListener;
     private String wsURL;
     private OkHttpClient httpClient;
-
     private WebSocket webSocket;
-    protected EchoWebSocketListener listener;
-
-    /** The connection is considered resolved after the WS connection returned a good message */
+    /**
+     * The connection is considered resolved after the WS connection returned a good message
+     */
     private boolean connectionResolved;
 
-    /** We only make 1 attempt to reconnect at the same time.. */
+    /**
+     * We only make 1 attempt to reconnect at the same time..
+     */
     private boolean isConnecting;
 
-    /** Boolean that indicates if we have a working connection to the server */
+    /**
+     * Boolean that indicates if we have a working connection to the server
+     */
     private boolean isHealthy;
 
-    /** Store the last event time for health checks */
+    /**
+     * Store the last event time for health checks
+     */
     private Date lastEvent;
 
-    /** Send a health check message every 30 seconds */
+    /**
+     * Send a health check message every 30 seconds
+     */
     private int healthCheckInterval = 30 * 1000;
 
-    /** consecutive failures influence the duration of the timeout */
+    /**
+     * consecutive failures influence the duration of the timeout
+     */
     private int consecutiveFailures;
 
     private boolean shuttingDown;
 
     private int wsId;
+    private EventHandlerThread eventThread;
+    private Runnable mOfflineNotifier = () -> {
+        if (!isHealthy()) {
+            Event wentOffline = new Event(false);
+            sendEventToHandlerThread(wentOffline);
+        }
+    };
+    private Runnable mHealthCheck = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Event event = new Event();
+                event.setType(EventType.HEALTH_CHECK);
+                webSocket.send(new Gson().toJson(event));
+            } finally {
+                eventThread.mHandler.postDelayed(mHealthCheck, healthCheckInterval);
+            }
+        }
+    };
+    private Runnable mReconnect = () -> {
+        if (isConnecting() || isHealthy()) {
+            return;
+        }
+
+        destroyCurrentWSConnection();
+        setupWS();
+    };
+    private Runnable mMonitor = new Runnable() {
+        @Override
+        public void run() {
+            long millisNow = new Date().getTime();
+            int monitorInterval = 1000;
+            if (getLastEvent() != null) {
+                if (millisNow - getLastEvent().getTime() > (healthCheckInterval + 10 * 1000)) {
+                    consecutiveFailures += 1;
+                    setHealth(false);
+                    reconnect(true);
+                }
+            }
+            eventThread.mHandler.postDelayed(mHealthCheck, monitorInterval);
+        }
+    };
+
+    public WebSocketService(String wsURL, String userID, WSResponseHandler webSocketListener) {
+        this.wsURL = wsURL;
+        this.webSocketListener = webSocketListener;
+    }
 
     private boolean isConnecting() {
         return isConnecting;
@@ -84,13 +139,6 @@ public class WebSocketService extends WebSocketListener {
 
     private void resetConsecutiveFailures() {
         this.consecutiveFailures = 0;
-    }
-
-    private EventHandlerThread eventThread;
-
-    public WebSocketService(String wsURL, String userID, WSResponseHandler webSocketListener) {
-        this.wsURL = wsURL;
-        this.webSocketListener = webSocketListener;
     }
 
     public void connect() {
@@ -125,7 +173,7 @@ public class WebSocketService extends WebSocketListener {
         reconnect(false);
     }
 
-    private void setupWS(){
+    private void setupWS() {
         Log.i(TAG, "setupWS");
 
         httpClient = new OkHttpClient();
@@ -134,6 +182,8 @@ public class WebSocketService extends WebSocketListener {
         webSocket = httpClient.newWebSocket(request, listener);
         httpClient.dispatcher().executorService().shutdown();
     }
+
+//    private Handler mHandler = new Handler();
 
     private void setHealth(boolean healthy) {
         Log.i(TAG, "setHealth " + healthy);
@@ -150,12 +200,12 @@ public class WebSocketService extends WebSocketListener {
     }
 
     private int getRetryInterval() {
-		int max = Math.min(500 + getConsecutiveFailures() * 2000, 25000);
-		int min = Math.min(Math.max(250, (getConsecutiveFailures() - 1) * 2000), 25000);
+        int max = Math.min(500 + getConsecutiveFailures() * 2000, 25000);
+        int min = Math.min(Math.max(250, (getConsecutiveFailures() - 1) * 2000), 25000);
         return (int) Math.floor(Math.random() * (max - min) + min);
     }
 
-    private void reconnect(boolean delay){
+    private void reconnect(boolean delay) {
         Log.i(TAG, "reconnecting...");
         if (isConnecting() || isHealthy()) {
             Log.i(TAG, "nevermind, we are already connecting...");
@@ -165,58 +215,11 @@ public class WebSocketService extends WebSocketListener {
         eventThread.mHandler.postDelayed(mReconnect, delay ? getRetryInterval() : 0);
     }
 
-    private void sendEventToHandlerThread(Event event){
+    private void sendEventToHandlerThread(Event event) {
         Message eventMsg = new Message();
         eventMsg.obj = event;
         eventThread.mHandler.sendMessage(eventMsg);
     }
-
-//    private Handler mHandler = new Handler();
-
-    private Runnable mOfflineNotifier = () -> {
-        if (!isHealthy()) {
-            Event wentOffline = new Event(false);
-            sendEventToHandlerThread(wentOffline);
-        }
-    };
-
-    private Runnable mMonitor = new Runnable() {
-        @Override
-        public void run() {
-            long millisNow = new Date().getTime();
-            int monitorInterval = 1000;
-            if (getLastEvent() != null) {
-                if (millisNow - getLastEvent().getTime() > (healthCheckInterval + 10 * 1000)) {
-                    consecutiveFailures += 1;
-                    setHealth(false);
-                    reconnect(true);
-                }
-            }
-            eventThread.mHandler.postDelayed(mHealthCheck, monitorInterval);
-        }
-    };
-
-    private Runnable mHealthCheck = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                Event event = new Event();
-                event.setType(EventType.HEALTH_CHECK);
-                webSocket.send(new Gson().toJson(event));
-            } finally {
-                eventThread.mHandler.postDelayed(mHealthCheck, healthCheckInterval);
-            }
-        }
-    };
-
-    private Runnable mReconnect = () -> {
-        if (isConnecting() || isHealthy()) {
-            return;
-        }
-
-        destroyCurrentWSConnection();
-        setupWS();
-    };
 
     private void startMonitor() {
         mHealthCheck.run();
@@ -230,6 +233,15 @@ public class WebSocketService extends WebSocketListener {
     private void setConnectionResolved() {
         this.connectionResolved = true;
         startMonitor();
+    }
+
+    private void destroyCurrentWSConnection() {
+        wsId++;
+        try {
+            httpClient.dispatcher().cancelAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private class EchoWebSocketListener extends WebSocketListener {
@@ -294,16 +306,6 @@ public class WebSocketService extends WebSocketListener {
             reconnect(true);
         }
     }
-
-    private void destroyCurrentWSConnection() {
-        wsId++;
-        try {
-            httpClient.dispatcher().cancelAll();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     class EventHandlerThread extends Thread {
         Handler mHandler;

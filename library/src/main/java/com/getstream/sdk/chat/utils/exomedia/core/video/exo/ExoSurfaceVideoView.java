@@ -20,12 +20,13 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.util.AttributeSet;
+import android.view.SurfaceHolder;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.AttributeSet;
-import android.view.SurfaceHolder;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;

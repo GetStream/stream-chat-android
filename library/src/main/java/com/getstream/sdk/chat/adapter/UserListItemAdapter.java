@@ -1,30 +1,27 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;
 
 public class UserListItemAdapter extends BaseAdapter {
 
     private final String TAG = UserListItemAdapter.class.getSimpleName();
+    public List<User> selectUsers;
+    public boolean groupChatMode = false;
     private LayoutInflater layoutInflater;
     private Context context;
     private List<User> users;
-    public List<User> selectUsers;
-    public boolean groupChatMode = false;
     private View.OnClickListener checkedChangeListener;
 
     public UserListItemAdapter(Context context, List users, View.OnClickListener checkedChangeListener) {
@@ -74,17 +71,7 @@ public class UserListItemAdapter extends BaseAdapter {
     }
 
     private void configUIs(StreamItemUserBinding binding, User user) {
-        TextView tv_initials = binding.viewUserAvator.findViewById(R.id.tv_initials);
-        ImageView cv_avatar = binding.viewUserAvator.findViewById(R.id.cv_avatar);
-        if (StringUtility.isValidImageUrl(user.getImage())) {
-            Utils.circleImageLoad(binding.viewUserAvator.findViewById(R.id.cv_avatar), user.getImage());
-            cv_avatar.setVisibility(View.VISIBLE);
-            tv_initials.setVisibility(View.INVISIBLE);
-        } else {
-            tv_initials.setText(user.getInitials());
-            tv_initials.setVisibility(View.VISIBLE);
-            cv_avatar.setVisibility(View.INVISIBLE);
-        }
+//        binding.viewUserAvator.setUser(user, style);
         binding.tvName.setText(user.getName());
 
         if (user.getOnline())

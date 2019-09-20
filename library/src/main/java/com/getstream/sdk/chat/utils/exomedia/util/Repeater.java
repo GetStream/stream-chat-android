@@ -18,6 +18,7 @@ package com.getstream.sdk.chat.utils.exomedia.util;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+
 import androidx.annotation.Nullable;
 
 /**
@@ -28,21 +29,13 @@ import androidx.annotation.Nullable;
 public class Repeater {
     protected static final String HANDLER_THREAD_NAME = "ExoMedia_Repeater_HandlerThread";
     protected static final int DEFAULT_REPEAT_DELAY = 33; // ~30 fps
-
-    public interface RepeatListener {
-        void onRepeat();
-    }
-
     protected volatile boolean repeaterRunning = false;
     protected int repeatDelay = DEFAULT_REPEAT_DELAY;
-
     protected Handler delayedHandler;
     protected HandlerThread handlerThread;
     protected boolean useHandlerThread = false;
-
     protected RepeatListener listener;
     protected PollRunnable pollRunnable = new PollRunnable();
-
     public Repeater() {
         this(true);
     }
@@ -67,21 +60,21 @@ public class Repeater {
     }
 
     /**
-     * Sets the amount of time between method invocation.
-     *
-     * @param milliSeconds The time between method calls [default: {@value #DEFAULT_REPEAT_DELAY}]
-     */
-    public void setRepeaterDelay(int milliSeconds) {
-        repeatDelay = milliSeconds;
-    }
-
-    /**
      * Retrieves the amount of time between method invocation.
      *
      * @return The millisecond time between method calls
      */
     public int getRepeaterDelay() {
         return repeatDelay;
+    }
+
+    /**
+     * Sets the amount of time between method invocation.
+     *
+     * @param milliSeconds The time between method calls [default: {@value #DEFAULT_REPEAT_DELAY}]
+     */
+    public void setRepeaterDelay(int milliSeconds) {
+        repeatDelay = milliSeconds;
     }
 
     /**
@@ -128,6 +121,10 @@ public class Repeater {
      */
     public void setRepeatListener(@Nullable RepeatListener listener) {
         this.listener = listener;
+    }
+
+    public interface RepeatListener {
+        void onRepeat();
     }
 
     protected class PollRunnable implements Runnable {

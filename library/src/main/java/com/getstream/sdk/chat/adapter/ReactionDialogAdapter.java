@@ -4,7 +4,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +16,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Map;
@@ -31,13 +28,11 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     private Channel channel;
     private Message message;
     private View.OnClickListener clickListener;
-    private boolean showAvatar;
     private Map<String, String> reactionTypes;
     private MessageListViewStyle style;
 
     public ReactionDialogAdapter(Channel channel,
                                  Message message,
-                                 boolean showAvatar,
                                  MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
         this.channel = channel;
@@ -45,7 +40,6 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         this.reactionTypes = channel.getReactionTypes();
         this.style = style;
         this.clickListener = clickListener;
-        this.showAvatar = showAvatar;
     }
 
     @Override
@@ -66,40 +60,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         String value = reactionTypes.get(key);
         holder.tv_emoji.setText(value);
 
-        if (!showAvatar) {
-            holder.cv_avatar.setVisibility(View.GONE);
-            holder.tv_initials.setVisibility(View.GONE);
-            holder.tv_count.setVisibility(View.GONE);
-        } else {
-            // added for new design
-            holder.cv_avatar.setVisibility(View.GONE);
-            holder.tv_initials.setVisibility(View.GONE);
-
-//            holder.cv_avatar.setVisibility(View.INVISIBLE);
-//            holder.tv_initials.setVisibility(View.INVISIBLE);
-            holder.tv_count.setVisibility(View.VISIBLE);
-        }
-
         if (message.getReactionCounts() == null) return;
         if (message.getReactionCounts().containsKey(key)) {
             holder.tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
-            // disabled for new design
-//            User user = null;
-//            for (Reaction reaction : message.getLatestReactions()) {
-//                if (reaction.getType().equals(key)) {
-//                    user = reaction.getUser();
-//                    break;
-//                }
-//            }
-//
-//            if (user != null && showAvatar) {
-//                String intials = user.getInitials();
-//                holder.tv_initials.setVisibility(View.VISIBLE);
-//                holder.cv_avatar.setVisibility(View.VISIBLE);
-//                holder.tv_initials.setText(intials);
-//                if (StringUtility.isValidImageUrl(user.getImage()))
-//                    Utils.circleImageLoad(holder.cv_avatar, user.getImage());
-//            }
         } else
             holder.tv_count.setText("");
     }
@@ -114,15 +77,12 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tv_emoji, tv_count, tv_initials;
-        public ImageView cv_avatar;
+        public TextView tv_emoji, tv_count;
 
         public MyViewHolder(View view) {
             super(view);
-            tv_initials = view.findViewById(R.id.tv_initials);
             tv_emoji = view.findViewById(R.id.tv_emoji);
             tv_count = view.findViewById(R.id.tv_count);
-            cv_avatar = view.findViewById(R.id.cv_avatar);
             view.setOnClickListener(this);
         }
 
@@ -134,9 +94,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             for (Reaction reaction : message.getLatestReactions()) {
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
-                        if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
-                            isReactioned = true;
-                            break;
+                    if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
+                        isReactioned = true;
+                        break;
                     }
                 }
             }

@@ -1,4 +1,5 @@
 package com.getstream.sdk.chat.model;
+
 /**
  * A command
  */

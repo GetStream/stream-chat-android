@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,7 +15,6 @@ import android.widget.TextView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -27,19 +28,16 @@ import java.util.List;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
+    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
-    private ConstraintLayout cl_attachment, cl_attachment_media;
+    private ConstraintLayout cl_attachment_media;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
 
-
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
-
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
-        cl_attachment = itemView.findViewById(R.id.attachmentview);
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
@@ -56,8 +54,9 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         configAttachment();
+        applyStyle();
     }
 
     private void configAttachment() {
@@ -86,6 +85,23 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         } else {
             lv_attachment_file.setVisibility(View.GONE);
         }
+
+        if (!hasMedia && !hasFile) {
+            iv_media_thumb.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(getAttachment().getTitle())) {
+                cl_attachment_media.setVisibility(View.VISIBLE);
+                tv_media_title.setVisibility(View.VISIBLE);
+                tv_media_title.setText(getAttachment().getTitle());
+            }else
+                tv_media_title.setVisibility(View.GONE);
+
+            if (!TextUtils.isEmpty(getAttachment().getText())) {
+                cl_attachment_media.setVisibility(View.VISIBLE);
+                tv_media_des.setVisibility(View.VISIBLE);
+                tv_media_des.setText(getAttachment().getText());
+            }else
+                tv_media_des.setVisibility(View.GONE);
+        }
     }
 
     private void configImageThumbBackground(Attachment attachment) {
@@ -95,11 +111,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configAttachViewBackground(View view) {
         Drawable background;
-        // TODO: fix this somehow
-        if (true) {
-            background = getStyle().getMessageBubbleDrawableTheirs();
-        } else {
+        if (getMessageListItem().isMine()) {
             background = getStyle().getMessageBubbleDrawableMine();
+        } else {
+            background = getStyle().getMessageBubbleDrawableTheirs();
         }
         view.setBackground(background);
     }
@@ -209,5 +224,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
     }
 
+    private void applyStyle() {
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentTitleTextSize());
+        tv_media_title.setTextColor(getStyle().getAttachmentTitleTextColor());
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentTitleTextStyle());
 
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
+        tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+    }
 }

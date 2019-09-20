@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
@@ -24,6 +25,10 @@ import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import io.noties.markwon.Markwon;
+import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.linkify.LinkifyPlugin;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
@@ -41,6 +46,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
 
+    private Markwon markwon;
+
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
         findReferences();
@@ -51,10 +58,11 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         userClickListener = l;
     }
 
-    public void setChannelClickListener(ChannelListView.ChannelClickListener l ) {
+    public void setChannelClickListener(ChannelListView.ChannelClickListener l) {
         channelClickListener = l;
     }
-    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l ) {
+
+    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l) {
         channelLongClickListener = l;
     }
 
@@ -98,7 +106,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_name.setTypeface(tv_name.getTypeface(), style.getUnreadTitleTextStyle());
 
         // last message
-        tv_last_message.setTypeface(tv_last_message.getTypeface(),  style.getUnreadMessageTextStyle());
+        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getUnreadMessageTextStyle());
         tv_last_message.setTextColor(style.getUnreadMessageTextColor());
     }
 
@@ -136,7 +144,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         if (lastMessage != null) {
             // set the lastMessage and last messageDate
-            tv_last_message.setText(lastMessage.getText());
+            if (markwon == null)
+                markwon = Markwon.builder(context)
+                        .usePlugin(CorePlugin.create())
+                        .usePlugin(LinkifyPlugin.create())
+                        .build();
+            markwon.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
             else
@@ -144,7 +158,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         // read indicators
-        read_state.setReads(lastMessageReads,true, style);
+        read_state.setReads(lastMessageReads, true, style);
 
         // apply unread style or read style
         if (unreadCount == 0) {
@@ -167,7 +181,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_click.setOnClickListener(view -> {
             Utils.setButtonDelayEnable(view);
             tv_click.setBackgroundColor(Color.parseColor("#14000000"));
-            new Handler().postDelayed(() ->tv_click.setBackgroundColor(0), 500);
+            new Handler().postDelayed(() -> tv_click.setBackgroundColor(0), 500);
             if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
             }

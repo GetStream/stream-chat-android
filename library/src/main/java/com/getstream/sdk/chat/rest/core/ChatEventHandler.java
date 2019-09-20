@@ -5,42 +5,90 @@ import com.getstream.sdk.chat.model.Event;
 
 public abstract class ChatEventHandler {
 
-    public void onUserPresenceChanged(Event event) {}
-    public void onUserWatchingStart(Channel channel, Event event) {}
-    public void onUserWatchingStop(Channel channel, Event event) {}
-    public void onUserUpdated(Event event) {}
-    public void onTypingStart(Event event) {}
-    public void onTypingStop(Event event) {}
-    public void onMessageNew(Channel channel, Event event) {}
-    public void onMessageUpdated(Channel channel, Event event) {}
-    public void onMessageDeleted(Channel channel, Event event) {}
-    public void onMessageRead(Channel channel, Event event) {}
-    public void onReactionNew(Channel channel,Event event) {}
-    public void onReactionDeleted(Channel channel, Event event) {}
-    public void onMemberAdded(Channel channel, Event event) {}
-    public void onMemberRemoved(Channel channel, Event event) {}
-    public void onChannelUpdated(Channel channel, Event event) {}
-    public void onChannelDeleted(Channel channel, Event event) {}
-    public void onHealthCheck(Event event) {}
-    public void onConnectionChanged(Event event) {}
-    public void onConnectionRecovered(Event event) {}
-    public void onNotificationMessageNew(Channel channel, Event event) {}
-    public void onNotificationMarkRead(Channel channel, Event event) {}
-    public void onNotificationInvited(Channel channel, Event event) {}
-    public void onNotificationInviteAccepted(Channel channel, Event event) {}
-    public void onNotificationAddedToChannel(Channel channel, Event event) {}
-    public void onNotificationRemovedFromChannel(Channel channel, Event event) {}
-    public void onAnyEvent(Event event) {}
+    public void onUserPresenceChanged(Event event) {
+    }
+
+    public void onUserWatchingStart(Channel channel, Event event) {
+    }
+
+    public void onUserWatchingStop(Channel channel, Event event) {
+    }
+
+    public void onUserUpdated(Event event) {
+    }
+
+    public void onTypingStart(Event event) {
+    }
+
+    public void onTypingStop(Event event) {
+    }
+
+    public void onMessageNew(Channel channel, Event event) {
+    }
+
+    public void onMessageUpdated(Channel channel, Event event) {
+    }
+
+    public void onMessageDeleted(Channel channel, Event event) {
+    }
+
+    public void onMessageRead(Channel channel, Event event) {
+    }
+
+    public void onReactionNew(Channel channel, Event event) {
+    }
+
+    public void onReactionDeleted(Channel channel, Event event) {
+    }
+
+    public void onMemberAdded(Channel channel, Event event) {
+    }
+
+    public void onMemberRemoved(Channel channel, Event event) {
+    }
+
+    public void onChannelUpdated(Channel channel, Event event) {
+    }
+
+    public void onChannelDeleted(Channel channel, Event event) {
+    }
+
+    public void onHealthCheck(Event event) {
+    }
+
+    public void onConnectionChanged(Event event) {
+    }
+
+    public void onConnectionRecovered(Event event) {
+    }
+
+    public void onNotificationMessageNew(Channel channel, Event event) {
+    }
+
+    public void onNotificationMarkRead(Channel channel, Event event) {
+    }
+
+    public void onNotificationInvited(Channel channel, Event event) {
+    }
+
+    public void onNotificationInviteAccepted(Channel channel, Event event) {
+    }
+
+    public void onNotificationAddedToChannel(Channel channel, Event event) {
+    }
+
+    public void onNotificationRemovedFromChannel(Channel channel, Event event) {
+    }
+
+    public void onAnyEvent(Event event) {
+    }
 
     final Channel getChannel(Client client, Event event) {
         if (event.getCid() == null) return null;
         return client.getChannelByCid(event.getCid());
     }
 
-    public void handleEventFromUnregisteredChannel(Client client, Event event) {}
-
-    private interface ChannelEvent {
-        void dispatch(Channel channel, Event event);
+    public void handleEventFromUnregisteredChannel(Client client, Event event) {
     }
 
     final void dispatchChannelEvent(Client client, Event event, ChannelEvent channelEventLambda) {
@@ -52,7 +100,7 @@ public abstract class ChatEventHandler {
         }
     }
 
-    final void dispatchEvent(Client client, Event event){
+    final void dispatchEvent(Client client, Event event) {
         onAnyEvent(event);
         switch (event.getType()) {
             case USER_PRESENCE_CHANGED:
@@ -131,6 +179,10 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
                 break;
         }
+    }
+
+    private interface ChannelEvent {
+        void dispatch(Channel channel, Event event);
     }
 
 }

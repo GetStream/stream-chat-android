@@ -14,21 +14,24 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.BaseStyle;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
+
+    private static final String TAG = AvatarGroupView.class.getSimpleName();
     Context context;
     Channel channel;
     STYLE style;
     List<User> lastActiveUsers;
     User user;
+    double factor = 1.7;
 
     public AvatarGroupView(Context context) {
         super(context);
+        this.context = context;
     }
 
     public AvatarGroupView(Context context, @Nullable AttributeSet attrs) {
@@ -65,9 +68,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
-        params.width = style.getAvatarWidth();
-        params.height = style.getAvatarHeight();
-        this.setLayoutParams(params);
+        if (params != null){
+            params.width = style.getAvatarWidth();
+            params.height = style.getAvatarHeight();
+            this.setLayoutParams(params);
+        }
 
         removeAllViews();
         if (user != null) {
@@ -88,8 +93,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         }
     }
 
-    double factor = 1.7;
-
     private void configUserAvatars() {
         double factor_;
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
@@ -104,14 +107,16 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     imageView.setPlaceholder(user_.getInitials(),
                             style.getAvatarBackGroundColor(),
                             style.getAvatarInitialTextColor());
-                    Glide.with(context)
-                            .load(user_.getImage())
-                            .into(imageView);
+
+                    if (!Utils.isSVGImage(user_.getImage()))
+                        Glide.with(context)
+                                .load(user_.getImage())
+                                .into(imageView);
 
                     RelativeLayout.LayoutParams params;
                     factor_ = factor;
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
-                            (int) style.getAvatarBorderWidth());
+                            style.getAvatarBorderWidth());
                     imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
                             (int) (style.getAvatarInitialTextSize() / factor_),
                             style.getAvatarInitialTextStyle());
@@ -162,9 +167,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         imageView.setPlaceholder(initial,
                 style.getAvatarBackGroundColor(),
                 style.getAvatarInitialTextColor());
-        Glide.with(context)
-                .load(image)
-                .into(imageView);
+
+        if (!Utils.isSVGImage(image))
+            Glide.with(context)
+                    .load(image)
+                    .into(imageView);
 
         RelativeLayout.LayoutParams params;
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,

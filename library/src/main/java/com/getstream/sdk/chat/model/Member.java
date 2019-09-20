@@ -35,36 +35,36 @@ public class Member implements UserEntity {
     @Expose
     private Date inviteAcceptedAt;
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public User getUser() {
         return user;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getRole() {
         return role;
     }
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreatedAt() {
         return createdAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public boolean isInvited() {

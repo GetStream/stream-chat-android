@@ -71,7 +71,8 @@ public class Event implements UserEntity {
 
     private boolean online;
 
-    public Event() {}
+    public Event() {
+    }
 
     public Event(String type) {
         this.type = type;
@@ -86,12 +87,16 @@ public class Event implements UserEntity {
         return connectionId;
     }
 
-    public boolean isChannelEvent(){
+    public boolean isChannelEvent() {
         return cid != null && !cid.equals("*");
     }
 
     public String getCid() {
         return cid;
+    }
+
+    public EventType getType() {
+        return EventType.findByString(type);
     }
 
     public void setType(String type) {
@@ -100,10 +105,6 @@ public class Event implements UserEntity {
 
     public void setType(EventType type) {
         this.type = type.label;
-    }
-
-    public EventType getType() {
-        return EventType.findByString(type);
     }
 
     public User getUser() {
@@ -118,12 +119,12 @@ public class Event implements UserEntity {
         return member;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
-    }
-
     public Message getMessage() {
         return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public Reaction getReaction() {

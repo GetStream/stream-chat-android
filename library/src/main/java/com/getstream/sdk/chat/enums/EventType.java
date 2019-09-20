@@ -31,7 +31,6 @@ public enum EventType {
     NOTIFICATION_REMOVED_FROM_CHANNEL("notification.removed_from_channel"),
     UNKNOWN("");
 
-    public final String label;
     private static final Map<String, EventType> lookup = new HashMap<>();
 
     static {
@@ -43,16 +42,18 @@ public enum EventType {
         }
     }
 
-    public static EventType findByString(String value){
+    public final String label;
+
+    EventType(String label) {
+        this.label = label;
+    }
+
+    public static EventType findByString(String value) {
         EventType eventType = EventType.lookup.get(value);
         if (eventType == null) {
             return UNKNOWN;
         }
         return eventType;
-    }
-
-    EventType(String label) {
-        this.label = label;
     }
 
 }

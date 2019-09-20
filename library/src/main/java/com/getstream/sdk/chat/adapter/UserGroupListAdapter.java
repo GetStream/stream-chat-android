@@ -1,17 +1,13 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.getstream.sdk.chat.R;
+import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.databinding.StreamItemGroupUserBinding;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.List;
 
@@ -60,13 +56,7 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
         }
 
         public void bind(User user, final View.OnClickListener clickListener) {
-            TextView tv_initials = binding.viewUserAvator.findViewById(R.id.tv_initials);
-            ImageView cv_avatar = binding.viewUserAvator.findViewById(R.id.cv_avatar);
-            binding.tvName.setText(user.getName());
-            tv_initials.setText(user.getInitials());
-            Utils.circleImageLoad(cv_avatar, user.getImage());
-            Utils.circleImageLoad(cv_avatar, user.getImage());
-
+//            binding.viewUserAvator.setUser(user,style);
             binding.tvClose.setOnClickListener((View v) -> {
                 v.setTag(user);
                 clickListener.onClick(v);

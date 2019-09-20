@@ -9,11 +9,10 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
-
-import androidx.appcompat.widget.AppCompatImageView;
-
 import android.util.AttributeSet;
 import android.util.Log;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 
 @SuppressWarnings("WeakerAccess")

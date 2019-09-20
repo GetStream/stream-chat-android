@@ -8,11 +8,10 @@ import java.util.Map;
 
 public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryRequest> {
 
-    @SerializedName("data")
-    private Map<String, Object> data;
-
     @SerializedName("messages")
     protected Map<String, Object> messages;
+    @SerializedName("data")
+    private Map<String, Object> data;
 
     public ChannelQueryRequest() {
         this.watch = true;

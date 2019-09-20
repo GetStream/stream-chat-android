@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-
 import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.DiffUtil;
@@ -9,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.ChannelListDiffCallback;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
@@ -43,35 +41,30 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         return channelClickListener;
     }
 
+    public void setChannelClickListener(ChannelListView.ChannelClickListener l) {
+        channelClickListener = l;
+    }
+
     public ChannelListView.ChannelClickListener getChannelLongClickListener() {
         return channelLongClickListener;
     }
 
+    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l) {
+        channelLongClickListener = l;
+    }
 
     public ChannelListView.UserClickListener getUserClickListener() {
         return userClickListener;
     }
 
-
     public void setUserClickListener(ChannelListView.UserClickListener l) {
         userClickListener = l;
-    }
-
-    public void setChannelClickListener(ChannelListView.ChannelClickListener l ) {
-        channelClickListener = l;
-    }
-    public void setChannelLongClickListener(ChannelListView.ChannelClickListener l ) {
-        channelLongClickListener = l;
-    }
-
-    public void setStyle(ChannelListViewStyle s) {
-        style = s;
     }
 
     public void replaceChannels(List<Channel> channelList) {
         List<Channel> cloneChannelList = new ArrayList<>();
 
-        for (Channel channel: channelList) {
+        for (Channel channel : new ArrayList<>(channelList)) {
             cloneChannelList.add(channel.copy());
         }
 
@@ -117,6 +110,10 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public ChannelListViewStyle getStyle() {
         return style;
+    }
+
+    public void setStyle(ChannelListViewStyle s) {
+        style = s;
     }
 
     public void setViewHolderFactory(ChannelViewHolderFactory viewHolderFactory) {

@@ -1,11 +1,10 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.View;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;

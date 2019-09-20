@@ -31,7 +31,8 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
                      MessageListView.MessageClickListener l1,
                      MessageListView.MessageLongClickListener messageLongClickListener,
                      MessageListView.AttachmentClickListener l2,
-                     MessageListView.UserClickListener userClickListener) {
+                     MessageListView.UserClickListener userClickListener,
+                     MessageListView.ReadStateClickListener readStateClickListener) {
 
         String humanizedDate = getRelativeTimeSpanString(messageListItem.getDate().getTime()).toString();
         tv_header_date.setText(humanizedDate);

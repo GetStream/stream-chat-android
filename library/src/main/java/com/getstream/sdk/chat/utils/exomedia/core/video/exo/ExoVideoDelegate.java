@@ -18,11 +18,12 @@ package com.getstream.sdk.chat.utils.exomedia.core.video.exo;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.Surface;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.Surface;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
@@ -91,7 +92,7 @@ public class ExoVideoDelegate {
     }
 
     public boolean restart() {
-        if(!exoMediaPlayer.restart()) {
+        if (!exoMediaPlayer.restart()) {
             return false;
         }
 
@@ -201,6 +202,7 @@ public class ExoVideoDelegate {
 
     /**
      * Clear all selected tracks for the specified renderer.
+     *
      * @param type The renderer type
      */
     public void clearSelectedTracks(@NonNull ExoMedia.RendererType type) {
@@ -218,6 +220,7 @@ public class ExoVideoDelegate {
 
     /**
      * Return true if at least one renderer for the given type is enabled
+     *
      * @param type The renderer type
      * @return true if at least one renderer for the given type is enabled
      */

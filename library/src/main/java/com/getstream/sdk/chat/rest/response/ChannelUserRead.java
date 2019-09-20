@@ -25,12 +25,12 @@ public class ChannelUserRead implements UserEntity {
         return user;
     }
 
-    public Date getLastRead() {
-        return lastRead;
-    }
-
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getLastRead() {
+        return lastRead;
     }
 
     public void setLastRead(Date last_read) {

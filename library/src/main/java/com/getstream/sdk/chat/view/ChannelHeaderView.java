@@ -68,11 +68,11 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
     }
 
-    protected void setHeaderTitle(ChannelState channelState){
+    protected void setHeaderTitle(ChannelState channelState) {
         binding.setChannelName(channelState.getChannelNameOrMembers());
     }
 
-    protected void setHeaderLastActive(ChannelState channelState){
+    protected void setHeaderLastActive(ChannelState channelState) {
         Date lastActive = channelState.getLastActive();
         Date now = new Date();
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
@@ -93,7 +93,12 @@ public class ChannelHeaderView extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = StreamViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(view -> ((Activity) getContext()).finish());
+        binding.tvBack.setOnClickListener(view ->{
+            if(viewModel.isThread())
+                viewModel.initThread();
+            else
+                ((Activity) getContext()).finish();
+        });
         return binding;
     }
 
@@ -114,7 +119,7 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
         binding.tvActive.setTextColor(style.getLastActiveTextColor());
         binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
-        binding.tvActive.setVisibility(style.isLastActiveShow   () ? VISIBLE : INVISIBLE);
+        binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : INVISIBLE);
         // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         binding.tvBack.setBackground(style.getBackButtonBackground());

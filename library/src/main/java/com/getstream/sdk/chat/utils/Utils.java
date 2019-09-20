@@ -6,12 +6,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,8 +27,6 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.ByteArrayOutputStream;
@@ -41,13 +39,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import top.defaults.drawabletoolbox.DrawableBuilder;
-
 public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    public static String TAG = "Utils";
+    private static String TAG = Utils.class.getSimpleName();
     public static List<Attachment> attachments = new ArrayList<>();
 
     public static String readInputStream(InputStream inputStream) {
@@ -75,16 +71,29 @@ public class Utils {
         });
     }
 
+    public static boolean isSVGImage(String url){
+        return url.contains("random_svg");
+    }
+
     public static void showMessage(Context mContext, String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
 
+    public static void showSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (!inputMethodManager.isAcceptingText())
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
     public static void hideSoftKeyboard(Activity activity) {
-        try {
-            InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
-        } catch (Exception e) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
         }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     public static int getScreenResolution(Context context) {
@@ -101,26 +110,6 @@ public class Utils {
     public static void setButtonDelayEnable(View v) {
         v.setEnabled(false);
         new Handler().postDelayed(() -> v.setEnabled(true), 1000);
-    }
-
-    public static Drawable getDrawable(boolean isRect, int strokeColor, int strokeWidth, int solidColor, int topLeftRadius, int topRightRadius ) {
-        if (isRect)
-            return new DrawableBuilder()
-                    .rectangle()
-                    .strokeColor(strokeColor)
-                    .strokeWidth(strokeWidth)
-                    .solidColor(solidColor)
-                    .cornerRadii(0, 0, 20, 20)
-                    .build();
-        else
-            return new DrawableBuilder()
-                    .oval()
-                    .strokeColor(0)
-                    .strokeWidth(0)
-                    .cornerRadii(0, 0, 0, 0)
-                    .solidColor(0)
-                    .build();
-
     }
 
     public static int dpToPx(int dp) {
@@ -261,17 +250,5 @@ public class Utils {
             }
         }
         return mentionedUserIDs;
-    }
-
-    public static String getMentionedText(Message message) {
-        if (message == null) return null;
-        String text = message.getText();
-        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
-            for (User mentionedUser : message.getMentionedUsers()) {
-                String userName = mentionedUser.getName();
-                text = text.replace("@" + userName, "**" + "@" + userName + "**");
-            }
-        }
-        return text;
     }
 }

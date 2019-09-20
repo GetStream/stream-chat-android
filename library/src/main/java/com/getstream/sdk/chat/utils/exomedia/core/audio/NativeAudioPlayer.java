@@ -21,11 +21,12 @@ import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.util.Log;
 
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;

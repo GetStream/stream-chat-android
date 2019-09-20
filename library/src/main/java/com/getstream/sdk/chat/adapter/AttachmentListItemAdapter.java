@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -26,6 +25,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
+    private MessageListView.GiphySendListener giphySendListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
 
@@ -87,6 +87,14 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
         this.longClickListener = longClickListener;
+    }
+
+    public MessageListView.GiphySendListener getGiphySendListener() {
+        return giphySendListener;
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

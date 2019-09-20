@@ -16,7 +16,7 @@ public class AddDeviceRequest {
     @Expose
     String push_provider;
 
-    public AddDeviceRequest(String deviceId){
+    public AddDeviceRequest(String deviceId) {
         this.id = deviceId;
         // TODO: fix this
 //        this.user_id = StreamChat.getInstance().getUserId();

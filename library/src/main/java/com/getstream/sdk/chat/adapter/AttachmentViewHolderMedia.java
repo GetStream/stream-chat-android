@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -10,22 +11,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import top.defaults.drawabletoolbox.DrawableBuilder;
+
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
+
+    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
     private PorterShapeImageView iv_media_thumb;
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_logo;
 
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
+    private ConstraintLayout cl_action;
+    private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+    private MessageListView.GiphySendListener giphySendListener;
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -35,6 +45,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         iv_command_logo = itemView.findViewById(R.id.iv_command_logo);
+        // Giphy
+        cl_action = itemView.findViewById(R.id.cl_action);
+        tv_action_send = itemView.findViewById(R.id.tv_action_send);
+        tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
+        tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
     }
 
     @Override
@@ -48,6 +63,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
+        configAction();
     }
 
 
@@ -57,7 +73,58 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(getContext(), background);
-        iv_media_thumb.setBackgroundDrawable(background);
+//        iv_media_thumb.setBackgroundDrawable(background);
+    }
+
+    private void configAction() {
+
+        if (getMessage().getType().equals(ModelType.message_ephemeral)
+                && getMessage().getCommand() != null
+                && getMessage().getCommand().equals(ModelType.attach_giphy)) {
+            // set Background
+            tv_action_send.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(Color.WHITE)
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(getContext().getResources().getColor(R.color.stream_input_message_send_button))
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+            tv_action_shuffle.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(Color.WHITE)
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+            tv_action_cancel.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeWidth(Utils.dpToPx(2))
+                    .solidColor(Color.WHITE)
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
+
+            cl_action.setVisibility(View.VISIBLE);
+
+            tv_action_send.setOnClickListener((View v) -> {
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SEND);
+            });
+
+            tv_action_shuffle.setOnClickListener((View v) -> {
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SHUFFLE);
+            });
+            tv_action_cancel.setOnClickListener((View v) -> {
+                if (giphySendListener != null)
+                    giphySendListener.onGiphySend(getMessage(), GiphyAction.CANCEL);
+            });
+        } else {
+            cl_action.setVisibility(View.GONE);
+        }
     }
 
     private void configMediaAttach() {
@@ -79,12 +146,13 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         configImageThumbBackground(getAttachment());
 
         // Set Click Listener
-        iv_media_thumb.setOnClickListener(this);
-        iv_media_thumb.setOnLongClickListener(this);
+//        iv_media_thumb.setOnClickListener(this);
+//        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(getContext())
                 .load(attachUrl)
+                .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());
@@ -121,5 +189,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
         tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
         tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+    }
+
+    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
+        this.giphySendListener = giphySendListener;
     }
 }

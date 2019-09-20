@@ -2,17 +2,16 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
 import android.net.Uri;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 
 /**
  * An Activity playing attachments such as stream_ic_audio and videos.
@@ -39,7 +38,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT);
             return;
         }
-        if (type.contains("stream_ic_audio"))
+        if (type.contains("audio"))
             iv_audio.setVisibility(View.VISIBLE);
         else
             iv_audio.setVisibility(View.GONE);
