@@ -50,7 +50,6 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean enableReaction;
-    private boolean showUsersReactionDlg;
     private Drawable reactionDlgBgDrawable;
     private int reactionDlgBgColor;
     private int reactionDlgEmojiSize;
@@ -109,7 +108,6 @@ public class MessageListViewStyle extends BaseStyle {
 
         // Reaction Dialog
         enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
-        showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_streamShowUsersReactionDlg, true);
         reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_streamrReactionDlgBgDrawable, -1));
         reactionDlgBgColor = a.getColor(R.styleable.MessageListView_streamReactionDlgbgColor, getColor(R.color.stream_reaction_dialog_background));
         reactionDlgEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionDlgEmojiSize, getDimension(R.dimen.stream_reaction_dialog_emoji_size));
@@ -269,10 +267,6 @@ public class MessageListViewStyle extends BaseStyle {
 
     public boolean isEnableReaction() {
         return enableReaction;
-    }
-
-    public boolean isShowUsersReactionDlg() {
-        return showUsersReactionDlg;
     }
 
     public Drawable getReactionDlgBgDrawable() {
