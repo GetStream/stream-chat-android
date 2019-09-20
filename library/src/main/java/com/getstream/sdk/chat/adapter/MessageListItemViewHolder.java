@@ -452,9 +452,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 .solidColorPressed(Color.LTGRAY)
                 .build());
         if (messageListItem.isMine())
-            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
+            iv_docket.setBackgroundResource(R.drawable.stream_tail_outgoing);
         else
-            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_outgoing);
+            iv_docket.setBackgroundResource(R.drawable.stream_tail_incoming);
     }
 
     private void configReplyView() {
