@@ -50,6 +50,7 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean enableReaction;
+
     // ReactionView
     private int reactionViewBgDrawable;
     private int reactionViewBgColor;
@@ -59,6 +60,7 @@ public class MessageListViewStyle extends BaseStyle {
     private int reactionInputBgColor;
     private int reactionInputEmojiSize;
     private int reactionInputEmojiMargin;
+
     // Thread
     private boolean enableThread;
 
@@ -112,6 +114,7 @@ public class MessageListViewStyle extends BaseStyle {
         attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
         // Reaction
         enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
+
         reactionViewBgDrawable = a.getResourceId(R.styleable.MessageListView_streamrReactionViewBgDrawable, -1);
         reactionViewBgColor = a.getColor(R.styleable.MessageListView_streamReactionViewBgColor, getColor(R.color.stream_reaction_dialog_background));
         reactionViewEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionViewEmojiSize, getDimension(R.dimen.stream_reaction_view_emoji_size));
@@ -120,6 +123,7 @@ public class MessageListViewStyle extends BaseStyle {
         reactionInputBgColor = a.getColor(R.styleable.MessageListView_streamReactionInputbgColor, getColor(R.color.stream_reaction_dialog_background));
         reactionInputEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionInputEmojiSize, getDimension(R.dimen.stream_reaction_dialog_emoji_size));
         reactionInputEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionInputEmojiMargin, getDimension(R.dimen.stream_reaction_dialog_emoji_margin));
+
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height));

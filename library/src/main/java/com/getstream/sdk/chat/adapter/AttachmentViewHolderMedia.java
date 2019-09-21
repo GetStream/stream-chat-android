@@ -150,10 +150,12 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 //        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
+
         Glide.with(getContext())
                 .load(attachUrl)
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
+
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());
         tv_media_des.setText(getAttachment().getText());
