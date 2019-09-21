@@ -33,9 +33,9 @@
     <dimen name="stream_message_deleted_text_font_size">13sp</dimen>
     <dimen name="stream_read_state_text_size">8sp</dimen>
     <dimen name="stream_reaction_view_emoji_size">12sp</dimen>
-    <dimen name="stream_reaction_view_emoji_margin">5sp</dimen>
-    <dimen name="stream_reaction_dialog_emoji_size">27sp</dimen>
-    <dimen name="stream_reaction_dialog_emoji_margin">5sp</dimen>
+    <dimen name="stream_reaction_view_emoji_margin">1sp</dimen>
+    <dimen name="stream_reaction_input_emoji_size">27sp</dimen>
+    <dimen name="stream_reaction_input_emoji_margin">5sp</dimen>
     <dimen name="stream_reaction_margin">8dp</dimen>
     <!--Attachment Item-->
     <dimen name="stream_attach_image_width">250dp</dimen>
