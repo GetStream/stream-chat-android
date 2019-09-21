@@ -450,7 +450,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
-        if (isDeletedOrFailedMessage()
+        if (!style.isEnableThread()
+                || isDeletedOrFailedMessage()
                 || isThread
                 || message.getReplyCount() == 0) {
             cl_reply.setVisibility(View.GONE);

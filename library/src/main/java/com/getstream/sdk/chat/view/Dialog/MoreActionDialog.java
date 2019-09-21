@@ -81,13 +81,8 @@ public class MoreActionDialog extends Dialog {
         LinearLayout ll_edit = findViewById(R.id.ll_edit);
         LinearLayout ll_delete = findViewById(R.id.ll_delete);
 
-        rl_wrap.setBackground(new DrawableBuilder()
-                .rectangle()
-                .solidColor(Color.BLACK)
-                .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
-                .build());
 
-        ll_thread.setVisibility(viewModel.isThread() ? View.GONE : View.VISIBLE);
+        ll_thread.setVisibility(threadableMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(copyableMessage() ? View.VISIBLE : View.GONE);
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
@@ -133,16 +128,25 @@ public class MoreActionDialog extends Dialog {
             });
         }
 
-
-        RecyclerView rv_reaction = findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
-        RecyclerView.LayoutManager mLayoutManager;
-        mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        rv_reaction.setLayoutManager(mLayoutManager);
-        ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
-                message,
-                style,
-                (View v) -> dismiss());
-        rv_reaction.setAdapter(reactionAdapter);
+        // set style
+        if (style.isEnableReaction()){
+            rl_wrap.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .solidColor(Color.BLACK)
+                    .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
+                    .build());
+            RecyclerView rv_reaction = findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
+            RecyclerView.LayoutManager mLayoutManager;
+            mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            rv_reaction.setLayoutManager(mLayoutManager);
+            ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
+                    message,
+                    style,
+                    (View v) -> dismiss());
+            rv_reaction.setAdapter(reactionAdapter);
+        }else{
+            rl_wrap.setVisibility(View.GONE);
+        }
 
         ll_thread.setOnClickListener(view -> {
             dismiss();
@@ -164,6 +168,10 @@ public class MoreActionDialog extends Dialog {
                 || TextUtils.isEmpty(message.getText()));
     }
 
+    private boolean threadableMessage() {
+        return style.isEnableThread()
+                && !viewModel.isThread();
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         dismiss();
