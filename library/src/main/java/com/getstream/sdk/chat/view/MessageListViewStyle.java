@@ -50,11 +50,15 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean enableReaction;
-    private boolean showUsersReactionDlg;
-    private Drawable reactionDlgBgDrawable;
-    private int reactionDlgBgColor;
-    private int reactionDlgEmojiSize;
-    private int reactionDlgEmojiMargin;
+    // ReactionView
+    private int reactionViewBgDrawable;
+    private int reactionViewBgColor;
+    private int reactionViewEmojiSize;
+    private int reactionViewEmojiMargin;
+    // ReactionInput
+    private int reactionInputBgColor;
+    private int reactionInputEmojiSize;
+    private int reactionInputEmojiMargin;
     // Thread
     private boolean enableThread;
 
@@ -106,14 +110,16 @@ public class MessageListViewStyle extends BaseStyle {
         attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text));
         attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_attach_file_size_text));
         attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
-
-        // Reaction Dialog
+        // Reaction
         enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
-        showUsersReactionDlg = a.getBoolean(R.styleable.MessageListView_streamShowUsersReactionDlg, true);
-        reactionDlgBgDrawable = getDrawable(a.getResourceId(R.styleable.MessageListView_streamrReactionDlgBgDrawable, -1));
-        reactionDlgBgColor = a.getColor(R.styleable.MessageListView_streamReactionDlgbgColor, getColor(R.color.stream_reaction_dialog_background));
-        reactionDlgEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionDlgEmojiSize, getDimension(R.dimen.stream_reaction_dialog_emoji_size));
-        reactionDlgEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionDlgEmojiMargin, getDimension(R.dimen.stream_reaction_dialog_emoji_margin));
+        reactionViewBgDrawable = a.getResourceId(R.styleable.MessageListView_streamrReactionViewBgDrawable, -1);
+        reactionViewBgColor = a.getColor(R.styleable.MessageListView_streamReactionViewBgColor, getColor(R.color.stream_reaction_dialog_background));
+        reactionViewEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionViewEmojiSize, getDimension(R.dimen.stream_reaction_dialog_emoji_size));
+        reactionViewEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionViewEmojiMargin, getDimension(R.dimen.stream_reaction_dialog_emoji_margin));
+        // Reaction Dialog
+        reactionInputBgColor = a.getColor(R.styleable.MessageListView_streamReactionInputbgColor, getColor(R.color.stream_reaction_dialog_background));
+        reactionInputEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionInputEmojiSize, getDimension(R.dimen.stream_reaction_dialog_emoji_size));
+        reactionInputEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionInputEmojiMargin, getDimension(R.dimen.stream_reaction_dialog_emoji_margin));
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height));
@@ -271,24 +277,32 @@ public class MessageListViewStyle extends BaseStyle {
         return enableReaction;
     }
 
-    public boolean isShowUsersReactionDlg() {
-        return showUsersReactionDlg;
+    public int getReactionViewBgDrawable() {
+        return reactionViewBgDrawable;
     }
 
-    public Drawable getReactionDlgBgDrawable() {
-        return reactionDlgBgDrawable;
+    public int getReactionViewBgColor() {
+        return reactionViewBgColor;
     }
 
-    public int getReactionDlgBgColor() {
-        return reactionDlgBgColor;
+    public int getReactionViewEmojiSize() {
+        return reactionViewEmojiSize;
     }
 
-    public int getReactionDlgEmojiSize() {
-        return reactionDlgEmojiSize;
+    public int getReactionViewEmojiMargin() {
+        return reactionViewEmojiMargin;
     }
 
-    public int getReactionDlgEmojiMargin() {
-        return reactionDlgEmojiMargin;
+    public int getReactionInputBgColor() {
+        return reactionInputBgColor;
+    }
+
+    public int getReactionInputEmojiSize() {
+        return reactionInputEmojiSize;
+    }
+
+    public int getReactionInputEmojiMargin() {
+        return reactionInputEmojiMargin;
     }
 
     // Thread

@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -437,23 +438,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_reaction_space.setVisibility(View.GONE);
             return;
         }
-
+        configStyleReactionView();
         rv_reaction.setVisibility(View.VISIBLE);
         iv_tail.setVisibility(View.VISIBLE);
         tv_reaction_space.setVisibility(View.VISIBLE);
         rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
-        if (messageListItem.isMine())
-            iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_outgoing));
-        else
-            iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_incoming));
-        // set style
-        rv_reaction.setBackground(new DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .solidColor(style.getReactionDlgBgColor())
-                .solidColorPressed(Color.LTGRAY)
-                .build());
-        DrawableCompat.setTint(iv_tail.getDrawable(), style.getReactionDlgBgColor());
     }
 
     private void configReplyView() {
@@ -679,7 +668,27 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
+    private void configStyleReactionView(){
+        if (style.getReactionViewBgDrawable() == -1){
+            rv_reaction.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .solidColor(style.getReactionViewBgColor())
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
 
+            if (messageListItem.isMine())
+                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_outgoing));
+            else
+                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_incoming));
+
+            DrawableCompat.setTint(iv_tail.getDrawable(), style.getReactionViewBgColor());
+        }else{
+            int drawable = style.getReactionViewBgDrawable();
+            rv_reaction.setBackground(context.getDrawable(drawable));
+            iv_tail.setVisibility(View.GONE);
+        }
+    }
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;

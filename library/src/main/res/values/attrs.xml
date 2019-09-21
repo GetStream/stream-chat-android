@@ -139,13 +139,17 @@
         <attr name="streamReadStateTextSize"/>
         <attr name="streamReadStateTextColor"/>
         <attr name="streamReadStateTextStyle"/>
-        <!--Reaction Dialog-->
+        <!--Reaction-->
         <attr name="streamEnableReaction" format="boolean" />
-        <attr name="streamShowUsersReactionDlg" format="boolean" />
-        <attr name="streamrReactionDlgBgDrawable" format="reference" />
-        <attr name="streamReactionDlgbgColor" format="color" />
-        <attr name="streamReactionDlgEmojiSize" format="dimension|reference" />
-        <attr name="streamReactionDlgEmojiMargin" format="dimension|reference" />
+        <!--ReactionView-->
+        <attr name="streamrReactionViewBgDrawable" format="reference" />
+        <attr name="streamReactionViewBgColor" format="color" />
+        <attr name="streamReactionViewEmojiSize" format="dimension|reference" />
+        <attr name="streamReactionViewEmojiMargin" format="dimension|reference" />
+        <!--Reaction Dialog-->
+        <attr name="streamReactionInputbgColor" format="color" />
+        <attr name="streamReactionInputEmojiSize" format="dimension|reference" />
+        <attr name="streamReactionInputEmojiMargin" format="dimension|reference" />
         <!--Message-->
         <attr name="streamMessageTextSizeMine" format="dimension|reference" />
         <attr name="streamMessageTextSizeTheirs" format="dimension|reference" />
