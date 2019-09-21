@@ -442,7 +442,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.setVisibility(View.VISIBLE);
         iv_tail.setVisibility(View.VISIBLE);
         tv_reaction_space.setVisibility(View.VISIBLE);
-        rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
+        rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes(), style));
     }
 
     private void configReplyView() {
@@ -534,6 +534,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
         tv_reaction_space.setLayoutParams(params);
+        rv_reaction.post(()->{
+            params.width = rv_reaction.getHeight()/3;
+            tv_reaction_space.setLayoutParams(params);
+        });
     }
 
     private void configParamsReactionTail() {
@@ -548,7 +552,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.startToStart = tv_reaction_space.getId();
         else
             params.endToEnd = tv_reaction_space.getId();
-        iv_tail.setLayoutParams(params);
+        rv_reaction.post(()->{
+           params.height = rv_reaction.getHeight();
+           params.width = rv_reaction.getHeight();
+           params.topMargin = rv_reaction.getHeight()/3;
+           iv_tail.setLayoutParams(params);
+        });
     }
 
     private void configParamsReactionRecycleView() {

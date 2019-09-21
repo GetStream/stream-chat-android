@@ -31,9 +31,8 @@
 
     <ImageView
         android:id="@+id/iv_tail"
-        android:layout_width="23dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/rv_reaction"
         app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
@@ -41,10 +40,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_reaction"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
+        android:layout_height="wrap_content"
         android:paddingStart="@dimen/stream_reaction_margin"
         android:paddingEnd="@dimen/stream_reaction_margin"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"

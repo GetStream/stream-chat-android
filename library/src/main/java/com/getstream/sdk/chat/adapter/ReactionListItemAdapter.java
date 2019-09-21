@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,11 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
     private List<String> reactions = new ArrayList<>();
     private int reactionCount;
     private Map<String, String> reactionTypes;
-
-    public ReactionListItemAdapter(Context context, Map<String, Integer> reactionCountMap, Map<String, String> reactionTypes) {
+    private MessageListViewStyle style;
+    public ReactionListItemAdapter(Context context, Map<String, Integer> reactionCountMap, Map<String, String> reactionTypes, MessageListViewStyle style) {
         this.context = context;
         this.reactionTypes = reactionTypes;
+        this.style = style;
         Set keys = reactionCountMap.keySet();
         reactionCount = 0;
         for (Object key : keys) {
@@ -59,9 +62,10 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            emoji = ReactionEmoji.valueOf(reaction).get();
         }
         holder.tv_emoji.setText(emoji);
+        // set Style
+        holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionViewEmojiSize());
     }
 
     @Override
