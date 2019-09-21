@@ -420,6 +420,8 @@ public class Channel {
                                     channel.config = response.body().getChannel().getConfig();
                                 if (channel.channelState == null)
                                     channel.channelState = response.body();
+                                if (channel.client == null)
+                                    channel.client = client;
 
                                 client.addChannelConfig(type, channel.config);
                                 client.addToActiveChannels(channel);
