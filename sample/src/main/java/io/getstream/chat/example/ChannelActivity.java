@@ -37,7 +37,8 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.UserClickListener,
         MessageInputView.OpenCameraViewListener {
 
-    final String TAG = ChannelActivity.class.getSimpleName();
+    static final String TAG = ChannelActivity.class.getSimpleName();
+    static final String STATE_TEXT = "messageText";
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
@@ -56,6 +57,10 @@ public class ChannelActivity extends AppCompatActivity
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
+        if (savedInstanceState != null) {
+            String messageText = savedInstanceState.getString(STATE_TEXT);
+            binding.messageInput.setMessageText(messageText);
+        }
 
         Channel channel = client.getChannelByCid(channelType + ":" + channelID);
         if (channel == null)
@@ -81,6 +86,11 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageInput.setViewModel(viewModel, this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TEXT, binding.messageInput.getMessageText());
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

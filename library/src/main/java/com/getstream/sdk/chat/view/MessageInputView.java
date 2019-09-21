@@ -346,6 +346,9 @@ public class MessageInputView extends RelativeLayout
         return binding.etMessage.requestFocus();
     }
 
+    public void setMessageText(String t) {
+        binding.etMessage.setText(t);
+    }
 
     public String getMessageText() {
         return binding.etMessage.getText().toString();
