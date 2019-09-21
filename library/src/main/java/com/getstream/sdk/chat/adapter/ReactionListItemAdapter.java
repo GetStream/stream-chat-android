@@ -7,9 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -66,6 +69,12 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
         holder.tv_emoji.setText(emoji);
         // set Style
         holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionViewEmojiSize());
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.tv_emoji.getLayoutParams();
+        params.leftMargin = style.getReactionViewEmojiMargin();
+        params.rightMargin = style.getReactionViewEmojiMargin();
+        params.topMargin = style.getReactionViewEmojiMargin();
+        params.bottomMargin = style.getReactionViewEmojiMargin();
+        holder.tv_emoji.setLayoutParams(params);
     }
 
     @Override

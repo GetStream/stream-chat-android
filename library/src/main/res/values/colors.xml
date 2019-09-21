@@ -30,7 +30,7 @@
     <color name="stream_message_stroke">#14000000</color>
     <color name="stream_message_failed">#1AD0021B</color>
     <color name="stream_user_intials_background">#CCCCA4D6</color>
-    <color name="stream_reaction_dialog_background">#292929</color>
+    <color name="stream_reaction_input_background">#292929</color>
 
     <color name="stream_attach_title_text">#026DFE</color>
     <color name="stream_attach_description_text">#989898</color>
