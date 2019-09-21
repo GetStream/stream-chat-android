@@ -21,11 +21,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_gap_header" />
 
+    <TextView
+        android:id="@+id/tv_reaction_space"
+        android:layout_width="8dp"
+        android:layout_height="5dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@+id/tv_text"
+        app:layout_constraintTop_toTopOf="@+id/tv_text" />
+
+    <ImageView
+        android:id="@+id/iv_tail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/rv_reaction"
+        app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_reaction"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:background="@drawable/stream_round_reaction"
+        android:layout_height="wrap_content"
         android:paddingStart="@dimen/stream_reaction_margin"
         android:paddingEnd="@dimen/stream_reaction_margin"
         android:visibility="gone"
@@ -141,31 +156,6 @@
             app:layout_constraintStart_toEndOf="@+id/iv_reply"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <TextView
-        android:id="@+id/tv_reactiontail_space"
-        android:layout_width="1px"
-        android:layout_height="3dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/tv_text"
-        app:layout_constraintTop_toTopOf="@+id/tv_text" />
-
-    <TextView
-        android:id="@+id/tv_reaction_space"
-        android:layout_width="8dp"
-        android:layout_height="5dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/tv_text"
-        app:layout_constraintTop_toTopOf="@+id/tv_text" />
-
-    <ImageView
-        android:id="@+id/iv_docket"
-        android:layout_width="18dp"
-        android:layout_height="8dp"
-        android:layout_marginTop="23dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/rv_reaction"
-        app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
 
     <TextView
         android:id="@+id/tv_username"

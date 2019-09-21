@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -17,6 +19,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +45,7 @@ import java.util.List;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
+import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
@@ -53,8 +57,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private LinearLayout ll_send_failed;
     private TextView tv_failed_text, tv_failed_des;
     private AvatarGroupView<MessageListViewStyle> avatar;
-    private ImageView iv_docket;
-    private TextView tv_reactiontail_space, tv_reaction_space;
+    private ImageView iv_tail;
+    private TextView tv_reaction_space;
     private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
     private TextView tv_username, tv_messagedate;
     // Delivered Indicator
@@ -94,8 +98,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         super(resId, viewGroup);
 
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
-        iv_docket = itemView.findViewById(R.id.iv_docket);
-        tv_reactiontail_space = itemView.findViewById(R.id.tv_reactiontail_space);
+        iv_tail = itemView.findViewById(R.id.iv_tail);
         tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
 
         tv_text = itemView.findViewById(R.id.tv_text);
@@ -175,7 +178,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageText();
         configParamsUserAvatar();
 
-        configParamsReactionTailSpace();
         configParamsReactionSpace();
         configParamsReactionTail();
         configParamsReactionRecycleView();
@@ -432,21 +434,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getReactionCounts() == null
                 || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
-            iv_docket.setVisibility(View.GONE);
-            tv_reactiontail_space.setVisibility(View.GONE);
+            iv_tail.setVisibility(View.GONE);
             tv_reaction_space.setVisibility(View.GONE);
             return;
         }
-
+        configStyleReactionView();
         rv_reaction.setVisibility(View.VISIBLE);
-        iv_docket.setVisibility(View.VISIBLE);
-        tv_reactiontail_space.setVisibility(View.VISIBLE);
+        iv_tail.setVisibility(View.VISIBLE);
         tv_reaction_space.setVisibility(View.VISIBLE);
-        rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes()));
-        if (messageListItem.isMine())
-            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_incoming);
-        else
-            iv_docket.setBackgroundResource(R.drawable.stream_ic_docket_outgoing);
+        rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes(), style));
     }
 
     private void configReplyView() {
@@ -519,11 +515,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_messagedate.setLayoutParams(params);
     }
 
-    private void configParamsReactionTailSpace() {
-        if (iv_docket.getVisibility() != View.VISIBLE) return;
+    private void configParamsReactionSpace() {
+        if (iv_tail.getVisibility() != View.VISIBLE) return;
         set.clone((ConstraintLayout) itemView);
-        set.clear(R.id.tv_reactiontail_space, ConstraintSet.START);
-        set.clear(R.id.tv_reactiontail_space, ConstraintSet.END);
+        set.clear(R.id.tv_reaction_space, ConstraintSet.START);
+        set.clear(R.id.tv_reaction_space, ConstraintSet.END);
         set.applyTo((ConstraintLayout) itemView);
 
         @IdRes int layoutId;
@@ -533,48 +529,42 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             layoutId = alv_attachments.getId();
         }
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reactiontail_space.getLayoutParams();
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reaction_space.getLayoutParams();
         if (messageListItem.isMine())
             params.endToStart = layoutId;
         else
             params.startToEnd = layoutId;
-        tv_reactiontail_space.setLayoutParams(params);
-    }
-
-    private void configParamsReactionSpace() {
-        if (iv_docket.getVisibility() != View.VISIBLE) return;
-        set.clone((ConstraintLayout) itemView);
-        set.clear(R.id.tv_reaction_space, ConstraintSet.START);
-        set.clear(R.id.tv_reaction_space, ConstraintSet.END);
-        set.applyTo((ConstraintLayout) itemView);
-
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reaction_space.getLayoutParams();
-        if (messageListItem.isMine())
-            params.endToStart = R.id.tv_reactiontail_space;
-        else
-            params.startToEnd = R.id.tv_reactiontail_space;
         tv_reaction_space.setLayoutParams(params);
+        rv_reaction.post(()->{
+            params.width = rv_reaction.getHeight()/3;
+            tv_reaction_space.setLayoutParams(params);
+        });
     }
 
     private void configParamsReactionTail() {
-        if (iv_docket.getVisibility() != View.VISIBLE) return;
+        if (iv_tail.getVisibility() != View.VISIBLE) return;
         set.clone((ConstraintLayout) itemView);
-        set.clear(R.id.iv_docket, ConstraintSet.START);
-        set.clear(R.id.iv_docket, ConstraintSet.END);
+        set.clear(R.id.iv_tail, ConstraintSet.START);
+        set.clear(R.id.iv_tail, ConstraintSet.END);
         set.applyTo((ConstraintLayout) itemView);
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_docket.getLayoutParams();
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_tail.getLayoutParams();
         if (messageListItem.isMine())
-            params.startToStart = tv_reactiontail_space.getId();
+            params.startToStart = tv_reaction_space.getId();
         else
-            params.endToEnd = tv_reactiontail_space.getId();
-        iv_docket.setLayoutParams(params);
+            params.endToEnd = tv_reaction_space.getId();
+        rv_reaction.post(()->{
+           params.height = rv_reaction.getHeight();
+           params.width = rv_reaction.getHeight();
+           params.topMargin = rv_reaction.getHeight()/3;
+           iv_tail.setLayoutParams(params);
+        });
     }
 
     private void configParamsReactionRecycleView() {
         if (rv_reaction.getVisibility() != View.VISIBLE) return;
         rv_reaction.setVisibility(View.INVISIBLE);
-        iv_docket.setVisibility(View.INVISIBLE);
+        iv_tail.setVisibility(View.INVISIBLE);
         rv_reaction.post(() -> {
             if (rv_reaction.getVisibility() == View.GONE) return;
             set.clone((ConstraintLayout) itemView);
@@ -605,7 +595,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             rv_reaction.setLayoutParams(params);
             rv_reaction.setVisibility(View.VISIBLE);
-            iv_docket.setVisibility(View.VISIBLE);
+            iv_tail.setVisibility(View.VISIBLE);
             configParamsReadIndicator();
         });
     }
@@ -689,7 +679,27 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
+    private void configStyleReactionView(){
+        if (style.getReactionViewBgDrawable() == -1){
+            rv_reaction.setBackground(new DrawableBuilder()
+                    .rectangle()
+                    .rounded()
+                    .solidColor(style.getReactionViewBgColor())
+                    .solidColorPressed(Color.LTGRAY)
+                    .build());
 
+            if (messageListItem.isMine())
+                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_outgoing));
+            else
+                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_incoming));
+
+            DrawableCompat.setTint(iv_tail.getDrawable(), style.getReactionViewBgColor());
+        }else{
+            int drawable = style.getReactionViewBgDrawable();
+            rv_reaction.setBackground(context.getDrawable(drawable));
+            iv_tail.setVisibility(View.GONE);
+        }
+    }
 
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;

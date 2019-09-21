@@ -68,7 +68,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     }
 
     private void applyStyle(final MyViewHolder holder) {
-        holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionDlgEmojiSize());
+        holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionInputEmojiSize());
     }
 
     @Override
