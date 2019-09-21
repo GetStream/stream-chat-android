@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -160,6 +159,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
         init();
+        configExtraData();
     }
 
     private void init() {
@@ -186,6 +186,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadIndicator();
     }
 
+    private void configExtraData(){
+        if (message.getExtraData() == null
+                || message.getExtraData().isEmpty())
+            return;
+        // progress ExtraData
+
+    }
     // endregion
     public void setStyle(MessageListViewStyle style) {
         this.style = style;

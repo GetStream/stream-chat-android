@@ -1,10 +1,14 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.room.TypeConverters;
+
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
 /**
  * An attachment
@@ -56,6 +60,10 @@ public class Attachment {
     @SerializedName("file_size")
     @Expose
     private int file_size;
+
+    // Additional Params
+    @TypeConverters(ExtraDataConverter.class)
+    private HashMap<String, Object> extraData;
 
     public String getTitle() {
         return title;
@@ -167,6 +175,14 @@ public class Attachment {
 
     public void setMime_type(String mime_type) {
         this.mime_type = mime_type;
+    }
+
+    public HashMap<String, Object> getExtraData() {
+        return extraData;
+    }
+
+    public void setExtraData(HashMap<String, Object> extraData) {
+        this.extraData = extraData;
     }
 
     public int getIcon() {

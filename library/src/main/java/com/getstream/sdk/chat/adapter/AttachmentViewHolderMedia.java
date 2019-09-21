@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -63,6 +64,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
+        configExtraData();
         configAction();
     }
 
@@ -145,9 +147,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
         configImageThumbBackground(getAttachment());
 
-        // Set Click Listener
-//        iv_media_thumb.setOnClickListener(this);
-//        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
 
@@ -159,7 +158,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         if (!getMessage().getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(getAttachment().getTitle());
         tv_media_des.setText(getAttachment().getText());
-
 
         if (attachment.getType().equals(ModelType.attach_giphy))
             iv_command_logo.setVisibility(View.VISIBLE);
@@ -180,6 +178,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
+
+    }
+
+    private void configExtraData(){
+        if (getAttachment().getExtraData() == null
+                || getAttachment().getExtraData().isEmpty())
+            return;
+        // progress ExtraData
 
     }
 
