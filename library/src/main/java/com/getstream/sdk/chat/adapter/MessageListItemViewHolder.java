@@ -606,6 +606,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             rv_reaction.setLayoutParams(params);
             rv_reaction.setVisibility(View.VISIBLE);
             iv_docket.setVisibility(View.VISIBLE);
+            configParamsReadIndicator();
         });
     }
 
