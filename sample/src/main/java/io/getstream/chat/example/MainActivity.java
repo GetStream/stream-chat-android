@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
-        //  client.enableOfflineStorage();
+        //client.enableOfflineStorage();
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(ChannelState response) {
                 Channel channel = response.getChannel();
+                channel.setClient(client);
                 Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
