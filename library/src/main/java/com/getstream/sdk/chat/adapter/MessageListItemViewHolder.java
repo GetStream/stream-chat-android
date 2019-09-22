@@ -431,6 +431,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configReactionView() {
         if (isDeletedOrFailedMessage()
                 || !style.isEnableReaction()
+                || !channelState.getChannel().getConfig().isReactions()
                 || message.getReactionCounts() == null
                 || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
@@ -447,6 +448,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configReplyView() {
         if (!style.isEnableThread()
+                || !channelState.getChannel().getConfig().isReplies()
                 || isDeletedOrFailedMessage()
                 || isThread
                 || message.getReplyCount() == 0) {

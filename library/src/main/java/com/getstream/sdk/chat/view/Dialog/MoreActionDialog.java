@@ -129,7 +129,7 @@ public class MoreActionDialog extends Dialog {
         }
 
         // set style
-        if (style.isEnableReaction()){
+        if (reactionableMessage()){
             rl_wrap.setBackground(new DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
@@ -170,8 +170,15 @@ public class MoreActionDialog extends Dialog {
 
     private boolean threadableMessage() {
         return style.isEnableThread()
+                && viewModel.getChannel().getConfig().isReplies()
                 && !viewModel.isThread();
     }
+
+    private boolean reactionableMessage() {
+        return style.isEnableReaction()
+                && viewModel.getChannel().getConfig().isReactions();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         dismiss();
