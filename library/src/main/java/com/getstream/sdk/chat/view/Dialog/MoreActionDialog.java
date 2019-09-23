@@ -170,13 +170,13 @@ public class MoreActionDialog extends Dialog {
 
     private boolean canThreadOnMessage() {
         return style.isThreadEnabled()
-                && viewModel.getChannel().getConfig().isReplies()
+                && viewModel.getChannel().getConfig().isRepliesEnabled()
                 && !viewModel.isThread();
     }
 
     private boolean canReactOnMessage() {
         return style.isReactionEnabled()
-                && viewModel.getChannel().getConfig().isReactions();
+                && viewModel.getChannel().getConfig().isReactionsEnabled();
     }
 
     @Override
