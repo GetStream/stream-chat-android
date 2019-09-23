@@ -140,7 +140,7 @@
         <attr name="streamReadStateTextColor"/>
         <attr name="streamReadStateTextStyle"/>
         <!--Reaction-->
-        <attr name="streamEnableReaction" format="boolean" />
+        <attr name="streamReactionEnabled" format="boolean" />
         <!--ReactionView-->
         <attr name="streamrReactionViewBgDrawable" format="reference" />
         <attr name="streamReactionViewBgColor" format="color" />
@@ -209,7 +209,7 @@
             <flag name="italic" value="2" />
         </attr>
         <!--Thread-->
-        <attr name="streamEnableThread" format="boolean" />
+        <attr name="streamThreadEnabled" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
