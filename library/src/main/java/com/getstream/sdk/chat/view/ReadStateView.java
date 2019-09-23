@@ -58,10 +58,10 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         imageView.setPlaceholder(user.getInitials(),
                 style.getAvatarBackGroundColor(),
-                style.getAvatarInitialTextColor());
+                style.getReadStateTextColor());
         imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
                 (style.getReadStateTextSize()),
-                style.getAvatarInitialTextStyle());
+                style.getReadStateTextStyle());
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
