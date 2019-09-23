@@ -13,16 +13,22 @@ The message list renders a list of messages. You can use it like this:
     app:layout_constraintEnd_toStartOf="@+id/message_input"
     app:layout_constraintStart_toEndOf="@+id/channelHeader"
     app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-    stream:reactionDlgEmojiSize="50dp"
-    stream:reactionDlgbgColor="#001DC4"
-    stream:showUsersReactionDlg="true"
-    stream:userAvatarTextColor="#FFF"
-    stream:userAvatarTextStyle="bold"
-    stream:userReadStateAvatarHeight="15dp"
-    stream:userReadStateAvatarWidth="15dp"
-    stream:userReadStateTextColor="#FFF"
-    stream:userReadStateTextStyle="bold"
-    stream:userRreadStateTextSize="9sp" />
+    app:streamAvatarTextColor="#000000"
+    app:streamAvatarTextStyle="bold|italic"
+    app:streamMessageBackgroundColorMine="#8BC34A"
+    app:streamMessageTextColorMine="#005CFF"
+    app:streamMessageTextStyleMine="italic"
+    app:streamReactionEnabled="true"
+    app:streamReactionInputEmojiMargin="20sp"
+    app:streamReactionInputEmojiSize="50dp"
+    app:streamReactionInputbgColor="#001DC4"
+    app:streamReactionViewBgColor="#3F51B5"
+    app:streamReactionViewEmojiSize="15sp"
+    app:streamReadStateAvatarHeight="15dp"
+    app:streamReadStateAvatarWidth="15dp"
+    app:streamReadStateTextColor="#FFFFFF"
+    app:streamReadStateTextSize="9sp"
+    app:streamReadStateTextStyle="bold" />
 ```
 
 And here's a full example of an activity that renders a message list, channel header and message input
@@ -33,8 +39,9 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -42,20 +49,16 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
+import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -63,11 +66,15 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
  * Show the messages for a channel
  */
 public class ChannelActivity extends AppCompatActivity
-        implements MessageListView.MessageClickListener,
+        implements MessageListView.MessageLongClickListener,
         MessageListView.AttachmentClickListener,
+        MessageListView.HeaderOptionsClickListener,
+        MessageListView.HeaderAvatarGroupClickListener,
+        MessageListView.UserClickListener,
         MessageInputView.OpenCameraViewListener {
 
-    final String TAG = ChannelActivity.class.getSimpleName();
+    static final String TAG = ChannelActivity.class.getSimpleName();
+    static final String STATE_TEXT = "messageText";
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
@@ -82,12 +89,14 @@ public class ChannelActivity extends AppCompatActivity
         String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
-
         // we're using data binding in this example
-        binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_channel);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
+        if (savedInstanceState != null) {
+            String messageText = savedInstanceState.getString(STATE_TEXT);
+            binding.messageInput.setMessageText(messageText);
+        }
 
         Channel channel = client.getChannelByCid(channelType + ":" + channelID);
         if (channel == null)
@@ -96,31 +105,37 @@ public class ChannelActivity extends AppCompatActivity
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);
 
-        // connect the view model
-        binding.channelHeader.setViewModel(viewModel, this);
-        binding.channelHeader.setOnBackClickListener(v -> finish());
-
-        MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
-        binding.messageList.setViewHolderFactory(factory);
-//        binding.messageList.setMessageClickListener(this);
+        // set listeners
+        binding.messageList.setMessageLongClickListener(this);
+        binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
-
-        binding.messageInput.setViewModel(viewModel, this);
-        binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setOpenCameraViewListener(this);
-        // set the viewModel data for the activity_channel.xml layout
+
+        binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
+
+        // connect the view model
         binding.setViewModel(viewModel);
-        // Permission Check
-        PermissionChecker.permissionCheck(this, null);
+        binding.channelHeader.setViewModel(viewModel, this);
+        binding.channelHeader.setHeaderOptionsClickListener(this);
+        binding.channelHeader.setHeaderAvatarGroupClickListener(this);
+        binding.messageList.setViewModel(viewModel, this);
+        binding.messageInput.setViewModel(viewModel, this);
     }
 
     @Override
-    public void onBackPressed() {
-        viewModel.removeEventHandler();
-        super.onBackPressed();
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TEXT, binding.messageInput.getMessageText());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
+    }
+
+    @Override
+
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
@@ -140,43 +155,43 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onMessageClick(Message message, int position) {
-        Log.i(TAG, "message was clicked");
-        showReactionDialog(message);
+    public void onMessageLongClick(Message message) {
+        new MoreActionDialog(this)
+                .setChannelViewModel(viewModel)
+                .setMessage(message)
+                .setStyle(binding.messageList.getStyle())
+                .show();
     }
 
     @Override
     public void onAttachmentClick(Message message, Attachment attachment) {
-        Log.i(TAG, "attachment was clicked");
-        // Image
-
-        if (attachment.getType().equals(ModelType.attach_image)) {
-            List<String> imageUrls = new ArrayList<>();
-            for (Attachment a : message.getAttachments()) {
-                imageUrls.add(a.getImageURL());
-            }
-
-            int position = message.getAttachments().indexOf(attachment);
-
-            new ImageViewer.Builder<>(this, imageUrls)
-                    .setStartPosition(position)
-                    .show();
-        } else {
-            // Giphy, Video, Link, Product,...
-            Intent mediaIntent = new Intent(this, AttachmentActivity.class);
-            this.startActivity(mediaIntent);
-        }
+        binding.messageList.showAttachment(message, attachment);
 
     }
 
-    public void showReactionDialog(Message message) {
+    @Override
+    public void onHeaderOptionsClick(Channel channel) {
+        new AlertDialog.Builder(this)
+                .setTitle("Options for channel " + channel.getName())
+                .setMessage("You pressed on the options, well done")
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.stream_ic_settings)
+                .show();
+    }
 
+    @Override
+    public void onHeaderAvatarGroupClick(Channel channel) {
+        new AlertDialog.Builder(this)
+                .setTitle("Avatar group click for channel " + channel.getName())
+                .setMessage("You pressed on the avatar group, well done")
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(R.drawable.stream_ic_settings)
+                .show();
+    }
+
+    @Override
+    public void onUserClick(User user) {
+        // open your user profile
     }
 }
 ```
@@ -233,34 +248,31 @@ This allows you to swap the layout file that's used for the typing indicator, th
 
 ```java
 public class MessageViewHolderFactory {
-    private static int NOT_FOUND = 0;
-    private static int DATE_SEPARATOR = 1;
-    private static int MESSAGE = 2;
-    private static int TYPING = 3;
+    private static String TAG = MessageViewHolderFactory.class.getName();
+
 
     private static int GENERIC_ATTACHMENT = 1;
     private static int IMAGE_ATTACHMENT = 2;
     private static int VIDEO_ATTACHMENT = 3;
     private static int FILE_ATTACHMENT = 4;
 
-
-    public enum Position {
-        TOP, MIDDLE, BOTTOM
-    }
-
-    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+    public MessageListItemType getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
-        MessageListItemAdapter.EntityType messageListItemType = messageListItem.getType();
-        if (messageListItemType == MessageListItemAdapter.EntityType.DATE_SEPARATOR) {
-            return DATE_SEPARATOR;
-        } else if (messageListItemType == MessageListItemAdapter.EntityType.MESSAGE) {
-            return MESSAGE;
-        } else if (messageListItemType == MessageListItemAdapter.EntityType.TYPING) {
-            return TYPING;
+        MessageListItemType messageListItemType = messageListItem.getType();
+        if (messageListItemType == MessageListItemType.DATE_SEPARATOR) {
+            return MessageListItemType.DATE_SEPARATOR;
+        } else if (messageListItemType == MessageListItemType.MESSAGE) {
+            return MessageListItemType.MESSAGE;
+        } else if (messageListItemType == MessageListItemType.TYPING) {
+            return MessageListItemType.TYPING;
+        } else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
+            return MessageListItemType.THREAD_SEPARATOR;
+        }else if (messageListItemType == MessageListItemType.NO_CONNECTION) {
+            return MessageListItemType.NO_CONNECTION;
         }
-        return NOT_FOUND;
+        return MessageListItemType.NOT_FOUND;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
@@ -273,7 +285,8 @@ public class MessageViewHolderFactory {
             return GENERIC_ATTACHMENT;
         } else if (t.equals(ModelType.attach_video)) {
             return VIDEO_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_image)) {
+        } else if (t.equals(ModelType.attach_image) ||
+                t.equals(ModelType.attach_giphy)) {
             return IMAGE_ATTACHMENT;
         } else if (t.equals(ModelType.attach_file)) {
             return FILE_ATTACHMENT;
@@ -283,19 +296,28 @@ public class MessageViewHolderFactory {
 
     }
 
-    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent,int viewType) {
-        if (viewType == DATE_SEPARATOR) {
-            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.list_item_date_separator, parent);
+    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, MessageListItemType viewType) {
+        if (viewType == MessageListItemType.DATE_SEPARATOR) {
+            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        } else if (viewType == MESSAGE) {
-            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.list_item_message, parent);
+        } else if (viewType == MessageListItemType.MESSAGE) {
+            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
+            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
 
-        } else if (viewType == TYPING) {
-            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.list_item_type_indicator, parent);
+        } else if (viewType == MessageListItemType.TYPING) {
+            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        } else if (viewType == MessageListItemType.THREAD_SEPARATOR) {
+            ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
+            holder.setStyle(adapter.getStyle());
+            return holder;
+        }else if (viewType == MessageListItemType.NO_CONNECTION) {
+            NoConnectionViewHolder holder = new NoConnectionViewHolder(R.layout.stream_item_no_connection, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
@@ -305,19 +327,23 @@ public class MessageViewHolderFactory {
 
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
-            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.list_item_attachment_video, parent);
+            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
             holder.setStyle(adapter.getStyle());
+            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         } else if (viewType == FILE_ATTACHMENT) {
-            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.list_item_attachment_file, parent);
+            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {
-            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.list_item_attachment, parent);
+            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.stream_item_attachment, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         }
+    }
 
+    public enum Position {
+        TOP, MIDDLE, BOTTOM
     }
 }
 ```
