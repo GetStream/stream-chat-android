@@ -467,7 +467,8 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
-                            channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
+                            if (channelState.getLastMessage() != null)
+                                channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
