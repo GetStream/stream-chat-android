@@ -200,57 +200,57 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 
 - **AvatarView**
 
-| Properties                         | Type                   | Default |
-| ---------------------------------- | ---------------------- | ------- |
-| `app:streamAvatarWidth`            | dimension              | 32dp    |
-| `app:streamAvatarHeight`           | dimension              | 32dp    |
-| `app:streamAvatarBorderWidth`      | dimension              | 3dp     |
-| `app:streamAvatarBorderColor`      | color                  | WHITE   |
-| `app:streamAvatarBackGroundColor`  | color                  | #989898 |
-| `app:streamAvatarTextSize`         | dimension              | 14sp    |
-| `app:streamAvatarTextColor`        | color                  | WHITE   |
-| `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamAvatarWidth`                          | dimension            | 32dp       |
+| `app:streamAvatarHeight`                         | dimension            | 32dp       |
+| `app:streamAvatarBorderWidth`                    | dimension            | 3dp        |
+| `app:streamAvatarBorderColor`                    | color                | WHITE      |
+| `app:streamAvatarBackGroundColor`                | color                | #989898    |
+| `app:streamAvatarTextSize`                       | dimension            | 14sp       |
+| `app:streamAvatarTextColor`                      | color                | WHITE      |
+| `app:streamAvatarTextStyle`                      | normal, bold, italic | bold       |
 
 - **Header Title**
 
-| Properties                              | Type                 | Default  |
-| --------------------------------------- | -------------------- | -------- |
-| `app:streamChannelHeaderTitleTextSize`  | dimension            | 16sp     |
-| `app:streamChannelHeaderTitleTextColor` | color                | BLACK    |
-| `app:streamChannelHeaderTitleTextStyle` | normal, bold, italic | bold     |
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamChannelHeaderTitleTextSize`           | dimension            | 16sp       |
+| `app:streamChannelHeaderTitleTextColor`          | color                | BLACK      |
+| `app:streamChannelHeaderTitleTextStyle`          | normal, bold, italic | bold       |
 		
 - **Last Active**
 
-| Properties                                   | Type                 | Default |
-| -------------------------------------------- | -------------------- | ------- |
-| `app:streamChannelHeaderLastActiveShow`      | boolean              | true    |
-| `app:streamChannelHeaderLastActiveTextSize`  | dimension            | 16sp    |
-| `app:streamChannelHeaderLastActiveTextColor` | color                | DKGRAY  |
-| `app:streamChannelHeaderLastActiveTextStyle` | normal, bold, italic | normal  |
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamChannelHeaderLastActiveShow`          | boolean              | true       |
+| `app:streamChannelHeaderLastActiveTextSize`      | dimension            | 16sp       |
+| `app:streamChannelHeaderLastActiveTextColor`     | color                | DKGRAY     |
+| `app:streamChannelHeaderLastActiveTextStyle`     | normal, bold, italic | normal     |
 
 
 - **Back Button**
 
-| Properties                                    | Type       | Default    |
-| --------------------------------------------- | ---------- | ---------- |
-| `app:streamChannelHeaderBackButtonShow`       | boolean    |  true      |
-| `app:streamChannelHeaderBackButtonBackground` | reference  |  -         |
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamChannelHeaderBackButtonShow`          | boolean              |  true      |
+| `app:streamChannelHeaderBackButtonBackground`    | reference            |  -         |
 
 - **Options Button**
 
-| Properties                                       | Type       | Default    |
-| ------------------------------------------------ | ---------- | ---------- |
-| `app:streamChannelHeaderOptionsButtonShow`       | boolean    |  false     |
-| `app:streamChannelHeaderOptionsButtonBackground` | reference  |  -         |
-| `app:streamChannelHeaderOptionsButtonTextSize`   | dimension  |  16sp      |		
-| `app:streamChannelHeaderOptionsButtonWidth`      | dimension  |  40dp      |	
-| `app:streamChannelHeaderOptionsButtonHeight`     | dimension  |  40dp      |	
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamChannelHeaderOptionsButtonShow`       | boolean              |  false     |
+| `app:streamChannelHeaderOptionsButtonBackground` | reference            |  -         |
+| `app:streamChannelHeaderOptionsButtonTextSize`   | dimension            |  16sp      |		
+| `app:streamChannelHeaderOptionsButtonWidth`      | dimension            |  40dp      |	
+| `app:streamChannelHeaderOptionsButtonHeight`     | dimension            |  40dp      |	
 
 - **Active Badge**
 
-| Properties                                       | Type       | Default    |
-| ------------------------------------------------ | ---------- | ---------- |
-| `app:streamChannelHeaderActiveBadgeShow`         | boolean    |  true      |
+| Properties                                       | Type                 | Default    |
+| ------------------------------------------------ | -------------------- | ---------- |
+| `app:streamChannelHeaderActiveBadgeShow`         | boolean              |  true      |
 
 #### Changing Header 
 
