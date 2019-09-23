@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -130,11 +129,14 @@ public class MoreActionDialog extends Dialog {
 
         // set style
         if (canReactOnMessage()) {
-            rl_wrap.setBackground(new DrawableBuilder()
-                    .rectangle()
-                    .solidColor(Color.BLACK)
-                    .cornerRadii(Utils.dpToPx(25), Utils.dpToPx(25), 0, 0)
-                    .build());
+            rl_wrap.post(() ->
+                    rl_wrap.setBackground(new DrawableBuilder()
+                            .rectangle()
+                            .solidColor(style.getReactionInputBgColor())
+                            .cornerRadii(rl_wrap.getHeight() / 2, rl_wrap.getHeight() / 2, 0, 0)
+                            .build())
+            );
+
             RecyclerView rv_reaction = findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
             RecyclerView.LayoutManager mLayoutManager;
             mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

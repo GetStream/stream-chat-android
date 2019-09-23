@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
@@ -69,6 +70,12 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
     private void applyStyle(final MyViewHolder holder) {
         holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionInputEmojiSize());
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.tv_emoji.getLayoutParams();
+        params.leftMargin = style.getReactionInputEmojiMargin();
+        params.rightMargin = style.getReactionInputEmojiMargin();
+        params.topMargin = style.getReactionInputEmojiMargin();
+        params.bottomMargin = style.getReactionInputEmojiMargin();
+        holder.tv_emoji.setLayoutParams(params);
     }
 
     @Override
