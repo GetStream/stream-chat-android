@@ -198,7 +198,93 @@ public class ChannelActivity extends AppCompatActivity
 
 #### Customizing the message list - Attributes
 
-TODO document the attributes for styling the message list
+You must use the following properties in your XML to change your MessageListView.
+
+- **AvatarView**
+
+| Properties                         | Type                   | Default |
+| ---------------------------------- | ---------------------- | ------- |
+| `app:streamAvatarWidth`            | dimension              | 32dp    |
+| `app:streamAvatarHeight`           | dimension              | 32dp    |
+| `app:streamAvatarBorderWidth`      | dimension              | 3dp     |
+| `app:streamAvatarBorderColor`      | color                  | WHITE   |
+| `app:streamAvatarBackGroundColor`  | color                  | #989898 |
+| `app:streamAvatarTextSize`         | dimension              | 14sp    |
+| `app:streamAvatarTextColor`        | color                  | WHITE   |
+| `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
+
+- **ReadStateView**
+
+| Properties                         | Type                   | Default |
+| ---------------------------------- | ---------------------- | ------- |
+| `app:streamShowReadState`          | boolean                | true    |
+| `app:streamReadStateAvatarWidth`   | dimension              | 14dp    |
+| `app:streamReadStateAvatarHeight`  | dimension              | 14dp    |
+| `app:streamReadStateTextSize`      | dimension              | 8sp     |
+| `app:streamReadStateTextColor`     | color                  | BLACK   |
+| `app:streamReadStateTextStyle`     | normal, bold, italic   | bold    |
+
+- **Reaction**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamReactionEnabled`         | boolean               | true    |
+| `app:streamrReactionViewBgDrawable` | reference             |   -     |
+| `app:streamReactionViewBgColor`     | color                 | #292929 |
+| `app:streamReactionViewEmojiSize`   | dimension             | 12sp    |
+| `app:streamReactionViewEmojiMargin` | dimension             | 1dp     |
+| `app:streamReactionInputbgColor`    | color   	      | #292929 |
+| `app:streamReactionInputEmojiSize`  | dimension             | 27sp    |
+| `app:streamReactionInputEmojiMargin`| dimension   	      | 5dp     |
+
+- **Message**
+
+| Properties                                      | Type                 | Default   |
+| ----------------------------------------------- | -------------------- | --------- |
+| `app:streamMessageTextSizeMine`                 | dimension            | 15sp      |
+| `app:streamMessageTextSizeTheirs`               | dimension            | 15sp      |
+| `app:streamMessageTextColorMine`                | color                | BLACK     |
+| `app:streamMessageTextColorTheirs`              | color                | BLACK     |
+| `app:streamMessageTextStyleMine`                | normal, bold, italic | normal    |
+| `app:streamMessageTextStyleTheirs`              | normal, bold, italic | normal    |
+| `app:streamMessageBubbleDrawableMine`           | reference            | -         |
+| `app:streamMessageBubbleDrawableTheirs`         | reference            | -         |
+| `app:streamMessageTopLeftCornerRadiusMine`      | dimension            | 16dp      |
+| `app:streamMessageTopRightCornerRadiusMine`     | dimension            | 16dp      |
+| `app:streamMessageBottomRightCornerRadiusMine`  | dimension            | 2dp       |
+| `app:streamMessageBottomLeftCornerRadiusMine`   | dimension            | 16dp      |
+| `app:streamMessageTopLeftCornerRadiusTheirs`    | dimension            | 16dp      |
+| `app:streamMessageTopRightCornerRadiusTheirs`   | dimension            | 16dp      |
+| `app:streamMessageBottomRightCornerRadiusTheirs`| dimension            | 16dp      |
+| `app:streamMessageBottomLeftCornerRadiusTheirs` | dimension            | 2dp       |
+| `app:streamMessageBackgroundColorMine`          | color                | #0D000000 |
+| `app:streamMessageBackgroundColorTheirs`        | color                | WHITE     |
+| `app:streamMessageBorderColorMine`              | color                | #14000000 |
+| `app:streamMessageBorderColorTheirs`            | color                | #14000000 |
+| `app:streamMessageBorderWidthMine`              | dimension            | 1dp       |
+| `app:streamMessageBorderWidthTheirs`            | dimension            | 1dp       |
+
+
+
+- **AttachmentView**
+
+| Properties                                | Type                 | Default |
+| ----------------------------------------- | -------------------- | ------- |
+| `app:streamAttachmentTitleTextSize`       | dimension            | 13sp    |
+| `app:streamAttachmentTitleTextColor`      | color                | #026DFE |
+| `app:streamAttachmentTitleTextStyle`      | normal, bold, italic | bold    |
+| `app:streamAttachmentDescriptionTextSize` | dimension            | 11sp    |
+| `app:streamAttachmentDescriptionTextColor`| color                | #989898 |
+| `app:streamAttachmentDescriptionTextStyle`| normal, bold, italic | normal  |
+| `app:streamAttachmentFileSizeTextSize`    | dimension            | 12sp    |
+| `app:streamAttachmentFileSizeTextColor`   | color                | #989898 |
+| `app:streamAttachmentFileSizeTextStyle`   | normal, bold, italic | bold    |
+
+- **Thread**
+
+| Properties                          | Type                   | Default |
+| ----------------------------------- | ---------------------- | ------- |
+| `app:streamThreadEnabled`           |   boolean              | true    |
 
 #### Customizing the message list - BubbleHelper
 
