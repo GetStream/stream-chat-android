@@ -49,7 +49,7 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextColor;
     private int attachmentFileSizeTextStyle;
     // Reaction
-    private boolean enableReaction;
+    private boolean reactionEnabled;
 
     // ReactionView
     private int reactionViewBgDrawable;
@@ -61,7 +61,7 @@ public class MessageListViewStyle extends BaseStyle {
     private int reactionInputEmojiSize;
     private int reactionInputEmojiMargin;
     // Thread
-    private boolean enableThread;
+    private boolean threadEnabled;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -112,7 +112,7 @@ public class MessageListViewStyle extends BaseStyle {
         attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_attach_file_size_text));
         attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
         // Reaction
-        enableReaction = a.getBoolean(R.styleable.MessageListView_streamEnableReaction, true);
+        reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
         reactionViewBgDrawable = a.getResourceId(R.styleable.MessageListView_streamrReactionViewBgDrawable, -1);
         reactionViewBgColor = a.getColor(R.styleable.MessageListView_streamReactionViewBgColor, getColor(R.color.stream_reaction_input_background));
@@ -144,7 +144,7 @@ public class MessageListViewStyle extends BaseStyle {
         readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
-        enableThread = a.getBoolean(R.styleable.MessageListView_streamEnableThread, true);
+        threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
         a.recycle();
     }
 
@@ -276,8 +276,8 @@ public class MessageListViewStyle extends BaseStyle {
 
     // Reaction Dialog
 
-    public boolean isEnableReaction() {
-        return enableReaction;
+    public boolean isReactionEnabled() {
+        return reactionEnabled;
     }
 
     public int getReactionViewBgDrawable() {
@@ -310,7 +310,7 @@ public class MessageListViewStyle extends BaseStyle {
 
     // Thread
 
-    public boolean isEnableThread() {
-        return enableThread;
+    public boolean isThreadEnabled() {
+        return threadEnabled;
     }
 }

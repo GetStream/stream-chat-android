@@ -82,8 +82,8 @@ public class MoreActionDialog extends Dialog {
         LinearLayout ll_delete = findViewById(R.id.ll_delete);
 
 
-        ll_thread.setVisibility(threadableMessage() ? View.VISIBLE : View.GONE);
-        ll_copy.setVisibility(copyableMessage() ? View.VISIBLE : View.GONE);
+        ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
+        ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
         if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
@@ -129,7 +129,7 @@ public class MoreActionDialog extends Dialog {
         }
 
         // set style
-        if (style.isEnableReaction()){
+        if (canReactOnMessage()) {
             rl_wrap.setBackground(new DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
@@ -144,7 +144,7 @@ public class MoreActionDialog extends Dialog {
                     style,
                     (View v) -> dismiss());
             rv_reaction.setAdapter(reactionAdapter);
-        }else{
+        } else {
             rl_wrap.setVisibility(View.GONE);
         }
 
@@ -160,7 +160,7 @@ public class MoreActionDialog extends Dialog {
         });
     }
 
-    private boolean copyableMessage() {
+    private boolean canCopyonMessage() {
         return !(message.getDeletedAt() != null
                 || message.getStatus() == MessageStatus.FAILED
                 || message.getType().equals(ModelType.message_error)
@@ -168,10 +168,17 @@ public class MoreActionDialog extends Dialog {
                 || TextUtils.isEmpty(message.getText()));
     }
 
-    private boolean threadableMessage() {
-        return style.isEnableThread()
+    private boolean canThreadOnMessage() {
+        return style.isThreadEnabled()
+                && viewModel.getChannel().getConfig().isReplies()
                 && !viewModel.isThread();
     }
+
+    private boolean canReactOnMessage() {
+        return style.isReactionEnabled()
+                && viewModel.getChannel().getConfig().isReactions();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         dismiss();

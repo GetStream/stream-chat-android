@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -430,7 +429,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configReactionView() {
         if (isDeletedOrFailedMessage()
-                || !style.isEnableReaction()
+                || !style.isReactionEnabled()
+                || !channelState.getChannel().getConfig().isReactions()
                 || message.getReactionCounts() == null
                 || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
@@ -446,7 +446,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
-        if (!style.isEnableThread()
+        if (!style.isThreadEnabled()
+                || !channelState.getChannel().getConfig().isReplies()
                 || isDeletedOrFailedMessage()
                 || isThread
                 || message.getReplyCount() == 0) {
