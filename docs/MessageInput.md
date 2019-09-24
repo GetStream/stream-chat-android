@@ -2,19 +2,15 @@
 
 Here's an example message input view
 
-```java
+```xml
 <com.getstream.sdk.chat.view.MessageInputView
     android:id="@+id/message_input"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="32dp"
-    android:layout_marginBottom="0dp"
-    android:background="@color/chat_theme"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintLeft_toLeftOf="parent"
-    app:layout_constraintRight_toRightOf="parent"
-    app:layout_constraintStart_toEndOf="@+id/messageList" />
+    app:layout_constraintStart_toEndOf="parent" />
 ```
 
 #### Styling via attributes

@@ -20,8 +20,7 @@ You can add your ChannelHeader to your layout this way:
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    />
+    app:layout_constraintTop_toTopOf="parent" />
 ```
 
 And in your activity do something like this:
@@ -48,7 +47,6 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.Dialog.ReactionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -60,15 +58,15 @@ import io.getstream.chat.example.databinding.ActivityChannelBinding;
  * Show the messages for a channel
  */
 public class ChannelActivity extends AppCompatActivity
-        implements MessageListView.MessageClickListener,
-        MessageListView.MessageLongClickListener,
+        implements MessageListView.MessageLongClickListener,
         MessageListView.AttachmentClickListener,
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
         MessageListView.UserClickListener,
         MessageInputView.OpenCameraViewListener {
 
-    final String TAG = ChannelActivity.class.getSimpleName();
+    static final String TAG = ChannelActivity.class.getSimpleName();
+    static final String STATE_TEXT = "messageText";
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
@@ -87,6 +85,10 @@ public class ChannelActivity extends AppCompatActivity
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
         // most the business logic of the chat is handled in the ChannelViewModel view model
         binding.setLifecycleOwner(this);
+        if (savedInstanceState != null) {
+            String messageText = savedInstanceState.getString(STATE_TEXT);
+            binding.messageInput.setMessageText(messageText);
+        }
 
         Channel channel = client.getChannelByCid(channelType + ":" + channelID);
         if (channel == null)
@@ -96,7 +98,6 @@ public class ChannelActivity extends AppCompatActivity
         ).get(ChannelViewModel.class);
 
         // set listeners
-        binding.messageList.setMessageClickListener(this);
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
@@ -107,11 +108,17 @@ public class ChannelActivity extends AppCompatActivity
         // connect the view model
         binding.setViewModel(viewModel);
         binding.channelHeader.setViewModel(viewModel, this);
-
+        binding.channelHeader.setHeaderOptionsClickListener(this);
+        binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_TEXT, binding.messageInput.getMessageText());
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -140,20 +147,9 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMessageClick(Message message, int position) {
-        new ReactionDialog(this)
-                .setChannel(viewModel.getChannel())
-                .setMessage(message)
-                .setMessagePosition(position)
-                .setRecyclerView(binding.messageList)
-                .setStyle(binding.messageList.getStyle())
-                .show();
-    }
-
-    @Override
     public void onMessageLongClick(Message message) {
         new MoreActionDialog(this)
-                .setChannel(viewModel.getChannel())
+                .setChannelViewModel(viewModel)
                 .setMessage(message)
                 .setStyle(binding.messageList.getStyle())
                 .show();
@@ -183,6 +179,11 @@ public class ChannelActivity extends AppCompatActivity
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(R.drawable.stream_ic_settings)
                 .show();
+    }
+
+    @Override
+    public void onUserClick(User user) {
+        // open your user profile
     }
 }
 ```

@@ -269,7 +269,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         <LinearLayout
             android:id="@+id/ll_composer"
             android:layout_width="match_parent"

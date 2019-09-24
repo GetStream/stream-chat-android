@@ -8,27 +8,11 @@ The message list renders a list of messages. You can use it like this:
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginBottom="10dp"
-    android:background="#FFF"
+    android:background="#f3f5f8"
     app:layout_constraintBottom_toTopOf="@+id/message_input"
-    app:layout_constraintEnd_toStartOf="@+id/message_input"
-    app:layout_constraintStart_toEndOf="@+id/channelHeader"
-    app:layout_constraintTop_toBottomOf="@+id/channelHeader"
-    app:streamAvatarTextColor="#000000"
-    app:streamAvatarTextStyle="bold|italic"
-    app:streamMessageBackgroundColorMine="#8BC34A"
-    app:streamMessageTextColorMine="#005CFF"
-    app:streamMessageTextStyleMine="italic"
-    app:streamReactionEnabled="true"
-    app:streamReactionInputEmojiMargin="20sp"
-    app:streamReactionInputEmojiSize="50dp"
-    app:streamReactionInputbgColor="#001DC4"
-    app:streamReactionViewBgColor="#3F51B5"
-    app:streamReactionViewEmojiSize="15sp"
-    app:streamReadStateAvatarHeight="15dp"
-    app:streamReadStateAvatarWidth="15dp"
-    app:streamReadStateTextColor="#FFFFFF"
-    app:streamReadStateTextSize="9sp"
-    app:streamReadStateTextStyle="bold" />
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/channelHeader"/>
 ```
 
 And here's a full example of an activity that renders a message list, channel header and message input
@@ -334,8 +318,8 @@ This allows you to swap the layout file that's used for the typing indicator, th
 
 ```java
 public class MessageViewHolderFactory {
-    private static String TAG = MessageViewHolderFactory.class.getName();
 
+    private static String TAG = MessageViewHolderFactory.class.getName();
 
     private static int GENERIC_ATTACHMENT = 1;
     private static int IMAGE_ATTACHMENT = 2;
