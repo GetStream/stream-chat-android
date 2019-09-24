@@ -187,8 +187,7 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-
-            viewModel.getChannel().sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
+            SendFileCallback callback = new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.setActiveMessageSend(true);
@@ -213,7 +212,12 @@ public class MessageInputClient {
                     Utils.showMessage(context, "Failed upload image!");
                     updateComposerViewBySelectedMedia(attachments, attachment);
                 }
-            });
+            };
+            if (attachment.getType().equals(ModelType.attach_image)) {
+                viewModel.getChannel().sendImage(attachment, callback);
+            } else {
+                viewModel.getChannel().sendFile(attachment, callback);
+            }
         } else
             selectedAttachments.remove(attachment);
 
@@ -266,7 +270,7 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            viewModel.getChannel().sendFile(attachment, false, new SendFileCallback() {
+            viewModel.getChannel().sendFile(attachment, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     attachment.setAssetURL(response.getFileUrl());

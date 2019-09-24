@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
-    final String USER_ID = "bender";
+    final String USER_ID = "dark-brook-5";
     // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZGFyay1icm9vay01In0.DQo_SCAfFVLqGZHm_f1I1oNmgrbeOcTTw4LS18dpljo";
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
@@ -59,8 +59,8 @@ public class MainActivity extends AppCompatActivity {
         //client.enableOfflineStorage();
 
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Bender");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("name", "Paranoid Android");
+        extraData.put("image", "https://bit.ly/2TIt8NR");
         User user = new User(USER_ID, extraData);
         client.setUser(user, USER_TOKEN);
         return client;

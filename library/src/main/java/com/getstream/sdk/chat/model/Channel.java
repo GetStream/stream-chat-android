@@ -401,8 +401,6 @@ public class Channel {
     /**
      * query - Query the API, get messages, members or other channel fields
      *
-     * @param {object} options The query options
-     * @return {object} Returns a query response
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
@@ -447,19 +445,8 @@ public class Channel {
     }
 
     /**
-     * query - Query the API, get messages, members or other channel fields
-     *
-     * @return {object} Returns a query response
-     */
-//    public void query(QueryChannelCallback callback) {
-//        query(new ChannelQueryRequest().withData(this.extraData), callback);
-//    }
-
-    /**
      * getReplies - List the message replies for a parent message
      *
-     * @param parentId The message parent id, ie the top of the thread
-     * @param limit    Pagination params, ie 10
      * @return {object} Returns a getReplies response
      */
     public void getReplies(@NonNull String parentId, int limit, String firstMessageId, final GetRepliesCallback callback) {
@@ -569,39 +556,41 @@ public class Channel {
         });
     }
 
-    public void sendFile(Attachment attachment, boolean isImage,
+    public void sendImage(Attachment attachment,
+                         SendFileCallback fileCallback) {
+        File file = new File(attachment.config.getFilePath());
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+        client.sendImage(this, part, new SendFileCallback() {
+            @Override
+            public void onSuccess(FileSendResponse response) {
+                fileCallback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                fileCallback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void sendFile(Attachment attachment,
                          SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
 
-        if (isImage) {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this, part, new SendFileCallback() {
-                @Override
-                public void onSuccess(FileSendResponse response) {
-                    fileCallback.onSuccess(response);
-                }
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+        client.sendFile(this, part, new SendFileCallback() {
+            @Override
+            public void onSuccess(FileSendResponse response) {
+                fileCallback.onSuccess(response);
+            }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    fileCallback.onError(errMsg, errCode);
-                }
-            });
-        } else {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this, part, new SendFileCallback() {
-                @Override
-                public void onSuccess(FileSendResponse response) {
-                    fileCallback.onSuccess(response);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    fileCallback.onError(errMsg, errCode);
-                }
-            });
-        }
+            @Override
+            public void onError(String errMsg, int errCode) {
+                fileCallback.onError(errMsg, errCode);
+            }
+        });
     }
     // endregion
 
