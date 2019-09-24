@@ -38,17 +38,17 @@ public class ChannelListViewStyle extends BaseStyle {
         TypedArray a = c.obtainStyledAttributes(attrs,
                 R.styleable.ChannelListView, 0, 0);
 
-        dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamLastMessageDateTextSize, -1);
-        titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamTitleTextSize, -1);
-        messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamMessageTextSize, -1);
+        titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamTitleTextSize, getDimension(R.dimen.stream_channel_item_title));
+        messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamMessageTextSize, getDimension(R.dimen.stream_channel_item_message));
+        dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date));
 
         titleTextColor = a.getColor(R.styleable.ChannelListView_streamTitleTextColor, getColor(R.color.stream_black));
         unreadTitleTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadTitleTextColor, getColor(R.color.stream_black));
         messageTextColor = a.getColor(R.styleable.ChannelListView_streamMessageTextColor, getColor(R.color.stream_gray_dark));
         unreadMessageTextColor = a.getColor(R.styleable.ChannelListView_streamUnreadMessageTextColor, getColor(R.color.stream_black));
-        dateTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageDateTextColor, -1);
+        dateTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_gray_dark));
 
-        titleTextStyle = a.getInt(R.styleable.ChannelListView_streamTitleTextStyleChannel, Typeface.BOLD);
+        titleTextStyle = a.getInt(R.styleable.ChannelListView_streamTitleTextStyle, Typeface.BOLD);
         unreadTitleTextStyle = a.getInt(R.styleable.ChannelListView_streamUnreadTitleTextStyle, Typeface.BOLD);
         messageTextStyle = a.getInt(R.styleable.ChannelListView_streamMessageTextStyle, Typeface.NORMAL);
         unreadMessageTextStyle = a.getInt(R.styleable.ChannelListView_streamUnreadMessageTextStyle, Typeface.BOLD);

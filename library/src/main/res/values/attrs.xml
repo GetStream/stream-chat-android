@@ -13,7 +13,6 @@
         <flag name="bold" value="1" />
         <flag name="italic" value="2" />
     </attr>
-
     <!--ReadStateView-->
     <attr name="streamShowReadState" format="boolean" />
     <attr name="streamReadStateAvatarWidth" format="dimension|reference" />
@@ -25,7 +24,6 @@
         <flag name="bold" value="1" />
         <flag name="italic" value="2" />
     </attr>
-
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
@@ -37,7 +35,6 @@
         <attr name="streamAvatarTextSize" />
         <attr name="streamAvatarTextColor" />
         <attr name="streamAvatarTextStyle"/>
-
         <!--ReadStateView-->
         <attr name="streamShowReadState"/>
         <attr name="streamReadStateAvatarWidth"/>
@@ -45,24 +42,18 @@
         <attr name="streamReadStateTextSize"/>
         <attr name="streamReadStateTextColor"/>
         <attr name="streamReadStateTextStyle"/>
-
         <!--LastMessageDate-->
         <attr name="streamLastMessageDateTextColor" format="color|reference" />
         <attr name="streamLastMessageDateTextSize" format="dimension|reference" />
         <!--Title-->
         <attr name="streamTitleTextColor" format="color|reference" />
         <attr name="streamTitleTextSize" format="dimension|reference" />
-        <attr name="streamTitleTextStyleChannel">
+        <attr name="streamTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="streamUnreadTitleTextColor" format="color|reference" />
-        <attr name="streamUnreadTitleTextStyle">
-            <flag name="normal" value="0" />
-            <flag name="bold" value="1" />
-            <flag name="italic" value="2" />
-        </attr>
+        <!--Last Message-->
         <attr name="streamMessageTextColor" format="color|reference" />
         <attr name="streamMessageTextSize" format="dimension|reference" />
         <attr name="streamMessageTextStyle">
@@ -70,12 +61,21 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!--Unread ChannelTitle-->
+        <attr name="streamUnreadTitleTextColor" format="color|reference" />
+        <attr name="streamUnreadTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!--Unread LastMessage-->
         <attr name="streamUnreadMessageTextColor" format="color|reference" />
         <attr name="streamUnreadMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <!--Custom ChannelListLayout-->
         <attr name="streamChannelPreviewLayout" format="reference" />
     </declare-styleable>
     <!--MessageInputView-->

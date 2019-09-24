@@ -208,7 +208,7 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamAvatarHeight`           | dimension              | 32dp    |
 | `app:streamAvatarBorderWidth`      | dimension              | 3dp     |
 | `app:streamAvatarBorderColor`      | color                  | WHITE   |
-| `app:streamAvatarBackGroundColor`  | color                  | #989898 |
+| `app:streamAvatarBackGroundColor`  | color                  | DKGRAY  |
 | `app:streamAvatarTextSize`         | dimension              | 14sp    |
 | `app:streamAvatarTextColor`        | color                  | WHITE   |
 | `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
@@ -233,7 +233,7 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamReactionViewBgColor`     | color                 | #292929 |
 | `app:streamReactionViewEmojiSize`   | dimension             | 12sp    |
 | `app:streamReactionViewEmojiMargin` | dimension             | 1dp     |
-| `app:streamReactionInputbgColor`    | color   	      | #292929 |
+| `app:streamReactionInputbgColor`    | color   	          | #292929 |
 | `app:streamReactionInputEmojiSize`  | dimension             | 27sp    |
 | `app:streamReactionInputEmojiMargin`| dimension   	      | 5dp     |
 

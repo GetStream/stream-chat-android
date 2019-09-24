@@ -39,9 +39,9 @@ You must use the following properties in your XML to change your MessageInputVie
 | Properties                                          | Type          | Default    |
 | --------------------------------------------------- | ------------- | ---------- |
 | `app:streamShowAttachmentButton`                    | boolean       | true       |
-| `app:streamAttachmentButtonDefaultIconColor`        | color         | DARK_GRAY  |
+| `app:streamAttachmentButtonDefaultIconColor`        | color         | DKGRAY     |
 | `app:streamAttachmentButtonDefaultIconPressedColor` | color         | WHITE      |
-| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LIGHT_GRAY |
+| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LTGRAY     |
 | `app:streamAttachmentButtonSelectedIconColor`       | color         | BLACK      |
 | `app:streamAttachmentButtonIcon`                    | reference     | -          |
 | `app:streamAttachmentButtonWidth`                   | dimension     | 25dp       |
@@ -55,7 +55,7 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamInputButtonDefaultIconColor`         | color         | #0076FF    |
 | `app:streamInputButtonEditIconColor`            | color         | #0DD25E    |
 | `app:streamInputButtonDefaultIconPressedColor`  | color         | WHITE      |
-| `app:streamInputButtonDefaultIconDisabledColor` | color         | LIGHT_GRAY |
+| `app:streamInputButtonDefaultIconDisabledColor` | color         | LTGRAY     |
 | `app:streamInputButtonIcon`                     | reference     | -          |
 | `app:streamInputButtonWidth`                    | dimension     | 25dp       |
 | `app:streamInputButtonHeight`                   | dimension     | 25dp       |
@@ -67,7 +67,7 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamInputHint`       | string                | Write a message |
 | `app:streamInputTextSize`   | dimension             | 15sp            |
 | `app:streamInputTextColor`  | color                 | BLACK           |
-| `app:streamInputHintColor`  | color                 | DARK_GRAY       |
+| `app:streamInputHintColor`  | color                 | DKGRAY          |
 | `app:streamInputTextStyle`  | normal, bold, italic  | normal          |
 
 
