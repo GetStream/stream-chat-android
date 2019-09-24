@@ -204,7 +204,7 @@ If you need to make a bigger change you can swap the layout for the channel prev
     android:layout_marginBottom="10dp"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    app:channelPreviewLayout="@layout/list_item_channel_custom" />
+    app:streamChannelPreviewLayout="@layout/list_item_channel_custom" />
 ```
 
 That only works for simple changes where you don't change the IDs of views, or their types.

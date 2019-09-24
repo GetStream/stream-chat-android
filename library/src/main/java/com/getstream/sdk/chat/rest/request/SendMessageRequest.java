@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.google.gson.Gson;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -35,17 +35,18 @@ public class SendMessageRequest {
             message.put("show_in_channel", showInChannel);
         }
         if (attachments != null && !attachments.isEmpty()) {
-            Gson gson = new Gson();
             List<Map> attachmentMaps = new ArrayList<>();
             boolean isGiphy = false;
             for (Attachment attachment_ : attachments) {
-                Map<String, Object> attachment;
-                String json = gson.toJson(attachment_);
-                attachment = (Map<String, Object>) gson.fromJson(json, Map.class);
+                Map attachment;
+                String json = GsonConverter.Gson().toJson(attachment_);
+                attachment = GsonConverter.Gson().fromJson(json, Map.class);
                 attachment.remove("config");
+                if (attachment_.getType().equals(ModelType.attach_image)) {
+                    attachment.remove("asset_url");
+                    attachment.remove("file_size");
+                }
                 attachmentMaps.add(attachment);
-                attachment.remove("asset_url");
-                attachment.remove("file_size");
                 if (!isGiphy && attachment_.getType().equals(ModelType.attach_giphy))
                     isGiphy = true;
             }
