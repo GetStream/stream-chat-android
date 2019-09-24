@@ -23,7 +23,6 @@ public class ChannelListView extends RecyclerView {
     final String TAG = ChannelListView.class.getSimpleName();
 
     private ChannelListViewStyle style;
-
     // our connection to the channel scope
     private ChannelListViewModel viewModel;
     private UserClickListener userClickListener;
@@ -32,16 +31,20 @@ public class ChannelListView extends RecyclerView {
     private ChannelListItemAdapter adapter;
     private ChannelViewHolderFactory viewHolderFactory;
 
+    private LinearLayoutManager layoutManager;
+
     public ChannelListView(Context context) {
         super(context);
         this.setHasFixedSize(true);
-        this.setLayoutManager(new LinearLayoutManager(context));
+        layoutManager = new LinearLayoutManager(context);
+        this.setLayoutManager(layoutManager);
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.setHasFixedSize(true);
-        this.setLayoutManager(new LinearLayoutManager(context));
+        layoutManager = new LinearLayoutManager(context);
+        this.setLayoutManager(layoutManager);
         this.parseAttr(context, attrs);
 
     }
@@ -49,7 +52,8 @@ public class ChannelListView extends RecyclerView {
     public ChannelListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.setHasFixedSize(true);
-        this.setLayoutManager(new LinearLayoutManager(context));
+        layoutManager = new LinearLayoutManager(context);
+        this.setLayoutManager(layoutManager);
         this.parseAttr(context, attrs);
     }
 
@@ -82,9 +86,14 @@ public class ChannelListView extends RecyclerView {
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
             Log.i(TAG, "Observe found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
+            if (canScrollUpForChannelEvent())
+                layoutManager.scrollToPosition(0);
         });
     }
 
+    private boolean canScrollUpForChannelEvent(){
+        return layoutManager.findFirstVisibleItemPosition() < 3;
+    }
 
     public void setViewHolderFactory(ChannelViewHolderFactory factory) {
         this.viewHolderFactory = factory;
