@@ -21,6 +21,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
 import com.getstream.sdk.chat.storage.converter.MemberListConverter;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -42,21 +43,26 @@ public class ChannelState {
     // ignore since we always embed the channelstate in the channel
     @Ignore
     @SerializedName("channel")
+    @Expose
     private Channel channel;
     // messages are stored separately
     @Ignore
     @SerializedName("messages")
+    @Expose
     private List<Message> messages;
     @Embedded(prefix = "last_message_")
     private Message lastMessage;
     @SerializedName("read")
+    @Expose
     @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
     @SerializedName("members")
+    @Expose
     @TypeConverters({MemberListConverter.class})
     private List<Member> members;
     @Ignore
     @SerializedName("watchers")
+    @Expose
     private List<Watcher> watchers;
     @Ignore
     @SerializedName("watcher_count")

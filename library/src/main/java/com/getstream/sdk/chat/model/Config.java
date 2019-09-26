@@ -4,6 +4,7 @@ import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.storage.converter.CommandListConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
@@ -16,34 +17,48 @@ import java.util.List;
 public class Config {
     @TypeConverters({DateConverter.class})
     @SerializedName("created_at")
+    @Expose
     private Date created_at;
 
     @SerializedName("updated_at")
+    @Expose
     @TypeConverters({DateConverter.class})
     private Date updated_at;
     @SerializedName("name")
+    @Expose
     private String name;
     @SerializedName("typing_events")
+    @Expose
     private boolean typingEvents;
     @SerializedName("read_events")
+    @Expose
     private boolean readEvents;
     @SerializedName("connect_events")
+    @Expose
     private boolean connect_events;
     @SerializedName("search")
+    @Expose
     private boolean search;
     @SerializedName("reactions")
+    @Expose
     private boolean reactions;
     @SerializedName("replies")
+    @Expose
     private boolean replies;
     @SerializedName("mutes")
+    @Expose
     private boolean mutes;
     @SerializedName("infinite")
+    @Expose
     private String infinite;
     @SerializedName("max_message_length")
+    @Expose
     private int max_message_length;
     @SerializedName("automod")
+    @Expose
     private String automod;
     @SerializedName("commands")
+    @Expose
     @TypeConverters(CommandListConverter.class)
     private List<Command> commands;
 

@@ -62,6 +62,8 @@ public class Attachment {
     private int file_size;
 
     // Additional Params
+    @SerializedName("extra_data")
+    @Expose
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 

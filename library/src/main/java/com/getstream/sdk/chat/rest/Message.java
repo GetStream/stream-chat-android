@@ -100,8 +100,9 @@ public class Message implements UserEntity {
     @Expose
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
+
     @SerializedName("reply_count")
-    @Expose
+    @Expose(serialize = false)
     private int replyCount;
     @SerializedName("created_at")
     @ColumnInfo(name = "created_at")
@@ -130,6 +131,9 @@ public class Message implements UserEntity {
     @SerializedName("command")
     @Expose
     private String command;
+    @SerializedName("show_in_channel")
+    @Expose
+    private boolean showInChannel;
     @SerializedName("command_info")
     @Expose
     @TypeConverters(CommandInfoConverter.class)
@@ -137,8 +141,12 @@ public class Message implements UserEntity {
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
     // Additional Params
+    @SerializedName("extra_data")
+    @Expose
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+
+
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -388,6 +396,14 @@ public class Message implements UserEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isShowInChannel() {
+        return showInChannel;
+    }
+
+    public void setShowInChannel(boolean showInChannel) {
+        this.showInChannel = showInChannel;
     }
 
     @TypeConverters(AttachmentListConverter.class)
