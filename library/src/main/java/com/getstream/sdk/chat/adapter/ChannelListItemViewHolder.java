@@ -118,7 +118,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // - unread count
         // - read state for this channel
         Message lastMessage = channelState.getLastMessage();
-        int unreadCount = channelState.getCurrentUserUnreadMessageCount();
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         List<User> otherUsers = channelState.getOtherUsers();
         String channelName = channelState.getChannelNameOrMembers();
@@ -147,14 +146,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         // read indicators
         read_state.setReads(lastMessageReads, true, style);
-        Date myReadDate = channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance(context).getUserId());
-        if (myReadDate == null){
+
+        if (channelState.readLastMessage())
+            applyReadStyle();
+        else
             applyUnreadStyle();
-        }else if (channelState.getLastMessage() == null){
-            applyReadStyle();
-        }else if (myReadDate.getTime() > channelState.getLastMessage().getCreatedAt().getTime()){
-            applyReadStyle();
-        }
+
         // click listeners
         avatarGroupView.setOnClickListener(view -> {
             // if there is 1 user

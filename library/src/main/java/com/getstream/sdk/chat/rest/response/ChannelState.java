@@ -481,5 +481,20 @@ public class ChannelState {
         ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
         reads.add(channelUserRead);
     }
+    // if user read the last message returns true, else false.
+    public boolean readLastMessage(){
+        Client client = this.getChannel().getClient();
+        String userID = client.getUserId();
+        Date myReadDate = getReadDateOfChannelLastMessage(userID);
+        if (myReadDate == null){
+            return false;
+        }else if (getLastMessage() == null){
+            return true;
+        }else if (myReadDate.getTime() > getLastMessage().getCreatedAt().getTime()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
 
