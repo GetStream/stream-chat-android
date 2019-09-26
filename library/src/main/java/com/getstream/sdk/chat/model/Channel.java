@@ -34,7 +34,6 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -528,12 +527,7 @@ public class Channel {
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request;
-        if (message.getId() != null) {
-            request = new SendMessageRequest(message.getId(), message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
-        } else {
-            request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
-        }
+        SendMessageRequest request = new SendMessageRequest(message, mentionedUserIDs);
 
         client.sendMessage(this, request, new MessageCallback() {
             @Override
@@ -554,8 +548,7 @@ public class Channel {
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-
-        UpdateMessageRequest request = new UpdateMessageRequest(message, mentionedUserIDs);
+        SendMessageRequest request = new SendMessageRequest(message, mentionedUserIDs);
 
         client.updateMessage(message.getId(), request, new MessageCallback() {
             @Override

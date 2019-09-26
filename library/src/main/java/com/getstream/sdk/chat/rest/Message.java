@@ -73,17 +73,17 @@ public class Message implements UserEntity {
     private String text;
 
     @SerializedName("html")
-    @Expose
+    @Expose(serialize = false)
     private String html;
 
     @SerializedName("type")
-    @Expose
+    @Expose(serialize = false)
     private String type;
 
     private Integer syncStatus;
 
     @SerializedName("user")
-    @Expose
+    @Expose(serialize = false)
     @Ignore
     private User user;
     @ColumnInfo(name = "user_id")
@@ -93,11 +93,11 @@ public class Message implements UserEntity {
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
     @SerializedName("latest_reactions")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
     @SerializedName("own_reactions")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
@@ -106,15 +106,15 @@ public class Message implements UserEntity {
     private int replyCount;
     @SerializedName("created_at")
     @ColumnInfo(name = "created_at")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters({DateConverter.class})
     private Date createdAt;
     @SerializedName("updated_at")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
     @SerializedName("deleted_at")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters({DateConverter.class})
     private Date deletedAt;
     @SerializedName("mentioned_users")
@@ -122,18 +122,18 @@ public class Message implements UserEntity {
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
     @SerializedName("reaction_counts")
-    @Expose
+    @Expose(serialize = false)
     @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
     @SerializedName("parent_id")
     @Expose
     private String parentId;
     @SerializedName("command")
-    @Expose
+    @Expose(serialize = false)
     private String command;
     @SerializedName("show_in_channel")
     @Expose
-    private boolean showInChannel;
+    private boolean showInChannel = false;
     @SerializedName("command_info")
     @Expose
     @TypeConverters(CommandInfoConverter.class)

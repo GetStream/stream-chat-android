@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
@@ -81,7 +80,7 @@ public interface APIService {
     Call<MessageResponse> sendMessage(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
 
     @POST("/messages/{id}")
-    Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body UpdateMessageRequest request);
+    Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
 
     @GET("/messages/{id}")
     Call<MessageResponse> getMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
