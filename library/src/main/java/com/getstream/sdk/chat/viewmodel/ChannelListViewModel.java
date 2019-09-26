@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.Storage;
 
@@ -235,10 +234,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onMessageRead(Channel channel, Event event) {
-                List<ChannelUserRead> reads = channel.getChannelState().getLastMessageReads();
-                if (reads.size() > 0) {
-                    Log.i(TAG, "State: Message read by user " + reads.get(0).getUser().getName());
-                }
                 updateChannel(channel, false);
             }
         });

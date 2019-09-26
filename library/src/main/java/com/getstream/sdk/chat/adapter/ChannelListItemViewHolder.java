@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.TypedValue;
 import android.view.View;
@@ -88,19 +89,19 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public void applyUnreadStyle() {
         // channel name
         tv_name.setTextColor(style.getUnreadTitleTextColor());
-        tv_name.setTypeface(tv_name.getTypeface(), style.getUnreadTitleTextStyle());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getUnreadTitleTextStyle());
 
         // last message
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getUnreadMessageTextStyle());
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getUnreadMessageTextStyle());
         tv_last_message.setTextColor(style.getUnreadMessageTextColor());
     }
 
     public void applyReadStyle() {
         // channel name
         tv_name.setTextColor(style.getTitleTextColor());
-        tv_name.setTypeface(tv_name.getTypeface(), style.getTitleTextStyle());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getTitleTextStyle());
         // last messsage
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getMessageTextStyle());
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle());
         tv_last_message.setTextColor(style.getMessageTextColor());
     }
 
