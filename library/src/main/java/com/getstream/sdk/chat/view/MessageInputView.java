@@ -47,6 +47,7 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
+import java.io.File;
 import java.util.Arrays;
 
 
@@ -313,7 +314,20 @@ public class MessageInputView extends RelativeLayout
     // endregion
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data == null) return;
+            if (data == null) {
+                File file = null;
+                try {
+                    String path  = imageUri.getPath();
+                    file = new File(path);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (file != null) {
+                    messageInputClient.progressCapturedMedia(getContext(), imageUri, true);
+                    imageUri = null;
+                }
+                return;
+            }
             try {
                 Uri uri = data.getData();
                 if (uri == null) {
