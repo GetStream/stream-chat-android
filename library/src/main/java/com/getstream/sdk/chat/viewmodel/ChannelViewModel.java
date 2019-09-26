@@ -29,7 +29,9 @@ import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -589,15 +591,15 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         channelState.postValue(channel.getChannelState());
     }
 
-    private void queryChannel() {
+    private void watchChannel() {
         int limit = 10; // Constant.DEFAULT_LIMIT
         if (!setLoading()) return;
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(limit);
+        ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
 
-        channel.query(
+        channel.watch(
                 request,
-                new QueryChannelCallback() {
+                new QueryWatchCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
                         if (response.getMessages().size() < limit) {
@@ -936,10 +938,10 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                if (channel.getChannelState().getLastMessage() == null) {
-                    viewModel.queryChannel();
-                } else {
+                if (channel.isInitialized()) {
                     channelLoadingDone();
+                } else {
+                    viewModel.watchChannel();
                 }
             }
         }

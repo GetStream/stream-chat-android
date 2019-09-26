@@ -357,14 +357,18 @@ public class Client implements WSResponseHandler {
 
     public Channel channel(String cid) {
         String[] parts = cid.split(":", 2);
-        return new Channel(this, parts[0], parts[1]);
+        return channel(parts[0], parts[1], new HashMap<>());
     }
 
     public Channel channel(String type, String id) {
-        return new Channel(this, type, id);
+        return channel(type, id, new HashMap<>());
     }
 
     public Channel channel(String type, String id, HashMap<String, Object> extraData) {
+        Channel channel = getChannelByCid(type, id);
+        if (channel != null) {
+            return channel;
+        }
         return new Channel(this, type, id, extraData);
     }
 
@@ -441,7 +445,11 @@ public class Client implements WSResponseHandler {
 
     // endregion
 
-    public Channel getChannelByCid(String cid) {
+    private Channel getChannelByCid(String type, String id) {
+        return getChannelByCid(type + ":" + id);
+    }
+
+    Channel getChannelByCid(String cid) {
         if (cid == null) {
             return null;
         }
@@ -479,6 +487,9 @@ public class Client implements WSResponseHandler {
                                 addToActiveChannels(channel);
                             }
                             channel.mergeWithState(channelState);
+                            if (request.isWatch()) {
+                                channel.setInitialized(true);
+                            }
                         }
 
                         // store the results of the query
@@ -861,19 +872,30 @@ public class Client implements WSResponseHandler {
      */
     public void addDevice(@NonNull String deviceId,
                           DeviceCallback callback) {
-
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
-        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
-            @Override
-            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
 
-            @Override
-            public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
+                @Override
+                public void onSuccess(User user) {
+                    mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
     }
 
     /**
@@ -883,17 +905,29 @@ public class Client implements WSResponseHandler {
     public void getDevices(@NonNull Map<String, String> payload,
                            GetDevicesCallback callback) {
 
-        mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
-            @Override
-            public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
 
-            @Override
-            public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                        @Override
+                        public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
             }
-        });
+        );
     }
 
     /**
@@ -902,18 +936,29 @@ public class Client implements WSResponseHandler {
      */
     public void removeDevice(@NonNull String deviceId,
                              DeviceCallback callback) {
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
 
-        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
-            @Override
-            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+                        @Override
+                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
 
-            @Override
-            public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
             }
-        });
+        );
     }
 
     // endregion

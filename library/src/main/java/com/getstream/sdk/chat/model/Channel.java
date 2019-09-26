@@ -27,8 +27,10 @@ import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -137,10 +139,22 @@ public class Channel {
     @Ignore
     private ChannelState channelState;
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    @Ignore
+    private boolean initialized;
+
     // this constructor is here for GSON to play fair
     public Channel() {
         this(null, "", "", new HashMap<>());
     }
+
     /**
      * constructor - Create a channel
      *
@@ -152,6 +166,7 @@ public class Channel {
     public Channel(Client client, String type, String id) {
         this(client, type, id, new HashMap<>());
     }
+
     /**
      * constructor - Create a channel
      *
@@ -188,6 +203,7 @@ public class Channel {
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
         channelState = new ChannelState(this);
+        initialized = false;
     }
 
     public Date getCreatedAt() {
@@ -399,6 +415,24 @@ public class Channel {
     }
 
     /**
+     * watch - Loads the initial channel state and watches for changes
+     *
+     */
+    public void watch(@NonNull ChannelWatchRequest request, QueryWatchCallback callback) {
+        query(request, new QueryChannelCallback() {
+            @Override
+            public void onSuccess(ChannelState response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
      * query - Query the API, get messages, members or other channel fields
      *
      */
@@ -420,7 +454,12 @@ public class Channel {
                                     channel.channelState = response.body();
 
                                 client.addChannelConfig(type, channel.config);
-                                client.addToActiveChannels(channel);
+
+                                if (request.isWatch()) {
+                                    client.addToActiveChannels(channel);
+                                    initialized = true;
+                                }
+
                                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                                 // offline storage
 
