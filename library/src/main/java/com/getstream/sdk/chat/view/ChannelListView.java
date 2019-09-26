@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -135,6 +136,12 @@ public class ChannelListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
+    @Override
+    public void onVisibilityChanged(View view, int visibility){
+        super.onVisibilityChanged(view, visibility);
+        if (visibility == 0 && adapter != null)
+            adapter.notifyDataSetChanged();
+    }
     // set the adapter and apply the style.
     public void setAdapterWithStyle(ChannelListItemAdapter adapter) {
         super.setAdapter(adapter);

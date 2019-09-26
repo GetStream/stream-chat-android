@@ -436,10 +436,10 @@ public class ChannelState {
 
     public int getUnreadMessageCount(String userId) {
         int unreadMessageCount = 0;
-        if (this.reads == null || this.reads.isEmpty()) return 1;
+        if (this.reads == null || this.reads.isEmpty()) return unreadMessageCount;
 
         Date lastReadDate = getReadDateOfChannelLastMessage(userId);
-        if (lastReadDate == null) return 1;
+        if (lastReadDate == null) return unreadMessageCount;
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
             if (!message.getUser().getId().equals(userId)) continue;

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -25,6 +26,7 @@ import com.getstream.sdk.chat.view.ChannelListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
@@ -145,14 +147,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         // read indicators
         read_state.setReads(lastMessageReads, true, style);
-
-        // apply unread style or read style
-        if (unreadCount == 0) {
-            this.applyReadStyle();
-        } else {
-            this.applyUnreadStyle();
+        Date myReadDate = channelState.getReadDateOfChannelLastMessage(StreamChat.getInstance(context).getUserId());
+        if (myReadDate == null){
+            applyUnreadStyle();
+        }else if (channelState.getLastMessage() == null){
+            applyReadStyle();
+        }else if (myReadDate.getTime() > channelState.getLastMessage().getCreatedAt().getTime()){
+            applyReadStyle();
         }
-
         // click listeners
         avatarGroupView.setOnClickListener(view -> {
             // if there is 1 user

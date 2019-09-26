@@ -459,6 +459,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 messagesCopy.add(message);
             }
             messages.postValue(messagesCopy);
+            markLastMessageRead();
         }
 
 //        Log.d(TAG,"New messages Count:" + messages.getValue().size());
@@ -715,7 +716,7 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
                 callback.onError("no internet", -1);
             return;
         }
-
+        channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
