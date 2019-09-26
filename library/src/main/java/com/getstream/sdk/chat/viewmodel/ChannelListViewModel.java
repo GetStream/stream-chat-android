@@ -294,7 +294,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
-
         QueryChannelListCallback queryCallback = new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {

@@ -16,6 +16,10 @@ public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<
 
     protected abstract T cloneOpts();
 
+    public boolean isWatch() {
+        return watch;
+    }
+
     public T withWatch() {
         BaseQueryChannelRequest clone = this.cloneOpts();
         clone.watch = true;

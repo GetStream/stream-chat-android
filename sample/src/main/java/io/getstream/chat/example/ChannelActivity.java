@@ -62,9 +62,7 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageInput.setMessageText(messageText);
         }
 
-        Channel channel = client.getChannelByCid(channelType + ":" + channelID);
-        if (channel == null)
-            channel = client.channel(channelType, channelID);
+        Channel channel = client.channel(channelType, channelID);
         viewModel = ViewModelProviders.of(this,
                 new ChannelViewModelFactory(this.getApplication(), channel)
         ).get(ChannelViewModel.class);
