@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ExtraDataTest {
 
     @org.junit.jupiter.api.Test
-    void channelExtraTest() {
+    void channelWriteExtraTest() {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("id", "the-channel-test-id");
         extraData.put("name", "Test Channel");
@@ -24,6 +24,17 @@ public class ExtraDataTest {
         assertEquals("{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}", json);
     }
 
+    @org.junit.jupiter.api.Test
+    void channelExtraReadTest() {
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("id", "the-channel-test-id");
+        extraData.put("name", "Test Channel");
+        extraData.put("image", "https://bit.ly/321RmWb");
+//        Channel channel = new Channel(null, "messaging", "the-channel-id", extraData);
+        String json = "{\"group\":\"group-channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}";
+        Channel channel = GsonConverter.Gson().fromJson(json, Channel.class);
+        assertEquals("{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}", json);
+    }
     @org.junit.jupiter.api.Test
     void userExtraTest() {
         HashMap<String, Object> extraData = new HashMap<>();

@@ -30,6 +30,12 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
     public Channel read(JsonReader in) throws IOException {
         TypeAdapter adapter = new Gson().getAdapter(Channel.class);
         Channel value = (Channel) adapter.read(in);
+        HashMap<String, Object> data = new HashMap<>();
+        if (value.getExtraData() != null && !value.getExtraData().isEmpty())
+            for (Map.Entry<String, Object> set : value.getExtraData().entrySet())
+                data.put(set.getKey(), set.getValue());
+
+        value.setExtraData(data);
         return value;
     }
 }
