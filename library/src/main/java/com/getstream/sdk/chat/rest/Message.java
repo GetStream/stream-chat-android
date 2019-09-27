@@ -509,7 +509,8 @@ public class Message implements UserEntity {
     }
 
     public void setExtraData(HashMap<String, Object> extraData) {
-        this.extraData = extraData;
+        this.extraData = new HashMap<>(extraData);
+        this.extraData.remove("id");
     }
 
 

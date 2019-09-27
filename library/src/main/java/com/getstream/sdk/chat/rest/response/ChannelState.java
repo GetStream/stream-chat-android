@@ -202,6 +202,8 @@ public class ChannelState {
             }
         }
         for (Watcher watcher : getWatchers()) {
+            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
+                continue;
             if (lastActive.before(watcher.getUser().getLastActive())) {
                 if (channel.getClient().fromCurrentUser(watcher)) continue;
                 lastActive = watcher.getUser().getLastActive();
