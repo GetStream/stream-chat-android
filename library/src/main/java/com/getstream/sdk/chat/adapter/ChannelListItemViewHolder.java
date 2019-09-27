@@ -74,30 +74,15 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         tv_click = itemView.findViewById(R.id.tv_click);
         avatarGroupView = itemView.findViewById(R.id.avatar_group);
-
         read_state = itemView.findViewById(R.id.read_state);
-
     }
 
     public void setStyle(ChannelListViewStyle style) {
         this.style = style;
-
-
-        if (style.getDateTextColor() != -1) {
-            tv_date.setTextColor(style.getDateTextColor());
-        }
-
-        if (style.getDateTextSize() != -1) {
-            tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
-        }
-
-        if (style.getTitleTextSize() != -1) {
-            tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
-        }
-        if (style.getMessageTextSize() != -1) {
-            tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
-        }
-
+        tv_date.setTextColor(style.getDateTextColor());
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
+        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
+        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
     }
 
     public void applyUnreadStyle() {

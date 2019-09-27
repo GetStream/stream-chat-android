@@ -356,14 +356,18 @@ public class Client implements WSResponseHandler {
 
     public Channel channel(String cid) {
         String[] parts = cid.split(":", 2);
-        return new Channel(this, parts[0], parts[1]);
+        return channel(parts[0], parts[1], new HashMap<>());
     }
 
     public Channel channel(String type, String id) {
-        return new Channel(this, type, id);
+        return channel(type, id, new HashMap<>());
     }
 
     public Channel channel(String type, String id, HashMap<String, Object> extraData) {
+        Channel channel = getChannelByCid(type, id);
+        if (channel != null) {
+            return channel;
+        }
         return new Channel(this, type, id, extraData);
     }
 
@@ -440,7 +444,11 @@ public class Client implements WSResponseHandler {
 
     // endregion
 
-    public Channel getChannelByCid(String cid) {
+    private Channel getChannelByCid(String type, String id) {
+        return getChannelByCid(type + ":" + id);
+    }
+
+    Channel getChannelByCid(String cid) {
         if (cid == null) {
             return null;
         }
@@ -466,7 +474,8 @@ public class Client implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
-                            channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
+                            if (channelState.getLastMessage() != null)
+                                channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
@@ -477,6 +486,9 @@ public class Client implements WSResponseHandler {
                                 addToActiveChannels(channel);
                             }
                             channel.mergeWithState(channelState);
+                            if (request.isWatch()) {
+                                channel.setInitialized(true);
+                            }
                         }
 
                         // store the results of the query
@@ -616,14 +628,6 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
-     */
-    public void markRead(@NonNull Channel channel,
-                         EventCallback callback) {
-        markRead(channel, new MarkReadRequest(null), callback);
-    }
-
-    /**
      * markRead - Send the mark read event for this user, only works if the `read_events` setting is enabled
      */
     public void markRead(@NonNull Channel channel,
@@ -677,9 +681,6 @@ public class Client implements WSResponseHandler {
     /**
      * getReplies - List the message replies for a parent message
      *
-     * @param {type} parent_id The message parent id, ie the top of the thread
-     * @param {type} options   Pagination params, ie {limit:10, idlte: 10}
-     * @return {type} A channelResponse with a list of messages
      */
     public void getReplies(@NonNull String parentId,
                            int limit,
@@ -717,10 +718,6 @@ public class Client implements WSResponseHandler {
     /**
      * sendReaction - Send a reaction about a message
      *
-     * @param {string} messageID the message id
-     * @param {object} reaction the reaction object for instance {type: 'love'}
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
      */
     public void sendReaction(@NonNull String messageId,
                              @NonNull ReactionRequest reactionRequest,
@@ -746,10 +743,6 @@ public class Client implements WSResponseHandler {
     /**
      * deleteReaction - Delete a reaction by user and type
      *
-     * @param {string} messageID the id of the message from which te remove the reaction
-     * @param {string} reactionType the type of reaction that should be removed
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
      */
     public void deleteReaction(@NonNull String messageId,
                                @NonNull String reactionType,
@@ -773,8 +766,6 @@ public class Client implements WSResponseHandler {
     /**
      * sendEvent - Send an event on this channel
      *
-     * @param {object} event for example {type: 'message.read'}
-     * @return {object} The Server Response
      */
     public void sendEvent(@NonNull Channel channel,
                           @NonNull SendEventRequest eventRequest,
@@ -851,10 +842,6 @@ public class Client implements WSResponseHandler {
     /**
      * queryUsers - Query users and watch user presence
      *
-     * @param {object} filterConditions MongoDB style filter conditions
-     * @param {object} sort             QuerySort options, for instance {last_active: -1}
-     * @param {object} options          Option object, {presence: true}
-     * @return {object} User Query Response
      */
     public void queryUsers(@NonNull JSONObject payload,
                            QueryUserListCallback callback) {
@@ -881,69 +868,96 @@ public class Client implements WSResponseHandler {
     /**
      * addDevice - Adds a push device for a user.
      *
-     * @param {string} id the device id
-     * @param {string} push_provider the push provider (apn or firebase)
-     * @param {string} [userID] the user id (defaults to current user)
      */
     public void addDevice(@NonNull String deviceId,
                           DeviceCallback callback) {
-
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
-        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
-            @Override
-            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
 
-            @Override
-            public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
+                @Override
+                public void onSuccess(User user) {
+                    mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
     }
 
     /**
      * getDevices - Returns the devices associated with a current user
      *
-     * @param {string} [userID] User ID. Only works on serversidex
-     * @return {devices} Array of devices
      */
     public void getDevices(@NonNull Map<String, String> payload,
                            GetDevicesCallback callback) {
 
-        mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
-            @Override
-            public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
 
-            @Override
-            public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                        @Override
+                        public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
             }
-        });
+        );
     }
 
     /**
      * removeDevice - Removes the device with the given id. Clientside users can only delete their own devices
      *
-     * @param {string} id The device id
-     * @param {string} [userID] The user id. Only specify this for serverside requests
      */
     public void removeDevice(@NonNull String deviceId,
                              DeviceCallback callback) {
+        onSetUserCompleted(
+            new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
+                        @Override
+                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            callback.onSuccess(response.body());
+                        }
 
-        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
-            @Override
-            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                callback.onSuccess(response.body());
-            }
+                        @Override
+                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    });
+                }
 
-            @Override
-            public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
             }
-        });
+        );
     }
 
     // endregion
@@ -966,23 +980,16 @@ public class Client implements WSResponseHandler {
         connectionRecovered();
     }
 
+    /**
+     * setAnonymousUser - Setup an anonymous session
+     */
     public void setAnonymousUser() {
     }
 
     /**
      * setGuestUser - Setup a temporary guest user
-     *
-     * @param {object} user Data about this user. IE {name: "john"}
-     * @return {promise} Returns a promise that resolves when the connection is setup
      */
-    public void setGuestUser() {
-    }
-
-    public void on() {
-    }
-
-    public void off() {
-
+    public void setGuestUser(User user) {
     }
 
     /**

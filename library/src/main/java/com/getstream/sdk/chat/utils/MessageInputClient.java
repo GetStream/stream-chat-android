@@ -187,11 +187,12 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-
-            viewModel.getChannel().sendFile(attachment, attachment.getType().equals(ModelType.attach_image), new SendFileCallback() {
+            binding.ivSend.setEnabled(false);
+            SendFileCallback callback = new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.setActiveMessageSend(true);
+                    binding.ivSend.setEnabled(true);
                     File file = new File(attachment.config.getFilePath());
                     if (attachment.getType().equals(ModelType.attach_image)) {
                         attachment.setImageURL(response.getFileUrl());
@@ -209,11 +210,17 @@ public class MessageInputClient {
                 @Override
                 public void onError(String errMsg, int errCode) {
                     binding.setActiveMessageSend(true);
+                    binding.ivSend.setEnabled(true);
                     attachment.config.setSelected(false);
-                    Utils.showMessage(context, "Failed upload image!");
+                    Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedMedia(attachments, attachment);
                 }
-            });
+            };
+            if (attachment.getType().equals(ModelType.attach_image)) {
+                viewModel.getChannel().sendImage(attachment, callback);
+            } else {
+                viewModel.getChannel().sendFile(attachment, callback);
+            }
         } else
             selectedAttachments.remove(attachment);
 
@@ -266,9 +273,11 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            viewModel.getChannel().sendFile(attachment, false, new SendFileCallback() {
+            binding.ivSend.setEnabled(false);
+            viewModel.getChannel().sendFile(attachment, new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
+                    binding.ivSend.setEnabled(true);
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
@@ -277,6 +286,8 @@ public class MessageInputClient {
                 @Override
                 public void onError(String errMsg, int errCode) {
                     attachment.config.setSelected(false);
+                    binding.ivSend.setEnabled(true);
+                    Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedFile(attachments, attachment);
                 }
             });

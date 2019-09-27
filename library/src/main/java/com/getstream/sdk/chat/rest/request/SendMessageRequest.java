@@ -18,6 +18,7 @@ public class SendMessageRequest {
     @Expose
     Map<String, Object> message;
 
+
     public SendMessageRequest(Message message, boolean showInChannel, List<String>mentionedUserIDs) {
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             boolean isGiphy = false;

@@ -20,7 +20,6 @@
 
         <TextView
             android:id="@+id/tv_name"
-            style="@style/channel_preview_channel_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -37,7 +36,6 @@
 
         <TextView
             android:id="@+id/tv_last_message"
-            style="@style/channel_preview_channel_last_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
@@ -49,14 +47,12 @@
             android:singleLine="true"
             app:layout_constraintLeft_toRightOf="@id/avatar_group"
             app:layout_constraintRight_toLeftOf="@id/tv_date"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar_group"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/avatar_group" />
 
 
 
         <TextView
             android:id="@+id/tv_date"
-            style="@style/channel_preview_channel_last_message_date"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:gravity="end"

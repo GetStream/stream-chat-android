@@ -27,8 +27,10 @@ import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -151,10 +153,22 @@ public class Channel {
     @Ignore
     private ChannelState channelState;
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    @Ignore
+    private boolean initialized;
+
     // this constructor is here for GSON to play fair
     public Channel() {
         this(null, "", "", new HashMap<>());
     }
+
     /**
      * constructor - Create a channel
      *
@@ -166,6 +180,7 @@ public class Channel {
     public Channel(Client client, String type, String id) {
         this(client, type, id, new HashMap<>());
     }
+
     /**
      * constructor - Create a channel
      *
@@ -202,6 +217,7 @@ public class Channel {
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
         channelState = new ChannelState(this);
+        initialized = false;
     }
 
     public Date getCreatedAt() {
@@ -413,10 +429,26 @@ public class Channel {
     }
 
     /**
+     * watch - Loads the initial channel state and watches for changes
+     *
+     */
+    public void watch(@NonNull ChannelWatchRequest request, QueryWatchCallback callback) {
+        query(request, new QueryChannelCallback() {
+            @Override
+            public void onSuccess(ChannelState response) {
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
      * query - Query the API, get messages, members or other channel fields
      *
-     * @param {object} options The query options
-     * @return {object} Returns a query response
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
@@ -436,7 +468,12 @@ public class Channel {
                                     channel.channelState = response.body();
 
                                 client.addChannelConfig(type, channel.config);
-                                client.addToActiveChannels(channel);
+
+                                if (request.isWatch()) {
+                                    client.addToActiveChannels(channel);
+                                    initialized = true;
+                                }
+
                                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                                 // offline storage
 
@@ -461,19 +498,8 @@ public class Channel {
     }
 
     /**
-     * query - Query the API, get messages, members or other channel fields
-     *
-     * @return {object} Returns a query response
-     */
-//    public void query(QueryChannelCallback callback) {
-//        query(new ChannelQueryRequest().withData(this.extraData), callback);
-//    }
-
-    /**
      * getReplies - List the message replies for a parent message
      *
-     * @param parentId The message parent id, ie the top of the thread
-     * @param limit    Pagination params, ie 10
      * @return {object} Returns a getReplies response
      */
     public void getReplies(@NonNull String parentId, int limit, String firstMessageId, final GetRepliesCallback callback) {
@@ -578,39 +604,41 @@ public class Channel {
         });
     }
 
-    public void sendFile(Attachment attachment, boolean isImage,
+    public void sendImage(Attachment attachment,
+                         SendFileCallback fileCallback) {
+        File file = new File(attachment.config.getFilePath());
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+        client.sendImage(this, part, new SendFileCallback() {
+            @Override
+            public void onSuccess(FileSendResponse response) {
+                fileCallback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                fileCallback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void sendFile(Attachment attachment,
                          SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
 
-        if (isImage) {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendImage(this, part, new SendFileCallback() {
-                @Override
-                public void onSuccess(FileSendResponse response) {
-                    fileCallback.onSuccess(response);
-                }
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
+        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
+        client.sendFile(this, part, new SendFileCallback() {
+            @Override
+            public void onSuccess(FileSendResponse response) {
+                fileCallback.onSuccess(response);
+            }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    fileCallback.onError(errMsg, errCode);
-                }
-            });
-        } else {
-            RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-            client.sendFile(this, part, new SendFileCallback() {
-                @Override
-                public void onSuccess(FileSendResponse response) {
-                    fileCallback.onSuccess(response);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    fileCallback.onError(errMsg, errCode);
-                }
-            });
-        }
+            @Override
+            public void onError(String errMsg, int errCode) {
+                fileCallback.onError(errMsg, errCode);
+            }
+        });
     }
     // endregion
 

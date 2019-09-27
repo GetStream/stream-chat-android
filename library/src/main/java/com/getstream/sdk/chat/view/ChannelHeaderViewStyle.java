@@ -66,7 +66,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         lastActiveShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true);
 
         // Back Button
-        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonShow, false);
+        backButtonShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonShow, true);
         backButtonBackground = a.getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonBackground);
 
         // Avatar

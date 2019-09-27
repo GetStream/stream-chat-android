@@ -6,13 +6,13 @@ Typically it will show an unread/read state, the last message and who is partici
 The easiest way to render a ChannelList is to add it to your layout:
 
 ```xml
-<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
+<com.getstream.sdk.chat.view.ChannelListView
+    android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginBottom="10dp"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-     />
+    app:layout_constraintBottom_toBottomOf="parent" />
 ```
 
 And in activity do something like this:
@@ -106,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // TODO: open your user profile
         });
-
     }
 }
 ```
@@ -123,47 +122,89 @@ The following listeners can be set
 
 The following attributes are available:
 
-```xml
-<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:layout_marginBottom="10dp"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    stream:avatarWidth="40dp"
-    stream:avatarHeight="40dp"
-    stream:avatarInitialsTextSize="16sp"
-    stream:avatarInitialsTextColor="#000"
-    stream:avatarInitialsTextStyle="bold"
-    stream:dateTextColor="#858585"
-    stream:dateTextSize="11sp"
-    stream:titleTextColor="#000"
-    stream:titleTextSize="16sp"
-    stream:titleTextStyleChannel="bold"
-    stream:unreadTitleTextColor="#000"
-    stream:unreadTitleTextStyle="bold"
-    stream:messageTextColor="#858585"
-    stream:messageTextSize="16sp"
-    stream:messageTextStyle="normal"
-    stream:unreadMessageTextColor="#000"
-    stream:unreadMessageTextStyle="bold"
-    stream:channelPreviewLayout="@layout/list_item_channel_custom"
-     />
-```
+You must use the following properties in your XML to change your ChannelListView.
+
+- **AvatarView**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamAvatarWidth`             | dimension             | 40dp    |
+| `app:streamAvatarHeight`            | dimension             | 40dp    |
+| `app:streamAvatarBorderWidth`       | dimension             | 3dp     |
+| `app:streamAvatarBorderColor`       | color                 | WHITE   |
+| `app:streamAvatarBackGroundColor`   | color                 | DKGRAY  |
+| `app:streamAvatarTextSize`          | dimension             | 14sp    |
+| `app:streamAvatarTextColor`         | color                 | WHITE   |
+| `app:streamAvatarTextStyle`         | normal, bold, italic  | bold    |
+
+- **ReadStateView**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamShowReadState`           | boolean               | true    |
+| `app:streamReadStateAvatarWidth`    | dimension             | 14dp    |
+| `app:streamReadStateAvatarHeight`   | dimension             | 14dp    |
+| `app:streamReadStateTextSize`       | dimension             | 8sp     |
+| `app:streamReadStateTextColor`      | color                 | BLACK   |
+| `app:streamReadStateTextStyle`      | normal, bold, italic  | bold    |
+
+- **Channel Title**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamTitleTextSize`           | dimension             | 15sp    |
+| `app:streamTitleTextColor`          | color                 | BLACK   |
+| `app:streamTitleTextStyle`          | normal, bold, italic  | bold    |
+
+- **Last Message**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamMessageTextSize`         | dimension             | 13sp    |
+| `app:streamMessageTextColor`        | color                 | DKGRAY  |
+| `app:streamMessageTextStyle`        | normal, bold, italic  | normal  |
+
+- **Last Message Date**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamLastMessageDateTextSize` | dimension             | 11sp    |
+| `app:streamLastMessageDateTextColor`| color                 | DKGRAY  |
+
+- **Unread Channel Title**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamUnreadTitleTextColor`    | color                 | BLACK   |
+| `app:streamUnreadTitleTextStyle`    | normal, bold, italic  | bold    |
+
+- **Unread Last Message**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamUnreadMessageTextColor`  | color                 | BLACK   |
+| `app:streamUnreadMessageTextStyle`  | normal, bold, italic  | bold    |
+
+- **Custom Layout**
+
+| Properties                          | Type                  | Default |
+| ----------------------------------- | --------------------- | ------- |
+| `app:streamChannelPreviewLayout`    | reference             |  _      |
+
 
 #### Changing the layout
 
 If you need to make a bigger change you can swap the layout for the channel previews.
 
 ```xml
-<com.getstream.sdk.chat.view.ChannelListView android:id="@+id/channelList"
+<com.getstream.sdk.chat.view.ChannelListView
+    android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_marginBottom="10dp"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    stream:channelPreviewLayout="@layout/list_item_channel_custom"
-     />
+    app:streamChannelPreviewLayout="@layout/list_item_channel_custom" />
 ```
 
 That only works for simple changes where you don't change the IDs of views, or their types.

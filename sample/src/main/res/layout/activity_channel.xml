@@ -14,14 +14,12 @@
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.ChannelActivity">
 
-
         <com.getstream.sdk.chat.view.ChannelHeaderView
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:streamChannelHeaderBackButtonShow="true" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
@@ -32,18 +30,16 @@
             app:layout_constraintBottom_toTopOf="@+id/message_input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/channelHeader"/>
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintStart_toEndOf="parent" />
 
         <ProgressBar
             android:layout_width="wrap_content"

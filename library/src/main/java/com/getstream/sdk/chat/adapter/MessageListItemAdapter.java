@@ -144,7 +144,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
-        if (style.isEnableReaction())
+        if (style.isReactionEnabled())
             this.messageClickListener = messageClickListener;
     }
 

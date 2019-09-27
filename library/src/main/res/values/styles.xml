@@ -1,5 +1,4 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -64,45 +63,6 @@
     <style name="text_s">
         <item name="android:textSize">11sp</item>
         <item name="android:textColor">@color/stream_gray_dark</item>
-    </style>
-
-    <!--region Channel Preview-->
-    <style name="channel_preview_initials">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/stream_black</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="channel_preview_avatar">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-    </style>
-
-    <style name="channel_preview_channel_name">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/stream_black</item>
-    </style>
-
-    <style name="channel_preview_channel_last_message">
-        <item name="android:textSize">13sp</item>
-        <item name="android:textColor">@color/stream_gray_dark</item>
-    </style>
-
-    <style name="channel_preview_channel_last_message_date">
-        <item name="android:textSize">11sp</item>
-        <item name="android:textColor">@color/stream_gray_dark</item>
-    </style>
-
-    <style name="channel_preview_channel_unread_indicator">
-        <item name="android:textSize">11sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/stream_black</item>
-    </style>
-    <!--endregion-->
-
-    <!--region Chat-->
-    <style name="message_text">
-        <item name="android:textSize">@dimen/stream_message_text_font_size</item>
     </style>
     <!--endregion-->
 </resources>

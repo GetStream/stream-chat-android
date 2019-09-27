@@ -41,10 +41,10 @@ public class Config {
     private boolean search;
     @SerializedName("reactions")
     @Expose
-    private boolean reactions;
+    private boolean reactionsEnabled;
     @SerializedName("replies")
     @Expose
-    private boolean replies;
+    private boolean repliesEnabled;
     @SerializedName("mutes")
     @Expose
     private boolean mutes;
@@ -134,20 +134,20 @@ public class Config {
         this.search = search;
     }
 
-    public boolean isReactions() {
-        return reactions;
+    public boolean isReactionsEnabled() {
+        return reactionsEnabled;
     }
 
-    public void setReactions(boolean reactions) {
-        this.reactions = reactions;
+    public void setReactionsEnabled(boolean reactionsEnabled) {
+        this.reactionsEnabled = reactionsEnabled;
     }
 
-    public boolean isReplies() {
-        return replies;
+    public boolean isRepliesEnabled() {
+        return repliesEnabled;
     }
 
-    public void setReplies(boolean replies) {
-        this.replies = replies;
+    public void setRepliesEnabled(boolean repliesEnabled) {
+        this.repliesEnabled = repliesEnabled;
     }
 
     public boolean isMutes() {
