@@ -78,6 +78,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     public LiveData<List<Channel>> getChannels() {
+        if (initialized.compareAndSet(false, true)) {
+            queryChannels();
+        }
         return channels;
     }
 
@@ -403,13 +406,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
         protected ChannelListViewModel viewModel;
 
-        @Override
-        protected void onActive() {
-            super.onActive();
-            if (viewModel.initialized.compareAndSet(false, true)) {
-                viewModel.queryChannels();
-            }
-        }
     }
 
 }

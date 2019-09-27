@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
 
         // most the business logic for chat is handled in the ChannelListViewModel view model
-        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ChannelListViewModel.class);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 
