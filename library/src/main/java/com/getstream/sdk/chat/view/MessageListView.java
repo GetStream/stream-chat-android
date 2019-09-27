@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
@@ -537,7 +538,7 @@ public class MessageListView extends RecyclerView {
         if (this.readStateClickListener != null) {
             adapter.setReadStateClickListener(this.readStateClickListener);
         } else {
-            adapter.setReadStateClickListener(reads ->  {
+            adapter.setReadStateClickListener(reads -> {
                 new ReadUsersDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setReads(reads)
@@ -573,11 +574,17 @@ public class MessageListView extends RecyclerView {
                 } else {
                     List<String> imageUrls = new ArrayList<>();
                     for (Attachment a : message.getAttachments()) {
-                        if (a.getType().equals(ModelType.attach_image))
-                            imageUrls.add(a.getImageURL());
+                        if (!a.getType().equals(ModelType.attach_image) || TextUtils.isEmpty(a.getImageURL()))
+                            continue;
+                        imageUrls.add(a.getImageURL());
                     }
-                    int position = message.getAttachments().indexOf(attachment);
+                    if (imageUrls.isEmpty()) {
+                        Utils.showMessage(getContext(), "Invalid image(s)!");
+                        return;
+                    }
 
+                    int position = message.getAttachments().indexOf(attachment);
+                    if (position > imageUrls.size() -1) position = 0;
                     new ImageViewer.Builder<>(getContext(), imageUrls)
                             .setStartPosition(position)
                             .show();
