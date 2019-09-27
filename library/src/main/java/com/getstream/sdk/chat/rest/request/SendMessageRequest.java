@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.request;
 
+import android.text.TextUtils;
+
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -16,7 +18,7 @@ public class SendMessageRequest {
     @Expose
     Map<String, Object> message;
 
-    public SendMessageRequest(Message message, List<String>mentionedUserIDs) {
+    public SendMessageRequest(Message message, boolean showInChannel, List<String>mentionedUserIDs) {
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             boolean isGiphy = false;
             for (Attachment attachment : message.getAttachments()) {
@@ -30,13 +32,12 @@ public class SendMessageRequest {
                 message.setCommandInfo(commandInfo);
             }
         }
-        HashMap<String, Object>extraData = new HashMap<>();
-        extraData.put("gender","Male");
-        message.setExtraData(extraData);
         String messageStr = GsonConverter.Gson().toJson(message);
         this.message = GsonConverter.Gson().fromJson(messageStr, Map.class);
 
         if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
             this.message.put("mentioned_users", mentionedUserIDs);
+        if (!TextUtils.isEmpty(message.getParentId()))
+            this.message.put("show_in_channel", showInChannel);
     }
 }

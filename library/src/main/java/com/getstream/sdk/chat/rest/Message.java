@@ -131,9 +131,6 @@ public class Message implements UserEntity {
     @SerializedName("command")
     @Expose(serialize = false)
     private String command;
-    @SerializedName("show_in_channel")
-    @Expose
-    private boolean showInChannel = false;
     @SerializedName("command_info")
     @Expose
     @TypeConverters(CommandInfoConverter.class)
@@ -396,14 +393,6 @@ public class Message implements UserEntity {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public boolean isShowInChannel() {
-        return showInChannel;
-    }
-
-    public void setShowInChannel(boolean showInChannel) {
-        this.showInChannel = showInChannel;
     }
 
     @TypeConverters(AttachmentListConverter.class)

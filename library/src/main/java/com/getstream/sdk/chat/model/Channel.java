@@ -527,7 +527,7 @@ public class Channel {
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, mentionedUserIDs);
+        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
 
         client.sendMessage(this, request, new MessageCallback() {
             @Override
@@ -548,7 +548,7 @@ public class Channel {
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, mentionedUserIDs);
+        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
 
         client.updateMessage(message.getId(), request, new MessageCallback() {
             @Override
