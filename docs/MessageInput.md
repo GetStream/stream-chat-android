@@ -123,7 +123,7 @@ TODO document this
 
 If you need to make a bigger change you can swap the layout for the Message Input.
 
-Create your custom Messge input layout as below
+Create your custom Messge input layout named `view_custom_message_input` as shown below.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -206,13 +206,13 @@ Create your custom Messge input layout as below
 </layout>
 ```
 
-And change `com.getstream.sdk.chat.view.MessageInputView` to as following
+And change `com.getstream.sdk.chat.view.MessageInputView` as following
 
 ```xml
 ...
 <include
-    layout="@layout/view_custom_message_input"
     android:id="@+id/message_input"
+    layout="@layout/view_custom_message_input"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="32dp"
@@ -222,18 +222,16 @@ And change `com.getstream.sdk.chat.view.MessageInputView` to as following
 ...
 ```
 
-Please add some codes to `ChannelActivity`
+Please add the following code to `ChannelActivity`
 ```java
-// Set Keystroke
+// Set typing event
 binding.messageInput.etMessage.addTextChangedListener(new TextWatcher() {
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
     }
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
     }
 
     @Override
@@ -259,15 +257,15 @@ binding.messageInput.btnImage.setOnClickListener(view -> {
     message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
     sendMessage(channel, message);
 });
-// Send Giphy Message
 
+// Send Giphy Message
 binding.messageInput.btnGif.setOnClickListener(view -> {
     Message message = new Message();
     message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
     sendMessage(channel, message);
 });
-// Send File Message
 
+// Send File Message
 binding.messageInput.btnFile.setOnClickListener(view -> {
     Message message = new Message();
     message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
@@ -282,13 +280,11 @@ private void sendMessage(Channel channel, Message message){
     channel.sendMessage(message, new MessageCallback() {
         @Override
         public void onSuccess(MessageResponse response) {
-            Log.i(TAG, "Sent message successfully!");
             binding.messageInput.etMessage.setText("");
         }
 
         @Override
         public void onError(String errMsg, int errCode) {
-            Log.i(TAG, errMsg);
             binding.messageInput.etMessage.setText("");
         }
     });
