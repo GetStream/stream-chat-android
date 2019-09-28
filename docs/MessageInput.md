@@ -122,7 +122,8 @@ TODO document this
 #### Changing the layout
 
 If you need to make a bigger change you can swap the layout for the Message Input.
-Create your custom Messga input layout as below
+
+Create your custom Messge input layout as below
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
