@@ -88,7 +88,10 @@
 
 ##---------------Begin: Stream specific  ----------
 
--keep class com.getstream.sdk.chat.** { *; }
-
+-keepclassmembers class * extends java.lang.Enum {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
 ##---------------End: Stream specific  ----------
 
