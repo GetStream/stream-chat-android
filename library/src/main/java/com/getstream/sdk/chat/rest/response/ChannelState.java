@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -82,9 +83,6 @@ public class ChannelState {
     }
 
     // endregion
-    private static void sortUserReads(List<ChannelUserRead> reads) {
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-    }
 
     public String getCid() {
         return cid;
@@ -295,7 +293,11 @@ public class ChannelState {
         Message lastMessage = this.getLastMessage();
         List<ChannelUserRead> readLastMessage = new ArrayList<>();
         if (reads == null || lastMessage == null) return readLastMessage;
+        Client client = this.getChannel().getClient();
+        String userID = client.getUserId();
         for (ChannelUserRead r : reads) {
+            if (r.getUserId().equals(userID))
+                continue;
             if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
                 readLastMessage.add(r);
             }
@@ -364,7 +366,6 @@ public class ChannelState {
     public User getLastReader() {
         if (this.reads == null || this.reads.isEmpty()) return null;
         User lastReadUser = null;
-        sortUserReads(this.reads);
         for (int i = reads.size() - 1; i >= 0; i--) {
             ChannelUserRead channelUserRead = reads.get(i);
             if (!channel.getClient().fromCurrentUser(channelUserRead)) {
@@ -452,8 +453,6 @@ public class ChannelState {
     public Date getReadDateOfChannelLastMessage(String userId) {
         if (this.reads == null || this.reads.isEmpty()) return null;
         Date lastReadDate = null;
-        sortUserReads(this.reads);
-
         try {
             for (int i = reads.size() - 1; i >= 0; i--) {
                 ChannelUserRead channelUserRead = reads.get(i);
@@ -479,9 +478,23 @@ public class ChannelState {
                 return;
             }
         }
-
         ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
         reads.add(channelUserRead);
+    }
+    // if user read the last message returns true, else false.
+    public boolean readLastMessage(){
+        Client client = this.getChannel().getClient();
+        String userID = client.getUserId();
+        Date myReadDate = getReadDateOfChannelLastMessage(userID);
+        if (myReadDate == null){
+            return false;
+        }else if (getLastMessage() == null){
+            return true;
+        }else if (myReadDate.getTime() > getLastMessage().getCreatedAt().getTime()){
+            return true;
+        }else{
+            return false;
+        }
     }
 }
 
