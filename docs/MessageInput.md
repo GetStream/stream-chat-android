@@ -295,13 +295,13 @@ private void sendMessage(Channel channel, Message message){
 // Get Attachment: Image, Giphy, File
 private Attachment getAttachment(String modelType){
     Attachment attachment = new Attachment();
-    attachment.setType(ModelType.attach_image);
     String url;
     switch (modelType){
         case ModelType.attach_image:
             url = "https://cdn.pixabay.com/photo/2017/12/25/17/48/waters-3038803_1280.jpg";
             attachment.setImageURL(url);
             attachment.setFallback("test image");
+            attachment.setType(ModelType.attach_image);
             break;
         case ModelType.attach_giphy:
             url = "https://media1.giphy.com/media/l4FB5yXHoVSheWQ5a/giphy.gif";
@@ -313,8 +313,7 @@ private Attachment getAttachment(String modelType){
         case ModelType.attach_file:
             url = "https://stream-cloud-uploads.imgix.net/attachments/47574/08cd5fba-f157-4c97-9ab1-fd57a1fafc03.VID_20190928_213042.mp4?dl=VID_20190928_213042.mp4&s=0d8f2c1501e0f6a1de34c5fe1c84a0a5";
             attachment.setTitle("video.mp4");
-            int size = 707971;
-            attachment.setFile_size(size);
+            attachment.setFile_size(707971);
             attachment.setAssetURL(url);
             attachment.setType(ModelType.attach_file);
             attachment.setMime_type(ModelType.attach_mime_mp4);
