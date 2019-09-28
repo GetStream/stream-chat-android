@@ -3,6 +3,9 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -13,16 +16,20 @@ import androidx.lifecycle.ViewModelProviders;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
-import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
+
+import java.util.Arrays;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -34,8 +41,7 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.AttachmentClickListener,
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
-        MessageListView.UserClickListener,
-        MessageInputView.OpenCameraViewListener {
+        MessageListView.UserClickListener{
 
     static final String TAG = ChannelActivity.class.getSimpleName();
     static final String STATE_TEXT = "messageText";
@@ -59,7 +65,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.setLifecycleOwner(this);
         if (savedInstanceState != null) {
             String messageText = savedInstanceState.getString(STATE_TEXT);
-            binding.messageInput.setMessageText(messageText);
+            binding.messageInput.etMessage.setText(messageText);
         }
 
         Channel channel = client.channel(channelType, channelID);
@@ -71,7 +77,6 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
-        binding.messageInput.setOpenCameraViewListener(this);
 
         binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
 
@@ -81,19 +86,111 @@ public class ChannelActivity extends AppCompatActivity
         binding.channelHeader.setHeaderOptionsClickListener(this);
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
-        binding.messageInput.setViewModel(viewModel, this);
+
+        // Set Keystroke
+        binding.messageInput.etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String messageText = binding.messageInput.etMessage.getText().toString();
+                Log.i(TAG, "Length is " + s.length());
+                if (messageText.length() > 0) {
+                    viewModel.keystroke();
+                }
+            }
+        });
+
+        // Send Text Message
+        binding.messageInput.btnSend.setOnClickListener(view -> {
+            Message message = new Message();
+            message.setText(binding.messageInput.etMessage.getText().toString());
+            sendMessage(channel, message);
+        });
+        // Send Image Message
+        binding.messageInput.btnImage.setOnClickListener(view -> {
+            Message message = new Message();
+            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
+            sendMessage(channel, message);
+        });
+        // Send Giphy Message
+        binding.messageInput.btnGif.setOnClickListener(view -> {
+            Message message = new Message();
+            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
+            sendMessage(channel, message);
+        });
+        // Send File Message
+        binding.messageInput.btnFile.setOnClickListener(view -> {
+            Message message = new Message();
+            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
+            sendMessage(channel, message);
+        });
+    }
+
+    private void sendMessage(Channel channel, Message message){
+        message.setStatus(null);
+        channel.sendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                Log.i(TAG, "Sent message successfully!");
+                binding.messageInput.etMessage.setText("");
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.i(TAG, errMsg);
+                binding.messageInput.etMessage.setText("");
+            }
+        });
+    }
+
+    private Attachment getAttachment(String modelType){
+        Attachment attachment = new Attachment();
+        attachment.setType(ModelType.attach_image);
+        String url;
+        switch (modelType){
+            case ModelType.attach_image:
+                url = "https://cdn.pixabay.com/photo/2017/12/25/17/48/waters-3038803_1280.jpg";
+                attachment.setImageURL(url);
+                attachment.setFallback("test image");
+                break;
+            case ModelType.attach_giphy:
+                url = "https://media1.giphy.com/media/l4FB5yXHoVSheWQ5a/giphy.gif";
+                attachment.setThumbURL(url);
+                attachment.setTitleLink(url);
+                attachment.setTitle("hi");
+                attachment.setType(ModelType.attach_giphy);
+                break;
+            case ModelType.attach_file:
+                url = "https://stream-cloud-uploads.imgix.net/attachments/47574/08cd5fba-f157-4c97-9ab1-fd57a1fafc03.VID_20190928_213042.mp4?dl=VID_20190928_213042.mp4&s=0d8f2c1501e0f6a1de34c5fe1c84a0a5";
+                attachment.setTitle("video.mp4");
+                int size = 707971;
+                attachment.setFile_size(size);
+                attachment.setAssetURL(url);
+                attachment.setType(ModelType.attach_file);
+                attachment.setMime_type(ModelType.attach_mime_mp4);
+                break;
+        }
+        return attachment;
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_TEXT, binding.messageInput.getMessageText());
+        outState.putString(STATE_TEXT, binding.messageInput.etMessage.getText().toString());
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
     }
 
     @Override
@@ -109,11 +206,6 @@ public class ChannelActivity extends AppCompatActivity
                 }
             if (!granted) PermissionChecker.showRationalDialog(this, null);
         }
-    }
-
-    @Override
-    public void openCameraView(Intent intent, int REQUEST_CODE) {
-        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override

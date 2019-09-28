@@ -32,7 +32,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
-        <com.getstream.sdk.chat.view.MessageInputView
+        <include
+            layout="@layout/view_custom_message_input"
             android:id="@+id/message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
