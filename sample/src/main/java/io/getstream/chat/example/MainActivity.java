@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
 
         // most the business logic for chat is handled in the ChannelListViewModel view model
-        viewModel = new ViewModelProvider(this).get(ChannelListViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
         FilterObject filter = and(eq("type", "messaging"));
 
