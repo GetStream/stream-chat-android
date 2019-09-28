@@ -123,6 +123,8 @@ TODO document this
 
 If you need to make a bigger change you can swap the layout for the Message Input.
 
+Let's look at an example of how to change a custom layout.
+
 Create your custom Messge input layout named `view_custom_message_input` as shown below.
 
 ```xml
@@ -206,7 +208,7 @@ Create your custom Messge input layout named `view_custom_message_input` as show
 </layout>
 ```
 
-And change `com.getstream.sdk.chat.view.MessageInputView` as following
+And change `com.getstream.sdk.chat.view.MessageInputView` in `activity_channel.xml` as following
 
 ```xml
 ...
