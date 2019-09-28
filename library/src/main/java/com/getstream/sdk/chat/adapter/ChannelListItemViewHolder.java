@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.TypedValue;
 import android.view.View;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -24,6 +26,7 @@ import com.getstream.sdk.chat.view.ChannelListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
@@ -88,19 +91,19 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public void applyUnreadStyle() {
         // channel name
         tv_name.setTextColor(style.getUnreadTitleTextColor());
-        tv_name.setTypeface(tv_name.getTypeface(), style.getUnreadTitleTextStyle());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getUnreadTitleTextStyle());
 
         // last message
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getUnreadMessageTextStyle());
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getUnreadMessageTextStyle());
         tv_last_message.setTextColor(style.getUnreadMessageTextColor());
     }
 
     public void applyReadStyle() {
         // channel name
         tv_name.setTextColor(style.getTitleTextColor());
-        tv_name.setTypeface(tv_name.getTypeface(), style.getTitleTextStyle());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getTitleTextStyle());
         // last messsage
-        tv_last_message.setTypeface(tv_last_message.getTypeface(), style.getMessageTextStyle());
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle());
         tv_last_message.setTextColor(style.getMessageTextColor());
     }
 
@@ -115,7 +118,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // - unread count
         // - read state for this channel
         Message lastMessage = channelState.getLastMessage();
-        int unreadCount = channelState.getCurrentUserUnreadMessageCount();
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         List<User> otherUsers = channelState.getOtherUsers();
         String channelName = channelState.getChannelNameOrMembers();
@@ -145,12 +147,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // read indicators
         read_state.setReads(lastMessageReads, true, style);
 
-        // apply unread style or read style
-        if (unreadCount == 0) {
-            this.applyReadStyle();
-        } else {
-            this.applyUnreadStyle();
-        }
+        if (channelState.readLastMessage())
+            applyReadStyle();
+        else
+            applyUnreadStyle();
 
         // click listeners
         avatarGroupView.setOnClickListener(view -> {

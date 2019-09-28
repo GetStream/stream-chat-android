@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -48,7 +49,7 @@ public class QueryChannelsQ {
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
 
-    public QueryChannelsQ(FilterObject filter, QuerySort sort) {
+    public QueryChannelsQ(@NonNull FilterObject filter, @NonNull QuerySort sort) {
         this.filter = filter;
         this.sort = sort;
         computeID();

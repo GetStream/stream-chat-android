@@ -16,7 +16,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -83,17 +82,19 @@ public class MainActivity extends AppCompatActivity {
 
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+        // just get all channels
+        FilterObject filter = and(eq("type", "messaging"));
+
+        // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
+        //binding.channelList.setViewHolderFactory(factory);
+        viewModel.setChannelFilter(filter);
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 
         binding.channelList.setViewModel(viewModel, this);
-        ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
 
-        // just get all channels
-        FilterObject filter = and(eq("type", "messaging"));
 
-        //binding.channelList.setViewHolderFactory(factory);
-        viewModel.setChannelFilter(filter);
+
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(channel -> {
