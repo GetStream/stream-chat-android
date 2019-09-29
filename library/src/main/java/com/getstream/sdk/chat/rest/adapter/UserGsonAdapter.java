@@ -27,8 +27,17 @@ public class UserGsonAdapter extends TypeAdapter<User> {
 
     @Override
     public User read(JsonReader in) throws IOException {
-        TypeAdapter adapter = new Gson().getAdapter(User.class);
-        User value = (User) adapter.read(in);
-        return value;
+        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        HashMap<String, Object> value = (HashMap<String, Object>) adapter.read(in);
+        HashMap<String, Object> data = new HashMap<>();
+        for (Map.Entry<String, Object> set : value.entrySet()) {
+            if (set.getKey().equals("id"))
+                continue;
+            data.put(set.getKey(), set.getValue());
+        }
+
+        User user = new User((String) value.get("id"));
+        user.setExtraData(data);
+        return user;
     }
 }

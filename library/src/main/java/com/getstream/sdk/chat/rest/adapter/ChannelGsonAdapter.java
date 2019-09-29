@@ -28,14 +28,17 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
 
     @Override
     public Channel read(JsonReader in) throws IOException {
-        TypeAdapter adapter = new Gson().getAdapter(Channel.class);
-        Channel value = (Channel) adapter.read(in);
+        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        HashMap<String, Object> value = (HashMap<String, Object>) adapter.read(in);
         HashMap<String, Object> data = new HashMap<>();
-        if (value.getExtraData() != null && !value.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : value.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
+        for (Map.Entry<String, Object> set : value.entrySet()) {
+            if (set.getKey().equals("id") || set.getKey().equals("type"))
+                continue;
+            data.put(set.getKey(), set.getValue());
+        }
 
-        value.setExtraData(data);
-        return value;
+        Channel channel = new Channel();
+        channel.setExtraData(data);
+        return channel;
     }
 }

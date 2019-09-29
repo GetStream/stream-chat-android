@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.google.gson.Gson;
 
 import java.util.HashMap;
 
@@ -26,28 +27,36 @@ public class ExtraDataTest {
 
     @org.junit.jupiter.api.Test
     void channelExtraReadTest() {
+        String json = "{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}";
+        Channel channel = GsonConverter.Gson().fromJson(json, Channel.class);
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("id", "the-channel-test-id");
         extraData.put("name", "Test Channel");
         extraData.put("image", "https://bit.ly/321RmWb");
-//        Channel channel = new Channel(null, "messaging", "the-channel-id", extraData);
-        String json = "{\"group\":\"group-channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}";
-        Channel channel = GsonConverter.Gson().fromJson(json, Channel.class);
-        assertEquals("{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}", json);
+        assertEquals(extraData, channel.getExtraData());
     }
+
     @org.junit.jupiter.api.Test
-    void userExtraTest() {
+    void userWriteExtraTest() {
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("gender", "male");
-        extraData.put("id", "the-user-test-id");
+        extraData.put("name", "Tommaso");
+        extraData.put("id", "the-user-id");
 
-        User user = new User("the-user-id", extraData);
+        User user = new User("tommaso", extraData);
         String json = GsonConverter.Gson().toJson(user);
-        assertEquals("{\"gender\":\"male\",\"id\":\"the-user-id\"}", json);
+        assertEquals("{\"name\":\"Tommaso\",\"id\":\"tommaso\"}", json);
     }
 
     @org.junit.jupiter.api.Test
-    void messageExtraTest() {
+    void userExtraReadTest() {
+        String json = "{\"name\":\"Tommaso\",\"id\":\"tommaso\"}";
+        User user = GsonConverter.Gson().fromJson(json, User.class);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", "Tommaso");
+        assertEquals(extraData, user.getExtraData());
+    }
+
+    @org.junit.jupiter.api.Test
+    void messageWriteExtraTest() {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("group", "group chat");
         extraData.put("id", "the-message-test-id");
@@ -60,7 +69,16 @@ public class ExtraDataTest {
     }
 
     @org.junit.jupiter.api.Test
-    void attachmentExtraTest() {
+    void messageExtraReadTest() {
+        String json = "{\"id\":\"the-message-id\",\"group\":\"group chat\"}";
+        Message message = GsonConverter.Gson().fromJson(json, Message.class);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("group", "group chat");
+        assertEquals(extraData, message.getExtraData());
+    }
+
+    @org.junit.jupiter.api.Test
+    void attachmentWriteExtraTest() {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("isAchieved", true);
 
@@ -70,4 +88,12 @@ public class ExtraDataTest {
         assertEquals("{\"isAchieved\":true}", json);
     }
 
+    @org.junit.jupiter.api.Test
+    void attachmentExtraReadTest() {
+        String json = "{\"isAchieved\":true}";
+        Attachment attachment = GsonConverter.Gson().fromJson(json, Attachment.class);
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("isAchieved", true);
+        assertEquals(extraData, attachment.getExtraData());
+    }
 }
