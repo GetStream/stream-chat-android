@@ -316,3 +316,6 @@ viewModel.isThread()
 
 You can retrieve the message that's being edited using `viewModel.getEditMessage`.
 To retrieve the current thread use `viewModel.getThreadParentMessage`.
+
+When editing a message you'll want to call `channel.updateMessage()` instead of `channel.sendMessage()`
+Typically you'll also want to add a button that allows your user to cancel editing a message.
