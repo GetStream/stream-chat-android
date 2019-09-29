@@ -180,6 +180,9 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
+                if (attachment.getType().equals(ModelType.attach_file)){
+                    return null;
+                }
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
@@ -192,14 +195,6 @@ public class MessageListView extends RecyclerView {
                     strokeColor = style.getMessageBorderColorMine();
                     strokeWidth = style.getMessageBorderWidthMine();
                     if (isDefaultBubble()) {
-                        try {
-                            if (message.getAttachments() != null
-                                    && !message.getAttachments().isEmpty()
-                                    && message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
-                                return null;
-                            }
-                        } catch (Exception e) {
-                        }
                         topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
@@ -224,14 +219,6 @@ public class MessageListView extends RecyclerView {
                     strokeColor = style.getMessageBorderColorTheirs();
                     strokeWidth = style.getMessageBorderWidthTheirs();
                     if (isDefaultBubble()) {
-                        try {
-                            if (message.getAttachments() != null
-                                    && !message.getAttachments().isEmpty()
-                                    && message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
-                                return null;
-                            }
-                        } catch (Exception e) {
-                        }
                         topRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {

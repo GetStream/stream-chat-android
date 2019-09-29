@@ -67,33 +67,33 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
 
-    private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessage(),
+    private void configImageThumbBackground() {
+        Drawable background = getBubbleHelper().getDrawableForAttachment(message,
                 getMessageListItem().isMine(),
                 getMessageListItem().getPositions(),
                 attachment);
-        iv_media_thumb.setShape(getContext(), background);
+        iv_media_thumb.setShape(context, background);
 //        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configAction() {
 
-        if (getMessage().getType().equals(ModelType.message_ephemeral)
-                && getMessage().getCommand() != null
-                && getMessage().getCommand().equals(ModelType.attach_giphy)) {
+        if (message.getType().equals(ModelType.message_ephemeral)
+                && message.getCommand() != null
+                && message.getCommand().equals(ModelType.attach_giphy)) {
             // set Background
             tv_action_send.setBackground(new DrawableBuilder()
                     .rectangle()
                     .rounded()
                     .strokeColor(Color.WHITE)
                     .strokeWidth(Utils.dpToPx(2))
-                    .solidColor(getContext().getResources().getColor(R.color.stream_input_message_send_button))
+                    .solidColor(context.getResources().getColor(R.color.stream_input_message_send_button))
                     .solidColorPressed(Color.LTGRAY)
                     .build());
             tv_action_shuffle.setBackground(new DrawableBuilder()
                     .rectangle()
                     .rounded()
-                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeColor(context.getResources().getColor(R.color.stream_message_stroke))
                     .strokeWidth(Utils.dpToPx(2))
                     .solidColor(Color.WHITE)
                     .solidColorPressed(Color.LTGRAY)
@@ -101,7 +101,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_action_cancel.setBackground(new DrawableBuilder()
                     .rectangle()
                     .rounded()
-                    .strokeColor(getContext().getResources().getColor(R.color.stream_message_stroke))
+                    .strokeColor(context.getResources().getColor(R.color.stream_message_stroke))
                     .strokeWidth(Utils.dpToPx(2))
                     .solidColor(Color.WHITE)
                     .solidColorPressed(Color.LTGRAY)
@@ -111,27 +111,25 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
             tv_action_send.setOnClickListener((View v) -> {
                 if (giphySendListener != null)
-                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SEND);
+                    giphySendListener.onGiphySend(message, GiphyAction.SEND);
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
                 if (giphySendListener != null)
-                    giphySendListener.onGiphySend(getMessage(), GiphyAction.SHUFFLE);
+                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
             });
             tv_action_cancel.setOnClickListener((View v) -> {
                 if (giphySendListener != null)
-                    giphySendListener.onGiphySend(getMessage(), GiphyAction.CANCEL);
+                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
             });
         } else {
             cl_action.setVisibility(View.GONE);
         }
     }
 
-    private void configMediaAttach() {
-        Attachment attachment = getAttachment();
-
+    private void configMediaAttach() {  
+        
         final String type = attachment.getType();
-
         String attachUrl = attachment.getImageURL();
         if (attachment.getType().equals(ModelType.attach_image)) {
             attachUrl = attachment.getImageURL();
@@ -140,25 +138,22 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         } else if (attachment.getType().equals(ModelType.attach_video)) {
             attachUrl = attachment.getThumbURL();
         } else {
-            if (attachUrl == null) attachUrl = getAttachment().getImage();
+            if (attachUrl == null) attachUrl = attachment.getImage();
         }
 
-        configImageThumbBackground(getAttachment());
+        configImageThumbBackground();
 
-        // Set Click Listener
-//        iv_media_thumb.setOnClickListener(this);
-//        iv_media_thumb.setOnLongClickListener(this);
         if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
 
-        Glide.with(getContext())
+        Glide.with(context)
                 .load(attachUrl)
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 
-        if (!getMessage().getType().equals(ModelType.message_ephemeral))
-            tv_media_title.setText(getAttachment().getTitle());
-        tv_media_des.setText(getAttachment().getText());
+        if (!message.getType().equals(ModelType.message_ephemeral))
+            tv_media_title.setText(attachment.getTitle());
+        tv_media_des.setText(attachment.getText());
 
 
         if (attachment.getType().equals(ModelType.attach_giphy))
@@ -166,12 +161,12 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         else
             iv_command_logo.setVisibility(View.GONE);
 
-        if (TextUtils.isEmpty(getAttachment().getText()))
+        if (TextUtils.isEmpty(attachment.getText()))
             tv_media_des.setVisibility(View.GONE);
         else
             tv_media_des.setVisibility(View.VISIBLE);
 
-        if (TextUtils.isEmpty(getAttachment().getTitle()))
+        if (TextUtils.isEmpty(attachment.getTitle()))
             tv_media_title.setVisibility(View.GONE);
         else
             tv_media_title.setVisibility(View.VISIBLE);
@@ -184,13 +179,13 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(getStyle().getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentTitleTextStyle());
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
+        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
 
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
+        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
