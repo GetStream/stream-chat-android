@@ -76,56 +76,18 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamInputSelectedBackground` | reference   | -       |
 | `app:streamInputEditBackground`     | reference   | -       |
 
-#### Writing your own message input view
+### Writing your own message input view
 
 You can also create your own message input view. 
 Building your own message list or channel list is a lot of work. 
 A message input or channel header view is much easier to build though.
 
-**ChannelViewModel**
+If you need to make a larger change you can always build your own message input layout or view.
+Let's go over a simple example of building your own message input.
 
-As a first step connect the channel view model. The channel view model holds all the state for a channel activity.
+#### Step 1: Create your custom layout
 
-```java
-public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
-	this.channelViewModel = viewModel;
-	binding.setLifecycleOwner(lifecycleOwner);
-	init();
-	observeUIs(lifecycleOwner);
-}
-```
-
-Second step is to forward typing events to the view model
-
-```java
-    private void stopTyping() {
-        isTyping = false;
-        channelViewModel.getChannel().stopTyping();
-        if (typingListener != null) {
-            typingListener.onStopTyping();
-        }
-    }
-
-    private void keyStroke() {
-        channelViewModel.getChannel().keystroke();
-        isTyping = true;
-        if (typingListener != null) {
-            typingListener.onKeystroke();
-        }
-    }
-```
-
-Third step is to connect the sendMessage flow
-
-TODO document this
-
-#### Changing the layout
-
-If you need to make a bigger change you can swap the layout for the Message Input.
-
-Let's look at an example of how to change a custom layout.
-
-Create your custom Messge input layout named `view_custom_message_input` as shown below.
+Create your custom Message input layout named `view_custom_message_input` as shown below.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -208,7 +170,9 @@ Create your custom Messge input layout named `view_custom_message_input` as show
 </layout>
 ```
 
-And change `com.getstream.sdk.chat.view.MessageInputView` in `activity_channel.xml` as following
+#### Step 2: Edit activity_channel.xml
+
+Open `activity_channel.xml` and replace `com.getstream.sdk.chat.view.MessageInputView` with the following include:
 
 ```xml
 ...
@@ -224,7 +188,18 @@ And change `com.getstream.sdk.chat.view.MessageInputView` in `activity_channel.x
 ...
 ```
 
-Please add the following code to `ChannelActivity`
+#### Step 3: Edit ChannelActivity
+
+As a next step we need to connect your message input to the rest of the UI.
+There a few things to think about:
+
+* Typing events
+* Sending messages (optionally with attachments)
+* Editing a message
+* Sending a message while viewing a thread
+
+Have a look at the above example and add the following code to `ChannelActivity`:
+
 ```java
 // Set typing event
 binding.messageInput.etMessage.addTextChangedListener(new TextWatcher() {
@@ -327,3 +302,17 @@ private Attachment getAttachment(String modelType){
 <p align="center">
 <img src="messageinput.png">
 </p>
+
+#### Step 4: Threads and Editing
+
+The above example doesn't handle threads and editing. For a complete message input you'll want to have a look at both.
+
+The viewModel exposes:
+
+```
+viewModel.isEditing()
+viewModel.isThread()
+```
+
+You can retrieve the message that's being edited using `viewModel.getEditMessage`.
+To retrieve the current thread use `viewModel.getThreadParentMessage`.
