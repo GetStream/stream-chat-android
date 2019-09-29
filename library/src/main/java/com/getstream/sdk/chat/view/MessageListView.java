@@ -163,9 +163,6 @@ public class MessageListView extends RecyclerView {
                             topLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                             bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                         }
-//                        if (message.getAttachments() != null && !message.getAttachments().isEmpty()){
-//                            topLeftRadius = getResources().getDimensionPixelSize(R.dimen.message_corner_radius2);
-//                        }
                     }
                 }
 
