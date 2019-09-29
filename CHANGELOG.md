@@ -1,3 +1,8 @@
+## September 28, 2019 - 2.0.1
+
+- Fix channel list ordering when a channel is added directly from Android
+- Better Proguard support
+
 ## September 26, 2019 - 2.0.0
 
 - Simplify random access to channels

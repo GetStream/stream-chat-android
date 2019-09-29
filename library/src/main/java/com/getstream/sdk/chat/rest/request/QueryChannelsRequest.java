@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.request;
 
+import androidx.annotation.NonNull;
+
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
@@ -32,13 +34,12 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
         this(new FilterObject(), new QuerySort());
     }
 
-    public QueryChannelsRequest(FilterObject filter, QuerySort sort) {
+    public QueryChannelsRequest(@NonNull FilterObject filter,@NonNull QuerySort sort) {
         this.filter = filter;
         this.watch = true;
         this.state = true;
-        if (sort != null) {
-            this.sort = sort.clone();
-        }
+
+        this.sort = sort.clone();
     }
 
     public QueryChannelsQ query() {

@@ -48,9 +48,6 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
-        // Show the icon of the user who was last to read...
-        Collections.sort(reads, (ChannelUserRead o1, ChannelUserRead o2) -> o2.getLastRead().compareTo(o1.getLastRead()));
-
         User user = reads.get(0).getUser();
         String image = user.getImage();
         // Avatar

@@ -780,7 +780,6 @@ public class Channel {
 
     public void handleReadEvent(Event event) {
         channelState.setReadDateOfChannelLastMessage(event.getUser(), event.getCreatedAt());
-        channelState.getChannel().setLastMessageDate(event.getCreatedAt());
     }
 
     /**
@@ -815,7 +814,7 @@ public class Channel {
         client.markRead(this, new MarkReadRequest(null), new EventCallback() {
             @Override
             public void onSuccess(EventResponse response) {
-                Log.i(TAG, "mark read successful");
+                Log.i(TAG, "mark read successful: " + response.getEvent().getUserId());
             }
 
             @Override

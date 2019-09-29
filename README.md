@@ -46,6 +46,10 @@ dependencies {
 }
 ~~~
 
+## Proguard/R8
+
+If you're using Proguard/R8 you'll want to have a look at the [proguard file we use for the sample](https://github.com/GetStream/stream-chat-android/blob/master/sample/proguard-rules.pro).
+
 ## Setup Stream Chat
 
 Make sure to initialize the SDK only once; the best place to do this is in your `Application` class.
