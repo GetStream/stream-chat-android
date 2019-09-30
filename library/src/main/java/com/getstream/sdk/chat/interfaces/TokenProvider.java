@@ -2,13 +2,9 @@ package com.getstream.sdk.chat.interfaces;
 
 
 public interface TokenProvider {
-    void onResult(TokenListener listener);
+    void getToken(TokenProviderListener listener);
 
-    void onError(String error);
-
-    interface TokenListener {
-        void onResult(String token);
+    interface TokenProviderListener {
+        void onSuccess(String token);
     }
 }
-
-
