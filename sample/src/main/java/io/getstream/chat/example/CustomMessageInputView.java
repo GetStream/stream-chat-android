@@ -132,6 +132,7 @@ public class CustomMessageInputView extends RelativeLayout {
         }
     }
 
+    // Get Attachment: Image, Giphy, File
     private Attachment getAttachment(String modelType) {
         Attachment attachment = new Attachment();
         String url;
@@ -161,6 +162,7 @@ public class CustomMessageInputView extends RelativeLayout {
         return attachment;
     }
 
+    // Edit Message
     private void editMessage(Message message) {
         if (message == null
                 || TextUtils.isEmpty(message.getText())) return;
