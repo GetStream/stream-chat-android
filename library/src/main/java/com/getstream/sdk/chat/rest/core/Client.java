@@ -988,11 +988,13 @@ public class Client implements WSResponseHandler {
     public void disconnect() {
         Log.i(TAG, "disconnecting");
         connectionWaiters.clear();
-        WSConn.disconnect();
-        connected = false;
-        WSConn = null;
-        clientID = null;
-        onWSEvent(new Event(false));
+        if (WSConn != null) {
+            WSConn.disconnect();
+            connected = false;
+            WSConn = null;
+            clientID = null;
+            onWSEvent(new Event(false));
+        }
     }
 
     public void reconnect() {
