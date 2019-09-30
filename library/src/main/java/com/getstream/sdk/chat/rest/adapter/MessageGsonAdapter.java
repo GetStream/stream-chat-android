@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageGsonAdapter extends TypeAdapter<Message> {
+    private static final String TAG = MessageGsonAdapter.class.getSimpleName();
+
     @Override
     public void write(JsonWriter writer, Message message) throws IOException {
         HashMap<String, Object> data = new HashMap<>();
@@ -81,89 +83,69 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
-        HashMap<String, Object> value = (HashMap) adapter.read(reader);
+        Map<String, Object> value = (HashMap) adapter.read(reader);
 
         Message message = new Message();
         HashMap<String, Object> extraData = new HashMap<>();
 
         for (HashMap.Entry<String, Object> set : value.entrySet()) {
-            boolean isReserved = false;
             String json = gson.toJson(set.getValue());
-            Date date;
             // Set Reserved Data
             switch (set.getKey()) {
                 case "id":
-                    isReserved = true;
                     message.setId((String) set.getValue());
-                    break;
+                    continue;
                 case "text":
-                    isReserved = true;
                     message.setText((String) set.getValue());
-                    break;
+                    continue;
                 case "html":
-                    isReserved = true;
                     message.setHtml((String) set.getValue());
-                    break;
+                    continue;
                 case "type":
-                    isReserved = true;
                     message.setType((String) set.getValue());
-                    break;
+                    continue;
                 case "user":
-                    isReserved = true;
                     message.setUser(gson.fromJson(json, User.class));
-                    break;
+                    continue;
                 case "attachments":
-                    isReserved = true;
                     message.setAttachments(gson.fromJson(json, List.class));
-                    break;
+                    continue;
                 case "latest_reactions":
-                    isReserved = true;
                     message.setLatestReactions(gson.fromJson(json, List.class));
-                    break;
+                    continue;
                 case "own_reactions":
-                    isReserved = true;
                     message.setOwnReactions(gson.fromJson(json, List.class));
-                    break;
+                    continue;
                 case "reply_count":
-                    isReserved = true;
                     message.setReplyCount(gson.fromJson(json, Integer.class));
-                    break;
+                    continue;
                 case "created_at":
-                    isReserved = true;
                     message.setCreatedAt(gson.fromJson(json, Date.class));
-                    break;
+                    continue;
                 case "updated_at":
-                    isReserved = true;
                     message.setUpdatedAt(gson.fromJson(json, Date.class));
-                    break;
+                    continue;
                 case "deleted_at":
-                    isReserved = true;
                     message.setDeletedAt(gson.fromJson(json, Date.class));
-                    break;
+                    continue;
                 case "mentioned_users":
-                    isReserved = true;
                     message.setMentionedUsers(gson.fromJson(json, List.class));
-                    break;
+                    continue;
                 case "reaction_counts":
-                    isReserved = true;
                     message.setReactionCounts(gson.fromJson(json, Map.class));
-                    break;
+                    continue;
                 case "parent_id":
-                    isReserved = true;
                     message.setParentId((String) set.getValue());
-                    break;
+                    continue;
                 case "command":
-                    isReserved = true;
                     message.setCommand((String) set.getValue());
-                    break;
+                    continue;
                 case "command_info":
-                    isReserved = true;
                     message.setCommandInfo(gson.fromJson(json, Map.class));
-                    break;
+                    continue;
             }
             // Set Extra Data
-            if (!isReserved)
-                extraData.put(set.getKey(), set.getValue());
+            extraData.put(set.getKey(), set.getValue());
         }
         message.setExtraData(extraData);
         return message;

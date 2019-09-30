@@ -15,7 +15,9 @@ import java.util.Map;
 public class UserGsonAdapter extends TypeAdapter<User> {
     @Override
     public void write(JsonWriter writer, User user) throws IOException {
+
         HashMap<String, Object> data = new HashMap<>();
+
         if (user.getId() != null)
             data.put("id", user.getId());
 
@@ -57,64 +59,48 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
-        HashMap<String, Object> value = (HashMap) adapter.read(reader);
+        HashMap<String, Object> value =  (HashMap) adapter.read(reader);
 
         User user = new User();
         HashMap<String, Object> extraData = new HashMap<>();
 
-        for (HashMap.Entry<String, Object> set : value.entrySet()) {
-            boolean isReserved = false;
-            String json = gson.toJson(set.getValue());
-            Date date;
+        for (HashMap.Entry<String, Object> set : value.entrySet()) {            
+            String json = gson.toJson(set.getValue());     
             // Set Reserved Data
             switch (set.getKey()) {
                 case "id":
-                    isReserved = true;
                     user.setId((String) set.getValue());
-                    break;
+                    continue;
                 case "name":
-                    isReserved = true;
                     user.setName((String) set.getValue());
-                    break;
+                    continue;
                 case "image":
-                    isReserved = true;
                     user.setImage((String) set.getValue());
-                    break;
+                    continue;
                 case "role":
-                    isReserved = true;
                     user.setRole((String) set.getValue());
-                    break;
+                    continue;
                 case "created_at":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    user.setCreatedAt(date);
-                    break;
+                    user.setCreatedAt(gson.fromJson(json, Date.class));
+                    continue;
                 case "updated_at":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    user.setUpdatedAt(date);
-                    break;
+                    user.setUpdatedAt(gson.fromJson(json, Date.class));
+                    continue;
                 case "last_active":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    user.setLastActive(date);
-                    break;
+                    user.setLastActive(gson.fromJson(json, Date.class));
+                    continue;
                 case "online":
-                    isReserved = true;
                     user.setOnline(gson.fromJson(json, Boolean.class));
-                    break;
+                    continue;
                 case "total_unread_count":
-                    isReserved = true;
                     user.setTotalUnreadCount(gson.fromJson(json, Integer.class));
-                    break;
+                    continue;
                 case "unread_channels":
-                    isReserved = true;
                     user.setUnreadChannels(gson.fromJson(json, Integer.class));
-                    break;
+                    continue;
             }
             // Set Extra Data
-            if (!isReserved)
-                extraData.put(set.getKey(), set.getValue());
+            extraData.put(set.getKey(), set.getValue());
         }
         user.setExtraData(extraData);
         return user;

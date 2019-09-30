@@ -31,9 +31,9 @@ public class GsonConverter {
             gsonBuilder.registerTypeAdapter(QuerySort.class, new QuerySortAdapter());
             gsonBuilder.registerTypeAdapter(ChannelState.class, new ChannelStateGsonAdapter());
             gsonBuilder.registerTypeAdapter(Channel.class, new ChannelGsonAdapter());
-//            gsonBuilder.registerTypeAdapter(User.class, new UserGsonAdapter());
-//            gsonBuilder.registerTypeAdapter(Message.class, new MessageGsonAdapter());
-//            gsonBuilder.registerTypeAdapter(Attachment.class, new AttachmentGsonAdapter());
+            gsonBuilder.registerTypeAdapter(User.class, new UserGsonAdapter());
+            gsonBuilder.registerTypeAdapter(Message.class, new MessageGsonAdapter());
+            gsonBuilder.registerTypeAdapter(Attachment.class, new AttachmentGsonAdapter());
             gsonBuilder.registerTypeAdapter(ErrorResponse.class, new ErrorGsonAdapter());
             gson = gsonBuilder.create();
         }

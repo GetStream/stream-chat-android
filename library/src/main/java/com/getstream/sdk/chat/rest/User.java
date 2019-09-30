@@ -24,7 +24,7 @@ import java.util.HashMap;
  * A user
  */
 
-//@JsonAdapter(UserGsonAdapter.class)
+@JsonAdapter(UserGsonAdapter.class)
 @Entity(tableName = "stream_user")
 public class User implements UserEntity {
     @PrimaryKey

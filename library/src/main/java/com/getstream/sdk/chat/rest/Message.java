@@ -59,7 +59,7 @@ import java.util.TimeZone;
         , indices = {
         @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
-//@JsonAdapter(MessageGsonAdapter.class)
+@JsonAdapter(MessageGsonAdapter.class)
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose

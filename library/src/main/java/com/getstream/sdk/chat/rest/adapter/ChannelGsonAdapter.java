@@ -70,65 +70,46 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
         Channel channel = new Channel();
         HashMap<String, Object> extraData = new HashMap<>();
 
-        for (HashMap.Entry<String, Object> set : value.entrySet()) {
-            boolean isReserved = false;
-            String json = gson.toJson(set.getValue());
-            Date date;
+        for (HashMap.Entry<String, Object> set : value.entrySet()) {   
+            String json = gson.toJson(set.getValue());      
             // Set Reserved Data
             switch (set.getKey()) {
-                case "id":
-                    isReserved = true;
+                case "id":              
                     channel.setId((String) set.getValue());
-                    break;
+                    continue;
                 case "cid":
-                    isReserved = true;
                     channel.setCid((String) set.getValue());
-                    break;
+                    continue;
                 case "type":
-                    isReserved = true;
                     channel.setType((String) set.getValue());
-                    break;
+                    continue;
                 case "name":
-                    isReserved = true;
                     channel.setName((String) set.getValue());
-                    break;
+                    continue;
                 case "image":
-                    isReserved = true;
                     channel.setImage((String) set.getValue());
-                    break;
+                    continue;
                 case "created_by":
-                    isReserved = true;
-                    User user = gson.fromJson(json, User.class);
-                    channel.setCreatedByUser(user);
-                    break;
+                    channel.setCreatedByUser(gson.fromJson(json, User.class));
+                    continue;
                 case "last_message_at":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    channel.setLastMessageDate(date);
-                    break;
+                    channel.setLastMessageDate(gson.fromJson(json, Date.class));
+                    continue;
                 case "created_at":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    channel.setCreatedAt(date);
-                    break;
+                    channel.setCreatedAt(gson.fromJson(json, Date.class));
+                    continue;
                 case "updated_at":
-                    isReserved = true;
-                    date = gson.fromJson(json, Date.class);
-                    channel.setUpdatedAt(date);
-                    break;
+                    channel.setUpdatedAt(gson.fromJson(json, Date.class));
+                    continue;
                 case "frozen":
-                    isReserved = true;
                     channel.setFrozen((boolean) set.getValue());
-                    break;
+                    continue;
                 case "config":
-                    isReserved = true;
-                    Config config = gson.fromJson(json, Config.class);
-                    channel.setConfig(config);
-                    break;
+                    channel.setConfig(gson.fromJson(json, Config.class));
+                    continue;
             }
-            // Set Extra Data
-            if (!isReserved)
-                extraData.put(set.getKey(), set.getValue());
+            // Set Extra Data       
+            extraData.put(set.getKey(), set.getValue());
         }
         channel.setExtraData(extraData);
         return channel;
