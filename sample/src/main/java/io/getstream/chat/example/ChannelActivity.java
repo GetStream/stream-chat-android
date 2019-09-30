@@ -71,8 +71,8 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setMessageLongClickListener(this);
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
-        // If you are using default MessageInputView please uncommit this line.
-//        binding.messageInput.setOpenCameraViewListener(this);
+        // If you are using own MessageInputView please commit this line.
+        binding.messageInput.setOpenCameraViewListener(this);
 
         binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
 
@@ -94,8 +94,8 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // If you are using default MessageInputView please uncommit this line.
-//        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
+        // If you are using own MessageInputView please commit this line.
+        binding.messageInput.progressCapturedMedia(requestCode, resultCode, data);
     }
 
     @Override
