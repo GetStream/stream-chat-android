@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.rest.adapter.MessageGsonAdapter;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
 import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
@@ -29,6 +30,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
@@ -57,6 +59,7 @@ import java.util.TimeZone;
         , indices = {
         @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
+//@JsonAdapter(MessageGsonAdapter.class)
 public class Message implements UserEntity {
     @SerializedName("id")
     @Expose
@@ -138,8 +141,6 @@ public class Message implements UserEntity {
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
     // Additional Params
-    @SerializedName("extra_data")
-    @Expose
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 

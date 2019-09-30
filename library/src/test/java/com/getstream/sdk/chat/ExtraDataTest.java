@@ -5,7 +5,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 
@@ -18,20 +17,19 @@ public class ExtraDataTest {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("id", "the-channel-test-id");
         extraData.put("name", "Test Channel");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("color", "blue");
 
         Channel channel = new Channel(null, "messaging", "the-channel-id", extraData);
         String json = GsonConverter.Gson().toJson(channel);
-        assertEquals("{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}", json);
+        assertEquals("{\"color\":\"blue\",\"name\":\"Test Channel\",\"frozen\":false,\"id\":\"the-channel-id\",\"type\":\"messaging\",\"cid\":\"messaging:the-channel-id\"}", json);
     }
 
     @org.junit.jupiter.api.Test
     void channelExtraReadTest() {
-        String json = "{\"image\":\"https://bit.ly/321RmWb\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}";
+        String json = "{\"color\":\"blue\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\"}";
         Channel channel = GsonConverter.Gson().fromJson(json, Channel.class);
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Test Channel");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("color", "blue");
         assertEquals(extraData, channel.getExtraData());
     }
 
@@ -40,18 +38,19 @@ public class ExtraDataTest {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Tommaso");
         extraData.put("id", "the-user-id");
+        extraData.put("gender", "male");
 
         User user = new User("tommaso", extraData);
         String json = GsonConverter.Gson().toJson(user);
-        assertEquals("{\"name\":\"Tommaso\",\"id\":\"tommaso\"}", json);
+        assertEquals("{\"gender\":\"male\",\"name\":\"Tommaso\",\"online\":false,\"id\":\"tommaso\"}", json);
     }
 
     @org.junit.jupiter.api.Test
     void userExtraReadTest() {
-        String json = "{\"name\":\"Tommaso\",\"id\":\"tommaso\"}";
+        String json = "{\"gender\":\"male\",\"name\":\"Tommaso\",\"online\":false,\"id\":\"tommaso\"}";
         User user = GsonConverter.Gson().fromJson(json, User.class);
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Tommaso");
+        extraData.put("gender", "male");
         assertEquals(extraData, user.getExtraData());
     }
 

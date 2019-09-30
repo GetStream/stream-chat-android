@@ -18,11 +18,13 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
 import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
@@ -48,6 +49,7 @@ import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
@@ -73,6 +75,7 @@ import retrofit2.Response;
         childColumns = "created_by_user_id"), indices = {
         @Index(value = {"created_by_user_id"})})
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
+@JsonAdapter(ChannelGsonAdapter.class)
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
@@ -135,9 +138,8 @@ public class Channel {
     @SerializedName("image")
     @Expose
     private String image;
+
     // Additional Params
-    @SerializedName("extra_data")
-    @Expose
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
     @Ignore
