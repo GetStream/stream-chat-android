@@ -90,6 +90,7 @@ public class Client implements WSResponseHandler {
     // Client params
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
+
     private List<ClientConnectionCallback> connectionWaiters;
     private APIService mService;
     private List<ChatEventHandler> eventSubscribers;
@@ -197,6 +198,10 @@ public class Client implements WSResponseHandler {
 
     public Client(String apiKey, ApiClientOptions options) {
         this(apiKey, new ApiClientOptions(), null);
+    }
+
+    public synchronized List<ClientConnectionCallback> getConnectionWaiters() {
+        return connectionWaiters;
     }
 
     public Storage storage() {
@@ -322,11 +327,11 @@ public class Client implements WSResponseHandler {
         eventSubscribers.remove(handler);
     }
 
-    public void onSetUserCompleted(ClientConnectionCallback callback) {
+    public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
             callback.onSuccess(user);
         } else {
-            connectionWaiters.add(callback);
+            getConnectionWaiters().add(callback);
         }
     }
 
@@ -379,17 +384,17 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
-    public void connectionResolved(Event event) {
+    public synchronized void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
         connected = true;
 
-        for (ClientConnectionCallback waiter : connectionWaiters) {
+        for (ClientConnectionCallback waiter : getConnectionWaiters()) {
             waiter.onSuccess(user);
         }
-        connectionWaiters.clear();
+        getConnectionWaiters().clear();
     }
 
     @Override
@@ -985,9 +990,9 @@ public class Client implements WSResponseHandler {
 
     // endregion
 
-    public void disconnect() {
+    public synchronized void disconnect() {
         Log.i(TAG, "disconnecting");
-        connectionWaiters.clear();
+        getConnectionWaiters().clear();
         if (WSConn != null) {
             WSConn.disconnect();
             connected = false;
