@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
-import com.getstream.sdk.chat.enums.Token;
+import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.UserEntity;
@@ -20,7 +20,6 @@ import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import com.getstream.sdk.chat.model.TokenService;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
@@ -84,11 +83,14 @@ public class Client implements WSResponseHandler {
     private String apiKey;
     private Boolean offlineStorage;
     private User user;
-    private String userToken;
+    private CachedTokenProvider tokenProvider;
+    private boolean fetchingToken;
+    private String cacheUserToken;
     private Context context;
     // Client params
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
+
     private List<ClientConnectionCallback> connectionWaiters;
     private APIService mService;
     private List<ChatEventHandler> eventSubscribers;
@@ -198,6 +200,10 @@ public class Client implements WSResponseHandler {
         this(apiKey, new ApiClientOptions(), null);
     }
 
+    public synchronized List<ClientConnectionCallback> getConnectionWaiters() {
+        return connectionWaiters;
+    }
+
     public Storage storage() {
         return Storage.getStorage(getContext(), this.offlineStorage);
     }
@@ -230,18 +236,49 @@ public class Client implements WSResponseHandler {
         return connected;
     }
 
-    // Server-side Token
-    public void setUser(User user, final TokenProvider provider) {
-        try {
-            this.user = user;
-            provider.onResult((String token) -> {
-                userToken = token;
-                connect();
-            });
-        } catch (Exception e) {
-            provider.onError(e.getLocalizedMessage());
-            e.printStackTrace();
-        }
+    public synchronized void setUser(User user, final TokenProvider provider) {
+        this.user = user;
+        List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
+
+        this.tokenProvider = new CachedTokenProvider() {
+            @Override
+            public void getToken(TokenProvider.TokenProviderListener listener) {
+                // use the cached token if possible
+                if (cacheUserToken != null) {
+                    listener.onSuccess(cacheUserToken);
+                    return;
+                }
+
+                // queue the listener up instead of spawning more getToken calls
+                if (fetchingToken) {
+                    listeners.add(listener);
+                    return;
+                } else {
+                    // token is not in cache and there are no in-flight requests, go fetch it
+                    Log.d(TAG, "Go get a new token");
+                    fetchingToken = true;
+                }
+
+                provider.getToken(token -> {
+                    cacheUserToken = token;
+                    fetchingToken = false;
+                    Log.d(TAG, "We got another token " + token);
+                    listener.onSuccess(token);
+                    for (TokenProvider.TokenProviderListener l :
+                            listeners) {
+                        l.onSuccess(token);
+                    }
+                    listeners.clear();
+                });
+            }
+
+            @Override
+            public void tokenExpired() {
+                Log.d(TAG, "Current token is expired: " + cacheUserToken);
+                cacheUserToken = null;
+            }
+        };
+        connect();
     }
 
     public User getTrackedUser(User user) {
@@ -267,35 +304,8 @@ public class Client implements WSResponseHandler {
         }
     }
 
-    // Dev, Guest Token
-    public void setUser(User user, Token token) throws Exception {
-        this.user = user;
-        switch (token) {
-            case DEVELOPMENT:
-                this.userToken = TokenService.devToken(user.getId());
-                break;
-            case HARDCODED:
-                this.userToken = token.getToken();
-                break;
-            case GUEST:
-                this.userToken = TokenService.createGuestToken(user.getId());
-                break;
-            default:
-                break;
-        }
-        Log.d(TAG, "TOKEN: " + this.userToken);
-        if (!TextUtils.isEmpty(this.userToken)) {
-            connect();
-        }
-    }
-
-    // endregion
-
-    // Hardcoded Code token
     public void setUser(User user, @NonNull String token) {
-        this.user = user;
-        this.userToken = token;
-        connect();
+        setUser(user, listener -> listener.onSuccess(token));
     }
 
     public boolean fromCurrentUser(UserEntity entity) {
@@ -317,11 +327,11 @@ public class Client implements WSResponseHandler {
         eventSubscribers.remove(handler);
     }
 
-    public void onSetUserCompleted(ClientConnectionCallback callback) {
+    public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
             callback.onSuccess(user);
         } else {
-            connectionWaiters.add(callback);
+            getConnectionWaiters().add(callback);
         }
     }
 
@@ -339,20 +349,21 @@ public class Client implements WSResponseHandler {
 
         jsonParameter.put("user_details", userDetails);
         jsonParameter.put("user_id", this.user.getId());
-        jsonParameter.put("user_token", this.userToken);
         jsonParameter.put("server_determines_connection_id", true);
         return new JSONObject(jsonParameter);
     }
 
     private synchronized void connect() {
-        JSONObject json = buildUserDetailJSON();
-        String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
-                + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
-        Log.d(TAG, "WebSocket URL : " + wsURL);
+        tokenProvider.getToken(userToken -> {
+            JSONObject json = buildUserDetailJSON();
+            String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
+                    + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
+            Log.d(TAG, "WebSocket URL : " + wsURL);
 
-        mService = RetrofitClient.getAuthorizedClient(userToken, options).create(APIService.class);
-        WSConn = new WebSocketService(wsURL, user.getId(), this);
-        WSConn.connect();
+            mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
+            WSConn = new WebSocketService(wsURL, user.getId(), this);
+            WSConn.connect();
+        });
     }
 
     public Channel channel(String cid) {
@@ -373,17 +384,17 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
-    public void connectionResolved(Event event) {
+    public synchronized void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
         connected = true;
 
-        for (ClientConnectionCallback waiter : connectionWaiters) {
+        for (ClientConnectionCallback waiter : getConnectionWaiters()) {
             waiter.onSuccess(user);
         }
-        connectionWaiters.clear();
+        getConnectionWaiters().clear();
     }
 
     @Override
@@ -424,9 +435,25 @@ public class Client implements WSResponseHandler {
                 }
             });
         } else {
-            onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+            onSetUserCompleted(new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+
+                }
+            });
         }
         connect();
+    }
+
+    @Override
+    public void tokenExpired() {
+        tokenProvider.tokenExpired();
+        reconnect();
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -963,21 +990,24 @@ public class Client implements WSResponseHandler {
 
     // endregion
 
-    public void disconnect() {
+    public synchronized void disconnect() {
         Log.i(TAG, "disconnecting");
-        connectionWaiters.clear();
-        WSConn.disconnect();
-        connected = false;
-        WSConn = null;
-        clientID = null;
-        onWSEvent(new Event(false));
+        getConnectionWaiters().clear();
+        if (WSConn != null) {
+            WSConn.disconnect();
+            connected = false;
+            WSConn = null;
+            clientID = null;
+            onWSEvent(new Event(false));
+        }
     }
 
     public void reconnect() {
-        if (user == null || userToken == null) {
+        if (user == null) {
             Log.e(TAG, "Client reconnect called before setUser, this is probably an integration mistake.");
             return;
         }
+        disconnect();
         connectionRecovered();
     }
 

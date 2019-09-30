@@ -142,6 +142,7 @@ client.onSetUserCompleted(new ClientConnectionCallback() {
     @Override
     public void onSuccess(User user) {
     	Log.i(TAG, "user connected!");
+	// do some more initialization
     }
 
     @Override
@@ -149,6 +150,42 @@ client.onSetUserCompleted(new ClientConnectionCallback() {
     }
 });
 ```
+
+### Retrieve tokens server-side / Handle tokens with expiration
+
+If you generate user tokens with an expiration (`exp` field) you can configure the SDK to request a new token upon expiration.
+
+Here's an example where we make an HTTP call to retrieve a token for current user. 
+
+```java
+client.setUser(user, listener -> {
+            OkHttpClient httpClient = new OkHttpClient()
+                    .newBuilder()
+                    .build();
+
+            // request the token for this user
+            Request request = new Request.Builder()
+                    .url("https://path/to/my/backend/")
+                    .header("Authorization", "user-session-id")
+                    .build();
+
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    // the request to get the token failed
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    Log.w(TAG, "getting the token worked!");
+                    listener.onSuccess(response.body.string());
+                }
+            });
+        }
+);
+```
+
+The listener will be called to fetch the user token and once the token is expired; the SDK will retry failed API calls and re-sync history so that no messages are lost during the renewal process.
 
 ## Online status
 

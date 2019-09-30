@@ -8,4 +8,6 @@ public interface WSResponseHandler {
     void connectionResolved(Event event);
 
     void connectionRecovered();
+
+    void tokenExpired();
 }

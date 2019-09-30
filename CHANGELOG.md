@@ -1,3 +1,7 @@
+## September 28, 2019 - 2.1.0
+
+- Improved support for regenerating expired tokens
+
 ## September 28, 2019 - 2.0.1
 
 - Fix channel list ordering when a channel is added directly from Android
