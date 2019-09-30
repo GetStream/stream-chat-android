@@ -32,9 +32,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
-        <include
+        <io.getstream.chat.example.CustomMessageInputView
             android:id="@+id/message_input"
-            layout="@layout/view_custom_message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
