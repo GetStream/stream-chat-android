@@ -64,12 +64,12 @@ public class ExtraDataTest {
         message.setId("the-message-id");
         message.setExtraData(extraData);
         String json = GsonConverter.Gson().toJson(message);
-        assertEquals("{\"id\":\"the-message-id\",\"group\":\"group chat\"}", json);
+        assertEquals("{\"attachments\":[],\"id\":\"the-message-id\",\"reply_count\":0,\"group\":\"group chat\"}", json);
     }
 
     @org.junit.jupiter.api.Test
     void messageExtraReadTest() {
-        String json = "{\"id\":\"the-message-id\",\"group\":\"group chat\"}";
+        String json = "{\"attachments\":[],\"id\":\"the-message-id\",\"reply_count\":0,\"group\":\"group chat\"}";
         Message message = GsonConverter.Gson().fromJson(json, Message.class);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("group", "group chat");
@@ -84,12 +84,12 @@ public class ExtraDataTest {
         Attachment attachment = new Attachment();
         attachment.setExtraData(extraData);
         String json = GsonConverter.Gson().toJson(attachment);
-        assertEquals("{\"isAchieved\":true}", json);
+        assertEquals("{\"isAchieved\":true,\"file_size\":0}", json);
     }
 
     @org.junit.jupiter.api.Test
     void attachmentExtraReadTest() {
-        String json = "{\"isAchieved\":true}";
+        String json = "{\"isAchieved\":true,\"file_size\":0}";
         Attachment attachment = GsonConverter.Gson().fromJson(json, Attachment.class);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("isAchieved", true);
