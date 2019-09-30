@@ -1,9 +1,10 @@
 package com.getstream.sdk.chat.rest.controller;
 
+import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
+import com.getstream.sdk.chat.rest.response.ErrorResponse;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -16,11 +17,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     private static Retrofit retrofit = null;
+    private static String userToken = "";
 
-    public static Retrofit getAuthorizedClient(String userToken, ApiClientOptions options) {
+    public static Retrofit getAuthorizedClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+
+        TokenAuthInterceptor authInterceptor = new TokenAuthInterceptor(tokenProvider);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
@@ -30,8 +34,7 @@ public class RetrofitClient {
                     Request request = chain.request();
                     Response response = chain.proceed(request);
                     if (!response.isSuccessful()) {
-                        String message = response.body().string();
-                        throw new IOException(message);
+                        throw ErrorResponse.parseError(response);
                     }
                     return response;
                 })
@@ -39,14 +42,13 @@ public class RetrofitClient {
                 .addInterceptor(chain -> {
                     Request request = chain.request()
                             .newBuilder()
-                            .addHeader("Authorization", userToken)
                             .addHeader("Content-Type", "application/json")
                             .addHeader("stream-auth-type", "jwt")
                             .addHeader("Accept-Encoding", "application/gzip")
                             .build();
-                    Response response = chain.proceed(request);
-                    return response;
+                    return chain.proceed(request);
                 })
+                .addInterceptor(authInterceptor)
                 .followRedirects(false)
                 .build();
 

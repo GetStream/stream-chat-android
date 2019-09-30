@@ -10,7 +10,10 @@ import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.getstream.sdk.chat.rest.response.ErrorResponse;
+import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.util.Date;
 
@@ -262,6 +265,21 @@ public class WebSocketService extends WebSocketListener {
         public synchronized void onMessage(WebSocket webSocket, String text) {
             if (shuttingDown) return;
             Log.d(TAG, "WebSocket Response : " + text);
+
+            WsErrorMessage errorMessage;
+
+            try {
+                errorMessage = GsonConverter.Gson().fromJson(text, WsErrorMessage.class);
+            } catch (JsonSyntaxException ignored) {
+                errorMessage = null;
+            }
+
+            if (errorMessage != null && errorMessage.getError() != null && errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
+                webSocket.close(NORMAL_CLOSURE_STATUS, "");
+                eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
+                return;
+            }
+
             Event event = GsonConverter.Gson().fromJson(text, Event.class);
             setLastEvent(new Date());
 
