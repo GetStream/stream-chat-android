@@ -159,7 +159,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
         init();
-        configExtraData();
     }
 
     private void init() {
@@ -186,13 +185,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadIndicator();
     }
 
-    private void configExtraData(){
-        if (message.getExtraData() == null
-                || message.getExtraData().isEmpty())
-            return;
-        // progress ExtraData
-
-    }
     // endregion
     public void setStyle(MessageListViewStyle style) {
         this.style = style;

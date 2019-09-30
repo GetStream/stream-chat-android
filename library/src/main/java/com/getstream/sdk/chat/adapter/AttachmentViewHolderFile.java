@@ -44,7 +44,6 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configAttachment();
-        configExtraData();
     }
 
 
@@ -72,14 +71,6 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
         cl_attachment.setOnClickListener(this);
         cl_attachment.setOnLongClickListener(this);
-    }
-
-    private void configExtraData(){
-        if (getAttachment().getExtraData() == null
-                || getAttachment().getExtraData().isEmpty())
-            return;
-        // progress ExtraData
-
     }
 }
 

@@ -57,7 +57,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configAttachment();
-        configExtraData();
     }
 
     private void configAttachment() {
@@ -211,14 +210,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
-    }
-
-    private void configExtraData(){
-        if (getAttachment().getExtraData() == null
-                || getAttachment().getExtraData().isEmpty())
-            return;
-        // progress ExtraData
-
     }
 
     private void triggerLongClick(Message message) {

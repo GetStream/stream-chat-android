@@ -18,7 +18,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -64,7 +63,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
-        configExtraData();
         configAction();
     }
 
@@ -178,14 +176,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.VISIBLE);
         else
             tv_media_play.setVisibility(View.GONE);
-
-    }
-
-    private void configExtraData(){
-        if (getAttachment().getExtraData() == null
-                || getAttachment().getExtraData().isEmpty())
-            return;
-        // progress ExtraData
 
     }
 
