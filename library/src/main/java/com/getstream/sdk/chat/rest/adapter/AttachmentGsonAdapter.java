@@ -12,32 +12,129 @@ import java.util.Map;
 
 public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
     @Override
-    public void write(JsonWriter out, Attachment attachment) throws IOException {
+    public void write(JsonWriter writer, Attachment attachment) throws IOException {
+
         HashMap<String, Object> data = new HashMap<>();
-        data.put("type", attachment.getType());
-        data.put("name", attachment.getName());
-        data.put("image", attachment.getImage());
+
+        if (attachment.getTitle() != null)
+            data.put("title", attachment.getTitle());
+
+        if (attachment.getAuthor() != null)
+            data.put("author_name", attachment.getAuthor());
+
+        if (attachment.getText() != null)
+            data.put("text", attachment.getText());
+
+        if (attachment.getType() != null)
+            data.put("type", attachment.getType());
+
+        if (attachment.getImage() != null)
+            data.put("image", attachment.getImage());
+
+        if (attachment.getUrl() != null)
+            data.put("url", attachment.getUrl());
+
+        if (attachment.getName() != null)
+            data.put("name", attachment.getName());
+
+        if (attachment.getTitleLink() != null)
+            data.put("title_link", attachment.getTitleLink());
+
+        if (attachment.getThumbURL() != null)
+            data.put("thumb_url", attachment.getThumbURL());
+
+        if (attachment.getFallback() != null)
+            data.put("fallback", attachment.getFallback());
+
+        if (attachment.getImageURL() != null)
+            data.put("image_url", attachment.getImageURL());
+
+        if (attachment.getAssetURL() != null)
+            data.put("asset_url", attachment.getAssetURL());
+
+        if (attachment.getOgURL() != null)
+            data.put("og_scrape_url", attachment.getOgURL());
+
+        if (attachment.getMime_type() != null)
+            data.put("mime_type", attachment.getMime_type());
+
+        data.put("file_size", attachment.getFile_size());
+
+        // Set Extra Data
         if (attachment.getExtraData() != null && !attachment.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
 
         TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
-        adapter.write(out, data);
+
+        adapter.write(writer, data);
     }
 
     @Override
-    public Attachment read(JsonReader in) throws IOException {
-        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
-        HashMap<String, Object> value = (HashMap<String, Object>) adapter.read(in);
-        HashMap<String, Object> data = new HashMap<>();
-        for (Map.Entry<String, Object> set : value.entrySet()) {
-            if (set.getKey().equals("id"))
-                continue;
-            data.put(set.getKey(), set.getValue());
-        }
+    public Attachment read(JsonReader reader) throws IOException {
+
+        Gson gson = new Gson();
+
+        TypeAdapter adapter = gson.getAdapter(HashMap.class);
+        HashMap<String, Object> value = (HashMap) adapter.read(reader);
 
         Attachment attachment = new Attachment();
-        attachment.setExtraData(data);
+        HashMap<String, Object> extraData = new HashMap<>();
+
+        for (HashMap.Entry<String, Object> set : value.entrySet()) {
+            String json = gson.toJson(set.getValue());
+            // Set Reserved Data
+            switch (set.getKey()) {
+                case "title":
+                    attachment.setTitle((String) set.getValue());
+                    continue;
+                case "author_name":
+                    attachment.setAuthor((String) set.getValue());
+                    continue;
+                case "text":
+                    attachment.setText((String) set.getValue());
+                    continue;
+                case "type":
+                    attachment.setType((String) set.getValue());
+                    continue;
+                case "image":
+                    attachment.setImage((String) set.getValue());
+                    continue;
+                case "url":
+                    attachment.setUrl((String) set.getValue());
+                    continue;
+                case "name":
+                    attachment.setName((String) set.getValue());
+                    continue;
+                case "title_link":
+                    attachment.setTitleLink((String) set.getValue());
+                    continue;
+                case "thumb_url":
+                    attachment.setThumbURL((String) set.getValue());
+                    continue;
+                case "fallback":
+                    attachment.setFallback((String) set.getValue());
+                    continue;
+                case "image_url":
+                    attachment.setImageURL((String) set.getValue());
+                    continue;
+                case "asset_url":
+                    attachment.setAssetURL((String) set.getValue());
+                    continue;
+                case "og_scrape_url":
+                    attachment.setOgURL((String) set.getValue());
+                    continue;
+                case "mime_type":
+                    attachment.setMime_type((String) set.getValue());
+                    continue;
+                case "file_size":
+                    attachment.setFile_size(gson.fromJson(json, Integer.class));
+                    continue;
+            }
+            // Set Extra Data
+            extraData.put(set.getKey(), set.getValue());
+        }
+        attachment.setExtraData(extraData);
         return attachment;
     }
 }

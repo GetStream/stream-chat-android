@@ -3,8 +3,10 @@ package com.getstream.sdk.chat.model;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.rest.adapter.AttachmentGsonAdapter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.DecimalFormat;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 /**
  * An attachment
  */
+@JsonAdapter(AttachmentGsonAdapter.class)
 public class Attachment {
     public Config config = new Config(); // Local file Attach Config
     @SerializedName("title")
@@ -62,8 +65,6 @@ public class Attachment {
     private int file_size;
 
     // Additional Params
-    @SerializedName("extra_data")
-    @Expose
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
