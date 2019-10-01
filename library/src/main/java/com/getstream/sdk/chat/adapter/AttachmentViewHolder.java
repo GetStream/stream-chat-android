@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -63,7 +62,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         boolean hasFile = false;
         boolean hasMedia = false;
-        for (Attachment attachment : getMessage().getAttachments()) {
+        for (Attachment attachment : message.getAttachments()) {
             if (attachment.getType() == null) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 hasFile = true;
@@ -88,33 +87,33 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         if (!hasMedia && !hasFile) {
             iv_media_thumb.setVisibility(View.GONE);
-            if (!TextUtils.isEmpty(getAttachment().getTitle())) {
+            if (!TextUtils.isEmpty(attachment.getTitle())) {
                 cl_attachment_media.setVisibility(View.VISIBLE);
                 tv_media_title.setVisibility(View.VISIBLE);
-                tv_media_title.setText(getAttachment().getTitle());
+                tv_media_title.setText(attachment.getTitle());
             }else
                 tv_media_title.setVisibility(View.GONE);
 
-            if (!TextUtils.isEmpty(getAttachment().getText())) {
+            if (!TextUtils.isEmpty(attachment.getText())) {
                 cl_attachment_media.setVisibility(View.VISIBLE);
                 tv_media_des.setVisibility(View.VISIBLE);
-                tv_media_des.setText(getAttachment().getText());
+                tv_media_des.setText(attachment.getText());
             }else
                 tv_media_des.setVisibility(View.GONE);
         }
     }
 
-    private void configImageThumbBackground(Attachment attachment) {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions(), attachment);
-        iv_media_thumb.setShape(getContext(), background);
+    private void configImageThumbBackground() {
+        Drawable background = getBubbleHelper().getDrawableForAttachment(message, getMessageListItem().isMine(), getMessageListItem().getPositions(), attachment);
+        iv_media_thumb.setShape(context, background);
     }
 
     private void configAttachViewBackground(View view) {
         Drawable background;
         if (getMessageListItem().isMine()) {
-            background = getStyle().getMessageBubbleDrawableMine();
+            background = style.getMessageBubbleDrawableMine();
         } else {
-            background = getStyle().getMessageBubbleDrawableTheirs();
+            background = style.getMessageBubbleDrawableTheirs();
         }
         view.setBackground(background);
     }
@@ -123,28 +122,28 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private void configFileAttach() {
         configAttachViewBackground(lv_attachment_file);
         List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : getMessage().getAttachments()) {
+        for (Attachment attachment : message.getAttachments()) {
             if (attachment.getType() == null) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
             }
         }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(getContext(), attachments, false, false);
+        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
 
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
             Log.d(TAG, "Attach onMessageClick: " + position);
-            triggerClick(getMessage(), getAttachment());
+            triggerClick();
 
 
         });
         lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            triggerLongClick(getMessage());
+            triggerLongClick();
             return true;
         });
 
-        float height = getContext().getResources().getDimension(R.dimen.stream_attach_file_height);
+        float height = context.getResources().getDimension(R.dimen.stream_attach_file_height);
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) lv_attachment_file.getLayoutParams();
         params.height = (int) height * attachments.size();
         lv_attachment_file.setLayoutParams(params);
@@ -152,7 +151,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
-        for (Attachment attachment : getMessage().getAttachments()) {
+        for (Attachment attachment : message.getAttachments()) {
             if (attachment.getType() == null) continue;
             if (!attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
@@ -177,22 +176,22 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
         cl_attachment_media.setVisibility(View.VISIBLE);
         configAttachViewBackground(cl_attachment_media);
-        configImageThumbBackground(attachments.get(0));
+        configImageThumbBackground();
 
         // Set Click Listener
         cl_attachment_media.setOnClickListener(this);
 
 
         cl_attachment_media.setOnLongClickListener((View v) -> {
-            this.triggerLongClick(getMessage());
+            this.triggerLongClick();
             return true;
         });
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
-        Glide.with(getContext())
+        Glide.with(context)
                 .load(attachUrl)
                 .into(iv_media_thumb);
-        if (!getMessage().getType().equals(ModelType.message_ephemeral))
+        if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());
         tv_media_des.setText(attachments.get(0).getText());
 
@@ -212,25 +211,25 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.GONE);
     }
 
-    private void triggerLongClick(Message message) {
+    private void triggerLongClick() {
         if (this.getLongClickListener() != null) {
             this.getLongClickListener().onMessageLongClick(message);
         }
     }
 
-    private void triggerClick(Message message, Attachment attachment) {
+    private void triggerClick() {
         if (this.getClickListener() != null) {
             this.getClickListener().onAttachmentClick(message, attachment);
         }
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(getStyle().getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentTitleTextStyle());
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
+        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
 
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, getStyle().getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(getStyle().getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, getStyle().getAttachmentDescriptionTextStyle());
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
+        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
     }
 }
