@@ -20,10 +20,14 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
 import com.getstream.sdk.chat.storage.Storage;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +153,50 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             return;
         }
         this.filter = filter;
+    }
+
+    /**
+     * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
+     *
+     * @param channel the channel needs to hide
+     */
+    public void hideChannel(@NotNull Channel channel) {
+        setLoading();
+        channel.hide(new ShowHideChannelCallback() {
+            @Override
+            public void onSuccess(ShowHideChannelResponse response) {
+                deleteChannel(channel); // remove the channel from the list of not hidden channels
+                setLoadingDone();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                setLoadingDone();
+            }
+        });
+    }
+
+    /**
+     * removes the hidden status for a channel and remove from the current list of channels
+     *
+     * @param channel the channel needs to show
+     */
+    public void showChannel(@NotNull Channel channel) {
+        setLoading();
+        channel.show(new ShowHideChannelCallback() {
+            @Override
+            public void onSuccess(ShowHideChannelResponse response) {
+                deleteChannel(channel); // remove the channel from the list of hidden channels
+                setLoadingDone();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                setLoadingDone();
+            }
+        });
     }
 
     public void setChannelSort(QuerySort sort) {
