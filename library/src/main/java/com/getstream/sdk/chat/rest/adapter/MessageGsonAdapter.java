@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.rest.adapter;
 
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
@@ -108,13 +111,16 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setUser(gson.fromJson(json, User.class));
                     continue;
                 case "attachments":
-                    message.setAttachments(gson.fromJson(json, List.class));
+                    List<Attachment>attachments = gson.fromJson(json, new TypeToken<List<Attachment>>(){}.getType());
+                    message.setAttachments(attachments);
                     continue;
                 case "latest_reactions":
-                    message.setLatestReactions(gson.fromJson(json, List.class));
+                    List<Reaction>reactions = gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType());
+                    message.setLatestReactions(reactions);
                     continue;
                 case "own_reactions":
-                    message.setOwnReactions(gson.fromJson(json, List.class));
+                    List<Reaction>ownReactions = gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType());
+                    message.setOwnReactions(ownReactions);
                     continue;
                 case "reply_count":
                     message.setReplyCount(gson.fromJson(json, Integer.class));
@@ -129,10 +135,11 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setDeletedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "mentioned_users":
-                    message.setMentionedUsers(gson.fromJson(json, List.class));
+                    List<User>users = gson.fromJson(json, new TypeToken<List<User>>(){}.getType());
+                    message.setMentionedUsers(users);
                     continue;
                 case "reaction_counts":
-                    message.setReactionCounts(gson.fromJson(json, Map.class));
+                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map<String, Integer>>(){}.getType()));
                     continue;
                 case "parent_id":
                     message.setParentId((String) set.getValue());
@@ -141,7 +148,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setCommand((String) set.getValue());
                     continue;
                 case "command_info":
-                    message.setCommandInfo(gson.fromJson(json, Map.class));
+                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map<String, String>>(){}.getType()));
                     continue;
             }
             // Set Extra Data
