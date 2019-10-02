@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
 
 import org.json.JSONObject;
 
@@ -54,6 +55,12 @@ public interface APIService {
 
     @POST("/channels/{type}/{id}")
     Call<ChannelState> rejectInvite(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);
+
+    @POST("/channels/{type}/{id}/show")
+    Call<ShowHideChannelResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
+
+    @POST("/channels/{type}/{id}/hide")
+    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
     // endregion
 
     // region User
