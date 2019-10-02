@@ -101,7 +101,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setMentionedUsers(gson.fromJson(json, new TypeToken<List<User>>(){}.getType()));
                     continue;
                 case "reaction_counts":
-                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map>(){}.getType()));
+                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map<String, Integer>>(){}.getType()));
                     continue;
                 case "parent_id":
                     message.setParentId((String) set.getValue());
@@ -110,7 +110,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setCommand((String) set.getValue());
                     continue;
                 case "command_info":
-                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map>(){}.getType()));
+                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map<String, String>>(){}.getType()));
                     continue;
             }
             // Set Extra Data
