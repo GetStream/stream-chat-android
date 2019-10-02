@@ -2,6 +2,8 @@ apply plugin: 'com.android.library'
 
 apply plugin: 'com.github.dcendents.android-maven'
 
+apply plugin: "de.mannodermaus.android-junit5"
+
 group = 'com.github.GetStream'
 
 def DEFAULT_COMPILE_SDK_VERSION = 28
@@ -26,6 +28,7 @@ android {
 }
 
 final def markdown_version = '4.1.0'
+final def jupiter_version = '5.5.1'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -58,10 +61,13 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-dash:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
-    testImplementation 'com.github.junit-team.junit5:junit-jupiter:r5.5.1'
-    testImplementation 'com.github.junit-team.junit5:junit-bom:r5.5.1'
     implementation 'androidx.room:room-runtime:2.1.0'
     annotationProcessor 'androidx.room:room-compiler:2.1.0'
+
+    // Tests
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
 }
 
 task javadoc(type: Javadoc) {
