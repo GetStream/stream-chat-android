@@ -1,4 +1,5 @@
 *.iml
+sample/release/*
 .gradle
 /local.properties
 /.idea/caches
