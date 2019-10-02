@@ -64,6 +64,7 @@ public class MessageListView extends RecyclerView {
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
     private GiphySendListener giphySendListener;
+    private ReactionViewClickListener reactionViewClickListener;
     private UserClickListener userClickListener;
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
@@ -273,6 +274,7 @@ public class MessageListView extends RecyclerView {
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
+        setReactionViewClickListener(reactionViewClickListener);
         setUserClickListener(userClickListener);
         setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
@@ -503,6 +505,23 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setReactionViewClickListener(ReactionViewClickListener l) {
+        this.reactionViewClickListener = l;
+        if (adapter == null) return;
+
+        if (this.reactionViewClickListener != null) {
+            adapter.setReactionViewClickListener(this.reactionViewClickListener);
+        } else {
+            adapter.setReactionViewClickListener(message -> {
+                new MoreActionDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setMessage(message)
+                        .setStyle(style)
+                        .show();
+            });
+        }
+    }
+
     public void setUserClickListener(UserClickListener userClickListener) {
         this.userClickListener = userClickListener;
 
@@ -649,7 +668,9 @@ public class MessageListView extends RecyclerView {
     public interface ReadStateClickListener {
         void onReadStateClick(List<ChannelUserRead> reads);
     }
-
+    public interface ReactionViewClickListener {
+        void onReactionViewClick(Message message);
+    }
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 

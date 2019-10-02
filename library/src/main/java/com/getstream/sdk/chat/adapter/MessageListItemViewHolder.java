@@ -76,6 +76,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.ReactionViewClickListener reactionViewClickListener;
     private MessageListView.UserClickListener userClickListener;
     private MessageListView.ReadStateClickListener readStateClickListener;
 
@@ -88,10 +89,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
     private ConstraintSet set;
-    public MessageListItemViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
-        this(resId, viewGroup);
-        style = s;
-    }
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
@@ -135,24 +132,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public void bind(Context context,
                      ChannelState channelState,
                      MessageListItem messageListItem,
-                     int position,
-                     boolean isThread,
-                     MessageListView.MessageClickListener messageClickListener,
-                     MessageListView.MessageLongClickListener messageLongClickListener,
-                     MessageListView.AttachmentClickListener attachmentClickListener,
-                     MessageListView.UserClickListener userClickListener,
-                     MessageListView.ReadStateClickListener readStateClickListener) {
+                     int position) {
 
         // set binding
         this.context = context;
         this.channelState = channelState;
         this.position = position;
-        this.isThread = isThread;
-        this.messageClickListener = messageClickListener;
-        this.messageLongClickListener = messageLongClickListener;
-        this.attachmentClickListener = attachmentClickListener;
-        this.userClickListener = userClickListener;
-        this.readStateClickListener = readStateClickListener;
 
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -161,6 +146,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         init();
     }
 
+    // region Init
     private void init() {
         // Configure UIs
         configSendFailed();
@@ -185,16 +171,47 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadIndicator();
     }
 
-    // endregion
+
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
         avatarWidth = style.getAvatarWidth();
+    }
+
+    public void setThread(boolean thread) {
+        isThread = thread;
+    }
+
+    public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
+        this.messageClickListener = messageClickListener;
+    }
+
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
+        this.messageLongClickListener = messageLongClickListener;
+    }
+
+    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
+    }
+
+    public void setReactionViewClickListener(MessageListView.ReactionViewClickListener reactionViewClickListener) {
+        this.reactionViewClickListener = reactionViewClickListener;
+    }
+
+    public void setUserClickListener(MessageListView.UserClickListener userClickListener) {
+        this.userClickListener = userClickListener;
+    }
+
+    public void setReadStateClickListener(MessageListView.ReadStateClickListener readStateClickListener) {
+        this.readStateClickListener = readStateClickListener;
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
         this.giphySendListener = giphySendListener;
     }
 
+    // endregion
+
+    // region Config
     private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
         // BOTTOM position shows the user avatar & message time
@@ -442,7 +459,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.setVisibility(View.VISIBLE);
         iv_tail.setVisibility(View.VISIBLE);
         tv_reaction_space.setVisibility(View.VISIBLE);
-        rv_reaction.setAdapter(new ReactionListItemAdapter(context, message.getReactionCounts(), channelState.getChannel().getReactionTypes(), style));
+        rv_reaction.setAdapter(new ReactionListItemAdapter(context,
+                message.getReactionCounts(),
+                channelState.getChannel().getReactionTypes(),
+                style));
+        rv_reaction.setOnClickListener(view -> {
+            reactionViewClickListener.onReactionViewClick(message);
+        });
     }
 
     private void configReplyView() {
