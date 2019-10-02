@@ -50,6 +50,7 @@ public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<
 
     public T withPresence() {
         BaseQueryChannelRequest clone = this.cloneOpts();
+        clone.presence = true;
         return (T) clone;
     }
 

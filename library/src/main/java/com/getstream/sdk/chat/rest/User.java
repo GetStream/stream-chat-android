@@ -13,9 +13,7 @@ import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.adapter.UserGsonAdapter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -27,50 +25,30 @@ import java.util.HashMap;
 @JsonAdapter(UserGsonAdapter.class)
 @Entity(tableName = "stream_user")
 public class User implements UserEntity {
+
     @PrimaryKey
     @NonNull
-    @SerializedName("id")
-    @Expose
     private String id;
 
-    @SerializedName("name")
-    @Expose
     private String name;
 
-    @SerializedName("image")
-    @Expose
     private String image;
 
-    @SerializedName("role")
-    @Expose
     private String role;
 
-    @SerializedName("created_at")
-    @Expose
     @TypeConverters(DateConverter.class)
     private Date createdAt;
 
-    @SerializedName("updated_at")
-    @Expose
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
 
-    @SerializedName("last_active")
-    @Expose
     @TypeConverters(DateConverter.class)
     private Date lastActive;
 
-    @SerializedName("online")
-    @Expose
     private Boolean online;
 
-    @SerializedName("total_unread_count")
-    @Expose
     private Integer totalUnreadCount;
 
-
-    @SerializedName("unread_channels")
-    @Expose
     private Integer unreadChannels;
 
     @TypeConverters(ExtraDataConverter.class)

@@ -61,8 +61,7 @@ import java.util.TimeZone;
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @JsonAdapter(MessageGsonAdapter.class)
 public class Message implements UserEntity {
-    @SerializedName("id")
-    @Expose
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")
@@ -71,79 +70,59 @@ public class Message implements UserEntity {
     @NonNull
     private String cid;
 
-    @SerializedName("text")
-    @Expose
     private String text;
 
-    @SerializedName("html")
-    @Expose(serialize = false)
     private String html;
 
-    @SerializedName("type")
-    @Expose(serialize = false)
     private String type;
 
     private Integer syncStatus;
 
-    @SerializedName("user")
-    @Expose(serialize = false)
     @Ignore
     private User user;
+
     @ColumnInfo(name = "user_id")
     private String userID;
-    @SerializedName("attachments")
-    @Expose
+
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
-    @SerializedName("latest_reactions")
-    @Expose(serialize = false)
+
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
-    @SerializedName("own_reactions")
-    @Expose(serialize = false)
+
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
-    @SerializedName("reply_count")
-    @Expose(serialize = false)
     private int replyCount;
-    @SerializedName("created_at")
+
     @ColumnInfo(name = "created_at")
-    @Expose(serialize = false)
     @TypeConverters({DateConverter.class})
     private Date createdAt;
-    @SerializedName("updated_at")
-    @Expose(serialize = false)
+
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
-    @SerializedName("deleted_at")
-    @Expose(serialize = false)
+
     @TypeConverters({DateConverter.class})
     private Date deletedAt;
-    @SerializedName("mentioned_users")
-    @Expose
+
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
-    @SerializedName("reaction_counts")
-    @Expose(serialize = false)
+
     @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
-    @SerializedName("parent_id")
-    @Expose
+
     private String parentId;
-    @SerializedName("command")
-    @Expose(serialize = false)
+
     private String command;
-    @SerializedName("command_info")
-    @Expose
+
     @TypeConverters(CommandInfoConverter.class)
     private Map<String, String> commandInfo;
+
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
-    // Additional Params
+
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
-
 
     private boolean isStartDay = false;
     private boolean isYesterday = false;

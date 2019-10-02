@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -21,42 +21,24 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         if (user.getId() != null)
             data.put("id", user.getId());
 
+        // Set Extra Data
+        if (user.getExtraData() != null && !user.getExtraData().isEmpty())
+            for (Map.Entry<String, Object> set : user.getExtraData().entrySet())
+                data.put(set.getKey(), set.getValue());
+
         if (user.getName() != null)
             data.put("name", user.getName());
 
         if (user.getImage() != null)
             data.put("image", user.getImage());
 
-        if (user.getRole() != null)
-            data.put("role", user.getRole());
-
-        if (user.getCreatedAt() != null)
-            data.put("created_at", user.getCreatedAt());
-
-        if (user.getUpdatedAt() != null)
-            data.put("updated_at", user.getUpdatedAt());
-
-        if (user.getLastActive() != null)
-            data.put("last_active", user.getLastActive());
-
-        if (user.getOnline() != null)
-            data.put("online", user.getOnline());
-
-        data.put("total_unread_count", user.getTotalUnreadCount());
-        data.put("unread_channels", user.getUnreadChannels());
-
-        // Set Extra Data
-        if (user.getExtraData() != null && !user.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : user.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
-
-        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
     }
 
     @Override
     public User read(JsonReader reader) throws IOException {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
+        Gson gson = GsonConverter.Gson();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         HashMap<String, Object> value =  (HashMap) adapter.read(reader);

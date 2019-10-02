@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.rest.adapter;
 
+import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
@@ -26,61 +29,27 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getText() != null)
             data.put("text", message.getText());
 
-        if (message.getHtml() != null)
-            data.put("html", message.getHtml());
-
-        if (message.getType() != null)
-            data.put("type", message.getType());
-
-        if (message.getUser() != null)
-            data.put("user", message.getUser());
-
         if (message.getAttachments() != null)
             data.put("attachments", message.getAttachments());
-
-        if (message.getLatestReactions() != null)
-            data.put("latest_reactions", message.getLatestReactions());
-
-        if (message.getOwnReactions() != null)
-            data.put("own_reactions", message.getOwnReactions());
-
-        data.put("reply_count", message.getReplyCount());
-
-        if (message.getCreatedAt() != null)
-            data.put("created_at", message.getCreatedAt());
-
-        if (message.getUpdatedAt() != null)
-            data.put("updated_at", message.getUpdatedAt());
-
-        if (message.getDeletedAt() != null)
-            data.put("deleted_at", message.getDeletedAt());
 
         if (message.getMentionedUsers() != null)
             data.put("mentioned_users", message.getMentionedUsers());
 
-        if (message.getReactionCounts() != null)
-            data.put("reaction_counts", message.getReactionCounts());
-
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());
 
-        if (message.getCommand() != null)
-            data.put("command", message.getCommand());
-
-        if (message.getCommandInfo() != null)
-            data.put("command_info", message.getCommandInfo());
         // Set Extra Data
         if (message.getExtraData() != null && !message.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : message.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
 
-        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
     }
 
     @Override
     public Message read(JsonReader reader) throws IOException {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
+        Gson gson = GsonConverter.Gson();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         Map<String, Object> value = (HashMap) adapter.read(reader);
@@ -108,13 +77,13 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setUser(gson.fromJson(json, User.class));
                     continue;
                 case "attachments":
-                    message.setAttachments(gson.fromJson(json, List.class));
+                    message.setAttachments(gson.fromJson(json, new TypeToken<List<Attachment>>(){}.getType()));
                     continue;
                 case "latest_reactions":
-                    message.setLatestReactions(gson.fromJson(json, List.class));
+                    message.setLatestReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
                     continue;
                 case "own_reactions":
-                    message.setOwnReactions(gson.fromJson(json, List.class));
+                    message.setOwnReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
                     continue;
                 case "reply_count":
                     message.setReplyCount(gson.fromJson(json, Integer.class));
@@ -129,10 +98,10 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setDeletedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "mentioned_users":
-                    message.setMentionedUsers(gson.fromJson(json, List.class));
+                    message.setMentionedUsers(gson.fromJson(json, new TypeToken<List<User>>(){}.getType()));
                     continue;
                 case "reaction_counts":
-                    message.setReactionCounts(gson.fromJson(json, Map.class));
+                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map>(){}.getType()));
                     continue;
                 case "parent_id":
                     message.setParentId((String) set.getValue());
@@ -141,7 +110,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     message.setCommand((String) set.getValue());
                     continue;
                 case "command_info":
-                    message.setCommandInfo(gson.fromJson(json, Map.class));
+                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map>(){}.getType()));
                     continue;
             }
             // Set Extra Data

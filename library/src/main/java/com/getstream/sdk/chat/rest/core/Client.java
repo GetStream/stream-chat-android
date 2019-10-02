@@ -374,6 +374,10 @@ public class Client implements WSResponseHandler {
         return channel(type, id, new HashMap<>());
     }
 
+    public Channel channel(String type, HashMap<String, Object> extraData, List<String> members) {
+        return new Channel(this, type, extraData, members);
+    }
+
     public Channel channel(String type, String id, HashMap<String, Object> extraData) {
         Channel channel = getChannelByCid(type, id);
         if (channel != null) {

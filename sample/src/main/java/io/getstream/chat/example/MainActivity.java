@@ -24,14 +24,12 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
@@ -93,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.channelList.setViewModel(viewModel, this);
 
-
-
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(channel -> {
@@ -111,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void createNewChannelDialog(View view) {
-
         final EditText inputName = new EditText(this);
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
@@ -139,20 +134,16 @@ public class MainActivity extends AppCompatActivity {
     void createNewChannel(String channelName){
         Client client = configureStreamClient();
 
-        String channelId = StringUtility.getSaltString(channelName);
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", channelName);
-        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", channelName);
+        extraData.put("title", channelName);
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
+        members.add("broken-waterfall-5");
 
-        data.put("members", members);
+        Channel channel = new Channel(client, ModelType.channel_messaging, extraData, members);
+        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10);
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withData(data).withMessages(10);
         viewModel.setLoading();
         channel.query(request, new QueryChannelCallback() {
             @Override

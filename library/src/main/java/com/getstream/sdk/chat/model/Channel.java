@@ -85,14 +85,15 @@ public class Channel {
     @Expose
     private String cid;
 
-    @NonNull
     @SerializedName("id")
     @Expose
     private String id;
+
     @NonNull
     @SerializedName("type")
     @Expose
     private String type;
+
     @SerializedName("last_message_at")
     @Expose
     @TypeConverters(DateConverter.class)
@@ -111,47 +112,60 @@ public class Channel {
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
+
     @SerializedName("created_at")
     @Expose
     @TypeConverters(DateConverter.class)
     private Date createdAt;
+
     @SerializedName("updated_at")
     @Expose
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
+
     @SerializedName("created_by")
     @Expose
     @Ignore
     private User createdByUser;
+
     @ColumnInfo(name = "created_by_user_id")
     private String createdByUserID;
+
     @SerializedName("frozen")
     @Expose
     private boolean frozen;
+
     @SerializedName("config")
     @Expose
     @Embedded(prefix = "config_")
     private Config config;
+
     @SerializedName("name")
     @Expose
     private String name;
+
     @SerializedName("image")
     @Expose
     private String image;
 
-    // Additional Params
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+
     @Ignore
     private Map<String, String> reactionTypes;
+
     @Ignore
     private List<ChatChannelEventHandler> eventSubscribers;
+
     @Ignore
     private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
+
     @Ignore
     private int subscribersSeq;
+
     @Ignore
     private Client client;
+
     @Ignore
     private ChannelState channelState;
 
@@ -220,6 +234,11 @@ public class Channel {
         eventSubscribersBy = new HashMap<>();
         channelState = new ChannelState(this);
         initialized = false;
+    }
+
+    public Channel(Client client, String type, HashMap<String, Object> extraData, List<String> members) {
+        this(client, type, null, extraData);
+        this.extraData.put("members", members);
     }
 
     public Date getCreatedAt() {
@@ -454,48 +473,62 @@ public class Channel {
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
+
+        Callback queryChannelCallback = new Callback<ChannelState>() {
+            @Override
+            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                mergeWithState(response.body());
+                // channels created without ID will get it populated by the API
+                if (id == null) {
+                    id = response.body().getChannel().getCid().split(":")[1];
+                    cid = response.body().getChannel().getCid();
+                }
+                if (channel.config == null)
+                    channel.config = response.body().getChannel().getConfig();
+                if (channel.channelState == null)
+                    channel.channelState = response.body();
+
+                client.addChannelConfig(type, channel.config);
+
+                if (request.isWatch()) {
+                    client.addToActiveChannels(channel);
+                    initialized = true;
+                }
+
+                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                // offline storage
+
+                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
+
+                callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ChannelState> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        };
+
+
         client.onSetUserCompleted(
-                new ClientConnectionCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
-                            @Override
-                            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                                mergeWithState(response.body());
-
-                                if (channel.config == null)
-                                    channel.config = response.body().getChannel().getConfig();
-                                if (channel.channelState == null)
-                                    channel.channelState = response.body();
-
-                                client.addChannelConfig(type, channel.config);
-
-                                if (request.isWatch()) {
-                                    client.addToActiveChannels(channel);
-                                    initialized = true;
-                                }
-
-                                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                                // offline storage
-
-                                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
-
-                                callback.onSuccess(response.body());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ChannelState> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        callback.onError(errMsg, errCode);
+            new ClientConnectionCallback() {
+                final ChannelQueryRequest queryRequest = request.withData(channel.extraData);
+                @Override
+                public void onSuccess(User user) {
+                    if (id == null) {
+                        // channels created without ID will get it populated by the API
+                        client.getApiService().queryChannel(channel.type, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
+                    } else {
+                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
                     }
                 }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    callback.onError(errMsg, errCode);
+                }
+            }
         );
     }
 

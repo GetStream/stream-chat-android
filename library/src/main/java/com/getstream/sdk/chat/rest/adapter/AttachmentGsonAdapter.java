@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -65,15 +66,14 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
             for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
 
-        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
-
+        TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
     }
 
     @Override
     public Attachment read(JsonReader reader) throws IOException {
 
-        Gson gson = new Gson();
+        Gson gson = GsonConverter.Gson();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         HashMap<String, Object> value = (HashMap) adapter.read(reader);

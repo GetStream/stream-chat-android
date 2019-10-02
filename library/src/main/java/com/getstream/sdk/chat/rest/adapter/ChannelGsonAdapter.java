@@ -3,8 +3,8 @@ package com.getstream.sdk.chat.rest.adapter;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
@@ -18,7 +18,7 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
     @Override
     public void write(JsonWriter writer, Channel channel) throws IOException {
         HashMap<String, Object> data = new HashMap<>();
-        // Set Reserved Data
+
         if (channel.getId() != null)
             data.put("id", channel.getId());
 
@@ -34,35 +34,17 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
         if (channel.getImage() != null)
             data.put("image", channel.getImage());
 
-        if (channel.getCreatedByUser() != null)
-            data.put("created_by", channel.getCreatedByUser());
-
-        if (channel.getLastMessageDate() != null)
-            data.put("last_message_at", channel.getLastMessageDate());
-
-        if (channel.getCreatedAt() != null)
-            data.put("created_at", channel.getCreatedAt());
-
-        if (channel.getUpdatedAt() != null)
-            data.put("updated_at", channel.getUpdatedAt());
-
-        data.put("frozen", channel.isFrozen());
-
-        if (channel.getConfig() != null)
-            data.put("config", channel.getConfig());
-
-        // Set Extra Data
         if (channel.getExtraData() != null && !channel.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : channel.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
 
-        TypeAdapter adapter = new Gson().getAdapter(HashMap.class);
+        TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
     }
 
     @Override
     public Channel read(JsonReader reader) throws IOException {
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss.SSS").create();
+        Gson gson = GsonConverter.Gson();
 
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         HashMap<String, Object> value = (HashMap) adapter.read(reader);

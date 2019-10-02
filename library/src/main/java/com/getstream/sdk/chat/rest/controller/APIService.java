@@ -42,6 +42,9 @@ public interface APIService {
     @POST("/channels/{type}/{id}/query")
     Call<ChannelState> queryChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
+    @POST("/channels/{type}/query")
+    Call<ChannelState> queryChannel(@Path("type") String channelType, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
+
     @DELETE("/channels/{type}/{id}")
     Call<ChannelState> deleteChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID);
 
