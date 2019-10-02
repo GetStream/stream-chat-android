@@ -58,15 +58,15 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     private void configAttachment() {
-        tv_file_size.setText(getAttachment().getFileSizeHumanized());
+        tv_file_size.setText(attachment.getFileSizeHumanized());
         // update the icon nicely
-        iv_file_thumb.setImageResource(getAttachment().getIcon());
-        tv_file_title.setText(getAttachment().getTitle());
+        iv_file_thumb.setImageResource(attachment.getIcon());
+        tv_file_title.setText(attachment.getTitle());
 
         Drawable background = getBubbleHelper().getDrawableForAttachment(getMessageListItem().getMessage(),
                 getMessageListItem().isMine(),
                 getMessageListItem().getPositions(),
-                getAttachment());
+                attachment);
         cl_attachment.setBackground(background);
 
         cl_attachment.setOnClickListener(this);

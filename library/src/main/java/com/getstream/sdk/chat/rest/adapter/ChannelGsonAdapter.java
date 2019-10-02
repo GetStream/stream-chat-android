@@ -28,12 +28,6 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
         if (channel.getType() != null)
             data.put("type", channel.getType());
 
-        if (channel.getName() != null)
-            data.put("name", channel.getName());
-
-        if (channel.getImage() != null)
-            data.put("image", channel.getImage());
-
         if (channel.getExtraData() != null && !channel.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : channel.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
@@ -64,12 +58,6 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     continue;
                 case "type":
                     channel.setType((String) set.getValue());
-                    continue;
-                case "name":
-                    channel.setName((String) set.getValue());
-                    continue;
-                case "image":
-                    channel.setImage((String) set.getValue());
                     continue;
                 case "created_by":
                     channel.setCreatedByUser(gson.fromJson(json, User.class));
