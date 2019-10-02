@@ -64,7 +64,7 @@ public class ExtraDataTest {
         message.setId("the-message-id");
         message.setExtraData(extraData);
         String json = GsonConverter.Gson().toJson(message);
-        assertEquals("{\"attachments\":[],\"id\":\"the-message-id\",\"reply_count\":0,\"group\":\"group chat\"}", json);
+        assertEquals("{\"id\":\"the-message-id\",\"group\":\"group chat\"}", json);
     }
 
     @org.junit.jupiter.api.Test

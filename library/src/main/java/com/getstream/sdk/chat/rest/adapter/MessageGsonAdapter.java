@@ -29,46 +29,11 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getText() != null)
             data.put("text", message.getText());
 
-        if (message.getHtml() != null)
-            data.put("html", message.getHtml());
-
-        if (message.getType() != null)
-            data.put("type", message.getType());
-
-        if (message.getUser() != null)
-            data.put("user", message.getUser());
-
-        if (message.getAttachments() != null)
+        if (message.getAttachments() != null && !message.getAttachments().isEmpty())
             data.put("attachments", message.getAttachments());
-
-        if (message.getLatestReactions() != null)
-            data.put("latest_reactions", message.getLatestReactions());
-
-        if (message.getOwnReactions() != null)
-            data.put("own_reactions", message.getOwnReactions());
-
-        data.put("reply_count", message.getReplyCount());
-
-        if (message.getCreatedAt() != null)
-            data.put("created_at", message.getCreatedAt());
-
-        if (message.getUpdatedAt() != null)
-            data.put("updated_at", message.getUpdatedAt());
-
-        if (message.getDeletedAt() != null)
-            data.put("deleted_at", message.getDeletedAt());
-
-        if (message.getMentionedUsers() != null)
-            data.put("mentioned_users", message.getMentionedUsers());
-
-        if (message.getReactionCounts() != null)
-            data.put("reaction_counts", message.getReactionCounts());
 
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());
-
-        if (message.getCommand() != null)
-            data.put("command", message.getCommand());
 
         if (message.getCommandInfo() != null)
             data.put("command_info", message.getCommandInfo());
