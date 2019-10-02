@@ -75,7 +75,7 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     channel.setFrozen((boolean) set.getValue());
                     continue;
                 case "config":
-                    channel.setConfig(gson.fromJson(json, Config.class));
+                    channel.setConfig(new Gson().fromJson(json, Config.class));
                     continue;
             }
             // Set Extra Data       
