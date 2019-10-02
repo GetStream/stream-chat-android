@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -444,6 +446,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         alv_attachments.setBackgroundResource(0);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void configReactionView() {
         if (isDeletedOrFailedMessage()
                 || !style.isReactionEnabled()
@@ -463,8 +466,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 message.getReactionCounts(),
                 channelState.getChannel().getReactionTypes(),
                 style));
-        rv_reaction.setOnClickListener(view -> {
-            reactionViewClickListener.onReactionViewClick(message);
+        rv_reaction.setOnTouchListener((View v, MotionEvent event) -> {
+            if (event.getAction() == MotionEvent.ACTION_UP)
+                reactionViewClickListener.onReactionViewClick(message);
+            return false;
         });
     }
 
@@ -559,8 +564,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         else
             params.startToEnd = layoutId;
         tv_reaction_space.setLayoutParams(params);
-        rv_reaction.post(()->{
-            params.width = rv_reaction.getHeight()/3;
+        rv_reaction.post(() -> {
+            params.width = rv_reaction.getHeight() / 3;
             tv_reaction_space.setLayoutParams(params);
         });
     }
@@ -577,11 +582,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             params.startToStart = tv_reaction_space.getId();
         else
             params.endToEnd = tv_reaction_space.getId();
-        rv_reaction.post(()->{
-           params.height = rv_reaction.getHeight();
-           params.width = rv_reaction.getHeight();
-           params.topMargin = rv_reaction.getHeight()/3;
-           iv_tail.setLayoutParams(params);
+        rv_reaction.post(() -> {
+            params.height = rv_reaction.getHeight();
+            params.width = rv_reaction.getHeight();
+            params.topMargin = rv_reaction.getHeight() / 3;
+            iv_tail.setLayoutParams(params);
         });
     }
 
@@ -703,8 +708,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         params.rightMargin = Utils.dpToPx(8);
         read_state.setLayoutParams(params);
     }
-    private void configStyleReactionView(){
-        if (style.getReactionViewBgDrawable() == -1){
+
+    private void configStyleReactionView() {
+        if (style.getReactionViewBgDrawable() == -1) {
             rv_reaction.setBackground(new DrawableBuilder()
                     .rectangle()
                     .rounded()
@@ -718,7 +724,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_incoming));
 
             DrawableCompat.setTint(iv_tail.getDrawable(), style.getReactionViewBgColor());
-        }else{
+        } else {
             int drawable = style.getReactionViewBgDrawable();
             rv_reaction.setBackground(context.getDrawable(drawable));
             iv_tail.setVisibility(View.GONE);
