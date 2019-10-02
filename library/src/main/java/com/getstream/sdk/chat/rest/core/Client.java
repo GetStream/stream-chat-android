@@ -569,59 +569,75 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * hides the channel from queryChannels for the user until a message is added
+     * hides the channel from queryChannels for the user until a message is added TODO: track hidden state in Room
      *
      * @param channel  the channel needs to hide
      * @param callback the result callback
      */
     public void hideChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
-        mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                new HideChannelRequest(user.getId()))
-                .enqueue(new Callback<ShowHideChannelResponse>() {
-                    @Override
-                    public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
-                        if (response.isSuccessful()) {
-                            callback.onSuccess(response.body());
-                        }
-                    }
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID)
+                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
 
-                    @Override
-                    public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
-                        if (t instanceof ErrorResponse) {
-                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                        } else {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    }
-                });
+                            @Override
+                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
+
     }
 
     /**
-     * removes the hidden status for a channel
+     * removes the hidden status for a channel TODO: track hidden state in Room
      *
      * @param channel  the channel needs to show
      * @param callback the result callback
      */
     public void showChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
-        mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                new HideChannelRequest(user.getId()))
-                .enqueue(new Callback<ShowHideChannelResponse>() {
-                    @Override
-                    public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
-                        if (response.isSuccessful()) {
-                            callback.onSuccess(response.body());
-                        }
-                    }
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID,
+                        new HideChannelRequest(user.getId()))
+                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
 
-                    @Override
-                    public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
-                        if (t instanceof ErrorResponse) {
-                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                        } else {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    }
-                });
+                            @Override
+                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
     }
 
     // region Message

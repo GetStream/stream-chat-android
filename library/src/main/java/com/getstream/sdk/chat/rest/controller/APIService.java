@@ -61,7 +61,7 @@ public interface APIService {
     Call<ShowHideChannelResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body HideChannelRequest body);
 
     @POST("/channels/{type}/{id}/hide")
-    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body HideChannelRequest body);
+    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID);
     // endregion
 
     // region User
