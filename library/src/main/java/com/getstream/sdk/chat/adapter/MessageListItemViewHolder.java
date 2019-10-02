@@ -2,9 +2,11 @@ package com.getstream.sdk.chat.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -356,6 +358,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
+    boolean isLongClick = false;
+    @SuppressLint("ClickableViewAccessibility")
     private void configMessageText() {
         if (message.getStatus() == MessageStatus.FAILED
                 || message.getType().equals(ModelType.message_error)
@@ -410,13 +414,27 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 messageClickListener.onMessageClick(message, position);
             }
         });
+
         tv_text.setOnLongClickListener(view -> {
+            isLongClick = true;
             if (this.messageLongClickListener != null)
                 this.messageLongClickListener.onMessageLongClick(message);
-
             return true;
         });
+
+        tv_text.setMovementMethod(new Utils.TextViewLinkHandler() {
+            @Override
+            public void onLinkClick(String url) {
+                if (isLongClick){
+                    isLongClick = false;
+                    return;
+                }
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                context.startActivity(browserIntent);
+            }
+        });
     }
+
 
     private void configAttachmentView() {
         if (isDeletedOrFailedMessage()
