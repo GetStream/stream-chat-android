@@ -535,14 +535,18 @@ public class Client implements WSResponseHandler {
 
                     @Override
                     public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
-                        callback.onError(t.getLocalizedMessage(), -1);
+                        ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                        if (response != null)
+                            callback.onError(response.getMessage(), response.getCode());
+                        else
+                            callback.onError(t.getLocalizedMessage(), -1);
                     }
                 });
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -563,7 +567,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -587,18 +595,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
-                                if (t instanceof ErrorResponse) {
-                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                                } else {
+                                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                                if (response != null)
+                                    callback.onError(response.getMessage(), response.getCode());
+                                else
                                     callback.onError(t.getLocalizedMessage(), -1);
-                                }
                             }
                         });
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
+                callback.onError(errMsg, errCode);
             }
         });
 
@@ -623,18 +631,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
-                                if (t instanceof ErrorResponse) {
-                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                                } else {
+                                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                                if (response != null)
+                                    callback.onError(response.getMessage(), response.getCode());
+                                else
                                     callback.onError(t.getLocalizedMessage(), -1);
-                                }
                             }
                         });
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -659,7 +667,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -687,7 +699,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -703,7 +719,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -725,7 +745,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -751,7 +775,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<EventResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                    if (response != null)
+                        callback.onError(response.getMessage(), response.getCode());
+                    else
+                        callback.onError(t.getLocalizedMessage(), -1);
                 }
             });
     }
@@ -773,7 +801,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -798,7 +830,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                    if (response != null)
+                        callback.onError(response.getMessage(), response.getCode());
+                    else
+                        callback.onError(t.getLocalizedMessage(), -1);
                 }
             });
         } else {
@@ -810,7 +846,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                    if (response != null)
+                        callback.onError(response.getMessage(), response.getCode());
+                    else
+                        callback.onError(t.getLocalizedMessage(), -1);
                 }
             });
         }
@@ -832,7 +872,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -856,7 +900,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -878,7 +926,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -896,7 +948,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -913,7 +969,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -933,7 +993,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -956,7 +1020,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -982,14 +1050,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                                if (response != null)
+                                    callback.onError(response.getMessage(), response.getCode());
+                                else
+                                    callback.onError(t.getLocalizedMessage(), -1);
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 });
     }
@@ -1012,14 +1084,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                                if (response != null)
+                                    callback.onError(response.getMessage(), response.getCode());
+                                else
+                                    callback.onError(t.getLocalizedMessage(), -1);
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 }
         );
@@ -1049,7 +1125,7 @@ public class Client implements WSResponseHandler {
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 }
         );
@@ -1115,7 +1191,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -1145,7 +1225,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -1168,7 +1252,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -1191,7 +1279,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
@@ -1241,7 +1333,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                if (response != null)
+                    callback.onError(response.getMessage(), response.getCode());
+                else
+                    callback.onError(t.getLocalizedMessage(), -1);
             }
         });
     }
