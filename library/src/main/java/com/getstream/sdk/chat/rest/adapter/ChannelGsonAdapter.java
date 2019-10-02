@@ -19,6 +19,10 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
     public void write(JsonWriter writer, Channel channel) throws IOException {
         HashMap<String, Object> data = new HashMap<>();
 
+        if (channel.getExtraData() != null && !channel.getExtraData().isEmpty())
+            for (Map.Entry<String, Object> set : channel.getExtraData().entrySet())
+                data.put(set.getKey(), set.getValue());
+
         if (channel.getId() != null)
             data.put("id", channel.getId());
 
@@ -27,10 +31,6 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
 
         if (channel.getType() != null)
             data.put("type", channel.getType());
-
-        if (channel.getExtraData() != null && !channel.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : channel.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);

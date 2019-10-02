@@ -23,6 +23,11 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
     @Override
     public void write(JsonWriter writer, Message message) throws IOException {
         HashMap<String, Object> data = new HashMap<>();
+
+        if (message.getExtraData() != null && !message.getExtraData().isEmpty())
+            for (Map.Entry<String, Object> set : message.getExtraData().entrySet())
+                data.put(set.getKey(), set.getValue());
+
         if (message.getId() != null)
             data.put("id", message.getId());
 
@@ -37,11 +42,6 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
 
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());
-
-        // Set Extra Data
-        if (message.getExtraData() != null && !message.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : message.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);

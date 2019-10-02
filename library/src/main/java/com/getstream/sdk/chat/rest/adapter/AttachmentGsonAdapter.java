@@ -17,6 +17,10 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
 
         HashMap<String, Object> data = new HashMap<>();
 
+        if (attachment.getExtraData() != null && !attachment.getExtraData().isEmpty())
+            for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
+                data.put(set.getKey(), set.getValue());
+
         if (attachment.getTitle() != null)
             data.put("title", attachment.getTitle());
 
@@ -60,11 +64,6 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
             data.put("mime_type", attachment.getMime_type());
 
         data.put("file_size", attachment.getFile_size());
-
-        // Set Extra Data
-        if (attachment.getExtraData() != null && !attachment.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);

@@ -21,7 +21,7 @@ public class ExtraDataTest {
 
         Channel channel = new Channel(null, "messaging", "the-channel-id", extraData);
         String json = GsonConverter.Gson().toJson(channel);
-        assertEquals("{\"color\":\"blue\",\"name\":\"Test Channel\",\"frozen\":false,\"id\":\"the-channel-id\",\"type\":\"messaging\",\"cid\":\"messaging:the-channel-id\"}", json);
+        assertEquals("{\"color\":\"blue\",\"name\":\"Test Channel\",\"id\":\"the-channel-id\",\"type\":\"messaging\",\"cid\":\"messaging:the-channel-id\"}", json);
     }
 
     @org.junit.jupiter.api.Test
@@ -30,6 +30,7 @@ public class ExtraDataTest {
         Channel channel = GsonConverter.Gson().fromJson(json, Channel.class);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("color", "blue");
+        extraData.put("name", "Test Channel");
         assertEquals(extraData, channel.getExtraData());
     }
 
@@ -42,12 +43,12 @@ public class ExtraDataTest {
 
         User user = new User("tommaso", extraData);
         String json = GsonConverter.Gson().toJson(user);
-        assertEquals("{\"gender\":\"male\",\"name\":\"Tommaso\",\"online\":false,\"id\":\"tommaso\"}", json);
+        assertEquals("{\"gender\":\"male\",\"name\":\"Tommaso\",\"id\":\"tommaso\"}", json);
     }
 
     @org.junit.jupiter.api.Test
     void userExtraReadTest() {
-        String json = "{\"gender\":\"male\",\"name\":\"Tommaso\",\"online\":false,\"id\":\"tommaso\"}";
+        String json = "{\"gender\":\"male\",\"name\":\"Tommaso\",\"id\":\"tommaso\"}";
         User user = GsonConverter.Gson().fromJson(json, User.class);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("gender", "male");
@@ -64,7 +65,7 @@ public class ExtraDataTest {
         message.setId("the-message-id");
         message.setExtraData(extraData);
         String json = GsonConverter.Gson().toJson(message);
-        assertEquals("{\"attachments\":[],\"id\":\"the-message-id\",\"reply_count\":0,\"group\":\"group chat\"}", json);
+        assertEquals("{\"attachments\":[],\"id\":\"the-message-id\",\"group\":\"group chat\"}", json);
     }
 
     @org.junit.jupiter.api.Test

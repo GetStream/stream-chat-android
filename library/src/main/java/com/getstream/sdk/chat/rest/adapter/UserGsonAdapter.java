@@ -21,7 +21,6 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         if (user.getId() != null)
             data.put("id", user.getId());
 
-        // Set Extra Data
         if (user.getExtraData() != null && !user.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : user.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
