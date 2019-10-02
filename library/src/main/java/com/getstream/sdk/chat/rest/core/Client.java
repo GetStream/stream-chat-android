@@ -159,7 +159,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(channel, event);
+                    channel.handleChannelUpdated(channel);
                 }
 
                 // TODO: what about deleted channels?

@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         Client client = configureStreamClient();
 
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("title", channelName);
+        extraData.put("name", channelName);
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());

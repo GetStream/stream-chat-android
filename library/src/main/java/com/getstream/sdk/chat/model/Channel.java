@@ -140,14 +140,7 @@ public class Channel {
     @Embedded(prefix = "config_")
     private Config config;
 
-    @SerializedName("name")
-    @Expose
-    private String name;
-
-    @SerializedName("image")
-    @Expose
-    private String image;
-
+    @NonNull
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
@@ -219,17 +212,6 @@ public class Channel {
             this.extraData = new HashMap<>(extraData);
         }
 
-        // since name and image are very common fields, we are going to promote them as
-        Object image = this.extraData.remove("image");
-        if (image != null) {
-            this.image = image.toString();
-        }
-
-        Object name = this.extraData.remove("name");
-        if (name != null) {
-            this.name = name.toString();
-        }
-        this.extraData.remove("id");
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
         channelState = new ChannelState(this);
@@ -327,19 +309,27 @@ public class Channel {
     }
 
     public String getName() {
-        return name;
+        Object name = extraData.get("name");
+        if (name instanceof String) {
+            return (String) name;
+        }
+        return null;
     }
 
     public void setName(String name) {
-        this.name = name;
+        extraData.put("name", name);
     }
 
     public String getImage() {
-        return image;
+        Object image = extraData.get("image");
+        if (image instanceof String) {
+            return (String) image;
+        }
+        return null;
     }
 
     public void setImage(String image) {
-        this.image = image;
+        extraData.put("image", image);
     }
 
     public Channel copy() {
@@ -439,8 +429,6 @@ public class Channel {
     }
 
     public void mergeWithState(ChannelState state) {
-        name = state.getChannel().name;
-        image = state.getChannel().image;
         channelState.init(state);
         config = state.getChannel().config;
         lastMessageDate = state.getChannel().lastMessageDate;
@@ -561,9 +549,8 @@ public class Channel {
 
     // TODO: move this somewhere else
     public String getInitials() {
-        String name = this.name;
+        String name = this.getName();
         if (name == null) {
-            this.name = "";
             return "";
         }
         String[] names = name.split(" ");
@@ -767,9 +754,7 @@ public class Channel {
         });
     }
 
-    public void handleChannelUpdated(Channel channel, Event event) {
-        name = channel.name;
-        image = channel.image;
+    public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         getClient().storage().insertChannel(channel);
     }
