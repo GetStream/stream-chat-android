@@ -39,6 +39,7 @@ import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -472,7 +473,11 @@ public class Channel {
 
                             @Override
                             public void onFailure(Call<ChannelState> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
                             }
                         });
                     }
