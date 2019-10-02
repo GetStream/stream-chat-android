@@ -21,13 +21,7 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     public abstract void bind(Context context,
                               ChannelState channelState,
                               @NonNull MessageListItem messageListItem,
-                              int position,
-                              boolean isThread,
-                              MessageListView.MessageClickListener messageClickListener,
-                              MessageListView.MessageLongClickListener messageLongClickListener,
-                              MessageListView.AttachmentClickListener attachmentClickListener,
-                              MessageListView.UserClickListener userClickListener,
-                              MessageListView.ReadStateClickListener readStateClickListener);
+                              int position);
 
     public abstract void setStyle(MessageListViewStyle style);
 

@@ -6,7 +6,6 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
@@ -22,14 +21,7 @@ public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
     public void bind(Context context,
                      ChannelState channelState,
                      MessageListItem messageListItem,
-                     int position,
-                     boolean isThread,
-                     MessageListView.MessageClickListener l1,
-                     MessageListView.MessageLongClickListener messageLongClickListener,
-                     MessageListView.AttachmentClickListener l2,
-                     MessageListView.UserClickListener userClickListener,
-                     MessageListView.ReadStateClickListener readStateClickListener) {
-
+                     int position) {
 //        tv_text.setText();
     }
 

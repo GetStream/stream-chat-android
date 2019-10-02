@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AvatarGroupView;
-import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
@@ -35,12 +34,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     public void bind(Context context,
                      ChannelState channelState,
                      MessageListItem messageListItem,
-                     int position, boolean isThread,
-                     MessageListView.MessageClickListener l1,
-                     MessageListView.MessageLongClickListener messageLongClickListener,
-                     MessageListView.AttachmentClickListener l2,
-                     MessageListView.UserClickListener userClickListener,
-                     MessageListView.ReadStateClickListener readStateClickListener) {
+                     int position) {
 
         ll_typingusers.setVisibility(View.VISIBLE);
         iv_typing_indicator.setVisibility(View.VISIBLE);
