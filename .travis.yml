@@ -19,4 +19,4 @@ install:
   - true
 
 script:
-  - ./gradlew build
+  - ./gradlew test --console verbose -i

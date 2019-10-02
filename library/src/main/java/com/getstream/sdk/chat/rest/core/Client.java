@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
@@ -56,11 +57,14 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
 import com.getstream.sdk.chat.storage.Storage;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -546,8 +550,6 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    // region Message
-
     /**
      * deleteChannel - Delete the given channel
      *
@@ -568,6 +570,79 @@ public class Client implements WSResponseHandler {
             }
         });
     }
+
+    /**
+     * hides the channel from queryChannels for the user until a message is added TODO: track hidden state in Room
+     *
+     * @param channel  the channel needs to hide
+     * @param callback the result callback
+     */
+    public void hideChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
+                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
+
+    }
+
+    /**
+     * removes the hidden status for a channel TODO: track hidden state in Room
+     *
+     * @param channel  the channel needs to show
+     * @param callback the result callback
+     */
+    public void showChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
+                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
+    }
+
+    // region Message
 
     /**
      * sendMessage - Send a message to this channel
@@ -711,7 +786,6 @@ public class Client implements WSResponseHandler {
 
     /**
      * getReplies - List the message replies for a parent message
-     *
      */
     public void getReplies(@NonNull String parentId,
                            int limit,
@@ -748,7 +822,6 @@ public class Client implements WSResponseHandler {
 
     /**
      * sendReaction - Send a reaction about a message
-     *
      */
     public void sendReaction(@NonNull String messageId,
                              @NonNull ReactionRequest reactionRequest,
@@ -773,7 +846,6 @@ public class Client implements WSResponseHandler {
 
     /**
      * deleteReaction - Delete a reaction by user and type
-     *
      */
     public void deleteReaction(@NonNull String messageId,
                                @NonNull String reactionType,
@@ -796,7 +868,6 @@ public class Client implements WSResponseHandler {
 
     /**
      * sendEvent - Send an event on this channel
-     *
      */
     public void sendEvent(@NonNull Channel channel,
                           @NonNull SendEventRequest eventRequest,
@@ -872,7 +943,6 @@ public class Client implements WSResponseHandler {
 
     /**
      * queryUsers - Query users and watch user presence
-     *
      */
     public void queryUsers(@NonNull JSONObject payload,
                            QueryUserListCallback callback) {
@@ -898,96 +968,93 @@ public class Client implements WSResponseHandler {
 
     /**
      * addDevice - Adds a push device for a user.
-     *
      */
     public void addDevice(@NonNull String deviceId,
                           DeviceCallback callback) {
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
         onSetUserCompleted(
-            new ClientConnectionCallback() {
+                new ClientConnectionCallback() {
 
-                @Override
-                public void onSuccess(User user) {
-                    mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
-                        @Override
-                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                            callback.onSuccess(response.body());
-                        }
+                    @Override
+                    public void onSuccess(User user) {
+                        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
+                            @Override
+                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
 
-                        @Override
-                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    });
-                }
+                            @Override
+                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                                callback.onError(t.getLocalizedMessage(), -1);
+                            }
+                        });
+                    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
+                    @Override
+                    public void onError(String errMsg, int errCode) {
 
-                }
-            });
+                    }
+                });
     }
 
     /**
      * getDevices - Returns the devices associated with a current user
-     *
      */
     public void getDevices(@NonNull Map<String, String> payload,
                            GetDevicesCallback callback) {
 
         onSetUserCompleted(
-            new ClientConnectionCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
-                        @Override
-                        public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
-                            callback.onSuccess(response.body());
-                        }
+                new ClientConnectionCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        mService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
+                            @Override
+                            public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
 
-                        @Override
-                        public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
+                                callback.onError(t.getLocalizedMessage(), -1);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+
+                    }
                 }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-
-                }
-            }
         );
     }
 
     /**
      * removeDevice - Removes the device with the given id. Clientside users can only delete their own devices
-     *
      */
     public void removeDevice(@NonNull String deviceId,
                              DeviceCallback callback) {
         onSetUserCompleted(
-            new ClientConnectionCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
-                        @Override
-                        public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
-                            callback.onSuccess(response.body());
-                        }
+                new ClientConnectionCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
+                            @Override
+                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
 
-                        @Override
-                        public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                                callback.onError(t.getLocalizedMessage(), -1);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+
+                    }
                 }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-
-                }
-            }
         );
     }
 

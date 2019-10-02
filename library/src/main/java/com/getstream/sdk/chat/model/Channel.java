@@ -30,6 +30,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -51,6 +52,8 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -99,7 +102,8 @@ public class Channel {
     @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
 
-    public @Sync.Status Integer getSyncStatus() {
+    public @Sync.Status
+    Integer getSyncStatus() {
         return syncStatus;
     }
 
@@ -439,7 +443,6 @@ public class Channel {
 
     /**
      * watch - Loads the initial channel state and watches for changes
-     *
      */
     public void watch(@NonNull ChannelWatchRequest request, QueryWatchCallback callback) {
         query(request, new QueryChannelCallback() {
@@ -457,7 +460,6 @@ public class Channel {
 
     /**
      * query - Query the API, get messages, members or other channel fields
-     *
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
@@ -627,7 +629,7 @@ public class Channel {
     }
 
     public void sendImage(Attachment attachment,
-                         SendFileCallback fileCallback) {
+                          SendFileCallback fileCallback) {
         File file = new File(attachment.config.getFilePath());
         RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
@@ -773,7 +775,7 @@ public class Channel {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         message.setStatus(MessageStatus.RECEIVED);
-        if (!message.getType().equals(ModelType.message_reply)){
+        if (!message.getType().equals(ModelType.message_reply)) {
             channelState.addMessageSorted(message);
         }
         if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
@@ -842,6 +844,24 @@ public class Channel {
                 Log.e(TAG, "mark read failed with error " + errMsg);
             }
         });
+    }
+
+    /**
+     * hides the channel from queryChannels for the user until a message is added
+     *
+     * @param callback the result callback
+     */
+    public void hide(@NotNull ShowHideChannelCallback callback) {
+        client.hideChannel(this, callback);
+    }
+
+    /**
+     * hides the channel from queryChannels for the user until a message is added
+     *
+     * @param callback the result callback
+     */
+    public void show(@NotNull ShowHideChannelCallback callback) {
+        client.showChannel(this, callback);
     }
 
     public ChannelState getLastState() {

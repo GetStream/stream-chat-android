@@ -339,6 +339,9 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
         Message message = this.channel.getChannelState().getLastMessage();
+        if (message == null) {
+            return;
+        }
         if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
             looper.markRead();
             lastMarkRead = message.getCreatedAt();

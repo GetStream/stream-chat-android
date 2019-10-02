@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -20,10 +21,15 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.utils.ResultCallback;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +155,58 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             return;
         }
         this.filter = filter;
+    }
+
+    /**
+     * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
+     *
+     * @param channel the channel needs to hide
+     * @param callback the result callback
+     */
+    public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
+        channel.hide(new ShowHideChannelCallback() {
+            @Override
+            public void onSuccess(ShowHideChannelResponse response) {
+                deleteChannel(channel); // remove the channel from the list of not hidden channels
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
+    }
+
+    /**
+     * removes the hidden status for a channel and remove from the current list of channels
+     *
+     * @param channel the channel needs to show
+     * @param callback the result callback
+     */
+    public void showChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
+        channel.show(new ShowHideChannelCallback() {
+            @Override
+            public void onSuccess(ShowHideChannelResponse response) {
+                deleteChannel(channel); // remove the channel from the list of hidden channels
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
     }
 
     public void setChannelSort(QuerySort sort) {
