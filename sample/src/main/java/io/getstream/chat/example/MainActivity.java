@@ -99,12 +99,10 @@ public class MainActivity extends AppCompatActivity {
         MainActivity parent = this;
         binding.channelList.setOnChannelClickListener(channel -> {
             // open the channel activity
-            /*Intent intent = new Intent(parent, ChannelActivity.class);
+            Intent intent = new Intent(parent, ChannelActivity.class);
             intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
             intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-            startActivity(intent);*/
-
-            viewModel.hideChannel(channel, null);
+            startActivity(intent);
         });
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
