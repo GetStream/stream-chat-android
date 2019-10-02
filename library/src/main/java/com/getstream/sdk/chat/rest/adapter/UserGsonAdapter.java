@@ -18,12 +18,12 @@ public class UserGsonAdapter extends TypeAdapter<User> {
 
         HashMap<String, Object> data = new HashMap<>();
 
-        if (user.getId() != null)
-            data.put("id", user.getId());
-
         if (user.getExtraData() != null && !user.getExtraData().isEmpty())
             for (Map.Entry<String, Object> set : user.getExtraData().entrySet())
                 data.put(set.getKey(), set.getValue());
+
+        if (user.getId() != null)
+            data.put("id", user.getId());
 
         if (user.getName() != null)
             data.put("name", user.getName());
