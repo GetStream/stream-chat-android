@@ -11,7 +11,6 @@ import androidx.room.PrimaryKey;
 import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -22,10 +21,10 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.ChannelUserReadListConverter;
 import com.getstream.sdk.chat.storage.converter.MemberListConverter;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,31 +36,45 @@ import java.util.Map;
 public class ChannelState {
 
     private static final String TAG = ChannelState.class.getSimpleName();
+
     @PrimaryKey
     @NonNull
     private String cid;
-    // ignore since we always embed the channelstate in the channel
+
+    // ignore since we always embed the channel state in the channel
     @Ignore
     @SerializedName("channel")
+    @Expose
     private Channel channel;
+
     // messages are stored separately
     @Ignore
     @SerializedName("messages")
+    @Expose
     private List<Message> messages;
+
     @Embedded(prefix = "last_message_")
     private Message lastMessage;
+
     @SerializedName("read")
+    @Expose
     @TypeConverters({ChannelUserReadListConverter.class})
     private List<ChannelUserRead> reads;
+
     @SerializedName("members")
+    @Expose
     @TypeConverters({MemberListConverter.class})
     private List<Member> members;
+
     @Ignore
     @SerializedName("watchers")
+    @Expose
     private List<Watcher> watchers;
+
     @Ignore
     @SerializedName("watcher_count")
     private int watcherCount;
+
     @Ignore
     private Date lastKnownActiveWatcher;
 
@@ -84,11 +97,12 @@ public class ChannelState {
 
     // endregion
 
+    @NonNull
     public String getCid() {
         return cid;
     }
 
-    public void setCid(String cid) {
+    public void setCid(@NonNull String cid) {
         this.cid = cid;
     }
 
@@ -113,7 +127,7 @@ public class ChannelState {
         this.watcherCount = watcherCount;
     }
 
-    public Date getLastKnownActiveWatcher() {
+    private Date getLastKnownActiveWatcher() {
         if (lastKnownActiveWatcher == null) {
             lastKnownActiveWatcher = new Date(0);
         }
@@ -194,24 +208,14 @@ public class ChannelState {
             }
         }
         for (Watcher watcher : getWatchers()) {
+            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
+                continue;
             if (lastActive.before(watcher.getUser().getLastActive())) {
                 if (channel.getClient().fromCurrentUser(watcher)) continue;
                 lastActive = watcher.getUser().getLastActive();
             }
         }
         return lastActive;
-    }
-
-    public Boolean anyOtherUsersOnline() {
-        Boolean online = false;
-        List<User> users = this.getOtherUsers();
-        for (User u : users) {
-            if (u.getOnline()) {
-                online = true;
-                break;
-            }
-        }
-        return online;
     }
 
     public String getChannelNameOrMembers() {
@@ -244,7 +248,7 @@ public class ChannelState {
         this.channel = channel;
     }
 
-    public Message getOldestMessage() {
+    private Message getOldestMessage() {
         if (messages == null) {
             return null;
         }
@@ -340,12 +344,12 @@ public class ChannelState {
                 break;
             }
         }
-        Message.setStartDay(Arrays.asList(lastMessage), null);
+        Message.setStartDay(Collections.singletonList(lastMessage), null);
 
         return lastMessage;
     }
 
-    public Message getLastMessageFromOtherUser() {
+    private Message getLastMessageFromOtherUser() {
         Message lastMessage = null;
         try {
             List<Message> messages = getMessages();
@@ -356,7 +360,7 @@ public class ChannelState {
                     break;
                 }
             }
-            Message.setStartDay(Arrays.asList(lastMessage), null);
+            Message.setStartDay(Collections.singletonList(lastMessage), null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -397,8 +401,6 @@ public class ChannelState {
     }
 
     private void addMessagesSorted(List<Message> messages) {
-        int initialSize = messages.size();
-
         for (Message m : messages) {
             if (m.getParentId() == null) {
                 addOrUpdateMessage(m);
@@ -434,7 +436,7 @@ public class ChannelState {
         return this.getUnreadMessageCount(userID);
     }
 
-    public int getUnreadMessageCount(String userId) {
+    private int getUnreadMessageCount(String userId) {
         int unreadMessageCount = 0;
         if (this.reads == null || this.reads.isEmpty()) return unreadMessageCount;
 
@@ -450,7 +452,7 @@ public class ChannelState {
         return unreadMessageCount;
     }
 
-    public Date getReadDateOfChannelLastMessage(String userId) {
+    private Date getReadDateOfChannelLastMessage(String userId) {
         if (this.reads == null || this.reads.isEmpty()) return null;
         Date lastReadDate = null;
         try {
@@ -490,11 +492,7 @@ public class ChannelState {
             return false;
         }else if (getLastMessage() == null){
             return true;
-        }else if (myReadDate.getTime() > getLastMessage().getCreatedAt().getTime()){
-            return true;
-        }else{
-            return false;
-        }
+        }else return myReadDate.getTime() > getLastMessage().getCreatedAt().getTime();
     }
 }
 

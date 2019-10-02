@@ -1,37 +1,48 @@
 package com.getstream.sdk.chat.model;
 
 import com.getstream.sdk.chat.rest.User;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Flag {
     @SerializedName("user")
+    @Expose
     User user;
 
     @SerializedName("target_user")
+    @Expose
     User target_user;
 
     @SerializedName("target_message_id")
+    @Expose
     String target_message_id;
 
     @SerializedName("created_at")
+    @Expose
     String created_at;
 
     @SerializedName("updated_at")
+    @Expose
     String updated_at;
 
     @SerializedName("reviewed_at")
+    @Expose
     String reviewed_at;
 
     @SerializedName("reviewed_by")
+    @Expose
     String reviewed_by;
 
     @SerializedName("approved_at")
+    @Expose
     String approved_at;
 
     @SerializedName("rejected_at")
+    @Expose
     String rejected_at;
 
     @SerializedName("created_by_automod")
+    @Expose
     boolean created_by_automod;
 
     public User getUser() {

@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
@@ -37,9 +38,7 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -50,6 +49,8 @@ import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
@@ -77,21 +78,27 @@ import retrofit2.Response;
         childColumns = "created_by_user_id"), indices = {
         @Index(value = {"created_by_user_id"})})
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
+@JsonAdapter(ChannelGsonAdapter.class)
 public class Channel {
     private static final String TAG = Channel.class.getSimpleName();
 
     @PrimaryKey
     @NonNull
     @SerializedName("cid")
+    @Expose
     private String cid;
 
-    @NonNull
     @SerializedName("id")
+    @Expose
     private String id;
+
     @NonNull
     @SerializedName("type")
+    @Expose
     private String type;
+
     @SerializedName("last_message_at")
+    @Expose
     @TypeConverters(DateConverter.class)
     private Date lastMessageDate;
 
@@ -109,38 +116,53 @@ public class Channel {
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
+
     @SerializedName("created_at")
+    @Expose
     @TypeConverters(DateConverter.class)
     private Date createdAt;
+
     @SerializedName("updated_at")
+    @Expose
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
+
     @SerializedName("created_by")
+    @Expose
     @Ignore
     private User createdByUser;
+
     @ColumnInfo(name = "created_by_user_id")
     private String createdByUserID;
+
     @SerializedName("frozen")
+    @Expose
     private boolean frozen;
+
     @SerializedName("config")
+    @Expose
     @Embedded(prefix = "config_")
     private Config config;
-    @SerializedName("name")
-    private String name;
-    @SerializedName("image")
-    private String image;
+
+    @NonNull
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
+
     @Ignore
     private Map<String, String> reactionTypes;
+
     @Ignore
     private List<ChatChannelEventHandler> eventSubscribers;
+
     @Ignore
     private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
+
     @Ignore
     private int subscribersSeq;
+
     @Ignore
     private Client client;
+
     @Ignore
     private ChannelState channelState;
 
@@ -194,21 +216,15 @@ public class Channel {
             this.extraData = new HashMap<>(extraData);
         }
 
-        // since name and image are very common fields, we are going to promote them as
-        Object image = this.extraData.remove("image");
-        if (image != null) {
-            this.image = image.toString();
-        }
-
-        Object name = this.extraData.remove("name");
-        if (name != null) {
-            this.name = name.toString();
-        }
-        this.extraData.remove("id");
         eventSubscribers = new ArrayList<>();
         eventSubscribersBy = new HashMap<>();
         channelState = new ChannelState(this);
         initialized = false;
+    }
+
+    public Channel(Client client, String type, HashMap<String, Object> extraData, List<String> members) {
+        this(client, type, null, extraData);
+        this.extraData.put("members", members);
     }
 
     public Date getCreatedAt() {
@@ -297,19 +313,27 @@ public class Channel {
     }
 
     public String getName() {
-        return name;
+        Object name = extraData.get("name");
+        if (name instanceof String) {
+            return (String) name;
+        }
+        return null;
     }
 
     public void setName(String name) {
-        this.name = name;
+        extraData.put("name", name);
     }
 
     public String getImage() {
-        return image;
+        Object image = extraData.get("image");
+        if (image instanceof String) {
+            return (String) image;
+        }
+        return null;
     }
 
     public void setImage(String image) {
-        this.image = image;
+        extraData.put("image", image);
     }
 
     public Channel copy() {
@@ -409,8 +433,6 @@ public class Channel {
     }
 
     public void mergeWithState(ChannelState state) {
-        name = state.getChannel().name;
-        image = state.getChannel().image;
         channelState.init(state);
         config = state.getChannel().config;
         lastMessageDate = state.getChannel().lastMessageDate;
@@ -441,52 +463,63 @@ public class Channel {
      */
     public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
         Channel channel = this;
+
+        Callback queryChannelCallback = new Callback<ChannelState>() {
+            @Override
+            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                mergeWithState(response.body());
+                // channels created without ID will get it populated by the API
+                if (id == null) {
+                    id = response.body().getChannel().getCid().split(":")[1];
+                    cid = response.body().getChannel().getCid();
+                }
+                if (channel.config == null)
+                    channel.config = response.body().getChannel().getConfig();
+                if (channel.channelState == null)
+                    channel.channelState = response.body();
+
+                client.addChannelConfig(type, channel.config);
+
+                if (request.isWatch()) {
+                    client.addToActiveChannels(channel);
+                    initialized = true;
+                }
+
+                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                // offline storage
+
+                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
+
+                callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ChannelState> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        };
+
+
         client.onSetUserCompleted(
-                new ClientConnectionCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), request).enqueue(new Callback<ChannelState>() {
-                            @Override
-                            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                                mergeWithState(response.body());
 
-                                if (channel.config == null)
-                                    channel.config = response.body().getChannel().getConfig();
-                                if (channel.channelState == null)
-                                    channel.channelState = response.body();
-
-                                client.addChannelConfig(type, channel.config);
-
-                                if (request.isWatch()) {
-                                    client.addToActiveChannels(channel);
-                                    initialized = true;
-                                }
-
-                                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                                // offline storage
-
-                                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
-
-                                callback.onSuccess(response.body());
-                            }
-
-                            @Override
-                            public void onFailure(Call<ChannelState> call, Throwable t) {
-                                if (t instanceof ErrorResponse) {
-                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                                } else {
-                                    callback.onError(t.getLocalizedMessage(), -1);
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        callback.onError(errMsg, errCode);
+            new ClientConnectionCallback() {
+                final ChannelQueryRequest queryRequest = request.withData(channel.extraData);
+                @Override
+                public void onSuccess(User user) {
+                    if (id == null) {
+                        // channels created without ID will get it populated by the API
+                        client.getApiService().queryChannel(channel.type, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
+                    } else {
+                        client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
                     }
                 }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    callback.onError(errMsg, errCode);
+                }
+            }
         );
     }
 
@@ -519,9 +552,8 @@ public class Channel {
 
     // TODO: move this somewhere else
     public String getInitials() {
-        String name = this.name;
+        String name = this.getName();
         if (name == null) {
-            this.name = "";
             return "";
         }
         String[] names = name.split(" ");
@@ -546,12 +578,7 @@ public class Channel {
     public void sendMessage(Message message,
                             MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request;
-        if (message.getId() != null) {
-            request = new SendMessageRequest(message.getId(), message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
-        } else {
-            request = new SendMessageRequest(message.getText(), message.getAttachments(), message.getParentId(), false, mentionedUserIDs);
-        }
+        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
 
         client.sendMessage(this, request, new MessageCallback() {
             @Override
@@ -562,6 +589,7 @@ public class Channel {
 
             @Override
             public void onError(String errMsg, int errCode) {
+                Log.d(TAG,"Send Message Error: " + errMsg);
                 if (callback != null)
                     callback.onError(errMsg, errCode);
             }
@@ -571,8 +599,7 @@ public class Channel {
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-
-        UpdateMessageRequest request = new UpdateMessageRequest(message, mentionedUserIDs);
+        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
 
         client.updateMessage(message.getId(), request, new MessageCallback() {
             @Override
@@ -730,9 +757,7 @@ public class Channel {
         });
     }
 
-    public void handleChannelUpdated(Channel channel, Event event) {
-        name = channel.name;
-        image = channel.image;
+    public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         getClient().storage().insertChannel(channel);
     }

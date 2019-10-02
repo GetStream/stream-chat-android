@@ -71,7 +71,7 @@ public class UserListItemAdapter extends BaseAdapter {
     }
 
     private void configUIs(StreamItemUserBinding binding, User user) {
-//        binding.viewUserAvator.setUser(user, style);
+//        binding.viewUserAvatar.setUser(user, style);
         binding.tvName.setText(user.getName());
 
         if (user.getOnline())

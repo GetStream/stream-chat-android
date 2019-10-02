@@ -12,7 +12,7 @@ public class QuerySortTest {
         String json = new Gson().toJson(
                 t.getData()
         );
-        assertEquals("[{\"field\":\"last_message_at\",\"direction\":\"-1\"}]", json);
+        assertEquals("[{\"field\":\"last_message_at\",\"direction\":-1}]", json);
     }
 
     @org.junit.jupiter.api.Test
@@ -21,7 +21,7 @@ public class QuerySortTest {
         String json = new Gson().toJson(
                 t.getData()
         );
-        assertEquals("[{\"field\":\"last_message_at\",\"direction\":\"1\"}]", json);
+        assertEquals("[{\"field\":\"last_message_at\",\"direction\":1}]", json);
     }
 
     @org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ public class QuerySortTest {
         String json = new Gson().toJson(
                 t.getData()
         );
-        assertEquals("[{\"field\":\"last_message_at\",\"direction\":\"1\"},{\"field\":\"qty\",\"direction\":\"-1\"}]", json);
+        assertEquals("[{\"field\":\"last_message_at\",\"direction\":1},{\"field\":\"qty\",\"direction\":-1}]", json);
     }
 
     @org.junit.jupiter.api.Test
@@ -39,6 +39,6 @@ public class QuerySortTest {
         String json = new Gson().toJson(
                 t.getData()
         );
-        assertEquals("[{\"field\":\"qty\",\"direction\":\"-1\"},{\"field\":\"last_message_at\",\"direction\":\"1\"}]", json);
+        assertEquals("[{\"field\":\"qty\",\"direction\":-1},{\"field\":\"last_message_at\",\"direction\":1}]", json);
     }
 }

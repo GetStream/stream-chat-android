@@ -42,20 +42,8 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
         super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
-        tv_file_size.setText(attachment.getFileSizeHumanized());
-        // update the icon nicely
-        iv_file_thumb.setImageResource(attachment.getIcon());
-        tv_file_title.setText(attachment.getTitle());
-
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(),
-                messageListItem.isMine(),
-                messageListItem.getPositions(),
-                attachment);
-        cl_attachment.setBackground(background);
-
-        cl_attachment.setOnClickListener(this);
-        cl_attachment.setOnLongClickListener(this);
         applyStyle();
+        configAttachment();
     }
 
 
@@ -67,6 +55,22 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         tv_file_size.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentFileSizeTextSize());
         tv_file_size.setTextColor(style.getAttachmentFileSizeTextColor());
         tv_file_size.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentFileSizeTextStyle());
+    }
+
+    private void configAttachment() {
+        tv_file_size.setText(attachment.getFileSizeHumanized());
+        // update the icon nicely
+        iv_file_thumb.setImageResource(attachment.getIcon());
+        tv_file_title.setText(attachment.getTitle());
+
+        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessageListItem().getMessage(),
+                getMessageListItem().isMine(),
+                getMessageListItem().getPositions(),
+                attachment);
+        cl_attachment.setBackground(background);
+
+        cl_attachment.setOnClickListener(this);
+        cl_attachment.setOnLongClickListener(this);
     }
 }
 

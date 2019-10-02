@@ -45,7 +45,6 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
@@ -164,7 +163,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(channel, event);
+                    channel.handleChannelUpdated(channel);
                 }
 
                 // TODO: what about deleted channels?
@@ -377,6 +376,10 @@ public class Client implements WSResponseHandler {
 
     public Channel channel(String type, String id) {
         return channel(type, id, new HashMap<>());
+    }
+
+    public Channel channel(String type, HashMap<String, Object> extraData, List<String> members) {
+        return new Channel(this, type, extraData, members);
     }
 
     public Channel channel(String type, String id, HashMap<String, Object> extraData) {
@@ -683,7 +686,7 @@ public class Client implements WSResponseHandler {
      * @return {object} Response that includes the message
      */
     public void updateMessage(@NonNull String messageId,
-                              @NonNull UpdateMessageRequest request,
+                              @NonNull SendMessageRequest request,
                               MessageCallback callback) {
 
         mService.updateMessage(messageId,
