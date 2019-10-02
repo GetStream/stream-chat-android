@@ -37,8 +37,9 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
@@ -58,10 +59,11 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -574,19 +576,19 @@ public class Client implements WSResponseHandler {
      * @param channel  the channel needs to hide
      * @param callback the result callback
      */
-    public void hideChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
+    public void hideChannel(@NonNull Channel channel, @NotNull CompletableCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
-                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                        .enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {
@@ -610,19 +612,19 @@ public class Client implements WSResponseHandler {
      * @param channel  the channel needs to show
      * @param callback the result callback
      */
-    public void showChannel(@NonNull Channel channel, @NotNull ShowHideChannelCallback callback) {
+    public void showChannel(@NonNull Channel channel, @NotNull CompletableCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
-                        .enqueue(new Callback<ShowHideChannelResponse>() {
+                        .enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<ShowHideChannelResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {
@@ -920,6 +922,198 @@ public class Client implements WSResponseHandler {
 
     // region User
 
+    /**
+     * muteUser - mutes a user
+     *
+     * @param target_id Only used with serverside auth
+     * @returns Server response
+     */
+    public void muteUser(@NonNull String target_id,
+                         MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id", target_id);
+        body.put("user_id", user.getId());
+
+        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * unmuteUser - unmutes a user
+     *
+     * @param target_id Only used with serverside auth
+     * @returns Server response
+     */
+    public void unmuteUser(@NonNull String target_id,
+                           MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id", target_id);
+        body.put("user_id", user.getId());
+
+        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void flagUser(@NonNull String targetUserId,
+                         FlagCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id", targetUserId);
+
+        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    public void unFlagUser(@NonNull String targetUserId,
+                           FlagCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id", targetUserId);
+
+        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                callback.onError(t.getLocalizedMessage(), -1);
+            }
+        });
+    }
+
+    /**
+     * bans target user ID
+     *
+     * @param targetUserId the ID of the user to ban
+     * @param channel      ban the user for this channel. If channel == null - ban the user from all channels
+     * @param reason       the reason the ban was created.
+     * @param timeout      the timeout in minutes until the ban is automatically expired.
+     * @param callback     the result callback
+     */
+    public void banUser(@NotNull String targetUserId, @Nullable Channel channel,
+                        @Nullable String reason, @Nullable Integer timeout,
+                        @NotNull CompletableCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.banUser(apiKey, clientID,
+                        new BanUserRequest(targetUserId, timeout, reason,
+                                channel != null ? channel.getType() : null,
+                                channel != null ? channel.getId() : null))
+                        .enqueue(new Callback<CompletableResponse>() {
+                            @Override
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
+                                if (response.isSuccessful()) {
+                                    callback.onSuccess(response.body());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
+    }
+
+    /**
+     * removes the ban for target user ID
+     *
+     * @param targetUserId the ID of the user to remove the ban
+     * @param channel      ban the user for this channel. If channel == null - revoke global ban for a user
+     * @param callback     the result callback
+     */
+    public void unBanUser(@NotNull String targetUserId, @Nullable Channel channel,
+                          @NotNull CompletableCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.unBanUser(apiKey, clientID, targetUserId,
+                        channel != null ? channel.getType() : null,
+                        channel != null ? channel.getId() : null)
+                        .enqueue(new Callback<CompletableResponse>() {
+                            @Override
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
+                                if (response.isSuccessful()) {
+                                    callback.onSuccess(response.body());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                //ignore
+            }
+        });
+    }
+
     // endregion
     public void sendAction(@NonNull String messageId,
                            @NonNull SendActionRequest request,
@@ -1088,112 +1282,6 @@ public class Client implements WSResponseHandler {
      * setGuestUser - Setup a temporary guest user
      */
     public void setGuestUser(User user) {
-    }
-
-    /**
-     * muteUser - mutes a user
-     *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
-     */
-    public void muteUser(@NonNull String target_id,
-                         MuteUserCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_id", target_id);
-        body.put("user_id", user.getId());
-
-        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
-            @Override
-            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    /**
-     * unmuteUser - unmutes a user
-     *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
-     */
-    public void unmuteUser(@NonNull String target_id,
-                           MuteUserCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_id", target_id);
-        body.put("user_id", user.getId());
-
-        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
-            @Override
-            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    public void flagUser(@NonNull String targetUserId,
-                         FlagCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_user_id", targetUserId);
-
-        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
-            @Override
-            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    public void unFlagUser(@NonNull String targetUserId,
-                           FlagCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_user_id", targetUserId);
-
-        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
-            @Override
-            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
     }
 
     public void flagMessage(@NonNull String targetMessageId,

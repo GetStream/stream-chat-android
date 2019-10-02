@@ -29,7 +29,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -725,6 +725,29 @@ public class Channel {
         });
     }
 
+    /**
+     * Bans a user from this channel
+     *
+     * @param targetUserId the ID of the user to ban
+     * @param reason       the reason the ban was created.
+     * @param timeout      the timeout in minutes until the ban is automatically expired.
+     * @param callback     the result callback
+     */
+    public void banUser(@NotNull String targetUserId, @Nullable String reason, @Nullable Integer timeout,
+                        @NotNull CompletableCallback callback) {
+        client.banUser(targetUserId, this, reason, timeout, callback);
+    }
+
+    /**
+     * Removes the ban for a user on this channel
+     *
+     * @param targetUserId the ID of the user to remove the ban
+     * @param callback     the result callback
+     */
+    public void unBanUser(@NotNull String targetUserId, @NotNull CompletableCallback callback) {
+        client.unBanUser(targetUserId, this, callback);
+    }
+
     public void handleChannelUpdated(Channel channel, Event event) {
         name = channel.name;
         image = channel.image;
@@ -822,7 +845,7 @@ public class Channel {
      *
      * @param callback the result callback
      */
-    public void hide(@NotNull ShowHideChannelCallback callback) {
+    public void hide(@NotNull CompletableCallback callback) {
         client.hideChannel(this, callback);
     }
 
@@ -831,7 +854,7 @@ public class Channel {
      *
      * @param callback the result callback
      */
-    public void show(@NotNull ShowHideChannelCallback callback) {
+    public void show(@NotNull CompletableCallback callback) {
         client.showChannel(this, callback);
     }
 
