@@ -1118,7 +1118,11 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
+                                if (response != null)
+                                    callback.onError(response.getMessage(), response.getCode());
+                                else
+                                    callback.onError(t.getLocalizedMessage(), -1);
                             }
                         });
                     }
