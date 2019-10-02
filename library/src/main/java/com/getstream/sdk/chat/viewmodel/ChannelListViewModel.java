@@ -355,7 +355,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 queryChannelDone = true;
                 setLoadingDone();
 
-                Log.i(TAG, "onSuccess for loading the channels");
+                Log.i(TAG, "onSendMessageSuccess for loading the channels");
                 // remove the offline channels before adding the new ones
                 setChannels(response.getChannelStates());
 
@@ -437,7 +437,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
-                Log.i(TAG, "onSuccess for loading more channels");
+                Log.i(TAG, "onSendMessageSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
 

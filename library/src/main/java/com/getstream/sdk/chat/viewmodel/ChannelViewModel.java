@@ -42,7 +42,6 @@ import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
-import com.getstream.sdk.chat.view.MessageInputView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +59,7 @@ import static java.util.UUID.randomUUID;
  * - load more data
  * -
  */
-public class ChannelViewModel extends AndroidViewModel implements MessageInputView.SendMessageListener, LifecycleHandler {
+public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
     private static final String TAG = ChannelViewModel.class.getSimpleName();
 
     private Channel channel;
@@ -696,10 +695,11 @@ public class ChannelViewModel extends AndroidViewModel implements MessageInputVi
         }
     }
 
-    @Override
-    public void onSendMessage(final Message message, @Nullable final MessageCallback callback) {
+    public void sendMessage(final Message message, @Nullable final MessageCallback callback) {
         // send typing.stop immediately
         stopTyping();
+
+        // TODO: this should be a method at the channel level
 
         if (message.getStatus() == null) {
             message.setUser(client().getUser());
