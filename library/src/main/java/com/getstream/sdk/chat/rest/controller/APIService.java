@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.rest.controller;
 
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -58,10 +57,10 @@ public interface APIService {
     Call<ChannelState> rejectInvite(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);
 
     @POST("/channels/{type}/{id}/show")
-    Call<ShowHideChannelResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body HideChannelRequest body);
+    Call<ShowHideChannelResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
 
     @POST("/channels/{type}/{id}/hide")
-    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID);
+    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
     // endregion
 
     // region User

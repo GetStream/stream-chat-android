@@ -39,7 +39,6 @@ import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
@@ -66,6 +65,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -578,7 +578,7 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID)
+                mService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
                         .enqueue(new Callback<ShowHideChannelResponse>() {
                             @Override
                             public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
@@ -614,8 +614,7 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new HideChannelRequest(user.getId()))
+                mService.showChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
                         .enqueue(new Callback<ShowHideChannelResponse>() {
                             @Override
                             public void onResponse(Call<ShowHideChannelResponse> call, Response<ShowHideChannelResponse> response) {
