@@ -871,7 +871,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
-        if (!channel.isInitialized())
+        if (!initialized.get() || !client().isConnected())
             setLoading();
     }
 
