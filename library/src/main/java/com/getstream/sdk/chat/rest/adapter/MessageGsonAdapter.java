@@ -54,9 +54,14 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         Map<String, Object> value = (HashMap) adapter.read(reader);
 
+        if (value == null) {
+            return null;
+        }
+
         Message message = new Message();
         HashMap<String, Object> extraData = new HashMap<>();
 
+        // TODO: is approach (like Java) is super dumb, we decode data twice
         for (HashMap.Entry<String, Object> set : value.entrySet()) {
             String json = gson.toJson(set.getValue());
             // Set Reserved Data

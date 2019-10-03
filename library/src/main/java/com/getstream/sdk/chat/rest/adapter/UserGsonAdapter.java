@@ -42,6 +42,10 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         HashMap<String, Object> value =  (HashMap) adapter.read(reader);
 
+        if (value == null) {
+            return null;
+        }
+
         User user = new User();
         HashMap<String, Object> extraData = new HashMap<>();
 
