@@ -45,6 +45,7 @@ import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
+
 import org.jetbrains.annotations.NotNull;
 
 
@@ -321,7 +322,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messages = threadMessages.getValue();
         if (messages != null && messages.size() > 1)
             return threadMessages.getValue().get(1).getId();
-        return null;
+        return "";
     }
 
     private boolean setLoading() {
@@ -594,15 +595,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private void cancelGiphy(Message message) {
-        // doesn't touch the message order, since message.created_at can't change
-        List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(message);
-        if (index != -1) {
-            messagesCopy.remove(message);
-            messages.postValue(messagesCopy);
-        }
-    }
 
     private boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
@@ -661,7 +653,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelState.postValue(channel.getChannelState());
     }
 
-    private void watchChannel() {
+    private void watchChannel(@Nullable ResultCallback<ChannelState, String> callback) {
         int limit = 10; // Constant.DEFAULT_LIMIT
         if (!setLoading()) return;
 
@@ -677,67 +669,102 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                         }
                         addMessages(response.getMessages());
                         channelLoadingDone();
+
+                        if (callback != null)
+                            callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
                         channelLoadingDone();
 
+                        if (callback != null)
+                            callback.onError(errMsg);
                     }
                 }
         );
     }
 
-    public void loadMore() {
+    public void loadMore(@Nullable ResultCallback<Object, String> callback) {
         if (!client().isConnected()) {
+            if (callback != null)
+                callback.onError("connection failed.");
             return;
         }
 
         if (isLoading.get()) {
-            Log.i(TAG, "already loading, skip loading more");
+            if (callback != null)
+                callback.onError("already loading, skip loading more");
             return;
         }
 
         if (!setLoadingMore()) {
-            Log.i(TAG, "already loading next page, skip loading more");
+            if (callback != null)
+                callback.onError("already loading next page, skip loading more");
             return;
         }
 
         Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
         if (isThread()) {
             if (reachedEndOfPaginationThread) {
-                Log.i(TAG, "already reached end of pagination, skip loading more");
                 setLoadingMoreDone();
+
+                if (callback != null)
+                    callback.onError("already reached end of pagination, skip loading more");
+
                 return;
             }
 
-            channel.getReplies(threadParentMessage.getValue().getId(), Constant.DEFAULT_LIMIT, getThreadOldestMessageId(), new GetRepliesCallback() {
-                @Override
-                public void onSuccess(GetRepliesResponse response) {
-                    entities.setIsLoadingMore(true);
-                    List<Message> newMessages = new ArrayList<>(response.getMessages());
-                    List<Message> messagesCopy = threadMessages.getValue();
-                    for (int i = newMessages.size() - 1; i > -1; i--)
-                        messagesCopy.add(1, newMessages.get(i));
+            if (threadParentMessage.getValue() == null) {
+                setLoadingMoreDone();
 
-                    threadMessages.postValue(messagesCopy);
-                    reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
-                    setLoadingMoreDone();
-                }
+                if (callback != null)
+                    callback.onError("Can't find thread parent message.");
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    setLoadingMoreDone();
-                }
-            });
+                return;
+            }
+
+            channel.getReplies(threadParentMessage.getValue().getId(),
+                    Constant.DEFAULT_LIMIT,
+                    getThreadOldestMessageId(),
+                    new GetRepliesCallback() {
+                        @Override
+                        public void onSuccess(GetRepliesResponse response) {
+                            entities.setIsLoadingMore(true);
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            List<Message> messagesCopy = threadMessages.getValue();
+                            for (int i = newMessages.size() - 1; i > -1; i--)
+                                messagesCopy.add(1, newMessages.get(i));
+
+                            threadMessages.postValue(messagesCopy);
+                            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+                            setLoadingMoreDone();
+
+                            if (callback != null)
+                                callback.onSuccess(response);
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            setLoadingMoreDone();
+
+                            if (callback != null)
+                                callback.onError(errMsg);
+                        }
+                    });
         } else {
 
             if (reachedEndOfPagination) {
-                Log.i(TAG, "already reached end of pagination, skip loading more");
                 setLoadingMoreDone();
+
+                if (callback != null)
+                    callback.onError("already reached end of pagination, skip loading more");
                 return;
             }
-            ChannelQueryRequest request = new ChannelQueryRequest().withMessages(Pagination.LESS_THAN, channel.getChannelState().getOldestMessageId(), Constant.DEFAULT_LIMIT);
+            ChannelQueryRequest request = new ChannelQueryRequest().
+                    withMessages(Pagination.LESS_THAN,
+                            channel.getChannelState().getOldestMessageId(),
+                            Constant.DEFAULT_LIMIT);
 
             channel.query(
                     request,
@@ -751,25 +778,32 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                             if (newMessages.size() < Constant.DEFAULT_LIMIT)
                                 reachedEndOfPagination = true;
                             setLoadingMoreDone();
+
+                            if (callback != null)
+                                callback.onSuccess(response);
                         }
 
                         @Override
                         public void onError(String errMsg, int errCode) {
                             setLoadingMoreDone();
+
+                            if (callback != null)
+                                callback.onError(errMsg);
                         }
                     }
             );
         }
     }
+
     /**
      * sends message
      *
-     * @param message the Message sent
+     * @param message  the Message sent
      * @param callback the result callback
      */
     public void sendMessage(final Message message, @Nullable ResultCallback<MessageResponse, String> callback) {
         // send typing.stop immediately
-        stopTyping();
+        stopTyping(null);
 
         // TODO: this should be a method at the channel level
 
@@ -815,7 +849,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 });
     }
 
-    public void sendGiphy(Message message, GiphyAction action) {
+    public void sendGiphy(Message message, GiphyAction action,
+                          @Nullable ResultCallback<MessageResponse, String> callback) {
         Map<String, String> map = new HashMap<>();
         switch (action) {
             case SEND:
@@ -825,7 +860,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                cancelGiphy(message);
+                List<Message> messagesCopy = messages.getValue();
+                int index = messagesCopy.indexOf(message);
+                if (index != -1) {
+                    messagesCopy.remove(message);
+                    messages.postValue(messagesCopy);
+                }
+                if (callback != null)
+                    callback.onError("Canceled.");
                 return;
         }
 
@@ -838,11 +880,17 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onSuccess(MessageResponse response) {
                 if (action == GiphyAction.SHUFFLE)
                     shuffleGiphy(message, response.getMessage());
+                else {
+                    if (callback != null)
+                        callback.onSuccess(response);
+                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                Log.d(TAG, errMsg);
+                Log.e(TAG, errMsg);
+                if (callback != null)
+                    callback.onError(errMsg);
             }
         });
     }
@@ -918,34 +966,50 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
-    public synchronized void keystroke() {
-        if (isThread()) return;
-        if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
+    public synchronized void keystroke(@Nullable ResultCallback<EventResponse, String> callback) {
+        if (isThread()) {
+            if (callback != null)
+                callback.onError("Now Thread.");
+        } else if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
             lastKeystrokeAt = new Date();
             channel.sendEvent(EventType.TYPING_START, new EventCallback() {
                 @Override
                 public void onSuccess(EventResponse response) {
+                    if (callback != null)
+                        callback.onSuccess(response);
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
+                    if (callback != null)
+                        callback.onError(errMsg);
                 }
             });
+        } else {
+            callback.onError("Unknown Error.");
         }
     }
 
-    public synchronized void stopTyping() {
-        if (lastKeystrokeAt == null || isThread()) return;
-        lastKeystrokeAt = null;
-        channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-            }
+    public synchronized void stopTyping(@Nullable ResultCallback<EventResponse, String> callback) {
+        if (lastKeystrokeAt == null || isThread()) {
+            if (callback != null)
+                callback.onError("Now Thread.");
+        } else {
+            lastKeystrokeAt = null;
+            channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
+                @Override
+                public void onSuccess(EventResponse response) {
+                    if (callback != null)
+                        callback.onSuccess(response);
+                }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-            }
-        });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    if (callback != null)
+                        callback.onError(errMsg);
+                }
+            });
+        }
     }
 
     /**
@@ -974,7 +1038,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
 
             if (timeSinceLastKeystroke > 5000) {
-                stopTyping();
+                stopTyping(null);
             }
         }
 
@@ -1017,7 +1081,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 if (channel.isInitialized()) {
                     channelLoadingDone();
                 } else {
-                    viewModel.watchChannel();
+                    viewModel.watchChannel(null);
                 }
             }
         }

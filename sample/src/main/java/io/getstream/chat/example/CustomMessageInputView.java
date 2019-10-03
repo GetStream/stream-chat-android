@@ -68,7 +68,7 @@ public class CustomMessageInputView extends RelativeLayout {
                 String messageText = binding.etMessage.getText().toString();
                 Log.i(TAG, "Length is " + s.length());
                 if (messageText.length() > 0) {
-                    viewModel.keystroke();
+                    viewModel.keystroke(null);
                 }
             }
         });

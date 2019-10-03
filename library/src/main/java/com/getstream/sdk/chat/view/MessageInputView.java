@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -403,7 +404,17 @@ public class MessageInputView extends RelativeLayout
         String messageText = this.getMessageText();
         Log.i(TAG, "Length is " + s.length());
         if (messageText.length() > 0) {
-            viewModel.keystroke();
+            viewModel.keystroke(new ResultCallback<EventResponse, String>() {
+                @Override
+                public void onSuccess(EventResponse eventResponse) {
+                    Log.i(TAG, "Sent Keystroke event");
+                }
+
+                @Override
+                public void onError(String s) {
+                    Log.e(TAG, s);
+                }
+            });
         }
         // detect commands
         messageInputClient.checkCommand(messageText);

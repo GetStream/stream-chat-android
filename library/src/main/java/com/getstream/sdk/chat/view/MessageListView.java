@@ -25,7 +25,11 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
@@ -178,7 +182,7 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                if (attachment.getType().equals(ModelType.attach_file)){
+                if (attachment.getType().equals(ModelType.attach_file)) {
                     return null;
                 }
                 if (mine) {
@@ -258,7 +262,19 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        giphySendListener = viewModel::sendGiphy;
+        giphySendListener = (Message message, GiphyAction action) -> {
+            viewModel.sendGiphy(message, action, new ResultCallback<MessageResponse, String>() {
+                @Override
+                public void onSuccess(MessageResponse messageResponse) {
+                    Log.i(TAG, "Sent giphy message.");
+                }
+
+                @Override
+                public void onError(String s) {
+                    Log.e(TAG, s);
+                }
+            });
+        };
     }
 
     // set the adapter and apply the style.
@@ -286,11 +302,28 @@ public class MessageListView extends RecyclerView {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (layoutManager != null) {
+
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
-                    if (currentFirstVisible < fVPosition) {
-                        if (currentFirstVisible == 0) viewModel.loadMore();
-                    }
+
+                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
+                        viewModel.loadMore(new ResultCallback<Object, String>() {
+                            @Override
+                            public void onSuccess(Object response) {
+                                if (response instanceof ChannelState) {
+                                    // Progress Message Load More
+
+                                } else {
+                                    // Progress Thread Message Load More
+                                }
+                            }
+
+                            @Override
+                            public void onError(String s) {
+                                Log.e(TAG, s);
+                            }
+                        });
+
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
@@ -587,7 +620,7 @@ public class MessageListView extends RecyclerView {
                     }
 
                     int position = message.getAttachments().indexOf(attachment);
-                    if (position > imageUrls.size() -1) position = 0;
+                    if (position > imageUrls.size() - 1) position = 0;
                     new ImageViewer.Builder<>(getContext(), imageUrls)
                             .setStartPosition(position)
                             .show();
@@ -668,9 +701,11 @@ public class MessageListView extends RecyclerView {
     public interface ReadStateClickListener {
         void onReadStateClick(List<ChannelUserRead> reads);
     }
+
     public interface ReactionViewClickListener {
         void onReactionViewClick(Message message);
     }
+
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 
