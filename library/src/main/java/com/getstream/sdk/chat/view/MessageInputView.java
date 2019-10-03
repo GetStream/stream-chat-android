@@ -42,6 +42,7 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputClient;
 import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -446,24 +447,24 @@ public class MessageInputView extends RelativeLayout
             m.setStatus(null);
             m.setText(input);
             m.setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.sendMessage(m, new MessageCallback() {
+            viewModel.sendMessage(m, new ResultCallback<MessageResponse, String>() {
                 @Override
-                public void onSuccess(MessageResponse response) {
+                public void onSuccess(MessageResponse messageResponse) {
                     binding.ivSend.setEnabled(true);
                     initSendMessage();
                     if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageSuccess(response.getMessage());
+                        sendMessageListener.onSendMessageSuccess(messageResponse.getMessage());
                     }
                 }
 
                 @Override
-                public void onError(String errMsg, int errCode) {
+                public void onError(String s) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
                     if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(errMsg, errCode);
+                        sendMessageListener.onSendMessageError(s);
                     } else {
-                        Utils.showMessage(getContext(), errMsg);
+                        Utils.showMessage(getContext(), s);
                     }
                 }
             });
@@ -493,7 +494,7 @@ public class MessageInputView extends RelativeLayout
      */
     public interface SendMessageListener {
         void onSendMessageSuccess(Message message);
-        void onSendMessageError(String errMsg, int errCod);
+        void onSendMessageError(String errMsg);
 
     }
 

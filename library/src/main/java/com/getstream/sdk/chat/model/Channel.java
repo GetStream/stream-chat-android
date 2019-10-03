@@ -580,20 +580,7 @@ public class Channel {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
 
-        client.sendMessage(this, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                if (callback != null)
-                    callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.d(TAG,"Send Message Error: " + errMsg);
-                if (callback != null)
-                    callback.onError(errMsg, errCode);
-            }
-        });
+        client.sendMessage(this, request, callback);
     }
 
     public void updateMessage(@NonNull Message message,

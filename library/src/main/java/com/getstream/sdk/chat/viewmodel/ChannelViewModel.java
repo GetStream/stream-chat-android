@@ -42,6 +42,7 @@ import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.utils.ResultCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -694,8 +695,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             );
         }
     }
-
-    public void sendMessage(final Message message, @Nullable final MessageCallback callback) {
+    /**
+     * sends message
+     *
+     * @param message the Message sent
+     * @param callback the result callback
+     */
+    public void sendMessage(final Message message, @Nullable ResultCallback<MessageResponse, String> callback) {
         // send typing.stop immediately
         stopTyping();
 
@@ -718,7 +724,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         if (!client().isConnected()) {
             if (callback != null)
-                callback.onError("no internet", -1);
+                callback.onError("no internet");
             return;
         }
         channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
@@ -738,7 +744,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                         clone.setStatus(MessageStatus.FAILED);
                         updateFailedMessage(clone);
                         if (callback != null)
-                            callback.onError(errMsg, errCode);
+                            callback.onError(errMsg);
                     }
                 });
     }
