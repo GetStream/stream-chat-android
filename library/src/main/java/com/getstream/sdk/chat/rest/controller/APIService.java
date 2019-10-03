@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.controller;
 
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
@@ -18,7 +19,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 
 import org.json.JSONObject;
 
@@ -59,10 +60,10 @@ public interface APIService {
     Call<ChannelState> rejectInvite(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, Object> body);
 
     @POST("/channels/{type}/{id}/show")
-    Call<ShowHideChannelResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
+    Call<CompletableResponse> showChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
 
     @POST("/channels/{type}/{id}/hide")
-    Call<ShowHideChannelResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
+    Call<CompletableResponse> hideChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
     // endregion
 
     // region User
@@ -83,6 +84,12 @@ public interface APIService {
 
     @POST("/moderation/unflag")
     Call<FlagResponse> unFlag(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map<String, String> body);
+
+    @POST("/moderation/ban")
+    Call<CompletableResponse> banUser(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Body BanUserRequest body);
+
+    @DELETE("/moderation/ban")
+    Call<CompletableResponse> unBanUser(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("target_user_id") String targetUserId, @Query("type") String channelType, @Query("id") String channelId);
     // endregion
 
     // region Message

@@ -21,11 +21,11 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
-import com.getstream.sdk.chat.rest.interfaces.ShowHideChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.rest.response.ShowHideChannelResponse;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
@@ -164,9 +164,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * @param callback the result callback
      */
     public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
-        channel.hide(new ShowHideChannelCallback() {
+        channel.hide(new CompletableCallback() {
             @Override
-            public void onSuccess(ShowHideChannelResponse response) {
+            public void onSuccess(CompletableResponse response) {
                 deleteChannel(channel); // remove the channel from the list of not hidden channels
                 if (callback != null) {
                     callback.onSuccess(null);
@@ -190,9 +190,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * @param callback the result callback
      */
     public void showChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
-        channel.show(new ShowHideChannelCallback() {
+        channel.show(new CompletableCallback() {
             @Override
-            public void onSuccess(ShowHideChannelResponse response) {
+            public void onSuccess(CompletableResponse response) {
                 deleteChannel(channel); // remove the channel from the list of hidden channels
                 if (callback != null) {
                     callback.onSuccess(null);

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.rest.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ShowHideChannelResponse {
+public class CompletableResponse {
     @SerializedName("duration")
     private String duration;
 }
