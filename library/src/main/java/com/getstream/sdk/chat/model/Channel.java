@@ -758,11 +758,11 @@ public class Channel {
     }
 
     /**
-     * Bans a user from this channel
+     * bans a user from this channel
      *
      * @param targetUserId the ID of the user to ban
-     * @param reason       the reason the ban was created.
-     * @param timeout      the timeout in minutes until the ban is automatically expired.
+     * @param reason       the reason the ban was created
+     * @param timeout      the timeout in minutes until the ban is automatically expired
      * @param callback     the result callback
      */
     public void banUser(@NotNull String targetUserId, @Nullable String reason, @Nullable Integer timeout,
@@ -771,7 +771,7 @@ public class Channel {
     }
 
     /**
-     * Removes the ban for a user on this channel
+     * removes the ban for a user on this channel
      *
      * @param targetUserId the ID of the user to remove the ban
      * @param callback     the result callback

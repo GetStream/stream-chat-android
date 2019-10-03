@@ -25,27 +25,26 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
-import com.getstream.sdk.chat.view.MessageInputView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -353,6 +352,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
+    /**
+     * bans a user from this channel
+     *
+     * @param targetUserId the ID of the user to ban
+     * @param reason       the reason the ban was created.
+     * @param timeout      the timeout in minutes until the ban is automatically expired
+     * @param callback     the result callback
+     */
     public void banUser(@NotNull String targetUserId, @Nullable String reason,
                         @Nullable Integer timeout, @Nullable ResultCallback<Void, String> callback) {
         channel.banUser(targetUserId, reason, timeout, new CompletableCallback() {
@@ -373,6 +380,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
+    /**
+     * removes the ban for a user on this channel
+     *
+     * @param targetUserId the ID of the user to remove the ban
+     * @param callback     the result callback
+     */
     public void unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
         channel.unBanUser(targetUserId, new CompletableCallback() {
             @Override
