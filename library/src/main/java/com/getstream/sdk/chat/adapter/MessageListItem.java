@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter;
 
 import androidx.annotation.Nullable;
 
-import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -15,11 +14,16 @@ import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_DATE_SEPARATOR;
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_TYPING;
+
 public class MessageListItem {
 
     private static final String TAG = MessageListItem.class.getSimpleName();
 
-    private MessageListItemType type;
+    private int type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
     private List<MessageViewHolderFactory.Position> positions;
@@ -28,14 +32,14 @@ public class MessageListItem {
     private List<User> users;
 
     public MessageListItem(Date date) {
-        this.type = MessageListItemType.DATE_SEPARATOR;
+        this.type = MESSAGEITEM_DATE_SEPARATOR;
         this.date = date;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
     public MessageListItem(Message message, List<MessageViewHolderFactory.Position> positions, Boolean messageMine) {
-        this.type = MessageListItemType.MESSAGE;
+        this.type = MESSAGEITEM_MESSAGE;
         this.message = message;
         this.positions = positions;
         this.messageMine = messageMine;
@@ -43,13 +47,13 @@ public class MessageListItem {
     }
 
     public MessageListItem(List<User> users) {
-        this.type = MessageListItemType.TYPING;
+        this.type = MESSAGEITEM_TYPING;
         this.users = users;
         this.messageMine = false;
         this.messageReadBy = new ArrayList<>();
     }
 
-    public MessageListItem(MessageListItemType messageListItemType) {
+    public MessageListItem(int messageListItemType) {
         this.type = messageListItemType;
         this.date = new Date();
         this.messageMine = false;
@@ -118,12 +122,12 @@ public class MessageListItem {
         }
 
         switch (type) {
-            case MESSAGE:
+            case MESSAGEITEM_MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);
                 boolean sameMessage = Objects.equals(other.message, message);
                 return sameMessage && samePositions && sameReads;
-            case DATE_SEPARATOR:
+            case MESSAGEITEM_DATE_SEPARATOR:
                 return Objects.equals(other.date, date);
         }
 
@@ -132,18 +136,18 @@ public class MessageListItem {
 
     long getStableID() {
         Checksum checksum = new CRC32();
-        String plaintext = type.toString() + ":";
+        String plaintext = type + ":";
         switch (type) {
-            case TYPING:
+            case MESSAGEITEM_TYPING:
                 plaintext += "typing";
                 break;
-            case THREAD_SEPARATOR:
+            case MESSAGEITEM_THREAD_SEPARATOR:
                 plaintext += "Start of a new thread";
                 break;
-            case MESSAGE:
+            case MESSAGEITEM_MESSAGE:
                 plaintext += message.getId();
                 break;
-            case DATE_SEPARATOR:
+            case MESSAGEITEM_DATE_SEPARATOR:
                 plaintext += date.toString();
                 break;
         }
@@ -171,7 +175,7 @@ public class MessageListItem {
         return users;
     }
 
-    public MessageListItemType getType() {
+    public int getType() {
         return type;
     }
 
