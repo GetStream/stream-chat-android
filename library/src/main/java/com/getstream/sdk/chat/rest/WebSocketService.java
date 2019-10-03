@@ -281,8 +281,15 @@ public class WebSocketService extends WebSocketListener {
                 return;
             }
 
-            Event event = GsonConverter.Gson().fromJson(text, Event.class);
-            setLastEvent(new Date());
+            Event event;
+
+            try {
+                event = GsonConverter.Gson().fromJson(text, Event.class);
+                setLastEvent(new Date());
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+                return;
+            }
 
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);
