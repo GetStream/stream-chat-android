@@ -386,6 +386,7 @@ public class Channel {
         return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
+    @NotNull
     public HashMap<String, Object> getExtraData() {
         return extraData;
     }

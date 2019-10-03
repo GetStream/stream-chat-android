@@ -77,6 +77,10 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
         TypeAdapter adapter = gson.getAdapter(HashMap.class);
         HashMap<String, Object> value = (HashMap) adapter.read(reader);
 
+        if (value == null) {
+            return null;
+        }
+
         Attachment attachment = new Attachment();
         HashMap<String, Object> extraData = new HashMap<>();
 

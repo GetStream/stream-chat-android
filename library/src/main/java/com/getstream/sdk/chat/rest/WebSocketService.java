@@ -263,8 +263,9 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
-            if (shuttingDown) return;
             Log.d(TAG, "WebSocket Response : " + text);
+
+            if (shuttingDown) return;
 
             WsErrorMessage errorMessage;
 

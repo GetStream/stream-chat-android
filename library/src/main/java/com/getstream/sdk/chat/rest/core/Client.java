@@ -184,8 +184,8 @@ public class Client implements WSResponseHandler {
         eventSubscribersBy = new HashMap<>();
         connectionWaiters = new ArrayList<>();
         channelTypeConfigs = new HashMap<>();
+        offlineStorage = false;
         this.options = options;
-        this.offlineStorage = false;
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
