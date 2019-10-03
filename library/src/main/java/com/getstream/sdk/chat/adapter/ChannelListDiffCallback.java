@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.text.TextUtils;
-
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.model.Channel;
@@ -41,10 +39,6 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         }
 
         if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
-            return false;
-        }
-
-        if (!TextUtils.equals(oldChannel.getName(), newChannel.getName())) {
             return false;
         }
 
