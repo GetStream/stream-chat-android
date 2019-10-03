@@ -1,3 +1,13 @@
+## Pending release
+
+- Fixed serialization of custom fields for message/user/channel and attachment types
+- Added support for distinct channels
+- Added support to Channel hide/show 
+- Improved client error reporting (we now return a parsed error response when available)
+- General improvements to Message Input View
+- Added ReactionViewClickListener
+- Added support for banning and unbanning users
+
 ## September 28, 2019 - 2.1.0
 
 - Improved support for regenerating expired tokens

@@ -33,8 +33,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.MessageInputClient;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -42,6 +40,8 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
+import com.getstream.sdk.chat.utils.MessageInputClient;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -66,26 +66,35 @@ import java.util.Arrays;
 public class MessageInputView extends RelativeLayout
         implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
 
+    /**
+     * Tag for logging purposes
+     */
     final String TAG = MessageInputView.class.getSimpleName();
+    /** Store the image if you take a picture */
     Uri imageUri;
-    // our connection to the channel scope
-    private ChannelViewModel viewModel;
-    // binding for this view
-    private StreamViewMessageInputBinding binding;
-    private MessageInputStyle style;
-    // listeners
-    private SendMessageListener sendMessageListener;
-    private OpenCameraViewListener openCameraViewListener;
+    /** If you are allowed to scroll up or not */
+    boolean lockScrollUp = false;
 
-    // TODO Rename, it's not a function
+    private StreamViewMessageInputBinding binding;
+    /**
+     * Styling class for the MessageInput
+     */
+    private MessageInputStyle style;
+    /** Fired when a message is sent */
+    private SendMessageListener sendMessageListener;
+    /** Camera view listener */
+    private OpenCameraViewListener openCameraViewListener;
+    /**
+     * The viewModel for handling typing etc.
+     */
+    private ChannelViewModel viewModel;
+    // TODO Rename, totally not clear what this does
     private MessageInputClient messageInputClient;
 
-    // region Constructor
     public MessageInputView(Context context) {
         super(context);
         binding = initBinding(context);
     }
-    // endregion
 
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -94,7 +103,6 @@ public class MessageInputView extends RelativeLayout
         applyStyle();
     }
 
-    // region Init
     private StreamViewMessageInputBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return StreamViewMessageInputBinding.inflate(inflater, this, true);
@@ -138,7 +146,7 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
         binding.etMessage.setCallback((InputContentInfoCompat inputContentInfo,
-                                       int flags, Bundle opts)-> {
+                                       int flags, Bundle opts) -> {
             if (BuildCompat.isAtLeastQ()
                     && (flags & InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
                 try {
@@ -161,7 +169,6 @@ public class MessageInputView extends RelativeLayout
         });
 
         onBackPressed();
-        setOnSendMessageListener(viewModel);
         initAttachmentUI();
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
@@ -231,7 +238,7 @@ public class MessageInputView extends RelativeLayout
             if (messageListScrollup && !lockScrollUp)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
-        viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage ->{
+        viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage -> {
             if (threadParentMessage == null) {
                 initSendMessage();
                 Utils.hideSoftKeyboard((Activity) getContext());
@@ -281,7 +288,7 @@ public class MessageInputView extends RelativeLayout
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
         binding.tvClose.setOnClickListener(v -> {
             messageInputClient.onClickCloseBackGroundView();
-            if (viewModel.isEditing()){
+            if (viewModel.isEditing()) {
                 initSendMessage();
                 clearFocus();
             }
@@ -312,12 +319,13 @@ public class MessageInputView extends RelativeLayout
     }
 
     // endregion
+    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
     public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 File file = null;
                 try {
-                    String path  = imageUri.getPath();
+                    String path = imageUri.getPath();
                     file = new File(path);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -351,7 +359,6 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setEnabled(true);
     }
 
-
     public void clearFocus() {
         binding.etMessage.clearFocus();
     }
@@ -360,12 +367,12 @@ public class MessageInputView extends RelativeLayout
         return binding.etMessage.requestFocus();
     }
 
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
-    }
-
     public String getMessageText() {
         return binding.etMessage.getText().toString();
+    }
+
+    public void setMessageText(String t) {
+        binding.etMessage.setText(t);
     }
 
     @Override
@@ -390,7 +397,6 @@ public class MessageInputView extends RelativeLayout
         //noop
     }
 
-
     @Override
     public void afterTextChanged(Editable s) {
         String messageText = this.getMessageText();
@@ -402,15 +408,15 @@ public class MessageInputView extends RelativeLayout
         messageInputClient.checkCommand(messageText);
         binding.setActiveMessageSend(!(messageText.length() == 0));
     }
-    boolean lockScrollUp = false;
+
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
-        if (hasFocus){
+        if (hasFocus) {
             lockScrollUp = true;
-            new Handler().postDelayed(()->lockScrollUp = false, 500);
+            new Handler().postDelayed(() -> lockScrollUp = false, 500);
             Utils.showSoftKeyboard((Activity) getContext());
-        }else
+        } else
             Utils.hideSoftKeyboard((Activity) getContext());
     }
 
@@ -440,22 +446,27 @@ public class MessageInputView extends RelativeLayout
             m.setStatus(null);
             m.setText(input);
             m.setAttachments(messageInputClient.getSelectedAttachments());
-            if (sendMessageListener != null) {
-                sendMessageListener.onSendMessage(m, new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        binding.ivSend.setEnabled(true);
-                        initSendMessage();
+            viewModel.sendMessage(m, new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    binding.ivSend.setEnabled(true);
+                    initSendMessage();
+                    if (sendMessageListener != null) {
+                        sendMessageListener.onSendMessageSuccess(response.getMessage());
                     }
+                }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        initSendMessage();
-                        binding.ivSend.setEnabled(true);
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    initSendMessage();
+                    binding.ivSend.setEnabled(true);
+                    if (sendMessageListener != null) {
+                        sendMessageListener.onSendMessageError(errMsg, errCode);
+                    } else {
                         Utils.showMessage(getContext(), errMsg);
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -481,7 +492,9 @@ public class MessageInputView extends RelativeLayout
      * Used for listening to the sendMessage event
      */
     public interface SendMessageListener {
-        void onSendMessage(Message message, MessageCallback callback);
+        void onSendMessageSuccess(Message message);
+        void onSendMessageError(String errMsg, int errCod);
+
     }
 
     /**
@@ -491,6 +504,9 @@ public class MessageInputView extends RelativeLayout
         void onAddAttachments();
     }
 
+    /**
+     * Interface for opening the camera view
+     */
     public interface OpenCameraViewListener {
         void openCameraView(Intent intent, int REQUEST_CODE);
     }

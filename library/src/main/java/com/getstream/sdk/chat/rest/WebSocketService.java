@@ -263,8 +263,9 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
-            if (shuttingDown) return;
             Log.d(TAG, "WebSocket Response : " + text);
+
+            if (shuttingDown) return;
 
             WsErrorMessage errorMessage;
 
@@ -280,8 +281,15 @@ public class WebSocketService extends WebSocketListener {
                 return;
             }
 
-            Event event = GsonConverter.Gson().fromJson(text, Event.class);
-            setLastEvent(new Date());
+            Event event;
+
+            try {
+                event = GsonConverter.Gson().fromJson(text, Event.class);
+                setLastEvent(new Date());
+            } catch (JsonSyntaxException e) {
+                e.printStackTrace();
+                return;
+            }
 
             if (isConnectionResolved()) {
                 sendEventToHandlerThread(event);

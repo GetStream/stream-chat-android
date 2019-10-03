@@ -467,7 +467,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getStatus() == MessageStatus.FAILED) {
-                    viewModel.onSendMessage(message, null);
+                    viewModel.sendMessage(message, null);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
                 }

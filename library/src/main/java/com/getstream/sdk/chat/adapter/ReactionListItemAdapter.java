@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -29,6 +27,7 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
     private int reactionCount;
     private Map<String, String> reactionTypes;
     private MessageListViewStyle style;
+
     public ReactionListItemAdapter(Context context, Map<String, Integer> reactionCountMap, Map<String, String> reactionTypes, MessageListViewStyle style) {
         this.context = context;
         this.reactionTypes = reactionTypes;

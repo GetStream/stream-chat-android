@@ -1,17 +1,21 @@
 package com.getstream.sdk.chat.rest.request;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 
 public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<T>> {
 
     @SerializedName("state")
+    @Expose
     protected boolean state;
 
     @SerializedName("watch")
+    @Expose
     protected boolean watch;
 
     @SerializedName("presence")
+    @Expose
     protected boolean presence;
 
     protected abstract T cloneOpts();
@@ -46,6 +50,7 @@ public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<
 
     public T withPresence() {
         BaseQueryChannelRequest clone = this.cloneOpts();
+        clone.presence = true;
         return (T) clone;
     }
 

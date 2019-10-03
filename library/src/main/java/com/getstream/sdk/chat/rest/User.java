@@ -10,9 +10,10 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.interfaces.UserEntity;
+import com.getstream.sdk.chat.rest.adapter.UserGsonAdapter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.JsonAdapter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -21,47 +22,46 @@ import java.util.HashMap;
  * A user
  */
 
+@JsonAdapter(UserGsonAdapter.class)
 @Entity(tableName = "stream_user")
 public class User implements UserEntity {
+
     @PrimaryKey
     @NonNull
-    @SerializedName("id")
     private String id;
 
-    @SerializedName("name")
     private String name;
 
-    @SerializedName("image")
     private String image;
 
-    @SerializedName("role")
     private String role;
 
-    @SerializedName("created_at")
     @TypeConverters(DateConverter.class)
     private Date createdAt;
 
-    @SerializedName("updated_at")
     @TypeConverters(DateConverter.class)
     private Date updatedAt;
 
-    @SerializedName("last_active")
     @TypeConverters(DateConverter.class)
     private Date lastActive;
 
-    @SerializedName("online")
     private Boolean online;
 
-    @SerializedName("total_unread_count")
     private Integer totalUnreadCount;
 
-
-    @SerializedName("unread_channels")
     private Integer unreadChannels;
 
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
+    /**
+     * Constructor
+     *
+     */
+    @Ignore
+    public User() {
+
+    }
     /**
      * Constructor
      *
