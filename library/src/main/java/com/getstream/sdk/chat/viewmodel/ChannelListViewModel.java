@@ -165,7 +165,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     /**
      * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
      *
-     * @param channel the channel needs to hide
+     * @param channel  the channel needs to hide
      * @param callback the result callback
      */
     public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
@@ -191,7 +191,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     /**
      * removes the hidden status for a channel and remove from the current list of channels
      *
-     * @param channel the channel needs to show
+     * @param channel  the channel needs to show
      * @param callback the result callback
      */
     public void showChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
@@ -397,9 +397,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().queryChannels(request, queryCallback);
     }
 
-    private void queryChannels() {
+    /**
+     * query channels
+     *
+     * @param callback the result callback
+     */
+    private void queryChannels(@Nullable ResultCallback<List<ChannelState>, String> callback) {
         Log.i(TAG, "queryChannels for loading the channels");
-        if (!setLoading()) return;
+        if (!setLoading()) {
+            if (callback != null)
+                callback.onError("already loading, skip queryChannels");
+            return;
+        }
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
@@ -410,11 +419,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 if (channels != null) {
                     addChannels(channels);
                 }
+                if (callback != null)
+                    callback.onSuccess(channels);
             }
 
             @Override
             public void onFailure(Exception e) {
-                // TODO
+                if (callback != null)
+                    callback.onError(e.getLocalizedMessage());
             }
         });
         queryChannelsInner(0);
@@ -423,22 +435,28 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     /**
      * loads more channels, use this to load a previous page
      *
+     * @param callback the result callback
      */
-    public void loadMore() {
+    public void loadMore(@Nullable ResultCallback<QueryChannelsResponse, String> callback) {
         if (!client().isConnected()) {
+            if (callback != null)
+                callback.onError("connection failed.");
             return;
         }
 
         if (isLoading.get()) {
-            Log.i(TAG, "already loading, skip loading more");
+            if (callback != null)
+                callback.onError("already loading, skip loading more");
             return;
         }
         if (reachedEndOfPagination) {
-            Log.i(TAG, "already reached end of pagination, skip loading more");
+            if (callback != null)
+                callback.onError("already reached end of pagination, skip loading more");
             return;
         }
         if (!setLoadingMore()) {
-            Log.i(TAG, "already loading next page, skip loading more");
+            if (callback != null)
+                callback.onError("already loading next page, skip loading more");
             return;
         }
 
@@ -446,9 +464,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
-        if (channels.getValue() != null) {
+        if (channels.getValue() != null)
             request = request.withOffset(channels.getValue().size());
-        }
 
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
@@ -456,17 +473,22 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Log.i(TAG, "onSendMessageSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
+                reachedEndOfPagination = response.getChannelStates().size() < pageSize;
 
-                if (response.getChannelStates().size() < pageSize) {
+                if (reachedEndOfPagination)
                     Log.i(TAG, "reached end of pagination");
-                    reachedEndOfPagination = true;
-                }
+
+                if (callback != null)
+                    callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels" + errMsg);
                 setLoadingMoreDone();
+
+                if (callback != null)
+                    callback.onError(errMsg);
             }
         });
     }
@@ -478,10 +500,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                viewModel.queryChannels();
+                viewModel.queryChannels(null);
             }
         }
-
     }
-
 }

@@ -17,6 +17,8 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
+import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 
@@ -164,7 +166,17 @@ public class ChannelListView extends RecyclerView {
                     Boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
                     // the viewmodel ensures that we only load once..
                     if (reachedTheEnd) {
-                        viewModel.loadMore();
+                        viewModel.loadMore(new ResultCallback<QueryChannelsResponse, String>() {
+                            @Override
+                            public void onSuccess(QueryChannelsResponse queryChannelsResponse) {
+                                Log.i(TAG, "Loaded more channels");
+                            }
+
+                            @Override
+                            public void onError(String s) {
+                                Log.e(TAG, s);
+                            }
+                        });
                     }
                 }
             }
