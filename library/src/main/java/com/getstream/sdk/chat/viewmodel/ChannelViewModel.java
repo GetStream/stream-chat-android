@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
@@ -35,6 +36,7 @@ import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
@@ -42,6 +44,9 @@ import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.utils.ResultCallback;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -347,6 +352,59 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
+    /**
+     * bans a user from this channel
+     *
+     * @param targetUserId the ID of the user to ban
+     * @param reason       the reason the ban was created.
+     * @param timeout      the timeout in minutes until the ban is automatically expired
+     * @param callback     the result callback
+     */
+    public void banUser(@NotNull String targetUserId, @Nullable String reason,
+                        @Nullable Integer timeout, @Nullable ResultCallback<Void, String> callback) {
+        channel.banUser(targetUserId, reason, timeout, new CompletableCallback() {
+            @Override
+            public void onSuccess(CompletableResponse response) {
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
+    }
+
+    /**
+     * removes the ban for a user on this channel
+     *
+     * @param targetUserId the ID of the user to remove the ban
+     * @param callback     the result callback
+     */
+    public void unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
+        channel.unBanUser(targetUserId, new CompletableCallback() {
+            @Override
+            public void onSuccess(CompletableResponse response) {
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
+    }
+
     private void initEventHandlers() {
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
@@ -495,7 +553,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messages.postValue(messagesCopy);
             }
 
-            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())){
+            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
                 messagesCopy.set(0, message);
                 threadMessages.postValue(messagesCopy);
             }
@@ -541,13 +599,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (message.getId().equals(messagesCopy.get(i).getId())) {
                 messagesCopy.remove(i);
-                if (isThread()){
+                if (isThread()) {
                     if (i == 0)
                         initThread();
                     else
                         threadMessages.postValue(messagesCopy);
-                }
-                else
+                } else
                     messages.postValue(messagesCopy);
 
                 return true;
