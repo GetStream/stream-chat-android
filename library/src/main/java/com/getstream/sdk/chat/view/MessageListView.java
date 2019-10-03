@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -516,6 +517,7 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message -> {
+                Utils.hideSoftKeyboard((Activity) getContext());
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
@@ -524,7 +526,6 @@ public class MessageListView extends RecyclerView {
             });
         }
     }
-
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
@@ -546,6 +547,7 @@ public class MessageListView extends RecyclerView {
             adapter.setReactionViewClickListener(this.reactionViewClickListener);
         } else {
             adapter.setReactionViewClickListener(message -> {
+                Utils.hideSoftKeyboard((Activity) getContext());
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)

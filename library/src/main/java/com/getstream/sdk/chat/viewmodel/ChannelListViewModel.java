@@ -230,11 +230,13 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        setLoading();
+        if (!initialized.get() || !client().isConnected())
+            setLoading();
     }
 
     @Override
     public void stopped() {
+
     }
 
     private void setupConnectionRecovery() {

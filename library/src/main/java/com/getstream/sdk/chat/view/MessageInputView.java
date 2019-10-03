@@ -418,7 +418,10 @@ public class MessageInputView extends RelativeLayout
         }
         // detect commands
         messageInputClient.checkCommand(messageText);
-        binding.setActiveMessageSend(!(messageText.length() == 0));
+        if (messageText.equals(" "))
+            binding.setActiveMessageSend(false);
+        else
+            binding.setActiveMessageSend(messageText.length() != 0);
     }
 
     @Override

@@ -13,7 +13,6 @@ import androidx.lifecycle.Observer;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -23,6 +22,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_NO_CONNECTION;
+import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
 
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
@@ -93,7 +96,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 MessageListItem e = merged.get(i);
                 ChannelUserRead userRead = entry.getValue();
                 // skip things that aren't messages
-                if (e.getType() != MessageListItemType.MESSAGE) {
+                if (e.getType() != MESSAGEITEM_MESSAGE) {
                     continue;
                 }
                 // skip message owner as reader
@@ -229,12 +232,12 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             // Insert Thread Separator
             if (isThread() && i == 0) {
-                entities.add(new MessageListItem(MessageListItemType.THREAD_SEPARATOR));
+                entities.add(new MessageListItem(MESSAGEITEM_THREAD_SEPARATOR));
                 previousMessage = null;
             }
             // Insert No connection Separator
             if (i == topIndex && !StreamChat.getInstance(null).isConnected())
-                entities.add(new MessageListItem(MessageListItemType.NO_CONNECTION));
+                entities.add(new MessageListItem(MESSAGEITEM_NO_CONNECTION));
 
         }
         this.messageEntities.clear();
