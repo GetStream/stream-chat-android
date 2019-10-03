@@ -155,7 +155,17 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
 
         Callable<Void> markRead = () -> {
-            channel.markRead();
+            channel.markRead(new EventCallback() {
+                @Override
+                public void onSuccess(EventResponse response) {
+                    Log.d(TAG, "Marked read message");
+                }
+
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Log.e(TAG, errMsg);
+                }
+            });
             return null;
         };
         looper = new Looper(markRead);

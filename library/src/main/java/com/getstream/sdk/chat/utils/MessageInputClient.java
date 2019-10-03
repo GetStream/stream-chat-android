@@ -217,9 +217,9 @@ public class MessageInputClient {
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
-                viewModel.getChannel().sendImage(attachment, callback);
+                viewModel.getChannel().sendImage(attachment.config.getFilePath(), callback);
             } else {
-                viewModel.getChannel().sendFile(attachment, callback);
+                viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             }
         } else
             selectedAttachments.remove(attachment);
@@ -274,7 +274,7 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            viewModel.getChannel().sendFile(attachment, new SendFileCallback() {
+            viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.ivSend.setEnabled(true);

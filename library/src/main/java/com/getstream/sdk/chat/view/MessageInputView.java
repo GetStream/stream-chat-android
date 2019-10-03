@@ -427,7 +427,7 @@ public class MessageInputView extends RelativeLayout
         if (isEdit) {
             getEditMessage().setText(input);
             getEditMessage().setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
+            viewModel.getChannel().updateMessage(getEditMessage(),  new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
@@ -482,8 +482,8 @@ public class MessageInputView extends RelativeLayout
         this.sendMessageListener = l;
     }
 
-    public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
-        this.openCameraViewListener = openCameraViewListener;
+    public void setOpenCameraViewListener(OpenCameraViewListener l) {
+        this.openCameraViewListener = l;
     }
 
 
