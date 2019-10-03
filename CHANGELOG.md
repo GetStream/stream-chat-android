@@ -6,6 +6,7 @@
 - Improved client error reporting (we now return a parsed error response when available)
 - General improvements to Message Input View
 - Added ReactionViewClickListener
+- Added support for banning and unbanning users
 
 ## September 28, 2019 - 2.1.0
 
