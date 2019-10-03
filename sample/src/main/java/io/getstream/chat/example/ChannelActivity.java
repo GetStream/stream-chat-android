@@ -83,6 +83,17 @@ public class ChannelActivity extends AppCompatActivity
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
+        binding.messageInput.setOnSendMessageListener(new MessageInputView.SendMessageListener() {
+            @Override
+            public void onSendMessageSuccess(Message message) {
+                // good place to track analytics events...
+            }
+
+            @Override
+            public void onSendMessageError(String errMsg, int errCod) {
+                // show an error message
+            }
+        });
     }
 
     @Override

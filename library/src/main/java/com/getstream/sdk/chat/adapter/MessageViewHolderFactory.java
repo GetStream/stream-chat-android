@@ -72,9 +72,15 @@ public class MessageViewHolderFactory {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
+            holder.setThread(adapter.isThread());
+            holder.setMessageClickListener(adapter.getMessageClickListener());
+            holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
+            holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
+            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
+            holder.setUserClickListener(adapter.getUserClickListener());
+            holder.setReadStateClickListener(adapter.getReadStateClickListener());
             holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
-
         } else if (viewType == MessageListItemType.TYPING) {
             TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
             holder.setStyle(adapter.getStyle());

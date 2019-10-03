@@ -116,7 +116,7 @@ public class CustomMessageInputView extends RelativeLayout {
             });
         } else {
             message.setStatus(null);
-            viewModel.onSendMessage(message, new MessageCallback() {
+            viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     Log.i(TAG, "Sent message successfully!");

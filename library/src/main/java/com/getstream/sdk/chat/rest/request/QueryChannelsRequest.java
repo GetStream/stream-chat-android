@@ -5,23 +5,29 @@ import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsRequest> {
 
     @SerializedName("filter_conditions")
+    @Expose
     private FilterObject filter;
 
     @SerializedName("sort")
+    @Expose
     private QuerySort sort;
 
     @SerializedName("message_limit")
+    @Expose
     private Number messageLimit;
 
     @SerializedName("limit")
+    @Expose
     private Number limit;
 
     @SerializedName("offset")
+    @Expose
     private Number offset;
 
     public QueryChannelsRequest() {

@@ -155,7 +155,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_title.setText(attachment.getTitle());
         tv_media_des.setText(attachment.getText());
 
-
         if (attachment.getType().equals(ModelType.attach_giphy))
             iv_command_logo.setVisibility(View.VISIBLE);
         else

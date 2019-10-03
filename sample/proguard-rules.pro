@@ -131,6 +131,6 @@
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
-
+-keep class com.getstream.sdk.chat.model.** { <fields>; }
 ##---------------End: Stream specific  ----------
 

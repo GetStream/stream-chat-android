@@ -1,19 +1,24 @@
 package com.getstream.sdk.chat.model;
 
 import com.getstream.sdk.chat.rest.User;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Mute {
     @SerializedName("user")
+    @Expose
     User user;
 
     @SerializedName("target")
+    @Expose
     User target;
 
     @SerializedName("created_at")
+    @Expose
     String created_at;
 
     @SerializedName("updated_at")
+    @Expose
     String updated_at;
 
     public User getUser() {

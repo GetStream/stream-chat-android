@@ -19,12 +19,12 @@ import java.util.List;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-
     private final String TAG = MessageListItemAdapter.class.getSimpleName();
     private ChannelState channelState;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
+    private MessageListView.ReactionViewClickListener reactionViewClickListener;
     private MessageListView.UserClickListener userClickListener;
     private MessageListView.ReadStateClickListener readStateClickListener;
     private MessageListView.GiphySendListener giphySendListener;
@@ -36,6 +36,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
+
     public MessageListItemAdapter(Context context, ChannelState channelState, @NonNull List<MessageListItem> messageListItemList) {
         this.context = context;
         this.viewHolderFactory = new MessageViewHolderFactory();
@@ -120,15 +121,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
                 messageListItem,
-                position,
-                isThread,
-                messageClickListener,
-                messageLongClickListener,
-                attachmentClickListener,
-                userClickListener,
-                readStateClickListener);
-
-
+                position);
     }
 
     public void setChannelState(ChannelState channelState) {
@@ -143,21 +136,49 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         isThread = thread;
     }
 
+    public MessageListView.MessageClickListener getMessageClickListener() {
+        return messageClickListener;
+    }
+
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         if (style.isReactionEnabled())
             this.messageClickListener = messageClickListener;
+    }
+
+    public MessageListView.MessageLongClickListener getMessageLongClickListener() {
+        return messageLongClickListener;
     }
 
     public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
         this.messageLongClickListener = messageLongClickListener;
     }
 
+    public MessageListView.AttachmentClickListener getAttachmentClickListener() {
+        return attachmentClickListener;
+    }
+
     public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
     }
 
+    public MessageListView.ReactionViewClickListener getReactionViewClickListener() {
+        return reactionViewClickListener;
+    }
+
+    public void setReactionViewClickListener(MessageListView.ReactionViewClickListener l) {
+        this.reactionViewClickListener = l;
+    }
+
+    public MessageListView.UserClickListener getUserClickListener() {
+        return userClickListener;
+    }
+
     public void setUserClickListener(MessageListView.UserClickListener userClickListener) {
         this.userClickListener = userClickListener;
+    }
+
+    public MessageListView.ReadStateClickListener getReadStateClickListener() {
+        return readStateClickListener;
     }
 
     public void setReadStateClickListener(MessageListView.ReadStateClickListener readStateClickListener) {
@@ -166,7 +187,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-
         return messageListItemList.size();
     }
 }

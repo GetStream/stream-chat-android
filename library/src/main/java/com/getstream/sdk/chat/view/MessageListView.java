@@ -64,6 +64,7 @@ public class MessageListView extends RecyclerView {
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
     private GiphySendListener giphySendListener;
+    private ReactionViewClickListener reactionViewClickListener;
     private UserClickListener userClickListener;
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
@@ -273,6 +274,7 @@ public class MessageListView extends RecyclerView {
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
+        setReactionViewClickListener(reactionViewClickListener);
         setUserClickListener(userClickListener);
         setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
@@ -464,7 +466,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getStatus() == MessageStatus.FAILED) {
-                    viewModel.onSendMessage(message, null);
+                    viewModel.sendMessage(message, null);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
                 }
@@ -500,6 +502,23 @@ public class MessageListView extends RecyclerView {
             adapter.setAttachmentClickListener(this.attachmentClickListener);
         } else {
             adapter.setAttachmentClickListener(this::showAttachment);
+        }
+    }
+
+    public void setReactionViewClickListener(ReactionViewClickListener l) {
+        this.reactionViewClickListener = l;
+        if (adapter == null) return;
+
+        if (this.reactionViewClickListener != null) {
+            adapter.setReactionViewClickListener(this.reactionViewClickListener);
+        } else {
+            adapter.setReactionViewClickListener(message -> {
+                new MoreActionDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setMessage(message)
+                        .setStyle(style)
+                        .show();
+            });
         }
     }
 
@@ -649,7 +668,9 @@ public class MessageListView extends RecyclerView {
     public interface ReadStateClickListener {
         void onReadStateClick(List<ChannelUserRead> reads);
     }
-
+    public interface ReactionViewClickListener {
+        void onReactionViewClick(Message message);
+    }
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 

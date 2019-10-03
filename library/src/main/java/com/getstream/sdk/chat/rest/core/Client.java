@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
@@ -37,7 +38,6 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -46,8 +46,8 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
-import com.getstream.sdk.chat.rest.request.UpdateMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
@@ -59,7 +59,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
@@ -166,7 +165,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(channel, event);
+                    channel.handleChannelUpdated(channel);
                 }
 
                 // TODO: what about deleted channels?
@@ -381,6 +380,10 @@ public class Client implements WSResponseHandler {
         return channel(type, id, new HashMap<>());
     }
 
+    public Channel channel(String type, HashMap<String, Object> extraData, List<String> members) {
+        return new Channel(this, type, extraData, members);
+    }
+
     public Channel channel(String type, String id, HashMap<String, Object> extraData) {
         Channel channel = getChannelByCid(type, id);
         if (channel != null) {
@@ -537,14 +540,18 @@ public class Client implements WSResponseHandler {
 
                     @Override
                     public void onFailure(Call<QueryChannelsResponse> call, Throwable t) {
-                        callback.onError(t.getLocalizedMessage(), -1);
+                        if (t instanceof ErrorResponse) {
+                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                        } else {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
                     }
                 });
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -565,7 +572,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -600,7 +611,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
+                callback.onError(errMsg, errCode);
             }
         });
 
@@ -636,7 +647,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -661,7 +672,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -673,7 +688,7 @@ public class Client implements WSResponseHandler {
      * @return {object} Response that includes the message
      */
     public void updateMessage(@NonNull String messageId,
-                              @NonNull UpdateMessageRequest request,
+                              @NonNull SendMessageRequest request,
                               MessageCallback callback) {
 
         mService.updateMessage(messageId,
@@ -689,7 +704,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -705,7 +724,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -727,7 +750,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -753,7 +780,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<EventResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    if (t instanceof ErrorResponse) {
+                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                    } else {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
                 }
             });
     }
@@ -775,7 +806,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -800,7 +835,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    if (t instanceof ErrorResponse) {
+                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                    } else {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
                 }
             });
         } else {
@@ -812,7 +851,11 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    if (t instanceof ErrorResponse) {
+                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                    } else {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
                 }
             });
         }
@@ -834,7 +877,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -858,7 +905,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -880,7 +931,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<EventResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -898,7 +953,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -915,118 +974,16 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
 
     // region User
-
-    /**
-     * muteUser - mutes a user
-     *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
-     */
-    public void muteUser(@NonNull String target_id,
-                         MuteUserCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_id", target_id);
-        body.put("user_id", user.getId());
-
-        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
-            @Override
-            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    /**
-     * unmuteUser - unmutes a user
-     *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
-     */
-    public void unmuteUser(@NonNull String target_id,
-                           MuteUserCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_id", target_id);
-        body.put("user_id", user.getId());
-
-        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
-            @Override
-            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    public void flagUser(@NonNull String targetUserId,
-                         FlagCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_user_id", targetUserId);
-
-        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
-            @Override
-            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
-
-    public void unFlagUser(@NonNull String targetUserId,
-                           FlagCallback callback) {
-
-        Map<String, String> body = new HashMap<>();
-        body.put("target_user_id", targetUserId);
-
-        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
-            @Override
-            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
-                if (response.isSuccessful()) {
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(response.message(), response.code());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        });
-    }
 
     /**
      * bans target user ID
@@ -1068,7 +1025,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -1109,25 +1066,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                //ignore
-            }
-        });
-    }
-
-    // endregion
-    public void sendAction(@NonNull String messageId,
-                           @NonNull SendActionRequest request,
-                           MessageCallback callback) {
-
-        mService.sendAction(messageId, apiKey, user.getId(), clientID, request).enqueue(new Callback<MessageResponse>() {
-            @Override
-            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -1150,10 +1089,171 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
+
+    /**
+     * setAnonymousUser - Setup an anonymous session
+     */
+    public void setAnonymousUser() {
+    }
+
+    /**
+     * setGuestUser - Setup a temporary guest user
+     */
+    public void setGuestUser(User user) {
+    }
+
+    /**
+     * muteUser - mutes a user
+     *
+     * @param target_id Only used with serverside auth
+     * @returns Server response
+     */
+    public void muteUser(@NonNull String target_id,
+                         MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id", target_id);
+        body.put("user_id", user.getId());
+
+        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
+            }
+        });
+    }
+
+    /**
+     * unmuteUser - unmutes a user
+     *
+     * @param target_id Only used with serverside auth
+     * @returns Server response
+     */
+    public void unmuteUser(@NonNull String target_id,
+                           MuteUserCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_id", target_id);
+        body.put("user_id", user.getId());
+
+        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+            @Override
+            public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MuteUserResponse> call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
+            }
+        });
+    }
+
+    public void flagUser(@NonNull String targetUserId,
+                         FlagCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id", targetUserId);
+
+        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
+            }
+        });
+    }
+
+    public void unFlagUser(@NonNull String targetUserId,
+                           FlagCallback callback) {
+
+        Map<String, String> body = new HashMap<>();
+        body.put("target_user_id", targetUserId);
+
+        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+            @Override
+            public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(response.message(), response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<FlagResponse> call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
+            }
+        });
+    }
+
+    // endregion
+    public void sendAction(@NonNull String messageId,
+                           @NonNull SendActionRequest request,
+                           MessageCallback callback) {
+
+        mService.sendAction(messageId, apiKey, user.getId(), clientID, request).enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                callback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
+            }
+        });
+    }
+
 
     // region Device
 
@@ -1176,14 +1276,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 });
     }
@@ -1206,14 +1310,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<GetDevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 }
         );
@@ -1236,14 +1344,18 @@ public class Client implements WSResponseHandler {
 
                             @Override
                             public void onFailure(Call<DevicesResponse> call, Throwable t) {
-                                callback.onError(t.getLocalizedMessage(), -1);
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
                             }
                         });
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-
+                        callback.onError(errMsg, errCode);
                     }
                 }
         );
@@ -1272,17 +1384,6 @@ public class Client implements WSResponseHandler {
         connectionRecovered();
     }
 
-    /**
-     * setAnonymousUser - Setup an anonymous session
-     */
-    public void setAnonymousUser() {
-    }
-
-    /**
-     * setGuestUser - Setup a temporary guest user
-     */
-    public void setGuestUser(User user) {
-    }
 
     public void flagMessage(@NonNull String targetMessageId,
                             FlagCallback callback) {
@@ -1302,11 +1403,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                ErrorResponse response = GsonConverter.Gson().fromJson(t.getLocalizedMessage(), ErrorResponse.class);
-                if (response != null)
-                    callback.onError(response.getMessage(), response.getCode());
-                else
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
                     callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
@@ -1329,7 +1430,11 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<FlagResponse> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
+                }
             }
         });
     }
