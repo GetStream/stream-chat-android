@@ -194,8 +194,11 @@ public class Client implements WSResponseHandler {
                 if (connectionModel.getIsConnected() && !connected) {
                     Log.i(TAG, "fast track connection discovery: UP");
                     if (WSConn != null) {
-                        WSConn.reconnect();
+                        reconnectWebSocket();
                     }
+                } else if (!connectionModel.getIsConnected() && connected) {
+                    Log.i(TAG, "fast track connection discovery: DOWN");
+                    disconnectWebSocket();
                 }
             });
         }
@@ -249,10 +252,21 @@ public class Client implements WSResponseHandler {
      * the connection is still pending (setUser is asynchronous) this method will also abort the pending
      * connection
      */
-    public synchronized void disconnect(){
+    public synchronized void disconnect() {
         if (user == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
         }
+
+        disconnectWebSocket();
+
+        // unset token facilities
+        tokenProvider = null;
+        fetchingToken = false;
+        cacheUserToken = null;
+
+        // clear local state
+        user = null;
+        activeChannels.clear();
     }
 
     /**
@@ -419,6 +433,7 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect() {
+        Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
             JSONObject json = buildUserDetailJSON();
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
@@ -481,6 +496,22 @@ public class Client implements WSResponseHandler {
         }
     }
 
+    /**
+     * the opposite of {@link #disconnectWebSocket()}
+     */
+    public void reconnectWebSocket() {
+        if (user == null) {
+            Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
+            return;
+        }
+        if (WSConn != null) {
+            Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
+            return;
+        }
+        connectionRecovered();
+        connect();
+    }
+
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
@@ -488,19 +519,29 @@ public class Client implements WSResponseHandler {
             cids.add(channel.getCid());
         }
         if (cids.size() > 0) {
-            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
-                    .withLimit(30)
-                    .withMessageLimit(30);
-            queryChannels(query, new QueryChannelListCallback() {
+            onSetUserCompleted(new ClientConnectionCallback() {
                 @Override
-                public void onSuccess(QueryChannelsResponse response) {
-                    connected = true;
-                    onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                public void onSuccess(User user) {
+                    QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
+                            .withLimit(30)
+                            .withMessageLimit(30);
+                    queryChannels(query, new QueryChannelListCallback() {
+                        @Override
+                        public void onSuccess(QueryChannelsResponse response) {
+                            connected = true;
+                            onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            // TODO: probably the best is to make sure the client goes back offline and online again
+                        }
+                    });
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    // TODO: probably the best is to make sure the client goes back offline and online again
+
                 }
             });
         } else {
@@ -516,12 +557,12 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
-        connect();
     }
 
     @Override
     public void tokenExpired() {
         tokenProvider.tokenExpired();
+        disconnectWebSocket();
         reconnectWebSocket();
     }
 
@@ -1427,26 +1468,13 @@ public class Client implements WSResponseHandler {
      */
     public synchronized void disconnectWebSocket() {
         Log.i(TAG, "disconnecting");
-        getConnectionWaiters().clear();
         if (WSConn != null) {
             WSConn.disconnect();
-            connected = false;
             WSConn = null;
             clientID = null;
-            onWSEvent(new Event(false));
         }
-    }
-
-    /**
-     * re-opens the WebSocket connection and triggers connection recovery
-     */
-    public void reconnectWebSocket() {
-        if (user == null) {
-            Log.e(TAG, "Client reconnectWebSocket called before setUser, this is probably an integration mistake.");
-            return;
-        }
-        disconnectWebSocket();
-        connectionRecovered();
+        onWSEvent(new Event(false));
+        connected = false;
     }
 
     public void flagMessage(@NonNull String targetMessageId,

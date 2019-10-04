@@ -61,6 +61,10 @@ public class WebSocketService extends WebSocketListener {
      */
     private int consecutiveFailures;
 
+    private boolean isShuttingDown() {
+        return shuttingDown;
+    }
+
     private boolean shuttingDown;
 
     private int wsId;
@@ -71,9 +75,15 @@ public class WebSocketService extends WebSocketListener {
             sendEventToHandlerThread(wentOffline);
         }
     };
+
     private Runnable mHealthCheck = new Runnable() {
         @Override
         public void run() {
+            if (isShuttingDown()) {
+                Log.i(TAG, "connection is shutting down, quit health check");
+                return;
+            }
+            Log.i(TAG, "send health check");
             try {
                 Event event = new Event();
                 event.setType(EventType.HEALTH_CHECK);
@@ -83,17 +93,23 @@ public class WebSocketService extends WebSocketListener {
             }
         }
     };
+
     private Runnable mReconnect = () -> {
-        if (isConnecting() || isHealthy()) {
+        if (isConnecting() || isHealthy() || isShuttingDown()) {
             return;
         }
-
         destroyCurrentWSConnection();
         setupWS();
     };
+
     private Runnable mMonitor = new Runnable() {
         @Override
         public void run() {
+            if (isShuttingDown()) {
+                Log.i(TAG, "connection is shutting down, quit monitor");
+                return;
+            }
+            Log.i(TAG, "check connection health");
             long millisNow = new Date().getTime();
             int monitorInterval = 1000;
             if (getLastEvent() != null) {
@@ -152,7 +168,7 @@ public class WebSocketService extends WebSocketListener {
             return;
         }
 
-        wsId = 1;
+        wsId = 0;
         setConnecting(true);
         resetConsecutiveFailures();
         setupWS();
@@ -164,29 +180,22 @@ public class WebSocketService extends WebSocketListener {
     }
 
     public void disconnect() {
+        Log.i(TAG, "disconnect was called");
+        webSocket.close(1000, "bye");
         shuttingDown = true;
         eventThread.mHandler.removeCallbacksAndMessages(null);
-        webSocket.close(NORMAL_CLOSURE_STATUS, "");
-        webSocket = null;
-        listener = null;
-        httpClient = null;
-    }
-
-    public void reconnect() {
-        reconnect(false);
+        destroyCurrentWSConnection();
     }
 
     private void setupWS() {
         Log.i(TAG, "setupWS");
-
+        wsId++;
         httpClient = new OkHttpClient();
         Request request = new Request.Builder().url(wsURL).build();
         listener = new EchoWebSocketListener();
         webSocket = httpClient.newWebSocket(request, listener);
         httpClient.dispatcher().executorService().shutdown();
     }
-
-//    private Handler mHandler = new Handler();
 
     private void setHealth(boolean healthy) {
         Log.i(TAG, "setHealth " + healthy);
@@ -209,9 +218,7 @@ public class WebSocketService extends WebSocketListener {
     }
 
     private void reconnect(boolean delay) {
-        Log.i(TAG, "reconnecting...");
-        if (isConnecting() || isHealthy()) {
-            Log.i(TAG, "nevermind, we are already connecting...");
+        if (isConnecting() || isHealthy() || shuttingDown) {
             return;
         }
         Log.i(TAG, "schedule reconnection in " + getRetryInterval() + "ms");
@@ -239,7 +246,6 @@ public class WebSocketService extends WebSocketListener {
     }
 
     private void destroyCurrentWSConnection() {
-        wsId++;
         try {
             httpClient.dispatcher().cancelAll();
         } catch (Exception e) {
@@ -251,7 +257,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onOpen(WebSocket webSocket, Response response) {
-            if (shuttingDown) return;
+            if (isShuttingDown()) return;
             setHealth(true);
             setConnecting(false);
             resetConsecutiveFailures();
@@ -263,9 +269,9 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
-            Log.d(TAG, "WebSocket Response : " + text);
+            Log.d(TAG, "WebSocket # " + wsId + " Response : " + text);
 
-            if (shuttingDown) return;
+            if (isShuttingDown()) return;
 
             WsErrorMessage errorMessage;
 
@@ -303,8 +309,8 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onClosing(WebSocket webSocket, int code, String reason) {
-            if (shuttingDown) return;
-            Log.d(TAG, "Closing : " + code + " / " + reason);
+            if (isShuttingDown()) return;
+            Log.d(TAG, "WebSocket # " + wsId + " Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
                 // TODO: propagate this upstream
@@ -320,9 +326,9 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            if (shuttingDown) return;
+            if (isShuttingDown()) return;
             try {
-                Log.i(TAG, "Error: " + t.getMessage());
+                Log.i(TAG, "WebSocket # " + wsId + " Error: " + t.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
             }

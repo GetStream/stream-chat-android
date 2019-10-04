@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class QuerySortTest {
+public class    QuerySortTest {
 
     @org.junit.jupiter.api.Test
     void decrTest() {

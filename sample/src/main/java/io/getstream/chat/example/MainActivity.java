@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
@@ -125,10 +126,33 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 createNewChannel(channelName);
+//                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
                 alertDialog.dismiss();
             });
         });
         alertDialog.show();
+    }
+
+    void switchUser(String userId, String token) {
+        Client client = StreamChat.getInstance(getApplication());
+        client.disconnect();
+
+        User user = new User(userId);
+        client.setUser(user, token);
+
+        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+
+        client.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                viewModel.reload();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        });
     }
 
     void createNewChannel(String channelName){

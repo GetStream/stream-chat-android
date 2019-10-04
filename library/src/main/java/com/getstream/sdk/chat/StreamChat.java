@@ -21,7 +21,6 @@ public class StreamChat {
     private static final String TAG = StreamChat.class.getSimpleName();
 
     private static Client INSTANCE;
-    private static int eventListener;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
@@ -50,12 +49,15 @@ public class StreamChat {
     }
 
     private static synchronized void setupEventListeners() {
-        eventListener = INSTANCE.addEventHandler(new ChatEventHandler() {
+        Log.i(TAG, "setupEventListeners");
+        INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
                 Log.w(TAG, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
+                } else {
+                    onlineStatus.postValue(OnlineStatus.FAILED);
                 }
             }
 
@@ -91,9 +93,10 @@ public class StreamChat {
         if (INSTANCE != null) {
             throw new RuntimeException("StreamChat is already initialized!");
         }
-
+        Log.i(TAG, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
+                Log.i(TAG, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
                 INSTANCE.setContext(context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
@@ -103,6 +106,7 @@ public class StreamChat {
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
+                        Log.i(TAG, "set user worked out well");
                         userWasInitialized = true;
                         onlineStatus.postValue(OnlineStatus.CONNECTED);
                         totalUnreadMessages.postValue(user.getTotalUnreadCount());
