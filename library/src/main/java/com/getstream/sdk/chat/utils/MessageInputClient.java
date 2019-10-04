@@ -414,7 +414,7 @@ public class MessageInputClient {
             if (!commands.isEmpty() && binding.clCommand.getVisibility() != View.VISIBLE)
                 openCommandView();
 
-            setCommandMentionListItemAdapter(false);
+            setCommandMentionListItemAdapter(text.startsWith("/"));
 
             if (commands.isEmpty())
                 closeCommandView();
