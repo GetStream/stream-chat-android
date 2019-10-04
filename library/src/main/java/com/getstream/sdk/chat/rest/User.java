@@ -58,6 +58,7 @@ public class User implements UserEntity {
      * Constructor
      *
      */
+    @Ignore
     public User() {
 
     }

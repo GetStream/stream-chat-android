@@ -293,7 +293,7 @@ public class ChannelState {
         return readsByUser;
     }
 
-    public List<ChannelUserRead> getLastMessageReads() {
+    public synchronized List<ChannelUserRead> getLastMessageReads() {
         Message lastMessage = this.getLastMessage();
         List<ChannelUserRead> readLastMessage = new ArrayList<>();
         if (reads == null || lastMessage == null) return readLastMessage;

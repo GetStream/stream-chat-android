@@ -151,6 +151,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             loadingMore.postValue(false);
     }
 
+    /**
+     * sets the filter used to query the list of channels
+     *
+     * @param filter the filter object that will be used to query channels (empty by default)
+     */
     public void setChannelFilter(FilterObject filter) {
         if (initialized.get()) {
             Log.e(TAG, "setChannelFilter on an already initialized channel list is a no-op, make sure to set filters *before* consuming channels or create a new ChannelListViewModel if you need a different query");
@@ -212,7 +217,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     /**
-     * removes the channel. Messages are permanently removed.
+     * removes the channel. Messages are permanently removed. //TODO I am not sure this method is needed. Client can call Channel.delete or Client.deleteChannel directly.
      *
      * @param channel  the channel needs to delete
      * @param callback the result callback
@@ -221,7 +226,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channel.delete(new DeleteChannelCallback() {
             @Override
             public void onSuccess(DeleteChannelResponse response) {
-                deleteChannel(channel);
                 if (callback != null) {
                     callback.onSuccess(response.getChannel());
                 }
@@ -237,6 +241,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
+    /**
+     * sets the sorting for the channel list, any channel field can be used to sort in either ASC or
+     * DESC direction. if not specified channels are sorted by last_message_at DESC
+     *
+     * @param sort the sort parameter
+     */
     public void setChannelSort(QuerySort sort) {
         this.sort = sort;
     }
@@ -247,11 +257,13 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        setLoading();
+        if (!initialized.get() || !client().isConnected())
+            setLoading();
     }
 
     @Override
     public void stopped() {
+
     }
 
     private void setupConnectionRecovery() {
@@ -372,7 +384,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private void queryChannelsInner(int attempt) {
 
-
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
@@ -436,6 +447,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         queryChannelsInner(0);
     }
 
+    /**
+     * loads more channels, use this to load a previous page
+     *
+     */
     public void loadMore() {
         if (!client().isConnected()) {
             return;

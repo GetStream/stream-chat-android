@@ -217,7 +217,6 @@ public class Channel {
         this.client = client;
         this.setSyncStatus(Sync.SYNCED);
         this.createdAt = new Date();
-        this.deletedAt = null;
 
         if (extraData == null) {
             this.extraData = new HashMap<>();
@@ -411,6 +410,7 @@ public class Channel {
         return TextUtils.equals(this.getCid(), otherChannel.getCid());
     }
 
+    @NotNull
     public HashMap<String, Object> getExtraData() {
         return extraData;
     }

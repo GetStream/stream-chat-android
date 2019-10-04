@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -100,7 +99,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
-            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions()).ordinal();
+            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }
@@ -110,7 +109,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
-        return this.viewHolderFactory.createMessageViewHolder(this, parent, MessageListItemType.values()[viewType]);
+        return this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
     }
 
 

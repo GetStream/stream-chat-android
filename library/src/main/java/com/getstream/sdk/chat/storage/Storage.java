@@ -537,7 +537,9 @@ public class Storage {
 
         @Override
         protected Void doInBackground(String... params) {
-            channelsDao.get().deleteChannel(params[0]); // params[0] - channel cid
+            if(channelsDao.get()!=null) {
+                channelsDao.get().deleteChannel(params[0]); // params[0] - channel cid
+            }
             return null;
         }
     }
