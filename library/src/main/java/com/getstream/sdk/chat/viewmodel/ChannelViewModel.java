@@ -848,13 +848,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         loadMore(new ResultCallback<Object, String>() {
             @Override
             public void onSuccess(Object response) {
-                if (response instanceof ChannelState) {
-                    // Progress Message Load More
 
-                } else {
-                    // Progress Thread Message Load More
-
-                }
             }
 
             @Override
