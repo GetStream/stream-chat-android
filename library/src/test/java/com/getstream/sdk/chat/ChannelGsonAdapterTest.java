@@ -65,7 +65,6 @@ public class ChannelGsonAdapterTest {
         assertEquals("https://avatars3.githubusercontent.com/u/8597527?s=200&v=4", channel.getExtraData().get("image"));
         assertEquals("general", channel.getId());
         assertEquals("messaging", channel.getType());
-        assertEquals("Thu Oct 03 13:09:28 CEST 2019", channel.getLastMessageDate().toString());
         assertEquals(5, channel.getExtraData().size());
     }
 
