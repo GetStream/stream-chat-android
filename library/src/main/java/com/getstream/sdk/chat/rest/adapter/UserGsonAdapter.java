@@ -58,9 +58,11 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                     continue;
                 case "name":
                     user.setName((String) set.getValue());
+                    if (user.getName() == null) user.setName("");
                     continue;
                 case "image":
                     user.setImage((String) set.getValue());
+                    if (user.getImage() == null) user.setImage("");
                     continue;
                 case "role":
                     user.setRole((String) set.getValue());
