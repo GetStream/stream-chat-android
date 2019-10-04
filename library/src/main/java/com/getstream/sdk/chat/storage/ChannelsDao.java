@@ -23,7 +23,6 @@ public interface ChannelsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertChannels(List<Channel> channels);
 
-
     @Query("SELECT * FROM stream_channel " +
             "WHERE stream_channel.cid IN (:cids)")
     List<Channel> getChannels(final List<String> cids);
@@ -32,4 +31,6 @@ public interface ChannelsDao {
             "WHERE stream_channel.cid IN (:cid)")
     Channel getChannel(final String cid);
 
+    @Query("DELETE FROM stream_channel WHERE stream_channel.cid IN (:cid)")
+    void deleteChannel(final String cid);
 }

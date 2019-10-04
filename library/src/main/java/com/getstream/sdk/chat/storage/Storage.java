@@ -17,6 +17,9 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +92,7 @@ public class Storage {
     public void insertChannels(List<Channel> channels) {
         if (!enabled) return;
 
-        for (Channel c: channels) {
+        for (Channel c : channels) {
             c.preStorage();
             c.getLastState().preStorage();
         }
@@ -234,6 +237,17 @@ public class Storage {
         channels.add(channel);
 
         insertChannels(channels);
+    }
+
+    /**
+     * delete channel from database
+     *
+     * @param channel the channel needs to delete
+     */
+    public void deleteChannel(@NotNull Channel channel) {
+        if (!enabled) return;
+
+        new DeleteChannelAsyncTask(channelsDao).execute(channel.getCid());
     }
 
     public void insertQuery(QueryChannelsQ query) {
@@ -511,6 +525,20 @@ public class Storage {
                     mCallBack.onFailure(mException);
                 }
             }
+        }
+    }
+
+    public static class DeleteChannelAsyncTask extends AsyncTask<String, Void, Void> {
+        private WeakReference<ChannelsDao> channelsDao;
+
+        private DeleteChannelAsyncTask(ChannelsDao channelsDao) {
+            this.channelsDao = new WeakReference<>(channelsDao);
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            channelsDao.get().deleteChannel(params[0]); // params[0] - channel cid
+            return null;
         }
     }
 

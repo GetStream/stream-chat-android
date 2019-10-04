@@ -9,7 +9,8 @@ import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.DevicesResponse;
+import com.getstream.sdk.chat.rest.response.CompletableResponse;
+import com.getstream.sdk.chat.rest.response.DeleteChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -19,7 +20,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 
 import org.json.JSONObject;
 
@@ -48,7 +48,7 @@ public interface APIService {
     Call<ChannelState> queryChannel(@Path("type") String channelType, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
     @DELETE("/channels/{type}/{id}")
-    Call<ChannelState> deleteChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID);
+    Call<DeleteChannelResponse> deleteChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID);
 
     @POST("/channels/{type}/{id}/stop-watching")
     Call<ChannelState> stopWatching(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body Map<String, String> body);
@@ -143,9 +143,9 @@ public interface APIService {
     Call<GetDevicesResponse> getDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("userID") Map body);
 
     @POST("devices")
-    Call<DevicesResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
+    Call<CompletableResponse> addDevices(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body AddDeviceRequest request);
 
     @DELETE("/devices")
-    Call<DevicesResponse> deleteDevice(@Query("id") String deviceId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<CompletableResponse> deleteDevice(@Query("id") String deviceId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
     // endregion
 }

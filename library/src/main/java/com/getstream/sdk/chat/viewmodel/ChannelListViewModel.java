@@ -20,12 +20,14 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
+import com.getstream.sdk.chat.rest.interfaces.DeleteChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
+import com.getstream.sdk.chat.rest.response.DeleteChannelResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
@@ -160,7 +162,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     /**
      * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
      *
-     * @param channel the channel needs to hide
+     * @param channel  the channel needs to hide
      * @param callback the result callback
      */
     public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
@@ -186,7 +188,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     /**
      * removes the hidden status for a channel and remove from the current list of channels
      *
-     * @param channel the channel needs to show
+     * @param channel  the channel needs to show
      * @param callback the result callback
      */
     public void showChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
@@ -196,6 +198,32 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 deleteChannel(channel); // remove the channel from the list of hidden channels
                 if (callback != null) {
                     callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
+    }
+
+    /**
+     * removes the channel. Messages are permanently removed.
+     *
+     * @param channel  the channel needs to delete
+     * @param callback the result callback
+     */
+    public void deleteChannel(@NotNull Channel channel, @Nullable ResultCallback<Channel, String> callback) {
+        channel.delete(new DeleteChannelCallback() {
+            @Override
+            public void onSuccess(DeleteChannelResponse response) {
+                deleteChannel(channel);
+                if (callback != null) {
+                    callback.onSuccess(response.getChannel());
                 }
             }
 
