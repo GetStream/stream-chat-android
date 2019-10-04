@@ -433,11 +433,18 @@ public class MessageInputClient {
         commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
         binding.lvCommand.setAdapter(commandMentionListItemAdapter);
         openCommandView();
-        binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
-            if (isCommand) {
-                binding.etMessage.setText("/" + ((Command) commands.get(i)).getName() + " ");
-            } else {
-                binding.etMessage.setText(binding.etMessage.getText().toString() + ((User) commands.get(i)).getName() + " ");
+        binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
+            if (isCommand)
+                binding.etMessage.setText("/" + ((Command) commands.get(position)).getName() + " ");
+            else {
+                String messageStr = binding.etMessage.getText().toString();
+                String[] names = messageStr.split("@");
+                String messageStr_ = "";
+                for (int i = 0; i < names.length - 1; i++){
+                    messageStr_ += names[i];
+                }
+                messageStr_ += "@";
+                binding.etMessage.setText(messageStr_ + ((User) commands.get(position)).getName() + " ");
             }
             binding.etMessage.setSelection(binding.etMessage.getText().length());
             closeCommandView();
