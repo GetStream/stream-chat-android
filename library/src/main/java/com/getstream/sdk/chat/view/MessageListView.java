@@ -26,11 +26,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
@@ -263,19 +259,7 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        giphySendListener = (Message message, GiphyAction action) -> {
-            viewModel.sendGiphy(message, action, new ResultCallback<MessageResponse, String>() {
-                @Override
-                public void onSuccess(MessageResponse messageResponse) {
-                    Log.i(TAG, "Sent giphy message.");
-                }
-
-                @Override
-                public void onError(String s) {
-                    Log.e(TAG, s);
-                }
-            });
-        };
+        giphySendListener = viewModel::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -308,22 +292,7 @@ public class MessageListView extends RecyclerView {
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
 
                     if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
-                        viewModel.loadMore(new ResultCallback<Object, String>() {
-                            @Override
-                            public void onSuccess(Object response) {
-                                if (response instanceof ChannelState) {
-                                    // Progress Message Load More
-
-                                } else {
-                                    // Progress Thread Message Load More
-                                }
-                            }
-
-                            @Override
-                            public void onError(String s) {
-                                Log.e(TAG, s);
-                            }
-                        });
+                        viewModel.loadMore();
 
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
@@ -500,7 +469,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getStatus() == MessageStatus.FAILED) {
-                    viewModel.sendMessage(message, null);
+                    viewModel.sendMessage(message);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
                 }

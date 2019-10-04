@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Arrays;
@@ -117,16 +116,16 @@ public class CustomMessageInputView extends RelativeLayout {
             });
         } else {
             message.setStatus(null);
-            viewModel.sendMessage(message, new ResultCallback<MessageResponse, String>() {
+            viewModel.sendMessage(message, new MessageCallback() {
                 @Override
-                public void onSuccess(MessageResponse messageResponse) {
+                public void onSuccess(MessageResponse response) {
                     Log.i(TAG, "Sent message successfully!");
                     binding.etMessage.setText("");
                 }
 
                 @Override
-                public void onError(String s) {
-                    Log.i(TAG, s);
+                public void onError(String errMsg, int errCode) {
+                    Log.i(TAG, errMsg);
                     binding.etMessage.setText("");
                 }
             });

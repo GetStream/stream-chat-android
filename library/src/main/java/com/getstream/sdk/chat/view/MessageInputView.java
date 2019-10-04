@@ -37,13 +37,11 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputClient;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -404,17 +402,7 @@ public class MessageInputView extends RelativeLayout
         String messageText = this.getMessageText();
         Log.i(TAG, "Length is " + s.length());
         if (messageText.length() > 0) {
-            viewModel.keystroke(new ResultCallback<EventResponse, String>() {
-                @Override
-                public void onSuccess(EventResponse eventResponse) {
-                    Log.i(TAG, "Sent Keystroke event");
-                }
-
-                @Override
-                public void onError(String s) {
-                    Log.e(TAG, s);
-                }
-            });
+            viewModel.keystroke();
         }
         // detect commands
         messageInputClient.checkCommand(messageText);
@@ -461,24 +449,23 @@ public class MessageInputView extends RelativeLayout
             m.setStatus(null);
             m.setText(input);
             m.setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.sendMessage(m, new ResultCallback<MessageResponse, String>() {
+            viewModel.sendMessage(m, new MessageCallback() {
                 @Override
-                public void onSuccess(MessageResponse messageResponse) {
+                public void onSuccess(MessageResponse response) {
                     binding.ivSend.setEnabled(true);
                     initSendMessage();
-                    if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageSuccess(messageResponse.getMessage());
-                    }
+                    if (sendMessageListener != null)
+                        sendMessageListener.onSendMessageSuccess(response.getMessage());
                 }
 
                 @Override
-                public void onError(String s) {
+                public void onError(String errMsg, int errCode) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
                     if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(s);
+                        sendMessageListener.onSendMessageError(errMsg);
                     } else {
-                        Utils.showMessage(getContext(), s);
+                        Utils.showMessage(getContext(), errMsg);
                     }
                 }
             });

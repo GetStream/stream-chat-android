@@ -376,17 +376,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channel.banUser(targetUserId, reason, timeout, new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
-                if (callback != null) {
+                if (callback != null)
                     callback.onSuccess(null);
-                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, errMsg);
-                if (callback != null) {
+                if (callback != null)
                     callback.onError(errMsg);
-                }
             }
         });
     }
@@ -401,17 +399,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channel.unBanUser(targetUserId, new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
-                if (callback != null) {
+                if (callback != null)
                     callback.onSuccess(null);
-                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, errMsg);
-                if (callback != null) {
+                if (callback != null)
                     callback.onError(errMsg);
-                }
             }
         });
     }
@@ -632,7 +628,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messagesCopy = new ArrayList<>();
         }
 
-
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
@@ -653,248 +648,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelState.postValue(channel.getChannelState());
     }
 
-    private void watchChannel(@Nullable ResultCallback<ChannelState, String> callback) {
-        int limit = 10; // Constant.DEFAULT_LIMIT
-        if (!setLoading()) return;
-
-        ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
-
-        channel.watch(
-                request,
-                new QueryWatchCallback() {
-                    @Override
-                    public void onSuccess(ChannelState response) {
-                        if (response.getMessages().size() < limit) {
-                            reachedEndOfPagination = true;
-                        }
-                        addMessages(response.getMessages());
-                        channelLoadingDone();
-
-                        if (callback != null)
-                            callback.onSuccess(response);
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        channelLoadingDone();
-
-                        if (callback != null)
-                            callback.onError(errMsg);
-                    }
-                }
-        );
-    }
-
-    public void loadMore(@Nullable ResultCallback<Object, String> callback) {
-        if (!client().isConnected()) {
-            if (callback != null)
-                callback.onError("connection failed.");
-            return;
-        }
-
-        if (isLoading.get()) {
-            if (callback != null)
-                callback.onError("already loading, skip loading more");
-            return;
-        }
-
-        if (!setLoadingMore()) {
-            if (callback != null)
-                callback.onError("already loading next page, skip loading more");
-            return;
-        }
-
-        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
-        if (isThread()) {
-            if (reachedEndOfPaginationThread) {
-                setLoadingMoreDone();
-
-                if (callback != null)
-                    callback.onError("already reached end of pagination, skip loading more");
-
-                return;
-            }
-
-            if (threadParentMessage.getValue() == null) {
-                setLoadingMoreDone();
-
-                if (callback != null)
-                    callback.onError("Can't find thread parent message.");
-
-                return;
-            }
-
-            channel.getReplies(threadParentMessage.getValue().getId(),
-                    Constant.DEFAULT_LIMIT,
-                    getThreadOldestMessageId(),
-                    new GetRepliesCallback() {
-                        @Override
-                        public void onSuccess(GetRepliesResponse response) {
-                            entities.setIsLoadingMore(true);
-                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-                            List<Message> messagesCopy = threadMessages.getValue();
-                            for (int i = newMessages.size() - 1; i > -1; i--)
-                                messagesCopy.add(1, newMessages.get(i));
-
-                            threadMessages.postValue(messagesCopy);
-                            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
-                            setLoadingMoreDone();
-
-                            if (callback != null)
-                                callback.onSuccess(response);
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            setLoadingMoreDone();
-
-                            if (callback != null)
-                                callback.onError(errMsg);
-                        }
-                    });
-        } else {
-
-            if (reachedEndOfPagination) {
-                setLoadingMoreDone();
-
-                if (callback != null)
-                    callback.onError("already reached end of pagination, skip loading more");
-                return;
-            }
-            ChannelQueryRequest request = new ChannelQueryRequest().
-                    withMessages(Pagination.LESS_THAN,
-                            channel.getChannelState().getOldestMessageId(),
-                            Constant.DEFAULT_LIMIT);
-
-            channel.query(
-                    request,
-                    new QueryChannelCallback() {
-                        @Override
-                        public void onSuccess(ChannelState response) {
-                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-                            // used to modify the scroll behaviour...
-                            entities.setIsLoadingMore(true);
-                            addMessages(newMessages);
-                            if (newMessages.size() < Constant.DEFAULT_LIMIT)
-                                reachedEndOfPagination = true;
-                            setLoadingMoreDone();
-
-                            if (callback != null)
-                                callback.onSuccess(response);
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            setLoadingMoreDone();
-
-                            if (callback != null)
-                                callback.onError(errMsg);
-                        }
-                    }
-            );
-        }
-    }
-
-    /**
-     * sends message
-     *
-     * @param message  the Message sent
-     * @param callback the result callback
-     */
-    public void sendMessage(final Message message, @Nullable ResultCallback<MessageResponse, String> callback) {
-        // send typing.stop immediately
-        stopTyping(null);
-
-        // TODO: this should be a method at the channel level
-
-        if (message.getStatus() == null) {
-            message.setUser(client().getUser());
-            message.setCreatedAt(new Date());
-            message.setType("regular");
-            if (isThread())
-                message.setParentId(threadParentMessage.getValue().getId());
-            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
-            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-            message.setId(clientSideID);
-            message.preStorage();
-            message.setSyncStatus(Sync.LOCAL_ONLY);
-            client().storage().insertMessageForChannel(channel, message);
-            addMessage(message);
-        }
-
-        if (!client().isConnected()) {
-            if (callback != null)
-                callback.onError("no internet");
-            return;
-        }
-        channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
-        // afterwards send the request
-        channel.sendMessage(message,
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        replaceMessage(message, response.getMessage());
-                        if (callback != null)
-                            callback.onSuccess(response);
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        Message clone = message.copy();
-                        clone.setStatus(MessageStatus.FAILED);
-                        updateFailedMessage(clone);
-                        if (callback != null)
-                            callback.onError(errMsg);
-                    }
-                });
-    }
-
-    public void sendGiphy(Message message, GiphyAction action,
-                          @Nullable ResultCallback<MessageResponse, String> callback) {
-        Map<String, String> map = new HashMap<>();
-        switch (action) {
-            case SEND:
-                map.put("image_action", ModelType.action_send);
-                break;
-            case SHUFFLE:
-                map.put("image_action", ModelType.action_shuffle);
-                break;
-            case CANCEL:
-                List<Message> messagesCopy = messages.getValue();
-                int index = messagesCopy.indexOf(message);
-                if (index != -1) {
-                    messagesCopy.remove(message);
-                    messages.postValue(messagesCopy);
-                }
-                if (callback != null)
-                    callback.onError("Canceled.");
-                return;
-        }
-
-        SendActionRequest request = new SendActionRequest(getChannel().getId(),
-                message.getId(),
-                ModelType.channel_messaging,
-                map);
-        channel.sendAction(message.getId(), request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                if (action == GiphyAction.SHUFFLE)
-                    shuffleGiphy(message, response.getMessage());
-                else {
-                    if (callback != null)
-                        callback.onSuccess(response);
-                }
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, errMsg);
-                if (callback != null)
-                    callback.onError(errMsg);
-            }
-        });
-    }
-
     public MessageListItemLiveData getEntities() {
         return entities;
     }
@@ -910,18 +663,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         }
         return users;
-    }
-
-    /**
-     * Cleans up the typing state by removing typing users that did not send
-     * typing.stop event for long time
-     */
-    private void cleanupTypingUsers() {
-        List<User> prev = typingUsers.getValue();
-        List<User> cleaned = getCleanedTypingUsers();
-        if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
-            typingUsers.postValue(getCleanedTypingUsers());
-        }
     }
 
     public MutableLiveData<Boolean> getHasNewMessages() {
@@ -966,49 +707,328 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
-    public synchronized void keystroke(@Nullable ResultCallback<EventResponse, String> callback) {
-        if (isThread()) {
-            if (callback != null)
-                callback.onError("Now Thread.");
-        } else if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
-            lastKeystrokeAt = new Date();
-            channel.sendEvent(EventType.TYPING_START, new EventCallback() {
-                @Override
-                public void onSuccess(EventResponse response) {
-                    if (callback != null)
-                        callback.onSuccess(response);
-                }
+    /**
+     * watches channel
+     *
+     * @param callback the result callback
+     */
+    public void watchChannel(QueryWatchCallback callback) {
+        int limit = 10; // Constant.DEFAULT_LIMIT
+        if (!setLoading()) return;
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    if (callback != null)
-                        callback.onError(errMsg);
-                }
-            });
+        ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
+        channel.watch(request, callback);
+    }
+
+    public void watchChannel() {
+        watchChannel(new QueryWatchCallback() {
+            @Override
+            public void onSuccess(ChannelState response) {
+                reachedEndOfPagination = response.getMessages().size() < 10;
+                addMessages(response.getMessages());
+                channelLoadingDone();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                channelLoadingDone();
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+    /**
+     * loads more messages, use this to load a previous page
+     *
+     * @param callback the result callback
+     */
+    public void loadMore(ResultCallback<Object, String> callback) {
+        if (!client().isConnected()) {
+            Log.i(TAG, "connection failed.");
+            return;
+        }
+
+        if (isLoading.get()) {
+            Log.i(TAG, "already loading, skip loading more");
+            return;
+        }
+
+        if (!setLoadingMore()) {
+            Log.i(TAG, "already loading next page, skip loading more");
+            return;
+        }
+
+        Log.i(TAG, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
+        if (isThread()) {
+            if (reachedEndOfPaginationThread) {
+                setLoadingMoreDone();
+                Log.i(TAG, "already reached end of pagination, skip loading more");
+                return;
+            }
+
+            if (threadParentMessage.getValue() == null) {
+                setLoadingMoreDone();
+                Log.i(TAG, "Can't find thread parent message.");
+                return;
+            }
+
+            channel.getReplies(threadParentMessage.getValue().getId(),
+                    Constant.DEFAULT_LIMIT,
+                    getThreadOldestMessageId(),
+                    new GetRepliesCallback() {
+                        @Override
+                        public void onSuccess(GetRepliesResponse response) {
+                            entities.setIsLoadingMore(true);
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            List<Message> messagesCopy = threadMessages.getValue();
+                            for (int i = newMessages.size() - 1; i > -1; i--)
+                                messagesCopy.add(1, newMessages.get(i));
+
+                            threadMessages.postValue(messagesCopy);
+                            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+                            setLoadingMoreDone();
+                            callback.onSuccess(response);
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            setLoadingMoreDone();
+                            callback.onError(errMsg);
+                        }
+                    });
         } else {
-            callback.onError("Unknown Error.");
+            if (reachedEndOfPagination) {
+                setLoadingMoreDone();
+                Log.i(TAG, "already reached end of pagination, skip loading more");
+                return;
+            }
+
+            ChannelQueryRequest request = new ChannelQueryRequest().
+                    withMessages(Pagination.LESS_THAN,
+                            channel.getChannelState().getOldestMessageId(),
+                            Constant.DEFAULT_LIMIT);
+
+            channel.query(
+                    request,
+                    new QueryChannelCallback() {
+                        @Override
+                        public void onSuccess(ChannelState response) {
+                            List<Message> newMessages = new ArrayList<>(response.getMessages());
+                            // used to modify the scroll behaviour...
+                            entities.setIsLoadingMore(true);
+                            addMessages(newMessages);
+                            if (newMessages.size() < Constant.DEFAULT_LIMIT)
+                                reachedEndOfPagination = true;
+                            setLoadingMoreDone();
+                            callback.onSuccess(response);
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            setLoadingMoreDone();
+                            callback.onError(errMsg);
+                        }
+                    }
+            );
         }
     }
 
-    public synchronized void stopTyping(@Nullable ResultCallback<EventResponse, String> callback) {
-        if (lastKeystrokeAt == null || isThread()) {
-            if (callback != null)
-                callback.onError("Now Thread.");
-        } else {
-            lastKeystrokeAt = null;
-            channel.sendEvent(EventType.TYPING_STOP, new EventCallback() {
-                @Override
-                public void onSuccess(EventResponse response) {
-                    if (callback != null)
-                        callback.onSuccess(response);
-                }
+    public void loadMore() {
+        loadMore(new ResultCallback<Object, String>() {
+            @Override
+            public void onSuccess(Object response) {
+                if (response instanceof ChannelState) {
+                    // Progress Message Load More
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    if (callback != null)
-                        callback.onError(errMsg);
+                } else {
+                    // Progress Thread Message Load More
+
                 }
-            });
+            }
+
+            @Override
+            public void onError(String s) {
+                Log.e(TAG, s);
+            }
+        });
+    }
+
+    /**
+     * sends message
+     *
+     * @param message  the Message sent
+     * @param callback the result callback
+     */
+    public void sendMessage(Message message, MessageCallback callback) {
+        // send typing.stop immediately
+        stopTyping();
+
+        // TODO: this should be a method at the channel level
+
+        if (message.getStatus() == null) {
+            message.setUser(client().getUser());
+            message.setCreatedAt(new Date());
+            message.setType("regular");
+            if (isThread())
+                message.setParentId(threadParentMessage.getValue().getId());
+            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
+            message.setId(clientSideID);
+            message.preStorage();
+            message.setSyncStatus(Sync.LOCAL_ONLY);
+            client().storage().insertMessageForChannel(channel, message);
+            addMessage(message);
+        }
+
+        if (!client().isConnected()) return;
+
+        channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
+        // afterwards send the request
+        channel.sendMessage(message,
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        replaceMessage(message, response.getMessage());
+                        callback.onSuccess(response);
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Message clone = message.copy();
+                        clone.setStatus(MessageStatus.FAILED);
+                        updateFailedMessage(clone);
+                        callback.onError(errMsg, errCode);
+                    }
+                });
+    }
+
+    public void sendMessage(Message message) {
+        sendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+    /**
+     * sendGiphy - Send giphy with shuffle and cancel.
+     *
+     * @param message  the message that has giphy attachment
+     * @param action   the giphy send, shuffle and cancel
+     * @param callback the result callback
+     */
+    public void sendGiphy(Message message,
+                          GiphyAction action,
+                          MessageCallback callback) {
+        Map<String, String> map = new HashMap<>();
+        switch (action) {
+            case SEND:
+                map.put("image_action", ModelType.action_send);
+                break;
+            case SHUFFLE:
+                map.put("image_action", ModelType.action_shuffle);
+                break;
+            case CANCEL:
+                List<Message> messagesCopy = messages.getValue();
+                int index = messagesCopy.indexOf(message);
+                if (index != -1) {
+                    messagesCopy.remove(message);
+                    messages.postValue(messagesCopy);
+                }
+                return;
+        }
+
+        SendActionRequest request = new SendActionRequest(getChannel().getId(),
+                message.getId(),
+                ModelType.channel_messaging,
+                map);
+        channel.sendAction(message.getId(), request, callback);
+    }
+
+    public void sendGiphy(Message message, GiphyAction action) {
+        sendGiphy(message, action, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (action == GiphyAction.SHUFFLE)
+                    shuffleGiphy(message, response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+    /**
+     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
+     * Call this on every keystroke
+     *
+     * @param callback the result callback
+     */
+    public synchronized void keystroke(EventCallback callback) {
+        if (isThread()) return;
+        if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
+            lastKeystrokeAt = new Date();
+            channel.sendEvent(EventType.TYPING_START, callback);
+        }
+    }
+
+    public synchronized void keystroke() {
+        keystroke(new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+    /**
+     * stopTyping - Sets last typing to null and sends the typing.stop event
+     *
+     * @param callback the result callback
+     */
+
+    public synchronized void stopTyping(EventCallback callback) {
+        if (lastKeystrokeAt == null || isThread()) return;
+        lastKeystrokeAt = null;
+        channel.sendEvent(EventType.TYPING_STOP, callback);
+    }
+
+    public synchronized void stopTyping() {
+        stopTyping(new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+    /**
+     * Cleans up the typing state by removing typing users that did not send
+     * typing.stop event for long time
+     */
+    private void cleanupTypingUsers() {
+        List<User> prev = typingUsers.getValue();
+        List<User> cleaned = getCleanedTypingUsers();
+        if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
+            typingUsers.postValue(getCleanedTypingUsers());
         }
     }
 
@@ -1038,7 +1058,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
 
             if (timeSinceLastKeystroke > 5000) {
-                stopTyping(null);
+                stopTyping();
             }
         }
 
@@ -1081,7 +1101,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 if (channel.isInitialized()) {
                     channelLoadingDone();
                 } else {
-                    viewModel.watchChannel(null);
+                    viewModel.watchChannel();
                 }
             }
         }
