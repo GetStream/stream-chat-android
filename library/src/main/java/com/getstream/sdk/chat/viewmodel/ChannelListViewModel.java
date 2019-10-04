@@ -411,7 +411,19 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
-        client().storage().selectChannelStates(request.query().getId(), 100, callback);
+        client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
+            @Override
+            public void onSuccess(List<ChannelState> channelStates) {
+                if (channels != null)
+                    addChannels(channelStates);
+                callback.onSuccess(channelStates);
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                callback.onFailure(e);
+            }
+        });
         queryChannelsInner(0);
     }
 
@@ -420,8 +432,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
                 Log.i(TAG, "Read from local cache...");
-                if (channels != null)
-                    addChannels(channelStates);
             }
 
             @Override
@@ -459,11 +469,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (channels.getValue() != null)
             request = request.withOffset(channels.getValue().size());
 
-        client().queryChannels(request, callback);
-    }
-
-    public void loadMore() {
-        loadMore(new QueryChannelListCallback() {
+        client().queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
                 Log.i(TAG, "onSendMessageSuccess for loading more channels");
@@ -473,13 +479,28 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
                 if (reachedEndOfPagination)
                     Log.i(TAG, "reached end of pagination");
-
+                callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels" + errMsg);
                 setLoadingMoreDone();
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void loadMore() {
+        loadMore(new QueryChannelListCallback() {
+            @Override
+            public void onSuccess(QueryChannelsResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
             }
         });
     }

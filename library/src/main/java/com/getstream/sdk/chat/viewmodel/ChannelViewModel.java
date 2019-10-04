@@ -717,21 +717,32 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (!setLoading()) return;
 
         ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
-        channel.watch(request, callback);
+        channel.watch(request, new QueryWatchCallback() {
+            @Override
+            public void onSuccess(ChannelState response) {
+                reachedEndOfPagination = response.getMessages().size() < 10;
+                addMessages(response.getMessages());
+                channelLoadingDone();
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                channelLoadingDone();
+                callback.onError(errMsg, errCode);
+            }
+        });
     }
 
     public void watchChannel() {
         watchChannel(new QueryWatchCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-                reachedEndOfPagination = response.getMessages().size() < 10;
-                addMessages(response.getMessages());
-                channelLoadingDone();
+
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                channelLoadingDone();
                 Log.e(TAG, errMsg);
             }
         });
@@ -948,15 +959,26 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 message.getId(),
                 ModelType.channel_messaging,
                 map);
-        channel.sendAction(message.getId(), request, callback);
+        channel.sendAction(message.getId(), request, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (action == GiphyAction.SHUFFLE)
+                    shuffleGiphy(message, response.getMessage());
+                callback.onSuccess(response);
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
     }
 
     public void sendGiphy(Message message, GiphyAction action) {
         sendGiphy(message, action, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                if (action == GiphyAction.SHUFFLE)
-                    shuffleGiphy(message, response.getMessage());
+
             }
 
             @Override
