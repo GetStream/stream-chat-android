@@ -26,7 +26,7 @@ public class GsonConverter {
     public static Gson Gson() {
         if (gson == null) {
             GsonBuilder gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
-            gsonBuilder.setDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             gsonBuilder.registerTypeAdapter(FilterObject.class, new FilterObjectAdapter());
             gsonBuilder.registerTypeAdapter(QuerySort.class, new QuerySortAdapter());
             gsonBuilder.registerTypeAdapter(ChannelState.class, new ChannelStateGsonAdapter());
