@@ -90,7 +90,7 @@ public class ChannelActivity extends AppCompatActivity
             }
 
             @Override
-            public void onSendMessageError(String errMsg, int errCod) {
+            public void onSendMessageError(String errMsg) {
                 // show an error message
             }
         });

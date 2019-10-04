@@ -430,7 +430,7 @@ public class MessageInputView extends RelativeLayout
         if (isEdit) {
             getEditMessage().setText(input);
             getEditMessage().setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
+            viewModel.getChannel().updateMessage(getEditMessage(),  new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
@@ -455,9 +455,8 @@ public class MessageInputView extends RelativeLayout
                 public void onSuccess(MessageResponse response) {
                     binding.ivSend.setEnabled(true);
                     initSendMessage();
-                    if (sendMessageListener != null) {
+                    if (sendMessageListener != null)
                         sendMessageListener.onSendMessageSuccess(response.getMessage());
-                    }
                 }
 
                 @Override
@@ -465,7 +464,7 @@ public class MessageInputView extends RelativeLayout
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
                     if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(errMsg, errCode);
+                        sendMessageListener.onSendMessageError(errMsg);
                     } else {
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -485,8 +484,8 @@ public class MessageInputView extends RelativeLayout
         this.sendMessageListener = l;
     }
 
-    public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
-        this.openCameraViewListener = openCameraViewListener;
+    public void setOpenCameraViewListener(OpenCameraViewListener l) {
+        this.openCameraViewListener = l;
     }
 
 
@@ -497,7 +496,7 @@ public class MessageInputView extends RelativeLayout
      */
     public interface SendMessageListener {
         void onSendMessageSuccess(Message message);
-        void onSendMessageError(String errMsg, int errCod);
+        void onSendMessageError(String errMsg);
 
     }
 
