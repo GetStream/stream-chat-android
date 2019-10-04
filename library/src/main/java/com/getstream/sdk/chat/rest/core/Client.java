@@ -241,7 +241,46 @@ public class Client implements WSResponseHandler {
         return connected;
     }
 
+    /**
+     * The opposite of {@link #setUser(User, TokenProvider)} this closes the current WebSocket connection
+     * and resets the client state as if setUser was never initialized
+     *
+     * Calls to this method will return an error if a user was not set; if a user was set but
+     * the connection is still pending (setUser is asynchronous) this method will also abort the pending
+     * connection
+     */
+    public synchronized void disconnect(){
+        if (user == null) {
+            Log.w(TAG, "disconnect was called but setUser was not called yet");
+        }
+    }
+
+    /**
+     * Sets the current user for chat
+     *
+     * 1. it sets the current user to the client
+     * 2. it requests the token from the provided TokenProvider
+     * 3. uses {@link #connect} to continue with the initialization process
+     *
+     * This method is required for most of Chat SDK functionality to work; since this is an async
+     * function (a WebSocket connection must be established) code that depends on the initialization
+     * of the user should be not be called directly but await for setUser to be completed
+     *
+     * This can be done by adding callbacks via {@link #onSetUserCompleted(ClientConnectionCallback)}
+     *
+     * Further calls to setUser are ignored; in order to change current user you first need to call
+     * {@link #disconnect()}}
+     *
+     * @param user the user to set as current
+     * @param provider the Token Provider used to obtain the auth token for the user
+     */
     public synchronized void setUser(User user, final TokenProvider provider) {
+
+        if (this.user != null) {
+            Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
+            return;
+        }
+
         this.user = user;
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
 
@@ -320,6 +359,12 @@ public class Client implements WSResponseHandler {
         return TextUtils.equals(user.getId(), otherUserId);
     }
 
+    /**
+     * Event Delegation: Adds an event handler for client events received via WebSocket
+     *
+     * @param handler the event handler for client events
+     * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Number)}
+     */
     public final synchronized int addEventHandler(ChatEventHandler handler) {
         int id = ++subscribersSeq;
         eventSubscribers.add(handler);
@@ -327,11 +372,26 @@ public class Client implements WSResponseHandler {
         return id;
     }
 
+    /**
+     * Event Delegation: removes an event handler via its id
+     *
+     * Removing an handler that was not registered is a no-op
+     *
+     * @param handlerId the event handler for client events
+     */
     public final synchronized void removeEventHandler(Number handlerId) {
         ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
         eventSubscribers.remove(handler);
     }
 
+    /**
+     * Makes sure the callback is called when the user is ready
+     *
+     * If the user is setup, it will run immediately; otherwise it will be added to a
+     * waiting list and will be fired as soon as the user is ready (see {@link #setUser(User, TokenProvider)} for more)
+     *
+     * @param callback the callback to run when
+     */
     public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
             callback.onSuccess(user);
@@ -462,7 +522,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void tokenExpired() {
         tokenProvider.tokenExpired();
-        reconnect();
+        reconnectWebSocket();
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -557,10 +617,11 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * deleteChannel - Delete the given channel
+     * deletes the given channel
      *
-     * @param channelId the Channel id needs to be specified
-     * @return {object} Response that includes the channel
+     * @param channelType the type of channel to delete
+     * @param channelId the id of the channel to delete
+     * @param callback the result callback
      */
     public void deleteChannel(@NonNull String channelType, @NonNull String channelId, QueryChannelCallback callback) {
 
@@ -1361,9 +1422,10 @@ public class Client implements WSResponseHandler {
         );
     }
 
-    // endregion
-
-    public synchronized void disconnect() {
+    /**
+     * closes the WebSocket connection and sends a connection.change event to all listeners
+     */
+    public synchronized void disconnectWebSocket() {
         Log.i(TAG, "disconnecting");
         getConnectionWaiters().clear();
         if (WSConn != null) {
@@ -1375,15 +1437,17 @@ public class Client implements WSResponseHandler {
         }
     }
 
-    public void reconnect() {
+    /**
+     * re-opens the WebSocket connection and triggers connection recovery
+     */
+    public void reconnectWebSocket() {
         if (user == null) {
-            Log.e(TAG, "Client reconnect called before setUser, this is probably an integration mistake.");
+            Log.e(TAG, "Client reconnectWebSocket called before setUser, this is probably an integration mistake.");
             return;
         }
-        disconnect();
+        disconnectWebSocket();
         connectionRecovered();
     }
-
 
     public void flagMessage(@NonNull String targetMessageId,
                             FlagCallback callback) {

@@ -115,7 +115,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
-                                    INSTANCE.reconnect();
+                                    INSTANCE.reconnectWebSocket();
                                 }
                             }
 
@@ -124,7 +124,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected stop");
                                 lifecycleStopped = true;
                                 if (INSTANCE != null) {
-                                    INSTANCE.disconnect();
+                                    INSTANCE.disconnectWebSocket();
                                 }
                             }
                         });

@@ -37,7 +37,7 @@ public class WebSocketService extends WebSocketListener {
     private boolean connectionResolved;
 
     /**
-     * We only make 1 attempt to reconnect at the same time..
+     * We only make 1 attempt to reconnectWebSocket at the same time..
      */
     private boolean isConnecting;
 
