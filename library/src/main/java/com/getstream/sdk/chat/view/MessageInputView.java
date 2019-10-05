@@ -406,7 +406,8 @@ public class MessageInputView extends RelativeLayout
         }
         // detect commands
         messageInputClient.checkCommand(messageText);
-        if (messageText.equals(" "))
+        String s_ = messageText.replaceAll("\\s+","");
+        if (TextUtils.isEmpty(s_))
             binding.setActiveMessageSend(false);
         else
             binding.setActiveMessageSend(messageText.length() != 0);
