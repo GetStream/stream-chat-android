@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
@@ -320,7 +322,7 @@ public class MessageInputView extends RelativeLayout
 
     // endregion
     // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
-    public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
+    public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 File file = null;
@@ -347,6 +349,23 @@ public class MessageInputView extends RelativeLayout
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    /*Used for handling requestPermissionsResult*/
+    public void permissionResult(int requestCode, @NonNull String[] permissions,
+                                 @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean granted = true;
+            for (int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            if (!granted) {
+                style.setShowAttachmentButton(granted);
+                messageInputClient.onClickCloseBackGroundView();
+                binding.ivOpenAttach.setVisibility(GONE);
             }
         }
     }

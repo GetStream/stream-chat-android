@@ -130,6 +130,10 @@ public class MessageInputStyle extends BaseStyle {
         return showAttachmentButton;
     }
 
+    public void setShowAttachmentButton(boolean showAttachmentButton) {
+        this.showAttachmentButton = showAttachmentButton;
+    }
+
     public Drawable getAttachmentButtonIcon(boolean isSelected) {
         if (attachmentButtonIcon == -1) {
             return getSelector(isSelected ? attachmentButtonSelectedIconColor : attachmentButtonDefaultIconColor,
