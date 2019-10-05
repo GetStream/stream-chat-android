@@ -107,9 +107,9 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        // If you are using own MessageInputView please comment this line.
         binding.messageInput.permissionResult(requestCode, permissions, grantResults);
     }
 
