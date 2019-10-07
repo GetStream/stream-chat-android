@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.ResultCallback;
+import com.getstream.sdk.chat.utils.RetryPolicy;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -56,6 +57,16 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private int recoverySubscriptionId = 0;
     private Handler retryLooper;
 
+    public RetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(RetryPolicy retryPolicy) {
+        this.retryPolicy = retryPolicy;
+    }
+
+    private RetryPolicy retryPolicy;
+
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
@@ -78,6 +89,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         new StreamLifecycleObserver(this);
         retryLooper = new Handler();
+
+        retryPolicy = new RetryPolicy() {
+            @Override
+            public boolean shouldRetry(Integer attempt, String errMsg, int errCode) {
+                return attempt < 100;
+            }
+
+            @Override
+            public Integer retryTimeout(Integer attempt, String errMsg, int errCode) {
+                return Math.min(500 * (attempt * attempt + 1), 30000);
+            }
+        };
     }
 
     public LiveData<List<Channel>> getChannels() {
@@ -378,14 +401,15 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels " + errMsg);
-                if (attempt > 100) {
+                Boolean shouldRetry = retryPolicy.shouldRetry(attempt, errMsg, errCode);
+                if (!shouldRetry) {
                     Log.e(TAG, "tried more than 100 times, give up now");
                     return;
                 }
                 if (!client().isConnected()) {
                     return;
                 }
-                int sleep = Math.min(500 * (attempt * attempt + 1), 30000);
+                int sleep = retryPolicy.retryTimeout(attempt, errMsg, errCode);
                 Log.d(TAG, "retrying in " + sleep);
                 retryLooper.postDelayed(() -> {
                     queryChannelsInner(attempt + 1);
