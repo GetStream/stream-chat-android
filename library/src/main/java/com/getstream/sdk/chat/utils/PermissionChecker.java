@@ -4,13 +4,17 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionChecker {
-    public static void permissionCheck(Activity activity, Fragment fragment) {
+    public static void permissionCheck(@NonNull Activity activity, @Nullable Fragment fragment) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                 (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                         || activity.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
@@ -19,7 +23,6 @@ public class PermissionChecker {
             int hasStoragePermission = activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             int hasReadPermission = activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
             int hasCameraPermission = activity.checkSelfPermission(Manifest.permission.CAMERA);
-
 
             List<String> permissions = new ArrayList<>();
             if (hasStoragePermission != PackageManager.PERMISSION_GRANTED) {

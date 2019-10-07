@@ -87,6 +87,7 @@ The following listeners can be set
 
 * setOnSendMessageListener
 * setOpenCameraViewListener
+* setPermissionRequestListener
 
 #### Send a message with attachments
 
@@ -94,13 +95,29 @@ The following listeners can be set
 
 You can send messages with attachments like images, videos and other files.
 To upload an attachment, you must allow proper permissions to access the camera and storage on your device.
+If your own application has already granted the permissions, ignore this part and `setPermissionRequestListener`.
 So you need to add the following code to ChannelActivity:
 
+* Set PermissionRequestListener
+
+```java
+...
+binding.messageInput.setPermissionRequestListener(this);
+...
+
+@Override
+public void openPermissionRequest() {
+    PermissionChecker.permissionCheck(this, null);
+    // If you are writing a Channel Screen in a Fragment, use the code below instead of the code above.
+    //   PermissionChecker.permissionCheck(getActivity(), this);
+}
+```
+
+* Request Permissions Result
 ```java
 @Override
 public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                        @NonNull int[] grantResults) {
-    // If you are using own MessageInputView please comment this line.
     binding.messageInput.permissionResult(requestCode, permissions, grantResults);
 }
 ```

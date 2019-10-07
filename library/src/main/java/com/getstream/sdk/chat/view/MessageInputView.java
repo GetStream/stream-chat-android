@@ -424,7 +424,7 @@ public class MessageInputView extends RelativeLayout
             binding.setIsAttachFile(true);
             if (style.isPermissionSet() || isGrantedPermissions())
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else
+            else if(permissionRequestListener != null)
                 permissionRequestListener.openPermissionRequest();
         }
     }

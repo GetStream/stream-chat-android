@@ -118,6 +118,8 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void openPermissionRequest() {
         PermissionChecker.permissionCheck(this, null);
+        // If you are writing a Channel Screen in a Fragment, use the code below instead of the code above.
+        //   PermissionChecker.permissionCheck(getActivity(), this);
     }
 
     @Override
