@@ -70,4 +70,12 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
         return binding.getRoot();
     }
+
+    public void setCommands(List<Object> commands) {
+        this.commands = commands;
+    }
+
+    public void setCommand(boolean command) {
+        isCommand = command;
+    }
 }

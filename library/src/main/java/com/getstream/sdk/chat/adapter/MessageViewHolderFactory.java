@@ -4,7 +4,6 @@ package com.getstream.sdk.chat.adapter;
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.enums.MessageListItemType;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -18,28 +17,35 @@ public class MessageViewHolderFactory {
     private static String TAG = MessageViewHolderFactory.class.getName();
 
 
-    private static int GENERIC_ATTACHMENT = 1;
-    private static int IMAGE_ATTACHMENT = 2;
-    private static int VIDEO_ATTACHMENT = 3;
-    private static int FILE_ATTACHMENT = 4;
+    public static final int MESSAGEITEM_DATE_SEPARATOR = 1;
+    public static final int MESSAGEITEM_MESSAGE = 2;
+    public static final int MESSAGEITEM_TYPING = 3;
+    public static final int MESSAGEITEM_THREAD_SEPARATOR = 4;
+    public static final int MESSAGEITEM_NO_CONNECTION = 5;
+    public static final int MESSAGEITEM_NOT_FOUND = 5;
 
-    public MessageListItemType getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+    public static final int GENERIC_ATTACHMENT = 1;
+    public static final int IMAGE_ATTACHMENT = 2;
+    public static final int VIDEO_ATTACHMENT = 3;
+    public static final int FILE_ATTACHMENT = 4;
+
+    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
-        MessageListItemType messageListItemType = messageListItem.getType();
-        if (messageListItemType == MessageListItemType.DATE_SEPARATOR) {
-            return MessageListItemType.DATE_SEPARATOR;
-        } else if (messageListItemType == MessageListItemType.MESSAGE) {
-            return MessageListItemType.MESSAGE;
-        } else if (messageListItemType == MessageListItemType.TYPING) {
-            return MessageListItemType.TYPING;
-        } else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
-            return MessageListItemType.THREAD_SEPARATOR;
-        }else if (messageListItemType == MessageListItemType.NO_CONNECTION) {
-            return MessageListItemType.NO_CONNECTION;
+        int messageListItemType = messageListItem.getType();
+        if (messageListItemType == MESSAGEITEM_DATE_SEPARATOR) {
+            return MESSAGEITEM_DATE_SEPARATOR;
+        } else if (messageListItemType == MESSAGEITEM_MESSAGE) {
+            return MESSAGEITEM_MESSAGE;
+        } else if (messageListItemType == MESSAGEITEM_TYPING) {
+            return MESSAGEITEM_TYPING;
+        } else if (messageListItemType == MESSAGEITEM_THREAD_SEPARATOR) {
+            return MESSAGEITEM_THREAD_SEPARATOR;
+        }else if (messageListItemType == MESSAGEITEM_NO_CONNECTION) {
+            return MESSAGEITEM_NO_CONNECTION;
         }
-        return MessageListItemType.NOT_FOUND;
+        return MESSAGEITEM_NOT_FOUND;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
@@ -63,12 +69,12 @@ public class MessageViewHolderFactory {
 
     }
 
-    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, MessageListItemType viewType) {
-        if (viewType == MessageListItemType.DATE_SEPARATOR) {
+    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
+        if (viewType == MESSAGEITEM_DATE_SEPARATOR) {
             DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        } else if (viewType == MessageListItemType.MESSAGE) {
+        } else if (viewType == MESSAGEITEM_MESSAGE) {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
@@ -81,15 +87,15 @@ public class MessageViewHolderFactory {
             holder.setReadStateClickListener(adapter.getReadStateClickListener());
             holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
-        } else if (viewType == MessageListItemType.TYPING) {
+        } else if (viewType == MESSAGEITEM_TYPING) {
             TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        } else if (viewType == MessageListItemType.THREAD_SEPARATOR) {
+        } else if (viewType == MESSAGEITEM_THREAD_SEPARATOR) {
             ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
-        }else if (viewType == MessageListItemType.NO_CONNECTION) {
+        }else if (viewType == MESSAGEITEM_NO_CONNECTION) {
             NoConnectionViewHolder holder = new NoConnectionViewHolder(R.layout.stream_item_no_connection, parent);
             holder.setStyle(adapter.getStyle());
             return holder;

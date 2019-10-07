@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -178,7 +179,7 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                if (attachment.getType().equals(ModelType.attach_file)){
+                if (attachment.getType().equals(ModelType.attach_file)) {
                     return null;
                 }
                 if (mine) {
@@ -286,11 +287,13 @@ public class MessageListView extends RecyclerView {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (layoutManager != null) {
+
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
-                    if (currentFirstVisible < fVPosition) {
-                        if (currentFirstVisible == 0) viewModel.loadMore();
-                    }
+
+                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
+                        viewModel.loadMore();
+
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
@@ -466,7 +469,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getStatus() == MessageStatus.FAILED) {
-                    viewModel.sendMessage(message, null);
+                    viewModel.sendMessage(message);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
                 }
@@ -483,6 +486,7 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message -> {
+                Utils.hideSoftKeyboard((Activity) getContext());
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
@@ -491,7 +495,6 @@ public class MessageListView extends RecyclerView {
             });
         }
     }
-
 
     public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
         this.attachmentClickListener = attachmentClickListener;
@@ -513,6 +516,7 @@ public class MessageListView extends RecyclerView {
             adapter.setReactionViewClickListener(this.reactionViewClickListener);
         } else {
             adapter.setReactionViewClickListener(message -> {
+                Utils.hideSoftKeyboard((Activity) getContext());
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
@@ -587,7 +591,7 @@ public class MessageListView extends RecyclerView {
                     }
 
                     int position = message.getAttachments().indexOf(attachment);
-                    if (position > imageUrls.size() -1) position = 0;
+                    if (position > imageUrls.size() - 1) position = 0;
                     new ImageViewer.Builder<>(getContext(), imageUrls)
                             .setStartPosition(position)
                             .show();
@@ -668,9 +672,11 @@ public class MessageListView extends RecyclerView {
     public interface ReadStateClickListener {
         void onReadStateClick(List<ChannelUserRead> reads);
     }
+
     public interface ReactionViewClickListener {
         void onReactionViewClick(Message message);
     }
+
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 
