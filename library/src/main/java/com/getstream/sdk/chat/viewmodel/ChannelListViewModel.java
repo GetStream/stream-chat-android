@@ -422,7 +422,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     /**
      * loads more channels, use this to load a previous page
-     *
      */
     public void loadMore() {
         if (!client().isConnected()) {
