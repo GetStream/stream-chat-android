@@ -48,6 +48,23 @@ public class StreamChat {
         }
     }
 
+    private static void handleConnectedUser() {
+        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                userWasInitialized = true;
+                onlineStatus.postValue(OnlineStatus.CONNECTED);
+                totalUnreadMessages.postValue(user.getTotalUnreadCount());
+                unreadChannels.postValue(user.getUnreadChannels());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        });
+    }
+
     private static synchronized void setupEventListeners() {
         Log.i(TAG, "setupEventListeners");
         INSTANCE.addEventHandler(new ChatEventHandler() {
@@ -59,6 +76,7 @@ public class StreamChat {
                 } else {
                     onlineStatus.postValue(OnlineStatus.FAILED);
                 }
+                handleConnectedUser();
             }
 
             @Override
@@ -102,15 +120,12 @@ public class StreamChat {
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();
+                handleConnectedUser();
 
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
                         Log.i(TAG, "set user worked out well");
-                        userWasInitialized = true;
-                        onlineStatus.postValue(OnlineStatus.CONNECTED);
-                        totalUnreadMessages.postValue(user.getTotalUnreadCount());
-                        unreadChannels.postValue(user.getUnreadChannels());
                         setupEventListeners();
 
                         new StreamLifecycleObserver(new LifecycleHandler() {
