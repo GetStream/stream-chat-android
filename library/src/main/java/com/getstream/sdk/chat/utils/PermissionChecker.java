@@ -2,14 +2,8 @@ package com.getstream.sdk.chat.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.view.View;
-import android.widget.Button;
-
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -35,8 +29,7 @@ public class PermissionChecker {
                 permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
             if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-                permissions.add(Manifest.permission.CAMERA);
-            }
+                permissions.add(Manifest.permission.CAMERA);            }
 
             if (!permissions.isEmpty()) {
                 if (fragment == null)
@@ -49,20 +42,4 @@ public class PermissionChecker {
         }
     }
 
-    public static void showRationalDialog(Context context, Fragment fragment) {
-        final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setTitle("You must allow these permissions to use the Attachments feature!")
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
-
-        alertDialog.setOnShowListener((DialogInterface dialog) -> {
-
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener((View view) -> {
-                permissionCheck((Activity) context, fragment);
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
-    }
 }

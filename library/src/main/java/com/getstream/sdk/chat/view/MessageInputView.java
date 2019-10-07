@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -378,6 +379,18 @@ public class MessageInputView extends RelativeLayout
         }
     }
 
+    private boolean isGrantedPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasStoragePermission = getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int hasReadPermission = getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            int hasCameraPermission = getContext().checkSelfPermission(Manifest.permission.CAMERA);
+            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
+                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED)
+                    && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
+        } else
+            return true;
+    }
+
     public Message getEditMessage() {
         return viewModel.getEditMessage().getValue();
     }
@@ -409,7 +422,7 @@ public class MessageInputView extends RelativeLayout
             this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
-            if (style.isPermissionSet())
+            if (style.isPermissionSet() || isGrantedPermissions())
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             else
                 permissionRequestListener.openPermissionRequest();
