@@ -443,6 +443,18 @@ public class MessageInputView extends RelativeLayout
             Utils.hideSoftKeyboard((Activity) getContext());
     }
 
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    public Message prepareMessage(String input) {
+        Message m = new Message();
+        m.setStatus(null);
+        m.setText(input);
+        m.setAttachments(messageInputClient.getSelectedAttachments());
+        return m;
+    }
+
     private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
 
@@ -465,10 +477,7 @@ public class MessageInputView extends RelativeLayout
                 }
             });
         } else {
-            Message m = new Message();
-            m.setStatus(null);
-            m.setText(input);
-            m.setAttachments(messageInputClient.getSelectedAttachments());
+            Message m = prepareMessage(input);
             viewModel.sendMessage(m, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
