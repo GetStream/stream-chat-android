@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -60,9 +59,10 @@ public class ChannelActivity extends AppCompatActivity
         }
 
         Channel channel = client.channel(channelType, channelID);
-        viewModel = ViewModelProviders.of(this,
-                new ChannelViewModelFactory(this.getApplication(), channel)
-        ).get(ChannelViewModel.class);
+
+        // setup the viewmodel, remember to also set the channel
+        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
+        viewModel.setChannel(channel);
 
         // set listeners
         binding.messageList.setMessageLongClickListener(this);
