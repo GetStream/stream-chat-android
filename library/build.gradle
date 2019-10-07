@@ -54,7 +54,7 @@ dependencies {
     implementation 'me.relex:photodraweeview:1.1.0'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
 
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
+//    implementation 'com.google.firebase:firebase-messaging:20.0.0'
     implementation 'androidx.media:media:1.1.0'
     // ExoPlayer
     api 'com.google.android.exoplayer:exoplayer-core:2.9.6'
