@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
+    final Boolean offlineEnabled = false;
     final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
     final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
@@ -54,7 +56,12 @@ public class MainActivity extends AppCompatActivity {
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
-        //client.enableOfflineStorage();
+
+        Crashlytics.setUserIdentifier(USER_ID);
+        if (offlineEnabled) {
+            client.enableOfflineStorage();
+        }
+        Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");

@@ -10,10 +10,11 @@
 - Added support for deleting a channel
 - Add support for switching users via `client.disconnect` and `client.setUser`
 - Add `reload` method to `ChannelListViewModel`
+- Bugfix: hides attachment drawer after deny permission
 
 #### Breaking changes:
 
-- Nothing yet
+- `MessageInputView#progressCapturedMedia(int requestCode, int resultCode, Intent data)` renamed into `captureMedia(int requestCode, int resultCode, Intent data)`
 
 ## September 28, 2019 - 2.1.0
 

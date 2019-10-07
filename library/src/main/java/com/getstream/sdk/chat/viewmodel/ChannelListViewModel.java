@@ -412,7 +412,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
-                if (channels != null)
+                if (channels != null && channelStates != null)
                     addChannels(channelStates);
                 callback.onSuccess(channelStates);
             }
