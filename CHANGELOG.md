@@ -7,6 +7,13 @@
 - General improvements to Message Input View
 - Added ReactionViewClickListener
 - Added support for banning and unbanning users
+- Added support for deleting a channel
+- Add support for switching users via `client.disconnect` and `client.setUser`
+- Add `reload` method to `ChannelListViewModel`
+
+### Breaking changes:
+
+- Nothing yet
 
 ## September 28, 2019 - 2.1.0
 
