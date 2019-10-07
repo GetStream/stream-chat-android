@@ -57,6 +57,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private int recoverySubscriptionId = 0;
     private Handler retryLooper;
 
+    private QueryChannelListCallback queryChannelListCallback;
+
     public RetryPolicy getRetryPolicy() {
         return retryPolicy;
     }
@@ -397,6 +399,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
                 }
+
+                if (queryChannelListCallback != null) {
+                    queryChannelListCallback.onSuccess(response);
+                }
             }
 
             @Override
@@ -415,6 +421,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 retryLooper.postDelayed(() -> {
                     queryChannelsInner(attempt + 1);
                 }, sleep);
+
+                if (queryChannelListCallback != null) {
+                    queryChannelListCallback.onError(errMsg, errCode);
+                }
             }
         };
         client().queryChannels(request, queryCallback);
@@ -542,6 +552,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(new ArrayList<>());
         queryChannels();
         reachedEndOfPagination = false;
+    }
+
+    public QueryChannelListCallback getQueryChannelListCallback() {
+        return queryChannelListCallback;
+    }
+
+    public void setQueryChannelListCallback(QueryChannelListCallback queryChannelListCallback) {
+        this.queryChannelListCallback = queryChannelListCallback;
     }
 
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
