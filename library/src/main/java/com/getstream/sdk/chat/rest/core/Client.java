@@ -27,14 +27,13 @@ import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
+import com.getstream.sdk.chat.rest.interfaces.DeleteChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
@@ -48,7 +47,7 @@ import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.DevicesResponse;
+import com.getstream.sdk.chat.rest.response.DeleteChannelResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -168,7 +167,12 @@ public class Client implements WSResponseHandler {
                     channel.handleChannelUpdated(channel);
                 }
 
-                // TODO: what about deleted channels?
+                @Override
+                public void onChannelDeleted(Channel channel, Event event) {
+                    storage().deleteChannel(channel);
+                    activeChannels.remove(channel);
+                }
+
                 // TODO: what about user update events?
 
                 @Override
@@ -483,8 +487,6 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
-        builtinHandler.dispatchEvent(this, event);
-
         for (int i = eventSubscribers.size() - 1; i >= 0; i--) {
             ChatEventHandler handler = eventSubscribers.get(i);
             handler.dispatchEvent(this, event);
@@ -494,6 +496,8 @@ public class Client implements WSResponseHandler {
         if (channel != null) {
             channel.handleChannelEvent(event);
         }
+
+        builtinHandler.dispatchEvent(this, event);
     }
 
     /**
@@ -658,27 +662,36 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * deletes the given channel
+     * removes the channel. Messages are permanently removed.
      *
-     * @param channelType the type of channel to delete
-     * @param channelId the id of the channel to delete
+     * @param channel  the channel needs to delete
      * @param callback the result callback
      */
-    public void deleteChannel(@NonNull String channelType, @NonNull String channelId, QueryChannelCallback callback) {
-
-        mService.deleteChannel(channelType, channelId, apiKey, user.getId(), clientID).enqueue(new Callback<ChannelState>() {
+    public void deleteChannel(@NonNull Channel channel, @NotNull DeleteChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                callback.onSuccess(response.body());
+            public void onSuccess(User user) {
+                mService.deleteChannel(channel.getType(), channel.getId(), apiKey, clientID)
+                        .enqueue(new Callback<DeleteChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<DeleteChannelResponse> call, Response<DeleteChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -753,6 +766,7 @@ public class Client implements WSResponseHandler {
             }
         });
     }
+
 
     // region Message
 
@@ -1363,21 +1377,21 @@ public class Client implements WSResponseHandler {
      * addDevice - Adds a push device for a user.
      */
     public void addDevice(@NonNull String deviceId,
-                          DeviceCallback callback) {
+                          CompletableCallback callback) {
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
         onSetUserCompleted(
                 new ClientConnectionCallback() {
 
                     @Override
                     public void onSuccess(User user) {
-                        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
+                        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {
@@ -1433,19 +1447,19 @@ public class Client implements WSResponseHandler {
      * removeDevice - Removes the device with the given id. Clientside users can only delete their own devices
      */
     public void removeDevice(@NonNull String deviceId,
-                             DeviceCallback callback) {
+                             CompletableCallback callback) {
         onSetUserCompleted(
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
+                        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {

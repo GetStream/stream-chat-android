@@ -32,6 +32,9 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
         if (channel.getType() != null)
             data.put("type", channel.getType());
 
+        if (channel.getDeletedAt() != null)
+            data.put("deleted_at", channel.getDeletedAt());
+
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
     }
@@ -51,11 +54,11 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
         HashMap<String, Object> extraData = new HashMap<>();
 
         // TODO: is approach (like Java) is super dumb, we decode data twice
-        for (HashMap.Entry<String, Object> set : value.entrySet()) {   
-            String json = gson.toJson(set.getValue());      
+        for (HashMap.Entry<String, Object> set : value.entrySet()) {
+            String json = gson.toJson(set.getValue());
             // Set Reserved Data
             switch (set.getKey()) {
-                case "id":              
+                case "id":
                     channel.setId((String) set.getValue());
                     continue;
                 case "cid":
@@ -72,6 +75,9 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     continue;
                 case "created_at":
                     channel.setCreatedAt(gson.fromJson(json, Date.class));
+                    continue;
+                case "deleted_at":
+                    channel.setDeletedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "updated_at":
                     channel.setUpdatedAt(gson.fromJson(json, Date.class));
