@@ -397,37 +397,57 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().queryChannels(request, queryCallback);
     }
 
-    private void queryChannels() {
+    /**
+     * query channels
+     *
+     * @param callback the result callback
+     */
+    public void queryChannels(Storage.OnQueryListener<List<ChannelState>> callback) {
         Log.i(TAG, "queryChannels for loading the channels");
-        if (!setLoading()) return;
+        if (!setLoading()) {
+            Log.i(TAG, "already loading, skip queryChannels");
+            return;
+        }
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
         client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
             @Override
-            public void onSuccess(List<ChannelState> channels) {
-                Log.i(TAG, "Read from local cache...");
-                if (channels != null) {
-                    addChannels(channels);
-                }
+            public void onSuccess(List<ChannelState> channelStates) {
+                if (channels != null)
+                    addChannels(channelStates);
+                callback.onSuccess(channelStates);
             }
 
             @Override
             public void onFailure(Exception e) {
-                // TODO
+                callback.onFailure(e);
             }
         });
         queryChannelsInner(0);
     }
 
+    public void queryChannels(){
+        queryChannels(new Storage.OnQueryListener<List<ChannelState>>() {
+            @Override
+            public void onSuccess(List<ChannelState> channelStates) {
+                Log.i(TAG, "Read from local cache...");
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Log.e(TAG, e.getLocalizedMessage());
+            }
+        });
+    }
+
     /**
      * loads more channels, use this to load a previous page
      *
+     * @param callback the result callback
      */
-    public void loadMore() {
-        if (!client().isConnected()) {
-            return;
-        }
+    public void loadMore(QueryChannelListCallback callback) {
+        if (!client().isConnected()) return;
 
         if (isLoading.get()) {
             Log.i(TAG, "already loading, skip loading more");
@@ -446,9 +466,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 .withLimit(pageSize)
                 .withMessageLimit(20);
 
-        if (channels.getValue() != null) {
+        if (channels.getValue() != null)
             request = request.withOffset(channels.getValue().size());
-        }
 
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
@@ -456,17 +475,32 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Log.i(TAG, "onSendMessageSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
+                reachedEndOfPagination = response.getChannelStates().size() < pageSize;
 
-                if (response.getChannelStates().size() < pageSize) {
+                if (reachedEndOfPagination)
                     Log.i(TAG, "reached end of pagination");
-                    reachedEndOfPagination = true;
-                }
+                callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels" + errMsg);
                 setLoadingMoreDone();
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    public void loadMore() {
+        loadMore(new QueryChannelListCallback() {
+            @Override
+            public void onSuccess(QueryChannelsResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
             }
         });
     }
@@ -481,7 +515,5 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 viewModel.queryChannels();
             }
         }
-
     }
-
 }

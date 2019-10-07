@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
@@ -320,7 +322,7 @@ public class MessageInputView extends RelativeLayout
 
     // endregion
     // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
-    public void progressCapturedMedia(int requestCode, int resultCode, Intent data) {
+    public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
                 File file = null;
@@ -347,6 +349,23 @@ public class MessageInputView extends RelativeLayout
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    /*Used for handling requestPermissionsResult*/
+    public void permissionResult(int requestCode, @NonNull String[] permissions,
+                                 @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean granted = true;
+            for (int grantResult : grantResults)
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    granted = false;
+                    break;
+                }
+            if (!granted) {
+                style.setShowAttachmentButton(granted);
+                messageInputClient.onClickCloseBackGroundView();
+                binding.ivOpenAttach.setVisibility(GONE);
             }
         }
     }
@@ -406,7 +425,8 @@ public class MessageInputView extends RelativeLayout
         }
         // detect commands
         messageInputClient.checkCommand(messageText);
-        if (messageText.equals(" "))
+        String s_ = messageText.replaceAll("\\s+","");
+        if (TextUtils.isEmpty(s_))
             binding.setActiveMessageSend(false);
         else
             binding.setActiveMessageSend(messageText.length() != 0);
@@ -429,7 +449,7 @@ public class MessageInputView extends RelativeLayout
         if (isEdit) {
             getEditMessage().setText(input);
             getEditMessage().setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.getChannel().updateMessage(getEditMessage(), new MessageCallback() {
+            viewModel.getChannel().updateMessage(getEditMessage(),  new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
@@ -454,9 +474,8 @@ public class MessageInputView extends RelativeLayout
                 public void onSuccess(MessageResponse response) {
                     binding.ivSend.setEnabled(true);
                     initSendMessage();
-                    if (sendMessageListener != null) {
+                    if (sendMessageListener != null)
                         sendMessageListener.onSendMessageSuccess(response.getMessage());
-                    }
                 }
 
                 @Override
@@ -464,7 +483,7 @@ public class MessageInputView extends RelativeLayout
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
                     if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(errMsg, errCode);
+                        sendMessageListener.onSendMessageError(errMsg);
                     } else {
                         Utils.showMessage(getContext(), errMsg);
                     }
@@ -484,8 +503,8 @@ public class MessageInputView extends RelativeLayout
         this.sendMessageListener = l;
     }
 
-    public void setOpenCameraViewListener(OpenCameraViewListener openCameraViewListener) {
-        this.openCameraViewListener = openCameraViewListener;
+    public void setOpenCameraViewListener(OpenCameraViewListener l) {
+        this.openCameraViewListener = l;
     }
 
 
@@ -496,7 +515,7 @@ public class MessageInputView extends RelativeLayout
      */
     public interface SendMessageListener {
         void onSendMessageSuccess(Message message);
-        void onSendMessageError(String errMsg, int errCod);
+        void onSendMessageError(String errMsg);
 
     }
 

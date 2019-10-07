@@ -40,11 +40,6 @@ import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.FileSendResponse;
-import com.getstream.sdk.chat.rest.response.FlagResponse;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
@@ -470,7 +465,8 @@ public class Channel {
     /**
      * watch - Loads the initial channel state and watches for changes
      */
-    public void watch(@NonNull ChannelWatchRequest request, QueryWatchCallback callback) {
+    public void watch(@NonNull ChannelWatchRequest request,
+                      @NonNull QueryWatchCallback callback) {
         query(request, new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
@@ -487,7 +483,8 @@ public class Channel {
     /**
      * query - Query the API, get messages, members or other channel fields
      */
-    public void query(@NonNull ChannelQueryRequest request, QueryChannelCallback callback) {
+    public void query(@NonNull ChannelQueryRequest request,
+                      @NonNull QueryChannelCallback callback) {
         Channel channel = this;
 
         Callback queryChannelCallback = new Callback<ChannelState>() {
@@ -554,18 +551,11 @@ public class Channel {
      *
      * @return {object} Returns a getReplies response
      */
-    public void getReplies(@NonNull String parentId, int limit, String firstMessageId, final GetRepliesCallback callback) {
-        client.getReplies(parentId, limit, firstMessageId, new GetRepliesCallback() {
-            @Override
-            public void onSuccess(GetRepliesResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+    public void getReplies(@NonNull String parentId,
+                           int limit,
+                           @NonNull String firstMessageId,
+                           @NonNull GetRepliesCallback callback) {
+        client.getReplies(parentId, limit, firstMessageId, callback);
     }
 
     public ChannelState getChannelState() {
@@ -601,95 +591,40 @@ public class Channel {
     }
 
     // region Message
-    public void sendMessage(Message message,
-                            MessageCallback callback) {
+    public void sendMessage(@NonNull Message message,
+                            @NonNull MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-
-        client.sendMessage(this, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                if (callback != null)
-                    callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.d(TAG, "Send Message Error: " + errMsg);
-                if (callback != null)
-                    callback.onError(errMsg, errCode);
-            }
-        });
+        client.sendMessage(this, request, callback);
     }
 
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-
-        client.updateMessage(message.getId(), request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+        client.updateMessage(message.getId(), request, callback);
     }
 
     public void deleteMessage(@NonNull Message message,
                               MessageCallback callback) {
-        client.deleteMessage(message.getId(), new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+        client.deleteMessage(message.getId(), callback);
     }
 
-    public void sendImage(Attachment attachment,
-                          SendFileCallback fileCallback) {
-        File file = new File(attachment.config.getFilePath());
+    public void sendImage(@NotNull String filePath,
+                          @NotNull SendFileCallback fileCallback) {
+        File file = new File(filePath);
         RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendImage(this, part, new SendFileCallback() {
-            @Override
-            public void onSuccess(FileSendResponse response) {
-                fileCallback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                fileCallback.onError(errMsg, errCode);
-            }
-        });
+        client.sendImage(this, part, fileCallback);
     }
 
-    public void sendFile(Attachment attachment,
-                         SendFileCallback fileCallback) {
-        File file = new File(attachment.config.getFilePath());
-
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(attachment.getMime_type()), file);
+    public void sendFile(@NotNull String filePath,
+                         @NotNull String mimeType,
+                         @NotNull SendFileCallback fileCallback) {
+        File file = new File(filePath);
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendFile(this, part, new SendFileCallback() {
-            @Override
-            public void onSuccess(FileSendResponse response) {
-                fileCallback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                fileCallback.onError(errMsg, errCode);
-            }
-        });
+        client.sendFile(this, part, fileCallback);
     }
     // endregion
 
@@ -701,19 +636,11 @@ public class Channel {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(String mesageId, String type, MessageCallback callback) {
+    public void sendReaction(@NotNull String mesageId,
+                             @NotNull String type,
+                             @NotNull MessageCallback callback) {
         ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+        client.sendReaction(mesageId, request, callback);
     }
 
     /**
@@ -724,63 +651,27 @@ public class Channel {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(String mesageId, String type, MessageCallback callback) {
-        client.deleteReaction(mesageId, type, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+    public void deleteReaction(@NonNull String mesageId,
+                               @NonNull String type,
+                               @NonNull MessageCallback callback) {
+        client.deleteReaction(mesageId, type, callback);
     }
 
     public void sendAction(@NonNull String messageId,
                            @NonNull SendActionRequest request,
-                           MessageCallback callback) {
+                           @NotNull MessageCallback callback) {
 
-        client.sendAction(messageId, request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+        client.sendAction(messageId, request, callback);
     }
 
-    public void flagMessage(String messageId, FlagCallback callback) {
-        client.flagMessage(messageId, new FlagCallback() {
-            @Override
-            public void onSuccess(FlagResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+    public void flagMessage(@NotNull String messageId,
+                            @NotNull  FlagCallback callback) {
+        client.flagMessage(messageId, callback);
     }
 
-    public void unFlagMessage(String messageId, FlagCallback callback) {
-        client.unFlagMessage(messageId, new FlagCallback() {
-            @Override
-            public void onSuccess(FlagResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+    public void unFlagMessage(@NotNull String messageId,
+                              @NotNull FlagCallback callback) {
+        client.unFlagMessage(messageId, callback);
     }
 
     /**
@@ -861,39 +752,20 @@ public class Channel {
      * @return The Server Response
      */
     // TODO: check this function
-    public void sendEvent(EventType eventType, final EventCallback callback) {
+    public void sendEvent(@NotNull EventType eventType,
+                          @NotNull EventCallback callback) {
         final Map<String, Object> event = new HashMap<>();
         event.put("type", eventType.label);
         SendEventRequest request = new SendEventRequest(event);
-
-        client.sendEvent(this, request, new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+        client.sendEvent(this, request, callback);
     }
 
     /**
      * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
+     * @param callback the result callback
      */
-    public void markRead() {
-        client.markRead(this, new MarkReadRequest(null), new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-                Log.i(TAG, "mark read successful: " + response.getEvent().getUserId());
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, "mark read failed with error " + errMsg);
-            }
-        });
+    public void markRead(@NotNull EventCallback callback) {
+        client.markRead(this, new MarkReadRequest(null), callback);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -50,9 +51,9 @@ public class MessageInputStyle extends BaseStyle {
     private Drawable inputSelectedBackground;
     private Drawable inputEditBackground;
 
-
     public MessageInputStyle(Context context, AttributeSet attrs) {
         setContext(context);
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MessageInputView);
         // Attachment Button
         showAttachmentButton = a.getBoolean(R.styleable.MessageInputView_streamShowAttachmentButton, true);
@@ -106,6 +107,9 @@ public class MessageInputStyle extends BaseStyle {
         avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
         a.recycle();
+
+        prefs = context.getSharedPreferences(
+                "MessageInputStyle", Context.MODE_PRIVATE);
     }
 
     private Drawable getSelector(@ColorInt int normalColor, @ColorInt int pressedColor,
@@ -126,8 +130,16 @@ public class MessageInputStyle extends BaseStyle {
     }
 
     // Attachment Button
+    private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
+    private final String showAttachmentButtonKey = "showAttachmentButton";
+
     public boolean showAttachmentButton() {
-        return showAttachmentButton;
+        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+    }
+
+    public void setShowAttachmentButton(boolean showAttachmentButton) {
+        this.showAttachmentButton = showAttachmentButton;
+        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
     }
 
     public Drawable getAttachmentButtonIcon(boolean isSelected) {
