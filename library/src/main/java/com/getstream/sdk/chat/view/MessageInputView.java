@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,7 +44,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputClient;
-import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -84,6 +84,8 @@ public class MessageInputView extends RelativeLayout
     private MessageInputStyle style;
     /** Fired when a message is sent */
     private SendMessageListener sendMessageListener;
+    /** Permission Request listener */
+    private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
     private OpenCameraViewListener openCameraViewListener;
     /**
@@ -357,16 +359,22 @@ public class MessageInputView extends RelativeLayout
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
             boolean granted = true;
-            for (int grantResult : grantResults)
-                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+                if (!permission.equals(Manifest.permission.CAMERA)
+                        && grantResult != PackageManager.PERMISSION_GRANTED) {
                     granted = false;
                     break;
                 }
-            if (!granted) {
-                style.setShowAttachmentButton(granted);
-                messageInputClient.onClickCloseBackGroundView();
-                binding.ivOpenAttach.setVisibility(GONE);
             }
+
+            style.setShowAttachmentButton(granted);
+            if (granted)
+                messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            else
+                binding.ivOpenAttach.setVisibility(GONE);
+
         }
     }
 
@@ -401,8 +409,10 @@ public class MessageInputView extends RelativeLayout
             this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
-            PermissionChecker.permissionCheck((Activity) v.getContext(), null);
-            messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            if (style.isPermissionSet())
+                messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            else
+                permissionRequestListener.openPermissionRequest();
         }
     }
 
@@ -503,6 +513,10 @@ public class MessageInputView extends RelativeLayout
         this.sendMessageListener = l;
     }
 
+    public void setPermissionRequestListener(PermissionRequestListener l) {
+        this.permissionRequestListener = l;
+    }
+
     public void setOpenCameraViewListener(OpenCameraViewListener l) {
         this.openCameraViewListener = l;
     }
@@ -525,7 +539,12 @@ public class MessageInputView extends RelativeLayout
     public interface AttachmentListener {
         void onAddAttachments();
     }
-
+    /**
+     * Interface for Permission request
+     */
+    public interface PermissionRequestListener {
+        void openPermissionRequest();
+    }
     /**
      * Interface for opening the camera view
      */
