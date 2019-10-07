@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -48,7 +49,6 @@ import com.getstream.sdk.chat.utils.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
 
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,6 +67,39 @@ import static java.util.UUID.randomUUID;
  */
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
     private static final String TAG = ChannelViewModel.class.getSimpleName();
+
+
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+
+        // fetch offline messages
+        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
+            @Override
+            public void onSuccess(ChannelState channelState) {
+                Log.i(TAG, "Read messages from local cache...");
+                if (channelState != null) {
+                    messages.setValue(channelState.getMessages());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
+
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        messages.setValue(channel.getChannelState().getMessages());
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        channelState = new MutableLiveData<>(channel.getChannelState());
+        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+
+        initEventHandlers();
+    }
+
+
 
     private Channel channel;
     private Looper looper;
@@ -100,10 +133,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
 
-    public ChannelViewModel(Application application, Channel channel) {
+    public ChannelViewModel(@NonNull Application application) {
         super(application);
-        this.channel = channel;
-
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
@@ -119,27 +150,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
-        messages.setValue(channel.getChannelState().getMessages());
+
 
         threadMessages = new LazyQueryChannelLiveData<>();
         threadMessages.viewModel = this;
         threadMessages.setValue(null);
-
-        // fetch offline messages
-        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
-            @Override
-            public void onSuccess(ChannelState channelState) {
-                Log.i(TAG, "Read messages from local cache...");
-                if (channelState != null) {
-                    messages.setValue(channelState.getMessages());
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                // TODO
-            }
-        });
 
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
@@ -147,17 +162,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         reads = new LazyQueryChannelLiveData<>();
         reads.viewModel = this;
-        reads.setValue(channel.getChannelState().getReadsByUser());
+
 
         entities = new MessageListItemLiveData(client().getUser(), messages, threadMessages, typingUsers, reads);
-        reads.setValue(channel.getChannelState().getReadsByUser());
 
         typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
 
-        channelState = new MutableLiveData<>(channel.getChannelState());
-        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+
 
         Callable<Void> markRead = () -> {
             channel.markRead(new EventCallback() {
@@ -177,8 +189,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         looper.start();
 
         new StreamLifecycleObserver(this);
-        initEventHandlers();
+
         setupConnectionRecovery();
+    }
+
+    public ChannelViewModel(Application application, Channel channel) {
+        this(application);
+        setChannel(channel);
+
     }
 
     public Channel getChannel() {

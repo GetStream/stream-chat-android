@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,7 +19,7 @@ public class ChannelViewModelFactory implements ViewModelProvider.Factory {
     }
 
     @Override
-    public <T extends ViewModel> T create(Class<T> modelClass) {
+    public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         return (T) new ChannelViewModel(mApplication, mChannel);
     }
 }
