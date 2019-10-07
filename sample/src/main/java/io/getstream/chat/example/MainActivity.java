@@ -29,7 +29,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -170,22 +169,20 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
-        members.add("broken-waterfall-5");
+        extraData.put("members", members);
 
-        Channel channel = new Channel(client, ModelType.channel_messaging, extraData, members);
+        String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10);
 
         viewModel.setLoading();
         channel.query(request, new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-                Channel channel = response.getChannel();
-                channel.setClient(client);
                 Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
-                viewModel.addChannels(Arrays.asList(response));
                 viewModel.setLoadingDone();
             }
 
