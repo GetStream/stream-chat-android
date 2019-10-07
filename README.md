@@ -187,6 +187,36 @@ client.setUser(user, listener -> {
 
 The listener will be called to fetch the user token and once the token is expired; the SDK will retry failed API calls and re-sync history so that no messages are lost during the renewal process.
 
+### Switch users
+
+You can switch from a user to another by calling `disconnect` and `setUser` again. When doing so you are responsible of reloading/re-render the UI. 
+
+This example switches to a different user and calls the `reload` method on the `ChannelListViewModel` when `setUser` is completed.
+
+```java
+void switchUser(String userId, String token) {
+    Client client = StreamChat.getInstance(getApplication());
+    client.disconnect();
+
+    User user = new User(userId);
+    client.setUser(user, token);
+
+    viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+
+    client.onSetUserCompleted(new ClientConnectionCallback() {
+        @Override
+        public void onSuccess(User user) {
+            viewModel.reload();
+        }
+
+        @Override
+        public void onError(String errMsg, int errCode) {
+
+        }
+    });
+}
+```
+
 ## Online status
 
 Connection status to Chat is available via `StreamChat.getOnlineStatus()` which returns a LiveData object you can attach observers to.
