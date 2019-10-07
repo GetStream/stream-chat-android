@@ -90,14 +90,15 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         new StreamLifecycleObserver(this);
         retryLooper = new Handler();
 
+        // default retry policy is to retry the request 100 times
         retryPolicy = new RetryPolicy() {
             @Override
-            public boolean shouldRetry(Integer attempt, String errMsg, int errCode) {
+            public boolean shouldRetry(Client client, Integer attempt, String errMsg, int errCode) {
                 return attempt < 100;
             }
 
             @Override
-            public Integer retryTimeout(Integer attempt, String errMsg, int errCode) {
+            public Integer retryTimeout(Client client, Integer attempt, String errMsg, int errCode) {
                 return Math.min(500 * (attempt * attempt + 1), 30000);
             }
         };
@@ -401,7 +402,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels " + errMsg);
-                Boolean shouldRetry = retryPolicy.shouldRetry(attempt, errMsg, errCode);
+                Boolean shouldRetry = retryPolicy.shouldRetry(client(), attempt, errMsg, errCode);
                 if (!shouldRetry) {
                     Log.e(TAG, "tried more than 100 times, give up now");
                     return;
@@ -409,7 +410,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 if (!client().isConnected()) {
                     return;
                 }
-                int sleep = retryPolicy.retryTimeout(attempt, errMsg, errCode);
+                int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
                 Log.d(TAG, "retrying in " + sleep);
                 retryLooper.postDelayed(() -> {
                     queryChannelsInner(attempt + 1);
