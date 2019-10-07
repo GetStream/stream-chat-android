@@ -42,7 +42,7 @@ public class MessageInputClient {
     MessageInputStyle style;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    CommandMentionListItemAdapter commandMentionListItemAdapter = null;
+    CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
     List<Object> commands = null;
     Context context;
     StreamViewMessageInputBinding binding;
@@ -107,6 +107,7 @@ public class MessageInputClient {
         binding.clCommand.setVisibility(View.GONE);
         binding.getRoot().setBackgroundResource(0);
         messageInputType = null;
+        commandMentionListItemAdapter = null;
     }
 
     private void initLoadAttachemtView() {
@@ -217,9 +218,9 @@ public class MessageInputClient {
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
-                viewModel.getChannel().sendImage(attachment, callback);
+                viewModel.getChannel().sendImage(attachment.config.getFilePath(), callback);
             } else {
-                viewModel.getChannel().sendFile(attachment, callback);
+                viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             }
         } else
             selectedAttachments.remove(attachment);
@@ -274,7 +275,7 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            viewModel.getChannel().sendFile(attachment, new SendFileCallback() {
+            viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.ivSend.setEnabled(true);
@@ -413,8 +414,7 @@ public class MessageInputClient {
             if (!commands.isEmpty() && binding.clCommand.getVisibility() != View.VISIBLE)
                 openCommandView();
 
-            if (commandMentionListItemAdapter != null)
-                commandMentionListItemAdapter.notifyDataSetChanged();
+            setCommandMentionListItemAdapter(text.startsWith("/"));
 
             if (commands.isEmpty())
                 closeCommandView();
@@ -430,29 +430,53 @@ public class MessageInputClient {
         String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
         binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
-        commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
-        binding.lvCommand.setAdapter(commandMentionListItemAdapter);
+        setCommandMentionListItemAdapter(isCommand);
+
         openCommandView();
-        binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int i, long l) -> {
-            if (isCommand) {
-                binding.etMessage.setText("/" + ((Command) commands.get(i)).getName() + " ");
-            } else {
-                binding.etMessage.setText(binding.etMessage.getText().toString() + ((User) commands.get(i)).getName() + " ");
+        binding.lvCommand.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
+            if (isCommand)
+                binding.etMessage.setText("/" + ((Command) commands.get(position)).getName() + " ");
+            else {
+                String messageStr = binding.etMessage.getText().toString();
+                String[] names = messageStr.split("@");
+                String messageStr_ = "";
+                int index;
+                if (messageStr.substring(messageStr.length() -1).equals("@"))
+                    index = names.length;
+                else
+                    index = names.length - 1;
+
+                for (int i = 0; i < index; i++){
+                    if (TextUtils.isEmpty(names[i])) continue;
+                    messageStr_ += "@" + names[i];
+                }
+                messageStr_ += "@";
+                binding.etMessage.setText(messageStr_ + ((User) commands.get(position)).getName() + " ");
             }
             binding.etMessage.setSelection(binding.etMessage.getText().length());
             closeCommandView();
         });
     }
-
+    private void setCommandMentionListItemAdapter(boolean isCommand){
+        if (commandMentionListItemAdapter  == null) {
+            commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
+            binding.lvCommand.setAdapter(commandMentionListItemAdapter);
+        }else{
+            commandMentionListItemAdapter.setCommand(isCommand);
+            commandMentionListItemAdapter.setCommands(commands);
+            commandMentionListItemAdapter.notifyDataSetChanged();
+        }
+    }
     private void setCommandsMentionUsers(String string) {
-        String string_ = string.replace(string.substring(0, 1), "");
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
-            setCommands(string_);
-            binding.tvCommand.setText(string_);
+            String commandStr = string.replace("/", "");
+            setCommands(commandStr);
+            binding.tvCommand.setText(commandStr);
         } else {
-            setMentionUsers(string_);
+            String[] names = string.split("@");
+            setMentionUsers(names[names.length - 1]);
         }
     }
 
@@ -467,12 +491,13 @@ public class MessageInputClient {
     }
 
     private void setMentionUsers(String string) {
+        Log.d(TAG, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         for (int i = 0; i < viewModel.getChannel().getChannelState().getMembers().size(); i++) {
             Member member = viewModel.getChannel().getChannelState().getMembers().get(i);
             User user = member.getUser();
-            if (user.getName().contains(string))
+            if (user.getName().toLowerCase().contains(string.toLowerCase()))
                 commands.add(user);
         }
     }

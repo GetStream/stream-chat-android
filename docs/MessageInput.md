@@ -1,4 +1,8 @@
 ### Message Input
+The MessageInput is used to enter a message with text, attachments(images & videos and the other files).
+Typically it will show:
+
+- Attachment Button
 
 Here's an example message input view
 
@@ -75,6 +79,45 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamInputBackground`         | reference   | -       |
 | `app:streamInputSelectedBackground` | reference   | -       |
 | `app:streamInputEditBackground`     | reference   | -       |
+
+
+#### Listeners
+
+The following listeners can be set
+
+* setOnSendMessageListener
+* setOpenCameraViewListener
+
+#### Send a message with attachments
+
+* Permission Request
+
+You can send messages with attachments like images, videos and other files.
+To upload an attachment, you must allow proper permissions to access the camera and storage on your device.
+So you need to add the following code to ChannelActivity:
+
+```java
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                       @NonNull int[] grantResults) {
+    // If you are using own MessageInputView please comment this line.
+    binding.messageInput.permissionResult(requestCode, permissions, grantResults);
+}
+```
+
+* Send Images and Videos from camera
+
+After capturing an image or video from the device's camera, it should be processed by `ChannelActivity`.
+
+```java
+@Override
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    // If you are using own MessageInputView please comment this line.
+    binding.messageInput.captureMedia(requestCode, resultCode, data);
+}
+```
+
 
 ### Writing your own message input view
 

@@ -50,7 +50,7 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         HashMap<String, Object> extraData = new HashMap<>();
 
         for (HashMap.Entry<String, Object> set : value.entrySet()) {            
-            String json = gson.toJson(set.getValue());     
+            String json = gson.toJson(set.getValue());
             // Set Reserved Data
             switch (set.getKey()) {
                 case "id":
@@ -58,9 +58,11 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                     continue;
                 case "name":
                     user.setName((String) set.getValue());
+                    if (user.getName() == null) user.setName("");
                     continue;
                 case "image":
                     user.setImage((String) set.getValue());
+                    if (user.getImage() == null) user.setImage("");
                     continue;
                 case "role":
                     user.setRole((String) set.getValue());
