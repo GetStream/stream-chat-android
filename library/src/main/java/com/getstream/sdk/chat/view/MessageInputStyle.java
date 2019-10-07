@@ -22,7 +22,7 @@ import com.getstream.sdk.chat.R;
 public class MessageInputStyle extends BaseStyle {
 
     private boolean showAttachmentButton;
-
+    private boolean permissionSet;
     private int attachmentButtonIcon;
     private int attachmentButtonDefaultIconColor;
     private int attachmentButtonDefaultIconPressedColor;
@@ -132,7 +132,7 @@ public class MessageInputStyle extends BaseStyle {
     // Attachment Button
     private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
     private final String showAttachmentButtonKey = "showAttachmentButton";
-
+    private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
         return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
     }
@@ -140,6 +140,11 @@ public class MessageInputStyle extends BaseStyle {
     public void setShowAttachmentButton(boolean showAttachmentButton) {
         this.showAttachmentButton = showAttachmentButton;
         prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
+        prefs.edit().putBoolean(permissionSetKey, true).apply();
+    }
+
+    public boolean isPermissionSet() {
+        return prefs.getBoolean(permissionSetKey, false);
     }
 
     public Drawable getAttachmentButtonIcon(boolean isSelected) {

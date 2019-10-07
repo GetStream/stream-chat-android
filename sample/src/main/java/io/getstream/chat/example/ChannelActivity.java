@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -30,7 +31,7 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.AttachmentClickListener,
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
-        MessageListView.UserClickListener,
+        MessageListView.UserClickListener, MessageInputView.PermissionRequestListener,
         MessageInputView.OpenCameraViewListener {
 
     static final String TAG = ChannelActivity.class.getSimpleName();
@@ -70,7 +71,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setAttachmentClickListener(this);
         // If you are using own MessageInputView please comment this line.
         binding.messageInput.setOpenCameraViewListener(this);
-
+        binding.messageInput.setPermissionRequestListener(this);
         binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
 
         // connect the view model
@@ -111,6 +112,14 @@ public class ChannelActivity extends AppCompatActivity
                                            @NonNull int[] grantResults) {
         // If you are using own MessageInputView please comment this line.
         binding.messageInput.permissionResult(requestCode, permissions, grantResults);
+    }
+
+
+    @Override
+    public void openPermissionRequest() {
+        PermissionChecker.permissionCheck(this, null);
+        // If you are writing a Channel Screen in a Fragment, use the code below instead of the code above.
+        //   PermissionChecker.permissionCheck(getActivity(), this);
     }
 
     @Override

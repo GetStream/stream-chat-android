@@ -488,7 +488,6 @@ public class Client implements WSResponseHandler {
     @Override
     public void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(this, event);
-
         for (int i = eventSubscribers.size() - 1; i >= 0; i--) {
             ChatEventHandler handler = eventSubscribers.get(i);
             handler.dispatchEvent(this, event);
