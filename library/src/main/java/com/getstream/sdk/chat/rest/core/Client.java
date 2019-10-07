@@ -198,8 +198,11 @@ public class Client implements WSResponseHandler {
                 if (connectionModel.getIsConnected() && !connected) {
                     Log.i(TAG, "fast track connection discovery: UP");
                     if (WSConn != null) {
-                        WSConn.reconnect();
+                        reconnectWebSocket();
                     }
+                } else if (!connectionModel.getIsConnected() && connected) {
+                    Log.i(TAG, "fast track connection discovery: DOWN");
+                    disconnectWebSocket();
                 }
             });
         }
@@ -245,7 +248,57 @@ public class Client implements WSResponseHandler {
         return connected;
     }
 
+    /**
+     * The opposite of {@link #setUser(User, TokenProvider)} this closes the current WebSocket connection
+     * and resets the client state as if setUser was never initialized
+     *
+     * Calls to this method will return an error if a user was not set; if a user was set but
+     * the connection is still pending (setUser is asynchronous) this method will also abort the pending
+     * connection
+     */
+    public synchronized void disconnect() {
+        if (user == null) {
+            Log.w(TAG, "disconnect was called but setUser was not called yet");
+        }
+
+        disconnectWebSocket();
+
+        // unset token facilities
+        tokenProvider = null;
+        fetchingToken = false;
+        cacheUserToken = null;
+
+        // clear local state
+        user = null;
+        activeChannels.clear();
+    }
+
+    /**
+     * Sets the current user for chat
+     *
+     * 1. it sets the current user to the client
+     * 2. it requests the token from the provided TokenProvider
+     * 3. uses {@link #connect} to continue with the initialization process
+     *
+     * This method is required for most of Chat SDK functionality to work; since this is an async
+     * function (a WebSocket connection must be established) code that depends on the initialization
+     * of the user should be not be called directly but await for setUser to be completed
+     *
+     * This can be done by adding callbacks via {@link #onSetUserCompleted(ClientConnectionCallback)}
+     *
+     * Further calls to setUser are ignored; in order to change current user you first need to call
+     * {@link #disconnect()}}
+     *
+     * @param user the user to set as current
+     * @param provider the Token Provider used to obtain the auth token for the user
+     */
     public synchronized void setUser(User user, final TokenProvider provider) {
+
+        if (this.user != null) {
+            Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
+            return;
+        }
+
         this.user = user;
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
 
@@ -324,6 +377,12 @@ public class Client implements WSResponseHandler {
         return TextUtils.equals(user.getId(), otherUserId);
     }
 
+    /**
+     * Event Delegation: Adds an event handler for client events received via WebSocket
+     *
+     * @param handler the event handler for client events
+     * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Number)}
+     */
     public final synchronized int addEventHandler(ChatEventHandler handler) {
         int id = ++subscribersSeq;
         eventSubscribers.add(handler);
@@ -331,11 +390,26 @@ public class Client implements WSResponseHandler {
         return id;
     }
 
+    /**
+     * Event Delegation: removes an event handler via its id
+     *
+     * Removing an handler that was not registered is a no-op
+     *
+     * @param handlerId the event handler for client events
+     */
     public final synchronized void removeEventHandler(Number handlerId) {
         ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
         eventSubscribers.remove(handler);
     }
 
+    /**
+     * Makes sure the callback is called when the user is ready
+     *
+     * If the user is setup, it will run immediately; otherwise it will be added to a
+     * waiting list and will be fired as soon as the user is ready (see {@link #setUser(User, TokenProvider)} for more)
+     *
+     * @param callback the callback to run when
+     */
     public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
             callback.onSuccess(user);
@@ -363,6 +437,7 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect() {
+        Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
             JSONObject json = buildUserDetailJSON();
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
@@ -425,6 +500,22 @@ public class Client implements WSResponseHandler {
         builtinHandler.dispatchEvent(this, event);
     }
 
+    /**
+     * the opposite of {@link #disconnectWebSocket()}
+     */
+    public void reconnectWebSocket() {
+        if (user == null) {
+            Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
+            return;
+        }
+        if (WSConn != null) {
+            Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
+            return;
+        }
+        connectionRecovered();
+        connect();
+    }
+
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
@@ -432,19 +523,29 @@ public class Client implements WSResponseHandler {
             cids.add(channel.getCid());
         }
         if (cids.size() > 0) {
-            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
-                    .withLimit(30)
-                    .withMessageLimit(30);
-            queryChannels(query, new QueryChannelListCallback() {
+            onSetUserCompleted(new ClientConnectionCallback() {
                 @Override
-                public void onSuccess(QueryChannelsResponse response) {
-                    connected = true;
-                    onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                public void onSuccess(User user) {
+                    QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
+                            .withLimit(30)
+                            .withMessageLimit(30);
+                    queryChannels(query, new QueryChannelListCallback() {
+                        @Override
+                        public void onSuccess(QueryChannelsResponse response) {
+                            connected = true;
+                            onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            // TODO: probably the best is to make sure the client goes back offline and online again
+                        }
+                    });
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    // TODO: probably the best is to make sure the client goes back offline and online again
+
                 }
             });
         } else {
@@ -460,13 +561,13 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
-        connect();
     }
 
     @Override
     public void tokenExpired() {
         tokenProvider.tokenExpired();
-        reconnect();
+        disconnectWebSocket();
+        reconnectWebSocket();
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -1376,29 +1477,19 @@ public class Client implements WSResponseHandler {
         );
     }
 
-    // endregion
-
-    public synchronized void disconnect() {
+    /**
+     * closes the WebSocket connection and sends a connection.change event to all listeners
+     */
+    public synchronized void disconnectWebSocket() {
         Log.i(TAG, "disconnecting");
-        getConnectionWaiters().clear();
         if (WSConn != null) {
             WSConn.disconnect();
-            connected = false;
             WSConn = null;
             clientID = null;
-            onWSEvent(new Event(false));
         }
+        onWSEvent(new Event(false));
+        connected = false;
     }
-
-    public void reconnect() {
-        if (user == null) {
-            Log.e(TAG, "Client reconnect called before setUser, this is probably an integration mistake.");
-            return;
-        }
-        disconnect();
-        connectionRecovered();
-    }
-
 
     public void flagMessage(@NonNull String targetMessageId,
                             FlagCallback callback) {

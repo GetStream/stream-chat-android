@@ -54,7 +54,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private int pageSize;
     private int subscriptionId = 0;
     private int recoverySubscriptionId = 0;
-    private StreamLifecycleObserver lifecycleObserver;
     private Handler retryLooper;
 
     public ChannelListViewModel(@NonNull Application application) {
@@ -77,8 +76,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         setupConnectionRecovery();
         initEventHandlers();
 
-        lifecycleObserver = new StreamLifecycleObserver(this);
-
+        new StreamLifecycleObserver(this);
         retryLooper = new Handler();
     }
 
@@ -503,6 +501,22 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             }
         });
+    }
+
+    /**
+     * Reloads the state of the view model
+     *
+     */
+    public void reload() {
+        retryLooper.removeCallbacksAndMessages(null);
+        initialized.set(true);
+
+        setLoadingDone();
+        setLoadingMoreDone();
+
+        channels.postValue(new ArrayList<>());
+        queryChannels();
+        reachedEndOfPagination = false;
     }
 
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
