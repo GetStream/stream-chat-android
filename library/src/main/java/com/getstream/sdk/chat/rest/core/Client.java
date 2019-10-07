@@ -170,6 +170,7 @@ public class Client implements WSResponseHandler {
                 @Override
                 public void onChannelDeleted(Channel channel, Event event) {
                     storage().deleteChannel(channel);
+                    activeChannels.remove(channel);
                 }
 
                 // TODO: what about user update events?
@@ -411,8 +412,6 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
-        builtinHandler.dispatchEvent(this, event);
-
         for (int i = eventSubscribers.size() - 1; i >= 0; i--) {
             ChatEventHandler handler = eventSubscribers.get(i);
             handler.dispatchEvent(this, event);
@@ -422,6 +421,8 @@ public class Client implements WSResponseHandler {
         if (channel != null) {
             channel.handleChannelEvent(event);
         }
+
+        builtinHandler.dispatchEvent(this, event);
     }
 
     @Override
