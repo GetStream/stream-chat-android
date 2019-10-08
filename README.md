@@ -258,6 +258,17 @@ StreamChat.getOnlineStatus().observe(...);
 - Slash commands
 - Offline support
 
+## FAQ
+
+### Channel List loading icons spins forever
+
+Not setting the lifecycle owner on a data binding can cause the channel list loading icon to spin forever
+
+```
+mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
+mBinding.setLifecycleOwner(this);
+```
+
 ## Getting started
 
 TODO: https://getstream.io/chat/docs/#introduction but with Android code examples

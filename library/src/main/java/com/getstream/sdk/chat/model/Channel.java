@@ -23,8 +23,8 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.DeleteChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
@@ -369,6 +369,9 @@ public class Channel {
         if (channelState != null) {
             clone.channelState = channelState.copy();
         }
+        if (!extraData.isEmpty()) {
+            clone.extraData = new HashMap<>(extraData);
+        }
         return clone;
     }
     // endregion
@@ -665,7 +668,7 @@ public class Channel {
     }
 
     public void flagMessage(@NotNull String messageId,
-                            @NotNull  FlagCallback callback) {
+                            @NotNull FlagCallback callback) {
         client.flagMessage(messageId, callback);
     }
 
@@ -699,6 +702,7 @@ public class Channel {
 
     public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
+        updatedAt = channel.updatedAt;
         getClient().storage().insertChannel(channel);
     }
 
@@ -762,6 +766,7 @@ public class Channel {
 
     /**
      * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
+     *
      * @param callback the result callback
      */
     public void markRead(@NotNull EventCallback callback) {
@@ -787,11 +792,34 @@ public class Channel {
     }
 
     /**
+     * edit the channel's custom properties.
+     *
+     * @param options       the custom properties
+     * @param updateMessage message allowing you to show a system message in the Channel that something changed
+     * @param callback      the result callback
+     */
+    public void update(@NotNull Map<String, Object> options, @Nullable String updateMessage,
+                       @NotNull ChannelCallback callback) {
+        client.updateChannel(this, options, updateMessage, callback);
+    }
+
+    /**
+     * edit the channel's custom properties.
+     *
+     * @param options  the custom properties
+     * @param callback the result callback
+     */
+    public void update(@NotNull Map<String, Object> options,
+                       @NotNull ChannelCallback callback) {
+        client.updateChannel(this, options, null, callback);
+    }
+
+    /**
      * removes the channel. Messages are permanently removed.
      *
      * @param callback the result callback
      */
-    public void delete(@NotNull DeleteChannelCallback callback) {
+    public void delete(@NotNull ChannelCallback callback) {
         client.deleteChannel(this, callback);
     }
 

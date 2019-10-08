@@ -32,6 +32,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int optionsButtonWidth;
     private int optionsButtonHeight;
     private boolean activeBadgeShow;
+    private String offlineText;
 
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
@@ -50,6 +51,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
+        offlineText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineTextStyle);
 
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
@@ -150,4 +152,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         return optionsButtonHeight;
     }
 
+    public String getOfflineText() {
+        return offlineText != null ? offlineText : "Waiting for network...";
+    }
 }
