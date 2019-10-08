@@ -48,7 +48,7 @@ public class EventSubscriberRegistry<T> {
      * @param handler the chat event handler
      * @return
      */
-    public final int addSubscription(T handler) {
+    public int addSubscription(T handler) {
         lock.lock();
         int id = ++subscriberSequence;
         subscribers.put(id, handler);
@@ -60,9 +60,19 @@ public class EventSubscriberRegistry<T> {
      * Removed the subscription by the subscription id returned by the addSubscription call
      * @param subId
      */
-    public final void removeSubscription(int subId) {
+    public void removeSubscription(int subId) {
         lock.lock();
         subscribers.remove(subId);
+        lock.unlock();
+    }
+
+    /**
+     * Resets the list of subscribers and the subscriber sequence
+     */
+    public void clear() {
+        lock.lock();
+        this.subscribers = new HashMap<>();
+        subscriberSequence = 0;
         lock.unlock();
     }
 }

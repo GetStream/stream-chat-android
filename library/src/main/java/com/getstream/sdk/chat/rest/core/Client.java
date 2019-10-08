@@ -97,9 +97,10 @@ public class Client implements WSResponseHandler {
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
 
-    private List<ClientConnectionCallback> connectionWaiters;
     private APIService mService;
     private EventSubscriberRegistry<ChatEventHandler> subRegistery;
+    // registry for callbacks on the setUser connection
+    private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
 
     private Map<String, Config> channelTypeConfigs;
     private WebSocketService WSConn;
@@ -188,7 +189,7 @@ public class Client implements WSResponseHandler {
         connected = false;
         this.apiKey = apiKey;
         subRegistery = new EventSubscriberRegistry();
-        connectionWaiters = new ArrayList<>();
+        connectSubRegistery = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.options = options;
@@ -208,10 +209,6 @@ public class Client implements WSResponseHandler {
 
     public Client(String apiKey, ApiClientOptions options) {
         this(apiKey, new ApiClientOptions(), null);
-    }
-
-    public synchronized List<ClientConnectionCallback> getConnectionWaiters() {
-        return connectionWaiters;
     }
 
     public Storage storage() {
@@ -409,7 +406,7 @@ public class Client implements WSResponseHandler {
         if (connected) {
             callback.onSuccess(user);
         } else {
-            getConnectionWaiters().add(callback);
+            connectSubRegistery.addSubscription(callback);
         }
     }
 
@@ -467,17 +464,21 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
-    public synchronized void connectionResolved(Event event) {
+    public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
+        // mark as connect, any new callbacks will automatically be executed
         connected = true;
 
-        for (ClientConnectionCallback waiter : getConnectionWaiters()) {
+        // call onSuccess for everyone that was waiting
+        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
+        connectSubRegistery.clear();
+        for (ClientConnectionCallback waiter : subs) {
             waiter.onSuccess(user);
         }
-        getConnectionWaiters().clear();
+
     }
 
     @Override
