@@ -127,16 +127,6 @@ public class Message implements UserEntity {
     private boolean isToday = false;
     private String date, time;
 
-    public boolean isInflight() {
-        return inflight;
-    }
-
-    public void setInflight(boolean inflight) {
-        this.inflight = inflight;
-    }
-
-    private boolean inflight = false;
-
     public Message() {
         this.setSyncStatus(Sync.SYNCED);
     }

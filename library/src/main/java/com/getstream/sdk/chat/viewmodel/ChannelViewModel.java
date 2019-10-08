@@ -42,7 +42,6 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Storage;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
@@ -58,6 +57,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -875,22 +878,22 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void sendMessage(Message message, MessageCallback callback) {
-        if (message.isInflight()) {
+        if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
 
         if (message.getStatus() == null) {
-            message.setInflight(true);
+            message.setSyncStatus(LOCAL_ONLY);
             message.setUser(client().getUser());
             message.setCreatedAt(new Date());
             message.setType("regular");
             if (isThread())
                 message.setParentId(threadParentMessage.getValue().getId());
-            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            message.setStatus(client().isConnected() ? SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             message.preStorage();
-            message.setSyncStatus(Sync.LOCAL_ONLY);
+
             client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
         }
@@ -907,6 +910,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 @Override
                 public void onSuccess(MessageResponse response) {
                     replaceMessage(message, response.getMessage());
+                    message.setSyncStatus(SYNCED);
                     callback.onSuccess(response);
                 }
 
@@ -914,7 +918,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 public void onError(String errMsg, int errCode) {
                     Message clone = message.copy();
                     clone.setStatus(MessageStatus.FAILED);
-                    clone.setInflight(false);
+                    clone.setSyncStatus(LOCAL_FAILED);
                     updateFailedMessage(clone);
                     callback.onError(errMsg, errCode);
                 }
