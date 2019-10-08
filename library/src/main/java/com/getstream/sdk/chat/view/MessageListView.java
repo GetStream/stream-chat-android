@@ -555,6 +555,16 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    /*Used for disable mark read Message*/
+    public void disableMarkRead(){
+        viewModel.setEnableMarkRead(false);
+    }
+
+    /*Used for enable mark read Message*/
+    public void enableMarkRead(){
+        viewModel.setEnableMarkRead(true);
+    }
+
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
         if (adapter != null) {

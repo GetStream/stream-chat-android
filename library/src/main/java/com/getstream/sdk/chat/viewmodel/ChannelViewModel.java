@@ -69,9 +69,8 @@ import static java.util.UUID.randomUUID;
  * -
  */
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
+
     private static final String TAG = ChannelViewModel.class.getSimpleName();
-
-
 
     public void setChannel(Channel channel) {
         this.channel = channel;
@@ -133,6 +132,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private LazyQueryChannelLiveData<Map<String, ChannelUserRead>> reads;
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
+    private boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
     public ChannelViewModel(@NonNull Application application) {
         super(application);
@@ -168,6 +168,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
+
+        enableMarkRead = true;
 
         Callable<Void> markRead = () -> {
             channel.markRead(new EventCallback() {
@@ -370,13 +372,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
         Message message = this.channel.getChannelState().getLastMessage();
-        if (message == null) {
+        if (message == null || !isEnableMarkRead()) {
             return;
         }
         if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
             looper.markRead();
             lastMarkRead = message.getCreatedAt();
         }
+    }
+
+    private boolean isEnableMarkRead() {
+        return enableMarkRead;
+    }
+
+    public void setEnableMarkRead(boolean enableMarkRead) {
+        this.enableMarkRead = enableMarkRead;
     }
 
     /**

@@ -12,10 +12,13 @@
 - Add `reload` method to `ChannelListViewModel`
 - Bugfix: hides attachment drawer after deny permission
 - Add support for update channel endpoint
+- Add PermissionRequestListener for Permission Request
 
 #### Breaking changes:
 
+## Oct 7, 2019 - 2.1.0
 - `MessageInputView#progressCapturedMedia(int requestCode, int resultCode, Intent data)` renamed into `captureMedia(int requestCode, int resultCode, Intent data)`
+- `binding.messageInput.permissionResult(requestCode, permissions, grantResults)` in `onRequestPermissionsResult(requestCode, permissions, grantResults) of `ChannelActivity`
 
 ## September 28, 2019 - 2.1.0
 
