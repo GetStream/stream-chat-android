@@ -293,6 +293,9 @@ public class Message implements UserEntity {
         if (deletedAt != null) {
             clone.deletedAt = new Date(deletedAt.getTime());
         }
+        if (!extraData.isEmpty()) {
+            clone.extraData = new HashMap<>(extraData);
+        }
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;
         clone.command = command;
