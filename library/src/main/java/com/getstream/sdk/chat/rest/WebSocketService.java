@@ -1,8 +1,5 @@
 package com.getstream.sdk.chat.rest;
 
-import android.annotation.SuppressLint;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -26,8 +23,9 @@ import okhttp3.WebSocketListener;
 public class WebSocketService extends WebSocketListener {
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private final String TAG = WebSocketService.class.getSimpleName();
+
     protected EchoWebSocketListener listener;
-    private WSResponseHandler webSocketListener;
+    public WSResponseHandler webSocketListener;
     private String wsURL;
     private OkHttpClient httpClient;
     private WebSocket webSocket;
@@ -171,12 +169,18 @@ public class WebSocketService extends WebSocketListener {
         wsId = 0;
         setConnecting(true);
         resetConsecutiveFailures();
+
+        // start the thread before setting up the websocket connection
+        eventThread = new EventHandlerThread(this);
+        eventThread.setName("WSS - event handler thread");
+        eventThread.start();
+
+        // WS connection
         setupWS();
 
         shuttingDown = false;
-        eventThread = new EventHandlerThread();
-        eventThread.start();
-        eventThread.setName("WSS - event handler thread");
+
+
     }
 
     public void disconnect() {
@@ -269,6 +273,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
+            // TODO: synchronized onMessage is not great for performance when receiving many messages at once
             Log.d(TAG, "WebSocket # " + wsId + " Response : " + text);
 
             if (isShuttingDown()) return;
@@ -336,23 +341,6 @@ public class WebSocketService extends WebSocketListener {
             setConnecting(false);
             setHealth(false);
             reconnect(true);
-        }
-    }
-
-    class EventHandlerThread extends Thread {
-        Handler mHandler;
-
-        @SuppressLint("HandlerLeak")
-        public void run() {
-            Looper.prepare();
-
-            mHandler = new Handler() {
-                public void handleMessage(Message msg) {
-                    webSocketListener.onWSEvent((Event) msg.obj);
-                }
-            };
-
-            Looper.loop();
         }
     }
 
