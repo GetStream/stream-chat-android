@@ -875,10 +875,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void sendMessage(Message message, MessageCallback callback) {
-        // send typing.stop immediately
-        stopTyping();
+        if (message.isInflight()) {
+            return;
+        }
 
         if (message.getStatus() == null) {
+            message.setInflight(true);
             message.setUser(client().getUser());
             message.setCreatedAt(new Date());
             message.setType("regular");
@@ -891,10 +893,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             message.setSyncStatus(Sync.LOCAL_ONLY);
             client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
-        } else {
-            message.setStatus(MessageStatus.SENDING);
-            updateFailedMessage(message);
         }
+
+        stopTyping();
 
         if (client().isConnected()) {
             channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
@@ -913,6 +914,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 public void onError(String errMsg, int errCode) {
                     Message clone = message.copy();
                     clone.setStatus(MessageStatus.FAILED);
+                    clone.setInflight(false);
                     updateFailedMessage(clone);
                     callback.onError(errMsg, errCode);
                 }
