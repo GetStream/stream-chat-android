@@ -117,6 +117,7 @@ public class MessageListItem {
         }
         MessageListItem other = (MessageListItem) obj;
 
+
         if (other.type != type) {
             return false;
         }

@@ -29,9 +29,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -256,9 +254,11 @@ public class Message implements UserEntity {
         if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
             return false;
         }
+
         if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
             return false;
         }
+
         if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
             return false;
         }

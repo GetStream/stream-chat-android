@@ -197,9 +197,7 @@ public class Client implements WSResponseHandler {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
                     Log.i(TAG, "fast track connection discovery: UP");
-                    if (WSConn != null) {
-                        reconnectWebSocket();
-                    }
+                    reconnectWebSocket();
                 } else if (!connectionModel.getIsConnected() && connected) {
                     Log.i(TAG, "fast track connection discovery: DOWN");
                     disconnectWebSocket();

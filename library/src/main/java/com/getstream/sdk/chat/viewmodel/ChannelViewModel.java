@@ -99,8 +99,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         initEventHandlers();
     }
 
-
-
     private Channel channel;
     private Looper looper;
     private Map<String, Event> typingState;
@@ -163,13 +161,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         reads = new LazyQueryChannelLiveData<>();
         reads.viewModel = this;
 
-
         entities = new MessageListItemLiveData(client().getUser(), messages, threadMessages, typingUsers, reads);
 
         typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
-
-
 
         Callable<Void> markRead = () -> {
             channel.markRead(new EventCallback() {
@@ -504,7 +499,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 newMessage.setStatus(MessageStatus.RECEIVED);
                 if (oldMessage.getStatus() == MessageStatus.FAILED) {
                     messagesCopy.remove(oldMessage);
-//                    messagesCopy.add(newMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
                 }
@@ -548,8 +542,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
-
-//        Log.d(TAG,"New messages Count:" + messages.getValue().size());
 
     }
 
@@ -719,6 +711,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
+                Log.i(TAG, "connection recovery done");
                 addMessages(channel.getChannelState().getMessages());
                 channelLoadingDone();
             }
@@ -886,8 +879,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // send typing.stop immediately
         stopTyping();
 
-        // TODO: this should be a method at the channel level
-
         if (message.getStatus() == null) {
             message.setUser(client().getUser());
             message.setCreatedAt(new Date());
@@ -901,28 +892,32 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             message.setSyncStatus(Sync.LOCAL_ONLY);
             client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
+        } else {
+            message.setStatus(MessageStatus.SENDING);
+            updateFailedMessage(message);
         }
 
-        if (!client().isConnected()) return;
+        if (client().isConnected()) {
+            channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
+        }
 
-        channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         // afterwards send the request
         channel.sendMessage(message,
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
-                    }
+            new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    replaceMessage(message, response.getMessage());
+                    callback.onSuccess(response);
+                }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        Message clone = message.copy();
-                        clone.setStatus(MessageStatus.FAILED);
-                        updateFailedMessage(clone);
-                        callback.onError(errMsg, errCode);
-                    }
-                });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Message clone = message.copy();
+                    clone.setStatus(MessageStatus.FAILED);
+                    updateFailedMessage(clone);
+                    callback.onError(errMsg, errCode);
+                }
+        });
     }
 
     public void sendMessage(Message message) {
