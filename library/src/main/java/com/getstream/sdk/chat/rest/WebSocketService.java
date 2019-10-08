@@ -273,7 +273,7 @@ public class WebSocketService extends WebSocketListener {
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
-            // TODO: synchronized onMessage is not great for performance when receiving many messages at once
+            // TODO: synchronized onMessage is not great for performance when receiving many messages at once. Minor concern since its pretty fast at handling a message
             Log.d(TAG, "WebSocket # " + wsId + " Response : " + text);
 
             if (isShuttingDown()) return;
