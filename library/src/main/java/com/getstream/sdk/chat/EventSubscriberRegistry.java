@@ -37,7 +37,10 @@ public class EventSubscriberRegistry<T> {
         List<T> subs = new ArrayList<>();
         for (int i = subscriberSequence; i >= 1; i--) {
             T sub = subscribers.get(i);
-            subs.add(sub);
+            if (sub != null) {
+                // subs can be removed so check for null
+                subs.add(sub);
+            }
         }
         lock.unlock();
         return subs;

@@ -71,6 +71,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -84,7 +85,8 @@ public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
-    private HashMap<String, User> knownUsers = new HashMap<>();
+    // On stream-chat-js lib this is called knownUsers
+    private ConcurrentHashMap<String, User> knownUsers = new ConcurrentHashMap<>();
     // Main Params
     private String apiKey;
     private Boolean offlineStorage;
