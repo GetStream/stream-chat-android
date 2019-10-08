@@ -26,8 +26,8 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.DeleteChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
@@ -45,9 +45,10 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.DeleteChannelResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -164,7 +165,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(channel);
+                    channel.handleChannelUpdated(event.getChannel());
                 }
 
                 @Override
@@ -661,19 +662,58 @@ public class Client implements WSResponseHandler {
     }
 
     /**
+     * edit the channel's custom properties.
+     *
+     * @param channel       the channel needs to update
+     * @param options       the custom properties
+     * @param updateMessage message allowing you to show a system message in the Channel that something changed
+     * @param callback      the result callback
+     */
+    public void updateChannel(@NonNull Channel channel, @NotNull Map<String, Object> options,
+                              @Nullable String updateMessage, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
+                        new UpdateChannelRequest(options, updateMessage))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
      * removes the channel. Messages are permanently removed.
      *
      * @param channel  the channel needs to delete
      * @param callback the result callback
      */
-    public void deleteChannel(@NonNull Channel channel, @NotNull DeleteChannelCallback callback) {
+    public void deleteChannel(@NonNull Channel channel, @NotNull ChannelCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.deleteChannel(channel.getType(), channel.getId(), apiKey, clientID)
-                        .enqueue(new Callback<DeleteChannelResponse>() {
+                        .enqueue(new Callback<ChannelResponse>() {
                             @Override
-                            public void onResponse(Call<DeleteChannelResponse> call, Response<DeleteChannelResponse> response) {
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
