@@ -15,6 +15,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -52,7 +53,6 @@ import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -154,13 +154,7 @@ public class Channel {
     private Map<String, String> reactionTypes;
 
     @Ignore
-    private List<ChatChannelEventHandler> eventSubscribers;
-
-    @Ignore
-    private Map<Number, ChatChannelEventHandler> eventSubscribersBy;
-
-    @Ignore
-    private int subscribersSeq;
+    private EventSubscriberRegistry<ChatChannelEventHandler> subRegistery;
 
     @Ignore
     private Client client;
@@ -219,8 +213,7 @@ public class Channel {
             this.extraData = new HashMap<>(extraData);
         }
 
-        eventSubscribers = new ArrayList<>();
-        eventSubscribersBy = new HashMap<>();
+        subRegistery = new EventSubscriberRegistry<>();
         channelState = new ChannelState(this);
         initialized = false;
     }
@@ -259,17 +252,6 @@ public class Channel {
         this.updatedAt = updatedAt;
     }
 
-    public void setEventSubscribers(List<ChatChannelEventHandler> eventSubscribers) {
-        this.eventSubscribers = eventSubscribers;
-    }
-
-    public void setEventSubscribersBy(Map<Number, ChatChannelEventHandler> eventSubscribersBy) {
-        this.eventSubscribersBy = eventSubscribersBy;
-    }
-
-    public void setSubscribersSeq(int subscribersSeq) {
-        this.subscribersSeq = subscribersSeq;
-    }
 
     // region Getter & Setter
     public String getId() {
@@ -432,25 +414,17 @@ public class Channel {
 
     // endregion
 
-    public final synchronized int addEventHandler(ChatChannelEventHandler handler) {
-        int id = ++subscribersSeq;
-        if (eventSubscribers == null) {
-            eventSubscribers = new ArrayList<>();
-            eventSubscribersBy = new HashMap<>();
-        }
-        eventSubscribers.add(handler);
-        eventSubscribersBy.put(id, handler);
-        return id;
+    public final int addEventHandler(ChatChannelEventHandler handler) {
+        Integer subID = subRegistery.addSubscription(handler);
+        return subID;
     }
 
-    public final synchronized void removeEventHandler(Number handlerId) {
-        ChatChannelEventHandler handler = eventSubscribersBy.remove(handlerId);
-        eventSubscribers.remove(handler);
+    public final void removeEventHandler(Integer subID) {
+        subRegistery.removeSubscription(subID);
     }
 
-    public final synchronized void handleChannelEvent(Event event) {
-        if (eventSubscribers == null || eventSubscribers.isEmpty()) return;
-        for (ChatChannelEventHandler handler : eventSubscribers) {
+    public final void handleChannelEvent(Event event) {
+        for (ChatChannelEventHandler handler : subRegistery.getSubscribers()) {
             handler.dispatchEvent(event);
         }
     }

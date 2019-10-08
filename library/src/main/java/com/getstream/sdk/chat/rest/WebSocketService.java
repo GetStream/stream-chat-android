@@ -23,6 +23,7 @@ import okhttp3.WebSocketListener;
 public class WebSocketService extends WebSocketListener {
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private final String TAG = WebSocketService.class.getSimpleName();
+
     protected EchoWebSocketListener listener;
     public WSResponseHandler webSocketListener;
     private String wsURL;
