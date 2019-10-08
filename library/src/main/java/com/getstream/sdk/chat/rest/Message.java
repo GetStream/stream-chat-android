@@ -29,9 +29,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -282,6 +280,9 @@ public class Message implements UserEntity {
         }
         if (deletedAt != null) {
             clone.deletedAt = new Date(deletedAt.getTime());
+        }
+        if (!extraData.isEmpty()) {
+            clone.extraData = new HashMap<>(extraData);
         }
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;
