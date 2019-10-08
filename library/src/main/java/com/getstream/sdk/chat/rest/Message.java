@@ -254,9 +254,11 @@ public class Message implements UserEntity {
         if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
             return false;
         }
+
         if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
             return false;
         }
+
         if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
             return false;
         }
