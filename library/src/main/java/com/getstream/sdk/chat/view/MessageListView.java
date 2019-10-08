@@ -485,14 +485,13 @@ public class MessageListView extends RecyclerView {
         if (this.messageLongClickListener != null) {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
-            adapter.setMessageLongClickListener(message -> {
-                Utils.hideSoftKeyboard((Activity) getContext());
+            adapter.setMessageLongClickListener(message ->
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
-                        .show();
-            });
+                        .show()
+            );
         }
     }
 
