@@ -31,7 +31,8 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.AttachmentClickListener,
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
-        MessageListView.UserClickListener, MessageInputView.PermissionRequestListener,
+        MessageListView.UserClickListener,
+        MessageInputView.PermissionRequestListener,
         MessageInputView.OpenCameraViewListener {
 
     static final String TAG = ChannelActivity.class.getSimpleName();
