@@ -711,7 +711,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
-                Log.i(TAG, "connection recovery done");
                 addMessages(channel.getChannelState().getMessages());
                 channelLoadingDone();
             }
