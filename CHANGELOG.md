@@ -11,6 +11,7 @@
 - Add support for switching users via `client.disconnect` and `client.setUser`
 - Add `reload` method to `ChannelListViewModel`
 - Bugfix: hides attachment drawer after deny permission
+- Add support for update channel endpoint
 
 #### Breaking changes:
 

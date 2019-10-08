@@ -11,13 +11,16 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
+import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
+import static com.getstream.sdk.chat.enums.OnlineStatus.CONNECTED;
 
 /*
 ChannelHeaderView is used to show a header for a channel
@@ -66,6 +69,13 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
+
+        StreamChat.getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
+        binding.setOnlineStatus(StreamChat.getOnlineStatus().getValue() == CONNECTED);
+    }
+
+    protected void onlineStatus(OnlineStatus status) {
+        binding.setOnlineStatus(status == CONNECTED);
     }
 
     protected void setHeaderTitle(ChannelState channelState) {
@@ -133,6 +143,7 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.tvOption.setHeight(style.getOptionsButtonHeight());
         // Active Badge
         binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : INVISIBLE);
+        binding.setOfflineText(style.getOfflineText());
     }
 
 }

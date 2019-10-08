@@ -21,7 +21,6 @@ public class MessageViewHolderFactory {
     public static final int MESSAGEITEM_MESSAGE = 2;
     public static final int MESSAGEITEM_TYPING = 3;
     public static final int MESSAGEITEM_THREAD_SEPARATOR = 4;
-    public static final int MESSAGEITEM_NO_CONNECTION = 5;
     public static final int MESSAGEITEM_NOT_FOUND = 5;
 
     public static final int GENERIC_ATTACHMENT = 1;
@@ -42,8 +41,6 @@ public class MessageViewHolderFactory {
             return MESSAGEITEM_TYPING;
         } else if (messageListItemType == MESSAGEITEM_THREAD_SEPARATOR) {
             return MESSAGEITEM_THREAD_SEPARATOR;
-        }else if (messageListItemType == MESSAGEITEM_NO_CONNECTION) {
-            return MESSAGEITEM_NO_CONNECTION;
         }
         return MESSAGEITEM_NOT_FOUND;
     }
@@ -93,10 +90,6 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == MESSAGEITEM_THREAD_SEPARATOR) {
             ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
-            holder.setStyle(adapter.getStyle());
-            return holder;
-        }else if (viewType == MESSAGEITEM_NO_CONNECTION) {
-            NoConnectionViewHolder holder = new NoConnectionViewHolder(R.layout.stream_item_no_connection, parent);
             holder.setStyle(adapter.getStyle());
             return holder;
         } else {

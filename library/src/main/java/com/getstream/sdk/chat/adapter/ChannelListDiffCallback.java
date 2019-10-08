@@ -50,6 +50,10 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
 
+        if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
+            return false;
+        }
+
         return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
     }
 }
