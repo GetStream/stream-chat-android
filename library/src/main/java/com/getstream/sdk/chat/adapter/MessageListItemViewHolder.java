@@ -755,6 +755,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private boolean isDeletedOrFailedMessage() {
-        return message.getDeletedAt() != null || message.getStatus() == MessageStatus.FAILED;
+        return message.getDeletedAt() != null
+                || message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error);
     }
 }
