@@ -156,10 +156,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             progressMessages(messages);
         });
 
-        threadMessages.observe(owner, messages -> {
-            if (messages == null) return;
-            progressMessages(messages);
-        });
+        threadMessages.observe(owner, this::progressMessages);
 
         this.typing.observe(owner, users -> {
             if (isThread()) return;
@@ -225,13 +222,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             MessageListItem messageListItem = new MessageListItem(message, positions, mine);
             entities.add(messageListItem);
-            // set the previous message for the next iteration
-            previousMessage = message;
 
             // Insert Thread Separator
             if (isThread() && i == 0) {
                 entities.add(new MessageListItem(MESSAGEITEM_THREAD_SEPARATOR));
                 previousMessage = null;
+            }else{
+                // set the previous message for the next iteration
+                previousMessage = message;
             }
         }
         this.messageEntities.clear();
