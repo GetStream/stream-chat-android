@@ -119,6 +119,7 @@ public class Message implements UserEntity {
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
 
+    @NonNull
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
@@ -128,6 +129,7 @@ public class Message implements UserEntity {
     private String date, time;
 
     public Message() {
+        this.extraData = new HashMap<>();
         this.setSyncStatus(Sync.SYNCED);
     }
 

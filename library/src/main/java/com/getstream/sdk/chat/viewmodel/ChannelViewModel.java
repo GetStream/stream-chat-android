@@ -152,7 +152,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
 
-
         threadMessages = new LazyQueryChannelLiveData<>();
         threadMessages.viewModel = this;
         threadMessages.setValue(null);
