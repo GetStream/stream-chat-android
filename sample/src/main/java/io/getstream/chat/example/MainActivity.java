@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void createNewChannel(String channelName){
+    void createNewChannel(String channelName) {
         Client client = configureStreamClient();
 
         HashMap<String, Object> extraData = new HashMap<>();

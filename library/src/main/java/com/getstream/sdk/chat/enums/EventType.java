@@ -18,6 +18,7 @@ public enum EventType {
     REACTION_DELETED("reaction.deleted"),
     MEMBER_ADDED("member.added"),
     MEMBER_REMOVED("member.removed"),
+    MEMBER_UPDATED("member.updated"),
     CHANNEL_UPDATED("channel.updated"),
     CHANNEL_DELETED("channel.deleted"),
     HEALTH_CHECK("health.check"),
