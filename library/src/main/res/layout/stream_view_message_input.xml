@@ -333,7 +333,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:maxLines="100"
+                    android:maxLines="7"
                     android:padding="17dp"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"

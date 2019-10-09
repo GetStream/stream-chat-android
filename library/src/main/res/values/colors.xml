@@ -16,7 +16,7 @@
     <color name="stream_input_message_send_button">#0076FF</color>
     <color name="stream_input_message_box_stroke_select">#0076FF</color>
     <color name="stream_input_message_box_stroke_edit">#0DD25E</color>
-    <color name="stream_input_message_box_background">#0D000000</color>
+    <color name="stream_input_message_box_background">#EDEDED</color>
     <color name="stream_chat_no_connection">#1AD0021B</color>
 
     <!--Message Item-->
