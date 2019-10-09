@@ -334,11 +334,11 @@ public class MessageListView extends RecyclerView {
             // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()) {
+                adapter.setThread(messageListItemWrapper.isThread());
                 adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
 
-            adapter.setThread(messageListItemWrapper.isThread());
             adapter.replaceEntities(entities);
 
             // Scroll to origin position on return from thread
