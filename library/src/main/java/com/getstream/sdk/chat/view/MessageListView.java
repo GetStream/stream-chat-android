@@ -119,7 +119,8 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
-                    if (message.getStatus() == MessageStatus.FAILED) {
+                    if (message.getStatus() == MessageStatus.FAILED
+                            || message.getType().equals(ModelType.message_error)) {
                         bgColor = getResources().getColor(R.color.stream_message_failed);
                     } else {
                         bgColor = style.getMessageBackgroundColorMine();
