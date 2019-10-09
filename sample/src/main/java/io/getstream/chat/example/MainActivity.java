@@ -15,8 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
@@ -27,7 +29,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
+    final Boolean offlineEnabled = false;
     final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
     final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
@@ -53,7 +55,12 @@ public class MainActivity extends AppCompatActivity {
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
-        //client.enableOfflineStorage();
+
+        Crashlytics.setUserIdentifier(USER_ID);
+        if (offlineEnabled) {
+            client.enableOfflineStorage();
+        }
+        Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");
@@ -125,10 +132,33 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 createNewChannel(channelName);
+//                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
                 alertDialog.dismiss();
             });
         });
         alertDialog.show();
+    }
+
+    void switchUser(String userId, String token) {
+        Client client = StreamChat.getInstance(getApplication());
+        client.disconnect();
+
+        User user = new User(userId);
+        client.setUser(user, token);
+
+        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+
+        client.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                viewModel.reload();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        });
     }
 
     void createNewChannel(String channelName){
@@ -139,22 +169,20 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
-        members.add("broken-waterfall-5");
+        extraData.put("members", members);
 
-        Channel channel = new Channel(client, ModelType.channel_messaging, extraData, members);
+        String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10);
 
         viewModel.setLoading();
         channel.query(request, new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-                Channel channel = response.getChannel();
-                channel.setClient(client);
                 Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
-                viewModel.addChannels(Arrays.asList(response));
                 viewModel.setLoadingDone();
             }
 

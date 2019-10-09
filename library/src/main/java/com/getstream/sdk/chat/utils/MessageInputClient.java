@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -97,6 +100,13 @@ public class MessageInputClient {
         }
         binding.tvTitle.setText(type.label);
         messageInputType = type;
+        // Check Camera Permission is allowed or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            int hasCameraPermission = context.checkSelfPermission(Manifest.permission.CAMERA);
+            if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+                binding.llCamera.setVisibility(View.GONE);
+            }
+        }
     }
 
 

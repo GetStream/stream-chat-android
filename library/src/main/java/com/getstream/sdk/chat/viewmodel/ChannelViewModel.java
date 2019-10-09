@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -41,13 +42,11 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Storage;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
-
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,6 +57,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -66,7 +69,37 @@ import static java.util.UUID.randomUUID;
  * -
  */
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
+
     private static final String TAG = ChannelViewModel.class.getSimpleName();
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+
+        // fetch offline messages
+        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
+            @Override
+            public void onSuccess(ChannelState channelState) {
+                Log.i(TAG, "Read messages from local cache...");
+                if (channelState != null) {
+                    messages.setValue(channelState.getMessages());
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                // TODO
+            }
+        });
+
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        messages.setValue(channel.getChannelState().getMessages());
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        channelState = new MutableLiveData<>(channel.getChannelState());
+        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+
+        initEventHandlers();
+    }
 
     private Channel channel;
     private Looper looper;
@@ -99,11 +132,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private LazyQueryChannelLiveData<Map<String, ChannelUserRead>> reads;
     private MutableLiveData<InputType> inputType;
     private MessageListItemLiveData entities;
+    private boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
-    public ChannelViewModel(Application application, Channel channel) {
+    public ChannelViewModel(@NonNull Application application) {
         super(application);
-        this.channel = channel;
-
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
@@ -119,27 +151,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
-        messages.setValue(channel.getChannelState().getMessages());
+
 
         threadMessages = new LazyQueryChannelLiveData<>();
         threadMessages.viewModel = this;
         threadMessages.setValue(null);
-
-        // fetch offline messages
-        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
-            @Override
-            public void onSuccess(ChannelState channelState) {
-                Log.i(TAG, "Read messages from local cache...");
-                if (channelState != null) {
-                    messages.setValue(channelState.getMessages());
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                // TODO
-            }
-        });
 
         typingUsers = new LazyQueryChannelLiveData<>();
         typingUsers.viewModel = this;
@@ -147,17 +163,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         reads = new LazyQueryChannelLiveData<>();
         reads.viewModel = this;
-        reads.setValue(channel.getChannelState().getReadsByUser());
 
         entities = new MessageListItemLiveData(client().getUser(), messages, threadMessages, typingUsers, reads);
-        reads.setValue(channel.getChannelState().getReadsByUser());
 
         typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
 
-        channelState = new MutableLiveData<>(channel.getChannelState());
-        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+        enableMarkRead = true;
 
         Callable<Void> markRead = () -> {
             channel.markRead(new EventCallback() {
@@ -177,8 +189,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         looper.start();
 
         new StreamLifecycleObserver(this);
-        initEventHandlers();
+
         setupConnectionRecovery();
+    }
+
+    public ChannelViewModel(Application application, Channel channel) {
+        this(application);
+        setChannel(channel);
+
     }
 
     public Channel getChannel() {
@@ -354,13 +372,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
         Message message = this.channel.getChannelState().getLastMessage();
-        if (message == null) {
+        if (message == null || !isEnableMarkRead()) {
             return;
         }
         if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
             looper.markRead();
             lastMarkRead = message.getCreatedAt();
         }
+    }
+
+    private boolean isEnableMarkRead() {
+        return enableMarkRead;
+    }
+
+    public void setEnableMarkRead(boolean enableMarkRead) {
+        this.enableMarkRead = enableMarkRead;
     }
 
     /**
@@ -486,7 +512,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 newMessage.setStatus(MessageStatus.RECEIVED);
                 if (oldMessage.getStatus() == MessageStatus.FAILED) {
                     messagesCopy.remove(oldMessage);
-//                    messagesCopy.add(newMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
                 }
@@ -530,8 +555,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
-
-//        Log.d(TAG,"New messages Count:" + messages.getValue().size());
 
     }
 
@@ -675,8 +698,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
-        if (!initialized.get() || !client().isConnected())
-            setLoading();
+//        if (channel != null && channel.isInitialized())
+//            setLoading();
     }
 
     @Override
@@ -865,46 +888,51 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void sendMessage(Message message, MessageCallback callback) {
-        // send typing.stop immediately
-        stopTyping();
-
-        // TODO: this should be a method at the channel level
+        if (message.getSyncStatus() == LOCAL_ONLY) {
+            return;
+        }
 
         if (message.getStatus() == null) {
+            message.setSyncStatus(LOCAL_ONLY);
             message.setUser(client().getUser());
             message.setCreatedAt(new Date());
             message.setType("regular");
             if (isThread())
                 message.setParentId(threadParentMessage.getValue().getId());
-            message.setStatus(client().isConnected() ? MessageStatus.SENDING : MessageStatus.FAILED);
+            message.setStatus(client().isConnected() ? SENDING : MessageStatus.FAILED);
             String clientSideID = client().getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             message.preStorage();
-            message.setSyncStatus(Sync.LOCAL_ONLY);
+
             client().storage().insertMessageForChannel(channel, message);
             addMessage(message);
         }
 
-        if (!client().isConnected()) return;
+        stopTyping();
 
-        channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
+        if (client().isConnected()) {
+            channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
+        }
+
         // afterwards send the request
         channel.sendMessage(message,
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
-                    }
+            new MessageCallback() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    replaceMessage(message, response.getMessage());
+                    message.setSyncStatus(SYNCED);
+                    callback.onSuccess(response);
+                }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        Message clone = message.copy();
-                        clone.setStatus(MessageStatus.FAILED);
-                        updateFailedMessage(clone);
-                        callback.onError(errMsg, errCode);
-                    }
-                });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    Message clone = message.copy();
+                    clone.setStatus(MessageStatus.FAILED);
+                    clone.setSyncStatus(LOCAL_FAILED);
+                    updateFailedMessage(clone);
+                    callback.onError(errMsg, errCode);
+                }
+        });
     }
 
     public void sendMessage(Message message) {

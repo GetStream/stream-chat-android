@@ -485,14 +485,13 @@ public class MessageListView extends RecyclerView {
         if (this.messageLongClickListener != null) {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
-            adapter.setMessageLongClickListener(message -> {
-                Utils.hideSoftKeyboard((Activity) getContext());
+            adapter.setMessageLongClickListener(message ->
                 new MoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
-                        .show();
-            });
+                        .show()
+            );
         }
     }
 
@@ -553,6 +552,16 @@ public class MessageListView extends RecyclerView {
                         .show();
             });
         }
+    }
+
+    /*Used for disable mark read Message*/
+    public void disableMarkRead(){
+        viewModel.setEnableMarkRead(false);
+    }
+
+    /*Used for enable mark read Message*/
+    public void enableMarkRead(){
+        viewModel.setEnableMarkRead(true);
     }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {

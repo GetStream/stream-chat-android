@@ -20,14 +20,15 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.utils.ResultCallback;
+import com.getstream.sdk.chat.utils.RetryPolicy;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,8 +55,19 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private int pageSize;
     private int subscriptionId = 0;
     private int recoverySubscriptionId = 0;
-    private StreamLifecycleObserver lifecycleObserver;
     private Handler retryLooper;
+
+    private QueryChannelListCallback queryChannelListCallback;
+
+    public RetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(RetryPolicy retryPolicy) {
+        this.retryPolicy = retryPolicy;
+    }
+
+    private RetryPolicy retryPolicy;
 
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
@@ -77,9 +89,21 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         setupConnectionRecovery();
         initEventHandlers();
 
-        lifecycleObserver = new StreamLifecycleObserver(this);
-
+        new StreamLifecycleObserver(this);
         retryLooper = new Handler();
+
+        // default retry policy is to retry the request 100 times
+        retryPolicy = new RetryPolicy() {
+            @Override
+            public boolean shouldRetry(Client client, Integer attempt, String errMsg, int errCode) {
+                return attempt < 100;
+            }
+
+            @Override
+            public Integer retryTimeout(Client client, Integer attempt, String errMsg, int errCode) {
+                return Math.min(500 * (attempt * attempt + 1), 30000);
+            }
+        };
     }
 
     public LiveData<List<Channel>> getChannels() {
@@ -230,8 +254,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        if (!initialized.get() || !client().isConnected())
-            setLoading();
+//        if (!initialized.get() || !client().isConnected())
+//            setLoading();
     }
 
     @Override
@@ -375,23 +399,32 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
                 }
+
+                if (queryChannelListCallback != null) {
+                    queryChannelListCallback.onSuccess(response);
+                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "onError for loading the channels " + errMsg);
-                if (attempt > 100) {
+                Boolean shouldRetry = retryPolicy.shouldRetry(client(), attempt, errMsg, errCode);
+                if (!shouldRetry) {
                     Log.e(TAG, "tried more than 100 times, give up now");
                     return;
                 }
                 if (!client().isConnected()) {
                     return;
                 }
-                int sleep = Math.min(500 * (attempt * attempt + 1), 30000);
+                int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
                 Log.d(TAG, "retrying in " + sleep);
                 retryLooper.postDelayed(() -> {
                     queryChannelsInner(attempt + 1);
                 }, sleep);
+
+                if (queryChannelListCallback != null) {
+                    queryChannelListCallback.onError(errMsg, errCode);
+                }
             }
         };
         client().queryChannels(request, queryCallback);
@@ -414,7 +447,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
-                if (channels != null)
+                if (channels != null && channelStates != null)
                     addChannels(channelStates);
                 callback.onSuccess(channelStates);
             }
@@ -503,6 +536,30 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             }
         });
+    }
+
+    /**
+     * Reloads the state of the view model
+     *
+     */
+    public void reload() {
+        retryLooper.removeCallbacksAndMessages(null);
+        initialized.set(true);
+
+        setLoadingDone();
+        setLoadingMoreDone();
+
+        channels.postValue(new ArrayList<>());
+        queryChannels();
+        reachedEndOfPagination = false;
+    }
+
+    public QueryChannelListCallback getQueryChannelListCallback() {
+        return queryChannelListCallback;
+    }
+
+    public void setQueryChannelListCallback(QueryChannelListCallback queryChannelListCallback) {
+        this.queryChannelListCallback = queryChannelListCallback;
     }
 
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {

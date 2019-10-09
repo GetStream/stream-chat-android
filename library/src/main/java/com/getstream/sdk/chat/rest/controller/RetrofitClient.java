@@ -16,9 +16,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static Retrofit retrofit = null;
-    private static String userToken = "";
-
     public static Retrofit getAuthorizedClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
 
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -52,13 +49,10 @@ public class RetrofitClient {
                 .followRedirects(false)
                 .build();
 
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(options.getHttpURL())
-                    .client(client)
-                    .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
-                    .build();
-        }
-        return retrofit;
+        return new Retrofit.Builder()
+            .baseUrl(options.getHttpURL())
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
+            .build();
     }
 }

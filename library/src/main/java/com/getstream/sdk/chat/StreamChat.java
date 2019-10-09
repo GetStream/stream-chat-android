@@ -21,7 +21,6 @@ public class StreamChat {
     private static final String TAG = StreamChat.class.getSimpleName();
 
     private static Client INSTANCE;
-    private static int eventListener;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
@@ -49,14 +48,35 @@ public class StreamChat {
         }
     }
 
+    private static void handleConnectedUser() {
+        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                userWasInitialized = true;
+                onlineStatus.postValue(OnlineStatus.CONNECTED);
+                totalUnreadMessages.postValue(user.getTotalUnreadCount());
+                unreadChannels.postValue(user.getUnreadChannels());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        });
+    }
+
     private static synchronized void setupEventListeners() {
-        eventListener = INSTANCE.addEventHandler(new ChatEventHandler() {
+        Log.i(TAG, "setupEventListeners");
+        INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
                 Log.w(TAG, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
+                } else {
+                    onlineStatus.postValue(OnlineStatus.FAILED);
                 }
+                handleConnectedUser();
             }
 
             @Override
@@ -91,22 +111,21 @@ public class StreamChat {
         if (INSTANCE != null) {
             throw new RuntimeException("StreamChat is already initialized!");
         }
-
+        Log.i(TAG, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
+                Log.i(TAG, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
                 INSTANCE.setContext(context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();
+                handleConnectedUser();
 
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        userWasInitialized = true;
-                        onlineStatus.postValue(OnlineStatus.CONNECTED);
-                        totalUnreadMessages.postValue(user.getTotalUnreadCount());
-                        unreadChannels.postValue(user.getUnreadChannels());
+                        Log.i(TAG, "set user worked out well");
                         setupEventListeners();
 
                         new StreamLifecycleObserver(new LifecycleHandler() {
@@ -115,7 +134,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
-                                    INSTANCE.reconnect();
+                                    INSTANCE.reconnectWebSocket();
                                 }
                             }
 
@@ -124,7 +143,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected stop");
                                 lifecycleStopped = true;
                                 if (INSTANCE != null) {
-                                    INSTANCE.disconnect();
+                                    INSTANCE.disconnectWebSocket();
                                 }
                             }
                         });

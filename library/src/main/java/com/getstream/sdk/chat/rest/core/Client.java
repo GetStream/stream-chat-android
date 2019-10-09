@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
+import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -26,15 +27,14 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.DeviceCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
@@ -46,9 +46,10 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
+import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.DevicesResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
@@ -70,6 +71,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -83,7 +85,8 @@ public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
-    private HashMap<String, User> knownUsers = new HashMap<>();
+    // On stream-chat-js lib this is called knownUsers
+    private ConcurrentHashMap<String, User> knownUsers = new ConcurrentHashMap<>();
     // Main Params
     private String apiKey;
     private Boolean offlineStorage;
@@ -96,11 +99,11 @@ public class Client implements WSResponseHandler {
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
 
-    private List<ClientConnectionCallback> connectionWaiters;
     private APIService mService;
-    private List<ChatEventHandler> eventSubscribers;
-    private Map<Number, ChatEventHandler> eventSubscribersBy;
-    private int subscribersSeq;
+    private EventSubscriberRegistry<ChatEventHandler> subRegistery;
+    // registry for callbacks on the setUser connection
+    private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
+
     private Map<String, Config> channelTypeConfigs;
     private WebSocketService WSConn;
     private ApiClientOptions options;
@@ -165,10 +168,15 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(channel);
+                    channel.handleChannelUpdated(event.getChannel());
                 }
 
-                // TODO: what about deleted channels?
+                @Override
+                public void onChannelDeleted(Channel channel, Event event) {
+                    storage().deleteChannel(channel);
+                    activeChannels.remove(channel);
+                }
+
                 // TODO: what about user update events?
 
                 @Override
@@ -182,9 +190,8 @@ public class Client implements WSResponseHandler {
     public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
         connected = false;
         this.apiKey = apiKey;
-        eventSubscribers = new ArrayList<>();
-        eventSubscribersBy = new HashMap<>();
-        connectionWaiters = new ArrayList<>();
+        subRegistery = new EventSubscriberRegistry();
+        connectSubRegistery = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.options = options;
@@ -193,9 +200,10 @@ public class Client implements WSResponseHandler {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
                     Log.i(TAG, "fast track connection discovery: UP");
-                    if (WSConn != null) {
-                        WSConn.reconnect();
-                    }
+                    reconnectWebSocket();
+                } else if (!connectionModel.getIsConnected() && connected) {
+                    Log.i(TAG, "fast track connection discovery: DOWN");
+                    disconnectWebSocket();
                 }
             });
         }
@@ -203,10 +211,6 @@ public class Client implements WSResponseHandler {
 
     public Client(String apiKey, ApiClientOptions options) {
         this(apiKey, new ApiClientOptions(), null);
-    }
-
-    public synchronized List<ClientConnectionCallback> getConnectionWaiters() {
-        return connectionWaiters;
     }
 
     public Storage storage() {
@@ -241,7 +245,57 @@ public class Client implements WSResponseHandler {
         return connected;
     }
 
+    /**
+     * The opposite of {@link #setUser(User, TokenProvider)} this closes the current WebSocket connection
+     * and resets the client state as if setUser was never initialized
+     *
+     * Calls to this method will return an error if a user was not set; if a user was set but
+     * the connection is still pending (setUser is asynchronous) this method will also abort the pending
+     * connection
+     */
+    public synchronized void disconnect() {
+        if (user == null) {
+            Log.w(TAG, "disconnect was called but setUser was not called yet");
+        }
+
+        disconnectWebSocket();
+
+        // unset token facilities
+        tokenProvider = null;
+        fetchingToken = false;
+        cacheUserToken = null;
+
+        // clear local state
+        user = null;
+        activeChannels.clear();
+    }
+
+    /**
+     * Sets the current user for chat
+     *
+     * 1. it sets the current user to the client
+     * 2. it requests the token from the provided TokenProvider
+     * 3. uses {@link #connect} to continue with the initialization process
+     *
+     * This method is required for most of Chat SDK functionality to work; since this is an async
+     * function (a WebSocket connection must be established) code that depends on the initialization
+     * of the user should be not be called directly but await for setUser to be completed
+     *
+     * This can be done by adding callbacks via {@link #onSetUserCompleted(ClientConnectionCallback)}
+     *
+     * Further calls to setUser are ignored; in order to change current user you first need to call
+     * {@link #disconnect()}}
+     *
+     * @param user the user to set as current
+     * @param provider the Token Provider used to obtain the auth token for the user
+     */
     public synchronized void setUser(User user, final TokenProvider provider) {
+
+        if (this.user != null) {
+            Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
+            return;
+        }
+
         this.user = user;
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
 
@@ -320,23 +374,41 @@ public class Client implements WSResponseHandler {
         return TextUtils.equals(user.getId(), otherUserId);
     }
 
-    public final synchronized int addEventHandler(ChatEventHandler handler) {
-        int id = ++subscribersSeq;
-        eventSubscribers.add(handler);
-        eventSubscribersBy.put(id, handler);
-        return id;
+    /**
+     * Event Delegation: Adds an event handler for client events received via WebSocket
+     *
+     * @param handler the event handler for client events
+     * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Integer)}
+     */
+    public final int addEventHandler(ChatEventHandler handler) {
+        Integer subID = subRegistery.addSubscription(handler);
+        return subID;
     }
 
-    public final synchronized void removeEventHandler(Number handlerId) {
-        ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
-        eventSubscribers.remove(handler);
+    /**
+     * Event Delegation: removes an event handler via its id
+     *
+     * Removing an handler that was not registered is a no-op
+     *
+     * @param handlerId the event handler for client events
+     */
+    public final void removeEventHandler(Integer handlerId) {
+        subRegistery.removeSubscription(handlerId);
     }
 
+    /**
+     * Makes sure the callback is called when the user is ready
+     *
+     * If the user is setup, it will run immediately; otherwise it will be added to a
+     * waiting list and will be fired as soon as the user is ready (see {@link #setUser(User, TokenProvider)} for more)
+     *
+     * @param callback the callback to run when
+     */
     public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
             callback.onSuccess(user);
         } else {
-            getConnectionWaiters().add(callback);
+            connectSubRegistery.addSubscription(callback);
         }
     }
 
@@ -359,6 +431,7 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect() {
+        Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
             JSONObject json = buildUserDetailJSON();
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
@@ -393,25 +466,27 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
-    public synchronized void connectionResolved(Event event) {
+    public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
+        // mark as connect, any new callbacks will automatically be executed
         connected = true;
 
-        for (ClientConnectionCallback waiter : getConnectionWaiters()) {
+        // call onSuccess for everyone that was waiting
+        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
+        connectSubRegistery.clear();
+        for (ClientConnectionCallback waiter : subs) {
             waiter.onSuccess(user);
         }
-        getConnectionWaiters().clear();
+
     }
 
     @Override
     public void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(this, event);
-
-        for (int i = eventSubscribers.size() - 1; i >= 0; i--) {
-            ChatEventHandler handler = eventSubscribers.get(i);
+        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
             handler.dispatchEvent(this, event);
         }
 
@@ -421,6 +496,22 @@ public class Client implements WSResponseHandler {
         }
     }
 
+    /**
+     * the opposite of {@link #disconnectWebSocket()}
+     */
+    public void reconnectWebSocket() {
+        if (user == null) {
+            Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
+            return;
+        }
+        if (WSConn != null) {
+            Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
+            return;
+        }
+        connectionRecovered();
+        connect();
+    }
+
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
@@ -428,19 +519,29 @@ public class Client implements WSResponseHandler {
             cids.add(channel.getCid());
         }
         if (cids.size() > 0) {
-            QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
-                    .withLimit(30)
-                    .withMessageLimit(30);
-            queryChannels(query, new QueryChannelListCallback() {
+            onSetUserCompleted(new ClientConnectionCallback() {
                 @Override
-                public void onSuccess(QueryChannelsResponse response) {
-                    connected = true;
-                    onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                public void onSuccess(User user) {
+                    QueryChannelsRequest query = new QueryChannelsRequest(and(in("cid", cids)), new QuerySort().desc("last_message_at"))
+                            .withLimit(30)
+                            .withMessageLimit(30);
+                    queryChannels(query, new QueryChannelListCallback() {
+                        @Override
+                        public void onSuccess(QueryChannelsResponse response) {
+                            connected = true;
+                            onWSEvent(new Event(EventType.CONNECTION_RECOVERED.label));
+                        }
+
+                        @Override
+                        public void onError(String errMsg, int errCode) {
+                            // TODO: probably the best is to make sure the client goes back offline and online again
+                        }
+                    });
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    // TODO: probably the best is to make sure the client goes back offline and online again
+
                 }
             });
         } else {
@@ -456,13 +557,13 @@ public class Client implements WSResponseHandler {
                 }
             });
         }
-        connect();
     }
 
     @Override
     public void tokenExpired() {
         tokenProvider.tokenExpired();
-        reconnect();
+        disconnectWebSocket();
+        reconnectWebSocket();
     }
 
     public synchronized void addChannelConfig(String channelType, Config config) {
@@ -557,26 +658,75 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * deleteChannel - Delete the given channel
+     * edit the channel's custom properties.
      *
-     * @param channelId the Channel id needs to be specified
-     * @return {object} Response that includes the channel
+     * @param channel       the channel needs to update
+     * @param options       the custom properties
+     * @param updateMessage message allowing you to show a system message in the Channel that something changed
+     * @param callback      the result callback
      */
-    public void deleteChannel(@NonNull String channelType, @NonNull String channelId, QueryChannelCallback callback) {
-
-        mService.deleteChannel(channelType, channelId, apiKey, user.getId(), clientID).enqueue(new Callback<ChannelState>() {
+    public void updateChannel(@NonNull Channel channel, @NotNull Map<String, Object> options,
+                              @Nullable String updateMessage, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                callback.onSuccess(response.body());
+            public void onSuccess(User user) {
+                mService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
+                        new UpdateChannelRequest(options, updateMessage))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
             }
 
             @Override
-            public void onFailure(Call call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * removes the channel. Messages are permanently removed.
+     *
+     * @param channel  the channel needs to delete
+     * @param callback the result callback
+     */
+    public void deleteChannel(@NonNull Channel channel, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.deleteChannel(channel.getType(), channel.getId(), apiKey, clientID)
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
     }
@@ -651,6 +801,7 @@ public class Client implements WSResponseHandler {
             }
         });
     }
+
 
     // region Message
 
@@ -1261,21 +1412,21 @@ public class Client implements WSResponseHandler {
      * addDevice - Adds a push device for a user.
      */
     public void addDevice(@NonNull String deviceId,
-                          DeviceCallback callback) {
+                          CompletableCallback callback) {
         AddDeviceRequest request = new AddDeviceRequest(deviceId);
         onSetUserCompleted(
                 new ClientConnectionCallback() {
 
                     @Override
                     public void onSuccess(User user) {
-                        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<DevicesResponse>() {
+                        mService.addDevices(apiKey, user.getId(), clientID, request).enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {
@@ -1331,19 +1482,19 @@ public class Client implements WSResponseHandler {
      * removeDevice - Removes the device with the given id. Clientside users can only delete their own devices
      */
     public void removeDevice(@NonNull String deviceId,
-                             DeviceCallback callback) {
+                             CompletableCallback callback) {
         onSetUserCompleted(
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<DevicesResponse>() {
+                        mService.deleteDevice(deviceId, apiKey, user.getId(), clientID).enqueue(new Callback<CompletableResponse>() {
                             @Override
-                            public void onResponse(Call<DevicesResponse> call, Response<DevicesResponse> response) {
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<DevicesResponse> call, Throwable t) {
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {
@@ -1361,29 +1512,19 @@ public class Client implements WSResponseHandler {
         );
     }
 
-    // endregion
-
-    public synchronized void disconnect() {
+    /**
+     * closes the WebSocket connection and sends a connection.change event to all listeners
+     */
+    public synchronized void disconnectWebSocket() {
         Log.i(TAG, "disconnecting");
-        getConnectionWaiters().clear();
         if (WSConn != null) {
             WSConn.disconnect();
-            connected = false;
             WSConn = null;
             clientID = null;
-            onWSEvent(new Event(false));
         }
+        onWSEvent(new Event(false));
+        connected = false;
     }
-
-    public void reconnect() {
-        if (user == null) {
-            Log.e(TAG, "Client reconnect called before setUser, this is probably an integration mistake.");
-            return;
-        }
-        disconnect();
-        connectionRecovered();
-    }
-
 
     public void flagMessage(@NonNull String targetMessageId,
                             FlagCallback callback) {
