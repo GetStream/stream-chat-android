@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     final Boolean offlineEnabled = false;
     final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ-broken";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream

@@ -486,6 +486,9 @@ public class Channel {
                     initialized = true;
                 }
 
+                // update the user references
+                getClient().getState().updateUsersForChannel(channelState);
+
                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                 // offline storage
 

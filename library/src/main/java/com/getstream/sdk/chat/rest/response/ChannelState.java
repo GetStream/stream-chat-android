@@ -168,7 +168,7 @@ public class ChannelState {
         if (members != null) {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
-                    users.add(channel.getClient().getTrackedUser(m.getUser()));
+                    users.add(channel.getClient().getState().getUser(m.getUser().getId()));
                 }
             }
         }
@@ -176,7 +176,7 @@ public class ChannelState {
         if (watchers != null) {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
-                    users.add(channel.getClient().getTrackedUser(w.getUser()));
+                    users.add(channel.getClient().getState().getUser(w.getUser().getId()));
                 }
             }
         }
