@@ -335,7 +335,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configSendFailed() {
-        if (message.getStatus() == MessageStatus.FAILED) {
+        if (message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
             // Set Style
@@ -754,6 +755,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private boolean isDeletedOrFailedMessage() {
-        return message.getDeletedAt() != null || message.getStatus() == MessageStatus.FAILED;
+        return message.getDeletedAt() != null
+                || message.getStatus() == MessageStatus.FAILED
+                || message.getType().equals(ModelType.message_error);
     }
 }
