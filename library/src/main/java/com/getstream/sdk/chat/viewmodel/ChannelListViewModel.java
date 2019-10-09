@@ -254,8 +254,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        if (!initialized.get() || !client().isConnected())
-            setLoading();
+//        if (!initialized.get() || !client().isConnected())
+//            setLoading();
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
+import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -72,6 +73,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -85,7 +87,8 @@ public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
-    private HashMap<String, User> knownUsers = new HashMap<>();
+    // On stream-chat-js lib this is called knownUsers
+    private ConcurrentHashMap<String, User> knownUsers = new ConcurrentHashMap<>();
     // Main Params
     private String apiKey;
     private Boolean offlineStorage;
@@ -98,11 +101,11 @@ public class Client implements WSResponseHandler {
     private List<Channel> activeChannels = new ArrayList<>();
     private boolean connected;
 
-    private List<ClientConnectionCallback> connectionWaiters;
     private APIService mService;
-    private List<ChatEventHandler> eventSubscribers;
-    private Map<Number, ChatEventHandler> eventSubscribersBy;
-    private int subscribersSeq;
+    private EventSubscriberRegistry<ChatEventHandler> subRegistery;
+    // registry for callbacks on the setUser connection
+    private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
+
     private Map<String, Config> channelTypeConfigs;
     private WebSocketService WSConn;
     private ApiClientOptions options;
@@ -210,9 +213,8 @@ public class Client implements WSResponseHandler {
     public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
         connected = false;
         this.apiKey = apiKey;
-        eventSubscribers = new ArrayList<>();
-        eventSubscribersBy = new HashMap<>();
-        connectionWaiters = new ArrayList<>();
+        subRegistery = new EventSubscriberRegistry();
+        connectSubRegistery = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.options = options;
@@ -221,9 +223,7 @@ public class Client implements WSResponseHandler {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
                     Log.i(TAG, "fast track connection discovery: UP");
-                    if (WSConn != null) {
-                        reconnectWebSocket();
-                    }
+                    reconnectWebSocket();
                 } else if (!connectionModel.getIsConnected() && connected) {
                     Log.i(TAG, "fast track connection discovery: DOWN");
                     disconnectWebSocket();
@@ -234,10 +234,6 @@ public class Client implements WSResponseHandler {
 
     public Client(String apiKey, ApiClientOptions options) {
         this(apiKey, new ApiClientOptions(), null);
-    }
-
-    public synchronized List<ClientConnectionCallback> getConnectionWaiters() {
-        return connectionWaiters;
     }
 
     public Storage storage() {
@@ -405,13 +401,11 @@ public class Client implements WSResponseHandler {
      * Event Delegation: Adds an event handler for client events received via WebSocket
      *
      * @param handler the event handler for client events
-     * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Number)}
+     * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Integer)}
      */
-    public final synchronized int addEventHandler(ChatEventHandler handler) {
-        int id = ++subscribersSeq;
-        eventSubscribers.add(handler);
-        eventSubscribersBy.put(id, handler);
-        return id;
+    public final int addEventHandler(ChatEventHandler handler) {
+        Integer subID = subRegistery.addSubscription(handler);
+        return subID;
     }
 
     /**
@@ -421,9 +415,8 @@ public class Client implements WSResponseHandler {
      *
      * @param handlerId the event handler for client events
      */
-    public final synchronized void removeEventHandler(Number handlerId) {
-        ChatEventHandler handler = eventSubscribersBy.remove(handlerId);
-        eventSubscribers.remove(handler);
+    public final void removeEventHandler(Integer handlerId) {
+        subRegistery.removeSubscription(handlerId);
     }
 
     /**
@@ -438,7 +431,7 @@ public class Client implements WSResponseHandler {
         if (connected) {
             callback.onSuccess(user);
         } else {
-            getConnectionWaiters().add(callback);
+            connectSubRegistery.addSubscription(callback);
         }
     }
 
@@ -496,24 +489,27 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
-    public synchronized void connectionResolved(Event event) {
+    public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
             user = event.getMe();
 
+        // mark as connect, any new callbacks will automatically be executed
         connected = true;
 
-        for (ClientConnectionCallback waiter : getConnectionWaiters()) {
+        // call onSuccess for everyone that was waiting
+        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
+        connectSubRegistery.clear();
+        for (ClientConnectionCallback waiter : subs) {
             waiter.onSuccess(user);
         }
-        getConnectionWaiters().clear();
+
     }
 
     @Override
     public void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(this, event);
-        for (int i = eventSubscribers.size() - 1; i >= 0; i--) {
-            ChatEventHandler handler = eventSubscribers.get(i);
+        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
             handler.dispatchEvent(this, event);
         }
 

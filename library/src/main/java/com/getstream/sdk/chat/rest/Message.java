@@ -29,9 +29,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -121,6 +119,7 @@ public class Message implements UserEntity {
     @TypeConverters({MessageStatusConverter.class})
     private MessageStatus status;
 
+    @NonNull
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
@@ -130,6 +129,7 @@ public class Message implements UserEntity {
     private String date, time;
 
     public Message() {
+        this.extraData = new HashMap<>();
         this.setSyncStatus(Sync.SYNCED);
     }
 
@@ -256,9 +256,11 @@ public class Message implements UserEntity {
         if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
             return false;
         }
+
         if (!Objects.equals(updatedAt, otherMessage.updatedAt)) {
             return false;
         }
+
         if (!Objects.equals(deletedAt, otherMessage.deletedAt)) {
             return false;
         }
@@ -282,6 +284,9 @@ public class Message implements UserEntity {
         }
         if (deletedAt != null) {
             clone.deletedAt = new Date(deletedAt.getTime());
+        }
+        if (!extraData.isEmpty()) {
+            clone.extraData = new HashMap<>(extraData);
         }
         clone.mentionedUsers = mentionedUsers;
         clone.parentId = parentId;

@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view.Dialog;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -41,7 +42,7 @@ public class MoreActionDialog extends Dialog {
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
-
+        Utils.hideSoftKeyboard((Activity) context);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
