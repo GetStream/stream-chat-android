@@ -1,5 +1,9 @@
 ## Pending release
 
+## Oct 9, 2019 - 2.2.0
+
+- Limit message input height to 7 rows
+- Fixed thread safety issues on Client.java
 - Fixed serialization of custom fields for message/user/channel and attachment types
 - Added support for distinct channels
 - Added support to Channel hide/show 
