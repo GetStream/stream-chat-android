@@ -501,6 +501,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 typingState.remove(user.getId());
                 typingUsers.postValue(getCleanedTypingUsers());
             }
+
+            @Override
+            public void onMemberAdded(Event event) {
+                channelState.postValue(channel.getChannelState());
+            }
+
+            @Override
+            public void onMemberRemoved(Event event) {
+                channelState.postValue(channel.getChannelState());
+            }
+
+            @Override
+            public void onMemberUpdated(Event event) {
+                channelState.postValue(channel.getChannelState());
+            }
         });
     }
 
@@ -915,23 +930,23 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         // afterwards send the request
         channel.sendMessage(message,
-            new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    replaceMessage(message, response.getMessage());
-                    message.setSyncStatus(SYNCED);
-                    callback.onSuccess(response);
-                }
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        replaceMessage(message, response.getMessage());
+                        message.setSyncStatus(SYNCED);
+                        callback.onSuccess(response);
+                    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Message clone = message.copy();
-                    clone.setStatus(MessageStatus.FAILED);
-                    clone.setSyncStatus(LOCAL_FAILED);
-                    updateFailedMessage(clone);
-                    callback.onError(errMsg, errCode);
-                }
-        });
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Message clone = message.copy();
+                        clone.setStatus(MessageStatus.FAILED);
+                        clone.setSyncStatus(LOCAL_FAILED);
+                        updateFailedMessage(clone);
+                        callback.onError(errMsg, errCode);
+                    }
+                });
     }
 
     public void sendMessage(Message message) {
