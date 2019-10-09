@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errMsg, errCode));
+                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
             }
         });
         return client;

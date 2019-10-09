@@ -291,11 +291,14 @@ public class WebSocketService extends WebSocketListener {
             if (isError) {
                 // token expiration is handled separately (allowing you to refresh the token from your backend)
                 if (errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                    webSocket.close(NORMAL_CLOSURE_STATUS, "");
+                    // the server closes the connection after sending an error, so we don't need to close it here
+                    // webSocket.close(NORMAL_CLOSURE_STATUS, "token expired");
                     eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
                     return;
                 } else {
                     // other errors are passed to the callback
+                    // the server closes the connection after sending an error, so we don't need to close it here
+                    // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
                     WsErrorMessage finalErrorMessage = errorMessage;
                     eventThread.mHandler.post(() -> webSocketListener.onError(finalErrorMessage));
                     return;
@@ -329,7 +332,6 @@ public class WebSocketService extends WebSocketListener {
             Log.d(TAG, "WebSocket # " + wsId + " Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
-                // TODO: propagate this upstream
                 webSocket.close(code, reason);
             } else {
                 consecutiveFailures++;
