@@ -27,7 +27,7 @@ android {
     }
 }
 
-final def markdown_version = '4.1.0'
+final def markdown_version = '4.1.1'
 final def jupiter_version = '5.5.1'
 
 dependencies {
