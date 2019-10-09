@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.utils;
 
-
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -51,7 +50,7 @@ public class StringUtility {
                 text = text.replace("@" + userName, "**" + "@" + userName + "**");
             }
         }
-        return text;
+        return text.replaceAll("\n", "<br/>  <br/>  \n");
     }
 
     public static String getSaltString(String s) {
