@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
@@ -7,6 +8,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,8 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * To keep this data in sync it needs to monitor the following events
  *
- * - mute event (in case you mute a new user)
- * - user.updated in case some of the current users have changed
+ * - mute event (in case you mute a new user) (done)
+ * - user.updated in case some of the current users have changed (done)
  * - mark read (for the unread count) (done)
  * - health.check for the initial user data (done)
  * - user.presence.changed for when a user went online/offline (done)
@@ -49,8 +51,10 @@ public class ClientState {
     private User currentUser;
     private Integer currentUserUnreadCount;
     private ConcurrentHashMap<String,List<String>> userIDToChannelsMap;
+    private Client client;
 
-    public ClientState() {
+    public ClientState(Client client) {
+        this.client = client;
         currentUser = null;
         currentUserUnreadCount = null;
         userIDToChannelsMap = new ConcurrentHashMap<>();
@@ -77,6 +81,8 @@ public class ClientState {
     }
 
     public void updateUsers(List<User> newUsers) {
+        Map<String, Channel> channelMap = client.getActiveChannelMap();
+
         for (User newUser: newUsers) {
             User oldUser = users.get(newUser.getId());
             if (oldUser != null) {
@@ -84,7 +90,33 @@ public class ClientState {
             } else {
                 users.put(newUser.getId(), newUser.shallowCopy());
             }
+
+            // if there are existing references, update them
+            List<String> cids = userIDToChannelsMap.get(newUser.getId());
+            if (cids != null) {
+                for (String cid : cids) {
+                    Channel channel = channelMap.get(cid);
+                    if (channel != null) {
+                        // update the members
+                        for (Member m : channel.getChannelState().getMembers()) {
+                            if (m.getUserId().equals(newUser.getId())) {
+                                m.getUser().shallowUpdate(newUser);
+                            }
+                        }
+                        // update the watchers
+                        // TODO: inefficient if you have many at the same time
+                        for (Watcher w : channel.getChannelState().getWatchers() ){
+                            if (w.getUserId().equals(newUser.getId())) {
+                                w.getUser().shallowUpdate(newUser);
+                            }
+                        }
+                    }
+
+                }
+            }
         }
+
+
     }
 
     public void updateUserWithReference(User newUser, String cid) {
@@ -105,7 +137,7 @@ public class ClientState {
     }
 
     public void updateUsersWithReference(List<User> newUsers, String cid) {
-        // update the users
+        // update the users first
         updateUsers(newUsers);
 
         // set the references

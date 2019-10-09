@@ -66,6 +66,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -103,7 +104,7 @@ public class Client implements WSResponseHandler {
     private String cacheUserToken;
     private Context context;
     // Client params
-    private List<Channel> activeChannels = new ArrayList<>();
+    private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
 
     private APIService mService;
@@ -121,18 +122,20 @@ public class Client implements WSResponseHandler {
                 @Override
                 public void onAnyEvent(Event event) {
                     // if an event contains the current user update it
+                    // this also captures notification.mutes_updated
                     if (event.getMe() != null) {
                         state.setCurrentUser(event.getMe());
                     }
 
                     // if an event contains a user update that user
+                    // handles user updates, presence changes etc.
                     if (event.getUser() != null) {
                         state.updateUser(event.getUser());
                     }
 
                     // update the unread count if it changes
                     if (event.getTotalUnreadCount() != null) {
-                        state.setCurrentUserUnreadCount((Integer) event.getTotalUnreadCount());
+                        state.setCurrentUserUnreadCount(event.getTotalUnreadCount().intValue());
                     }
 
                     // if an event contains an updated channel write the update
@@ -193,11 +196,8 @@ public class Client implements WSResponseHandler {
                 @Override
                 public void onChannelDeleted(Channel channel, Event event) {
                     storage().deleteChannel(channel);
-                    activeChannels.remove(channel);
+                    activeChannelMap.remove(channel.getCid());
                 }
-
-                // TODO: what about user update events?
-                // TODO: what about mute events
 
                 @Override
                 public void onConnectionChanged(Event event) {
@@ -215,7 +215,7 @@ public class Client implements WSResponseHandler {
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.options = options;
-        this.state = new ClientState();
+        this.state = new ClientState(this);
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -254,8 +254,15 @@ public class Client implements WSResponseHandler {
         return clientID;
     }
 
+    public Map<String, Channel> getActiveChannelMap() {
+        return activeChannelMap;
+    }
+
     public List<Channel> getActiveChannels() {
-        return activeChannels;
+        Collection<Channel> values = activeChannelMap.values();
+        ArrayList<Channel> channels = new ArrayList<>(values);
+
+        return channels;
     }
 
     public APIService getApiService() {
@@ -288,7 +295,7 @@ public class Client implements WSResponseHandler {
 
         // clear local state
         user = null;
-        activeChannels.clear();
+        activeChannelMap.clear();
     }
 
     public synchronized void setUser(User user, final TokenProvider provider, ClientConnectionCallback callback) {
@@ -532,7 +539,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
-        for (Channel channel : activeChannels) {
+        for (Channel channel : getActiveChannels()) {
             cids.add(channel.getCid());
         }
         if (cids.size() > 0) {
@@ -593,7 +600,7 @@ public class Client implements WSResponseHandler {
 
     public synchronized void addToActiveChannels(Channel channel) {
         if (getChannelByCid(channel.getCid()) == null) {
-            activeChannels.add(channel);
+            activeChannelMap.put(channel.getCid(), channel);
         }
     }
 
@@ -604,15 +611,7 @@ public class Client implements WSResponseHandler {
     }
 
     Channel getChannelByCid(String cid) {
-        if (cid == null) {
-            return null;
-        }
-        for (Channel channel : activeChannels) {
-            if (cid.equals(channel.getCid())) {
-                return channel;
-            }
-        }
-        return null;
+        return activeChannelMap.get(cid);
     }
 
     // region Channel
