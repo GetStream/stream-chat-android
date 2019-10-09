@@ -286,10 +286,21 @@ public class WebSocketService extends WebSocketListener {
                 errorMessage = null;
             }
 
-            if (errorMessage != null && errorMessage.getError() != null && errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                webSocket.close(NORMAL_CLOSURE_STATUS, "");
-                eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
-                return;
+            Boolean isError = errorMessage != null && errorMessage.getError() != null;
+
+            if (isError) {
+                // token expiration is handled separately (allowing you to refresh the token from your backend)
+                if (errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
+                    webSocket.close(NORMAL_CLOSURE_STATUS, "");
+                    eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
+                    return;
+                } else {
+                    // other errors are passed to the callback
+                    WsErrorMessage finalErrorMessage = errorMessage;
+                    eventThread.mHandler.post(() -> webSocketListener.onError(finalErrorMessage));
+                    return;
+                }
+
             }
 
             Event event;

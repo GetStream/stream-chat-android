@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     final Boolean offlineEnabled = false;
     final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
+    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ-broken";
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
@@ -67,7 +67,17 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("name", "Bender");
         extraData.put("image", "https://bit.ly/321RmWb");
         User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN);
+        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.i(TAG, String.format("Connection established for user %s", user.getName()));
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errMsg, errCode));
+            }
+        });
         return client;
     }
 

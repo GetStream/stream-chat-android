@@ -60,6 +60,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
@@ -270,6 +271,11 @@ public class Client implements WSResponseHandler {
         activeChannels.clear();
     }
 
+    public synchronized void setUser(User user, final TokenProvider provider, ClientConnectionCallback callback) {
+        connectSubRegistery.addSubscription(callback);
+        setUser(user, provider);
+    }
+
     /**
      * Sets the current user for chat
      *
@@ -361,6 +367,10 @@ public class Client implements WSResponseHandler {
         for (Member member : channel.getChannelState().getMembers()) {
             trackUser(member.getUser());
         }
+    }
+
+    public void setUser(User user, @NonNull String token, ClientConnectionCallback callback) {
+        setUser(user, listener -> listener.onSuccess(token), callback);
     }
 
     public void setUser(User user, @NonNull String token) {
@@ -481,6 +491,16 @@ public class Client implements WSResponseHandler {
             waiter.onSuccess(user);
         }
 
+    }
+
+    @Override
+    public void onError(WsErrorMessage error) {
+        // call onError for everyone
+        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
+        connectSubRegistery.clear();
+        for (ClientConnectionCallback waiter : subs) {
+            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+        }
     }
 
     @Override
