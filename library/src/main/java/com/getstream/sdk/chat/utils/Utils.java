@@ -15,13 +15,14 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,7 +83,15 @@ public class Utils {
     }
 
     public static void showMessage(Context mContext, String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+        View toastView = toast.getView();
+        TextView toastMessage = toastView.findViewById(android.R.id.message);
+        toastMessage.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) toastMessage.getLayoutParams();
+        params.leftMargin = dpToPx(10);
+        params.rightMargin = dpToPx(10);
+        toastMessage.setLayoutParams(params);
+        toast.show();
     }
 
     public static void showSoftKeyboard(Activity activity) {
