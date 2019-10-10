@@ -126,6 +126,9 @@ public class Client implements WSResponseHandler {
                     if (event.getMe() != null) {
                         state.setCurrentUser(event.getMe());
                     }
+                    if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
+                        Log.i(TAG, "Mutes updated");
+                    }
 
                     // if an event contains a user update that user
                     // handles user updates, presence changes etc.

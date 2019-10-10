@@ -60,7 +60,6 @@ public class ClientState {
     public ClientState(Client client) {
         this.client = client;
         currentUser = null;
-        currentUserUnreadCount = null;
         userIDToChannelsMap = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
     }

@@ -1,13 +1,17 @@
 package com.getstream.sdk.chat.rest.adapter;
 
+import com.getstream.sdk.chat.model.Device;
+import com.getstream.sdk.chat.model.Mute;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +88,15 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                     continue;
                 case "unread_channels":
                     user.setUnreadChannels(gson.fromJson(json, Integer.class));
+                    continue;
+                case "invisible":
+                    user.setInvisible(gson.fromJson(json, Boolean.class));
+                    continue;
+                case "devices":
+                    user.setDevices(gson.fromJson(json, new TypeToken<ArrayList<Device>>(){}.getType()));
+                    continue;
+                case "mutes":
+                    user.setMutes(gson.fromJson(json, new TypeToken<ArrayList<Mute>>(){}.getType()));
                     continue;
             }
             // Set Extra Data
