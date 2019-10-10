@@ -90,6 +90,8 @@ public class ClientState {
 
     void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        this.totalUnreadCount = currentUser.getTotalUnreadCount();
+        this.unreadChannels = currentUser.getUnreadChannels();
     }
 
     /**
