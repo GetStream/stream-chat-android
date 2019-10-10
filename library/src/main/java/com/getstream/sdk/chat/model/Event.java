@@ -39,7 +39,7 @@ public class Event implements UserEntity {
 
     @SerializedName("member")
     @Expose
-    private User member;
+    private Member member;
 
     @SerializedName("message")
     @Expose
@@ -115,7 +115,7 @@ public class Event implements UserEntity {
         return me;
     }
 
-    public User getMember() {
+    public Member getMember() {
         return member;
     }
 

@@ -39,10 +39,12 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
+import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
@@ -177,6 +179,27 @@ public class Client implements WSResponseHandler {
                     activeChannels.remove(channel);
                 }
 
+                @Override
+                public void onMemberAdded(Channel channel, Event event) {
+                    if (event.getMember() != null) {
+                        channel.handleMemberAdded(event.getMember());
+                    }
+                }
+
+                @Override
+                public void onMemberUpdated(Channel channel, Event event) {
+                    if (event.getMember() != null) {
+                        channel.handleMemberUpdated(event.getMember());
+                    }
+                }
+
+                @Override
+                public void onMemberRemoved(Channel channel, Event event) {
+                    if (event.getUser() != null) {
+                        channel.handelMemberRemoved(event.getUser());
+                    }
+                }
+
                 // TODO: what about user update events?
 
                 @Override
@@ -248,7 +271,7 @@ public class Client implements WSResponseHandler {
     /**
      * The opposite of {@link #setUser(User, TokenProvider)} this closes the current WebSocket connection
      * and resets the client state as if setUser was never initialized
-     *
+     * <p>
      * Calls to this method will return an error if a user was not set; if a user was set but
      * the connection is still pending (setUser is asynchronous) this method will also abort the pending
      * connection
@@ -272,21 +295,21 @@ public class Client implements WSResponseHandler {
 
     /**
      * Sets the current user for chat
-     *
+     * <p>
      * 1. it sets the current user to the client
      * 2. it requests the token from the provided TokenProvider
      * 3. uses {@link #connect} to continue with the initialization process
-     *
+     * <p>
      * This method is required for most of Chat SDK functionality to work; since this is an async
      * function (a WebSocket connection must be established) code that depends on the initialization
      * of the user should be not be called directly but await for setUser to be completed
-     *
+     * <p>
      * This can be done by adding callbacks via {@link #onSetUserCompleted(ClientConnectionCallback)}
-     *
+     * <p>
      * Further calls to setUser are ignored; in order to change current user you first need to call
      * {@link #disconnect()}}
      *
-     * @param user the user to set as current
+     * @param user     the user to set as current
      * @param provider the Token Provider used to obtain the auth token for the user
      */
     public synchronized void setUser(User user, final TokenProvider provider) {
@@ -387,7 +410,7 @@ public class Client implements WSResponseHandler {
 
     /**
      * Event Delegation: removes an event handler via its id
-     *
+     * <p>
      * Removing an handler that was not registered is a no-op
      *
      * @param handlerId the event handler for client events
@@ -398,7 +421,7 @@ public class Client implements WSResponseHandler {
 
     /**
      * Makes sure the callback is called when the user is ready
-     *
+     * <p>
      * If the user is setup, it will run immediately; otherwise it will be added to a
      * waiting list and will be fired as soon as the user is ready (see {@link #setUser(User, TokenProvider)} for more)
      *
@@ -1158,9 +1181,7 @@ public class Client implements WSResponseHandler {
                         .enqueue(new Callback<CompletableResponse>() {
                             @Override
                             public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
-                                if (response.isSuccessful()) {
-                                    callback.onSuccess(response.body());
-                                }
+                                callback.onSuccess(response.body());
                             }
 
                             @Override
@@ -1199,9 +1220,7 @@ public class Client implements WSResponseHandler {
                         .enqueue(new Callback<CompletableResponse>() {
                             @Override
                             public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
-                                if (response.isSuccessful()) {
-                                    callback.onSuccess(response.body());
-                                }
+                                callback.onSuccess(response.body());
                             }
 
                             @Override
@@ -1379,6 +1398,80 @@ public class Client implements WSResponseHandler {
                 } else {
                     callback.onError(t.getLocalizedMessage(), -1);
                 }
+            }
+        });
+    }
+
+    /**
+     * adds members with given user IDs to the channel
+     *
+     * @param channel  add members to this channel
+     * @param members  list of user IDs to add as members
+     * @param callback the result callback
+     */
+    public void addMembers(@NotNull Channel channel, @NotNull List<String> members,
+                           @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.addMembers(channel.getType(), channel.getId(), apiKey, clientID, new AddMembersRequest(members))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * remove members with given user IDs from the channel
+     *
+     * @param channel  add members to this channel
+     * @param members  list of user IDs to remove from the member list
+     * @param callback the result callback
+     */
+    public void removeMembers(@NotNull Channel channel, @NotNull List<String> members,
+                              @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.removeMembers(channel.getType(), channel.getId(), apiKey, clientID, new RemoveMembersRequest(members))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
     }

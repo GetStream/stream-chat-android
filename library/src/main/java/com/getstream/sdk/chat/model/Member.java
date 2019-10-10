@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.User;
 import com.google.gson.annotations.Expose;
@@ -87,5 +89,16 @@ public class Member implements UserEntity {
     public String getUserId() {
         if (user == null) return null;
         return user.getId();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof Member) {
+            return getUserId().equals(((Member) obj).getUserId());
+        } else {
+            return false;
+        }
     }
 }
