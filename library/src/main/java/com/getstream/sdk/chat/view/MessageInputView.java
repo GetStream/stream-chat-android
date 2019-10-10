@@ -160,9 +160,11 @@ public class MessageInputView extends RelativeLayout
                     return false;
                 }
             }
+            if (inputContentInfo.getLinkUri() == null)
+                return false;
+
             String url = inputContentInfo.getLinkUri().toString();
             Log.d(TAG, "getLinkUri:" + url);
-            Log.d(TAG, "getContentUri:" + inputContentInfo.getContentUri());
             Attachment attachment = new Attachment();
             attachment.setThumbURL(url);
             attachment.setTitleLink(url);
