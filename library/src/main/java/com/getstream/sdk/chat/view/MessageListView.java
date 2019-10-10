@@ -336,7 +336,6 @@ public class MessageListView extends RecyclerView {
             boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()) {
                 adapter.setThread(messageListItemWrapper.isThread());
-                adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
 
