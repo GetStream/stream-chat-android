@@ -88,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         // setup the client
         Client client = configureStreamClient();
+        // example for how to observe the unread counts
+        StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
+            Log.i(TAG, String.format("Total unread message count is now %d", count));
+        });
+        StreamChat.getUnreadChannels().observe(this, (Number count) -> {
+            Log.i(TAG, String.format("There are %d channels with unread messages", count));
+        });
 
         // we're using data binding in this example
         ActivityMainBinding binding =
