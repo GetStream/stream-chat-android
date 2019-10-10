@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
@@ -57,6 +58,7 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
+import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
@@ -1086,6 +1088,57 @@ public class Client implements WSResponseHandler {
                 }
             }
         });
+    }
+
+    /**
+     * list the reactions, supports pagination
+     *
+     * @param messageId the message id
+     * @param limit     pagination param
+     * @param offset    pagination param
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             int limit,
+                             int offset,
+                             @NotNull GetReactionsCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.getReactions(messageId, apiKey, clientID, limit, offset)
+                        .enqueue(new Callback<GetReactionsResponse>() {
+                            @Override
+                            public void onResponse(Call<GetReactionsResponse> call, Response<GetReactionsResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<GetReactionsResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * list of reactions (10 most recent reactions)
+     *
+     * @param messageId the message id
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull GetReactionsCallback callback) {
+        getReactions(messageId, 10, 0, callback);
     }
 
     // endregion

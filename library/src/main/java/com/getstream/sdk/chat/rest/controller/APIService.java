@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
+import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
@@ -122,6 +123,9 @@ public interface APIService {
 
     @DELETE("/messages/{id}/reaction/{type}")
     Call<MessageResponse> deleteReaction(@Path("id") String messageId, @Path("type") String reactionType, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+
+    @GET("/messages/{id}/reactions")
+    Call<GetReactionsResponse> getReactions(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("limit") Integer limit, @Query("offset") Integer offset);
 
     @GET("/messages/{parent_id}/replies")
     Call<GetRepliesResponse> getReplies(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit);
