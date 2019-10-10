@@ -87,7 +87,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onFailure(Exception e) {
-                // TODO
+                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
             }
         });
 
