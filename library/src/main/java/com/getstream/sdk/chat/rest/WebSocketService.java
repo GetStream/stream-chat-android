@@ -310,20 +310,24 @@ public class WebSocketService extends WebSocketListener {
 
             try {
                 event = GsonConverter.Gson().fromJson(text, Event.class);
-                setLastEvent(new Date());
+                // set received at, prevents clock issues from breaking our ability to remove old typing indicators
+                Date now = new Date();
+                event.setReceivedAt(now);
+                setLastEvent(now);
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();
                 return;
             }
 
-            if (isConnectionResolved()) {
-                sendEventToHandlerThread(event);
-            } else {
+            // resolve on the first good message
+            if (!isConnectionResolved()) {
                 eventThread.mHandler.post(() -> {
                     webSocketListener.connectionResolved(event);
                     setConnectionResolved();
                 });
             }
+
+            sendEventToHandlerThread(event);
         }
 
         @Override

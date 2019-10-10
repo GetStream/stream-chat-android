@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import androidx.room.Ignore;
+
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.Message;
@@ -68,6 +70,9 @@ public class Event implements UserEntity {
     @SerializedName("created_at")
     @Expose
     private Date createdAt;
+
+    @Ignore
+    private Date receivedAt;
 
     private boolean online;
 
@@ -170,4 +175,11 @@ public class Event implements UserEntity {
         return user.getId();
     }
 
+    public Date getReceivedAt() {
+        return receivedAt;
+    }
+
+    public void setReceivedAt(Date receivedAt) {
+        this.receivedAt = receivedAt;
+    }
 }
