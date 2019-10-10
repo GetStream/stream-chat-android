@@ -136,9 +136,12 @@ public class Client implements WSResponseHandler {
                         state.updateUser(event.getUser());
                     }
 
-                    // update the unread count if it changes
+                    // update the unread count if it is present on the event
                     if (event.getTotalUnreadCount() != null) {
-                        state.setCurrentUserUnreadCount(event.getTotalUnreadCount().intValue());
+                        state.setTotalUnreadCount(event.getTotalUnreadCount().intValue());
+                    }
+                    if (event.getUnreadChannels() != null) {
+                        state.setUnreadChannels(event.getUnreadChannels().intValue());
                     }
 
                     // if an event contains an updated channel write the update

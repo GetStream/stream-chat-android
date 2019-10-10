@@ -48,7 +48,8 @@ public class ClientState {
     private static final String TAG = ClientState.class.getSimpleName();
     private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
     private User currentUser;
-    private Integer currentUserUnreadCount;
+    private Integer totalUnreadCount;
+    private Integer unreadChannels;
     private ConcurrentHashMap<String, List<String>> userIDToChannelsMap;
     private Client client;
 
@@ -62,6 +63,19 @@ public class ClientState {
         currentUser = null;
         userIDToChannelsMap = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
+    }
+
+    /**
+     * Returns the total unread count
+     *
+     * @return
+     */
+    public Integer getTotalUnreadCount() {
+        return totalUnreadCount;
+    }
+
+    void setTotalUnreadCount(Integer totalUnreadCount) {
+        this.totalUnreadCount = totalUnreadCount;
     }
 
 
@@ -88,18 +102,6 @@ public class ClientState {
         return users.get(userID);
     }
 
-    /**
-     * Returns the unread count for the current user
-     *
-     * @return
-     */
-    public Integer getCurrentUserUnreadCount() {
-        return currentUserUnreadCount;
-    }
-
-    void setCurrentUserUnreadCount(Integer currentUserUnreadCount) {
-        this.currentUserUnreadCount = currentUserUnreadCount;
-    }
 
     void updateUser(User newUser) {
         List<User> newUsers = new ArrayList();
@@ -175,5 +177,18 @@ public class ClientState {
             }
             channelRefs.add(cid);
         }
+    }
+
+    /**
+     * Returns the number of unread channels
+     *
+     * @return
+     */
+    public Integer getUnreadChannels() {
+        return unreadChannels;
+    }
+
+    void setUnreadChannels(Integer unreadChannels) {
+        this.unreadChannels = unreadChannels;
     }
 }
