@@ -331,6 +331,24 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             public void onMessageRead(Channel channel, Event event) {
                 updateChannel(channel, false);
             }
+
+            @Override
+            public void onMemberAdded(Channel channel, Event event) {
+                super.onMemberAdded(channel, event);
+                updateChannel(channel, false);
+            }
+
+            @Override
+            public void onMemberUpdated(Channel channel, Event event) {
+                super.onMemberUpdated(channel, event);
+                updateChannel(channel, false);
+            }
+
+            @Override
+            public void onMemberRemoved(Channel channel, Event event) {
+                super.onMemberRemoved(channel, event);
+                updateChannel(channel, false);
+            }
         });
     }
 
@@ -460,7 +478,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         queryChannelsInner(0);
     }
 
-    public void queryChannels(){
+    public void queryChannels() {
         queryChannels(new Storage.OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
@@ -540,7 +558,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     /**
      * Reloads the state of the view model
-     *
      */
     public void reload() {
         retryLooper.removeCallbacksAndMessages(null);

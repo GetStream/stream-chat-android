@@ -677,6 +677,26 @@ public class Channel {
         client.unBanUser(targetUserId, this, callback);
     }
 
+    /**
+     * adds members with given user IDs to this channel
+     *
+     * @param members  list of user IDs to add as members
+     * @param callback the result callback
+     */
+    public void addMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
+        client.addMembers(this, members, callback);
+    }
+
+    /**
+     * remove members with given user IDs from this channel
+     *
+     * @param members  list of user IDs to remove from the member list
+     * @param callback the result callback
+     */
+    public void removeMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
+        client.removeMembers(this, members, callback);
+    }
+
     public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         updatedAt = channel.updatedAt;
@@ -724,6 +744,18 @@ public class Channel {
 
     public void handleReadEvent(Event event) {
         channelState.setReadDateOfChannelLastMessage(event.getUser(), event.getCreatedAt());
+    }
+
+    public void handleMemberAdded(@NotNull Member member) {
+        channelState.addOrUpdateMember(member);
+    }
+
+    public void handleMemberUpdated(@NotNull Member member) {
+        channelState.addOrUpdateMember(member);
+    }
+
+    public void handelMemberRemoved(@NotNull User user) {
+        channelState.removeMemberById(user.getId());
     }
 
     /**

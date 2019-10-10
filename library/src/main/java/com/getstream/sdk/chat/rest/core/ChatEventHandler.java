@@ -47,6 +47,9 @@ public abstract class ChatEventHandler {
     public void onMemberRemoved(Channel channel, Event event) {
     }
 
+    public void onMemberUpdated(Channel channel, Event event) {
+    }
+
     public void onChannelUpdated(Channel channel, Event event) {
     }
 
@@ -147,6 +150,9 @@ public abstract class ChatEventHandler {
                 break;
             case MEMBER_REMOVED:
                 dispatchChannelEvent(client, event, this::onMemberRemoved);
+                break;
+            case MEMBER_UPDATED:
+                dispatchChannelEvent(client, event, this::onMemberUpdated);
                 break;
             case CHANNEL_UPDATED:
                 dispatchChannelEvent(client, event, this::onChannelUpdated);

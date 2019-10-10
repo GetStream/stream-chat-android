@@ -24,6 +24,8 @@ import com.getstream.sdk.chat.storage.converter.MemberListConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -160,6 +162,28 @@ public class ChannelState {
             lastKnownActiveWatcher = watcher.getUser().getLastActive();
         }
         watchers.remove(watcher);
+    }
+
+    public void addOrUpdateMember(@NotNull Member member) {
+        if (members == null) {
+            members = new ArrayList<>();
+        }
+        int index = members.indexOf(member);
+        if (index >= 0) {
+            members.set(index, member);
+        } else {
+            members.add(member);
+        }
+    }
+
+    public void removeMemberById(@NotNull String userId) {
+        if (members != null) {
+            for (Member member : members) {
+                if (member.getUserId().equals(userId)) {
+                    members.remove(member);
+                }
+            }
+        }
     }
 
     public List<User> getOtherUsers() {
@@ -410,7 +434,6 @@ public class ChannelState {
 
     public void init(ChannelState incoming) {
         reads = incoming.reads;
-        members = incoming.members;
         watcherCount = incoming.watcherCount;
 
         if (watcherCount > 1) {
@@ -426,8 +449,11 @@ public class ChannelState {
                 addWatcher(watcher);
             }
         }
+
+        if (incoming.members != null) {
+            members = new ArrayList<>(incoming.members);
+        }
         // TODO: merge with incoming.reads
-        // TODO: merge with incoming.members
     }
 
     public int getCurrentUserUnreadMessageCount() {
@@ -483,16 +509,17 @@ public class ChannelState {
         ChannelUserRead channelUserRead = new ChannelUserRead(user, readDate);
         reads.add(channelUserRead);
     }
+
     // if user read the last message returns true, else false.
-    public boolean readLastMessage(){
+    public boolean readLastMessage() {
         Client client = this.getChannel().getClient();
         String userID = client.getUserId();
         Date myReadDate = getReadDateOfChannelLastMessage(userID);
-        if (myReadDate == null){
+        if (myReadDate == null) {
             return false;
-        }else if (getLastMessage() == null){
+        } else if (getLastMessage() == null) {
             return true;
-        }else return myReadDate.getTime() > getLastMessage().getCreatedAt().getTime();
+        } else return myReadDate.getTime() > getLastMessage().getCreatedAt().getTime();
     }
 }
 
