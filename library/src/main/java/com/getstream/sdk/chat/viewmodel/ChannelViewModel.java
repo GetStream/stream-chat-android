@@ -282,8 +282,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     public void setThreadParentMessage(Message threadParentMessage_) {
-        configThread(threadParentMessage_);
         threadParentMessage.postValue(threadParentMessage_);
+        configThread(threadParentMessage_);
     }
 
     public int getThreadParentPosition() {
@@ -300,11 +300,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     private void configThread(Message threadParentMessage_) {
+        // Create New message for Parent Message
+        Message message = threadParentMessage_.copy();
+        message.setId("");
+
         if (threadParentMessage_.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
             threadMessages.postValue(new ArrayList<Message>() {
                 {
-                    add(threadParentMessage_);
+                    add(message);
                 }
             });
         } else {
@@ -312,8 +316,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
-                    newMessages.add(0, threadParentMessage_);
-                    reachedEndOfPaginationThread = newMessages.size() < 30;
+                    newMessages.add(0, message);
+                    reachedEndOfPaginationThread = newMessages.size() < 30 + 1;
                     threadMessages.postValue(newMessages);
                 }
 
@@ -598,8 +602,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
 
             if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
-                messagesCopy.set(0, message);
-                threadMessages.postValue(messagesCopy);
+//                messagesCopy.set(0, message);
+//                threadMessages.postValue(messagesCopy);
             }
             Log.d(TAG, "updateMessage:" + updated);
         }

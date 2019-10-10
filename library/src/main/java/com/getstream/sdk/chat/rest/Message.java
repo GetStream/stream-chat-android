@@ -277,6 +277,7 @@ public class Message implements UserEntity {
         clone.attachments = attachments;
         clone.latestReactions = latestReactions;
         clone.ownReactions = ownReactions;
+        clone.reactionCounts = reactionCounts;
         clone.replyCount = replyCount;
         clone.createdAt = new Date(createdAt.getTime());
         if (updatedAt != null) {

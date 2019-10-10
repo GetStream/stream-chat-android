@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
-        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10);
+        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
         viewModel.setLoading();
         channel.query(request, new QueryChannelCallback() {
@@ -183,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
+                viewModel.addChannels(Arrays.asList(channel.getChannelState()));
                 viewModel.setLoadingDone();
             }
 

@@ -119,7 +119,8 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
-                    if (message.getStatus() == MessageStatus.FAILED) {
+                    if (message.getStatus() == MessageStatus.FAILED
+                            || message.getType().equals(ModelType.message_error)) {
                         bgColor = getResources().getColor(R.color.stream_message_failed);
                     } else {
                         bgColor = style.getMessageBackgroundColorMine();
@@ -334,11 +335,11 @@ public class MessageListView extends RecyclerView {
             // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()) {
+                adapter.setThread(messageListItemWrapper.isThread());
                 adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
 
-            adapter.setThread(messageListItemWrapper.isThread());
             adapter.replaceEntities(entities);
 
             // Scroll to origin position on return from thread
