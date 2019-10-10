@@ -319,6 +319,8 @@ public class WebSocketService extends WebSocketListener {
                 return;
             }
 
+            Log.d(TAG, String.format("Received event of type %s", event.getType().toString()));
+
             // resolve on the first good message
             if (!isConnectionResolved()) {
                 eventThread.mHandler.post(() -> {

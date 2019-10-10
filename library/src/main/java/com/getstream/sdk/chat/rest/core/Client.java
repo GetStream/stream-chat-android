@@ -227,7 +227,7 @@ public class Client implements WSResponseHandler {
                         channel.handelMemberRemoved(event.getUser());
                     }
                 }
-                
+
                 @Override
                 public void onConnectionChanged(Event event) {
                     if (!event.getOnline()) {

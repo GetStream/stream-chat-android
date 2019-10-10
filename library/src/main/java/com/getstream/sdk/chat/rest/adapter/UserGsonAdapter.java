@@ -98,6 +98,9 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                 case "mutes":
                     user.setMutes(gson.fromJson(json, new TypeToken<ArrayList<Mute>>(){}.getType()));
                     continue;
+                case "unread_count":
+                    gson.fromJson(json, Integer.class);
+                    continue;
             }
             // Set Extra Data
             extraData.put(set.getKey(), set.getValue());
