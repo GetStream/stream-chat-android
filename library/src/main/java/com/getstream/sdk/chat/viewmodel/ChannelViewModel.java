@@ -718,7 +718,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         for (Event event : typingState.values()) {
             // constants
             long TYPING_TIMEOUT = 10000;
-            if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
+            if (now - event.getReceivedAt().getTime() < TYPING_TIMEOUT) {
                 users.add(event.getUser());
             }
         }
