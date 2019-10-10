@@ -85,7 +85,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private MessageListView.ReadStateClickListener readStateClickListener;
 
     private int position;
-    private boolean isThread;
     private Context context;
     private Message message;
     private MessageListItem messageListItem;
@@ -179,10 +178,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
         avatarWidth = style.getAvatarWidth();
-    }
-
-    public void setThread(boolean thread) {
-        isThread = thread;
     }
 
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
@@ -290,7 +285,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || !messageListItem.isMine()
                 || message.getCreatedAt().getTime() < channelState.getLastMessage().getCreatedAt().getTime()
                 || message.getType().equals(ModelType.message_ephemeral)
-                || message.getStatus() == null)
+                || message.getStatus() == null
+                || isThread())
             return;
 
         switch (message.getStatus()) {
@@ -322,7 +318,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (isDeletedOrFailedMessage()
                 || readBy.isEmpty()
-                || isThread) {
+                || isThread()) {
             read_state.setVisibility(View.GONE);
             return;
         }
@@ -496,8 +492,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
                 || isDeletedOrFailedMessage()
-                || isThread
-                || message.getReplyCount() == 0) {
+                || (position == 0 && message.isThreadParent())
+                || message.getReplyCount() == 0
+                || isThread()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
@@ -758,5 +755,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         return message.getDeletedAt() != null
                 || message.getStatus() == MessageStatus.FAILED
                 || message.getType().equals(ModelType.message_error);
+    }
+
+    private boolean isThread(){
+        return !(message == null || TextUtils.isEmpty(message.getParentId()));
     }
 }

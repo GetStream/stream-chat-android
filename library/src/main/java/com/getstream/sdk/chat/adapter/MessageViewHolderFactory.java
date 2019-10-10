@@ -75,7 +75,6 @@ public class MessageViewHolderFactory {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
-            holder.setThread(adapter.isThread());
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
             holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
