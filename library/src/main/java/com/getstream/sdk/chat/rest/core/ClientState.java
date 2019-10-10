@@ -153,7 +153,7 @@ public class ClientState {
         updateUsersWithReference(newUsers, cid);
     }
 
-    void updateUsersForChannel(ChannelState channelState) {
+    public void updateUsersForChannel(ChannelState channelState) {
         List<User> users = new ArrayList<>();
         for (Member m : channelState.getMembers()) {
             users.add(m.getUser());
