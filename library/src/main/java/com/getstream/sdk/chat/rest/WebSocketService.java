@@ -286,30 +286,50 @@ public class WebSocketService extends WebSocketListener {
                 errorMessage = null;
             }
 
-            if (errorMessage != null && errorMessage.getError() != null && errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                webSocket.close(NORMAL_CLOSURE_STATUS, "");
-                eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
-                return;
+            Boolean isError = errorMessage != null && errorMessage.getError() != null;
+
+            if (isError) {
+                // token expiration is handled separately (allowing you to refresh the token from your backend)
+                if (errorMessage.getError().getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
+                    // the server closes the connection after sending an error, so we don't need to close it here
+                    // webSocket.close(NORMAL_CLOSURE_STATUS, "token expired");
+                    eventThread.mHandler.post(() -> webSocketListener.tokenExpired());
+                    return;
+                } else {
+                    // other errors are passed to the callback
+                    // the server closes the connection after sending an error, so we don't need to close it here
+                    // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
+                    WsErrorMessage finalErrorMessage = errorMessage;
+                    eventThread.mHandler.post(() -> webSocketListener.onError(finalErrorMessage));
+                    return;
+                }
+
             }
 
             Event event;
 
             try {
                 event = GsonConverter.Gson().fromJson(text, Event.class);
-                setLastEvent(new Date());
+                // set received at, prevents clock issues from breaking our ability to remove old typing indicators
+                Date now = new Date();
+                event.setReceivedAt(now);
+                setLastEvent(now);
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();
                 return;
             }
 
-            if (isConnectionResolved()) {
-                sendEventToHandlerThread(event);
-            } else {
+            Log.d(TAG, String.format("Received event of type %s", event.getType().toString()));
+
+            // resolve on the first good message
+            if (!isConnectionResolved()) {
                 eventThread.mHandler.post(() -> {
                     webSocketListener.connectionResolved(event);
                     setConnectionResolved();
                 });
             }
+
+            sendEventToHandlerThread(event);
         }
 
         @Override
@@ -318,7 +338,6 @@ public class WebSocketService extends WebSocketListener {
             Log.d(TAG, "WebSocket # " + wsId + " Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
-                // TODO: propagate this upstream
                 webSocket.close(code, reason);
             } else {
                 consecutiveFailures++;

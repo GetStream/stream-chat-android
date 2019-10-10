@@ -97,6 +97,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelState = new MutableLiveData<>(channel.getChannelState());
         watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+        lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+        currentUserUnreadMessageCount = new MutableLiveData<>(lastCurrentUserUnreadMessageCount);
 
         initEventHandlers();
     }
@@ -116,6 +118,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private Date lastKeystrokeAt;
 
+    public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
+        return currentUserUnreadMessageCount;
+    }
+
+    private MutableLiveData<Number> currentUserUnreadMessageCount;
+    private Integer lastCurrentUserUnreadMessageCount;
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> messageListScrollUp;
     private MutableLiveData<Boolean> loadingMore;
@@ -148,6 +156,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
+
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
@@ -448,6 +457,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageNew(Event event) {
                 upsertMessage(event.getMessage());
                 channelState.postValue(channel.getChannelState());
+                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
+                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                }
+
             }
 
             @Override
@@ -479,6 +493,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
                 reads.postValue(channel.getChannelState().getReadsByUser());
+                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
+                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                }
             }
 
             @Override

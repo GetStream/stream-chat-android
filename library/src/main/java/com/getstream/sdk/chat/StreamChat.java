@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.core.ClientState;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class StreamChat {
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
     private static MutableLiveData<Number> unreadChannels;
+    private static Integer lastTotalUnreadMessages;
+    private static Integer lastUnreadChannels;
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
 
@@ -32,10 +35,18 @@ public class StreamChat {
         return onlineStatus;
     }
 
+    /**
+     * Returns a LiveData object for the total unread messages
+     * @return
+     */
     public static LiveData<Number> getTotalUnreadMessages() {
         return totalUnreadMessages;
     }
 
+    /**
+     * Returns a LiveData object for the number of unread channels
+     * @return
+     */
     public static LiveData<Number> getUnreadChannels() {
         return unreadChannels;
     }
@@ -54,8 +65,6 @@ public class StreamChat {
             public void onSuccess(User user) {
                 userWasInitialized = true;
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
-                totalUnreadMessages.postValue(user.getTotalUnreadCount());
-                unreadChannels.postValue(user.getUnreadChannels());
             }
 
             @Override
@@ -93,11 +102,17 @@ public class StreamChat {
 
             @Override
             public void onAnyEvent(Event event) {
-                if (event.getTotalUnreadCount() != null) {
-                    totalUnreadMessages.postValue(event.getTotalUnreadCount());
-                }
-                if (event.getUnreadChannels() != null) {
-                    unreadChannels.postValue(event.getUnreadChannels());
+                ClientState state = INSTANCE.getState();
+                if (state.getTotalUnreadCount() != null) {
+                    // post the value if it changed since last time
+                    if (state.getTotalUnreadCount() != lastTotalUnreadMessages) {
+                        lastTotalUnreadMessages = state.getTotalUnreadCount();
+                        totalUnreadMessages.postValue(lastTotalUnreadMessages);
+                    }
+                    if (state.getUnreadChannels() != lastUnreadChannels) {
+                        lastUnreadChannels = state.getUnreadChannels();
+                        unreadChannels.postValue(lastUnreadChannels);
+                    }
                 }
             }
         });

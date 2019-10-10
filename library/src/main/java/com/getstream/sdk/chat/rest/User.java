@@ -10,6 +10,8 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.interfaces.UserEntity;
+import com.getstream.sdk.chat.model.Device;
+import com.getstream.sdk.chat.model.Mute;
 import com.getstream.sdk.chat.rest.adapter.UserGsonAdapter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
@@ -17,6 +19,7 @@ import com.google.gson.annotations.JsonAdapter;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * A user
@@ -45,7 +48,16 @@ public class User implements UserEntity {
     @TypeConverters(DateConverter.class)
     private Date lastActive;
 
+    @Ignore
     private Boolean online;
+
+    private Boolean invisible;
+
+    @Ignore
+    private List<Mute> mutes;
+
+    @Ignore
+    private List<Device> devices;
 
     private Integer totalUnreadCount;
 
@@ -248,5 +260,29 @@ public class User implements UserEntity {
 
     public String getUserId() {
         return id;
+    }
+
+    public Boolean getInvisible() {
+        return invisible;
+    }
+
+    public void setInvisible(Boolean invisible) {
+        this.invisible = invisible;
+    }
+
+    public List<Mute> getMutes() {
+        return mutes;
+    }
+
+    public void setMutes(List<Mute> mutes) {
+        this.mutes = mutes;
+    }
+
+    public List<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 }

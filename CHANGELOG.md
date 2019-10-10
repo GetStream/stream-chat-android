@@ -1,10 +1,9 @@
 ## Pending release
 
+- Added a callback as an optional last argument for setUser functions
+- Added ClientState which stores users, current user, unreadCount and the current user's mutes
+- Added notification.mutes_updated event
 - Add support for add/remove channel members
-
-
-#### Breaking changes:
-
 
 ## Oct 9, 2019 - 2.2.0
 

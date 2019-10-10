@@ -67,7 +67,17 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("name", "Bender");
         extraData.put("image", "https://bit.ly/321RmWb");
         User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN);
+        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.i(TAG, String.format("Connection established for user %s", user.getName()));
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
+            }
+        });
         return client;
     }
 
@@ -78,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
 
         // setup the client
         Client client = configureStreamClient();
+        // example for how to observe the unread counts
+        StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
+            Log.i(TAG, String.format("Total unread message count is now %d", count));
+        });
+        StreamChat.getUnreadChannels().observe(this, (Number count) -> {
+            Log.i(TAG, String.format("There are %d channels with unread messages", count));
+        });
 
         // we're using data binding in this example
         ActivityMainBinding binding =

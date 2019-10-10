@@ -19,9 +19,7 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -62,6 +60,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
@@ -69,11 +68,11 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -87,8 +86,17 @@ public class Client implements WSResponseHandler {
 
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
-    // On stream-chat-js lib this is called knownUsers
-    private ConcurrentHashMap<String, User> knownUsers = new ConcurrentHashMap<>();
+
+    public ClientState getState() {
+        return state;
+    }
+
+    public void setState(ClientState state) {
+        this.state = state;
+    }
+
+    private ClientState state;
+
     // Main Params
     private String apiKey;
     private Boolean offlineStorage;
@@ -98,7 +106,7 @@ public class Client implements WSResponseHandler {
     private String cacheUserToken;
     private Context context;
     // Client params
-    private List<Channel> activeChannels = new ArrayList<>();
+    private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
 
     private APIService mService;
@@ -115,12 +123,32 @@ public class Client implements WSResponseHandler {
             new ChatEventHandler() {
                 @Override
                 public void onAnyEvent(Event event) {
-                    if (event.getUser() != null) {
-                        trackUser(event.getUser());
+                    // if an event contains the current user update it
+                    // this also captures notification.mutes_updated
+                    if (event.getMe() != null) {
+                        state.setCurrentUser(event.getMe());
                     }
-                    Channel channel = getChannelByCid(event.getCid());
-                    if (channel != null) {
-                        trackUsersFromChannel(channel);
+                    if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
+                        Log.i(TAG, "Mutes updated");
+                    }
+
+                    // if an event contains a user update that user
+                    // handles user updates, presence changes etc.
+                    if (event.getUser() != null) {
+                        state.updateUser(event.getUser());
+                    }
+
+                    // update the unread count if it is present on the event
+                    if (event.getTotalUnreadCount() != null) {
+                        state.setTotalUnreadCount(event.getTotalUnreadCount().intValue());
+                    }
+                    if (event.getUnreadChannels() != null) {
+                        state.setUnreadChannels(event.getUnreadChannels().intValue());
+                    }
+
+                    // if an event contains an updated channel write the update
+                    if (event.getChannel() != null) {
+                        state.updateUsersForChannel(event.getChannel().getChannelState());
                     }
                 }
 
@@ -176,7 +204,7 @@ public class Client implements WSResponseHandler {
                 @Override
                 public void onChannelDeleted(Channel channel, Event event) {
                     storage().deleteChannel(channel);
-                    activeChannels.remove(channel);
+                    activeChannelMap.remove(channel.getCid());
                 }
 
                 @Override
@@ -200,8 +228,6 @@ public class Client implements WSResponseHandler {
                     }
                 }
 
-                // TODO: what about user update events?
-
                 @Override
                 public void onConnectionChanged(Event event) {
                     if (!event.getOnline()) {
@@ -218,6 +244,7 @@ public class Client implements WSResponseHandler {
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.options = options;
+        this.state = new ClientState(this);
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -256,8 +283,15 @@ public class Client implements WSResponseHandler {
         return clientID;
     }
 
+    public Map<String, Channel> getActiveChannelMap() {
+        return activeChannelMap;
+    }
+
     public List<Channel> getActiveChannels() {
-        return activeChannels;
+        Collection<Channel> values = activeChannelMap.values();
+        ArrayList<Channel> channels = new ArrayList<>(values);
+
+        return channels;
     }
 
     public APIService getApiService() {
@@ -290,7 +324,12 @@ public class Client implements WSResponseHandler {
 
         // clear local state
         user = null;
-        activeChannels.clear();
+        activeChannelMap.clear();
+    }
+
+    public synchronized void setUser(User user, final TokenProvider provider, ClientConnectionCallback callback) {
+        connectSubRegistery.addSubscription(callback);
+        setUser(user, provider);
     }
 
     /**
@@ -363,27 +402,8 @@ public class Client implements WSResponseHandler {
         connect();
     }
 
-    public User getTrackedUser(User user) {
-        User knownUser = knownUsers.get(user.getId());
-        return knownUser == null ? user : knownUser;
-    }
-
-    private void trackUser(User newUser) {
-        User user = knownUsers.get(newUser.getId());
-        if (user == null) {
-            knownUsers.put(newUser.getId(), newUser.shallowCopy());
-        } else {
-            user.shallowUpdate(newUser);
-        }
-    }
-
-    private void trackUsersFromChannel(Channel channel) {
-        for (Watcher watcher : channel.getChannelState().getWatchers()) {
-            trackUser(watcher.getUser());
-        }
-        for (Member member : channel.getChannelState().getMembers()) {
-            trackUser(member.getUser());
-        }
+    public void setUser(User user, @NonNull String token, ClientConnectionCallback callback) {
+        setUser(user, listener -> listener.onSuccess(token), callback);
     }
 
     public void setUser(User user, @NonNull String token) {
@@ -507,6 +527,16 @@ public class Client implements WSResponseHandler {
     }
 
     @Override
+    public void onError(WsErrorMessage error) {
+        // call onError for everyone
+        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
+        connectSubRegistery.clear();
+        for (ClientConnectionCallback waiter : subs) {
+            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+        }
+    }
+
+    @Override
     public void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(this, event);
         for (ChatEventHandler handler : subRegistery.getSubscribers()) {
@@ -538,7 +568,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionRecovered() {
         List<String> cids = new ArrayList<>();
-        for (Channel channel : activeChannels) {
+        for (Channel channel : getActiveChannels()) {
             cids.add(channel.getCid());
         }
         if (cids.size() > 0) {
@@ -599,7 +629,7 @@ public class Client implements WSResponseHandler {
 
     public synchronized void addToActiveChannels(Channel channel) {
         if (getChannelByCid(channel.getCid()) == null) {
-            activeChannels.add(channel);
+            activeChannelMap.put(channel.getCid(), channel);
         }
     }
 
@@ -610,15 +640,7 @@ public class Client implements WSResponseHandler {
     }
 
     Channel getChannelByCid(String cid) {
-        if (cid == null) {
-            return null;
-        }
-        for (Channel channel : activeChannels) {
-            if (cid.equals(channel.getCid())) {
-                return channel;
-            }
-        }
-        return null;
+        return activeChannelMap.get(cid);
     }
 
     // region Channel
@@ -650,6 +672,9 @@ public class Client implements WSResponseHandler {
                             if (request.isWatch()) {
                                 channel.setInitialized(true);
                             }
+
+                            // update the user references
+                            state.updateUsersForChannel(channelState);
                         }
 
                         // store the results of the query
@@ -658,6 +683,7 @@ public class Client implements WSResponseHandler {
                         List<Channel> channels = response.body().getChannels();
 
                         storage().insertQueryWithChannels(query, channels);
+
                         // callback
                         callback.onSuccess(response.body());
                     }
@@ -1250,10 +1276,7 @@ public class Client implements WSResponseHandler {
         mService.queryUsers(apiKey, user.getId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
             @Override
             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                for (User user : response.body().getUsers())
-                    if (!fromCurrentUser(user)) {
-                        trackUser(user);
-                    }
+                state.updateUsers(response.body().getUsers());
                 callback.onSuccess(response.body());
             }
 
