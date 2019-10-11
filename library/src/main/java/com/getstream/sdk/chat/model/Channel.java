@@ -112,6 +112,27 @@ public class Channel {
 
     private Integer syncStatus;
 
+    public Date getLastKeystrokeAt() {
+        return lastKeystrokeAt;
+    }
+
+    public void setLastKeystrokeAt(Date lastKeystrokeAt) {
+        this.lastKeystrokeAt = lastKeystrokeAt;
+    }
+
+    @Ignore
+    private Date lastKeystrokeAt;
+
+    public Date getLastStartTypingEvent() {
+        return lastStartTypingEvent;
+    }
+
+    public void setLastStartTypingEvent(Date lastStartTypingEvent) {
+        this.lastStartTypingEvent = lastStartTypingEvent;
+    }
+
+    @Ignore
+    private Date lastStartTypingEvent;
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
@@ -577,15 +598,6 @@ public class Channel {
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
 
-        // if the message was inserted into local storage these fields will already be defined
-        // if they are not there setup the message id and created at
-        if (message.getId() == null) {
-            String clientSideID = getClient().generateMessageID();
-            message.setId(clientSideID);
-        }
-        if (message.getCreatedAt() == null) {
-            message.setCreatedAt(new Date());
-        }
         message.setSyncStatus(LOCAL_ONLY);
         // immediately fail if there is no network
         message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
@@ -633,11 +645,11 @@ public class Channel {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void sendReaction(@NotNull String mesageId,
+    public void sendReaction(@NotNull String messageId,
                              @NotNull String type,
                              @NotNull MessageCallback callback) {
         ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, callback);
+        client.sendReaction(messageId, request, callback);
     }
 
     /**
@@ -648,10 +660,10 @@ public class Channel {
      * @param {string} user_id the id of the user (used only for server side request) default null
      * @return {object} The Server Response
      */
-    public void deleteReaction(@NonNull String mesageId,
+    public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
                                @NonNull MessageCallback callback) {
-        client.deleteReaction(mesageId, type, callback);
+        client.deleteReaction(messageId, type, callback);
     }
 
     public void sendAction(@NonNull String messageId,
@@ -773,6 +785,26 @@ public class Channel {
 
     public void handelMemberRemoved(@NotNull User user) {
         channelState.removeMemberById(user.getId());
+    }
+
+    /**
+     * Sends a start typing event if it's been more than 3 seconds since the last start typing event was sent
+     */
+    public synchronized void keystroke(EventCallback callback) {
+        Date now = new Date();
+        lastKeystrokeAt = now;
+        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
+            lastStartTypingEvent = now;
+            this.sendEvent(EventType.TYPING_START, callback);
+        }
+    }
+
+    /**
+     * Sends the stop typing event
+     */
+    public synchronized void stopTyping(EventCallback callback) {
+        lastStartTypingEvent = null;
+        this.sendEvent(EventType.TYPING_STOP, callback);
     }
 
     /**

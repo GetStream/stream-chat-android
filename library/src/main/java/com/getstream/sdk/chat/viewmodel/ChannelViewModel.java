@@ -14,7 +14,6 @@ import androidx.lifecycle.Transformations;
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
-import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -114,8 +113,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private boolean reachedEndOfPagination;
     private boolean reachedEndOfPaginationThread;
     private Date lastMarkRead;
-
-    private Date lastKeystrokeAt;
 
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;
@@ -1071,10 +1068,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public synchronized void keystroke(EventCallback callback) {
         if (isThread()) return;
-        if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
-            lastKeystrokeAt = new Date();
-            channel.sendEvent(EventType.TYPING_START, callback);
-        }
+        channel.keystroke(callback);
     }
 
     public synchronized void keystroke() {
@@ -1098,9 +1092,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
 
     public synchronized void stopTyping(EventCallback callback) {
-        if (lastKeystrokeAt == null || isThread()) return;
-        lastKeystrokeAt = null;
-        channel.sendEvent(EventType.TYPING_STOP, callback);
+        if (isThread()) return;
+        channel.stopTyping(callback);
     }
 
     public synchronized void stopTyping() {
@@ -1147,12 +1140,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         private void sendStoppedTyping() {
 
-            // typing did not start quit
-            if (lastKeystrokeAt == null) {
+            // typing did not start, quit
+            if (channel.getLastStartTypingEvent() == null) {
                 return;
             }
 
-            long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
+            // if we didn't press a key for more than 5 seconds send the stopTyping event
+            long timeSinceLastKeystroke = new Date().getTime() - channel.getLastKeystrokeAt().getTime();
 
             if (timeSinceLastKeystroke > 5000) {
                 stopTyping();
