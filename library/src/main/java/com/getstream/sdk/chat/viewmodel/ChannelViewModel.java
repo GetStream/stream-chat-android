@@ -594,7 +594,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
-
     }
 
     private boolean updateMessage(Message message) {
@@ -675,6 +674,24 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         }
         return false;
+    }
+
+    private void checkErrorMessage(){
+        boolean hasErrorMessage = false;
+        List<Message> messagesCopy = getMessages().getValue();
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            Message message = getMessages().getValue().get(i);
+            if (message.getType().equals(ModelType.message_error)) {
+                messagesCopy.remove(i);
+                hasErrorMessage = true;
+            }
+        }
+        if (!hasErrorMessage) return;
+
+        if (isThread()) {
+            threadMessages.postValue(messagesCopy);
+        } else
+            messages.postValue(messagesCopy);
     }
 
     private void addMessage(Message message) {
@@ -934,6 +951,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
+        // Check ErrorMessages
+        checkErrorMessage();
 
         if (message.getStatus() == null) {
             message.setSyncStatus(LOCAL_ONLY);
@@ -956,7 +975,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (client().isConnected()) {
             channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         }
-
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
