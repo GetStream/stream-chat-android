@@ -646,11 +646,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     private void shuffleGiphy(Message oldMessage, Message message) {
-        List<Message> messagesCopy = messages.getValue();
+        List<Message> messagesCopy = getMessages().getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
             messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
+            if (isThread())
+                threadMessages.postValue(messagesCopy);
+            else
+                messages.postValue(messagesCopy);
         }
     }
 
@@ -1008,11 +1011,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                List<Message> messagesCopy = messages.getValue();
+                List<Message> messagesCopy = getMessages().getValue();
                 int index = messagesCopy.indexOf(message);
                 if (index != -1) {
                     messagesCopy.remove(message);
-                    messages.postValue(messagesCopy);
+                    if (isThread())
+                        threadMessages.postValue(messagesCopy);
+                    else
+                        messages.postValue(messagesCopy);
                 }
                 return;
         }
