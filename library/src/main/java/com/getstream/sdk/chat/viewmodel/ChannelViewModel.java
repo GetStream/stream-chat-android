@@ -907,12 +907,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     new QueryChannelCallback() {
                         @Override
                         public void onSuccess(ChannelState response) {
+//                            reachedEndOfPagination = response.getMessages().size() < Constant.DEFAULT_LIMIT;
+                            reachedEndOfPagination = response.getMessages().isEmpty();
                             List<Message> newMessages = new ArrayList<>(response.getMessages());
                             // used to modify the scroll behaviour...
                             entities.setIsLoadingMore(true);
                             addMessages(newMessages);
-                            if (newMessages.size() < Constant.DEFAULT_LIMIT)
-                                reachedEndOfPagination = true;
                             setLoadingMoreDone();
                             callback.onSuccess(response);
                         }
