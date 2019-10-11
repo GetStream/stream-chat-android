@@ -286,7 +286,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getCreatedAt().getTime() < channelState.getLastMessage().getCreatedAt().getTime()
                 || message.getType().equals(ModelType.message_ephemeral)
                 || message.getStatus() == null
-                || isThread())
+                || isThread()
+                || isEphemeral())
             return;
 
         switch (message.getStatus()) {
@@ -318,7 +319,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (isDeletedOrFailedMessage()
                 || readBy.isEmpty()
-                || isThread()) {
+                || isThread()
+                || isEphemeral()) {
             read_state.setVisibility(View.GONE);
             return;
         }
@@ -759,5 +761,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private boolean isThread(){
         return !(message == null || TextUtils.isEmpty(message.getParentId()));
+    }
+
+    private boolean isEphemeral() {
+        return (message != null
+                && message.getType().equals(ModelType.message_ephemeral));
     }
 }
