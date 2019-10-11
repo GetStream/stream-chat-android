@@ -1,6 +1,11 @@
 ## Pending release
 
--
+- Improved error message for uploading large files
+- Remove error messages after you send a message (similar behaviour to Slack)
+- Fixed slash command support on threads
+- Improved newline handling
+- Improved thread display
+
 
 ## Oct 10th, 2019 - 2.2.1
 
