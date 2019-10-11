@@ -43,6 +43,15 @@ public class ApiClientOptions {
         }
 
         public Builder BaseURL(String baseURL) {
+            if (baseURL != null && baseURL.startsWith("https://")) {
+                baseURL = baseURL.split("https://")[1];
+            }
+            if (baseURL != null && baseURL.startsWith("http://")) {
+                baseURL = baseURL.split("http://")[1];
+            }
+            if (baseURL.endsWith("/")) {
+                baseURL = baseURL.substring(0, baseURL.length() - 1);
+            }
             options.baseURL = baseURL;
             return this;
         }

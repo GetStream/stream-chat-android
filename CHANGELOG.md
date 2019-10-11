@@ -8,6 +8,7 @@
 - Added ClientState which stores users, current user, unreadCount and the current user's mutes
 - Added notification.mutes_updated event
 - Add support for add/remove channel members
+- Expose channel unread messages counts for any user in the channel
 
 ## Oct 9, 2019 - 2.2.0
 
