@@ -294,10 +294,14 @@ public class Storage {
 
 
     public void insertMessageForChannel(Channel channel, Message message) {
-        // always set the ids etc
-        String clientSideID = getClient().generateMessageID();
-        message.setId(clientSideID);
-        message.setCreatedAt(new Date());
+        // set the ids etc
+        if (message.getId() == null) {
+            String clientSideID = getClient().generateMessageID();
+            message.setId(clientSideID);
+        }
+        if (message.getCreatedAt() == null) {
+            message.setCreatedAt(new Date());
+        }
         message.setSyncStatus(LOCAL_ONLY);
         // immediately fail if there is no network
         message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
