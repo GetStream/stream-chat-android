@@ -143,9 +143,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
         configImageThumbBackground();
 
-        if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
-            attachUrl = "https:" + attachUrl;
-
         Glide.with(context)
                 .load(attachUrl)
                 .placeholder(R.drawable.stream_placeholder)

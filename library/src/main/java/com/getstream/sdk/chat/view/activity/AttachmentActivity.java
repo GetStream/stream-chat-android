@@ -64,24 +64,10 @@ public class AttachmentActivity extends AppCompatActivity {
     }
 
     private void showAttachment(final String type, final String url) {
-        switch (type) {
-            case ModelType.attach_video:
-                loadUrlToWeb(url);
-                break;
-            case ModelType.attach_giphy:
-                showGiphy(url);
-                break;
-            case ModelType.attach_image:
-                break;
-            case ModelType.attach_link:
-            case ModelType.attach_product:
-                loadUrlToWeb(url);
-                break;
-            case ModelType.attach_file:
-                break;
-            default:
-                break;
-        }
+        if (type.equals(ModelType.attach_giphy))
+            showGiphy(url);
+        else
+            loadUrlToWeb(url);
     }
 
     /**

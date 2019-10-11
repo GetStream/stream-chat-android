@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -565,7 +566,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
 
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return;
@@ -592,14 +594,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
-
     }
 
     private boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return updated;
@@ -643,11 +645,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     private void shuffleGiphy(Message oldMessage, Message message) {
-        List<Message> messagesCopy = messages.getValue();
+        List<Message> messagesCopy = getMessages().getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
             messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
+            if (isThread())
+                threadMessages.postValue(messagesCopy);
+            else
+                messages.postValue(messagesCopy);
         }
     }
 
@@ -669,6 +674,24 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         }
         return false;
+    }
+
+    private void checkErrorMessage(){
+        boolean hasErrorMessage = false;
+        List<Message> messagesCopy = getMessages().getValue();
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            Message message = getMessages().getValue().get(i);
+            if (message.getType().equals(ModelType.message_error)) {
+                messagesCopy.remove(i);
+                hasErrorMessage = true;
+            }
+        }
+        if (!hasErrorMessage) return;
+
+        if (isThread()) {
+            threadMessages.postValue(messagesCopy);
+        } else
+            messages.postValue(messagesCopy);
     }
 
     private void addMessage(Message message) {
@@ -928,6 +951,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
+        // Check ErrorMessages
+        checkErrorMessage();
 
         if (message.getStatus() == null) {
             message.setSyncStatus(LOCAL_ONLY);
@@ -950,7 +975,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (client().isConnected()) {
             channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         }
-
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
@@ -1005,11 +1029,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                List<Message> messagesCopy = messages.getValue();
+                List<Message> messagesCopy = getMessages().getValue();
                 int index = messagesCopy.indexOf(message);
                 if (index != -1) {
                     messagesCopy.remove(message);
-                    messages.postValue(messagesCopy);
+                    if (isThread())
+                        threadMessages.postValue(messagesCopy);
+                    else
+                        messages.postValue(messagesCopy);
                 }
                 return;
         }
