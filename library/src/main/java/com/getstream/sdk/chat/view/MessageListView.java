@@ -608,17 +608,7 @@ public class MessageListView extends RecyclerView {
                 }
                 break;
             case ModelType.attach_video:
-                switch (attachment.getAuthor().toLowerCase()) {
-                    case "youtube":
-                        url = attachment.getAssetURL();
-                        break;
-                    case "giphy":
-                        url = attachment.getOgURL();
-                        break;
-                    default:
-                        url = attachment.getAssetURL();
-                        break;
-                }
+                url = attachment.getAssetURL();
                 break;
             case ModelType.attach_giphy:
                 url = attachment.getThumbURL();
