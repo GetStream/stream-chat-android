@@ -1177,7 +1177,11 @@ public class Client implements WSResponseHandler {
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                    String errorMsg = t.getLocalizedMessage();
+                    if (t.getLocalizedMessage().toLowerCase().equals("timeout"))
+                        errorMsg = "The file is too large to upload!";
+
+                    callback.onError(errorMsg, -1);
                 }
             }
         });
