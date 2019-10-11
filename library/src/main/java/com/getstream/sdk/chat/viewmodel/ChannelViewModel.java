@@ -1148,6 +1148,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             // if we didn't press a key for more than 5 seconds send the stopTyping event
             long timeSinceLastKeystroke = new Date().getTime() - channel.getLastKeystrokeAt().getTime();
 
+            // TODO: this should be a config value on the client or channel object...
             if (timeSinceLastKeystroke > 5000) {
                 stopTyping();
             }
