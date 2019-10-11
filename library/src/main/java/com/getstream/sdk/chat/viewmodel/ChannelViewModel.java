@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -565,7 +566,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
 
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return;
@@ -599,7 +601,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return updated;
