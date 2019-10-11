@@ -29,14 +29,11 @@ public class ChannelStateGsonAdapter extends TypeAdapter<ChannelState> {
             Collections.sort(channelState.getReads(), (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
 
         /*Filter wrong Thread messages from main channel message list*/
-        if(channelState.getMessages() != null && !channelState.getMessages().isEmpty()){
-            List<Message>messages = new ArrayList<>();
-            for (Message message : channelState.getMessages()){
+        if (channelState.getMessages() != null && !channelState.getMessages().isEmpty()) {
+            List<Message> newMessages = new ArrayList<>(channelState.getMessages());
+            for (Message message : newMessages)
                 if (!TextUtils.isEmpty(message.getParentId()))
-                    continue;
-                messages.add(message);
-            }
-            channelState.setMessages(messages);
+                    channelState.getMessages().remove(message);
         }
 
         /*Set ChannelState to Channel*/
