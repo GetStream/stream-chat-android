@@ -38,6 +38,7 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
         this.filter = filter;
         this.watch = true;
         this.state = true;
+        this.presence = false;
 
         this.sort = sort.clone();
     }
@@ -72,6 +73,12 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
     public QueryChannelsRequest withOffset(int offset) {
         QueryChannelsRequest clone = this.cloneOpts();
         clone.offset = offset;
+        return clone;
+    }
+
+    public QueryChannelsRequest withPresence() {
+        QueryChannelsRequest clone = this.cloneOpts();
+        clone.presence = true;
         return clone;
     }
 }

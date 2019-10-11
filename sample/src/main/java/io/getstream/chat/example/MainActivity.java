@@ -63,9 +63,11 @@ public class MainActivity extends AppCompatActivity {
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
+
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", "Bender");
         extraData.put("image", "https://bit.ly/321RmWb");
+
         User user = new User(USER_ID, extraData);
         client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
             @Override
