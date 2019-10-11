@@ -18,8 +18,11 @@ public class SendMessageRequest {
     @Expose
     Map<String, Object> message;
 
+    private Message messageObject;
+
 
     public SendMessageRequest(Message message, boolean showInChannel, List<String>mentionedUserIDs) {
+        messageObject = message;
         if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
             boolean isGiphy = false;
             for (Attachment attachment : message.getAttachments()) {
@@ -40,5 +43,13 @@ public class SendMessageRequest {
             this.message.put("mentioned_users", mentionedUserIDs);
         if (!TextUtils.isEmpty(message.getParentId()))
             this.message.put("show_in_channel", showInChannel);
+    }
+
+    public Message getMessageObject() {
+        return messageObject;
+    }
+
+    public void setMessageObject(Message messageObject) {
+        this.messageObject = messageObject;
     }
 }

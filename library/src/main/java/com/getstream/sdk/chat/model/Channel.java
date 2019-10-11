@@ -66,6 +66,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+
 /**
  * A channel
  */
@@ -573,6 +576,20 @@ public class Channel {
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
+
+        // if the message was inserted into local storage these fields will already be defined
+        // if they are not there setup the message id and created at
+        if (message.getId() == null) {
+            String clientSideID = getClient().generateMessageID();
+            message.setId(clientSideID);
+        }
+        if (message.getCreatedAt() == null) {
+            message.setCreatedAt(new Date());
+        }
+        message.setSyncStatus(LOCAL_ONLY);
+        // immediately fail if there is no network
+        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
+
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
         client.sendMessage(this, request, callback);

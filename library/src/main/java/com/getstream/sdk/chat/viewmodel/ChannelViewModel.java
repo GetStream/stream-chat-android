@@ -43,6 +43,7 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
@@ -58,10 +59,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
-import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
-import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -953,25 +951,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
         // Check ErrorMessages
         checkErrorMessage();
+        // stop typing
+        stopTyping();
 
-        if (message.getStatus() == null) {
-            message.setSyncStatus(LOCAL_ONLY);
-            message.setUser(client().getUser());
-            message.setCreatedAt(new Date());
-            message.setType("regular");
-            if (isThread())
-                message.setParentId(threadParentMessage.getValue().getId());
-            message.setStatus(client().isConnected() ? SENDING : MessageStatus.FAILED);
-            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-            message.setId(clientSideID);
-            message.preStorage();
-
+        if (message.getSyncStatus() == Sync.IN_MEMORY) {
+            // insert the message into local storage
             client().storage().insertMessageForChannel(channel, message);
+
+            // add the message here
             addMessage(message);
         }
 
-        stopTyping();
-
+        // TODO: I'm reading this code and i don't get what it does, needs some clarification (Thierry)
         if (client().isConnected()) {
             channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         }
@@ -981,15 +972,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     @Override
                     public void onSuccess(MessageResponse response) {
                         replaceMessage(message, response.getMessage());
-                        message.setSyncStatus(SYNCED);
                         callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
                         Message clone = message.copy();
-                        clone.setStatus(MessageStatus.FAILED);
-                        clone.setSyncStatus(LOCAL_FAILED);
+
                         updateFailedMessage(clone);
                         callback.onError(errMsg, errCode);
                     }

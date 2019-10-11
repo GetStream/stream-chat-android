@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class Sync {
 
+    public static final int IN_MEMORY = -1;
     public static final int LOCAL_ONLY = 0;
     public static final int LOCAL_UPDATE_PENDING = 1;
     public static final int SYNCED = 2;
@@ -16,7 +17,7 @@ public class Sync {
         System.out.println("status :" + status);
     }
 
-    @IntDef({LOCAL_ONLY, LOCAL_UPDATE_PENDING, SYNCED, LOCAL_FAILED})
+    @IntDef({IN_MEMORY, LOCAL_ONLY, LOCAL_UPDATE_PENDING, SYNCED, LOCAL_FAILED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Status {
     }

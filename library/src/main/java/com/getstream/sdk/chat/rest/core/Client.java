@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -81,6 +82,9 @@ import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.in;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
+import static com.getstream.sdk.chat.storage.Sync.SYNCED;
+import static java.util.UUID.randomUUID;
 
 public class Client implements WSResponseHandler {
 
@@ -264,7 +268,7 @@ public class Client implements WSResponseHandler {
     }
 
     public Storage storage() {
-        return Storage.getStorage(getContext(), this.offlineStorage);
+        return Storage.getStorage(this, getContext(), this.offlineStorage);
     }
 
     public String getApiKey() {
@@ -400,6 +404,16 @@ public class Client implements WSResponseHandler {
             }
         };
         connect();
+    }
+
+    /**
+     * Generates a message id based on the user id + a random UUID.
+     * We generate the message client side to make it easier to update the local storage/in-memory store of messages
+     *
+     * @return a string with the new message id
+     */
+    public String generateMessageID() {
+        return getUserId() + "-" + randomUUID().toString();
     }
 
     public void setUser(User user, @NonNull String token, ClientConnectionCallback callback) {
@@ -864,14 +878,19 @@ public class Client implements WSResponseHandler {
                             @NonNull SendMessageRequest sendMessageRequest,
                             MessageCallback callback) {
 
+        Message message = sendMessageRequest.getMessageObject();
+
         mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                message.setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                message.setStatus(MessageStatus.FAILED);
+                message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {

@@ -132,7 +132,8 @@ public class Message implements UserEntity {
 
     public Message() {
         this.extraData = new HashMap<>();
-        this.setSyncStatus(Sync.SYNCED);
+        this.setSyncStatus(Sync.IN_MEMORY);
+        this.setType("regular");
     }
 
     // region Set Date and Time
