@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -42,6 +43,7 @@ public class MessageInputClient {
     private static final String TAG = MessageInputClient.class.getSimpleName();
 
     ChannelViewModel viewModel;
+    Channel channel;
     MessageInputStyle style;
     MediaAttachmentAdapter mediaAttachmentAdapter = null;
     MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
@@ -60,6 +62,7 @@ public class MessageInputClient {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
+        this.channel = viewModel.getChannel();
         this.style = style;
     }
 
@@ -228,9 +231,9 @@ public class MessageInputClient {
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
-                viewModel.getChannel().sendImage(attachment.config.getFilePath(), callback);
+                channel.sendImage(attachment.config.getFilePath(), callback);
             } else {
-                viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
+                channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             }
         } else
             selectedAttachments.remove(attachment);
@@ -285,7 +288,7 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            viewModel.getChannel().sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new SendFileCallback() {
+            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new SendFileCallback() {
                 @Override
                 public void onSuccess(FileSendResponse response) {
                     binding.ivSend.setEnabled(true);
@@ -493,8 +496,8 @@ public class MessageInputClient {
     private void setCommands(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < viewModel.getChannel().getConfig().getCommands().size(); i++) {
-            Command command = viewModel.getChannel().getConfig().getCommands().get(i);
+        for (int i = 0; i < channel.getConfig().getCommands().size(); i++) {
+            Command command = channel.getConfig().getCommands().get(i);
             if (command.getName().contains(string))
                 commands.add(command);
         }
@@ -504,8 +507,8 @@ public class MessageInputClient {
         Log.d(TAG, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < viewModel.getChannel().getChannelState().getMembers().size(); i++) {
-            Member member = viewModel.getChannel().getChannelState().getMembers().get(i);
+        for (int i = 0; i < channel.getChannelState().getMembers().size(); i++) {
+            Member member = channel.getChannelState().getMembers().get(i);
             User user = member.getUser();
             if (user.getName().toLowerCase().contains(string.toLowerCase()))
                 commands.add(user);

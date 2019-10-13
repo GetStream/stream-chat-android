@@ -2,11 +2,12 @@ package com.getstream.sdk.chat.rest.core;
 
 public class ApiClientOptions {
 
-
     private static String defaultURL = "chat-us-east-1.stream-io-api.com";
     private static int defaultTimeout = 6000;
+    private static int defaultCDNTimeout = 1000 * 30;
 
     private String baseURL;
+    private String cdnURL;
     private int timeout;
 
     public ApiClientOptions(String baseURL, int timeout) {
@@ -53,6 +54,20 @@ public class ApiClientOptions {
                 baseURL = baseURL.substring(0, baseURL.length() - 1);
             }
             options.baseURL = baseURL;
+            return this;
+        }
+
+        public Builder CDNURL(String cdnURL) {
+            if (cdnURL != null && cdnURL.startsWith("https://")) {
+                cdnURL = cdnURL.split("https://")[1];
+            }
+            if (cdnURL != null && cdnURL.startsWith("http://")) {
+                cdnURL = cdnURL.split("http://")[1];
+            }
+            if (cdnURL.endsWith("/")) {
+                cdnURL = cdnURL.substring(0, cdnURL.length() - 1);
+            }
+            options.cdnURL = cdnURL;
             return this;
         }
 
