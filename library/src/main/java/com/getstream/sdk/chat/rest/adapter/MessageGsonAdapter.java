@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
@@ -59,6 +60,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         }
 
         Message message = new Message();
+        message.setSyncStatus(Sync.SYNCED);
         HashMap<String, Object> extraData = new HashMap<>();
 
         // TODO: is approach (like Java) is super dumb, we decode data twice

@@ -477,6 +477,11 @@ public class MessageInputView extends RelativeLayout
         m.setStatus(null);
         m.setText(input);
         m.setAttachments(messageInputClient.getSelectedAttachments());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
+        // set the current user
+        m.setUser(viewModel.client().getUser());
         return m;
     }
 

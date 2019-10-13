@@ -66,6 +66,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+
 /**
  * A channel
  */
@@ -109,6 +112,27 @@ public class Channel {
 
     private Integer syncStatus;
 
+    public Date getLastKeystrokeAt() {
+        return lastKeystrokeAt;
+    }
+
+    public void setLastKeystrokeAt(Date lastKeystrokeAt) {
+        this.lastKeystrokeAt = lastKeystrokeAt;
+    }
+
+    @Ignore
+    private Date lastKeystrokeAt;
+
+    public Date getLastStartTypingEvent() {
+        return lastStartTypingEvent;
+    }
+
+    public void setLastStartTypingEvent(Date lastStartTypingEvent) {
+        this.lastStartTypingEvent = lastStartTypingEvent;
+    }
+
+    @Ignore
+    private Date lastStartTypingEvent;
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
@@ -573,6 +597,11 @@ public class Channel {
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
+
+        message.setSyncStatus(LOCAL_ONLY);
+        // immediately fail if there is no network
+        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
+
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
         client.sendMessage(this, request, callback);
@@ -612,30 +641,46 @@ public class Channel {
     /**
      * sendReaction - Send a reaction about a message
      *
-     * @param {string} messageID the message id
-     * @param {object} reaction the reaction object for instance {type: 'love'}
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param reaction {Reaction} the reaction object
+     * @param callback {MessageCallback} the request callback
      */
-    public void sendReaction(@NotNull String mesageId,
-                             @NotNull String type,
+    public void sendReaction(@NotNull Reaction reaction,
                              @NotNull MessageCallback callback) {
-        ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, callback);
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
+    }
+
+    /**
+     * sendReaction - Send a reaction about a message
+     *
+     * @param messageID {string} the message id
+     * @param type {string} the type of reaction (ie. like)
+     * @param extraData {Map<String, Object>} reaction extra data
+     * @param callback {MessageCallback} the request callback
+     */
+    public void sendReaction(@NotNull String messageID,
+                             @NotNull String type,
+                             Map<String, Object> extraData,
+                             @NotNull MessageCallback callback) {
+        Reaction reaction = new Reaction();
+        reaction.setMessageId(messageID);
+        reaction.setType(type);
+        reaction.setExtraData(extraData);
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
     }
 
     /**
      * deleteReaction - Delete a reaction by user and type
      *
-     * @param {string} messageID the id of the message from which te remove the reaction
-     * @param {string} reactionType the type of reaction that should be removed
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param messageId {string} the message id
+     * @param type {string} the type of reaction that should be removed
+     * @param callback {MessageCallback} the request callback
      */
-    public void deleteReaction(@NonNull String mesageId,
+    public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
                                @NonNull MessageCallback callback) {
-        client.deleteReaction(mesageId, type, callback);
+        client.deleteReaction(messageId, type, callback);
     }
 
     public void sendAction(@NonNull String messageId,
@@ -757,6 +802,26 @@ public class Channel {
 
     public void handelMemberRemoved(@NotNull User user) {
         channelState.removeMemberById(user.getId());
+    }
+
+    /**
+     * Sends a start typing event if it's been more than 3 seconds since the last start typing event was sent
+     */
+    public synchronized void keystroke(EventCallback callback) {
+        Date now = new Date();
+        lastKeystrokeAt = now;
+        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
+            lastStartTypingEvent = now;
+            this.sendEvent(EventType.TYPING_START, callback);
+        }
+    }
+
+    /**
+     * Sends the stop typing event
+     */
+    public synchronized void stopTyping(EventCallback callback) {
+        lastStartTypingEvent = null;
+        this.sendEvent(EventType.TYPING_STOP, callback);
     }
 
     /**

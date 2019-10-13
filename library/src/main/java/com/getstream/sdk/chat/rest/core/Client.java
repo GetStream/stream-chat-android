@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -81,6 +82,9 @@ import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.in;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
+import static com.getstream.sdk.chat.storage.Sync.SYNCED;
+import static java.util.UUID.randomUUID;
 
 public class Client implements WSResponseHandler {
 
@@ -265,7 +269,7 @@ public class Client implements WSResponseHandler {
     }
 
     public Storage storage() {
-        return Storage.getStorage(getContext(), this.offlineStorage);
+        return Storage.getStorage(this, getContext(), this.offlineStorage);
     }
 
     public String getApiKey() {
@@ -401,6 +405,16 @@ public class Client implements WSResponseHandler {
             }
         };
         connect();
+    }
+
+    /**
+     * Generates a message id based on the user id + a random UUID.
+     * We generate the message client side to make it easier to update the local storage/in-memory store of messages
+     *
+     * @return a string with the new message id
+     */
+    public String generateMessageID() {
+        return getUserId() + "-" + randomUUID().toString();
     }
 
     public void setUser(User user, @NonNull String token, ClientConnectionCallback callback) {
@@ -866,14 +880,19 @@ public class Client implements WSResponseHandler {
                             @NonNull SendMessageRequest sendMessageRequest,
                             MessageCallback callback) {
 
+        Message message = sendMessageRequest.getMessageObject();
+
         mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                message.setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                message.setStatus(MessageStatus.FAILED);
+                message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {
@@ -884,10 +903,8 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * updateMessage - Update the given message
-     *
-     * @param {object} message object, id needs to be specified
-     * @return {object} Response that includes the message
+     * Updates a message
+     * TODO: nicer signature, Message only
      */
     public void updateMessage(@NonNull String messageId,
                               @NonNull SendMessageRequest request,
@@ -936,10 +953,10 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * deleteMessage - Delete the given message
+     * Deletes a message
      *
-     * @param {string} messageID the message id needs to be specified
-     * @return {object} Response that includes the message
+     * @param messageId the id of the message to delete
+     * @param callback the result callback
      */
     public void deleteMessage(@NonNull String messageId,
                               MessageCallback callback) {
@@ -962,7 +979,10 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * markRead - Send the mark read event for this user, only works if the `read_events` setting is enabled
+     * Marks a channel as read for this user, only works if the `read_events` setting is enabled
+     * @param channel the channel to mark as read
+     * @param readRequest the mark read request additional options
+     * @param callback the result callback
      */
     public void markRead(@NonNull Channel channel,
                          MarkReadRequest readRequest,
@@ -995,12 +1015,12 @@ public class Client implements WSResponseHandler {
     // region Thread
 
     /**
-     * markAllRead - marks all channels for this user as read
+     * Marks all channels for this user as read
+     * @param callback the result callback
      */
-    public void markAllRead(MarkReadRequest readRequest,
-                            EventCallback callback) {
+    public void markAllRead(EventCallback callback) {
 
-        mService.markAllRead(apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
+        mService.markAllRead(apiKey, user.getId(), clientID).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -1021,14 +1041,18 @@ public class Client implements WSResponseHandler {
     // region Reaction
 
     /**
-     * getReplies - List the message replies for a parent message
+     * Lists the message replies for a parent message
+     * @param parentId the id of the parent message
+     * @param limit the number of messages to retrieve older than idLt
+     * @param idLt the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
+     * @param callback the result callback
      */
     public void getReplies(@NonNull String parentId,
                            int limit,
-                           String firstId,
+                           String idLt,
                            GetRepliesCallback callback) {
 
-        if (TextUtils.isEmpty(firstId)) {
+        if (TextUtils.isEmpty(idLt)) {
             mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
@@ -1045,7 +1069,7 @@ public class Client implements WSResponseHandler {
                 }
             });
         } else {
-            mService.getRepliesMore(parentId, apiKey, user.getId(), clientID, limit, firstId).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getRepliesMore(parentId, apiKey, user.getId(), clientID, limit, idLt).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     callback.onSuccess(response.body());
@@ -1065,13 +1089,15 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * sendReaction - Send a reaction about a message
+     * Sends a reaction about a message
+     *
+     * @param callback   the result callback
      */
-    public void sendReaction(@NonNull String messageId,
-                             @NonNull ReactionRequest reactionRequest,
-                             MessageCallback callback) {
+    public void sendReaction(@NotNull ReactionRequest reactionRequest,
+                             @NotNull MessageCallback callback) {
 
-        mService.sendReaction(messageId, apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
+
+        mService.sendReaction(reactionRequest.getReaction().getMessageId(), apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1093,13 +1119,17 @@ public class Client implements WSResponseHandler {
     // region Event
 
     /**
-     * deleteReaction - Delete a reaction by user and type
+     * Deletes a reaction by user and type
+     *
+     * @param messageId the message id
+     * @param type      the type of reaction that should be removed
+     * @param callback  the result callback
      */
     public void deleteReaction(@NonNull String messageId,
-                               @NonNull String reactionType,
+                               @NonNull String type,
                                MessageCallback callback) {
 
-        mService.deleteReaction(messageId, reactionType, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
+        mService.deleteReaction(messageId, type, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1119,7 +1149,11 @@ public class Client implements WSResponseHandler {
     // endregion
 
     /**
-     * sendEvent - Send an event on this channel
+     * Sends an event on a channel
+     *
+     * @param channel      the channel for this event
+     * @param eventRequest the send event request
+     * @param callback     the result callback
      */
     public void sendEvent(@NonNull Channel channel,
                           @NonNull SendEventRequest eventRequest,
@@ -1142,7 +1176,13 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    // region File
+    /**
+     * Uploads an image
+     *
+     * @param channel  the channel where the image should be loaded
+     * @param part     the multipart body
+     * @param callback the result callback
+     */
     public void sendImage(@NonNull Channel channel,
                           MultipartBody.Part part,
                           SendFileCallback callback) {
@@ -1164,6 +1204,13 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    /**
+     * Uploads a file
+     *
+     * @param channel  the channel where the file should be loaded
+     * @param part     the multipart body
+     * @param callback the result callback
+     */
     public void sendFile(@NonNull Channel channel,
                          MultipartBody.Part part,
                          SendFileCallback callback) {
@@ -1192,7 +1239,7 @@ public class Client implements WSResponseHandler {
     // region User
 
     /**
-     * bans target user ID
+     * Bans target user ID
      *
      * @param targetUserId the ID of the user to ban
      * @param channel      ban the user for this channel. If channel == null - ban the user from all channels
@@ -1235,7 +1282,7 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * removes the ban for target user ID
+     * Removes the ban for target user ID
      *
      * @param targetUserId the ID of the user to remove the ban
      * @param channel      ban the user for this channel. If channel == null - revoke global ban for a user
@@ -1274,7 +1321,7 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * queryUsers - Query users and watch user presence
+     *  Query users and watch user presence
      */
     public void queryUsers(@NonNull JSONObject payload,
                            QueryUserListCallback callback) {
@@ -1298,22 +1345,22 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * setAnonymousUser - Setup an anonymous session
+     * Setup an anonymous session
      */
     public void setAnonymousUser() {
     }
 
     /**
-     * setGuestUser - Setup a temporary guest user
+     * Setup a temporary guest user
      */
     public void setGuestUser(User user) {
     }
 
     /**
-     * muteUser - mutes a user
+     * Mutes a user
      *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
+     * @param target_id the id of the user to mute
+     * @param callback  the result callback
      */
     public void muteUser(@NonNull String target_id,
                          MuteUserCallback callback) {
@@ -1344,10 +1391,10 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * unmuteUser - unmutes a user
+     * Unmutes another user, the reverse of {@link #muteUser(String, MuteUserCallback)}
      *
-     * @param target_id Only used with serverside auth
-     * @returns Server response
+     * @param target_id the id of the user to un-mute
+     * @param callback  the result callback
      */
     public void unmuteUser(@NonNull String target_id,
                            MuteUserCallback callback) {
@@ -1432,7 +1479,7 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * adds members with given user IDs to the channel
+     * Adds members with given user IDs to the channel
      *
      * @param channel  add members to this channel
      * @param members  list of user IDs to add as members
@@ -1469,7 +1516,7 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * remove members with given user IDs from the channel
+     * Removes members with given user IDs from the channel
      *
      * @param channel  add members to this channel
      * @param members  list of user IDs to remove from the member list
@@ -1531,7 +1578,9 @@ public class Client implements WSResponseHandler {
     // region Device
 
     /**
-     * addDevice - Adds a push device for a user.
+     * Adds a push device for a user.
+     * @param deviceId the id of the device to add
+     * @param callback the result callback
      */
     public void addDevice(@NonNull String deviceId,
                           CompletableCallback callback) {
