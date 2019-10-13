@@ -36,7 +36,6 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
@@ -53,7 +52,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.FileSendResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
@@ -62,6 +60,7 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
+import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
 import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
@@ -75,7 +74,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -103,6 +101,7 @@ public class Client implements WSResponseHandler {
 
     // Main Params
     private String apiKey;
+    private StreamPublicStorage uploadStorage;
     private Boolean offlineStorage;
     private User user;
     private CachedTokenProvider tokenProvider;
@@ -114,7 +113,7 @@ public class Client implements WSResponseHandler {
     private boolean connected;
 
     private APIService mService;
-    private APIService mCDNService;
+
     private EventSubscriberRegistry<ChatEventHandler> subRegistery;
     // registry for callbacks on the setUser connection
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
@@ -497,7 +496,7 @@ public class Client implements WSResponseHandler {
             Log.d(TAG, "WebSocket URL : " + wsURL);
 
             mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
-            mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
+            uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
             WSConn = new WebSocketService(wsURL, user.getId(), this);
             WSConn.connect();
         });
@@ -1176,65 +1175,7 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    /**
-     * Uploads an image
-     *
-     * @param channel  the channel where the image should be loaded
-     * @param part     the multipart body
-     * @param callback the result callback
-     */
-    public void sendImage(@NonNull Channel channel,
-                          MultipartBody.Part part,
-                          SendFileCallback callback) {
-
-        mCDNService.sendImage(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
-            @Override
-            public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
-            }
-        });
-    }
-
-    /**
-     * Uploads a file
-     *
-     * @param channel  the channel where the file should be loaded
-     * @param part     the multipart body
-     * @param callback the result callback
-     */
-    public void sendFile(@NonNull Channel channel,
-                         MultipartBody.Part part,
-                         SendFileCallback callback) {
-
-        mCDNService.sendFile(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
-            @Override
-            public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    String errorMsg = t.getLocalizedMessage();
-                    if (t.getLocalizedMessage().toLowerCase().equals("timeout"))
-                        errorMsg = "The file is too large to upload!";
-
-                    callback.onError(errorMsg, -1);
-                }
-            }
-        });
-    }
+    
 
     // region User
 
@@ -1773,5 +1714,13 @@ public class Client implements WSResponseHandler {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public StreamPublicStorage getUploadStorage() {
+        return uploadStorage;
+    }
+
+    public void setUploadStorage(StreamPublicStorage uploadStorage) {
+        this.uploadStorage = uploadStorage;
     }
 }

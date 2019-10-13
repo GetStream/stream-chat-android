@@ -59,9 +59,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -623,18 +620,16 @@ public class Channel {
                           @NotNull String mimeType,
                           @NotNull SendFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendImage(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
 
     public void sendFile(@NotNull String filePath,
                          @NotNull String mimeType,
                          @NotNull SendFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendFile(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
     // endregion
 

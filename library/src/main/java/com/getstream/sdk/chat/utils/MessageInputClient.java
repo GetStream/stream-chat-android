@@ -231,7 +231,7 @@ public class MessageInputClient {
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
-                channel.sendImage(attachment.config.getFilePath(),"image/jpeg", callback);
+                channel.sendImage(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             } else {
                 channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             }
