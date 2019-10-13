@@ -115,7 +115,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void sendReaction(final View view, String type) {
-            channel.sendReaction(message.getId(), type, new MessageCallback() {
+            channel.sendReaction(message.getId(), type, null, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     clickListener.onClick(view);

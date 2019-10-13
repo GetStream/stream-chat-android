@@ -36,7 +36,6 @@ import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.SendMessageRequest;
@@ -611,30 +610,29 @@ public class Channel {
     /**
      * sendReaction - Send a reaction about a message
      *
-     * @param {string} messageID the message id
-     * @param {object} reaction the reaction object for instance {type: 'love'}
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param messageID {string} the message id
+     * @param type {string} the type of reaction (ie. like)
+     * @param extraData {Map<String, Object>} reaction extra data
+     * @param callback {MessageCallback} the request callback
      */
-    public void sendReaction(@NotNull String mesageId,
+    public void sendReaction(@NotNull String messageID,
                              @NotNull String type,
+                             Map<String, Object> extraData,
                              @NotNull MessageCallback callback) {
-        ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, callback);
+        client.sendReaction(messageID, type, extraData, callback);
     }
 
     /**
      * deleteReaction - Delete a reaction by user and type
      *
-     * @param {string} messageID the id of the message from which te remove the reaction
-     * @param {string} reactionType the type of reaction that should be removed
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param messageId {string} the message id
+     * @param type {string} the type of reaction that should be removed
+     * @param callback {MessageCallback} the request callback
      */
-    public void deleteReaction(@NonNull String mesageId,
+    public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
                                @NonNull MessageCallback callback) {
-        client.deleteReaction(mesageId, type, callback);
+        client.deleteReaction(messageId, type, callback);
     }
 
     public void sendAction(@NonNull String messageId,
