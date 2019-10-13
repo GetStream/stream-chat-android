@@ -21,7 +21,6 @@ import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -1090,20 +1089,13 @@ public class Client implements WSResponseHandler {
     /**
      * Sends a reaction about a message
      *
-     * @param messageID  the message id
-     * @param type       the type of reaction (ie. like)
-     * @param extraData  reaction extra data
      * @param callback   the result callback
      */
-    public void sendReaction(@NotNull String messageID,
-                             @NotNull String type,
-                             Map<String, Object> extraData,
+    public void sendReaction(@NotNull ReactionRequest reactionRequest,
                              @NotNull MessageCallback callback) {
 
-        Reaction reaction = new Reaction(messageID, getUser(), type, extraData);
-        ReactionRequest reactionRequest = new ReactionRequest(reaction);
 
-        mService.sendReaction(messageID, apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendReaction(reactionRequest.getReaction().getMessageId(), apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());

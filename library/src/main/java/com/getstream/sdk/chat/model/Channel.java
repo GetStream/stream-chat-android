@@ -640,6 +640,18 @@ public class Channel {
     /**
      * sendReaction - Send a reaction about a message
      *
+     * @param reaction {Reaction} the reaction object
+     * @param callback {MessageCallback} the request callback
+     */
+    public void sendReaction(@NotNull Reaction reaction,
+                             @NotNull MessageCallback callback) {
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
+    }
+
+    /**
+     * sendReaction - Send a reaction about a message
+     *
      * @param messageID {string} the message id
      * @param type {string} the type of reaction (ie. like)
      * @param extraData {Map<String, Object>} reaction extra data
@@ -649,7 +661,12 @@ public class Channel {
                              @NotNull String type,
                              Map<String, Object> extraData,
                              @NotNull MessageCallback callback) {
-        client.sendReaction(messageID, type, extraData, callback);
+        Reaction reaction = new Reaction();
+        reaction.setMessageId(messageID);
+        reaction.setType(type);
+        reaction.setExtraData(extraData);
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
     }
 
     /**
