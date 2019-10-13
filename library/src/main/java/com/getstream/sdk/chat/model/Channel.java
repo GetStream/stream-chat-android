@@ -591,9 +591,10 @@ public class Channel {
     }
 
     public void sendImage(@NotNull String filePath,
+                          @NotNull String mimeType,
                           @NotNull SendFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
+        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
         client.sendImage(this, part, fileCallback);
     }

@@ -55,6 +55,11 @@ public class ApiClientOptions {
             return this;
         }
 
+        public Builder CDNTimeout(int timeout) {
+            options.cdntimeout = timeout;
+            return this;
+        }
+
         public Builder BaseURL(String baseURL) {
             if (baseURL != null && baseURL.startsWith("https://")) {
                 baseURL = baseURL.split("https://")[1];
