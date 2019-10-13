@@ -110,6 +110,7 @@ public class Client implements WSResponseHandler {
     private boolean connected;
 
     private APIService mService;
+    private APIService mCDNService;
     private EventSubscriberRegistry<ChatEventHandler> subRegistery;
     // registry for callbacks on the setUser connection
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
@@ -482,6 +483,7 @@ public class Client implements WSResponseHandler {
             Log.d(TAG, "WebSocket URL : " + wsURL);
 
             mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
+            mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
             WSConn = new WebSocketService(wsURL, user.getId(), this);
             WSConn.connect();
         });
@@ -1145,7 +1147,7 @@ public class Client implements WSResponseHandler {
                           MultipartBody.Part part,
                           SendFileCallback callback) {
 
-        mService.sendImage(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
+        mCDNService.sendImage(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 callback.onSuccess(response.body());
@@ -1166,7 +1168,7 @@ public class Client implements WSResponseHandler {
                          MultipartBody.Part part,
                          SendFileCallback callback) {
 
-        mService.sendFile(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
+        mCDNService.sendFile(channel.getType(), channel.getId(), part, apiKey, user.getId(), clientID).enqueue(new Callback<FileSendResponse>() {
             @Override
             public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
                 callback.onSuccess(response.body());

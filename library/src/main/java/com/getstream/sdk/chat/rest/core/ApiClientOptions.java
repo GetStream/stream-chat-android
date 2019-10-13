@@ -7,20 +7,28 @@ public class ApiClientOptions {
     private static int defaultCDNTimeout = 1000 * 30;
 
     private String baseURL;
-    private String cdnURL;
     private int timeout;
 
-    public ApiClientOptions(String baseURL, int timeout) {
+    private String cdnURL;
+    private int cdntimeout;
+
+    public ApiClientOptions(String baseURL, int timeout, int cdntimeout) {
         this.baseURL = baseURL;
         this.timeout = timeout;
+        this.cdnURL = baseURL;
+        this.cdntimeout = cdntimeout;
     }
 
     public ApiClientOptions() {
-        this(defaultURL, defaultTimeout);
+        this(defaultURL, defaultTimeout, defaultCDNTimeout);
     }
 
     public String getHttpURL() {
         return "https://" + baseURL + "/";
+    }
+
+    public String getCdnHttpURL() {
+        return "https://" + cdnURL + "/";
     }
 
     public String getWssURL() {
@@ -29,6 +37,10 @@ public class ApiClientOptions {
 
     public int getTimeout() {
         return timeout;
+    }
+
+    public int getCdntimeout() {
+        return cdntimeout;
     }
 
     public static class Builder {
