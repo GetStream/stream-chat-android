@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.model.Attachment;
@@ -36,7 +37,7 @@ public class AttachmentViewHolderImgur extends BaseAttachmentViewHolder {
         iv_media_thumb.setOnLongClickListener(this);
 
         Glide.with(context)
-                .load(attachment.getThumbURL())
+                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
                 .into(iv_media_thumb);
     }
 }
