@@ -6,15 +6,14 @@ import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
-import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.UploadFileResponse;
+import com.getstream.sdk.chat.utils.ProgressRequestBody;
 
 import java.io.File;
 
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,13 +43,13 @@ public class StreamPublicStorage extends BaseStorage {
     }
 
     @Override
-    public void sendFile(Channel channel, File file, String mimeType, SendFileCallback callback) {
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
+    public void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback) {
+        ProgressRequestBody fileReqBody = new ProgressRequestBody(file, mimeType, callback);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
 
-        Callback<FileSendResponse> callbackWrapper = new Callback<FileSendResponse>() {
+        Callback<UploadFileResponse> callbackWrapper = new Callback<UploadFileResponse>() {
             @Override
-            public void onResponse(Call<FileSendResponse> call, Response<FileSendResponse> response) {
+            public void onResponse(Call<UploadFileResponse> call, Response<UploadFileResponse> response) {
                 callback.onSuccess(response.body());
             }
 

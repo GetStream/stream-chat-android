@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.rest.storage;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 
 import java.io.File;
 
@@ -16,5 +16,5 @@ public abstract class BaseStorage {
 
     }
 
-    public abstract void sendFile(Channel channel, File file, String mimeType, SendFileCallback callback);
+    public abstract void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback);
 }

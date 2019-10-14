@@ -32,7 +32,7 @@ import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -618,7 +618,7 @@ public class Channel {
 
     public void sendImage(@NotNull String filePath,
                           @NotNull String mimeType,
-                          @NotNull SendFileCallback fileCallback) {
+                          @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
 
         client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
@@ -626,7 +626,7 @@ public class Channel {
 
     public void sendFile(@NotNull String filePath,
                          @NotNull String mimeType,
-                         @NotNull SendFileCallback fileCallback) {
+                         @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
 
         client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
