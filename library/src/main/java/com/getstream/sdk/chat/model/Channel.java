@@ -610,8 +610,9 @@ public class Channel {
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-        client.updateMessage(message.getId(), request, callback);
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            message.setMentionedUsersId(mentionedUserIDs);
+        client.updateMessage(message, callback);
     }
 
     public void deleteMessage(@NonNull Message message,

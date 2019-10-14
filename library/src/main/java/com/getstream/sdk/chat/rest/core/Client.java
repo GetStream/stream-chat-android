@@ -904,15 +904,17 @@ public class Client implements WSResponseHandler {
      * Updates a message
      * TODO: nicer signature, Message only
      */
-    public void updateMessage(@NonNull String messageId,
-                              @NonNull SendMessageRequest request,
+    public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
 
-        mService.updateMessage(messageId,
+        String str = GsonConverter.Gson().toJson(message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
+        mService.updateMessage(message.getId(),
                 apiKey,
                 user.getId(),
                 clientID,
-                request).enqueue(new Callback<MessageResponse>() {
+                map).enqueue(new Callback<MessageResponse>() {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
