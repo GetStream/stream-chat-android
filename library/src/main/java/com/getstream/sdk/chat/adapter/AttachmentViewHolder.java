@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
@@ -189,7 +190,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
-                .load(attachUrl)
+                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachUrl))
                 .into(iv_media_thumb);
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());

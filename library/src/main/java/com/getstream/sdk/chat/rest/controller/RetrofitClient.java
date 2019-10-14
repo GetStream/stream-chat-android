@@ -55,4 +55,44 @@ public class RetrofitClient {
             .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
             .build();
     }
+
+    public static Retrofit getAuthorizedCDNClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
+
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+
+        TokenAuthInterceptor authInterceptor = new TokenAuthInterceptor(tokenProvider);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(options.getCdntimeout(), TimeUnit.MILLISECONDS)
+                .writeTimeout(options.getCdntimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(options.getCdntimeout(), TimeUnit.MILLISECONDS)
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    Response response = chain.proceed(request);
+                    if (!response.isSuccessful()) {
+                        throw ErrorResponse.parseError(response);
+                    }
+                    return response;
+                })
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(chain -> {
+                    Request request = chain.request()
+                            .newBuilder()
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("stream-auth-type", "jwt")
+                            .addHeader("Accept-Encoding", "application/gzip")
+                            .build();
+                    return chain.proceed(request);
+                })
+                .addInterceptor(authInterceptor)
+                .followRedirects(false)
+                .build();
+
+        return new Retrofit.Builder()
+                .baseUrl(options.getCdnHttpURL())
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
+                .build();
+    }
 }

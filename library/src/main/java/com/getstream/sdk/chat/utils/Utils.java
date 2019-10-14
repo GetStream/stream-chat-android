@@ -31,6 +31,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -67,15 +68,19 @@ public class Utils {
 
 
     public static void circleImageLoad(ImageView view, String url) {
-        Glide.with(view.getContext()).asBitmap().load(url).centerCrop().into(new BitmapImageViewTarget(view) {
-            @Override
-            protected void setResource(Bitmap resource) {
-                RoundedBitmapDrawable circularBitmapDrawable =
-                        RoundedBitmapDrawableFactory.create(view.getContext().getResources(), resource);
-                circularBitmapDrawable.setCircular(true);
-                view.setImageDrawable(circularBitmapDrawable);
-            }
-        });
+        Glide.with(view.getContext())
+                .asBitmap()
+                .load(StreamChat.getInstance(view.getContext()).getUploadStorage().signGlideUrl(url))
+                .centerCrop()
+                .into(new BitmapImageViewTarget(view) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(view.getContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        view.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
     }
 
     public static boolean isSVGImage(String url){

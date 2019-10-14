@@ -32,7 +32,7 @@ import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
@@ -58,9 +58,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -646,20 +643,19 @@ public class Channel {
     }
 
     public void sendImage(@NotNull String filePath,
-                          @NotNull SendFileCallback fileCallback) {
+                          @NotNull String mimeType,
+                          @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendImage(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
 
     public void sendFile(@NotNull String filePath,
                          @NotNull String mimeType,
-                         @NotNull SendFileCallback fileCallback) {
+                         @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendFile(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
     // endregion
 

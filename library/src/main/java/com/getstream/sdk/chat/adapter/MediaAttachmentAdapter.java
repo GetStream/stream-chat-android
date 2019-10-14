@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -67,7 +68,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             if (file.exists()) {
                 Uri imageUri = Uri.fromFile(file);
                 Glide.with(context)
-                        .load(imageUri)
+                        .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(imageUri.toString()))
                         .into(binding.ivMedia);
             } else {
                 Log.d(TAG, "There is no image from this path");
