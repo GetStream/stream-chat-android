@@ -106,6 +106,9 @@ public class Message implements UserEntity {
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
+    @Ignore
+    private List<String> mentionedUsersId;
+
     @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
 
@@ -427,6 +430,14 @@ public class Message implements UserEntity {
 
     public void setMentionedUsers(List<User> mentionedUsers) {
         this.mentionedUsers = mentionedUsers;
+    }
+
+    public List<String> getMentionedUsersId() {
+        return mentionedUsersId;
+    }
+
+    public void setMentionedUsersId(List<String> mentionedUsersId) {
+        this.mentionedUsersId = mentionedUsersId;
     }
 
     public Map<String, Integer> getReactionCounts() {

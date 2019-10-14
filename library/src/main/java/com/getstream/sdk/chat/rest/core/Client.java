@@ -46,7 +46,6 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -875,12 +874,14 @@ public class Client implements WSResponseHandler {
      * @return {object} The Server Response
      */
     public void sendMessage(Channel channel,
-                            @NonNull SendMessageRequest sendMessageRequest,
+                            @NonNull Message message,
                             MessageCallback callback) {
 
-        Message message = sendMessageRequest.getMessageObject();
+        String str = GsonConverter.Gson().toJson(message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
 
-        mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, map).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
@@ -902,17 +903,21 @@ public class Client implements WSResponseHandler {
 
     /**
      * Updates a message
-     * TODO: nicer signature, Message only
+     *
+     * @param {object} message The Message object
+     * @return {object} The Server Response
      */
-    public void updateMessage(@NonNull String messageId,
-                              @NonNull SendMessageRequest request,
+    public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
 
-        mService.updateMessage(messageId,
+        String str = GsonConverter.Gson().toJson(message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
+        mService.updateMessage(message.getId(),
                 apiKey,
                 user.getId(),
                 clientID,
-                request).enqueue(new Callback<MessageResponse>() {
+                map).enqueue(new Callback<MessageResponse>() {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
