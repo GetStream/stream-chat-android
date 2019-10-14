@@ -6,6 +6,9 @@
 - Improved newline handling
 - Improved thread display
 
+## Oct 14th, 2019 - 2.2.1
+- Removed `SendMessageRequest`
+- Updated `sendMessage` and `updateMessage` from `Client`
 
 ## Oct 10th, 2019 - 2.2.1
 

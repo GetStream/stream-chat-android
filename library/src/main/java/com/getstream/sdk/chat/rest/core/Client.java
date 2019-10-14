@@ -903,7 +903,9 @@ public class Client implements WSResponseHandler {
 
     /**
      * Updates a message
-     * TODO: nicer signature, Message only
+     *
+     * @param {object} message The Message object
+     * @return {object} The Server Response
      */
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
