@@ -594,6 +594,31 @@ public class Channel {
         return null;
     }
 
+    /**
+     * countUnread - Count the number of unread messages mentioning the current user
+     *
+     * @return {int} Unread mentions count
+     */
+    public int countUnreadMentions() {
+		Date lastRead = channelState.getReadDateOfChannelLastMessage(client.getUserId());
+        int count = 0;
+        for (Message m : this.channelState.getMessages()) {
+            if (client.getUser().getId().equals(m.getUserId())) {
+                continue;
+            }
+            if (lastRead == null) {
+                count++;
+                continue;
+            }
+            if (m.getCreatedAt().getTime() > lastRead.getTime()) {
+                if (m.getMentionedUsers().indexOf(client.getUser()) != -1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
