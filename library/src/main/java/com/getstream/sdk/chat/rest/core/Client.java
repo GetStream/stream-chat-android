@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.core;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -45,7 +46,6 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -68,6 +68,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -430,6 +431,32 @@ public class Client implements WSResponseHandler {
         if (otherUserId == null) return false;
         if (user == null) return false;
         return TextUtils.equals(user.getId(), otherUserId);
+    }
+
+    /**
+     *
+     * @param userId {string} the id of the user
+     * @return {string}
+     */
+    public static String devToken(@NonNull String userId) throws Exception {
+        if (TextUtils.isEmpty(userId)) {
+            throw new IllegalArgumentException("User ID must be non-null");
+        }
+
+        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
+        JSONObject payloadJson = new JSONObject();
+
+        payloadJson.put("user_id", userId);
+        String payload = payloadJson.toString();
+        String payloadBase64 = Base64.encodeToString(payload.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+        String devSignature = "devtoken";
+
+        String[] a = new String[3];
+        a[0] = header;
+        a[1] = payloadBase64;
+        a[2] = devSignature;
+
+        return TextUtils.join(".", a);
     }
 
     /**
@@ -877,12 +904,14 @@ public class Client implements WSResponseHandler {
      * @return {object} The Server Response
      */
     public void sendMessage(Channel channel,
-                            @NonNull SendMessageRequest sendMessageRequest,
+                            @NonNull Message message,
                             MessageCallback callback) {
 
-        Message message = sendMessageRequest.getMessageObject();
+        String str = GsonConverter.Gson().toJson(message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
 
-        mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, sendMessageRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, map).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
@@ -904,17 +933,21 @@ public class Client implements WSResponseHandler {
 
     /**
      * Updates a message
-     * TODO: nicer signature, Message only
+     *
+     * @param {object} message The Message object
+     * @return {object} The Server Response
      */
-    public void updateMessage(@NonNull String messageId,
-                              @NonNull SendMessageRequest request,
+    public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
 
-        mService.updateMessage(messageId,
+        String str = GsonConverter.Gson().toJson(message);
+        Map<String, Object> map = new HashMap<>();
+        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
+        mService.updateMessage(message.getId(),
                 apiKey,
                 user.getId(),
                 clientID,
-                request).enqueue(new Callback<MessageResponse>() {
+                map).enqueue(new Callback<MessageResponse>() {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {

@@ -257,12 +257,12 @@ public class Utils {
         return attachments;
     }
 
-    public static List<String> getMentionedUserIDs(ChannelState response, String text) {
+    public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {
         if (TextUtils.isEmpty(text)) return null;
 
         List<String> mentionedUserIDs = new ArrayList<>();
-        if (response.getMembers() != null && !response.getMembers().isEmpty()) {
-            for (Member member : response.getMembers()) {
+        if (channelState.getMembers() != null && !channelState.getMembers().isEmpty()) {
+            for (Member member : channelState.getMembers()) {
                 String userName = member.getUser().getName();
                 if (text.contains("@" + userName)) {
                     mentionedUserIDs.add(member.getUser().getId());
