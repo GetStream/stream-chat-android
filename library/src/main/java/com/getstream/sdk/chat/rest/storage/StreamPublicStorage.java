@@ -60,7 +60,6 @@ public class StreamPublicStorage extends BaseStorage {
         mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
     }
 
-    @Override
     public void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback) {
         ProgressRequestBody fileReqBody = new ProgressRequestBody(file, mimeType, callback);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
@@ -93,26 +92,13 @@ public class StreamPublicStorage extends BaseStorage {
     }
 
 
-    /**
-     * signFileURL allows you to add a token your file for authorization
-     *
-     * @param channel
-     * @param url
-     * @return
-     */
-    public String signFileURL(Channel channel, String url) {
+
+    public String signFileUrl(String url) {
         return url;
     }
 
-    /**
-     * signGlideURL returns a GlidUrl for the given url string.
-     * This allows you to add a token to either the headers or the query params
-     *
-     * @param channel
-     * @param url
-     * @return
-     */
-    public GlideUrl signGlideURL(Channel channel, String url) {
+
+    public GlideUrl signGlideUrl(String url) {
         GlideUrl glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
                 .addHeader("X-requested-by", "stream")
                 .build());

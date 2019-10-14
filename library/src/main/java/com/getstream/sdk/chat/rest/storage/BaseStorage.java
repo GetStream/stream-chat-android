@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.storage;
 
+import com.bumptech.glide.load.model.GlideUrl;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -17,4 +18,21 @@ public abstract class BaseStorage {
     }
 
     public abstract void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback);
+
+    /**
+     * signFileUrl allows you to add a token your file for authorization
+     *
+     * @param url
+     * @return
+     */
+    public abstract String signFileUrl(String url);
+
+    /**
+     * signGlideUrl returns a GlidUrl for the given url string.
+     * This allows you to add a token to either the headers or the query params
+     *
+     * @param url
+     * @return
+     */
+    public abstract GlideUrl signGlideUrl(String url);
 }
