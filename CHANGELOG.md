@@ -6,6 +6,8 @@
 - Improved newline handling
 - Improved thread display
 
+## Oct 14th, 2019 - 2.2.1
+- Added devToken function for setUser of Client
 
 ## Oct 10th, 2019 - 2.2.1
 
