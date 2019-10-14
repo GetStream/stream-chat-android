@@ -202,7 +202,7 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            UploadFileCallback callback = new UploadFileCallback() {
+            UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
                     binding.setActiveMessageSend(true);
@@ -231,7 +231,7 @@ public class MessageInputClient {
                 }
 
                 @Override
-                public void onProgress(int percentage) {
+                public void onProgress(Integer percentage) {
                     Log.d(TAG, "onProgress: " + percentage);
                 }
             };
@@ -293,7 +293,7 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback() {
+            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
                     binding.ivSend.setEnabled(true);
@@ -311,7 +311,7 @@ public class MessageInputClient {
                 }
 
                 @Override
-                public void onProgress(int percentage) {
+                public void onProgress(Integer percentage) {
                     Log.d(TAG, "onProgress: " + percentage);
                 }
             });
