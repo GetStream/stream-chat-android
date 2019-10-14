@@ -1141,7 +1141,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         private void sendStoppedTyping() {
 
             // typing did not start, quit
-            if (channel.getLastStartTypingEvent() == null) {
+            if (channel == null || channel.getLastStartTypingEvent() == null) {
                 return;
             }
 
