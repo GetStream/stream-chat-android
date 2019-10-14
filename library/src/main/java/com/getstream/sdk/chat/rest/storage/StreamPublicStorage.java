@@ -27,12 +27,22 @@ import retrofit2.Response;
  * - everything is public (livestream)
  * - visibility is restricted to which channels you are allowed to read
  *
+ * The storage should also expose the
+ * - upload progress
+ * - ability to delete a file
+ *
  * For the channel visibility the typical workflow is this:
  * - the image is uploaded to a path that contains the channel cid
  * - when you read the image you pass a user token
  * - a proxy service uses the token to authorize a user
  * - the proxy service checks if that user has permission to read that channel
  * - token generation is sometimes done differently than for other API endpoints
+ *
+ * Alternatively some apps like Slack simply proxy static files behind their auth.
+ * So if you logout images are immediately not available.
+ * (The disadvantage of this approach is that it mostly breaks your CDN usage)
+ * (You could work around it with something like Lamdba on the edge)
+ *
  *
  */
 public class StreamPublicStorage extends BaseStorage {
