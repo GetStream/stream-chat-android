@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.storage;
 
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.controller.APIService;
@@ -42,6 +44,12 @@ import retrofit2.Response;
  * (The disadvantage of this approach is that it mostly breaks your CDN usage)
  * (You could work around it with something like Lamdba on the edge)
  *
+ * Some CDNs will need to add an authorization token/header to the images they are requesting
+ * One challenge with this is that we use various different flows for loading files
+ *
+ * - You can open a file when clicking on the link
+ * - Images are loaded via Glide
+ * - Video also opens a file when clicking on the link
  *
  */
 public class StreamPublicStorage extends BaseStorage {
@@ -82,5 +90,32 @@ public class StreamPublicStorage extends BaseStorage {
         } else {
             mCDNService.sendFile(channel.getType(), channel.getId(), part, client.getApiKey(), client.getUserId(), client.getClientID()).enqueue(callbackWrapper);
         }
+    }
+
+
+    /**
+     * signFileURL allows you to add a token your file for authorization
+     *
+     * @param channel
+     * @param url
+     * @return
+     */
+    public String signFileURL(Channel channel, String url) {
+        return url;
+    }
+
+    /**
+     * signGlideURL returns a GlidUrl for the given url string.
+     * This allows you to add a token to either the headers or the query params
+     *
+     * @param channel
+     * @param url
+     * @return
+     */
+    public GlideUrl signGlideURL(Channel channel, String url) {
+        GlideUrl glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
+                .addHeader("X-requested-by", "stream")
+                .build());
+        return glideUrl;
     }
 }
