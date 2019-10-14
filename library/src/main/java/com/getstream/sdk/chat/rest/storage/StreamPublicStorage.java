@@ -35,17 +35,15 @@ import retrofit2.Response;
  * - token generation is sometimes done differently than for other API endpoints
  *
  */
-public class StreamPublicStorage {
-    private Client client;
-    private APIService mCDNService;
+public class StreamPublicStorage extends BaseStorage {
 
 
     public StreamPublicStorage(Client client, CachedTokenProvider tokenProvider, ApiClientOptions options) {
-        this.client = client;
-
+        super(client);
         mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
     }
 
+    @Override
     public void sendFile(Channel channel, File file, String mimeType, SendFileCallback callback) {
         RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
@@ -70,7 +68,10 @@ public class StreamPublicStorage {
             }
         };
 
-        // TODO detect if it's an image or not
-        mCDNService.sendFile(channel.getType(), channel.getId(), part, client.getApiKey(), client.getUserId(), client.getClientID()).enqueue(callbackWrapper);
+        if (mimeType.contains("image")) {
+            mCDNService.sendImage(channel.getType(), channel.getId(), part, client.getApiKey(), client.getUserId(), client.getClientID()).enqueue(callbackWrapper);
+        } else {
+            mCDNService.sendFile(channel.getType(), channel.getId(), part, client.getApiKey(), client.getUserId(), client.getClientID()).enqueue(callbackWrapper);
+        }
     }
 }

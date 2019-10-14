@@ -60,6 +60,7 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
+import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
 import com.getstream.sdk.chat.storage.Storage;
 
@@ -101,7 +102,7 @@ public class Client implements WSResponseHandler {
 
     // Main Params
     private String apiKey;
-    private StreamPublicStorage uploadStorage;
+    private BaseStorage uploadStorage;
     private Boolean offlineStorage;
     private User user;
     private CachedTokenProvider tokenProvider;
@@ -249,6 +250,7 @@ public class Client implements WSResponseHandler {
         offlineStorage = false;
         this.options = options;
         this.state = new ClientState(this);
+        uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -496,7 +498,7 @@ public class Client implements WSResponseHandler {
             Log.d(TAG, "WebSocket URL : " + wsURL);
 
             mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
-            uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
+
             WSConn = new WebSocketService(wsURL, user.getId(), this);
             WSConn.connect();
         });
@@ -1175,7 +1177,7 @@ public class Client implements WSResponseHandler {
         });
     }
 
-    
+
 
     // region User
 
@@ -1716,11 +1718,11 @@ public class Client implements WSResponseHandler {
         this.context = context;
     }
 
-    public StreamPublicStorage getUploadStorage() {
+    public BaseStorage getUploadStorage() {
         return uploadStorage;
     }
 
-    public void setUploadStorage(StreamPublicStorage uploadStorage) {
+    public void setUploadStorage(BaseStorage uploadStorage) {
         this.uploadStorage = uploadStorage;
     }
 }
