@@ -5,6 +5,11 @@
 - Fixed slash command support on threads
 - Improved newline handling
 - Improved thread display
+
+## Oct 14th, 2019 - 2.2.1
+
+- Renamed `FileSendResponse` to `UploadFileResponse`
+- Renamed `SendFileCallback` to `UploadFileCallback`
 - Removed `SendMessageRequest`
 - Updated `sendMessage` and `updateMessage` from `Client`
 - Added devToken function for setUser of Client

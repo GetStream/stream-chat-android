@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.Utils;
@@ -110,7 +111,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
                     if (!Utils.isSVGImage(user_.getImage()))
                         Glide.with(context)
-                                .load(user_.getImage())
+                                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(user_.getImage()))
                                 .into(imageView);
 
                     RelativeLayout.LayoutParams params;
@@ -170,7 +171,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
-                    .load(image)
+                    .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
                     .into(imageView);
 
         RelativeLayout.LayoutParams params;

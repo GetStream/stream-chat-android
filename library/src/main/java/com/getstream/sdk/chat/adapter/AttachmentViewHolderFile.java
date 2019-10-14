@@ -46,7 +46,6 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         configAttachment();
     }
 
-
     private void applyStyle() {
         tv_file_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
         tv_file_title.setTextColor(style.getAttachmentTitleTextColor());

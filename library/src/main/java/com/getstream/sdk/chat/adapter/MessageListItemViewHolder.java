@@ -428,7 +428,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     isLongClick = false;
                     return;
                 }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(StreamChat.getInstance(context).getUploadStorage().signFileUrl(url)));
                 context.startActivity(browserIntent);
             }
         });

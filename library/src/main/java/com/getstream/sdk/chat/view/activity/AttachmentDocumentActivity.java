@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
@@ -53,7 +54,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
      */
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
-        webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
+        webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
     }
 
 
@@ -61,14 +62,14 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             // TODO Auto-generated method stub
-            view.loadUrl(url);
+            view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             // TODO Auto-generated method stub
-            super.onPageFinished(view, url);
+            super.onPageFinished(view, StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
     }
