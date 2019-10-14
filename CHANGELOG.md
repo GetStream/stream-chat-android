@@ -6,6 +6,9 @@
 - Improved newline handling
 - Improved thread display
 
+## Oct 14th, 2019 - 2.2.1
+- Renamed `FileSendResponse` to `UploadFileResponse`
+- Renamed `SendFileCallback` to `UploadFileCallback`
 
 ## Oct 10th, 2019 - 2.2.1
 

@@ -29,8 +29,8 @@ import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
-import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
+import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -202,9 +202,9 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            SendFileCallback callback = new SendFileCallback() {
+            UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
-                public void onSuccess(FileSendResponse response) {
+                public void onSuccess(UploadFileResponse response) {
                     binding.setActiveMessageSend(true);
                     binding.ivSend.setEnabled(true);
                     File file = new File(attachment.config.getFilePath());
@@ -229,9 +229,14 @@ public class MessageInputClient {
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedMedia(attachments, attachment);
                 }
+
+                @Override
+                public void onProgress(Integer percentage) {
+                    Log.d(TAG, "onProgress: " + percentage);
+                }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
-                channel.sendImage(attachment.config.getFilePath(), attachment.getMime_type(), callback);
+                channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
             } else {
                 channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
             }
@@ -288,9 +293,9 @@ public class MessageInputClient {
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             binding.ivSend.setEnabled(false);
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new SendFileCallback() {
+            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
-                public void onSuccess(FileSendResponse response) {
+                public void onSuccess(UploadFileResponse response) {
                     binding.ivSend.setEnabled(true);
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
@@ -303,6 +308,11 @@ public class MessageInputClient {
                     binding.ivSend.setEnabled(true);
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedFile(attachments, attachment);
+                }
+
+                @Override
+                public void onProgress(Integer percentage) {
+                    Log.d(TAG, "onProgress: " + percentage);
                 }
             });
         } else

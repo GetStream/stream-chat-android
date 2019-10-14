@@ -250,7 +250,6 @@ public class Client implements WSResponseHandler {
         offlineStorage = false;
         this.options = options;
         this.state = new ClientState(this);
-        uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
@@ -498,7 +497,7 @@ public class Client implements WSResponseHandler {
             Log.d(TAG, "WebSocket URL : " + wsURL);
 
             mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
-
+            uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
             WSConn = new WebSocketService(wsURL, user.getId(), this);
             WSConn.connect();
         });
