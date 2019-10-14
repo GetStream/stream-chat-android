@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
 
@@ -97,8 +98,8 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .asGif()
-                .load(url)
+                .load(StreamChat.getInstance(this).getUploadStorage().signGlideUrl(url))
+                .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
 

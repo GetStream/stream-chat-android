@@ -99,9 +99,8 @@ public class StreamPublicStorage extends BaseStorage {
 
 
     public GlideUrl signGlideUrl(String url) {
-        GlideUrl glideUrl = new GlideUrl(url, new LazyHeaders.Builder()
+        return new GlideUrl(url, new LazyHeaders.Builder()
                 .addHeader("X-requested-by", "stream")
                 .build());
-        return glideUrl;
     }
 }
