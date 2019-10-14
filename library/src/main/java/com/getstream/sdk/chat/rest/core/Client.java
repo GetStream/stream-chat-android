@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.core;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -67,6 +68,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -428,6 +430,32 @@ public class Client implements WSResponseHandler {
         if (otherUserId == null) return false;
         if (user == null) return false;
         return TextUtils.equals(user.getId(), otherUserId);
+    }
+
+    /**
+     *
+     * @param userId {string} the id of the user
+     * @return {string}
+     */
+    public static String devToken(@NonNull String userId) throws Exception {
+        if (TextUtils.isEmpty(userId)) {
+            throw new IllegalArgumentException("User ID must be non-null");
+        }
+
+        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
+        JSONObject payloadJson = new JSONObject();
+
+        payloadJson.put("user_id", userId);
+        String payload = payloadJson.toString();
+        String payloadBase64 = Base64.encodeToString(payload.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+        String devSignature = "devtoken";
+
+        String[] a = new String[3];
+        a[0] = header;
+        a[1] = payloadBase64;
+        a[2] = devSignature;
+
+        return TextUtils.join(".", a);
     }
 
     /**

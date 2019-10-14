@@ -5,10 +5,9 @@
 - Fixed slash command support on threads
 - Improved newline handling
 - Improved thread display
-
-## Oct 14th, 2019 - 2.2.1
 - Removed `SendMessageRequest`
 - Updated `sendMessage` and `updateMessage` from `Client`
+- Added devToken function for setUser of Client
 
 ## Oct 10th, 2019 - 2.2.1
 
