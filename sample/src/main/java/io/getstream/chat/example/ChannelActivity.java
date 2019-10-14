@@ -16,8 +16,6 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -88,29 +86,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
-
-        client.markAllRead(new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
-        binding.messageInput.setOnSendMessageListener(new MessageInputView.SendMessageListener() {
-            @Override
-            public void onSendMessageSuccess(Message message) {
-                // good place to track analytics events...
-            }
-
-            @Override
-            public void onSendMessageError(String errMsg) {
-                // show an error message
-            }
-        });
+        
     }
 
     @Override
