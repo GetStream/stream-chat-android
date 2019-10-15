@@ -221,13 +221,11 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-//            binding.ivSend.setEnabled(false);
             uploadingFile = true;
             UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
                     binding.setActiveMessageSend(true);
-//                    binding.ivSend.setEnabled(true);
                     uploadingFile = false;
                     File file = new File(attachment.config.getFilePath());
                     if (attachment.getType().equals(ModelType.attach_image)) {
@@ -247,8 +245,6 @@ public class MessageInputClient {
                 @Override
                 public void onError(String errMsg, int errCode) {
                     binding.setActiveMessageSend(true);
-                    binding.rvMedia.setEnabled(true);
-//                    binding.ivSend.setEnabled(true);
                     uploadingFile = false;
                     attachment.config.setSelected(false);
                     Utils.showMessage(context, errMsg);
@@ -259,7 +255,6 @@ public class MessageInputClient {
                 public void onProgress(Integer percentage) {
                     attachment.config.setProgress(percentage);
                     selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
-                    Log.d(TAG, "File Uploading Progress: " + percentage);
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
@@ -319,12 +314,10 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-//            binding.ivSend.setEnabled(false);
             uploadingFile = true;
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
-//                    binding.ivSend.setEnabled(true);
                     uploadingFile = false;
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
@@ -336,7 +329,6 @@ public class MessageInputClient {
                 public void onError(String errMsg, int errCode) {
                     attachment.config.setSelected(false);
                     uploadingFile = false;
-//                    binding.ivSend.setEnabled(true);
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedFile(attachments, attachment);
                 }
@@ -345,7 +337,6 @@ public class MessageInputClient {
                 public void onProgress(Integer percentage) {
                     attachment.config.setProgress(percentage);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
-                    Log.d(TAG, "File Uploading Progress: " + percentage);
                 }
             });
         } else
