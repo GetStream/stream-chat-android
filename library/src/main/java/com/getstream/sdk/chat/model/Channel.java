@@ -18,6 +18,7 @@ import androidx.room.TypeConverters;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -557,9 +558,10 @@ public class Channel {
      */
     public void getReplies(@NonNull String parentId,
                            int limit,
-                           @NonNull String firstMessageId,
+                           Pagination pagination,
+                           String firstMessageId,
                            @NonNull GetRepliesCallback callback) {
-        client.getReplies(parentId, limit, firstMessageId, callback);
+        client.getReplies(parentId, limit, pagination, firstMessageId, callback);
     }
 
     public ChannelState getChannelState() {

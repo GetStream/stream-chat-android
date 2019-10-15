@@ -310,6 +310,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         message.setId("");
         message.setThreadParent(true);
 
+        int repliesPageSize = 30;
+
         if (threadParentMessage_.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
             threadMessages.postValue(new ArrayList<Message>() {
@@ -318,12 +320,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), 30, null, new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage_.getId(), repliesPageSize, null, null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
                     newMessages.add(0, message);
-                    reachedEndOfPaginationThread = newMessages.size() < 30 + 1;
+                    reachedEndOfPaginationThread = newMessages.size() < repliesPageSize + 1;
                     threadMessages.postValue(newMessages);
                 }
 
@@ -863,6 +865,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             channel.getReplies(threadParentMessage.getValue().getId(),
                     Constant.DEFAULT_LIMIT,
+                    Pagination.LESS_THAN,
                     getThreadOldestMessageId(),
                     new GetRepliesCallback() {
                         @Override

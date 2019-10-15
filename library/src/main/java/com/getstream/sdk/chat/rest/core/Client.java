@@ -10,16 +10,14 @@ import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
+import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Config;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.model.QueryChannelsQ;
+import com.getstream.sdk.chat.model.*;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
@@ -1042,46 +1040,51 @@ public class Client implements WSResponseHandler {
      * Lists the message replies for a parent message
      * @param parentId the id of the parent message
      * @param limit the number of messages to retrieve older than idLt
-     * @param idLt the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
+     * @param pagination type of pagination. null if first page is needed
+     * @param paginationMessageId the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
      * @param callback the result callback
      */
     public void getReplies(@NonNull String parentId,
                            int limit,
-                           String idLt,
+                           @Nullable Pagination pagination,
+                           @Nullable String paginationMessageId,
                            GetRepliesCallback callback) {
 
-        if (TextUtils.isEmpty(idLt)) {
-            mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(new Callback<GetRepliesResponse>() {
-                @Override
-                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
-                    callback.onSuccess(response.body());
-                }
+        Callback<GetRepliesResponse> responseCallback = new Callback<GetRepliesResponse>() {
+            @Override
+            public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
+                callback.onSuccess(response.body());
+            }
 
-                @Override
-                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    if (t instanceof ErrorResponse) {
-                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                    } else {
-                        callback.onError(t.getLocalizedMessage(), -1);
-                    }
+            @Override
+            public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
+                if (t instanceof ErrorResponse) {
+                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                } else {
+                    callback.onError(t.getLocalizedMessage(), -1);
                 }
-            });
+            }
+        };
+
+        if (pagination == null) {
+            mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(responseCallback);
         } else {
-            mService.getRepliesMore(parentId, apiKey, user.getId(), clientID, limit, idLt).enqueue(new Callback<GetRepliesResponse>() {
-                @Override
-                public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
-                    callback.onSuccess(response.body());
-                }
-
-                @Override
-                public void onFailure(Call<GetRepliesResponse> call, Throwable t) {
-                    if (t instanceof ErrorResponse) {
-                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                    } else {
-                        callback.onError(t.getLocalizedMessage(), -1);
-                    }
-                }
-            });
+            switch (pagination) {
+                case LESS_THAN:
+                    mService.getRepliesLessThan(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    break;
+                case LESS_THAN_OR_EQUAL:
+                    mService.getRepliesLessThanOrEqual(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    break;
+                case GREATER_THAN:
+                    mService.getRepliesGreaterThan(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    break;
+                case GREATER_THAN_OR_EQUAL:
+                    mService.getRepliesGreaterThanOrEqual(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    break;
+                default:
+                    throw new RuntimeException("Unsupported paging type: " + pagination);
+            }
         }
 
     }

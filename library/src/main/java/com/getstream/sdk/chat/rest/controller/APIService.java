@@ -30,14 +30,7 @@ import java.util.Map;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.GET;
-import retrofit2.http.Multipart;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 public interface APIService {
     // region Channel
@@ -127,7 +120,16 @@ public interface APIService {
     Call<GetRepliesResponse> getReplies(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit);
 
     @GET("/messages/{parent_id}/replies")
-    Call<GetRepliesResponse> getRepliesMore(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit, @Query("id_lt") String firstId);
+    Call<GetRepliesResponse> getRepliesGreaterThan(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit, @Query("id_gt") String paginationMessageId);
+
+    @GET("/messages/{parent_id}/replies")
+    Call<GetRepliesResponse> getRepliesGreaterThanOrEqual(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit, @Query("id_gte") String paginationMessageId);
+
+    @GET("/messages/{parent_id}/replies")
+    Call<GetRepliesResponse> getRepliesLessThan(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit, @Query("id_lt") String paginationMessageId);
+
+    @GET("/messages/{parent_id}/replies")
+    Call<GetRepliesResponse> getRepliesLessThanOrEqual(@Path("parent_id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("limit") int limit, @Query("id_lte") String paginationMessageId);
 
     @POST("/channels/{type}/{id}/event")
     Call<EventResponse> sendEvent(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendEventRequest request);
