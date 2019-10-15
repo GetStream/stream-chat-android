@@ -248,8 +248,7 @@ public class Utils {
                 float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
                 attachment.setType(ModelType.attach_file);
                 attachment.setMime_type(ModelType.attach_mime_mp4);
-                attachment.config.setVideoLengh((int) (videolengh / 1000));
-                attachments.add(attachment);
+                attachment.config.setVideoLengh((int) (videolengh / 1000));            ;
             }
             attachments.add(attachment);
         }
