@@ -245,6 +245,7 @@ public class MessageInputClient {
 
                 @Override
                 public void onProgress(Integer percentage) {
+                    uploadingFile = true;
                     attachment.config.setProgress(percentage);
                     selectedMediaAttachmentAdapter.notifyDataSetChanged();
                 }
@@ -260,11 +261,11 @@ public class MessageInputClient {
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageSend(true);
+//            binding.setActiveMessageSend(true);
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
+//            binding.setActiveMessageSend(false);
         }
     }
 
@@ -327,6 +328,7 @@ public class MessageInputClient {
 
                 @Override
                 public void onProgress(Integer percentage) {
+                    uploadingFile = true;
                     attachment.config.setProgress(percentage);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
                 }
@@ -338,10 +340,10 @@ public class MessageInputClient {
 
         if (selectedAttachments.size() > 0) {
             viewModel.setInputType(InputType.SELECT);
-            binding.setActiveMessageSend(true);
+//            binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
+//            binding.setActiveMessageSend(false);
         }
     }
 

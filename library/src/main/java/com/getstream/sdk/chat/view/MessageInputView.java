@@ -294,6 +294,10 @@ public class MessageInputView extends RelativeLayout
         // TODO: make the attachment UI into it's own view and allow you to change it.
         messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel, style, ()-> {
             if (binding.ivSend.isEnabled()) return;
+            for (Attachment attachment : messageInputClient.getSelectedAttachments())
+                if (!attachment.config.isUploaded())
+                    return;
+
             onSendMessage();
         });
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
