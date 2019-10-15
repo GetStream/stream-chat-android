@@ -234,7 +234,7 @@ public class MessageInputClient {
                 public void onProgress(Integer percentage) {
                     attachment.config.setProgress(percentage);
                     selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
-                    Log.d(TAG, "onProgress: " + percentage);
+                    Log.d(TAG, "File Uploading Progress: " + percentage);
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
@@ -314,7 +314,9 @@ public class MessageInputClient {
 
                 @Override
                 public void onProgress(Integer percentage) {
-                    Log.d(TAG, "onProgress: " + percentage);
+                    attachment.config.setProgress(percentage);
+                    selectedFileAttachmentAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "File Uploading Progress: " + percentage);
                 }
             });
         } else
