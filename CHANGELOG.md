@@ -15,6 +15,7 @@
 - Improved thread display
 - Expose ban information for current user (`User#getBanned`)
 - Bugfix on attachment size
+- Add `editMessage` functions to `ChannelViewModel` (Adrian)
 
 ## Oct 14th, 2019 - 2.2.1
 
