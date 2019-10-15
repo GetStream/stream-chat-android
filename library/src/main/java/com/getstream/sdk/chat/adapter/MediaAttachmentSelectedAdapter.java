@@ -75,6 +75,13 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     .solidColor(Color.BLACK)
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
+
+            binding.ivMask.setShape(context, new DrawableBuilder()
+                    .rectangle()
+                    .solidColor(Color.BLACK)
+                    .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+                    .build());
+
             if (attachment.config.getFilePath() != null) {
                 File file = new File(attachment.config.getFilePath());
                 if (file.exists()) {
@@ -115,8 +122,13 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 binding.tvLength.setText("");
             }
             itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
-            binding.progressBar.setProgress(attachment.config.getProgress());
-            if (attachment.config.isUploaded()) binding.progressBar.setVisibility(View.GONE);
+
+            if (attachment.config.isUploaded()) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.ivMask.setVisibility(View.GONE);
+            }else
+                binding.progressBar.setProgress(attachment.config.getProgress());
+
             binding.executePendingBindings();
         }
     }
