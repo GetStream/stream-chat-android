@@ -114,9 +114,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            itemView.setOnClickListener((View v) -> {
-                listener.onItemClick(getAdapterPosition());
-            });
+            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
+            binding.progressBar.setProgress(attachment.config.getProgress());
             if (attachment.config.isUploaded()) binding.progressBar.setVisibility(View.GONE);
             binding.executePendingBindings();
         }

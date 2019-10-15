@@ -232,6 +232,8 @@ public class MessageInputClient {
 
                 @Override
                 public void onProgress(Integer percentage) {
+                    attachment.config.setProgress(percentage);
+                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
                     Log.d(TAG, "onProgress: " + percentage);
                 }
             };
