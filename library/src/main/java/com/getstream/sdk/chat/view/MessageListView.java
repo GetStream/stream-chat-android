@@ -180,9 +180,11 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                if (attachment.getType().equals(ModelType.attach_file)) {
+                if (attachment == null
+                        || attachment.getType() == null
+                        || attachment.getType().equals(ModelType.attach_file)) 
                     return null;
-                }
+
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
@@ -336,7 +338,6 @@ public class MessageListView extends RecyclerView {
             boolean backFromThread = false;
             if (adapter.isThread() != messageListItemWrapper.isThread()) {
                 adapter.setThread(messageListItemWrapper.isThread());
-                adapter.replaceEntities(new ArrayList<>());
                 backFromThread = !messageListItemWrapper.isThread();
             }
 

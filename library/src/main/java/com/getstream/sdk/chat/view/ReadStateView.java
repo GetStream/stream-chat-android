@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
@@ -62,7 +63,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
-                    .load(image)
+                    .load(StreamChat.getInstance(getContext()).getUploadStorage().signGlideUrl(image))
                     .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(

@@ -192,7 +192,7 @@ public class ChannelState {
         if (members != null) {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
-                    users.add(channel.getClient().getTrackedUser(m.getUser()));
+                    users.add(channel.getClient().getState().getUser(m.getUser().getId()));
                 }
             }
         }
@@ -200,7 +200,7 @@ public class ChannelState {
         if (watchers != null) {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
-                    users.add(channel.getClient().getTrackedUser(w.getUser()));
+                    users.add(channel.getClient().getState().getUser(w.getUser().getId()));
                 }
             }
         }
@@ -470,7 +470,7 @@ public class ChannelState {
         if (lastReadDate == null) return unreadMessageCount;
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
-            if (!message.getUser().getId().equals(userId)) continue;
+            if (message.getUser().getId().equals(userId)) continue;
             if (message.getDeletedAt() != null) continue;
             if (message.getCreatedAt().getTime() > lastReadDate.getTime())
                 unreadMessageCount++;
@@ -478,7 +478,7 @@ public class ChannelState {
         return unreadMessageCount;
     }
 
-    private Date getReadDateOfChannelLastMessage(String userId) {
+    public Date getReadDateOfChannelLastMessage(String userId) {
         if (this.reads == null || this.reads.isEmpty()) return null;
         Date lastReadDate = null;
         try {

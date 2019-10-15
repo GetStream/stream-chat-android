@@ -8,12 +8,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.room.Transaction;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
@@ -21,14 +23,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
 public class Storage {
     private static volatile Storage INSTANCE;
     final String TAG = Storage.class.getSimpleName();
     private Boolean enabled;
+    private Client client;
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
@@ -37,7 +44,8 @@ public class Storage {
     private ChannelsDao channelsDao;
     private QueryChannelsQDao queryChannelsQDao;
 
-    public Storage(Context context, Boolean enabled) {
+    public Storage(Client client, Context context, Boolean enabled) {
+        this.client = client;
         this.context = context;
         this.enabled = enabled;
         if (enabled) {
@@ -49,11 +57,11 @@ public class Storage {
         }
     }
 
-    public static Storage getStorage(final Context context, final boolean enabled) {
+    public static Storage getStorage(Client client, final Context context, final boolean enabled) {
         if (INSTANCE == null) {
             synchronized (Storage.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new Storage(context, enabled);
+                    INSTANCE = new Storage(client, context, enabled);
                 }
             }
         }
@@ -286,7 +294,22 @@ public class Storage {
 
 
     public void insertMessageForChannel(Channel channel, Message message) {
+        // set the ids etc
+        if (message.getId() == null) {
+            String clientSideID = getClient().generateMessageID();
+            message.setId(clientSideID);
+        }
+        if (message.getCreatedAt() == null) {
+            message.setCreatedAt(new Date());
+        }
+        message.setSyncStatus(LOCAL_ONLY);
+        // immediately fail if there is no network
+        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
+        message.preStorage();
+
         if (!enabled) return;
+
+
 
         List<Message> messages = new ArrayList<>();
         messages.add(message);
@@ -420,6 +443,14 @@ public class Storage {
                 r.setUser(userMap.get(r.getUserID()));
             }
         }
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public interface OnQueryListener<T> {

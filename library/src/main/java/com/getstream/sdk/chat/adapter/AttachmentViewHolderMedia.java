@@ -15,9 +15,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -36,6 +38,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private ConstraintLayout cl_action;
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
     private MessageListView.GiphySendListener giphySendListener;
+    private Client client;
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -50,6 +53,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
         tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
         tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
+        client = StreamChat.getInstance(context);
     }
 
     @Override
@@ -143,11 +147,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
         configImageThumbBackground();
 
-        if (!TextUtils.isEmpty(attachUrl) && !attachUrl.contains("https:"))
-            attachUrl = "https:" + attachUrl;
-
         Glide.with(context)
-                .load(attachUrl)
+                .load(client.getUploadStorage().signGlideUrl(attachUrl))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 

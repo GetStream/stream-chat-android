@@ -42,6 +42,12 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
         return clone;
     }
 
+    public ChannelQueryRequest withPresence() {
+        ChannelQueryRequest clone = this.cloneOpts();
+        clone.presence = true;
+        return clone;
+    }
+
     public ChannelQueryRequest withMessages(int limit) {
         ChannelQueryRequest clone = this.cloneOpts();
         Map<String, Object> messages = new HashMap<>();

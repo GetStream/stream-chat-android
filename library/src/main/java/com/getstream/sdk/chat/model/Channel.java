@@ -32,14 +32,13 @@ import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -59,12 +58,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
+import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
 /**
  * A channel
@@ -109,6 +108,27 @@ public class Channel {
 
     private Integer syncStatus;
 
+    public Date getLastKeystrokeAt() {
+        return lastKeystrokeAt;
+    }
+
+    public void setLastKeystrokeAt(Date lastKeystrokeAt) {
+        this.lastKeystrokeAt = lastKeystrokeAt;
+    }
+
+    @Ignore
+    private Date lastKeystrokeAt;
+
+    public Date getLastStartTypingEvent() {
+        return lastStartTypingEvent;
+    }
+
+    public void setLastStartTypingEvent(Date lastStartTypingEvent) {
+        this.lastStartTypingEvent = lastStartTypingEvent;
+    }
+
+    @Ignore
+    private Date lastStartTypingEvent;
 
     @Embedded(prefix = "state_")
     private ChannelState lastState;
@@ -486,6 +506,9 @@ public class Channel {
                     initialized = true;
                 }
 
+                // update the user references
+                getClient().getState().updateUsersForChannel(channelState);
+
                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                 // offline storage
 
@@ -567,19 +590,51 @@ public class Channel {
         return null;
     }
 
+    /**
+     * countUnread - Count the number of unread messages mentioning the current user
+     *
+     * @return {int} Unread mentions count
+     */
+    public int countUnreadMentions() {
+		Date lastRead = channelState.getReadDateOfChannelLastMessage(client.getUserId());
+        int count = 0;
+        for (Message m : this.channelState.getMessages()) {
+            if (client.getUser().getId().equals(m.getUserId())) {
+                continue;
+            }
+            if (lastRead == null) {
+                count++;
+                continue;
+            }
+            if (m.getCreatedAt().getTime() > lastRead.getTime()) {
+                if (m.getMentionedUsers().indexOf(client.getUser()) != -1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
+
+        message.setSyncStatus(LOCAL_ONLY);
+        // immediately fail if there is no network
+        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
+
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-        client.sendMessage(this, request, callback);
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            message.setMentionedUsersId(mentionedUserIDs);
+        client.sendMessage(this, message, callback);
     }
 
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-        client.updateMessage(message.getId(), request, callback);
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            message.setMentionedUsersId(mentionedUserIDs);
+        client.updateMessage(message, callback);
     }
 
     public void deleteMessage(@NonNull Message message,
@@ -588,50 +643,65 @@ public class Channel {
     }
 
     public void sendImage(@NotNull String filePath,
-                          @NotNull SendFileCallback fileCallback) {
+                          @NotNull String mimeType,
+                          @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendImage(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
 
     public void sendFile(@NotNull String filePath,
                          @NotNull String mimeType,
-                         @NotNull SendFileCallback fileCallback) {
+                         @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendFile(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
     // endregion
 
     /**
      * sendReaction - Send a reaction about a message
      *
-     * @param {string} messageID the message id
-     * @param {object} reaction the reaction object for instance {type: 'love'}
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param reaction {Reaction} the reaction object
+     * @param callback {MessageCallback} the request callback
      */
-    public void sendReaction(@NotNull String mesageId,
-                             @NotNull String type,
+    public void sendReaction(@NotNull Reaction reaction,
                              @NotNull MessageCallback callback) {
-        ReactionRequest request = new ReactionRequest(type);
-        client.sendReaction(mesageId, request, callback);
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
+    }
+
+    /**
+     * sendReaction - Send a reaction about a message
+     *
+     * @param messageID {string} the message id
+     * @param type {string} the type of reaction (ie. like)
+     * @param extraData {Map<String, Object>} reaction extra data
+     * @param callback {MessageCallback} the request callback
+     */
+    public void sendReaction(@NotNull String messageID,
+                             @NotNull String type,
+                             Map<String, Object> extraData,
+                             @NotNull MessageCallback callback) {
+        Reaction reaction = new Reaction();
+        reaction.setMessageId(messageID);
+        reaction.setType(type);
+        reaction.setExtraData(extraData);
+        ReactionRequest r = new ReactionRequest(reaction);
+        client.sendReaction(r, callback);
     }
 
     /**
      * deleteReaction - Delete a reaction by user and type
      *
-     * @param {string} messageID the id of the message from which te remove the reaction
-     * @param {string} reactionType the type of reaction that should be removed
-     * @param {string} user_id the id of the user (used only for server side request) default null
-     * @return {object} The Server Response
+     * @param messageId {string} the message id
+     * @param type {string} the type of reaction that should be removed
+     * @param callback {MessageCallback} the request callback
      */
-    public void deleteReaction(@NonNull String mesageId,
+    public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
                                @NonNull MessageCallback callback) {
-        client.deleteReaction(mesageId, type, callback);
+        client.deleteReaction(messageId, type, callback);
     }
 
     public void sendAction(@NonNull String messageId,
@@ -714,7 +784,7 @@ public class Channel {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
         message.setStatus(MessageStatus.RECEIVED);
-        if (!message.getType().equals(ModelType.message_reply)) {
+        if (!message.getType().equals(ModelType.message_reply) && TextUtils.isEmpty(message.getParentId())) {
             channelState.addMessageSorted(message);
         }
         if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
@@ -753,6 +823,26 @@ public class Channel {
 
     public void handelMemberRemoved(@NotNull User user) {
         channelState.removeMemberById(user.getId());
+    }
+
+    /**
+     * Sends a start typing event if it's been more than 3 seconds since the last start typing event was sent
+     */
+    public synchronized void keystroke(EventCallback callback) {
+        Date now = new Date();
+        lastKeystrokeAt = now;
+        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
+            lastStartTypingEvent = now;
+            this.sendEvent(EventType.TYPING_START, callback);
+        }
+    }
+
+    /**
+     * Sends the stop typing event
+     */
+    public synchronized void stopTyping(EventCallback callback) {
+        lastStartTypingEvent = null;
+        this.sendEvent(EventType.TYPING_STOP, callback);
     }
 
     /**

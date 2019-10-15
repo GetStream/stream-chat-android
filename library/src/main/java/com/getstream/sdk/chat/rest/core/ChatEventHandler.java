@@ -83,6 +83,9 @@ public abstract class ChatEventHandler {
     public void onNotificationRemovedFromChannel(Channel channel, Event event) {
     }
 
+    public void onNotificationMutesUpdated(Channel channel, Event event) {
+    }
+
     public void onAnyEvent(Event event) {
     }
 
@@ -182,6 +185,9 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onNotificationAddedToChannel);
                 break;
             case NOTIFICATION_REMOVED_FROM_CHANNEL:
+                dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
+                break;
+            case NOTIFICATION_MUTES_UPDATED:
                 dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
                 break;
         }

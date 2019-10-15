@@ -2,6 +2,7 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -65,6 +66,9 @@ public class ChannelActivity extends AppCompatActivity
         // setup the viewmodel, remember to also set the channel
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.setChannel(channel);
+        viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
+          Log.i(TAG, String.format("The current user unread count is now %d", count));
+        });
 
         // set listeners
         binding.messageList.setMessageLongClickListener(this);
@@ -82,17 +86,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
-        binding.messageInput.setOnSendMessageListener(new MessageInputView.SendMessageListener() {
-            @Override
-            public void onSendMessageSuccess(Message message) {
-                // good place to track analytics events...
-            }
-
-            @Override
-            public void onSendMessageError(String errMsg) {
-                // show an error message
-            }
-        });
+        
     }
 
     @Override

@@ -472,6 +472,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onFailure(Exception e) {
+                Log.w(TAG, String.format("Failed to read channel list from offline storage, error %s", e.toString()));
                 callback.onFailure(e);
             }
         });

@@ -9,13 +9,12 @@ import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.FileSendResponse;
+import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
@@ -104,10 +103,10 @@ public interface APIService {
 
     // region Message
     @POST("/channels/{type}/{id}/message")
-    Call<MessageResponse> sendMessage(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
+    Call<MessageResponse> sendMessage(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map message);
 
     @POST("/messages/{id}")
-    Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body SendMessageRequest request);
+    Call<MessageResponse> updateMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body Map message);
 
     @GET("/messages/{id}")
     Call<MessageResponse> getMessage(@Path("id") String messageId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
@@ -140,15 +139,15 @@ public interface APIService {
     Call<EventResponse> markRead(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
 
     @POST("/channels/read")
-    Call<EventResponse> markAllRead(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Body MarkReadRequest request);
+    Call<EventResponse> markAllRead(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
     @Multipart
     @POST("/channels/{type}/{id}/image")
-    Call<FileSendResponse> sendImage(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<UploadFileResponse> sendImage(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
     @Multipart
     @POST("/channels/{type}/{id}/file")
-    Call<FileSendResponse> sendFile(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+    Call<UploadFileResponse> sendFile(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
     // endregion
 
     // region Device

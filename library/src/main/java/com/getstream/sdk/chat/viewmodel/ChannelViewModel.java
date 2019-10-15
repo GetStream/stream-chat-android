@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,7 +14,6 @@ import androidx.lifecycle.Transformations;
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
-import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -42,6 +42,7 @@ import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
@@ -57,10 +58,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
-import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
-import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
 /*
@@ -87,7 +85,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onFailure(Exception e) {
-                // TODO
+                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
             }
         });
 
@@ -97,6 +95,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelState = new MutableLiveData<>(channel.getChannelState());
         watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+        lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+        currentUserUnreadMessageCount = new MutableLiveData<>(lastCurrentUserUnreadMessageCount);
 
         initEventHandlers();
     }
@@ -114,8 +114,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private boolean reachedEndOfPaginationThread;
     private Date lastMarkRead;
 
-    private Date lastKeystrokeAt;
+    public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
+        return currentUserUnreadMessageCount;
+    }
 
+    private MutableLiveData<Number> currentUserUnreadMessageCount;
+    private Integer lastCurrentUserUnreadMessageCount;
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> messageListScrollUp;
     private MutableLiveData<Boolean> loadingMore;
@@ -148,6 +152,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
+
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
@@ -303,6 +308,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // Create New message for Parent Message
         Message message = threadParentMessage_.copy();
         message.setId("");
+        message.setThreadParent(true);
 
         if (threadParentMessage_.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
@@ -447,6 +453,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageNew(Event event) {
                 upsertMessage(event.getMessage());
                 channelState.postValue(channel.getChannelState());
+                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
+                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                }
+
             }
 
             @Override
@@ -478,6 +489,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
                 reads.postValue(channel.getChannelState().getReadsByUser());
+                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
+                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
+                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                }
             }
 
             @Override
@@ -546,7 +561,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
 
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return;
@@ -573,14 +589,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
-
     }
 
     private boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
-        if (message.getType().equals(ModelType.message_reply)) {
+        if (message.getType().equals(ModelType.message_reply)
+                || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
                     || !message.getParentId().equals(threadParentMessage.getValue().getId()))
                 return updated;
@@ -624,11 +640,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     private void shuffleGiphy(Message oldMessage, Message message) {
-        List<Message> messagesCopy = messages.getValue();
+        List<Message> messagesCopy = getMessages().getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
             messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
+            if (isThread())
+                threadMessages.postValue(messagesCopy);
+            else
+                messages.postValue(messagesCopy);
         }
     }
 
@@ -650,6 +669,24 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         }
         return false;
+    }
+
+    private void checkErrorMessage(){
+        boolean hasErrorMessage = false;
+        List<Message> messagesCopy = getMessages().getValue();
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            Message message = getMessages().getValue().get(i);
+            if (message.getType().equals(ModelType.message_error)) {
+                messagesCopy.remove(i);
+                hasErrorMessage = true;
+            }
+        }
+        if (!hasErrorMessage) return;
+
+        if (isThread()) {
+            threadMessages.postValue(messagesCopy);
+        } else
+            messages.postValue(messagesCopy);
     }
 
     private void addMessage(Message message) {
@@ -699,7 +736,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         for (Event event : typingState.values()) {
             // constants
             long TYPING_TIMEOUT = 10000;
-            if (now - event.getCreatedAt().getTime() < TYPING_TIMEOUT) {
+            if (now - event.getReceivedAt().getTime() < TYPING_TIMEOUT) {
                 users.add(event.getUser());
             }
         }
@@ -865,12 +902,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     new QueryChannelCallback() {
                         @Override
                         public void onSuccess(ChannelState response) {
+//                            reachedEndOfPagination = response.getMessages().size() < Constant.DEFAULT_LIMIT;
+                            reachedEndOfPagination = response.getMessages().isEmpty();
                             List<Message> newMessages = new ArrayList<>(response.getMessages());
                             // used to modify the scroll behaviour...
                             entities.setIsLoadingMore(true);
                             addMessages(newMessages);
-                            if (newMessages.size() < Constant.DEFAULT_LIMIT)
-                                reachedEndOfPagination = true;
                             setLoadingMoreDone();
                             callback.onSuccess(response);
                         }
@@ -909,44 +946,36 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
+        // Check ErrorMessages
+        checkErrorMessage();
+        // stop typing
+        stopTyping();
 
-        if (message.getStatus() == null) {
-            message.setSyncStatus(LOCAL_ONLY);
-            message.setUser(client().getUser());
-            message.setCreatedAt(new Date());
-            message.setType("regular");
-            if (isThread())
-                message.setParentId(threadParentMessage.getValue().getId());
-            message.setStatus(client().isConnected() ? SENDING : MessageStatus.FAILED);
-            String clientSideID = client().getUserId() + "-" + randomUUID().toString();
-            message.setId(clientSideID);
-            message.preStorage();
-
+        if (message.getSyncStatus() == Sync.IN_MEMORY) {
+            // insert the message into local storage
             client().storage().insertMessageForChannel(channel, message);
+
+            // add the message here
             addMessage(message);
         }
 
-        stopTyping();
-
+        // TODO: I'm reading this code and i don't get what it does, needs some clarification (Thierry)
         if (client().isConnected()) {
             channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
         }
-
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
                     @Override
                     public void onSuccess(MessageResponse response) {
                         replaceMessage(message, response.getMessage());
-                        message.setSyncStatus(SYNCED);
                         callback.onSuccess(response);
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
                         Message clone = message.copy();
-                        clone.setStatus(MessageStatus.FAILED);
-                        clone.setSyncStatus(LOCAL_FAILED);
+
                         updateFailedMessage(clone);
                         callback.onError(errMsg, errCode);
                     }
@@ -986,11 +1015,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                List<Message> messagesCopy = messages.getValue();
+                List<Message> messagesCopy = getMessages().getValue();
                 int index = messagesCopy.indexOf(message);
                 if (index != -1) {
                     messagesCopy.remove(message);
-                    messages.postValue(messagesCopy);
+                    if (isThread())
+                        threadMessages.postValue(messagesCopy);
+                    else
+                        messages.postValue(messagesCopy);
                 }
                 return;
         }
@@ -1036,10 +1068,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public synchronized void keystroke(EventCallback callback) {
         if (isThread()) return;
-        if (lastKeystrokeAt == null || (new Date().getTime() - lastKeystrokeAt.getTime() > 3000)) {
-            lastKeystrokeAt = new Date();
-            channel.sendEvent(EventType.TYPING_START, callback);
-        }
+        channel.keystroke(callback);
     }
 
     public synchronized void keystroke() {
@@ -1063,9 +1092,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
 
     public synchronized void stopTyping(EventCallback callback) {
-        if (lastKeystrokeAt == null || isThread()) return;
-        lastKeystrokeAt = null;
-        channel.sendEvent(EventType.TYPING_STOP, callback);
+        if (isThread()) return;
+        channel.stopTyping(callback);
     }
 
     public synchronized void stopTyping() {
@@ -1112,13 +1140,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         private void sendStoppedTyping() {
 
-            // typing did not start quit
-            if (lastKeystrokeAt == null) {
+            // typing did not start, quit
+            if (channel == null || channel.getLastStartTypingEvent() == null) {
                 return;
             }
 
-            long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
+            // if we didn't press a key for more than 5 seconds send the stopTyping event
+            long timeSinceLastKeystroke = new Date().getTime() - channel.getLastKeystrokeAt().getTime();
 
+            // TODO: this should be a config value on the client or channel object...
             if (timeSinceLastKeystroke > 5000) {
                 stopTyping();
             }

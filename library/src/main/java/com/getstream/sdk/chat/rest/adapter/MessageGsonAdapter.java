@@ -1,10 +1,12 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
@@ -37,11 +39,26 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getAttachments() != null)
             data.put("attachments", message.getAttachments());
 
-        if (message.getMentionedUsers() != null)
-            data.put("mentioned_users", message.getMentionedUsers());
+        if (message.getMentionedUsersId() != null)
+            data.put("mentioned_users", message.getMentionedUsersId());
 
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());
+
+        if (message.getAttachments() != null
+                && !message.getAttachments().isEmpty()) {
+            boolean isGiphy = false;
+            for (Attachment attachment : message.getAttachments()) {
+                if (!isGiphy && attachment.getType().equals(ModelType.attach_giphy))
+                    isGiphy = true;
+            }
+            if (isGiphy){
+                data.put("command", ModelType.attach_giphy);
+                Map<String, String> commandInfo = new HashMap<>();
+                commandInfo.put("name","Giphy");
+                data.put("command_info", commandInfo);
+            }
+        }
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
@@ -59,6 +76,7 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         }
 
         Message message = new Message();
+        message.setSyncStatus(Sync.SYNCED);
         HashMap<String, Object> extraData = new HashMap<>();
 
         // TODO: is approach (like Java) is super dumb, we decode data twice

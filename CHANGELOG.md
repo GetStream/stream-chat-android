@@ -1,10 +1,26 @@
 ## Pending release
 
+- Improved error message for uploading large files
+- Remove error messages after you send a message (similar behaviour to Slack)
+- Fixed slash command support on threads
+- Improved newline handling
+- Improved thread display
+
+## Oct 14th, 2019 - 2.2.1
+
+- Renamed `FileSendResponse` to `UploadFileResponse`
+- Renamed `SendFileCallback` to `UploadFileCallback`
+- Removed `SendMessageRequest`
+- Updated `sendMessage` and `updateMessage` from `Client`
+- Added devToken function for setUser of Client
+
+## Oct 10th, 2019 - 2.2.1
+
+- Added a callback as an optional last argument for setUser functions
+- Added ClientState which stores users, current user, unreadCount and the current user's mutes
+- Added notification.mutes_updated event
 - Add support for add/remove channel members
-
-
-#### Breaking changes:
-
+- Expose channel unread messages counts for any user in the channel
 
 ## Oct 9, 2019 - 2.2.0
 

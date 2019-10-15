@@ -106,6 +106,9 @@ public class Message implements UserEntity {
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
+    @Ignore
+    private List<String> mentionedUsersId;
+
     @TypeConverters(ReactionCountConverter.class)
     private Map<String, Integer> reactionCounts;
 
@@ -123,6 +126,8 @@ public class Message implements UserEntity {
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
+    private boolean isThreadParent = false; /*Used to tag Thread Parent Message*/
+
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -130,7 +135,8 @@ public class Message implements UserEntity {
 
     public Message() {
         this.extraData = new HashMap<>();
-        this.setSyncStatus(Sync.SYNCED);
+        this.setSyncStatus(Sync.IN_MEMORY);
+        this.setType("regular");
     }
 
     // region Set Date and Time
@@ -426,6 +432,14 @@ public class Message implements UserEntity {
         this.mentionedUsers = mentionedUsers;
     }
 
+    public List<String> getMentionedUsersId() {
+        return mentionedUsersId;
+    }
+
+    public void setMentionedUsersId(List<String> mentionedUsersId) {
+        this.mentionedUsersId = mentionedUsersId;
+    }
+
     public Map<String, Integer> getReactionCounts() {
         return reactionCounts;
     }
@@ -480,6 +494,14 @@ public class Message implements UserEntity {
 
     public void setCommandInfo(Map<String, String> commandInfo) {
         this.commandInfo = commandInfo;
+    }
+
+    public boolean isThreadParent() {
+        return isThreadParent;
+    }
+
+    public void setThreadParent(boolean threadParent) {
+        isThreadParent = threadParent;
     }
 
     @Override

@@ -10,7 +10,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 This library includes both a low level chat SDK and a set of reusable UI components.
 Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
-## Installation
+## Installing the Java Chat SDK
 
 - **Step 1** Add repository into root build.gradle
 
