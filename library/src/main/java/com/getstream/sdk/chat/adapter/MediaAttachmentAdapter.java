@@ -68,7 +68,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             if (file.exists()) {
                 Uri imageUri = Uri.fromFile(file);
                 Glide.with(context)
-                        .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(imageUri.toString()))
+                        .load(imageUri)
                         .into(binding.ivMedia);
             } else {
                 Log.d(TAG, "There is no image from this path");
