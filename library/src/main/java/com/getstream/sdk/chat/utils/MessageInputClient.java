@@ -43,20 +43,20 @@ public class MessageInputClient {
 
     private static final String TAG = MessageInputClient.class.getSimpleName();
 
-    ChannelViewModel viewModel;
-    Channel channel;
-    MessageInputStyle style;
-    MediaAttachmentAdapter mediaAttachmentAdapter = null;
-    MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
-    List<Object> commands = null;
-    Context context;
-    StreamViewMessageInputBinding binding;
-    AttachmentListAdapter fileAttachmentAdapter = null;
-    AttachmentListAdapter selectedFileAttachmentAdapter = null;
+    private ChannelViewModel viewModel;
+    private Channel channel;
+    private MessageInputStyle style;
+    private MediaAttachmentAdapter mediaAttachmentAdapter = null;
+    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
+    private CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
+    private List<Object> commands = null;
+    private Context context;
+    private StreamViewMessageInputBinding binding;
+    private AttachmentListAdapter fileAttachmentAdapter = null;
+    private AttachmentListAdapter selectedFileAttachmentAdapter = null;
 
-    MessageInputType messageInputType;
-    MessageInputView.AttachmentListener attachmentListener;
+    private MessageInputType messageInputType;
+    private MessageInputView.AttachmentListener attachmentListener;
     private List<Attachment> selectedAttachments = null;
     private boolean uploadingFile = false;
     // region Attachment
@@ -156,10 +156,6 @@ public class MessageInputClient {
             List<Attachment> attachments = Utils.getAllShownImagesPath(context);
             ((Activity) context).runOnUiThread(() -> {
                 mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                    if (uploadingFile) {
-                        Utils.showMessage(context, "Uploading file...");
-                        return;
-                    }
                     Attachment attachment = attachments.get(position);
                     attachment.config.setSelected(!attachment.config.isSelected());
                     mediaAttachmentAdapter.notifyItemChanged(position);
@@ -182,10 +178,6 @@ public class MessageInputClient {
                     binding.lvFile.setAdapter(fileAttachmentAdapter);
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
-                        if (uploadingFile) {
-                            Utils.showMessage(context, "Uploading file...");
-                            return;
-                        }
                         Attachment attachment = attachments.get(position);
 
                         attachment.config.setSelected(!attachment.config.isSelected());
@@ -238,7 +230,7 @@ public class MessageInputClient {
                         attachment.setAssetURL(response.getFileUrl());
                     }
                     attachment.config.setUploaded(true);
-                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
                     attachmentListener.onAddAttachments();
                 }
 
@@ -254,7 +246,7 @@ public class MessageInputClient {
                 @Override
                 public void onProgress(Integer percentage) {
                     attachment.config.setProgress(percentage);
-                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {

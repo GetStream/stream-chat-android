@@ -345,6 +345,7 @@ public class MessageInputView extends RelativeLayout
                     file = new File(path);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    clearInsertedMediaStore();
                 }
                 if (file != null) {
                     messageInputClient.progressCapturedMedia(getContext(), imageUri, true);
@@ -360,14 +361,21 @@ public class MessageInputView extends RelativeLayout
                     imageUri = null;
                 } else {
                     messageInputClient.progressCapturedMedia(getContext(), uri, false);
+                    clearInsertedMediaStore();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                clearInsertedMediaStore();
             }
         }else{
-            if (imageUri != null)
-                getContext().getContentResolver().delete(imageUri, null, null);
+            clearInsertedMediaStore();
         }
+    }
+
+    private void clearInsertedMediaStore(){
+        if (imageUri != null)
+            getContext().getContentResolver().delete(imageUri, null, null);
+        imageUri = null;
     }
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
