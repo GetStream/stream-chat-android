@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
+import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -52,6 +53,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 
 
 /**
@@ -89,12 +91,16 @@ public class MessageInputView extends RelativeLayout
     private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
     private OpenCameraViewListener openCameraViewListener;
+
     /**
      * The viewModel for handling typing etc.
      */
     private ChannelViewModel viewModel;
     // TODO Rename, totally not clear what this does
     private MessageInputClient messageInputClient;
+
+    /*The pendingMessage for uploading File*/
+    private Message pendingMessage;
 
     public MessageInputView(Context context) {
         super(context);
@@ -171,7 +177,8 @@ public class MessageInputView extends RelativeLayout
             attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
             attachment.setType(ModelType.attach_giphy);
             messageInputClient.setSelectedAttachments(Arrays.asList(attachment));
-            onSendMessage("", viewModel.isEditing());
+            binding.etMessage.setText("");
+            onSendMessage();
             return true;
         });
 
@@ -285,7 +292,10 @@ public class MessageInputView extends RelativeLayout
 
     private void initAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel, style);
+        messageInputClient = new MessageInputClient(getContext(), binding, this.viewModel, style, ()-> {
+            if (binding.ivSend.isEnabled()) return;
+            onSendMessage();
+        });
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
@@ -421,7 +431,7 @@ public class MessageInputView extends RelativeLayout
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.iv_send) {
-            this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
+            this.onSendMessage();
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
             if (style.isPermissionSet() || isGrantedPermissions())
@@ -482,16 +492,28 @@ public class MessageInputView extends RelativeLayout
             m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
         // set the current user
         m.setUser(viewModel.client().getUser());
+        // Check file uploading
+        if (messageInputClient.isUploadingFile()){
+            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+            m.setId(clientSideID);
+            m.setCreatedAt(new Date());
+            m.setType(ModelType.message_pending);
+            m.setAttachments(null);
+        }
         return m;
     }
 
-    private void onSendMessage(String input, boolean isEdit) {
+    private void onSendMessage() {
+        String input = binding.etMessage.getText().toString();
+        boolean isEdit = viewModel.isEditing();
         binding.ivSend.setEnabled(false);
-
         if (isEdit) {
-            getEditMessage().setText(input);
-            getEditMessage().setAttachments(messageInputClient.getSelectedAttachments());
-            viewModel.getChannel().updateMessage(getEditMessage(),  new MessageCallback() {
+            Message m = getEditMessage();
+            m.setText(input);
+            m.setAttachments(messageInputClient.getSelectedAttachments());
+            if (messageInputClient.isUploadingFile())
+                m.setType(ModelType.message_pending);
+            viewModel.getChannel().updateMessage(m,  new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
@@ -529,6 +551,7 @@ public class MessageInputView extends RelativeLayout
                 }
             });
         }
+
     }
 
     private void initSendMessage() {

@@ -671,17 +671,17 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void checkErrorMessage(){
-        boolean hasErrorMessage = false;
+    private void checkErrorOrPendingMessage(){
+        boolean hasErrorOrPendingMessage = false;
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             Message message = getMessages().getValue().get(i);
-            if (message.getType().equals(ModelType.message_error)) {
+            if (message.getType().equals(ModelType.message_error) || message.getType().equals(ModelType.message_pending)) {
                 messagesCopy.remove(i);
-                hasErrorMessage = true;
+                hasErrorOrPendingMessage = true;
             }
         }
-        if (!hasErrorMessage) return;
+        if (!hasErrorOrPendingMessage) return;
 
         if (isThread()) {
             threadMessages.postValue(messagesCopy);
@@ -946,11 +946,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
-        // Check ErrorMessages
-        checkErrorMessage();
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
         // stop typing
         stopTyping();
-
+        // Check uploading file
+        if (message.getType().equals(ModelType.message_pending)){
+            addMessage(message);
+            return;
+        }
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
             client().storage().insertMessageForChannel(channel, message);

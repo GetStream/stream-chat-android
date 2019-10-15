@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.view.MessageInputStyle;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;
@@ -53,17 +54,24 @@ public class MessageInputClient {
     StreamViewMessageInputBinding binding;
     AttachmentListAdapter fileAttachmentAdapter = null;
     AttachmentListAdapter selectedFileAttachmentAdapter = null;
-    MessageInputType messageInputType;
-    private List<Attachment> selectedAttachments = null;
 
+    MessageInputType messageInputType;
+    MessageInputView.AttachmentListener attachmentListener;
+    private List<Attachment> selectedAttachments = null;
+    private boolean uploadingFile = false;
     // region Attachment
 
-    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel, MessageInputStyle style) {
+    public MessageInputClient(Context context,
+                              StreamViewMessageInputBinding binding,
+                              ChannelViewModel viewModel,
+                              MessageInputStyle style,
+                              MessageInputView.AttachmentListener attachmentListener) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
         this.channel = viewModel.getChannel();
         this.style = style;
+        this.attachmentListener = attachmentListener;
     }
 
     public List<Attachment> getSelectedAttachments() {
@@ -72,6 +80,10 @@ public class MessageInputClient {
 
     public void setSelectedAttachments(List<Attachment> selectedAttachments) {
         this.selectedAttachments = selectedAttachments;
+    }
+
+    public boolean isUploadingFile() {
+        return uploadingFile;
     }
 
     public void onClickOpenBackGroundView(MessageInputType type) {
@@ -144,6 +156,10 @@ public class MessageInputClient {
             List<Attachment> attachments = Utils.getAllShownImagesPath(context);
             ((Activity) context).runOnUiThread(() -> {
                 mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
+                    if (uploadingFile) {
+                        Utils.showMessage(context, "Uploading file...");
+                        return;
+                    }
                     Attachment attachment = attachments.get(position);
                     attachment.config.setSelected(!attachment.config.isSelected());
                     mediaAttachmentAdapter.notifyItemChanged(position);
@@ -166,6 +182,10 @@ public class MessageInputClient {
                     binding.lvFile.setAdapter(fileAttachmentAdapter);
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
+                        if (uploadingFile) {
+                            Utils.showMessage(context, "Uploading file...");
+                            return;
+                        }
                         Attachment attachment = attachments.get(position);
 
                         attachment.config.setSelected(!attachment.config.isSelected());
@@ -201,12 +221,14 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            binding.ivSend.setEnabled(false);
+//            binding.ivSend.setEnabled(false);
+            uploadingFile = true;
             UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
                     binding.setActiveMessageSend(true);
-                    binding.ivSend.setEnabled(true);
+//                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     File file = new File(attachment.config.getFilePath());
                     if (attachment.getType().equals(ModelType.attach_image)) {
                         attachment.setImageURL(response.getFileUrl());
@@ -219,12 +241,15 @@ public class MessageInputClient {
                     }
                     attachment.config.setUploaded(true);
                     selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+                    attachmentListener.onAddAttachments();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
                     binding.setActiveMessageSend(true);
-                    binding.ivSend.setEnabled(true);
+                    binding.rvMedia.setEnabled(true);
+//                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     attachment.config.setSelected(false);
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedMedia(attachments, attachment);
@@ -257,7 +282,7 @@ public class MessageInputClient {
     }
 
     private void setSelectedMediaAttachmentRecyclerViewAdapter(final List<Attachment> attachments) {
-        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, (int position) -> {
+        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
             Attachment attachment1 = selectedAttachments.get(position);
             attachment1.config.setSelected(false);
             selectedAttachments.remove(attachment1);
@@ -294,20 +319,24 @@ public class MessageInputClient {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            binding.ivSend.setEnabled(false);
+//            binding.ivSend.setEnabled(false);
+            uploadingFile = true;
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
-                    binding.ivSend.setEnabled(true);
+//                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
+                    attachmentListener.onAddAttachments();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
                     attachment.config.setSelected(false);
-                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
+//                    binding.ivSend.setEnabled(true);
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedFile(attachments, attachment);
                 }
