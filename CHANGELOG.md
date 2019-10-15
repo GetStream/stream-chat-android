@@ -5,6 +5,8 @@
 - Fixed slash command support on threads
 - Improved newline handling
 - Improved thread display
+- Expose ban information for current user (`User#getBanned`)
+- Bugfix on attachment size
 
 ## Oct 14th, 2019 - 2.2.1
 
