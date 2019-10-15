@@ -1,4 +1,12 @@
-## Pending release
+## Upcoming release
+
+- 
+
+#### Breaking changes:
+
+- 
+
+## Oct 15th, 2019 - 2.2.2-alpha0
 
 - Improved error message for uploading large files
 - Remove error messages after you send a message (similar behaviour to Slack)
