@@ -617,10 +617,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messages.postValue(messagesCopy);
             }
 
-            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
+//            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
 //                messagesCopy.set(0, message);
 //                threadMessages.postValue(messagesCopy);
-            }
+//            }
             Log.d(TAG, "updateMessage:" + updated);
         }
         return updated;
@@ -676,7 +676,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             Message message = getMessages().getValue().get(i);
-            if (message.getType().equals(ModelType.message_error) || message.getType().equals(ModelType.message_pending)) {
+            if (message.getType().equals(ModelType.message_error) || message.getStatus() == MessageStatus.PENDING) {
                 messagesCopy.remove(i);
                 hasErrorOrPendingMessage = true;
             }
@@ -951,7 +951,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // stop typing
         stopTyping();
         // Check uploading file
-        if (message.getType().equals(ModelType.message_pending)){
+        if (message.getStatus() == MessageStatus.PENDING){
             addMessage(message);
             return;
         }
@@ -1000,6 +1000,37 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
+    /**
+     * Edit message
+     *
+     * @param message  the Message sent
+     * @param callback the result callback
+     */
+    public void editMessage(Message message, @NonNull MessageCallback callback) {
+        if (message.getStatus() == MessageStatus.PENDING){
+            replaceMessage(message, message);
+            return;
+        }
+
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
+
+        channel.updateMessage(message, callback);
+    }
+
+    public void editMessage(Message message) {
+        editMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
     /**
      * sendGiphy - Send giphy with shuffle and cancel.
      *

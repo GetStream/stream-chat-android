@@ -497,7 +497,7 @@ public class MessageInputView extends RelativeLayout
             String clientSideID = viewModel.getChannel().getClient().generateMessageID();
             m.setId(clientSideID);
             m.setCreatedAt(new Date());
-            m.setType(ModelType.message_pending);
+            m.setStatus(MessageStatus.PENDING);
             m.setAttachments(null);
         }
         return m;
@@ -511,13 +511,17 @@ public class MessageInputView extends RelativeLayout
             Message m = getEditMessage();
             m.setText(input);
             m.setAttachments(messageInputClient.getSelectedAttachments());
-            if (messageInputClient.isUploadingFile())
-                m.setType(ModelType.message_pending);
-            viewModel.getChannel().updateMessage(m,  new MessageCallback() {
+            if (messageInputClient.isUploadingFile()){
+                m.setStatus(MessageStatus.PENDING);
+                m.setAttachments(null);
+            }
+
+            viewModel.editMessage(m, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
+                    Utils.hideSoftKeyboard((Activity) getContext());
                     clearFocus();
                 }
 
@@ -525,6 +529,7 @@ public class MessageInputView extends RelativeLayout
                 public void onError(String errMsg, int errCode) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
+                    Utils.hideSoftKeyboard((Activity) getContext());
                     clearFocus();
                 }
             });

@@ -91,7 +91,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 try {
                     if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||
                             attachment.getMime_type().equals(ModelType.attach_mime_mp4)) {
-                        binding.ivMedia.setImageResource(R.drawable.stream_ic_videoplay);
+                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -3,7 +3,8 @@ package com.getstream.sdk.chat.enums;
 public enum MessageStatus {
     RECEIVED("received"),
     FAILED("failed"),
-    SENDING("sending");
+    SENDING("sending"),
+    PENDING("pending");
 
     public final String label;
 
