@@ -6,6 +6,8 @@ import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,11 +48,21 @@ public class ClientState {
 
 
     private static final String TAG = ClientState.class.getSimpleName();
-    private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+
+    @NotNull
+    private ConcurrentHashMap<String, User> users;
+
+    @NotNull
     private User currentUser;
+
     private Integer totalUnreadCount;
+
     private Integer unreadChannels;
+
+    @NotNull
     private ConcurrentHashMap<String, List<String>> userIDToChannelsMap;
+
+    @NotNull
     private Client client;
 
     /**
@@ -146,8 +158,6 @@ public class ClientState {
                 }
             }
         }
-
-
     }
 
     void updateUserWithReference(User newUser, String cid) {
