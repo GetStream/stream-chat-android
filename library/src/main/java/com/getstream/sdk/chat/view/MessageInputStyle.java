@@ -134,14 +134,15 @@ public class MessageInputStyle extends BaseStyle {
     private final String showAttachmentButtonKey = "showAttachmentButton";
     private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
-        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+//        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+        return showAttachmentButton;
     }
 
-    public void setShowAttachmentButton(boolean showAttachmentButton) {
-        this.showAttachmentButton = showAttachmentButton;
-        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
-        prefs.edit().putBoolean(permissionSetKey, true).apply();
-    }
+//    public void setShowAttachmentButton(boolean showAttachmentButton) {
+//        this.showAttachmentButton = showAttachmentButton;
+//        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
+//        prefs.edit().putBoolean(permissionSetKey, true).apply();
+//    }
 
     public boolean isPermissionSet() {
         return prefs.getBoolean(permissionSetKey, false);
