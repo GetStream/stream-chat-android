@@ -54,7 +54,7 @@ public class StreamChat {
     /**
      * @return LiveData object for the current user
      */
-    public static MutableLiveData<User> getCurrentUser() {
+    public static LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
