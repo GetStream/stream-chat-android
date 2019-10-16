@@ -2,6 +2,7 @@
 
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
+- Added support for `channel.stopWatching()` 
 
 #### Breaking changes:
 
