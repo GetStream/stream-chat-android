@@ -71,6 +71,7 @@ import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -454,7 +455,7 @@ public class Client implements WSResponseHandler {
      * @param userId the id of the user
      * @return the dev token for the user
      */
-    public static String devToken(@NonNull String userId) throws Exception {
+    public String devToken(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) {
             throw new IllegalArgumentException("User ID must be non-null");
         }
@@ -462,7 +463,12 @@ public class Client implements WSResponseHandler {
         String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
         JSONObject payloadJson = new JSONObject();
 
-        payloadJson.put("user_id", userId);
+        try {
+            payloadJson.put("user_id", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         String payload = payloadJson.toString();
         String payloadBase64 = Base64.encodeToString(payload.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         String devSignature = "devtoken";
