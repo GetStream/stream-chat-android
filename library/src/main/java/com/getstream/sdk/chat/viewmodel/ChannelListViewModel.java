@@ -174,16 +174,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     /**
-     * sets the filter used to query the list of channels
+     * sets the filter used to query the list of channels; if the channel list is already initialized
+     * changing the filter will reload the view model using {@link #reload()}
      *
      * @param filter the filter object that will be used to query channels (empty by default)
      */
     public void setChannelFilter(FilterObject filter) {
-        if (initialized.get()) {
-            Log.e(TAG, "setChannelFilter on an already initialized channel list is a no-op, make sure to set filters *before* consuming channels or create a new ChannelListViewModel if you need a different query");
-            return;
-        }
         this.filter = filter;
+        if (initialized.get()) {
+            Log.e(TAG, "setChannelFilter on an already initialized channel will reload the view model");
+            reload();
+        }
     }
 
     /**
