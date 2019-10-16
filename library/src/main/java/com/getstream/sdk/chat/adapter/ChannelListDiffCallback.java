@@ -53,6 +53,23 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
             return false;
         }
+        // Check Message Update
+        try {
+            if (oldChannel.getChannelState().getLastMessage().getUpdatedAt().getTime() < newChannel.getChannelState().getLastMessage().getUpdatedAt().getTime()) {
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        // Check Message Delete
+        try {
+            if (oldChannel.getChannelState().getLastMessage() != newChannel.getChannelState().getLastMessage()) {
+                return false;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
     }
