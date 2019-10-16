@@ -194,7 +194,7 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
                 break;
             case NOTIFICATION_MUTES_UPDATED:
-                dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
+                dispatchChannelEvent(client, event, this::onNotificationMutesUpdated);
                 break;
         }
     }
