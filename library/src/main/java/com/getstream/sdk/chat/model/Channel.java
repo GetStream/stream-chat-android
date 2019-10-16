@@ -597,7 +597,7 @@ public class Channel {
      * @return {int} Unread mentions count
      */
     public int countUnreadMentions() {
-		Date lastRead = channelState.getReadDateOfChannelLastMessage(client.getUserId());
+        Date lastRead = channelState.getReadDateOfChannelLastMessage(client.getUserId());
         int count = 0;
         for (Message m : this.channelState.getMessages()) {
             if (client.getUser().getId().equals(m.getUserId())) {
@@ -676,9 +676,9 @@ public class Channel {
      * sendReaction - Send a reaction about a message
      *
      * @param messageID {string} the message id
-     * @param type {string} the type of reaction (ie. like)
+     * @param type      {string} the type of reaction (ie. like)
      * @param extraData {Map<String, Object>} reaction extra data
-     * @param callback {MessageCallback} the request callback
+     * @param callback  {MessageCallback} the request callback
      */
     public void sendReaction(@NotNull String messageID,
                              @NotNull String type,
@@ -696,8 +696,8 @@ public class Channel {
      * deleteReaction - Delete a reaction by user and type
      *
      * @param messageId {string} the message id
-     * @param type {string} the type of reaction that should be removed
-     * @param callback {MessageCallback} the request callback
+     * @param type      {string} the type of reaction that should be removed
+     * @param callback  {MessageCallback} the request callback
      */
     public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
@@ -942,6 +942,15 @@ public class Channel {
      */
     public void delete(@NotNull ChannelCallback callback) {
         client.deleteChannel(this, callback);
+    }
+
+    /**
+     * stops watching the channel for events.
+     *
+     * @param callback the result callback
+     */
+    public void stopWatching(@NotNull CompletableCallback callback) {
+        client.stopWatchingChannel(this, callback);
     }
 
     public ChannelState getLastState() {
