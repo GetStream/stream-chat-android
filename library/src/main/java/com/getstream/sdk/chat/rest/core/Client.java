@@ -38,6 +38,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
@@ -45,6 +46,7 @@ import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
@@ -931,6 +933,77 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    /**
+     * Accept an invite to the channel
+     *
+     * @param channel  accept invite to this channel
+     * @param message  message object allowing you to show a system message in the Channel
+     * @param callback the result callback
+     */
+    public void acceptInvite(@NotNull Channel channel, @Nullable String message, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.acceptInvite(channel.getType(), channel.getId(), apiKey, clientID, new AcceptInviteRequest(message))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * Reject an invite to the channel
+     *
+     * @param channel  reject invite to this channel
+     * @param callback the result callback
+     */
+    public void rejectInvite(@NotNull Channel channel, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.rejectInvite(channel.getType(), channel.getId(), apiKey, clientID, new RejectInviteRequest())
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
 
     // region Message
 
@@ -1581,7 +1654,7 @@ public class Client implements WSResponseHandler {
     /**
      * Removes members with given user IDs from the channel
      *
-     * @param channel  add members to this channel
+     * @param channel  remove members to this channel
      * @param members  list of user IDs to remove from the member list
      * @param callback the result callback
      */

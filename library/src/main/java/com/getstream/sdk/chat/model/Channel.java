@@ -693,6 +693,30 @@ public class Channel {
     }
 
     /**
+     * list the reactions, supports pagination
+     *
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull PaginationOptions pagination,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, pagination, callback);
+    }
+
+    /**
+     * list of reactions (10 most recent reactions)
+     *
+     * @param messageId the message id
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, callback);
+    }
+
+    /**
      * deleteReaction - Delete a reaction by user and type
      *
      * @param messageId {string} the message id
@@ -766,27 +790,31 @@ public class Channel {
     }
 
     /**
-     * list the reactions, supports pagination
+     * Accept an invite to this channel
      *
-     * @param messageId  the message id
-     * @param pagination pagination options
-     * @param callback   the result callback
+     * @param message  message object allowing you to show a system message in the Channel
+     * @param callback the result callback
      */
-    public void getReactions(@NotNull String messageId,
-                             @NotNull PaginationOptions pagination,
-                             @NotNull GetReactionsCallback callback) {
-        client.getReactions(messageId, pagination, callback);
+    public void acceptInvite(@Nullable String message, @NotNull ChannelCallback callback) {
+        client.acceptInvite(this, message, callback);
     }
 
     /**
-     * list of reactions (10 most recent reactions)
+     * Accept an invite to this channel
      *
-     * @param messageId the message id
-     * @param callback  the result callback
+     * @param callback the result callback
      */
-    public void getReactions(@NotNull String messageId,
-                             @NotNull GetReactionsCallback callback) {
-        client.getReactions(messageId, callback);
+    public void acceptInvite(@NotNull ChannelCallback callback) {
+        client.acceptInvite(this, null, callback);
+    }
+
+    /**
+     * Reject an invite to this channel
+     *
+     * @param callback the result callback
+     */
+    public void rejectInvite(@NotNull ChannelCallback callback) {
+        client.rejectInvite(this, callback);
     }
 
     public void handleChannelUpdated(Channel channel) {
