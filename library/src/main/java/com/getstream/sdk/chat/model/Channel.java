@@ -28,6 +28,7 @@ import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
@@ -762,6 +763,30 @@ public class Channel {
      */
     public void removeMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
         client.removeMembers(this, members, callback);
+    }
+
+    /**
+     * list the reactions, supports pagination
+     *
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull PaginationOptions pagination,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, pagination, callback);
+    }
+
+    /**
+     * list of reactions (10 most recent reactions)
+     *
+     * @param messageId the message id
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, callback);
     }
 
     public void handleChannelUpdated(Channel channel) {
