@@ -1,6 +1,6 @@
 ## Upcoming release
 
-- 
+- Added support for `getReactions` endpoint
 
 #### Breaking changes:
 
