@@ -1,6 +1,7 @@
 ## Upcoming release
 
 - Added support for `getReactions` endpoint
+- Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
 
 #### Breaking changes:
 
