@@ -43,6 +43,7 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
@@ -1259,19 +1260,17 @@ public class Client implements WSResponseHandler {
     /**
      * list the reactions, supports pagination
      *
-     * @param messageId the message id
-     * @param limit     pagination param
-     * @param offset    pagination param
-     * @param callback  the result callback
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
      */
     public void getReactions(@NotNull String messageId,
-                             int limit,
-                             int offset,
+                             @NotNull PaginationOptions pagination,
                              @NotNull GetReactionsCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                mService.getReactions(messageId, apiKey, clientID, limit, offset)
+                mService.getReactions(messageId, apiKey, clientID, pagination.getLimit(), pagination.getOffset())
                         .enqueue(new Callback<GetReactionsResponse>() {
                             @Override
                             public void onResponse(Call<GetReactionsResponse> call, Response<GetReactionsResponse> response) {
@@ -1304,7 +1303,7 @@ public class Client implements WSResponseHandler {
      */
     public void getReactions(@NotNull String messageId,
                              @NotNull GetReactionsCallback callback) {
-        getReactions(messageId, 10, 0, callback);
+        getReactions(messageId, new PaginationOptions(10, 0), callback);
     }
 
     // endregion
