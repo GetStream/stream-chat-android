@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
@@ -41,6 +42,7 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
@@ -54,6 +56,7 @@ import com.getstream.sdk.chat.rest.response.ErrorResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
+import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
@@ -1177,6 +1180,55 @@ public class Client implements WSResponseHandler {
                 }
             }
         });
+    }
+
+    /**
+     * list the reactions, supports pagination
+     *
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull PaginationOptions pagination,
+                             @NotNull GetReactionsCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.getReactions(messageId, apiKey, clientID, pagination.getLimit(), pagination.getOffset())
+                        .enqueue(new Callback<GetReactionsResponse>() {
+                            @Override
+                            public void onResponse(Call<GetReactionsResponse> call, Response<GetReactionsResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<GetReactionsResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * list of reactions (10 most recent reactions)
+     *
+     * @param messageId the message id
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull GetReactionsCallback callback) {
+        getReactions(messageId, new PaginationOptions(10, 0), callback);
     }
 
     // endregion
