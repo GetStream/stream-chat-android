@@ -698,16 +698,14 @@ public class Channel {
     /**
      * list the reactions, supports pagination
      *
-     * @param messageId the message id
-     * @param limit     pagination param
-     * @param offset    pagination param
-     * @param callback  the result callback
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
      */
     public void getReactions(@NotNull String messageId,
-                             int limit,
-                             int offset,
+                             @NotNull PaginationOptions pagination,
                              @NotNull GetReactionsCallback callback) {
-        client.getReactions(messageId, limit, offset, callback);
+        client.getReactions(messageId, pagination, callback);
     }
 
     /**
