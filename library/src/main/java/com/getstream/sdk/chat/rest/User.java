@@ -129,7 +129,7 @@ public class User implements UserEntity {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updated_at) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
