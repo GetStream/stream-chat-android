@@ -37,12 +37,12 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputClient;
@@ -498,7 +498,6 @@ public class MessageInputView extends RelativeLayout
      */
     public Message prepareMessage(String input) {
         Message m = new Message();
-        m.setStatus(null);
         m.setText(input);
         m.setAttachments(messageInputClient.getSelectedAttachments());
         // set the thread id if we are viewing a thread
@@ -511,7 +510,7 @@ public class MessageInputView extends RelativeLayout
             String clientSideID = viewModel.getChannel().getClient().generateMessageID();
             m.setId(clientSideID);
             m.setCreatedAt(new Date());
-            m.setStatus(MessageStatus.PENDING);
+            m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
             m.setAttachments(null);
         }
         return m;
@@ -526,7 +525,7 @@ public class MessageInputView extends RelativeLayout
             m.setText(input);
             m.setAttachments(messageInputClient.getSelectedAttachments());
             if (messageInputClient.isUploadingFile()){
-                m.setStatus(MessageStatus.PENDING);
+                m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
                 m.setAttachments(null);
             }
 

@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.room.Transaction;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
@@ -28,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
 public class Storage {
@@ -304,7 +302,7 @@ public class Storage {
         }
         message.setSyncStatus(LOCAL_ONLY);
         // immediately fail if there is no network
-        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
+        message.setSyncStatus(getClient().isConnected() ? LOCAL_ONLY : Sync.LOCAL_FAILED);
         message.preStorage();
 
         if (!enabled) return;

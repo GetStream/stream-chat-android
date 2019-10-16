@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -242,6 +241,11 @@ public class Client implements WSResponseHandler {
                     if (!event.getOnline()) {
                         connected = false;
                     }
+                }
+
+                @Override
+                public void onNotificationMutesUpdated(Channel channel, Event event) {
+                    Log.d(TAG, "onNotificationMutesUpdated: " + GsonConverter.Gson().toJson(event));
                 }
             };
 
@@ -704,7 +708,7 @@ public class Client implements WSResponseHandler {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
                             if (channelState.getLastMessage() != null)
-                                channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
+                                channelState.getLastMessage().setSyncStatus(SYNCED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(m);
@@ -923,7 +927,6 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setStatus(MessageStatus.FAILED);
                 message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());

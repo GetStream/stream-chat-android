@@ -20,13 +20,13 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
@@ -119,7 +119,7 @@ public class MessageListView extends RecyclerView {
                 if (mine) {
                     if (style.getMessageBubbleDrawableMine() != null)
                         return style.getMessageBubbleDrawableMine();
-                    if (message.getStatus() == MessageStatus.FAILED
+                    if (message.getSyncStatus() == Sync.LOCAL_FAILED
                             || message.getType().equals(ModelType.message_error)) {
                         bgColor = getResources().getColor(R.color.stream_message_failed);
                     } else {
@@ -470,7 +470,7 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
             adapter.setMessageClickListener((message, position) -> {
-                if (message.getStatus() == MessageStatus.FAILED) {
+                if (message.getSyncStatus() == Sync.LOCAL_FAILED) {
                     viewModel.sendMessage(message);
                 } else if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);

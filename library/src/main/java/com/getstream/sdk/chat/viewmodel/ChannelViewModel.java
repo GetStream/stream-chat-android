@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -542,8 +541,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
-                newMessage.setStatus(MessageStatus.RECEIVED);
-                if (oldMessage.getStatus() == MessageStatus.FAILED) {
+                newMessage.setSyncStatus(Sync.SYNCED);
+                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
                     messagesCopy.remove(oldMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
@@ -676,7 +675,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             Message message = getMessages().getValue().get(i);
-            if (message.getType().equals(ModelType.message_error) || message.getStatus() == MessageStatus.PENDING) {
+            if (message.getType().equals(ModelType.message_error) || message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
                 messagesCopy.remove(i);
                 hasErrorOrPendingMessage = true;
             }
@@ -951,7 +950,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // stop typing
         stopTyping();
         // Check uploading file
-        if (message.getStatus() == MessageStatus.PENDING){
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
             addMessage(message);
             return;
         }
@@ -1007,7 +1006,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void editMessage(Message message, @NonNull MessageCallback callback) {
-        if (message.getStatus() == MessageStatus.PENDING){
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
             replaceMessage(message, message);
             return;
         }
