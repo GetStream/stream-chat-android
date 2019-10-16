@@ -1,12 +1,8 @@
-## Upcoming release
+## Oct 15th, 2019 - 2.2.2-alpha1
 
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
 - Added support for `channel.stopWatching()` 
-
-#### Breaking changes:
-
-- 
 
 ## Oct 15th, 2019 - 2.2.2-alpha0
 
