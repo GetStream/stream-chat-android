@@ -1,13 +1,8 @@
-## Upcoming release
+## Upcoming
 
 - Added support for `getReactions` endpoint
-
-#### Breaking changes:
-
-- 
-
-## Oct 15th, 2019 - 2.2.2-alpha0
-
+- Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
+- Added support for `channel.stopWatching()` 
 - Improved error message for uploading large files
 - Remove error messages after you send a message (similar behaviour to Slack)
 - Fixed slash command support on threads
@@ -15,6 +10,7 @@
 - Improved thread display
 - Expose ban information for current user (`User#getBanned`)
 - Bugfix on attachment size
+- Added support for accepting and rejecting channel invites
 
 ## Oct 14th, 2019 - 2.2.1
 

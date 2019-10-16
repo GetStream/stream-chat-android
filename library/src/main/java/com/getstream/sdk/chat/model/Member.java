@@ -37,6 +37,10 @@ public class Member implements UserEntity {
     @Expose
     private Date inviteAcceptedAt;
 
+    @SerializedName("invite_rejected_at")
+    @Expose
+    private Date inviteRejectedAt;
+
     public User getUser() {
         return user;
     }
@@ -83,6 +87,14 @@ public class Member implements UserEntity {
 
     public void setInviteAcceptedAt(Date inviteAcceptedAt) {
         this.inviteAcceptedAt = inviteAcceptedAt;
+    }
+
+    public Date getInviteRejectedAt() {
+        return inviteRejectedAt;
+    }
+
+    public void setInviteRejectedAt(Date inviteRejectedAt) {
+        this.inviteRejectedAt = inviteRejectedAt;
     }
 
     @Override
