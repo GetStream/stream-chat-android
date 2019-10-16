@@ -77,6 +77,9 @@ public abstract class ChatEventHandler {
     public void onNotificationInviteAccepted(Channel channel, Event event) {
     }
 
+    public void onNotificationInviteRejected(Channel channel, Event event) {
+    }
+
     public void onNotificationAddedToChannel(Channel channel, Event event) {
     }
 
@@ -180,6 +183,9 @@ public abstract class ChatEventHandler {
                 break;
             case NOTIFICATION_INVITE_ACCEPTED:
                 dispatchChannelEvent(client, event, this::onNotificationInviteAccepted);
+                break;
+            case NOTIFICATION_INVITE_REJECTED:
+                dispatchChannelEvent(client, event, this::onNotificationInviteRejected);
                 break;
             case NOTIFICATION_ADDED_TO_CHANNEL:
                 dispatchChannelEvent(client, event, this::onNotificationAddedToChannel);

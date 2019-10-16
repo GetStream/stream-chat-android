@@ -28,6 +28,7 @@ public enum EventType {
     NOTIFICATION_MARK_READ("notification.mark_read"),
     NOTIFICATION_INVITED("notification.invited"),
     NOTIFICATION_INVITE_ACCEPTED("notification.invite_accepted"),
+    NOTIFICATION_INVITE_REJECTED("notification.invite_rejected"),
     NOTIFICATION_ADDED_TO_CHANNEL("notification.added_to_channel"),
     NOTIFICATION_REMOVED_FROM_CHANNEL("notification.removed_from_channel"),
     NOTIFICATION_MUTES_UPDATED("notification.mutes_updated"),

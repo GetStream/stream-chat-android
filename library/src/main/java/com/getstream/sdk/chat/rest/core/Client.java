@@ -38,12 +38,14 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
@@ -436,7 +438,6 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     *
      * @param userId {string} the id of the user
      * @return {string}
      */
@@ -896,6 +897,77 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    /**
+     * Accept an invite to the channel
+     *
+     * @param channel  accept invite to this channel
+     * @param message  message object allowing you to show a system message in the Channel
+     * @param callback the result callback
+     */
+    public void acceptInvite(@NotNull Channel channel, @Nullable String message, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.acceptInvite(channel.getType(), channel.getId(), apiKey, clientID, new AcceptInviteRequest(message))
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * Reject an invite to the channel
+     *
+     * @param channel  reject invite to this channel
+     * @param callback the result callback
+     */
+    public void rejectInvite(@NotNull Channel channel, @NotNull ChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.rejectInvite(channel.getType(), channel.getId(), apiKey, clientID, new RejectInviteRequest())
+                        .enqueue(new Callback<ChannelResponse>() {
+                            @Override
+                            public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChannelResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
 
     // region Message
 
@@ -991,7 +1063,7 @@ public class Client implements WSResponseHandler {
      * Deletes a message
      *
      * @param messageId the id of the message to delete
-     * @param callback the result callback
+     * @param callback  the result callback
      */
     public void deleteMessage(@NonNull String messageId,
                               MessageCallback callback) {
@@ -1015,9 +1087,10 @@ public class Client implements WSResponseHandler {
 
     /**
      * Marks a channel as read for this user, only works if the `read_events` setting is enabled
-     * @param channel the channel to mark as read
+     *
+     * @param channel     the channel to mark as read
      * @param readRequest the mark read request additional options
-     * @param callback the result callback
+     * @param callback    the result callback
      */
     public void markRead(@NonNull Channel channel,
                          MarkReadRequest readRequest,
@@ -1051,6 +1124,7 @@ public class Client implements WSResponseHandler {
 
     /**
      * Marks all channels for this user as read
+     *
      * @param callback the result callback
      */
     public void markAllRead(EventCallback callback) {
@@ -1077,9 +1151,10 @@ public class Client implements WSResponseHandler {
 
     /**
      * Lists the message replies for a parent message
+     *
      * @param parentId the id of the parent message
-     * @param limit the number of messages to retrieve older than idLt
-     * @param idLt the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
+     * @param limit    the number of messages to retrieve older than idLt
+     * @param idLt     the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
      * @param callback the result callback
      */
     public void getReplies(@NonNull String parentId,
@@ -1126,7 +1201,7 @@ public class Client implements WSResponseHandler {
     /**
      * Sends a reaction about a message
      *
-     * @param callback   the result callback
+     * @param callback the result callback
      */
     public void sendReaction(@NotNull ReactionRequest reactionRequest,
                              @NotNull MessageCallback callback) {
@@ -1263,7 +1338,6 @@ public class Client implements WSResponseHandler {
     }
 
 
-
     // region User
 
     /**
@@ -1349,7 +1423,7 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     *  Query users and watch user presence
+     * Query users and watch user presence
      */
     public void queryUsers(@NonNull JSONObject payload,
                            QueryUserListCallback callback) {
@@ -1546,7 +1620,7 @@ public class Client implements WSResponseHandler {
     /**
      * Removes members with given user IDs from the channel
      *
-     * @param channel  add members to this channel
+     * @param channel  remove members to this channel
      * @param members  list of user IDs to remove from the member list
      * @param callback the result callback
      */
@@ -1607,6 +1681,7 @@ public class Client implements WSResponseHandler {
 
     /**
      * Adds a push device for a user.
+     *
      * @param deviceId the id of the device to add
      * @param callback the result callback
      */
