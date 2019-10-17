@@ -75,7 +75,7 @@ public class QueryUserRequest {
      */
     public QueryUserRequest withOffset(int offset) {
         QueryUserRequest clone = this.cloneOpts();
-        clone.limit = limit;
+        clone.offset = offset;
         return clone;
     }
 
