@@ -39,7 +39,10 @@ public class StringUtility {
 
     public static String getDeletedOrMentionedText(Message message) {
         if (message == null) return null;
-        String text = message.getText();
+        // Trimming New Lines
+        String text = trimStartNewLine(message.getText());
+        text = trimTrailingNewLine(text);
+
         if (message.getDeletedAt() != null) {
             text = "_" + Constant.MESSAGE_DELETED + "_";
             return text;
@@ -50,7 +53,33 @@ public class StringUtility {
                 text = text.replace("@" + userName, "**" + "@" + userName + "**");
             }
         }
+        // Markdown for newline
+        text = text.replaceAll("<br/>  <br/>  \n", "\n");
         return text.replaceAll("\n", "<br/>  <br/>  \n");
+    }
+
+    private static String trimTrailingNewLine(String text){
+        if (TextUtils.isEmpty(text))
+            return text;
+        String s = text.substring(text.length() - 1);
+        while (s.equals("\n")){
+            text = text.substring(0, text.length() - 1);
+            s = text.substring(text.length() - 1);
+        }
+        return text;
+    }
+
+    private static String trimStartNewLine(String text){
+        if (TextUtils.isEmpty(text))
+            return text;
+        String s = text.substring(0, 1);
+        while (s.equals("\n")){
+            text = text.substring(1);
+            if (TextUtils.isEmpty(text))
+                break;
+            s = text.substring(0, 1);
+        }
+        return text;
     }
 
     public static String getSaltString(String s) {
