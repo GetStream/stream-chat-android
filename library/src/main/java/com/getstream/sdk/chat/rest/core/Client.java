@@ -1475,7 +1475,10 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * Query users and watch user presence
+     * search for users and see if they are online/offline
+     *
+     * @param request  request options include filter, sort options and query options
+     * @param callback the result callback
      */
     public void queryUsers(QueryUserRequest request,
                            QueryUserListCallback callback) {

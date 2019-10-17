@@ -38,6 +38,10 @@ public class QueryUserRequest {
     @Expose
     private int offset;
 
+    /**
+     * @param filter filter MongoDB style filter conditions
+     * @param sort   sort options
+     */
     public QueryUserRequest(@NotNull FilterObject filter, @Nullable QuerySort sort) {
         this.filter = filter;
         this.sort = sort;
