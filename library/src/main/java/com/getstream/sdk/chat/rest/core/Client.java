@@ -66,7 +66,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.SearchMessagesRespose;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
@@ -1181,14 +1181,14 @@ public class Client implements WSResponseHandler {
             public void onSuccess(User user) {
                 String requestString = GsonConverter.Gson().toJson(request);
                 mService.searchMessages(apiKey, clientID, requestString)
-                        .enqueue(new Callback<SearchMessagesRespose>() {
+                        .enqueue(new Callback<SearchMessagesResponse>() {
                             @Override
-                            public void onResponse(Call<SearchMessagesRespose> call, Response<SearchMessagesRespose> response) {
+                            public void onResponse(Call<SearchMessagesResponse> call, Response<SearchMessagesResponse> response) {
                                 callback.onSuccess(response.body());
                             }
 
                             @Override
-                            public void onFailure(Call<SearchMessagesRespose> call, Throwable t) {
+                            public void onFailure(Call<SearchMessagesResponse> call, Throwable t) {
                                 if (t instanceof ErrorResponse) {
                                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                                 } else {

@@ -8,7 +8,7 @@ import java.util.List;
 /*
  * Created by Anton Bevza on 2019-10-17.
  */
-public class SearchMessagesRespose {
+public class SearchMessagesResponse {
 
     @SerializedName("results")
     @Expose
