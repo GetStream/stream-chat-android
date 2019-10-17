@@ -1175,6 +1175,12 @@ public class Client implements WSResponseHandler {
             });
     }
 
+    /**
+     * search messages by parameters
+     *
+     * @param request  request options include filter, query string and query options
+     * @param callback the result callback
+     */
     public void searchMessages(@NotNull SearchMessagesRequest request, @NotNull SearchMessagesCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override

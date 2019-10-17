@@ -28,6 +28,10 @@ public class SearchMessagesRequest {
     @Expose
     private int offset;
 
+    /**
+     * @param filter MongoDB style filter conditions
+     * @param query  search keyword
+     */
     public SearchMessagesRequest(@NotNull FilterObject filter, @NotNull String query) {
         this.filter = filter;
         this.query = query;
