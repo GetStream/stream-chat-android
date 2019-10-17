@@ -689,6 +689,23 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
     }
 
+    private void checkFailedMessage(Message message){
+        if (message.getStatus() != MessageStatus.FAILED)
+            return;
+
+        List<Message> messagesCopy = getMessages().getValue();
+        for (int i = 0; i < messagesCopy.size(); i++) {
+            if (message.getId().equals(messagesCopy.get(i).getId())) {
+                messagesCopy.remove(message);
+                if (isThread())
+                    threadMessages.postValue(messagesCopy);
+                else
+                    messages.postValue(messagesCopy);
+                break;
+            }
+        }
+    }
+
     private void addMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         messagesCopy.add(message);
@@ -948,6 +965,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
         // Check ErrorMessages
         checkErrorMessage();
+        // Check Failed Message
+        checkFailedMessage(message);
         // stop typing
         stopTyping();
 
