@@ -972,6 +972,15 @@ public class Channel {
         client.deleteChannel(this, callback);
     }
 
+    /**
+     * stops watching the channel for events.
+     *
+     * @param callback the result callback
+     */
+    public void stopWatching(@NotNull CompletableCallback callback) {
+        client.stopWatchingChannel(this, callback);
+    }
+
     public ChannelState getLastState() {
         return lastState;
     }

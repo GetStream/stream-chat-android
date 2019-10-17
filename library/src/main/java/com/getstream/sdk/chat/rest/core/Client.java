@@ -72,6 +72,7 @@ import com.getstream.sdk.chat.storage.Storage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -97,6 +98,7 @@ public class Client implements WSResponseHandler {
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
 
+    @NotNull
     public ClientState getState() {
         return state;
     }
@@ -111,7 +113,6 @@ public class Client implements WSResponseHandler {
     private String apiKey;
     private BaseStorage uploadStorage;
     private Boolean offlineStorage;
-    private User user;
     private CachedTokenProvider tokenProvider;
     private boolean fetchingToken;
     private String cacheUserToken;
@@ -283,12 +284,20 @@ public class Client implements WSResponseHandler {
         return apiKey;
     }
 
+    /**
+     * Returns the current user set in client's state
+     */
     public User getUser() {
-        return user;
+        return state.getCurrentUser();
     }
 
+    /**
+     * Returns the current user set in client's state
+     */
     public String getUserId() {
-        return user.getId();
+        User currentUser = state.getCurrentUser();
+        if (currentUser == null) return null;
+        return currentUser.getId();
     }
 
     public String getClientID() {
@@ -323,7 +332,7 @@ public class Client implements WSResponseHandler {
      * connection
      */
     public synchronized void disconnect() {
-        if (user == null) {
+        if (state.getCurrentUser() == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
         }
 
@@ -335,7 +344,7 @@ public class Client implements WSResponseHandler {
         cacheUserToken = null;
 
         // clear local state
-        user = null;
+        state.setCurrentUser(null);
         activeChannelMap.clear();
     }
 
@@ -365,12 +374,12 @@ public class Client implements WSResponseHandler {
      */
     public synchronized void setUser(User user, final TokenProvider provider) {
 
-        if (this.user != null) {
+        if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
         }
 
-        this.user = user;
+        state.setCurrentUser(user);
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
 
         this.tokenProvider = new CachedTokenProvider() {
@@ -435,15 +444,19 @@ public class Client implements WSResponseHandler {
     public boolean fromCurrentUser(UserEntity entity) {
         String otherUserId = entity.getUserId();
         if (otherUserId == null) return false;
-        if (user == null) return false;
-        return TextUtils.equals(user.getId(), otherUserId);
+        if (getUser() == null) return false;
+        return TextUtils.equals(getUserId(), otherUserId);
     }
 
     /**
-     * @param userId {string} the id of the user
-     * @return {string}
+     * Creates an authorization token for development purposes.
+     * Note: you must configure your application to disable auth checks
+     * This only suitable for a dev/test environment.
+     *
+     * @param userId the id of the user
+     * @return the dev token for the user
      */
-    public static String devToken(@NonNull String userId) throws Exception {
+    public String devToken(@NonNull String userId) {
         if (TextUtils.isEmpty(userId)) {
             throw new IllegalArgumentException("User ID must be non-null");
         }
@@ -451,7 +464,12 @@ public class Client implements WSResponseHandler {
         String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
         JSONObject payloadJson = new JSONObject();
 
-        payloadJson.put("user_id", userId);
+        try {
+            payloadJson.put("user_id", userId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         String payload = payloadJson.toString();
         String payloadBase64 = Base64.encodeToString(payload.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
         String devSignature = "devtoken";
@@ -496,7 +514,7 @@ public class Client implements WSResponseHandler {
      */
     public synchronized void onSetUserCompleted(ClientConnectionCallback callback) {
         if (connected) {
-            callback.onSuccess(user);
+            callback.onSuccess(getUser());
         } else {
             connectSubRegistery.addSubscription(callback);
         }
@@ -506,16 +524,16 @@ public class Client implements WSResponseHandler {
         HashMap<String, Object> jsonParameter = new HashMap<>();
         HashMap<String, Object> userDetails = new HashMap<>();
 
-        if (user.getExtraData() != null) {
-            userDetails = new HashMap<>(user.getExtraData());
+        if (getUser().getExtraData() != null) {
+            userDetails = new HashMap<>(getUser().getExtraData());
         }
 
-        userDetails.put("id", this.user.getId());
-        userDetails.put("name", this.user.getName());
-        userDetails.put("image", this.user.getImage());
+        userDetails.put("id", getUserId());
+        userDetails.put("name", getUser().getName());
+        userDetails.put("image", getUser().getImage());
 
         jsonParameter.put("user_details", userDetails);
-        jsonParameter.put("user_id", this.user.getId());
+        jsonParameter.put("user_id", getUserId());
         jsonParameter.put("server_determines_connection_id", true);
         return new JSONObject(jsonParameter);
     }
@@ -530,7 +548,7 @@ public class Client implements WSResponseHandler {
 
             mService = RetrofitClient.getAuthorizedClient(tokenProvider, options).create(APIService.class);
             uploadStorage = new StreamPublicStorage(this, tokenProvider, options);
-            WSConn = new WebSocketService(wsURL, user.getId(), this);
+            WSConn = new WebSocketService(wsURL, getUserId(), this);
             WSConn.connect();
         });
     }
@@ -560,7 +578,7 @@ public class Client implements WSResponseHandler {
     public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
         if (event.getMe() != null)
-            user = event.getMe();
+            state.setCurrentUser(event.getMe());
 
         // mark as connect, any new callbacks will automatically be executed
         connected = true;
@@ -569,7 +587,7 @@ public class Client implements WSResponseHandler {
         List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
         connectSubRegistery.clear();
         for (ClientConnectionCallback waiter : subs) {
-            waiter.onSuccess(user);
+            waiter.onSuccess(getUser());
         }
 
     }
@@ -601,7 +619,7 @@ public class Client implements WSResponseHandler {
      * the opposite of {@link #disconnectWebSocket()}
      */
     public void reconnectWebSocket() {
-        if (user == null) {
+        if (getUser() == null) {
             Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
             return;
         }
@@ -829,6 +847,41 @@ public class Client implements WSResponseHandler {
     }
 
     /**
+     * stops watching the channel for events.
+     *
+     * @param channel  stops watch this channel
+     * @param callback the result callback
+     */
+    public void stopWatchingChannel(@NotNull Channel channel, @NotNull CompletableCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                mService.stopWatching(channel.getType(), channel.getId(), apiKey, clientID, Collections.emptyMap())
+                        .enqueue(new Callback<CompletableResponse>() {
+                            @Override
+                            public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<CompletableResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
      * hides the channel from queryChannels for the user until a message is added TODO: track hidden state in Room
      *
      * @param channel  the channel needs to hide
@@ -974,10 +1027,10 @@ public class Client implements WSResponseHandler {
     // region Message
 
     /**
-     * sendMessage - Send a message to this channel
+     * sendMessage - Sends a message to a channel
      *
-     * @param {object} message The Message object
-     * @return {object} The Server Response
+     * @param channel The channel
+     * @param message The message
      */
     public void sendMessage(Channel channel,
                             @NonNull Message message,
@@ -987,7 +1040,7 @@ public class Client implements WSResponseHandler {
         Map<String, Object> map = new HashMap<>();
         map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
 
-        mService.sendMessage(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, map).enqueue(new Callback<MessageResponse>() {
+        mService.sendMessage(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, map).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
@@ -1010,8 +1063,7 @@ public class Client implements WSResponseHandler {
     /**
      * Updates a message
      *
-     * @param {object} message The Message object
-     * @return {object} The Server Response
+     * @param message The Message object
      */
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
@@ -1021,7 +1073,7 @@ public class Client implements WSResponseHandler {
         map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
         mService.updateMessage(message.getId(),
                 apiKey,
-                user.getId(),
+                getUserId(),
                 clientID,
                 map).enqueue(new Callback<MessageResponse>() {
 
@@ -1044,7 +1096,7 @@ public class Client implements WSResponseHandler {
     public void getMessage(@NonNull String messageId,
                            MessageCallback callback) {
 
-        mService.getMessage(messageId, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
+        mService.getMessage(messageId, apiKey, getUserId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1070,7 +1122,7 @@ public class Client implements WSResponseHandler {
     public void deleteMessage(@NonNull String messageId,
                               MessageCallback callback) {
 
-        mService.deleteMessage(messageId, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
+        mService.deleteMessage(messageId, apiKey, getUserId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1104,7 +1156,7 @@ public class Client implements WSResponseHandler {
         }
 
         if (getChannelConfig(channel.getType()).isReadEvents())
-            mService.markRead(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
+            mService.markRead(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
                 @Override
                 public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                     callback.onSuccess(response.body());
@@ -1131,7 +1183,7 @@ public class Client implements WSResponseHandler {
      */
     public void markAllRead(EventCallback callback) {
 
-        mService.markAllRead(apiKey, user.getId(), clientID).enqueue(new Callback<EventResponse>() {
+        mService.markAllRead(apiKey, getUserId(), clientID).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -1165,7 +1217,7 @@ public class Client implements WSResponseHandler {
                            GetRepliesCallback callback) {
 
         if (TextUtils.isEmpty(idLt)) {
-            mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getReplies(parentId, apiKey, getUserId(), clientID, limit).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     callback.onSuccess(response.body());
@@ -1181,7 +1233,7 @@ public class Client implements WSResponseHandler {
                 }
             });
         } else {
-            mService.getRepliesMore(parentId, apiKey, user.getId(), clientID, limit, idLt).enqueue(new Callback<GetRepliesResponse>() {
+            mService.getRepliesMore(parentId, apiKey, getUserId(), clientID, limit, idLt).enqueue(new Callback<GetRepliesResponse>() {
                 @Override
                 public void onResponse(Call<GetRepliesResponse> call, Response<GetRepliesResponse> response) {
                     callback.onSuccess(response.body());
@@ -1209,7 +1261,7 @@ public class Client implements WSResponseHandler {
                              @NotNull MessageCallback callback) {
 
 
-        mService.sendReaction(reactionRequest.getReaction().getMessageId(), apiKey, user.getId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
+        mService.sendReaction(reactionRequest.getReaction().getMessageId(), apiKey, getUserId(), clientID, reactionRequest).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1241,7 +1293,7 @@ public class Client implements WSResponseHandler {
                                @NonNull String type,
                                MessageCallback callback) {
 
-        mService.deleteReaction(messageId, type, apiKey, user.getId(), clientID).enqueue(new Callback<MessageResponse>() {
+        mService.deleteReaction(messageId, type, apiKey, getUserId(), clientID).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1320,7 +1372,7 @@ public class Client implements WSResponseHandler {
                           @NonNull SendEventRequest eventRequest,
                           EventCallback callback) {
 
-        mService.sendEvent(channel.getType(), channel.getId(), apiKey, user.getId(), clientID, eventRequest).enqueue(new Callback<EventResponse>() {
+        mService.sendEvent(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, eventRequest).enqueue(new Callback<EventResponse>() {
             @Override
             public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
                 callback.onSuccess(response.body());
@@ -1481,9 +1533,9 @@ public class Client implements WSResponseHandler {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_id", target_id);
-        body.put("user_id", user.getId());
+        body.put("user_id", getUserId());
 
-        mService.muteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+        mService.muteUser(apiKey, getUserId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
             @Override
             public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
                 if (response.isSuccessful()) {
@@ -1515,9 +1567,9 @@ public class Client implements WSResponseHandler {
 
         Map<String, String> body = new HashMap<>();
         body.put("target_id", target_id);
-        body.put("user_id", user.getId());
+        body.put("user_id", getUserId());
 
-        mService.unMuteUser(apiKey, user.getId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
+        mService.unMuteUser(apiKey, getUserId(), clientID, body).enqueue(new Callback<MuteUserResponse>() {
             @Override
             public void onResponse(Call<MuteUserResponse> call, Response<MuteUserResponse> response) {
                 if (response.isSuccessful()) {
@@ -1544,7 +1596,7 @@ public class Client implements WSResponseHandler {
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id", targetUserId);
 
-        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+        mService.flag(apiKey, getUserId(), clientID, body).enqueue(new Callback<FlagResponse>() {
             @Override
             public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
                 if (response.isSuccessful()) {
@@ -1571,7 +1623,7 @@ public class Client implements WSResponseHandler {
         Map<String, String> body = new HashMap<>();
         body.put("target_user_id", targetUserId);
 
-        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+        mService.unFlag(apiKey, getUserId(), clientID, body).enqueue(new Callback<FlagResponse>() {
             @Override
             public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
                 if (response.isSuccessful()) {
@@ -1671,7 +1723,7 @@ public class Client implements WSResponseHandler {
                            @NonNull SendActionRequest request,
                            MessageCallback callback) {
 
-        mService.sendAction(messageId, apiKey, user.getId(), clientID, request).enqueue(new Callback<MessageResponse>() {
+        mService.sendAction(messageId, apiKey, getUserId(), clientID, request).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 callback.onSuccess(response.body());
@@ -1818,7 +1870,7 @@ public class Client implements WSResponseHandler {
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id", targetMessageId);
 
-        mService.flag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+        mService.flag(apiKey, getUserId(), clientID, body).enqueue(new Callback<FlagResponse>() {
             @Override
             public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
                 if (response.isSuccessful()) {
@@ -1845,7 +1897,7 @@ public class Client implements WSResponseHandler {
         Map<String, String> body = new HashMap<>();
         body.put("target_message_id", targetMessageId);
 
-        mService.unFlag(apiKey, user.getId(), clientID, body).enqueue(new Callback<FlagResponse>() {
+        mService.unFlag(apiKey, getUserId(), clientID, body).enqueue(new Callback<FlagResponse>() {
             @Override
             public void onResponse(Call<FlagResponse> call, Response<FlagResponse> response) {
                 if (response.isSuccessful()) {

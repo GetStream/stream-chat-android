@@ -1,14 +1,8 @@
-## Upcoming release
+## Oct 16th, 2019 - 2.3.0
 
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
-
-#### Breaking changes:
-
-- 
-
-## Oct 15th, 2019 - 2.2.2-alpha0
-
+- Added support for `channel.stopWatching()` 
 - Improved error message for uploading large files
 - Remove error messages after you send a message (similar behaviour to Slack)
 - Fixed slash command support on threads
@@ -16,6 +10,8 @@
 - Improved thread display
 - Expose ban information for current user (`User#getBanned`)
 - Bugfix on attachment size
+- Added support for accepting and rejecting channel invites
+- Expose current user LiveData with `StreamChat.getCurrentUser()`
 
 ## Oct 14th, 2019 - 2.2.1
 
