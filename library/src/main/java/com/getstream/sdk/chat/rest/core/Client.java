@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -43,8 +44,8 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.request.QueryUserRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
@@ -1424,25 +1425,37 @@ public class Client implements WSResponseHandler {
     /**
      * Query users and watch user presence
      */
-    public void queryUsers(@NonNull JSONObject payload,
+    public void queryUsers(QueryUserRequest request,
                            QueryUserListCallback callback) {
-
-        mService.queryUsers(apiKey, user.getId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                state.updateUsers(response.body().getUsers());
-                callback.onSuccess(response.body());
+            public void onSuccess(User user) {
+                String requestString = GsonConverter.Gson().toJson(request);
+                mService.queryUsers(apiKey, clientID, requestString)
+                        .enqueue(new Callback<QueryUserListResponse>() {
+                            @Override
+                            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
+                                state.updateUsers(response.body().getUsers());
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
             }
 
             @Override
-            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
+
     }
 
     /**
