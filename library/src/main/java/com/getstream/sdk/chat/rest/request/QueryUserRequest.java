@@ -84,6 +84,8 @@ public class QueryUserRequest {
         clone.presence = this.presence;
         clone.sort = this.sort;
         clone.filter = this.filter;
+        clone.limit = this.limit;
+        clone.offset = this.offset;
         return clone;
     }
 }
