@@ -61,7 +61,7 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
         // Check Message Delete
-        if (oldLastMessage != null && oldLastMessage != newLastMessage) {
+        if (oldLastMessage != null && !oldLastMessage.equals(newLastMessage)) {
             return false;
         }
 
