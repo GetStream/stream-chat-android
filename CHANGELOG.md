@@ -1,4 +1,4 @@
-## Upcoming
+## Oct 16th, 2019 - 2.3.0
 
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
@@ -11,6 +11,7 @@
 - Expose ban information for current user (`User#getBanned`)
 - Bugfix on attachment size
 - Added support for accepting and rejecting channel invites
+- Expose current user LiveData with `StreamChat.getCurrentUser()`
 
 ## Oct 16th, 2019 - 2.2.1-alpha2
 - Removed `MessageStatus` and `MessageStatusConverter`
