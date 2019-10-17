@@ -40,8 +40,7 @@ public class StringUtility {
     public static String getDeletedOrMentionedText(Message message) {
         if (message == null) return null;
         // Trimming New Lines
-        String text = trimStartNewLine(message.getText());
-        text = trimTrailingNewLine(text);
+        String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
 
         if (message.getDeletedAt() != null) {
             text = "_" + Constant.MESSAGE_DELETED + "_";
@@ -58,29 +57,7 @@ public class StringUtility {
         return text.replaceAll("\n", "<br/>  <br/>  \n");
     }
 
-    private static String trimTrailingNewLine(String text){
-        if (TextUtils.isEmpty(text))
-            return text;
-        String s = text.substring(text.length() - 1);
-        while (s.equals("\n")){
-            text = text.substring(0, text.length() - 1);
-            s = text.substring(text.length() - 1);
-        }
-        return text;
-    }
 
-    private static String trimStartNewLine(String text){
-        if (TextUtils.isEmpty(text))
-            return text;
-        String s = text.substring(0, 1);
-        while (s.equals("\n")){
-            text = text.substring(1);
-            if (TextUtils.isEmpty(text))
-                break;
-            s = text.substring(0, 1);
-        }
-        return text;
-    }
 
     public static String getSaltString(String s) {
         String s_ = s.replaceAll("\\s+","");
