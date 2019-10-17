@@ -557,11 +557,9 @@ public class Channel {
      * @return {object} Returns a getReplies response
      */
     public void getReplies(@NonNull String parentId,
-                           int limit,
                            Pagination pagination,
-                           String firstMessageId,
                            @NonNull GetRepliesCallback callback) {
-        client.getReplies(parentId, limit, pagination, firstMessageId, callback);
+        client.getReplies(parentId, pagination, callback);
     }
 
     public ChannelState getChannelState() {

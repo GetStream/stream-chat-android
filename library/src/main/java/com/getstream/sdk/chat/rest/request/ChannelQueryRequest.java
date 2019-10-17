@@ -56,11 +56,11 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
         return clone;
     }
 
-    public ChannelQueryRequest withMessages(Pagination direction, String messageId, int limit) {
+    public ChannelQueryRequest withMessages(Pagination pagination) {
         ChannelQueryRequest clone = this.cloneOpts();
         Map<String, Object> messages = new HashMap<>();
-        messages.put("limit", limit);
-        messages.put(direction.toString(), messageId);
+        messages.put("limit", pagination.limit);
+        messages.put(pagination.direction.toString(), pagination.messageId);
         clone.messages = messages;
         return clone;
     }

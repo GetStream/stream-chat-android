@@ -1039,15 +1039,11 @@ public class Client implements WSResponseHandler {
     /**
      * Lists the message replies for a parent message
      * @param parentId the id of the parent message
-     * @param limit the number of messages to retrieve older than idLt
-     * @param pagination type of pagination. null if first page is needed
-     * @param paginationMessageId the id of the reply to use as offset (if null or empty it will fetch replies from the oldest)
+     * @param pagination pagination options.
      * @param callback the result callback
      */
     public void getReplies(@NonNull String parentId,
-                           int limit,
-                           @Nullable Pagination pagination,
-                           @Nullable String paginationMessageId,
+                           Pagination pagination,
                            GetRepliesCallback callback) {
 
         Callback<GetRepliesResponse> responseCallback = new Callback<GetRepliesResponse>() {
@@ -1066,24 +1062,24 @@ public class Client implements WSResponseHandler {
             }
         };
 
-        if (pagination == null) {
-            mService.getReplies(parentId, apiKey, user.getId(), clientID, limit).enqueue(responseCallback);
+        if (pagination.direction == Pagination.Direction.FIRST_PAGE) {
+            mService.getReplies(parentId, apiKey, user.getId(), clientID, pagination.limit).enqueue(responseCallback);
         } else {
-            switch (pagination) {
+            switch (pagination.direction) {
                 case LESS_THAN:
-                    mService.getRepliesLessThan(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    mService.getRepliesLessThan(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case LESS_THAN_OR_EQUAL:
-                    mService.getRepliesLessThanOrEqual(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    mService.getRepliesLessThanOrEqual(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case GREATER_THAN:
-                    mService.getRepliesGreaterThan(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    mService.getRepliesGreaterThan(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case GREATER_THAN_OR_EQUAL:
-                    mService.getRepliesGreaterThanOrEqual(parentId, apiKey, user.getId(), clientID, limit, paginationMessageId).enqueue(responseCallback);
+                    mService.getRepliesGreaterThanOrEqual(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 default:
-                    throw new RuntimeException("Unsupported paging type: " + pagination);
+                    throw new RuntimeException("Unsupported paging direction: " + pagination.direction);
             }
         }
 

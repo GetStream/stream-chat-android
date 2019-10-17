@@ -320,7 +320,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), repliesPageSize, null, null, new GetRepliesCallback() {
+            channel.getReplies(threadParentMessage_.getId(), Pagination.firstPage(repliesPageSize), new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
@@ -864,9 +864,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
 
             channel.getReplies(threadParentMessage.getValue().getId(),
-                    Constant.DEFAULT_LIMIT,
-                    Pagination.LESS_THAN,
-                    getThreadOldestMessageId(),
+                    Pagination.nextPage(Pagination.Direction.LESS_THAN, getThreadOldestMessageId(), Constant.DEFAULT_LIMIT),
                     new GetRepliesCallback() {
                         @Override
                         public void onSuccess(GetRepliesResponse response) {
@@ -889,6 +887,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                         }
                     });
         } else {
+
             if (reachedEndOfPagination) {
                 setLoadingMoreDone();
                 Log.i(TAG, "already reached end of pagination, skip loading more");
@@ -896,9 +895,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
 
             ChannelQueryRequest request = new ChannelQueryRequest().
-                    withMessages(Pagination.LESS_THAN,
+                    withMessages(Pagination.nextPage(
+                            Pagination.Direction.LESS_THAN,
                             channel.getChannelState().getOldestMessageId(),
-                            Constant.DEFAULT_LIMIT);
+                            Constant.DEFAULT_LIMIT
+                    ));
 
             channel.query(
                     request,
