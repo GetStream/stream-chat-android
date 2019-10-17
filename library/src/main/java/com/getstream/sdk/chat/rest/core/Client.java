@@ -779,13 +779,12 @@ public class Client implements WSResponseHandler {
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void updateChannel(@NonNull Channel channel, @NotNull Map<String, Object> options,
-                              @Nullable String updateMessage, @NotNull ChannelCallback callback) {
+    public void updateChannel(@NonNull Channel channel, @Nullable String updateMessage, @NotNull ChannelCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(options, updateMessage))
+                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
