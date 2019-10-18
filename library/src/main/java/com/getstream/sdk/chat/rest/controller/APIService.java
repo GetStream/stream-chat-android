@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
@@ -150,6 +151,10 @@ public interface APIService {
     @Multipart
     @POST("/channels/{type}/{id}/file")
     Call<UploadFileResponse> sendFile(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+
+    @GET("/search")
+    Call<SearchMessagesResponse> searchMessages(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
+
     // endregion
 
     // region Device
