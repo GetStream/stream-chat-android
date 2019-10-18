@@ -39,7 +39,9 @@ public class StringUtility {
 
     public static String getDeletedOrMentionedText(Message message) {
         if (message == null) return null;
-        String text = message.getText();
+        // Trimming New Lines
+        String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
+
         if (message.getDeletedAt() != null) {
             text = "_" + Constant.MESSAGE_DELETED + "_";
             return text;
@@ -50,8 +52,12 @@ public class StringUtility {
                 text = text.replace("@" + userName, "**" + "@" + userName + "**");
             }
         }
+        // Markdown for newline
+        text = text.replaceAll("<br/>  <br/>  \n", "\n");
         return text.replaceAll("\n", "<br/>  <br/>  \n");
     }
+
+
 
     public static String getSaltString(String s) {
         String s_ = s.replaceAll("\\s+","");
