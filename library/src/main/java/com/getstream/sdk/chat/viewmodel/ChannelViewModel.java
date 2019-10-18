@@ -539,7 +539,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = getMessages().getValue();
-        for (int i = 0; i < messagesCopy.size(); i++) {
+        for (int i = messagesCopy.size() - 1; i >= 0; i--) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
                 if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
                     messagesCopy.remove(oldMessage);
@@ -558,7 +558,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-
         if (message.getType().equals(ModelType.message_reply)
                 || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()

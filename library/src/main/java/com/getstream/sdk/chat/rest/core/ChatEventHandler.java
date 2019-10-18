@@ -2,6 +2,8 @@ package com.getstream.sdk.chat.rest.core;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.utils.Constant;
 
 public abstract class ChatEventHandler {
 
@@ -131,12 +133,15 @@ public abstract class ChatEventHandler {
                 onTypingStop(event);
                 break;
             case MESSAGE_NEW:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 dispatchChannelEvent(client, event, this::onMessageNew);
                 break;
             case MESSAGE_UPDATED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 dispatchChannelEvent(client, event, this::onMessageUpdated);
                 break;
             case MESSAGE_DELETED:
+                event.getMessage().setText(Constant.MESSAGE_DELETED);
                 dispatchChannelEvent(client, event, this::onMessageDeleted);
                 break;
             case MESSAGE_READ:
