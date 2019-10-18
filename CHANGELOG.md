@@ -2,7 +2,12 @@
 
 - Added support for message search `client.searchMessages`
 - Better support for query user options
+- Update channel update signature
 - Minor bugfixes
+
+#### Breaking changes
+
+- `Channel.update` signature has changed
 
 ## Oct 16th, 2019 - 2.3.0
 
