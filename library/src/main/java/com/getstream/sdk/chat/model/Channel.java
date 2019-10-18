@@ -676,7 +676,7 @@ public class Channel {
      * @param callback the result callback
      */
     public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
-        client.getUploadStorage().deleteFile(this, url, callback);
+        client.getUploadStorage().deleteImage(this, url, callback);
     }
 
     // endregion
