@@ -658,6 +658,27 @@ public class Channel {
 
         client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
+
+    /**
+     * Delete a file with a given URL.
+     *
+     * @param url      the file URL
+     * @param callback the result callback
+     */
+    public void deleteFile(@NotNull String url, @NotNull CompletableCallback callback) {
+        client.getUploadStorage().deleteFile(this, url, callback);
+    }
+
+    /**
+     * Delete a image with a given URL.
+     *
+     * @param url      the image URL
+     * @param callback the result callback
+     */
+    public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
+        client.getUploadStorage().deleteFile(this, url, callback);
+    }
+
     // endregion
 
     /**
@@ -859,7 +880,7 @@ public class Channel {
                 channelState.getMessages().set(i, message);
 
                 // Check updatedMessage is Last or not
-                if (i == channelState.getMessages().size() -1)
+                if (i == channelState.getMessages().size() - 1)
                     channelState.setLastMessage(message);
 
                 getClient().storage().insertMessageForChannel(this, message);
