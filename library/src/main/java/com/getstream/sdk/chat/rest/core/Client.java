@@ -1273,20 +1273,20 @@ public class Client implements WSResponseHandler {
         };
 
         if (pagination.direction == Pagination.Direction.FIRST_PAGE) {
-            mService.getReplies(parentId, apiKey, user.getId(), clientID, pagination.limit).enqueue(responseCallback);
+            mService.getReplies(parentId, apiKey, getUser().getId(), clientID, pagination.limit).enqueue(responseCallback);
         } else {
             switch (pagination.direction) {
                 case LESS_THAN:
                     mService.getRepliesLessThan(parentId, apiKey, getUserId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case LESS_THAN_OR_EQUAL:
-                    mService.getRepliesLessThanOrEqual(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
+                    mService.getRepliesLessThanOrEqual(parentId, apiKey,  getUser().getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case GREATER_THAN:
-                    mService.getRepliesGreaterThan(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
+                    mService.getRepliesGreaterThan(parentId, apiKey,  getUser().getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 case GREATER_THAN_OR_EQUAL:
-                    mService.getRepliesGreaterThanOrEqual(parentId, apiKey, user.getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
+                    mService.getRepliesGreaterThanOrEqual(parentId, apiKey,  getUser().getId(), clientID, pagination.limit, pagination.messageId).enqueue(responseCallback);
                     break;
                 default:
                     throw new RuntimeException("Unsupported paging direction: " + pagination.direction);
