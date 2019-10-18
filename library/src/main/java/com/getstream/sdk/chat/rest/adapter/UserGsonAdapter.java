@@ -83,6 +83,9 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                 case "online":
                     user.setOnline(gson.fromJson(json, Boolean.class));
                     continue;
+                case "banned":
+                    user.setBanned(gson.fromJson(json, Boolean.class));
+                    continue;
                 case "total_unread_count":
                     user.setTotalUnreadCount(gson.fromJson(json, Integer.class));
                     continue;

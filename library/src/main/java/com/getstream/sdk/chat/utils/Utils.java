@@ -31,6 +31,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -67,15 +68,19 @@ public class Utils {
 
 
     public static void circleImageLoad(ImageView view, String url) {
-        Glide.with(view.getContext()).asBitmap().load(url).centerCrop().into(new BitmapImageViewTarget(view) {
-            @Override
-            protected void setResource(Bitmap resource) {
-                RoundedBitmapDrawable circularBitmapDrawable =
-                        RoundedBitmapDrawableFactory.create(view.getContext().getResources(), resource);
-                circularBitmapDrawable.setCircular(true);
-                view.setImageDrawable(circularBitmapDrawable);
-            }
-        });
+        Glide.with(view.getContext())
+                .asBitmap()
+                .load(StreamChat.getInstance(view.getContext()).getUploadStorage().signGlideUrl(url))
+                .centerCrop()
+                .into(new BitmapImageViewTarget(view) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(view.getContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        view.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
     }
 
     public static boolean isSVGImage(String url){
@@ -252,12 +257,12 @@ public class Utils {
         return attachments;
     }
 
-    public static List<String> getMentionedUserIDs(ChannelState response, String text) {
+    public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {
         if (TextUtils.isEmpty(text)) return null;
 
         List<String> mentionedUserIDs = new ArrayList<>();
-        if (response.getMembers() != null && !response.getMembers().isEmpty()) {
-            for (Member member : response.getMembers()) {
+        if (channelState.getMembers() != null && !channelState.getMembers().isEmpty()) {
+            for (Member member : channelState.getMembers()) {
                 String userName = member.getUser().getName();
                 if (text.contains("@" + userName)) {
                     mentionedUserIDs.add(member.getUser().getId());

@@ -355,6 +355,10 @@ public class ChannelState {
     }
 
     public void setLastMessage(Message lastMessage) {
+        if (lastMessage.getDeletedAt() != null){
+            this.lastMessage = computeLastMessage();
+            return;
+        }
         this.lastMessage = lastMessage;
     }
 
@@ -478,7 +482,7 @@ public class ChannelState {
         return unreadMessageCount;
     }
 
-    private Date getReadDateOfChannelLastMessage(String userId) {
+    public Date getReadDateOfChannelLastMessage(String userId) {
         if (this.reads == null || this.reads.isEmpty()) return null;
         Date lastReadDate = null;
         try {

@@ -54,6 +54,9 @@ public class User implements UserEntity {
     private Boolean invisible;
 
     @Ignore
+    private Boolean banned;
+
+    @Ignore
     private List<Mute> mutes;
 
     @Ignore
@@ -126,7 +129,7 @@ public class User implements UserEntity {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updated_at) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -284,5 +287,13 @@ public class User implements UserEntity {
 
     public void setDevices(List<Device> devices) {
         this.devices = devices;
+    }
+
+    public Boolean getBanned() {
+        return banned;
+    }
+
+    public void setBanned(Boolean banned) {
+        this.banned = banned;
     }
 }

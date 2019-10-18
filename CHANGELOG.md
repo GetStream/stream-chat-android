@@ -1,11 +1,31 @@
-## Pending release
+## Upcoming release
 
+- Added support for message search `client.searchMessages`
+- Better support for query user options
+- Minor bugfixes
+
+## Oct 16th, 2019 - 2.3.0
+
+- Added support for `getReactions` endpoint
+- Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
+- Added support for `channel.stopWatching()` 
 - Improved error message for uploading large files
 - Remove error messages after you send a message (similar behaviour to Slack)
 - Fixed slash command support on threads
 - Improved newline handling
 - Improved thread display
+- Expose ban information for current user (`User#getBanned`)
+- Bugfix on attachment size
+- Added support for accepting and rejecting channel invites
+- Expose current user LiveData with `StreamChat.getCurrentUser()`
 
+## Oct 14th, 2019 - 2.2.1
+
+- Renamed `FileSendResponse` to `UploadFileResponse`
+- Renamed `SendFileCallback` to `UploadFileCallback`
+- Removed `SendMessageRequest`
+- Updated `sendMessage` and `updateMessage` from `Client`
+- Added devToken function for setUser of Client
 
 ## Oct 10th, 2019 - 2.2.1
 

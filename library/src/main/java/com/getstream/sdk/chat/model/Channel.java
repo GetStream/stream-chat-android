@@ -29,18 +29,18 @@ import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
 import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
+import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.SendFileCallback;
+import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.SendMessageRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -60,9 +60,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -594,6 +591,31 @@ public class Channel {
         return null;
     }
 
+    /**
+     * countUnread - Count the number of unread messages mentioning the current user
+     *
+     * @return {int} Unread mentions count
+     */
+    public int countUnreadMentions() {
+        Date lastRead = channelState.getReadDateOfChannelLastMessage(client.getUserId());
+        int count = 0;
+        for (Message m : this.channelState.getMessages()) {
+            if (client.getUser().getId().equals(m.getUserId())) {
+                continue;
+            }
+            if (lastRead == null) {
+                count++;
+                continue;
+            }
+            if (m.getCreatedAt().getTime() > lastRead.getTime()) {
+                if (m.getMentionedUsers().indexOf(client.getUser()) != -1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
@@ -603,15 +625,17 @@ public class Channel {
         message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
 
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-        client.sendMessage(this, request, callback);
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            message.setMentionedUsersId(mentionedUserIDs);
+        client.sendMessage(this, message, callback);
     }
 
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        SendMessageRequest request = new SendMessageRequest(message, false, mentionedUserIDs);
-        client.updateMessage(message.getId(), request, callback);
+        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+            message.setMentionedUsersId(mentionedUserIDs);
+        client.updateMessage(message, callback);
     }
 
     public void deleteMessage(@NonNull Message message,
@@ -620,20 +644,19 @@ public class Channel {
     }
 
     public void sendImage(@NotNull String filePath,
-                          @NotNull SendFileCallback fileCallback) {
+                          @NotNull String mimeType,
+                          @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendImage(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
 
     public void sendFile(@NotNull String filePath,
                          @NotNull String mimeType,
-                         @NotNull SendFileCallback fileCallback) {
+                         @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
-        RequestBody fileReqBody = RequestBody.create(MediaType.parse(mimeType), file);
-        MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
-        client.sendFile(this, part, fileCallback);
+
+        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
     // endregion
 
@@ -653,9 +676,9 @@ public class Channel {
      * sendReaction - Send a reaction about a message
      *
      * @param messageID {string} the message id
-     * @param type {string} the type of reaction (ie. like)
+     * @param type      {string} the type of reaction (ie. like)
      * @param extraData {Map<String, Object>} reaction extra data
-     * @param callback {MessageCallback} the request callback
+     * @param callback  {MessageCallback} the request callback
      */
     public void sendReaction(@NotNull String messageID,
                              @NotNull String type,
@@ -670,11 +693,35 @@ public class Channel {
     }
 
     /**
+     * list the reactions, supports pagination
+     *
+     * @param messageId  the message id
+     * @param pagination pagination options
+     * @param callback   the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull PaginationOptions pagination,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, pagination, callback);
+    }
+
+    /**
+     * list of reactions (10 most recent reactions)
+     *
+     * @param messageId the message id
+     * @param callback  the result callback
+     */
+    public void getReactions(@NotNull String messageId,
+                             @NotNull GetReactionsCallback callback) {
+        client.getReactions(messageId, callback);
+    }
+
+    /**
      * deleteReaction - Delete a reaction by user and type
      *
      * @param messageId {string} the message id
-     * @param type {string} the type of reaction that should be removed
-     * @param callback {MessageCallback} the request callback
+     * @param type      {string} the type of reaction that should be removed
+     * @param callback  {MessageCallback} the request callback
      */
     public void deleteReaction(@NonNull String messageId,
                                @NonNull String type,
@@ -742,6 +789,34 @@ public class Channel {
         client.removeMembers(this, members, callback);
     }
 
+    /**
+     * Accept an invite to this channel
+     *
+     * @param message  message object allowing you to show a system message in the Channel
+     * @param callback the result callback
+     */
+    public void acceptInvite(@Nullable String message, @NotNull ChannelCallback callback) {
+        client.acceptInvite(this, message, callback);
+    }
+
+    /**
+     * Accept an invite to this channel
+     *
+     * @param callback the result callback
+     */
+    public void acceptInvite(@NotNull ChannelCallback callback) {
+        client.acceptInvite(this, null, callback);
+    }
+
+    /**
+     * Reject an invite to this channel
+     *
+     * @param callback the result callback
+     */
+    public void rejectInvite(@NotNull ChannelCallback callback) {
+        client.rejectInvite(this, callback);
+    }
+
     public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         updatedAt = channel.updatedAt;
@@ -775,9 +850,18 @@ public class Channel {
         Message message = event.getMessage();
         for (int i = 0; i < channelState.getMessages().size(); i++) {
             if (message.getId().equals(channelState.getMessages().get(i).getId())) {
+
                 if (event.getType().equals(EventType.MESSAGE_DELETED))
                     message.setText(Constant.MESSAGE_DELETED);
+                else
+                    message.setStatus(MessageStatus.RECEIVED);
+
                 channelState.getMessages().set(i, message);
+
+                // Check updatedMessage is Last or not
+                if (i == channelState.getMessages().size() -1)
+                    channelState.setLastMessage(message);
+
                 getClient().storage().insertMessageForChannel(this, message);
                 break;
             }
@@ -895,6 +979,15 @@ public class Channel {
      */
     public void delete(@NotNull ChannelCallback callback) {
         client.deleteChannel(this, callback);
+    }
+
+    /**
+     * stops watching the channel for events.
+     *
+     * @param callback the result callback
+     */
+    public void stopWatching(@NotNull CompletableCallback callback) {
+        client.stopWatchingChannel(this, callback);
     }
 
     public ChannelState getLastState() {

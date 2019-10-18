@@ -131,7 +131,12 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
                     attachment.setMime_type((String) set.getValue());
                     continue;
                 case "file_size":
-                    attachment.setFile_size(gson.fromJson(json, Integer.class));
+                    try {
+                        double fileSize = (Double) set.getValue();
+                        attachment.setFile_size((int)fileSize);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                     continue;
             }
             // Set Extra Data

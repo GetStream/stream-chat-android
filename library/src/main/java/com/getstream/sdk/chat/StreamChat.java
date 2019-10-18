@@ -26,6 +26,8 @@ public class StreamChat {
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
     private static MutableLiveData<Number> unreadChannels;
+
+    private static MutableLiveData<User> currentUser;
     private static Integer lastTotalUnreadMessages;
     private static Integer lastUnreadChannels;
     private static boolean lifecycleStopped;
@@ -36,19 +38,24 @@ public class StreamChat {
     }
 
     /**
-     * Returns a LiveData object for the total unread messages
-     * @return
+     * @return LiveData object for the total unread messages
      */
     public static LiveData<Number> getTotalUnreadMessages() {
         return totalUnreadMessages;
     }
 
     /**
-     * Returns a LiveData object for the number of unread channels
-     * @return
+     * @return LiveData object for the number of unread channels
      */
     public static LiveData<Number> getUnreadChannels() {
         return unreadChannels;
+    }
+
+    /**
+     * @return LiveData object for the current user
+     */
+    public static LiveData<User> getCurrentUser() {
+        return currentUser;
     }
 
     public static synchronized Client getInstance(final Context context) {
@@ -105,13 +112,16 @@ public class StreamChat {
                 ClientState state = INSTANCE.getState();
                 if (state.getTotalUnreadCount() != null) {
                     // post the value if it changed since last time
-                    if (state.getTotalUnreadCount() != lastTotalUnreadMessages) {
+                    if (!state.getTotalUnreadCount().equals(lastTotalUnreadMessages)) {
                         lastTotalUnreadMessages = state.getTotalUnreadCount();
                         totalUnreadMessages.postValue(lastTotalUnreadMessages);
                     }
-                    if (state.getUnreadChannels() != lastUnreadChannels) {
+                    if (!state.getUnreadChannels().equals(lastUnreadChannels)) {
                         lastUnreadChannels = state.getUnreadChannels();
                         unreadChannels.postValue(lastUnreadChannels);
+                    }
+                    if (event.getMe() != null) {
+                        currentUser.postValue(state.getCurrentUser());
                     }
                 }
             }
@@ -133,6 +143,7 @@ public class StreamChat {
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
                 INSTANCE.setContext(context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
+                currentUser = new MutableLiveData<>();
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();
                 handleConnectedUser();
@@ -142,6 +153,7 @@ public class StreamChat {
                     public void onSuccess(User user) {
                         Log.i(TAG, "set user worked out well");
                         setupEventListeners();
+                        currentUser.postValue(user);
 
                         new StreamLifecycleObserver(new LifecycleHandler() {
                             @Override
