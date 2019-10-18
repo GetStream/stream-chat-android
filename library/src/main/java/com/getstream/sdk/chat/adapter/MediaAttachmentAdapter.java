@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.io.File;
 import java.util.List;
@@ -78,18 +79,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
                 binding.ivSelectMark.setVisibility(View.GONE);
 
             if (attachment.getType().equals(ModelType.attach_file)) {
-                String videoLength;
-                int videoLeng = attachment.config.getVideoLengh();
-                if (videoLeng < 10) {
-                    videoLength = "00:0" + videoLeng;
-                } else if (videoLeng < 60) {
-                    videoLength = "00:" + videoLeng;
-                } else if (videoLeng < 600) {
-                    videoLength = "0" + (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
-                } else {
-                    videoLength = (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
-                }
-                binding.tvLength.setText(videoLength);
+                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));
             } else {
                 binding.tvLength.setText("");
             }

@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
@@ -7,6 +8,7 @@ import androidx.annotation.Nullable;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.util.Date;
 import java.util.Random;
 
 public class StringUtility {
@@ -57,7 +59,13 @@ public class StringUtility {
         return text.replaceAll("\n", "<br/>  <br/>  \n");
     }
 
-
+    @SuppressLint("DefaultLocale")
+    public static String convertVideoLength(long videoLengh) {
+        long hours = videoLengh / 3600;
+        long minutes = (videoLengh % 3600) / 60;
+        long seconds = videoLengh % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
 
     public static String getSaltString(String s) {
         String s_ = s.replaceAll("\\s+","");
