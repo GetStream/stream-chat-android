@@ -355,6 +355,10 @@ public class ChannelState {
     }
 
     public void setLastMessage(Message lastMessage) {
+        if (lastMessage.getDeletedAt() != null){
+            this.lastMessage = computeLastMessage();
+            return;
+        }
         this.lastMessage = lastMessage;
     }
 
