@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.rest.Message;
 
 import java.util.List;
 
@@ -51,6 +52,16 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         }
 
         if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
+            return false;
+        }
+        // Check Message Update
+        Message oldLastMessage = oldChannel.getChannelState().getLastMessage();
+        Message newLastMessage = newChannel.getChannelState().getLastMessage();
+        if (oldLastMessage != null && oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
+            return false;
+        }
+        // Check Message Delete
+        if (oldLastMessage != null && !oldLastMessage.equals(newLastMessage)) {
             return false;
         }
 

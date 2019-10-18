@@ -319,6 +319,16 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             }
 
             @Override
+            public void onMessageUpdated(Channel channel, Event event) {
+                updateChannel(channel, true);
+            }
+
+            @Override
+            public void onMessageDeleted(Channel channel, Event event) {
+                updateChannel(channel, false);
+            }
+
+            @Override
             public void onChannelDeleted(Channel channel, Event event) {
                 deleteChannel(channel);
             }

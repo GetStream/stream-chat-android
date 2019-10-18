@@ -12,11 +12,11 @@ import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.UploadFileResponse;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
@@ -25,8 +25,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-
-import org.json.JSONObject;
+import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 
 import java.util.Map;
 
@@ -76,7 +75,7 @@ public interface APIService {
 
     // region User
     @GET("/users")
-    Call<QueryUserListResponse> queryUsers(@Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId, @Query("payload") JSONObject payload);
+    Call<QueryUserListResponse> queryUsers(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
 
     @POST("/channels/{type}/{id}")
     Call<ChannelResponse> addMembers(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String connectionId, @Body AddMembersRequest body);
@@ -150,6 +149,10 @@ public interface APIService {
     @Multipart
     @POST("/channels/{type}/{id}/file")
     Call<UploadFileResponse> sendFile(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
+
+    @GET("/search")
+    Call<SearchMessagesResponse> searchMessages(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
+
     // endregion
 
     // region Device
