@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -37,16 +38,18 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
 import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.request.QueryUserRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
+import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
@@ -63,6 +66,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
@@ -1174,6 +1178,43 @@ public class Client implements WSResponseHandler {
                 }
             });
     }
+
+    /**
+     * search messages by parameters
+     *
+     * @param request  request options include filter, query string and query options
+     * @param callback the result callback
+     */
+    public void searchMessages(@NotNull SearchMessagesRequest request, @NotNull SearchMessagesCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                String requestString = GsonConverter.Gson().toJson(request);
+                mService.searchMessages(apiKey, clientID, requestString)
+                        .enqueue(new Callback<SearchMessagesResponse>() {
+                            @Override
+                            public void onResponse(Call<SearchMessagesResponse> call, Response<SearchMessagesResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<SearchMessagesResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
     // endregion
 
     // region Thread
@@ -1358,7 +1399,7 @@ public class Client implements WSResponseHandler {
      */
     public void getReactions(@NotNull String messageId,
                              @NotNull GetReactionsCallback callback) {
-        getReactions(messageId, new PaginationOptions(10, 0), callback);
+        getReactions(messageId, new PaginationOptions.Builder().limit(10).build(), callback);
     }
 
     // endregion
@@ -1477,27 +1518,42 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * Query users and watch user presence
+     * search for users and see if they are online/offline
+     *
+     * @param request  request options include filter, sort options and query options
+     * @param callback the result callback
      */
-    public void queryUsers(@NonNull JSONObject payload,
+    public void queryUsers(QueryUserRequest request,
                            QueryUserListCallback callback) {
-
-        mService.queryUsers(apiKey, getUserId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                state.updateUsers(response.body().getUsers());
-                callback.onSuccess(response.body());
+            public void onSuccess(User user) {
+                String requestString = GsonConverter.Gson().toJson(request);
+                mService.queryUsers(apiKey, clientID, requestString)
+                        .enqueue(new Callback<QueryUserListResponse>() {
+                            @Override
+                            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
+                                state.updateUsers(response.body().getUsers());
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
             }
 
             @Override
-            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
+
     }
 
     /**

@@ -848,9 +848,18 @@ public class Channel {
         Message message = event.getMessage();
         for (int i = 0; i < channelState.getMessages().size(); i++) {
             if (message.getId().equals(channelState.getMessages().get(i).getId())) {
+
                 if (event.getType().equals(EventType.MESSAGE_DELETED))
                     message.setText(Constant.MESSAGE_DELETED);
+                else
+                    message.setSyncStatus(Sync.SYNCED);
+
                 channelState.getMessages().set(i, message);
+
+                // Check updatedMessage is Last or not
+                if (i == channelState.getMessages().size() -1)
+                    channelState.setLastMessage(message);
+
                 getClient().storage().insertMessageForChannel(this, message);
                 break;
             }
