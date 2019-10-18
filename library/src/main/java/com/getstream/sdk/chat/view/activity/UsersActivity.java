@@ -20,24 +20,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
+import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.request.QueryUserRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -223,10 +222,10 @@ public class UsersActivity extends AppCompatActivity {
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
+        if (client == null)
+            client = StreamChat.getInstance(this);
 
-//        if (client == null)
-//            client = StreamChat.getInstance();
-        client.queryUsers(getUserQueryPayload(), new QueryUserListCallback() {
+        client.queryUsers(getQueryUserRequest(), new QueryUserListCallback() {
             @Override
             public void onSuccess(QueryUserListResponse response) {
                 binding.setShowMainProgressbar(false);
@@ -253,25 +252,10 @@ public class UsersActivity extends AppCompatActivity {
         });
     }
 
-    private JSONObject getUserQueryPayload() {
-        Map<String, Object> payload = new HashMap<>();
-
-        // Filter options
-
-        payload.put("filter_conditions", new HashMap<>());
-
-        // QuerySort options
-
-        Map<String, Object> sort = new HashMap<>();
-        sort.put("field", "last_active");
-        sort.put("direction", -1);
-        payload.put("sort", Collections.singletonList(sort));
-        payload.put("limit", Constant.USER_LIMIT);
-
-        JSONObject json;
-        json = new JSONObject(payload);
-        Log.d(TAG, "Payload: " + json);
-        return json;
+    private QueryUserRequest getQueryUserRequest() {
+        FilterObject filter = new FilterObject();
+        QuerySort sort = new QuerySort().asc("last_active");
+        return new QueryUserRequest(filter, sort).withLimit(10);
     }
 
     private void getChannel(List<User> users) {
