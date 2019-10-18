@@ -15,7 +15,7 @@ public class PaginationOptions {
     @Expose
     private int offset;
 
-    public PaginationOptions(int limit, int offset) {
+    private PaginationOptions(int limit, int offset) {
         this.limit = limit;
         this.offset = offset;
     }
@@ -24,15 +24,33 @@ public class PaginationOptions {
         return limit;
     }
 
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
     public int getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    public static class Builder {
+        private int limit;
+        private int offset;
+
+        /**
+         * @param limit number of objects to return
+         */
+        public Builder limit(int limit) {
+            this.limit = limit;
+            return this;
+        }
+
+        /**
+         * @param offset offset for pagination
+         */
+        public Builder offset(int offset) {
+            this.offset = offset;
+            return this;
+        }
+
+        public PaginationOptions build() {
+            return new PaginationOptions(limit, offset);
+        }
     }
+
 }

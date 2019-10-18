@@ -1395,7 +1395,7 @@ public class Client implements WSResponseHandler {
      */
     public void getReactions(@NotNull String messageId,
                              @NotNull GetReactionsCallback callback) {
-        getReactions(messageId, new PaginationOptions(10, 0), callback);
+        getReactions(messageId, new PaginationOptions.Builder().limit(10).build(), callback);
     }
 
     // endregion
