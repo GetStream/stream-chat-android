@@ -541,7 +541,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
-                newMessage.setSyncStatus(Sync.SYNCED);
                 if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
                     messagesCopy.remove(oldMessage);
                 } else {
@@ -962,13 +961,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
-
         // Check Error or Pending Messages
         checkErrorOrPendingMessage();
-
         // Check Failed Message
         checkFailedMessage(message);
-
         // stop typing
         stopTyping();
         // Check uploading file
@@ -979,7 +975,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
             client().storage().insertMessageForChannel(channel, message);
-
             // add the message here
             addMessage(message);
         }

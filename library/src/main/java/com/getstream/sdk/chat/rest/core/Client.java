@@ -1051,6 +1051,7 @@ public class Client implements WSResponseHandler {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
+                response.body().getMessage().setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
@@ -1085,11 +1086,14 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                message.setSyncStatus(SYNCED);
+                response.body().getMessage().setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {

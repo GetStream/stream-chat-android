@@ -617,11 +617,6 @@ public class Channel {
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
-
-//        message.setSyncStatus(LOCAL_ONLY);
-//        // immediately fail if there is no network
-//        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
-
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
             message.setMentionedUsersId(mentionedUserIDs);

@@ -285,8 +285,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || !messageListItem.isMine()
                 || message.getCreatedAt().getTime() < channelState.getLastMessage().getCreatedAt().getTime()
                 || message.getType().equals(ModelType.message_ephemeral)
-                || message.getSyncStatus() == Sync.IN_MEMORY
-                || message.getSyncStatus() == null
                 || isThread()
                 || isEphemeral())
             return;
@@ -300,18 +298,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.VISIBLE);
                 break;
+            case Sync.IN_MEMORY:
             case Sync.LOCAL_FAILED:
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.GONE);
-                break;
-            default:
-                if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
-                        && channelState.getLastMessage().getId().equals(message.getId())) {
-                    message.setSyncStatus(Sync.SYNCED);
-                    iv_deliver.setVisibility(View.VISIBLE);
-                    return;
-                }
-                pb_deliver.setVisibility(View.VISIBLE);
                 break;
         }
     }

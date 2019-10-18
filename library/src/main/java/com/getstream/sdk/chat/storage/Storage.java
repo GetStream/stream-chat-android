@@ -300,14 +300,11 @@ public class Storage {
         if (message.getCreatedAt() == null) {
             message.setCreatedAt(new Date());
         }
-        message.setSyncStatus(LOCAL_ONLY);
         // immediately fail if there is no network
         message.setSyncStatus(getClient().isConnected() ? LOCAL_ONLY : Sync.LOCAL_FAILED);
         message.preStorage();
 
         if (!enabled) return;
-
-
 
         List<Message> messages = new ArrayList<>();
         messages.add(message);
