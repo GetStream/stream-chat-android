@@ -110,6 +110,7 @@ public class Client implements WSResponseHandler {
         this.state = state;
     }
 
+    @NotNull
     private ClientState state;
 
     // Main Params

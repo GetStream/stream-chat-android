@@ -52,7 +52,6 @@ public class ClientState {
     @NotNull
     private ConcurrentHashMap<String, User> users;
 
-    @NotNull
     private User currentUser;
 
     private Integer totalUnreadCount;
@@ -93,8 +92,6 @@ public class ClientState {
 
     /**
      * Returns the current user
-     *
-     * @return
      */
     public User getCurrentUser() {
         return currentUser;
@@ -102,15 +99,19 @@ public class ClientState {
 
     void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
-        this.totalUnreadCount = currentUser.getTotalUnreadCount();
-        this.unreadChannels = currentUser.getUnreadChannels();
+        if (currentUser == null) {
+            this.totalUnreadCount = null;
+            this.unreadChannels = null;
+        } else {
+            this.totalUnreadCount = currentUser.getTotalUnreadCount();
+            this.unreadChannels = currentUser.getUnreadChannels();
+        }
     }
 
     /**
      * Get a user by ID
      *
      * @param userID a string based ID for the user
-     * @return
      */
     public User getUser(String userID) {
         return users.get(userID);
