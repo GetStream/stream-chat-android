@@ -946,7 +946,7 @@ public class Channel {
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void update(@Nullable String updateMessage, @NotNull ChannelCallback callback) {
+    public void update(@Nullable Message updateMessage, @NotNull ChannelCallback callback) {
         client.updateChannel(this, updateMessage, callback);
     }
 

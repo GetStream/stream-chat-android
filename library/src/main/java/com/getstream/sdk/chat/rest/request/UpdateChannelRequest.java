@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.request;
 
 
+import com.getstream.sdk.chat.rest.Message;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -23,22 +24,10 @@ public class UpdateChannelRequest {
     @Nullable
     @Expose
     @SerializedName("message")
-    private UpdateMessage updateMessage;
+    private Message updateMessage;
 
-    public UpdateChannelRequest(@NotNull Map<String, Object> data, @Nullable String updateMessage) {
+    public UpdateChannelRequest(@NotNull Map<String, Object> data, @Nullable Message updateMessage) {
         this.data = data;
-        this.updateMessage = updateMessage != null ? new UpdateMessage(updateMessage) : null;
-    }
-
-    private class UpdateMessage {
-
-        @Nullable
-        @Expose
-        @SerializedName("text")
-        private String text;
-
-        UpdateMessage(@Nullable String text) {
-            this.text = text;
-        }
+        this.updateMessage = updateMessage;
     }
 }
