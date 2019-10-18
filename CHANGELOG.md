@@ -3,6 +3,7 @@
 - Added support for message search `client.searchMessages`
 - Better support for query user options
 - Update channel update signature
+- Fix disconnection NPE
 - Minor bugfixes
 
 #### Breaking changes
