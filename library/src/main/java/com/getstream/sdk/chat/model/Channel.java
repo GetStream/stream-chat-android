@@ -952,24 +952,20 @@ public class Channel {
     /**
      * edit the channel's custom properties.
      *
-     * @param options       the custom properties
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void update(@NotNull Map<String, Object> options, @Nullable String updateMessage,
-                       @NotNull ChannelCallback callback) {
-        client.updateChannel(this, options, updateMessage, callback);
+    public void update(@Nullable Message updateMessage, @NotNull ChannelCallback callback) {
+        client.updateChannel(this, updateMessage, callback);
     }
 
     /**
      * edit the channel's custom properties.
      *
-     * @param options  the custom properties
      * @param callback the result callback
      */
-    public void update(@NotNull Map<String, Object> options,
-                       @NotNull ChannelCallback callback) {
-        client.updateChannel(this, options, null, callback);
+    public void update(@NotNull ChannelCallback callback) {
+        client.updateChannel(this, null, callback);
     }
 
     /**
