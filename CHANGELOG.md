@@ -1,3 +1,7 @@
+## Upcoming release
+
+- Added support for message search `client.searchMessages`
+
 ## Oct 16th, 2019 - 2.3.0
 
 - Added support for `getReactions` endpoint
