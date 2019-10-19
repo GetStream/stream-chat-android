@@ -6,6 +6,7 @@
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
+- Expose members and watchers pagination options for query channel 
 
 #### Breaking changes
 
@@ -59,7 +60,6 @@
 - Bugfix: hides attachment drawer after deny permission
 - Add support for update channel endpoint
 - Add PermissionRequestListener for Permission Request
-
 
 ## September 28, 2019 - 2.1.0
 
