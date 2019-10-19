@@ -5,6 +5,7 @@
 - Update channel update signature
 - Fix disconnection NPE
 - Minor bugfixes
+- Remove file/image support
 
 #### Breaking changes
 
