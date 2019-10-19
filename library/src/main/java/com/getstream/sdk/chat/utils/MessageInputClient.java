@@ -143,13 +143,19 @@ public class MessageInputClient {
         if (isMedia) {
             List<Attachment> attachments = Utils.getAllShownImagesPath(context);
             ((Activity) context).runOnUiThread(() -> {
-                mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                    Attachment attachment = attachments.get(position);
-                    attachment.config.setSelected(!attachment.config.isSelected());
-                    mediaAttachmentAdapter.notifyItemChanged(position);
-                    updateComposerViewBySelectedMedia(attachments, attachment);
-                });
-                binding.rvMedia.setAdapter(mediaAttachmentAdapter);
+                if (!attachments.isEmpty()){
+                    mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
+                        Attachment attachment = attachments.get(position);
+                        attachment.config.setSelected(!attachment.config.isSelected());
+                        mediaAttachmentAdapter.notifyItemChanged(position);
+                        updateComposerViewBySelectedMedia(attachments, attachment);
+                    });
+                    binding.rvMedia.setAdapter(mediaAttachmentAdapter);
+                }else{
+                    Utils.showMessage(context, "There is no photo or video.");
+                    onClickCloseBackGroundView();
+                }
+
                 binding.progressBarFileLoader.setVisibility(View.GONE);
                 // edit
                 if (editAttachments != null) {
@@ -174,7 +180,7 @@ public class MessageInputClient {
                     });
                 } else {
                     Utils.showMessage(context, "There is no file");
-
+                    onClickCloseBackGroundView();
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
                 // edit
