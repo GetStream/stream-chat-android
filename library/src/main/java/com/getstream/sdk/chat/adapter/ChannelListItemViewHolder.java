@@ -147,7 +147,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // read indicators
         read_state.setReads(lastMessageReads, true, style);
 
-        if (channelState.readLastMessage() || lastMessage.getUserId().equals(channel.getClient().getUserId()))
+        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(channel.getClient().getUserId()));
+        if (channelState.readLastMessage() || outgoing)
             applyReadStyle();
         else
             applyUnreadStyle();
