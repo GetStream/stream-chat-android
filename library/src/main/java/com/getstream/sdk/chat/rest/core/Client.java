@@ -347,7 +347,7 @@ public class Client implements WSResponseHandler {
         cacheUserToken = null;
 
         // clear local state
-        state.setCurrentUser(null);
+        state.reset();
         activeChannelMap.clear();
     }
 

@@ -56,4 +56,9 @@ public class ChannelWatchRequest extends ChannelQueryRequest {
         return clone;
     }
 
+    public ChannelWatchRequest withPresence() {
+        ChannelWatchRequest clone = this.cloneOpts();
+        clone.presence = true;
+        return clone;
+    }
 }

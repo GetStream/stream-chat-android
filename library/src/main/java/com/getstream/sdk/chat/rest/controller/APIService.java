@@ -150,6 +150,12 @@ public interface APIService {
     @POST("/channels/{type}/{id}/file")
     Call<UploadFileResponse> sendFile(@Path("type") String channelType, @Path("id") String channelId, @Part MultipartBody.Part file, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
 
+    @DELETE("/channels/{type}/{id}/file")
+    Call<CompletableResponse> deleteFile(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("url") String url);
+
+    @DELETE("/channels/{type}/{id}/image")
+    Call<CompletableResponse> deleteImage(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("url") String url);
+
     @GET("/search")
     Call<SearchMessagesResponse> searchMessages(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
 
