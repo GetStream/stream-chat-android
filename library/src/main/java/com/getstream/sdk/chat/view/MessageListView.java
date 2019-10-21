@@ -29,7 +29,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
@@ -488,7 +488,7 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                new MoreActionDialog(getContext())
+                new MessageMoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
@@ -518,7 +518,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReactionViewClickListener(message -> {
                 Utils.hideSoftKeyboard((Activity) getContext());
-                new MoreActionDialog(getContext())
+                new MessageMoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)

@@ -34,13 +34,13 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
-public class MoreActionDialog extends Dialog {
+public class MessageMoreActionDialog extends Dialog {
 
     Message message;
     ChannelViewModel viewModel;
     MessageListViewStyle style;
 
-    public MoreActionDialog(@NonNull Context context) {
+    public MessageMoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
         Utils.hideSoftKeyboard((Activity) context);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
@@ -48,20 +48,20 @@ public class MoreActionDialog extends Dialog {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH, WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH);
     }
 
-    public MoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
+    public MessageMoreActionDialog setChannelViewModel(ChannelViewModel viewModel) {
         this.viewModel = viewModel;
         init();
         return this;
     }
 
 
-    public MoreActionDialog setMessage(Message message) {
+    public MessageMoreActionDialog setMessage(Message message) {
         this.message = message;
         init();
         return this;
     }
 
-    public MoreActionDialog setStyle(MessageListViewStyle style) {
+    public MessageMoreActionDialog setStyle(MessageListViewStyle style) {
         this.style = style;
         init();
         return this;
@@ -72,7 +72,7 @@ public class MoreActionDialog extends Dialog {
         if (viewModel == null || message == null || style == null)
             return;
 
-        setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_moreaction);
+        setContentView(com.getstream.sdk.chat.R.layout.stream_dialog_message_moreaction);
         setCanceledOnTouchOutside(true);
         RelativeLayout rl_wrap = findViewById(R.id.rl_wrap);
         LinearLayout ll_thread = findViewById(R.id.ll_thread);

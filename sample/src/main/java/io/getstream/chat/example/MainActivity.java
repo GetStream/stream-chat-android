@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.view.Dialog.ChannelMoreActionDialog;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
             startActivity(intent);
         });
+        binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
@@ -214,4 +216,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    // region More action
+    void showMoreActionDialog(Channel channel){
+        new ChannelMoreActionDialog(this)
+                .setChannelListViewModel(viewModel)
+                .setChannel(channel)
+                .show();
+    }
+
+    // endregion
+
 }
