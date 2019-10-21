@@ -130,10 +130,12 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
+        binding.ivAdd.setOnClickListener(this::showCreateNewChannelDialog);
+        binding.ivSwitchUser.setOnClickListener(this::showSwitchUserDialog);
     }
 
-    void createNewChannelDialog(View view) {
+    // region create new channel
+    void showCreateNewChannelDialog(View view) {
         final EditText inputName = new EditText(this);
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
@@ -157,28 +159,6 @@ public class MainActivity extends AppCompatActivity {
             });
         });
         alertDialog.show();
-    }
-
-    void switchUser(String userId, String token) {
-        Client client = StreamChat.getInstance(getApplication());
-        client.disconnect();
-
-        User user = new User(userId);
-        client.setUser(user, token);
-
-        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-
-        client.onSetUserCompleted(new ClientConnectionCallback() {
-            @Override
-            public void onSuccess(User user) {
-                viewModel.reload();
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
     }
 
     void createNewChannel(String channelName) {
@@ -214,4 +194,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    // endregion
+
+    // region switch user
+    void switchUser(String userId, String token) {
+        Client client = StreamChat.getInstance(getApplication());
+        client.disconnect();
+
+        User user = new User(userId);
+        client.setUser(user, token);
+
+        viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
+
+        client.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                viewModel.reload();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    void showSwitchUserDialog(View view) {
+        final EditText inputUserId = new EditText(this);
+        inputUserId.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputUserId.setHint("Type a user id");
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Log in with another account!")
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setView(inputUserId);
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                String userId = inputUserId.getText().toString();
+                if (TextUtils.isEmpty(userId)) {
+                    inputUserId.setError("Invalid id!");
+                    return;
+                }
+                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
+    }
+    // endregion
 }

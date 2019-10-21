@@ -43,6 +43,17 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
+            android:id="@+id/iv_switch_user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/switch_user"
+            app:isGone="@{safeUnbox(viewModel.loading)}"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_add"
+            app:layout_constraintEnd_toStartOf="@+id/iv_add"
+            app:layout_constraintTop_toTopOf="@+id/iv_add" />
+
+        <ImageView
             android:id="@+id/iv_add"
             android:layout_width="50dp"
             android:layout_height="50dp"
