@@ -197,6 +197,23 @@ public class MainActivity extends AppCompatActivity {
     // endregion
 
     // region switch user
+    void showSwitchUserDialog(View view) {
+        final AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle("Log in with another account!")
+                .setMessage("User ID is broken-waterfall-5")
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
+    }
+
     void switchUser(String userId, String token) {
         Client client = StreamChat.getInstance(getApplication());
         client.disconnect();
@@ -205,42 +222,20 @@ public class MainActivity extends AppCompatActivity {
         client.setUser(user, token);
 
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-
+        viewModel.setLoading();
         client.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 viewModel.reload();
+                viewModel.setLoadingDone();
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
+                viewModel.setLoadingDone();
                 Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-    void showSwitchUserDialog(View view) {
-        final EditText inputUserId = new EditText(this);
-        inputUserId.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        inputUserId.setHint("Type a user id");
-        final AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Log in with another account!")
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.setView(inputUserId);
-        alertDialog.setOnShowListener(dialog -> {
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                String userId = inputUserId.getText().toString();
-                if (TextUtils.isEmpty(userId)) {
-                    inputUserId.setError("Invalid id!");
-                    return;
-                }
-                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
     }
     // endregion
 }
