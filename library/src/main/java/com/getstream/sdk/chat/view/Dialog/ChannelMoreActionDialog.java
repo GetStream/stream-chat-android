@@ -67,7 +67,7 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private boolean canEditOrDeleteChannel() {
-        return channel.getCreatedByUser().getId().equals(channel.getClient().getUserId());
+        return channel.getCreatedByUser() != null && channel.getCreatedByUser().getId().equals(channel.getClient().getUserId());
     }
 
     private void hideChannel(){
