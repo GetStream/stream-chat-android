@@ -59,9 +59,9 @@ public class ChannelMoreActionDialog extends Dialog {
         ll_edit.setVisibility(canEditOrDeleteChannel() ? View.VISIBLE : View.GONE);
         ll_delete.setVisibility(canEditOrDeleteChannel() ? View.VISIBLE : View.GONE);
 
-        ll_hide.setOnClickListener(view-> moreAction(MoreActionType.HIDE));
-        ll_edit.setOnClickListener(view-> moreAction(MoreActionType.EDIT));
-        ll_delete.setOnClickListener(view-> moreAction(MoreActionType.DELET));
+        ll_hide.setOnClickListener(view-> hideChannel());
+        ll_edit.setOnClickListener(view-> editChannel());
+        ll_delete.setOnClickListener(view-> deleteChannel());
     }
 
     private boolean canEditOrDeleteChannel() {
@@ -69,6 +69,7 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void hideChannel(){
+        dismiss();
         viewModel.hideChannel(channel, new ResultCallback<Void, String>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -83,6 +84,7 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void showChannel(){
+        dismiss();
         viewModel.showChannel(channel, new ResultCallback<Void, String>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -97,10 +99,12 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void editChannel(){
+        dismiss();
 
     }
 
     private void deleteChannel(){
+        dismiss();
         final AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle("Do you want to delete this channel?")
                 .setMessage("Deleting this channel will permanently remove your messages!")
@@ -127,39 +131,11 @@ public class ChannelMoreActionDialog extends Dialog {
         alertDialog.show();
     }
 
-    private void moreAction(MoreActionType type) {
-        dismiss();
-        switch (type) {
-            case HIDE:
-                hideChannel();
-                break;
-            case SHOW:
-                showChannel();
-                break;
-            case EDIT:
-                editChannel();
-                break;
-            case DELET:
-                deleteChannel();
-                break;
-            default:
-                break;
-        }
-    }
-
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         dismiss();
         return false;
-    }
-
-    public enum MoreActionType {
-        HIDE,
-        SHOW,
-        EDIT,
-        DELET
     }
 
 }
