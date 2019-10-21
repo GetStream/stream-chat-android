@@ -14,10 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
+import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
@@ -25,9 +22,10 @@ public class ChannelMoreActionDialog extends Dialog {
 
     Channel channel;
     ChannelListViewModel viewModel;
-
-    public ChannelMoreActionDialog(@NonNull Context context) {
+    Context context;
+    public ChannelMoreActionDialog(@NonNull Context context) {        
         super(context, R.style.DialogTheme);
+        this.context = context;
         Utils.hideSoftKeyboard((Activity) context);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
@@ -71,29 +69,29 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void hideChannel(){
-        channel.hide(new CompletableCallback() {
+        viewModel.hideChannel(channel, new ResultCallback<Void, String>() {
             @Override
-            public void onSuccess(CompletableResponse response) {
-                Utils.showMessage(getContext(), "Hidden successfully!");
+            public void onSuccess(Void aVoid) {
+                Utils.showMessage(context, "Hidden successfully!");
             }
 
             @Override
-            public void onError(String errMsg, int errCode) {
-                Utils.showMessage(getContext(), errMsg);
+            public void onError(String s) {
+                Utils.showMessage(context, s);
             }
         });
     }
 
     private void showChannel(){
-        channel.show(new CompletableCallback() {
+        viewModel.showChannel(channel, new ResultCallback<Void, String>() {
             @Override
-            public void onSuccess(CompletableResponse response) {
-                Utils.showMessage(getContext(), "Shown successfully!");
+            public void onSuccess(Void aVoid) {
+                Utils.showMessage(context, "Shown up successfully!");
             }
 
             @Override
-            public void onError(String errMsg, int errCode) {
-                Utils.showMessage(getContext(), errMsg);
+            public void onError(String s) {
+                Utils.showMessage(context, s);
             }
         });
     }
@@ -103,7 +101,7 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void deleteChannel(){
-        final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle("Do you want to delete this channel?")
                 .setMessage("Deleting this channel will permanently remove your messages!")
                 .setPositiveButton(android.R.string.ok, null)
@@ -112,15 +110,15 @@ public class ChannelMoreActionDialog extends Dialog {
         alertDialog.setOnShowListener(dialog -> {
             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(v -> {
-                channel.delete(new ChannelCallback() {
+                viewModel.deleteChannel(channel, new ResultCallback<Void, String>() {
                     @Override
-                    public void onSuccess(ChannelResponse response) {
-                        Utils.showMessage(getContext(), "Deleted successfully!");
+                    public void onSuccess(Void aVoid) {
+                        Utils.showMessage(context, "Deleted successfully!");
                     }
 
                     @Override
-                    public void onError(String errMsg, int errCode) {
-                        Utils.showMessage(getContext(), errMsg);
+                    public void onError(String s) {
+                        Utils.showMessage(context, s);
                     }
                 });
                 alertDialog.dismiss();

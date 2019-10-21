@@ -20,9 +20,11 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
@@ -185,6 +187,32 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             Log.e(TAG, "setChannelFilter on an already initialized channel will reload the view model");
             reload();
         }
+    }
+
+    /**
+     * deletes the channel and remove from the current list of channels
+     *
+     * @param channel  the channel needs to hide
+     * @param callback the result callback
+     */
+    public void deleteChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
+        channel.delete(new ChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                deleteChannel(channel); // remove the channel from the list of not hidden channels
+                if (callback != null) {
+                    callback.onSuccess(null);
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+                if (callback != null) {
+                    callback.onError(errMsg);
+                }
+            }
+        });
     }
 
     /**
@@ -383,9 +411,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(channelCopy);
     }
 
-    private boolean deleteChannel(Channel channel) {
+    public boolean deleteChannel(Channel channel) {
         List<Channel> channelCopy = channels.getValue();
-        Boolean removed = channelCopy.remove(channel);
+        boolean removed = channelCopy.remove(channel);
         channels.postValue(channelCopy);
         return removed;
     }
@@ -407,6 +435,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channelCopy.addAll(newChannels);
         channels.postValue(channelCopy);
     }
+
 
     private void queryChannelsInner(int attempt) {
 
