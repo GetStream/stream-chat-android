@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.getstream.sdk.chat.viewmodel.ChannelListViewModel" />
+
+        <variable
+            name="isSwitchedUser"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -44,12 +48,11 @@
 
         <ImageView
             android:id="@+id/iv_switch_user"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/switch_user"
             app:isGone="@{safeUnbox(viewModel.loading)}"
             android:layout_marginEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_add"
             app:layout_constraintEnd_toStartOf="@+id/iv_add"
             app:layout_constraintTop_toTopOf="@+id/iv_add" />
 
@@ -59,7 +62,7 @@
             android:layout_height="50dp"
             android:layout_margin="30dp"
             android:background="@drawable/add"
-            app:isGone="@{safeUnbox(viewModel.loading)}"
+            app:isGone="@{safeUnbox(viewModel.loading) || isSwitchedUser}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

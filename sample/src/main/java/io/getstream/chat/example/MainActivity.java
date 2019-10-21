@@ -51,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
     final String USER_ID = "bender";
     // User token is typically provided by your server when the user authenticates
     final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
+
+    final String USER1_ID = "broken-waterfall-5";
+    final String USER1_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
+
+    private ActivityMainBinding binding;
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
@@ -99,8 +104,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // we're using data binding in this example
-        ActivityMainBinding binding =
-                DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         // Specify the current activity as the lifecycle owner.
         binding.setLifecycleOwner(this);
@@ -200,14 +204,14 @@ public class MainActivity extends AppCompatActivity {
     void showSwitchUserDialog(View view) {
         final AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Log in with another account!")
-                .setMessage("User ID is broken-waterfall-5")
+                .setMessage("New user id is " + USER1_ID)
                 .setPositiveButton(android.R.string.ok, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
         alertDialog.setOnShowListener(dialog -> {
             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(v -> {
-                switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
+                switchUser(USER1_ID, USER1_TOKEN);
                 alertDialog.dismiss();
             });
         });
@@ -226,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         client.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
+                binding.setIsSwitchedUser(true);
                 viewModel.reload();
                 viewModel.setLoadingDone();
             }
