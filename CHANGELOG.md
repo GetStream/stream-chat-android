@@ -34,9 +34,6 @@
 - Removed `SendMessageRequest`
 - Updated `sendMessage` and `updateMessage` from `Client`
 - Added devToken function for setUser of Client
-
-## Oct 10th, 2019 - 2.2.1
-
 - Added a callback as an optional last argument for setUser functions
 - Added ClientState which stores users, current user, unreadCount and the current user's mutes
 - Added notification.mutes_updated event
