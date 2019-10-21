@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.view.Dialog.ChannelMoreActionDialog;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 
@@ -81,7 +82,7 @@ public class ChannelListView extends RecyclerView {
 
         // connect the viewHolder on click listener...
         adapter.setChannelClickListener(this.channelClickListener);
-        adapter.setChannelLongClickListener(this.channelLongClickListener);
+        setOnLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
@@ -126,8 +127,16 @@ public class ChannelListView extends RecyclerView {
 
     public void setOnLongClickListener(ChannelClickListener l) {
         this.channelLongClickListener = l;
-        if (adapter != null) {
+        if (adapter == null) return;
+
+        if (l != null) {
             adapter.setChannelLongClickListener(l);
+        }else{
+            adapter.setChannelLongClickListener(channel ->
+                    new ChannelMoreActionDialog(getContext())
+                    .setChannelListViewModel(viewModel)
+                    .setChannel(channel)
+                    .show());
         }
     }
 
