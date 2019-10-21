@@ -1,4 +1,4 @@
-## Upcoming release
+## Oct 21th, 2019 - 3.0.0
 
 - Added support for message search `client.searchMessages`
 - Better support for query user options
