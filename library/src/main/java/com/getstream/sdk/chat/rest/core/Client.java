@@ -72,6 +72,7 @@ import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.utils.StringUtility;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -533,7 +534,7 @@ public class Client implements WSResponseHandler {
 
         userDetails.put("id", getUserId());
         userDetails.put("name", getUser().getName());
-        userDetails.put("image", getUser().getImage());
+        userDetails.put("image", StringUtility.urlEncode(getUser().getImage(), ""));
 
         jsonParameter.put("user_details", userDetails);
         jsonParameter.put("user_id", getUserId());
