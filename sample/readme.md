@@ -2,6 +2,7 @@
 ## Setup (optional)
 To build and run sample with custom user define next environmental variables:
 ```bash
+export API_KEY='...'
 export STREAM_CHAT_USER_ID='...'
 export STREAM_CHAT_USER_TOKEN='...'
 export STREAM_CHAT_USER_NAME='...'
