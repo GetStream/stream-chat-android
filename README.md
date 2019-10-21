@@ -257,6 +257,7 @@ StreamChat.getOnlineStatus().observe(...);
 - Threads
 - Slash commands
 - Offline support
+- [Markdown messages formatting](https://github.com/noties/Markwon)
 
 ## FAQ
 
