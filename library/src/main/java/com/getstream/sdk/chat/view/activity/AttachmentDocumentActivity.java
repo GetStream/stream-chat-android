@@ -2,7 +2,10 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,11 +15,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.utils.Utils;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
  */
 public class AttachmentDocumentActivity extends AppCompatActivity {
+    private final static String TAG = AttachmentDocumentActivity.class.getSimpleName();
 
     WebView webView;
     ProgressBar progressBar;
@@ -61,16 +66,22 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // TODO Auto-generated method stub
             view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
             super.onPageFinished(view, StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
+            if (error == null) return;
+
+            Log.e(TAG, error.toString());
+            Utils.showMessage(AttachmentDocumentActivity.this, error.toString());
         }
     }
 }
