@@ -65,14 +65,11 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
             File file = new File(attachment.config.getFilePath());
-            if (file.exists()) {
-                Uri imageUri = Uri.fromFile(file);
-                Glide.with(context)
-                        .load(imageUri)
-                        .into(binding.ivMedia);
-            } else {
-                Log.d(TAG, "There is no image from this path");
-            }
+            Uri imageUri = Uri.fromFile(file);
+            Glide.with(context)
+                    .load(imageUri)
+                    .into(binding.ivMedia);
+
             if (attachment.config.isSelected())
                 binding.ivSelectMark.setVisibility(View.VISIBLE);
             else

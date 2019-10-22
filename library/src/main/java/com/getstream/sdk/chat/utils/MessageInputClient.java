@@ -152,7 +152,7 @@ public class MessageInputClient {
                     });
                     binding.rvMedia.setAdapter(mediaAttachmentAdapter);
                 }else{
-                    Utils.showMessage(context, "There is no photo or video.");
+                    Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                     onClickCloseBackGroundView();
                 }
 
@@ -179,7 +179,7 @@ public class MessageInputClient {
                         updateComposerViewBySelectedFile(attachments, attachment);
                     });
                 } else {
-                    Utils.showMessage(context, "There is no file");
+                    Utils.showMessage(context, context.getResources().getString(R.string.stream_no_file_error));
                     onClickCloseBackGroundView();
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
