@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -347,6 +348,7 @@ public class ChannelState {
         this.members = members;
     }
 
+    @Nullable
     public Message getLastMessage() {
         if (lastMessage == null) {
             lastMessage = computeLastMessage();
@@ -354,7 +356,10 @@ public class ChannelState {
         return lastMessage;
     }
 
-    public void setLastMessage(Message lastMessage) {
+    public void setLastMessage(@Nullable  Message lastMessage) {
+
+        if(lastMessage == null) return;
+
         if (lastMessage.getDeletedAt() != null){
             this.lastMessage = computeLastMessage();
             return;
@@ -362,6 +367,7 @@ public class ChannelState {
         this.lastMessage = lastMessage;
     }
 
+    @Nullable
     public Message computeLastMessage() {
         Message lastMessage = null;
         List<Message> messages = getMessages();
