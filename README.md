@@ -257,6 +257,14 @@ StreamChat.getOnlineStatus().observe(...);
 - Threads
 - Slash commands
 - Offline support
+- Markdown messages formatting
+
+## Markdown support
+
+Markdown support is based on [Markwon: 4.1.1](https://github.com/noties/Markwon).
+Currently SDK doesn't support all `Markwon` features and limited to this plugins:
+- [CorePlugin](https://noties.io/Markwon/docs/v4/core/core-plugin.html)
+- [LinkifyPlugin](https://noties.io/Markwon/docs/v4/linkify/)
 
 ## FAQ
 

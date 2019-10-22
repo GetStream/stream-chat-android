@@ -351,7 +351,7 @@ public class Client implements WSResponseHandler {
         cacheUserToken = null;
 
         // clear local state
-        state.setCurrentUser(null);
+        state.reset();
         activeChannelMap.clear();
     }
 
@@ -783,17 +783,15 @@ public class Client implements WSResponseHandler {
      * edit the channel's custom properties.
      *
      * @param channel       the channel needs to update
-     * @param options       the custom properties
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void updateChannel(@NonNull Channel channel, @NotNull Map<String, Object> options,
-                              @Nullable String updateMessage, @NotNull ChannelCallback callback) {
+    public void updateChannel(@NonNull Channel channel, @Nullable Message updateMessage, @NotNull ChannelCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(options, updateMessage))
+                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
