@@ -534,7 +534,7 @@ public class Client implements WSResponseHandler {
 
         userDetails.put("id", getUserId());
         userDetails.put("name", getUser().getName());
-        userDetails.put("image", StringUtility.urlEncode(getUser().getImage(), ""));
+        userDetails.put("image", getUser().getImage());
 
         jsonParameter.put("user_details", userDetails);
         jsonParameter.put("user_id", getUserId());
@@ -545,7 +545,7 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
-            JSONObject json = buildUserDetailJSON();
+            String json = StringUtility.urlEncode(buildUserDetailJSON().toString(), "");
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                     + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
             Log.d(TAG, "WebSocket URL : " + wsURL);
