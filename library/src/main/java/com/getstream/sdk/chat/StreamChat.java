@@ -128,13 +128,13 @@ public class StreamChat {
         });
     }
 
-    public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context);
+    public static synchronized void init(String apiKey, Context context) {
+        init(apiKey, new ApiClientOptions(), context);
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, Context context) {
+    public static synchronized void init(String apiKey, ApiClientOptions apiClientOptions, Context context) {
         if (INSTANCE != null) {
-            throw new RuntimeException("StreamChat is already initialized!");
+            return;
         }
         Log.i(TAG, "calling init");
         synchronized (Client.class) {
@@ -183,6 +183,5 @@ public class StreamChat {
                 });
             }
         }
-        return true;
     }
 }
