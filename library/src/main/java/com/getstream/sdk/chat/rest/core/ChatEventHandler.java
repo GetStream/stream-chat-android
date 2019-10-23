@@ -8,6 +8,8 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 
 public abstract class ChatEventHandler {
 
+    public void onUserDisconnected() {}
+
     public void onUserPresenceChanged(Event event) {
     }
 
@@ -109,6 +111,10 @@ public abstract class ChatEventHandler {
     }
 
     public void handleEventFromUnregisteredChannel(Client client, Event event) {
+    }
+
+    final void dispatchUserDisconnected() {
+        onUserDisconnected();
     }
 
     final void dispatchChannelEvent(Client client, Event event, ChannelEvent channelEventLambda) {
