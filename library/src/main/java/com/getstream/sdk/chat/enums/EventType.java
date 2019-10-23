@@ -8,6 +8,8 @@ public enum EventType {
     USER_WATCHING_START("user.watching.start"),
     USER_WATCHING_STOP("user.watching.stop"),
     USER_UPDATED("user.updated"),
+    USER_BANNED("user.banned"),
+    USER_UNBANNED("user.unbanned"),
     TYPING_START("typing.start"),
     TYPING_STOP("typing.stop"),
     MESSAGE_NEW("message.new"),

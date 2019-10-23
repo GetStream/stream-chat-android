@@ -1,3 +1,7 @@
+## Upcoming
+
+- Add channel to list when the user is added
+
 ## Oct 23th, 2019 - 3.0.2
 
 - Fix NPE with restore from background and null users
