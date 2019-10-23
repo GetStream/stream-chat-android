@@ -185,6 +185,8 @@ public class Utils {
                         attachment.setMime_type(ModelType.attach_mime_mp3);
                     }
 
+                    if (!file.exists()) continue;
+
                     if (attachment.getMime_type() != null) {
                         attachment.setType(ModelType.attach_file);
                         attachment.setTitle(file.getName());
@@ -240,6 +242,8 @@ public class Utils {
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
             int type = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
             int t = imagecursor.getInt(type);
+            File file = new File(imagecursor.getString(dataColumnIndex));
+            if (!file.exists()) continue;
             attachment.config.setFilePath(imagecursor.getString(dataColumnIndex));
 
             if (t == Constant.MEDIA_TYPE_IMAGE) {
@@ -248,7 +252,8 @@ public class Utils {
                 float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
                 attachment.setType(ModelType.attach_file);
                 attachment.setMime_type(ModelType.attach_mime_mp4);
-                attachment.config.setVideoLengh((int) (videolengh / 1000));            ;
+                attachment.config.setVideoLengh((int) (videolengh / 1000));
+
             }
             attachments.add(attachment);
         }
