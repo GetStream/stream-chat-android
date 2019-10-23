@@ -254,6 +254,7 @@ public class ChannelState {
             List<User> top3 = users.subList(0, Math.min(3, users.size()));
             List<String> usernames = new ArrayList<>();
             for (User u : top3) {
+                if(u == null) continue;
                 usernames.add(u.getName());
             }
 
