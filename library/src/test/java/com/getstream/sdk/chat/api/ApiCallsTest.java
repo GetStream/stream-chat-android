@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
+import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -315,13 +316,44 @@ class ApiCallsTest {
         RecordedRequest recordedRequest = mockWebServer.takeRequest();
         //Check request
         assertEquals("/moderation/ban?api_key=" + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID +
-                "&target_user_id=" + targetUserId + "&type=" + channelType + "&id=" + channelId,
+                        "&target_user_id=" + targetUserId + "&type=" + channelType + "&id=" + channelId,
                 recordedRequest.getPath());
         //Check response
         assertNotNull(response.body().getDuration());
     }
 
-    //TODO queryChannels
+    @Test
+    void queryChannelsSuccessTest() throws IOException, InterruptedException {
+        String testUserId = "testUserId";
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("query_channels_success.json").getContent()
+        ));
+        Response<QueryChannelsResponse> response = service.queryChannels(TEST_API_KEY,
+                testUserId, TEST_CLIENT_ID, "").execute();
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels?api_key=" + TEST_API_KEY + "&user_id=" + testUserId +
+                        "&client_id=" + TEST_CLIENT_ID + "&payload=",
+                recordedRequest.getPath());
+        //Check response
+        assertEquals(2, response.body().getChannelStates().size());
+    }
+
+    @Test
+    void queryChannelSuccessTest() throws IOException, InterruptedException {
+        String testUserId = "testUserId";
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("query_channels_success.json").getContent()
+        ));
+        Response<QueryChannelsResponse> response = service.queryChannels(TEST_API_KEY,
+                testUserId, TEST_CLIENT_ID, "").execute();
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels?api_key=" + TEST_API_KEY + "&user_id=" + testUserId +
+                        "&client_id=" + TEST_CLIENT_ID + "&payload=",
+                recordedRequest.getPath());
+        //Check response
+        assertEquals(2, response.body().getChannelStates().size());
+    }
+
     //TODO queryChannel
     //TODO queryUsers
     //TODO muteUser

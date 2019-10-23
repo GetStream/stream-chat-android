@@ -715,11 +715,13 @@ public class Client implements WSResponseHandler {
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
         Client m = this;
+        request = request.withLimit(2).withMessageLimit(1);
+        QueryChannelsRequest finalRequest = request;
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 String userID = user.getId();
-                String payload = GsonConverter.Gson().toJson(request);
+                String payload = GsonConverter.Gson().toJson(finalRequest);
 
                 mService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
@@ -738,7 +740,7 @@ public class Client implements WSResponseHandler {
                                 addToActiveChannels(channel);
                             }
                             channel.mergeWithState(channelState);
-                            if (request.isWatch()) {
+                            if (finalRequest.isWatch()) {
                                 channel.setInitialized(true);
                             }
 
@@ -747,7 +749,7 @@ public class Client implements WSResponseHandler {
                         }
 
                         // store the results of the query
-                        QueryChannelsQ query = request.query();
+                        QueryChannelsQ query = finalRequest.query();
 
                         List<Channel> channels = response.body().getChannels();
 
