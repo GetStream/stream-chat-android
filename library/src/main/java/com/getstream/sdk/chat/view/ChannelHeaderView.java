@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
@@ -79,7 +81,11 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void setHeaderTitle(ChannelState channelState) {
-        binding.setChannelName(channelState.getChannelNameOrMembers());
+        String channelName = channelState.getChannelNameOrMembers();
+        if (TextUtils.isEmpty(channelName))
+            channelName = getContext().getResources().getString(R.string.stream_title_channel_unknown);
+
+        binding.setChannelName(channelName);
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {

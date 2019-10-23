@@ -24,6 +24,7 @@
     <!--Chat Screen-->
     <string name="stream_title_media">Select your photo or video</string>
     <string name="stream_title_file">Select your file</string>
+    <string name="stream_title_channel_unknown">Unknown</string>
     <!--Error-->
     <string name="stream_title_error">Error!</string>
     <string name="stream_no_media_error">There is no photo or video.</string>
