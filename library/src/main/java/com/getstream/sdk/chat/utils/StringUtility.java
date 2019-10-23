@@ -78,13 +78,4 @@ public class StringUtility {
         }
         return salt.toString();
     }
-
-    public static String urlEncode(String value, String errorValue) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (Throwable t) {
-            Log.d(TAG, t.getMessage());
-            return errorValue;
-        }
-    }
 }
