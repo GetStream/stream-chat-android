@@ -49,16 +49,14 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final Boolean offlineEnabled = false;
-    final String USER_ID = "bender";
-    // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
+
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
 
-        Crashlytics.setUserIdentifier(USER_ID);
+        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
         if (offlineEnabled) {
             client.enableOfflineStorage();
         }
@@ -66,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Bender");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("name", BuildConfig.USER_NAME);
+        extraData.put("image", BuildConfig.USER_IMAGE);
 
-        User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
+        User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
