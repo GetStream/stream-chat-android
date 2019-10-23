@@ -310,6 +310,16 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             }
 
             @Override
+            public void onNotificationAddedToChannel(Channel channel, Event event) {
+                upsertChannel(channel);
+            }
+
+            @Override
+            public void onNotificationRemovedFromChannel(Channel channel, Event event) {
+                deleteChannel(channel);
+            }
+
+            @Override
             public void onMessageNew(Channel channel, Event event) {
                 Message lastMessage = channel.getChannelState().getLastMessage();
                 Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
