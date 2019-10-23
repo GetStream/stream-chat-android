@@ -1,3 +1,7 @@
+## Oct 23th, 2019 - 3.0.2
+
+- Fix NPE with restore from background and null users
+
 ## Oct 22th, 2019 - 3.0.1
 
 - Fix NPE with empty channel lists
