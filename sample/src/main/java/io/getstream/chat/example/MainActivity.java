@@ -48,12 +48,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final Boolean offlineEnabled = false;
-    final String USER_ID = "bender";
-    // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
-
-    final String USER1_ID = "broken-waterfall-5";
-    final String USER1_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
 
     private ActivityMainBinding binding;
     private ChannelListViewModel viewModel;
@@ -62,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
 
-        Crashlytics.setUserIdentifier(USER_ID);
+        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
         if (offlineEnabled) {
             client.enableOfflineStorage();
         }
@@ -70,11 +64,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Bender");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("name", BuildConfig.USER_NAME);
+        extraData.put("image", BuildConfig.USER_IMAGE);
 
-        User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
+        User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
@@ -134,12 +128,12 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(this::showCreateNewChannelDialog);
-        binding.ivSwitchUser.setOnClickListener(this::showSwitchUserDialog);
+        binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
+        binding.ivSwitchUser.setOnClickListener(view -> showSwitchUserDialog());
     }
 
     // region create new channel
-    void showCreateNewChannelDialog(View view) {
+    void showCreateNewChannelDialog() {
         final EditText inputName = new EditText(this);
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
@@ -201,7 +195,10 @@ public class MainActivity extends AppCompatActivity {
     // endregion
 
     // region switch user
-    void showSwitchUserDialog(View view) {
+    void showSwitchUserDialog() {
+        final String USER1_ID = "broken-waterfall-5";
+        final String USER1_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg";
+
         final AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Log in with another account!")
                 .setMessage("New user id is " + USER1_ID)
