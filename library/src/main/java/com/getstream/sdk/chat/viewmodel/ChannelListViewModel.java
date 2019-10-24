@@ -89,7 +89,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         sort = new QuerySort().desc("last_message_at");
 
         setupConnectionRecovery();
-        setEventHandler(new EventHandler((event, channel) -> EventInterceptorAction.CONTINUE));
+        setEventHandler(new EventHandler((event, channel) -> false));
 
         new StreamLifecycleObserver(this);
         retryLooper = new Handler();
@@ -307,21 +307,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     /*
-    * EventInterceptor implementations will receive all events (and channel when applicable) to add
-    * custom behavior.
-    *
-    * handleEvent return type tells the view model what to do next: continue with event handling or
-    * stop any processing.
-    *
-    * This allows the developer to disable some built-in mechanism like automatically add a new
-    * channel to the list.
-    */
+     * EventInterceptor implementations will receive all events (and channel when applicable) to add
+     * custom behavior.
+     *
+     * shouldDiscard informs the view model what to do next: continue with event handling or
+     * ignore the event.
+     *
+     * This allows the developer to disable some built-in mechanism like automatically add a new
+     * channel to the list.
+     */
     public interface EventInterceptor {
-        EventInterceptorAction handleEvent(Event event, @Nullable Channel channel);
-    }
-
-    public enum EventInterceptorAction {
-        CONTINUE, STOP
+        boolean shouldDiscard(Event event, @Nullable Channel channel);
     }
 
     public class EventHandler extends ChatEventHandler {
@@ -345,73 +341,73 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         @Override
         public void onNotificationMessageNew(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             upsertChannel(channel);
         }
 
         @Override
         public void onNotificationAddedToChannel(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             upsertChannel(channel);
         }
 
         @Override
         public void onNotificationRemovedFromChannel(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             deleteChannel(channel);
         }
 
         @Override
         public void onMessageNew(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageUpdated(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageDeleted(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
 
         @Override
         public void onChannelDeleted(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             deleteChannel(channel);
         }
 
         @Override
         public void onChannelUpdated(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
 
         @Override
         public void onMessageRead(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
 
         @Override
         public void onMemberAdded(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
 
         @Override
         public void onMemberUpdated(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
 
         @Override
         public void onMemberRemoved(Channel channel, Event event) {
-            if (interceptor.handleEvent(event, channel) == EventInterceptorAction.STOP) return;
+            if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
     }

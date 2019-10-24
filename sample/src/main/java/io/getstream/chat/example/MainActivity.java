@@ -125,11 +125,9 @@ public class MainActivity extends AppCompatActivity {
         // Example on how to ignore some events handled by the VM
         //    viewModel.setEventInterceptor((event, channel) -> {
         //        if (event.getType() == EventType.NOTIFICATION_MESSAGE_NEW && event.getMessage() != null) {
-        //            if (client.getUser().hasMuted(event.getMessage().getUser())) {
-        //                return ChannelListViewModel.EventInterceptorAction.STOP;
-        //            }
+        //            return client.getUser().hasMuted(event.getMessage().getUser());
         //        }
-        //        return ChannelListViewModel.EventInterceptorAction.CONTINUE;
+        //        return false;
         //    });
 
         // set the viewModel data for the activity_main.xml layout
