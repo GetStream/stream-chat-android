@@ -1,15 +1,20 @@
 package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 public class StringUtility {
+
+    private static final String TAG = StringUtility.class.getSimpleName();
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
