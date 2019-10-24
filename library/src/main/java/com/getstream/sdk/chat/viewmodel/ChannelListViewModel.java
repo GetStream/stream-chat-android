@@ -72,6 +72,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
+        Log.d(TAG, "instance created");
+
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
         initialized = new AtomicBoolean(false);
@@ -139,6 +141,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     @Override
     protected void onCleared() {
         super.onCleared();
+
+        Log.d(TAG, "onCleared");
+
         if (subscriptionId != 0) {
             client().removeEventHandler(subscriptionId);
         }
@@ -255,13 +260,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
+        Log.d(TAG, "resume");
 //        if (!initialized.get() || !client().isConnected())
 //            setLoading();
     }
 
     @Override
     public void stopped() {
-
+        Log.d(TAG, "stopped");
     }
 
     private void setupConnectionRecovery() {

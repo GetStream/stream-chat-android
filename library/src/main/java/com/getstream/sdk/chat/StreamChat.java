@@ -76,7 +76,7 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-
+                Log.d(TAG, "handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
