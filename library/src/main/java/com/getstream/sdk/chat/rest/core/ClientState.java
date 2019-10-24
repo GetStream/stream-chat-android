@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClientState {
 
-
     private static final String TAG = ClientState.class.getSimpleName();
 
     @NotNull

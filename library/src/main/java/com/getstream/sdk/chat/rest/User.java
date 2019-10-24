@@ -274,6 +274,20 @@ public class User implements UserEntity {
         this.invisible = invisible;
     }
 
+
+    /**
+     * Returns true if the other user is muted
+     */
+    public boolean hasMuted(User user) {
+        if (mutes == null || mutes.size() == 0)
+            return false;
+        for (Mute mute : getMutes()) {
+            if (mute.getTarget().getId().equals(user.getId()))
+                return true;
+        }
+        return false;
+    }
+
     public List<Mute> getMutes() {
         return mutes;
     }
