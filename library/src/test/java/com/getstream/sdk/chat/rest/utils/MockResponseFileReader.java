@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.api.utils;
+package com.getstream.sdk.chat.rest.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

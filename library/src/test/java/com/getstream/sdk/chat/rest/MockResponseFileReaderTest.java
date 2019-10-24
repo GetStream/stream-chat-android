@@ -1,6 +1,6 @@
-package com.getstream.sdk.chat.api;
+package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.api.utils.MockResponseFileReader;
+import com.getstream.sdk.chat.rest.utils.MockResponseFileReader;
 
 import org.junit.jupiter.api.Test;
 

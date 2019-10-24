@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.api.utils;
+package com.getstream.sdk.chat.rest.utils;
 
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 
