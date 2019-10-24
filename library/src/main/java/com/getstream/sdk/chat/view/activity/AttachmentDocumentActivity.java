@@ -72,13 +72,19 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
+            if (view.getTitle().equals("")){
+                view.reload();
+                return;
+            }
             progressBar.setVisibility(View.GONE);
         }
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
-            if (error == null) return;
+            if (error == null){
+                Log.e(TAG, "The load failed due to an unknown error.");
+                return;
+            }
 
             Log.e(TAG, error.toString());
             Utils.showMessage(AttachmentDocumentActivity.this, error.toString());
