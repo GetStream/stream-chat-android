@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -78,6 +79,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -549,7 +551,17 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
-            JSONObject json = buildUserDetailJSON();
+
+            String json = buildUserDetailJSON().toString();
+
+            try{
+                json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            }catch (Throwable throwable){
+                throwable.printStackTrace();
+                onError("Unable to encode user details json: " + json, ClientErrorCode.JSON_ENCODING);
+                return;
+            }
+
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                     + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
             Log.d(TAG, "WebSocket URL : " + wsURL);
@@ -602,11 +614,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onError(WsErrorMessage error) {
-        // call onError for everyone
+        onError(error.getError().getMessage(), error.getError().getCode());
+    }
+
+    private void onError(String errMsg, int errCode) {
         List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
         connectSubRegistery.clear();
         for (ClientConnectionCallback waiter : subs) {
-            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+            waiter.onError(errMsg, errCode);
         }
     }
 
