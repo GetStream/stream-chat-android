@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
             // TODO: open your user profile
         });
     }
-}```
+}
+```
 
 #### Listeners
 
