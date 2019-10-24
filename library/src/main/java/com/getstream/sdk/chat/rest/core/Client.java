@@ -262,6 +262,8 @@ public class Client implements WSResponseHandler {
         this.options = options;
         this.state = new ClientState(this);
 
+        Log.d(TAG, "instance created: " + apiKey);
+
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
@@ -337,6 +339,8 @@ public class Client implements WSResponseHandler {
     public synchronized void disconnect() {
         if (state.getCurrentUser() == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
+        } else {
+            Log.d(TAG, "disconnecting");
         }
 
         disconnectWebSocket();
@@ -385,6 +389,8 @@ public class Client implements WSResponseHandler {
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
+        } else {
+            Log.d(TAG, "setting user: " + user.getId());
         }
 
         state.setCurrentUser(user);
@@ -1900,7 +1906,7 @@ public class Client implements WSResponseHandler {
      * closes the WebSocket connection and sends a connection.change event to all listeners
      */
     public synchronized void disconnectWebSocket() {
-        Log.i(TAG, "disconnecting");
+        Log.i(TAG, "disconnecting websocket");
         if (WSConn != null) {
             WSConn.disconnect();
             WSConn = null;
