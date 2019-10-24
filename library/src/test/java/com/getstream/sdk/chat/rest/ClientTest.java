@@ -6,7 +6,9 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.utils.MockResponseFileReader;
 import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
@@ -20,12 +22,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /*
  * Created by Anton Bevza on 2019-10-23.
@@ -58,6 +62,142 @@ public class ClientTest {
                 webSocketServiceProvider,
                 new UploadStorageProvider(testApiClientOptions),
                 null);
+    }
+
+    @Test
+    void updateChannelSuccessTest() throws IOException, InterruptedException {
+        simulateConnection();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("channel_success.json").getContent()
+        ));
+        final Object syncObject = new Object();
+        ChannelCallback callback = new ChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                assertNotNull(response.getChannel());
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        };
+        HashMap<String, Object> extraFields = new HashMap<>();
+        extraFields.put("name", "testName");
+        extraFields.put("title", "testTitle");
+        Channel channel = new Channel(client, "testType", "testId", extraFields);
+        Message message = new Message();
+        message.setText("test message");
+        client.updateChannel(channel, message, callback);
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels/testType/testId?api_key="
+                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
+        String expectedBody = "{\"data\":{\"name\":\"testName\",\"title\":\"testTitle\"}," +
+                "\"message\":{\"attachments\":[],\"text\":\"test message\"}}";
+        assertEquals(expectedBody, recordedRequest.getBody().readUtf8());
+
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
+    }
+
+    @Test
+    void deleteChannelSuccessTest() throws IOException, InterruptedException {
+        simulateConnection();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("channel_success.json").getContent()
+        ));
+        final Object syncObject = new Object();
+        ChannelCallback callback = new ChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                assertNotNull(response.getChannel());
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        };
+        Channel channel = new Channel(client, "testType", "testId");
+        client.deleteChannel(channel, callback);
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels/testType/testId?api_key=" + TEST_API_KEY +
+                "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
+
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
+    }
+
+    @Test
+    void hideChannelSuccessTest() throws IOException, InterruptedException {
+        simulateConnection();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("completable_success.json").getContent()
+        ));
+        final Object syncObject = new Object();
+        CompletableCallback callback = new CompletableCallback() {
+            @Override
+            public void onSuccess(CompletableResponse response) {
+                assertEquals("999", response.getDuration());
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        };
+        client.hideChannel(new Channel(client, "testType", "testId"), callback);
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels/testType/testId/hide?api_key="
+                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
+        assertEquals("{}", recordedRequest.getBody().readUtf8());
+
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
+    }
+
+    @Test
+    void showChannelSuccessTest() throws IOException, InterruptedException {
+        simulateConnection();
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
+                new MockResponseFileReader("completable_success.json").getContent()
+        ));
+        final Object syncObject = new Object();
+        CompletableCallback callback = new CompletableCallback() {
+            @Override
+            public void onSuccess(CompletableResponse response) {
+                assertEquals("999", response.getDuration());
+                synchronized (syncObject) {
+                    syncObject.notify();
+                }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+
+            }
+        };
+        client.showChannel(new Channel(client, "testType", "testId"), callback);
+        RecordedRequest recordedRequest = mockWebServer.takeRequest();
+        assertEquals("/channels/testType/testId/show?api_key="
+                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
+        assertEquals("{}", recordedRequest.getBody().readUtf8());
+
+        synchronized (syncObject) {
+            syncObject.wait();
+        }
     }
 
     @Test
