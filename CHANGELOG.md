@@ -1,3 +1,17 @@
+## Upcoming
+
+- Add channel to list when the user is added
+- Add `onUserDisconnected` event
+- Make sure channel list view model is cleared when the user disconnects
+
+## Oct 23th, 2019 - 3.0.2
+
+- Fix NPE with restore from background and null users
+
+## Oct 22th, 2019 - 3.0.1
+
+- Fix NPE with empty channel lists
+
 ## Oct 21th, 2019 - 3.0.0
 
 - Added support for message search `client.searchMessages`
