@@ -1,15 +1,17 @@
 package com.getstream.sdk.chat.rest;
 
-import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
+import com.getstream.sdk.chat.rest.utils.MockResponseFileReader;
 import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
+import com.getstream.sdk.chat.rest.utils.TestCachedTokenProvider;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -33,7 +35,7 @@ class RetrofitClientTest {
     private APIService service;
 
     @Spy
-    private TestTokenProvider testTokenProvider = new TestTokenProvider();
+    private TestCachedTokenProvider testTokenProvider = new TestCachedTokenProvider();
 
     @BeforeEach
     void initTest() throws IOException {
@@ -42,7 +44,7 @@ class RetrofitClientTest {
         mockWebServer.start();
         TestApiClientOptions testApiClientOptions =
                 new TestApiClientOptions(mockWebServer.url("/").toString());
-        service = RetrofitClient.getAuthorizedClient((CachedTokenProvider) testTokenProvider, testApiClientOptions)
+        service = RetrofitClient.getAuthorizedClient(testTokenProvider, testApiClientOptions)
                 .create(APIService.class);
     }
 
@@ -68,4 +70,17 @@ class RetrofitClientTest {
         assertEquals(TestTokenProvider.TEST_TOKEN, request.getHeader("Authorization"));
     }
 
+    @Test
+    void tokenExpiredTest() throws IOException {
+        mockWebServer.enqueue(new MockResponse().setResponseCode(403).setBody(
+                new MockResponseFileReader("token_expired_error.json").getContent()
+        ));
+        try {
+            //any request
+            service.queryUsers(null, null, null).execute();
+        } catch (IOException e) {
+            //ignore
+        }
+        Mockito.verify(testTokenProvider).tokenExpired();
+    }
 }
