@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.getstream.sdk.chat.R;
@@ -33,7 +34,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int optionsButtonHeight;
     private boolean activeBadgeShow;
     private String offlineText;
-
+    private String titleWithoutNameText;
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -42,6 +43,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
                 R.styleable.ChannelHeaderView, 0, 0);
 
         // Channel Title
+        titleWithoutNameText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderWithOutNameTitleText);
         channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD);
@@ -51,7 +53,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark));
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
-        offlineText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineTextStyle);
+        offlineText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText);
 
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width));
@@ -86,6 +88,10 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         optionsButtonHeight = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonHeight, getDimension(R.dimen.stream_channel_avatar_height));
 
         a.recycle();
+    }
+
+    public String getTitleWithoutNameText() {
+        return !TextUtils.isEmpty(titleWithoutNameText) ? titleWithoutNameText : context.getString(R.string.stream_channel_unknown_title);
     }
 
     public int getChannelTitleTextSize() {
@@ -153,6 +159,6 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public String getOfflineText() {
-        return offlineText != null ? offlineText : "Waiting for network...";
+        return offlineText != null ? offlineText : context.getString(R.string.stream_channel_offlineText);
     }
 }

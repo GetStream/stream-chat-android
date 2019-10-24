@@ -199,20 +199,22 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 
 - **Header Title**
 
-| Properties                                       | Type                 | Default    |
-| ------------------------------------------------ | -------------------- | ---------- |
-| `app:streamChannelHeaderTitleTextSize`           | dimension            | 16sp       |
-| `app:streamChannelHeaderTitleTextColor`          | color                | BLACK      |
-| `app:streamChannelHeaderTitleTextStyle`          | normal, bold, italic | bold       |
+| Properties                                       | Type                 | Default              |
+| ------------------------------------------------ | -------------------- | -------------------- |
+| `app:streamChannelHeaderWithOutNameTitleText`    | string               | Channel without name |
+| `app:streamChannelHeaderTitleTextSize`           | dimension            | 16sp                 |
+| `app:streamChannelHeaderTitleTextColor`          | color                | BLACK                |
+| `app:streamChannelHeaderTitleTextStyle`          | normal, bold, italic | bold                 |
 		
 - **Last Active**
 
-| Properties                                       | Type                 | Default    |
-| ------------------------------------------------ | -------------------- | ---------- |
-| `app:streamChannelHeaderLastActiveShow`          | boolean              | true       |
-| `app:streamChannelHeaderLastActiveTextSize`      | dimension            | 16sp       |
-| `app:streamChannelHeaderLastActiveTextColor`     | color                | DKGRAY     |
-| `app:streamChannelHeaderLastActiveTextStyle`     | normal, bold, italic | normal     |
+| Properties                                       | Type                 | Default                |
+| ------------------------------------------------ | -------------------- | ---------------------- |
+| `app:streamChannelHeaderOfflineText`             | string               | Waiting for network... |
+| `app:streamChannelHeaderLastActiveShow`          | boolean              | true                   |
+| `app:streamChannelHeaderLastActiveTextSize`      | dimension            | 11sp                   |
+| `app:streamChannelHeaderLastActiveTextColor`     | color                | DKGRAY                 |
+| `app:streamChannelHeaderLastActiveTextStyle`     | normal, bold, italic | normal                 |
 
 
 - **Back Button**

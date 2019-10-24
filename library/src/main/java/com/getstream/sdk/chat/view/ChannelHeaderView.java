@@ -82,10 +82,7 @@ public class ChannelHeaderView extends RelativeLayout {
 
     protected void setHeaderTitle(ChannelState channelState) {
         String channelName = channelState.getChannelNameOrMembers();
-        if (TextUtils.isEmpty(channelName))
-            channelName = getContext().getResources().getString(R.string.stream_title_channel_unknown);
-
-        binding.setChannelName(channelName);
+        binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getTitleWithoutNameText());
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {
