@@ -365,6 +365,11 @@ public class Client implements WSResponseHandler {
         fetchingToken = false;
         cacheUserToken = null;
 
+        builtinHandler.dispatchUserDisconnected();
+        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
+            handler.dispatchUserDisconnected();
+        }
+
         // clear local state
         state.reset();
         activeChannelMap.clear();

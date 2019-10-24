@@ -97,7 +97,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     private void configUserAvatars() {
         double factor_;
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
-            for (int i = 0; i < (lastActiveUsers.size() < 4 ? lastActiveUsers.size() : 3); i++) {
+            for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
                     configAvatar(user_.getImage(), user_.getInitials());

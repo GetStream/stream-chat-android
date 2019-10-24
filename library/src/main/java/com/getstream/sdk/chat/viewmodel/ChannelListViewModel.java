@@ -292,7 +292,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     private void initEventHandlers() {
+
         subscriptionId = client().addEventHandler(new ChatEventHandler() {
+
+            @Override
+            public void onUserDisconnected() {
+                clean();
+            }
+
             @Override
             public void onConnectionChanged(Event event) {
                 if (!event.getOnline()) {
@@ -307,6 +314,16 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
                 Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
                 upsertChannel(channel);
+            }
+
+            @Override
+            public void onNotificationAddedToChannel(Channel channel, Event event) {
+                upsertChannel(channel);
+            }
+
+            @Override
+            public void onNotificationRemovedFromChannel(Channel channel, Event event) {
+                deleteChannel(channel);
             }
 
             @Override
@@ -568,19 +585,22 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
+    private void clean() {
+        retryLooper.removeCallbacksAndMessages(null);
+        initialized.set(true);
+        channels.postValue(new ArrayList<>());
+        setLoadingDone();
+        setLoadingMoreDone();
+        reachedEndOfPagination = false;
+    }
+
     /**
      * Reloads the state of the view model
      */
     public void reload() {
-        retryLooper.removeCallbacksAndMessages(null);
-        initialized.set(true);
-
-        setLoadingDone();
-        setLoadingMoreDone();
-
-        channels.postValue(new ArrayList<>());
+        clean();
         queryChannels();
-        reachedEndOfPagination = false;
+
     }
 
     public QueryChannelListCallback getQueryChannelListCallback() {
