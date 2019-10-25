@@ -136,6 +136,8 @@ public class ClientTest {
         }
     }
 
+
+
     @Test
     void hideChannelSuccessTest() throws IOException, InterruptedException {
         simulateConnection();

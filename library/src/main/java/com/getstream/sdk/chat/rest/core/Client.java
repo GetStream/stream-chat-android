@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -79,6 +80,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -271,6 +273,8 @@ public class Client implements WSResponseHandler {
         this.uploadStorageProvider = uploadStorageProvider;
         this.state = new ClientState(this);
 
+        Log.d(TAG, "instance created: " + apiKey);
+
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
@@ -356,6 +360,8 @@ public class Client implements WSResponseHandler {
     public synchronized void disconnect() {
         if (state.getCurrentUser() == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
+        } else {
+            Log.d(TAG, "disconnecting");
         }
 
         disconnectWebSocket();
@@ -404,6 +410,8 @@ public class Client implements WSResponseHandler {
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
+        } else {
+            Log.d(TAG, "setting user: " + user.getId());
         }
 
         state.setCurrentUser(user);
@@ -550,10 +558,14 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
-            apiService = apiServiceProvider.provideApiService(tokenProvider);
-            uploadStorage = uploadStorageProvider.provideApiService(tokenProvider, this);
-            webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
-            webSocketService.connect();
+            try {
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
+                apiService = apiServiceProvider.provideApiService(tokenProvider);
+                uploadStorage = uploadStorageProvider.provideApiService(tokenProvider, this);
+                webSocketService.connect();
+            } catch (UnsupportedEncodingException e) {
+                onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+            }
         });
     }
 
@@ -598,11 +610,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onError(WsErrorMessage error) {
-        // call onError for everyone
+        onError(error.getError().getMessage(), error.getError().getCode());
+    }
+
+    private void onError(String errMsg, int errCode) {
         List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
         connectSubRegistery.clear();
         for (ClientConnectionCallback waiter : subs) {
-            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+            waiter.onError(errMsg, errCode);
         }
     }
 
@@ -1896,7 +1911,7 @@ public class Client implements WSResponseHandler {
      * closes the WebSocket connection and sends a connection.change event to all listeners
      */
     public synchronized void disconnectWebSocket() {
-        Log.i(TAG, "disconnecting");
+        Log.i(TAG, "disconnecting websocket");
         if (webSocketService != null) {
             webSocketService.disconnect();
             webSocketService = null;
