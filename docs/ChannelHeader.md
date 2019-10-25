@@ -211,7 +211,7 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 
 | Properties                                       | Type                 | Default              |
 | ------------------------------------------------ | -------------------- | -------------------- |
-| `app:streamChannelHeaderWithOutNameTitleText`    | string               | Channel without name |
+| `app:streamChannelWithOutNameTitleText`          | string               | Channel without name |
 | `app:streamChannelHeaderTitleTextSize`           | dimension            | 16sp                 |
 | `app:streamChannelHeaderTitleTextColor`          | color                | BLACK                |
 | `app:streamChannelHeaderTitleTextStyle`          | normal, bold, italic | bold                 |
