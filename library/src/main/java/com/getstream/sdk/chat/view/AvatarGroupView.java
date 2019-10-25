@@ -65,7 +65,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         this.lastActiveUsers = null;
         configUIs();
     }
-    String imgur = "https://drive.google.com/file/d/1bF4fvtVhYqgZc6e72K5YEYTPm1VGb1L_/view?usp=sharing";
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
@@ -80,15 +79,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
             configAvatar(user.getImage(), user.getInitials());
         } else if (!TextUtils.isEmpty(channel.getImage())) {
             configAvatar(channel.getImage(), channel.getInitials());
-//            ImageView imageView = new ImageView(context);
-//            Utils.circleImageLoad(imageView, channel.getImage());
-//
-//            RelativeLayout.LayoutParams params_;
-//            params_ = new RelativeLayout.LayoutParams(
-//                    (style.getAvatarWidth()),
-//                    (style.getAvatarHeight()));
-//            imageView.setLayoutParams(params_);
-//            this.addView(imageView);
         } else {
             configUserAvatars();
         }
@@ -99,7 +89,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
             for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
-                if (i == 0) user_.setImage(imgur);
                 if (lastActiveUsers.size() == 1) {
                     configAvatar(user_.getImage(), user_.getInitials());
                 } else {
