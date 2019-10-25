@@ -188,12 +188,17 @@ public class ChannelState {
     }
 
     public List<User> getOtherUsers() {
+
+        Log.d(TAG, "getOtherUsers");
+
         List<User> users = new ArrayList<>();
 
         if (members != null) {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
-                    users.add(channel.getClient().getState().getUser(m.getUser().getId()));
+                    User user = channel.getClient().getState().getUser(m.getUser().getId());
+                    Log.d(TAG, "getOtherUsers: member: " + user);
+                    users.add(user);
                 }
             }
         }
@@ -201,7 +206,9 @@ public class ChannelState {
         if (watchers != null) {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
-                    users.add(channel.getClient().getState().getUser(w.getUser().getId()));
+                    User user = channel.getClient().getState().getUser(w.getUser().getId());
+                    Log.d(TAG, "getOtherUsers: watcher: " + user);
+                    users.add(user);
                 }
             }
         }

@@ -38,6 +38,7 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
+import static java.util.UUID.randomUUID;
 
 
 /**
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
-
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", BuildConfig.USER_NAME);
         extraData.put("image", BuildConfig.USER_IMAGE);
@@ -81,6 +81,15 @@ public class MainActivity extends AppCompatActivity {
         });
         return client;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = and(eq("type", "messaging"));
+        viewModel.setChannelFilter(filter);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +121,16 @@ public class MainActivity extends AppCompatActivity {
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
+
+
+        // Example on how to ignore some events handled by the VM
+        //    viewModel.setEventInterceptor((event, channel) -> {
+        //        if (event.getType() == EventType.NOTIFICATION_MESSAGE_NEW && event.getMessage() != null) {
+        //            return client.getUser().hasMuted(event.getMessage().getUser());
+        //        }
+        //        return false;
+        //    });
+
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 

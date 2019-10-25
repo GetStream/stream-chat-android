@@ -140,6 +140,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     public ChannelViewModel(@NonNull Application application) {
         super(application);
+
+        Log.d(TAG, "instance created");
+
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
@@ -770,18 +773,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
+        Log.d(TAG, "resume");
 //        if (channel != null && channel.isInitialized())
 //            setLoading();
     }
 
     @Override
     public void stopped() {
-
+        Log.d(TAG, "stopped");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
+
+        Log.d(TAG, "onCleared");
 
         if (looper != null) {
             looper.interrupt();

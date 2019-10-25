@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -78,6 +79,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -262,6 +264,8 @@ public class Client implements WSResponseHandler {
         this.options = options;
         this.state = new ClientState(this);
 
+        Log.d(TAG, "instance created: " + apiKey);
+
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
@@ -337,6 +341,8 @@ public class Client implements WSResponseHandler {
     public synchronized void disconnect() {
         if (state.getCurrentUser() == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
+        } else {
+            Log.d(TAG, "disconnecting");
         }
 
         disconnectWebSocket();
@@ -345,6 +351,11 @@ public class Client implements WSResponseHandler {
         tokenProvider = null;
         fetchingToken = false;
         cacheUserToken = null;
+
+        builtinHandler.dispatchUserDisconnected();
+        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
+            handler.dispatchUserDisconnected();
+        }
 
         // clear local state
         state.reset();
@@ -380,6 +391,8 @@ public class Client implements WSResponseHandler {
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
+        } else {
+            Log.d(TAG, "setting user: " + user.getId());
         }
 
         state.setCurrentUser(user);
@@ -544,7 +557,17 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
-            JSONObject json = buildUserDetailJSON();
+
+            String json = buildUserDetailJSON().toString();
+
+            try{
+                json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            }catch (Throwable throwable){
+                throwable.printStackTrace();
+                onError("Unable to encode user details json: " + json, ClientErrorCode.JSON_ENCODING);
+                return;
+            }
+
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                     + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
             Log.d(TAG, "WebSocket URL : " + wsURL);
@@ -597,11 +620,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onError(WsErrorMessage error) {
-        // call onError for everyone
+        onError(error.getError().getMessage(), error.getError().getCode());
+    }
+
+    private void onError(String errMsg, int errCode) {
         List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
         connectSubRegistery.clear();
         for (ClientConnectionCallback waiter : subs) {
-            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+            waiter.onError(errMsg, errCode);
         }
     }
 
@@ -1895,7 +1921,7 @@ public class Client implements WSResponseHandler {
      * closes the WebSocket connection and sends a connection.change event to all listeners
      */
     public synchronized void disconnectWebSocket() {
-        Log.i(TAG, "disconnecting");
+        Log.i(TAG, "disconnecting websocket");
         if (WSConn != null) {
             WSConn.disconnect();
             WSConn = null;
