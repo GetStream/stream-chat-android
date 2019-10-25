@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.rest;
 
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
-import com.getstream.sdk.chat.rest.utils.MockResponseFileReader;
 import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
 import com.getstream.sdk.chat.rest.utils.TestCachedTokenProvider;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
@@ -73,7 +72,7 @@ class RetrofitClientTest {
     @Test
     void tokenExpiredTest() throws IOException {
         mockWebServer.enqueue(new MockResponse().setResponseCode(403).setBody(
-                new MockResponseFileReader("token_expired_error.json").getContent()
+                "{\"code\":40}"
         ));
         try {
             //any request
