@@ -30,4 +30,14 @@ public class UpdateChannelRequest {
         this.data = data;
         this.updateMessage = updateMessage;
     }
+
+    @NotNull
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    @Nullable
+    public Message getUpdateMessage() {
+        return updateMessage;
+    }
 }

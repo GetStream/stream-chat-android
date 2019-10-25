@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
@@ -10,26 +11,18 @@ import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.utils.MockResponseFileReader;
-import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
+import com.getstream.sdk.chat.rest.storage.BaseStorage;
+import com.getstream.sdk.chat.rest.utils.CallFake;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
-import com.getstream.sdk.chat.rest.utils.TestWebSocketService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 
 import java.io.IOException;
-import java.util.HashMap;
-
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.Collections;
 
 /*
  * Created by Anton Bevza on 2019-10-23.
@@ -39,238 +32,173 @@ public class ClientTest {
     private static String TEST_API_KEY = "testApiKey";
     private static String TEST_CLIENT_ID = "testClientId";
 
-    private MockWebServer mockWebServer;
+    @Mock
+    private APIService apiService;
+    @Mock
+    private BaseStorage uploadStorage;
+    @Mock
+    private WebSocketService webSocketService;
 
-    @Spy
-    private TestTokenProvider testTokenProvider = new TestTokenProvider();
     private Client client;
 
     @BeforeEach
     void initTest() throws IOException {
         MockitoAnnotations.initMocks(this);
+
         WebSocketServiceProvider webSocketServiceProvider = Mockito.mock(WebSocketServiceProvider.class);
-        Mockito.doReturn(new TestWebSocketService(null, "", null))
-                .when(webSocketServiceProvider).provideWebSocketService(
+        Mockito.doReturn(webSocketService).when(webSocketServiceProvider).provideWebSocketService(
                 Mockito.any(), Mockito.any(), Mockito.any()
         );
-        mockWebServer = new MockWebServer();
-        mockWebServer.start();
-        TestApiClientOptions testApiClientOptions =
-                new TestApiClientOptions(mockWebServer.url("/").toString());
+
+        ApiServiceProvider apiServiceProvider = Mockito.mock(ApiServiceProvider.class);
+        Mockito.doReturn(apiService).when(apiServiceProvider).provideApiService(Mockito.any());
+
+        UploadStorageProvider uploadStorageProvider = Mockito.mock(UploadStorageProvider.class);
+        Mockito.doReturn(uploadStorage).when(uploadStorageProvider).provideUploadStorage(Mockito.any(), Mockito.any());
+
         client = new Client(TEST_API_KEY,
-                new ApiServiceProvider(testApiClientOptions),
+                apiServiceProvider,
                 webSocketServiceProvider,
-                new UploadStorageProvider(testApiClientOptions),
+                uploadStorageProvider,
                 null);
+
+        simulateConnection();
     }
 
     @Test
-    void updateChannelSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("channel_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        ChannelCallback callback = new ChannelCallback() {
-            @Override
-            public void onSuccess(ChannelResponse response) {
-                assertNotNull(response.getChannel());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
+    void hideChannelSuccessTest() {
+        CompletableResponse response = new CompletableResponse();
+        CompletableCallback callback = Mockito.mock(CompletableCallback.class);
 
-            @Override
-            public void onError(String errMsg, int errCode) {
+        Mockito.when(apiService.hideChannel(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
 
-            }
-        };
-        HashMap<String, Object> extraFields = new HashMap<>();
-        extraFields.put("name", "testName");
-        extraFields.put("title", "testTitle");
-        Channel channel = new Channel(client, "testType", "testId", extraFields);
-        Message message = new Message();
-        message.setText("test message");
-        client.updateChannel(channel, message, callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/channels/testType/testId?api_key="
-                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
-        String expectedBody = "{\"data\":{\"name\":\"testName\",\"title\":\"testTitle\"}," +
-                "\"message\":{\"attachments\":[],\"text\":\"test message\"}}";
-        assertEquals(expectedBody, recordedRequest.getBody().readUtf8());
+        String channelType = "testType";
+        String channelId = "testId";
 
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
-    }
+        client.hideChannel(new Channel(client, channelType, channelId), callback);
 
-    @Test
-    void deleteChannelSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("channel_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        ChannelCallback callback = new ChannelCallback() {
-            @Override
-            public void onSuccess(ChannelResponse response) {
-                assertNotNull(response.getChannel());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        };
-        Channel channel = new Channel(client, "testType", "testId");
-        client.deleteChannel(channel, callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/channels/testType/testId?api_key=" + TEST_API_KEY +
-                "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
-
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
+        Mockito.verify(apiService).hideChannel(channelType, channelId,
+                TEST_API_KEY, TEST_CLIENT_ID,
+                Collections.emptyMap());
+        Mockito.verify(callback).onSuccess(response);
     }
 
 
-
     @Test
-    void hideChannelSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("completable_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        CompletableCallback callback = new CompletableCallback() {
-            @Override
-            public void onSuccess(CompletableResponse response) {
-                assertEquals("999", response.getDuration());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
+    void showChannelSuccessTest() {
+        CompletableResponse response = new CompletableResponse();
+        CompletableCallback callback = Mockito.mock(CompletableCallback.class);
 
-            @Override
-            public void onError(String errMsg, int errCode) {
+        Mockito.when(apiService.showChannel(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
 
-            }
-        };
-        client.hideChannel(new Channel(client, "testType", "testId"), callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/channels/testType/testId/hide?api_key="
-                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
-        assertEquals("{}", recordedRequest.getBody().readUtf8());
+        String channelType = "testType";
+        String channelId = "testId";
 
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
+        client.showChannel(new Channel(client, channelType, channelId), callback);
+
+        Mockito.verify(apiService).showChannel(channelType, channelId,
+                TEST_API_KEY, TEST_CLIENT_ID,
+                Collections.emptyMap());
+        Mockito.verify(callback).onSuccess(response);
     }
 
     @Test
-    void showChannelSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("completable_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        CompletableCallback callback = new CompletableCallback() {
-            @Override
-            public void onSuccess(CompletableResponse response) {
-                assertEquals("999", response.getDuration());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
+    void updateChannelSuccessTest() {
+        ChannelResponse response = new ChannelResponse("100", new Channel());
+        ChannelCallback callback = Mockito.mock(ChannelCallback.class);
 
-            @Override
-            public void onError(String errMsg, int errCode) {
+        Mockito.when(apiService.updateChannel(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
 
-            }
-        };
-        client.showChannel(new Channel(client, "testType", "testId"), callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/channels/testType/testId/show?api_key="
-                + TEST_API_KEY + "&client_id=" + TEST_CLIENT_ID, recordedRequest.getPath());
-        assertEquals("{}", recordedRequest.getBody().readUtf8());
+        String channelType = "testType";
+        String channelId = "testId";
+        Channel channel = new Channel(client, channelType, channelId);
+        channel.setName("test name");
+        Message updateMessage = new Message();
+        updateMessage.setText("test text");
 
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
+        client.updateChannel(channel, updateMessage, callback);
+
+        Mockito.verify(apiService).updateChannel(Mockito.eq(channelType),
+                Mockito.eq(channelId),
+                Mockito.eq(TEST_API_KEY),
+                Mockito.eq(TEST_CLIENT_ID),
+                Mockito.argThat(argument -> argument.getData().get("name").equals(channel.getName())
+                        && argument.getUpdateMessage().getText().equals(updateMessage.getText())));
+        Mockito.verify(callback).onSuccess(response);
     }
 
     @Test
-    void banUserSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("completable_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        CompletableCallback callback = new CompletableCallback() {
-            @Override
-            public void onSuccess(CompletableResponse response) {
-                assertEquals("999", response.getDuration());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
+    void deleteChannelSuccessTest() {
+        ChannelResponse response = new ChannelResponse("100", new Channel());
+        ChannelCallback callback = Mockito.mock(ChannelCallback.class);
 
-            @Override
-            public void onError(String errMsg, int errCode) {
+        Mockito.when(apiService.deleteChannel(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
 
-            }
-        };
-        client.banUser("userId", new Channel(client, "testType", "testId"),
-                "testReason", 100, callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/moderation/ban?api_key=" + TEST_API_KEY + "&client_id=" +
-                TEST_CLIENT_ID, recordedRequest.getPath());
-        assertEquals("{\"target_user_id\":\"userId\",\"timeout\":100," +
-                        "\"reason\":\"testReason\",\"type\":\"testType\",\"id\":\"testId\"}",
-                recordedRequest.getBody().readUtf8());
+        String channelType = "testType";
+        String channelId = "testId";
 
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
+        client.deleteChannel(new Channel(client, channelType, channelId), callback);
+
+        Mockito.verify(apiService).deleteChannel(channelType, channelId, TEST_API_KEY, TEST_CLIENT_ID);
+        Mockito.verify(callback).onSuccess(response);
     }
 
     @Test
-    void unBanUserSuccessTest() throws IOException, InterruptedException {
-        simulateConnection();
-        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody(
-                new MockResponseFileReader("completable_success.json").getContent()
-        ));
-        final Object syncObject = new Object();
-        CompletableCallback callback = new CompletableCallback() {
-            @Override
-            public void onSuccess(CompletableResponse response) {
-                assertEquals("999", response.getDuration());
-                synchronized (syncObject) {
-                    syncObject.notify();
-                }
-            }
+    void banUserSuccessTest() {
+        CompletableResponse response = new CompletableResponse();
+        CompletableCallback callback = Mockito.mock(CompletableCallback.class);
 
-            @Override
-            public void onError(String errMsg, int errCode) {
+        Mockito.when(apiService.banUser(Mockito.any(), Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
 
-            }
-        };
-        client.unBanUser("userId", new Channel(client, "testType", "testId"), callback);
-        RecordedRequest recordedRequest = mockWebServer.takeRequest();
-        assertEquals("/moderation/ban?api_key=" + TEST_API_KEY + "&client_id=" +
-                        TEST_CLIENT_ID + "&target_user_id=userId&type=testType&id=testId",
-                recordedRequest.getPath());
+        String channelType = "testType";
+        String channelId = "testId";
+        String targetUserId = "testUserId";
+        String reason = "testReason";
+        int timeout = 100;
 
-        synchronized (syncObject) {
-            syncObject.wait();
-        }
+        client.banUser(targetUserId, new Channel(client, channelType, channelId),
+                reason, timeout, callback);
+
+        Mockito.verify(apiService).banUser(Mockito.eq(TEST_API_KEY), Mockito.eq(TEST_CLIENT_ID),
+                Mockito.argThat(argument ->
+                        argument.getChannelType().equals(channelType) &&
+                                argument.getChannelId().equals(channelId) &&
+                                argument.getReason().equals(reason) &&
+                                argument.getTimeout() == timeout &&
+                                argument.getTargetUserId().equals(targetUserId)
+                )
+        );
+        Mockito.verify(callback).onSuccess(response);
+    }
+
+    @Test
+    void unBanUserSuccessTest() {
+        CompletableResponse response = new CompletableResponse();
+        CompletableCallback callback = Mockito.mock(CompletableCallback.class);
+
+        Mockito.when(apiService.unBanUser(Mockito.any(), Mockito.any(), Mockito.any(),
+                Mockito.any(), Mockito.any()))
+                .thenReturn(CallFake.buildSuccess(response));
+
+        String channelType = "testType";
+        String channelId = "testId";
+        String targetUserId = "testUserId";
+
+        client.unBanUser(targetUserId, new Channel(client, channelType, channelId), callback);
+
+        Mockito.verify(apiService).unBanUser(TEST_API_KEY, TEST_CLIENT_ID,
+                targetUserId, channelType, channelId
+        );
+        Mockito.verify(callback).onSuccess(response);
     }
 
     private void simulateConnection() {
-        client.setUser(new User("testUserId"), testTokenProvider);
+        client.setUser(new User("testUserId"), new TestTokenProvider());
         Event event = new Event();
         event.setConnectionId(TEST_CLIENT_ID);
         client.connectionResolved(event);
