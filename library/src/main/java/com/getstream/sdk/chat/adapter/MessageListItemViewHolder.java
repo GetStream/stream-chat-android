@@ -42,11 +42,14 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
+import org.commonmark.ext.gfm.strikethrough.Strikethrough;
+
 import java.util.Arrays;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -373,6 +376,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             markwon = Markwon.builder(context)
                     .usePlugin(CorePlugin.create())
                     .usePlugin(LinkifyPlugin.create())
+                    .usePlugin(StrikethroughPlugin.create())
                     .build();
         markwon.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
