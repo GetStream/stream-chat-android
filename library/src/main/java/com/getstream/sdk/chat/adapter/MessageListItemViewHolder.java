@@ -42,15 +42,9 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
-import org.commonmark.ext.gfm.strikethrough.Strikethrough;
-
 import java.util.Arrays;
 import java.util.List;
 
-import io.noties.markwon.Markwon;
-import io.noties.markwon.core.CorePlugin;
-import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
-import io.noties.markwon.linkify.LinkifyPlugin;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
@@ -76,7 +70,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ConstraintLayout cl_reply;
     private ImageView iv_reply;
     private TextView tv_reply;
-    private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
     private MessageViewHolderFactory viewHolderFactory;
     private ChannelState channelState;
@@ -372,13 +365,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         tv_text.setVisibility(View.VISIBLE);
         // Set Text
-        if (markwon == null)
-            markwon = Markwon.builder(context)
-                    .usePlugin(CorePlugin.create())
-                    .usePlugin(LinkifyPlugin.create())
-                    .usePlugin(StrikethroughPlugin.create())
-                    .build();
-        markwon.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        StreamChat.markwonInstance.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
         if (message.getDeletedAt() != null) {
             // background
