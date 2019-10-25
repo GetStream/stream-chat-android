@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -187,12 +188,17 @@ public class ChannelState {
     }
 
     public List<User> getOtherUsers() {
+
+        Log.d(TAG, "getOtherUsers");
+
         List<User> users = new ArrayList<>();
 
         if (members != null) {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
-                    users.add(channel.getClient().getState().getUser(m.getUser().getId()));
+                    User user = channel.getClient().getState().getUser(m.getUser().getId());
+                    Log.d(TAG, "getOtherUsers: member: " + user);
+                    users.add(user);
                 }
             }
         }
@@ -200,7 +206,9 @@ public class ChannelState {
         if (watchers != null) {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
-                    users.add(channel.getClient().getState().getUser(w.getUser().getId()));
+                    User user = channel.getClient().getState().getUser(w.getUser().getId());
+                    Log.d(TAG, "getOtherUsers: watcher: " + user);
+                    users.add(user);
                 }
             }
         }
@@ -253,6 +261,7 @@ public class ChannelState {
             List<User> top3 = users.subList(0, Math.min(3, users.size()));
             List<String> usernames = new ArrayList<>();
             for (User u : top3) {
+                if(u == null) continue;
                 usernames.add(u.getName());
             }
 
@@ -347,6 +356,7 @@ public class ChannelState {
         this.members = members;
     }
 
+    @Nullable
     public Message getLastMessage() {
         if (lastMessage == null) {
             lastMessage = computeLastMessage();
@@ -354,10 +364,18 @@ public class ChannelState {
         return lastMessage;
     }
 
-    public void setLastMessage(Message lastMessage) {
+    public void setLastMessage(@Nullable  Message lastMessage) {
+
+        if(lastMessage == null) return;
+
+        if (lastMessage.getDeletedAt() != null){
+            this.lastMessage = computeLastMessage();
+            return;
+        }
         this.lastMessage = lastMessage;
     }
 
+    @Nullable
     public Message computeLastMessage() {
         Message lastMessage = null;
         List<Message> messages = getMessages();

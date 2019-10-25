@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.core;
 
+import android.util.Log;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Watcher;
@@ -46,13 +48,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClientState {
 
-
     private static final String TAG = ClientState.class.getSimpleName();
 
     @NotNull
     private ConcurrentHashMap<String, User> users;
 
-    @NotNull
     private User currentUser;
 
     private Integer totalUnreadCount;
@@ -72,7 +72,6 @@ public class ClientState {
      */
     public ClientState(Client client) {
         this.client = client;
-        currentUser = null;
         userIDToChannelsMap = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
     }
@@ -90,7 +89,6 @@ public class ClientState {
         this.totalUnreadCount = totalUnreadCount;
     }
 
-
     /**
      * Returns the current user
      *
@@ -101,9 +99,19 @@ public class ClientState {
     }
 
     void setCurrentUser(User currentUser) {
+        Log.d(TAG, "setCurrentUser: " + currentUser);
         this.currentUser = currentUser;
         this.totalUnreadCount = currentUser.getTotalUnreadCount();
         this.unreadChannels = currentUser.getUnreadChannels();
+    }
+
+    void reset() {
+        Log.d(TAG, "reset");
+        currentUser = null;
+        totalUnreadCount = 0;
+        unreadChannels = 0;
+        userIDToChannelsMap.clear();
+        users.clear();
     }
 
     /**
@@ -113,17 +121,20 @@ public class ClientState {
      * @return
      */
     public User getUser(String userID) {
-        return users.get(userID);
+        User result = users.get(userID);
+        Log.d(TAG, "getUser: " + userID + " with result: " + result);
+        return result;
     }
 
 
     void updateUser(User newUser) {
-        List<User> newUsers = new ArrayList();
+        List<User> newUsers = new ArrayList<>();
         newUsers.add(newUser);
         updateUsers(newUsers);
     }
 
     void updateUsers(List<User> newUsers) {
+        Log.d(TAG, "updateUsers");
         Map<String, Channel> channelMap = client.getActiveChannelMap();
 
         for (User newUser : newUsers) {
@@ -161,7 +172,7 @@ public class ClientState {
     }
 
     void updateUserWithReference(User newUser, String cid) {
-        List<User> newUsers = new ArrayList();
+        List<User> newUsers = new ArrayList<>();
         newUsers.add(newUser);
         updateUsersWithReference(newUsers, cid);
     }

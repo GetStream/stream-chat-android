@@ -12,6 +12,15 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
     @SerializedName("messages")
     @Expose
     protected Map<String, Object> messages;
+
+    @SerializedName("watchers")
+    @Expose
+    protected Map<String, Object> watchers;
+
+    @SerializedName("members")
+    @Expose
+    protected Map<String, Object> members;
+
     @SerializedName("data")
     @Expose
     private Map<String, Object> data;
@@ -30,6 +39,12 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
         if (this.messages != null) {
             _this.messages = new HashMap<>(this.messages);
         }
+        if (this.watchers != null) {
+            _this.watchers = new HashMap<>(this.watchers);
+        }
+        if (this.members != null) {
+            _this.members = new HashMap<>(this.members);
+        }
         if (this.data != null) {
             _this.data = new HashMap<>(this.data);
         }
@@ -45,6 +60,24 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
     public ChannelQueryRequest withPresence() {
         ChannelQueryRequest clone = this.cloneOpts();
         clone.presence = true;
+        return clone;
+    }
+
+    public ChannelQueryRequest withMembers(int limit, int offset) {
+        ChannelQueryRequest clone = this.cloneOpts();
+        Map<String, Object> members = new HashMap<>();
+        members.put("limit", limit);
+        members.put("offset", offset);
+        clone.members = members;
+        return clone;
+    }
+
+    public ChannelQueryRequest withWatchers(int limit, int offset) {
+        ChannelQueryRequest clone = this.cloneOpts();
+        Map<String, Object> watchers = new HashMap<>();
+        watchers.put("limit", limit);
+        watchers.put("offset", offset);
+        clone.watchers = watchers;
         return clone;
     }
 

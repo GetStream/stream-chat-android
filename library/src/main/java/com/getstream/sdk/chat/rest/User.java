@@ -20,6 +20,7 @@ import com.google.gson.annotations.JsonAdapter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A user
@@ -93,7 +94,7 @@ public class User implements UserEntity {
      * @param extraData Custom user fields (ie: name, image, anything that json can serialize is ok)
      */
     @Ignore
-    public User(String id, HashMap<String, Object> extraData) {
+    public User(String id, Map<String, Object> extraData) {
         this.id = id;
         this.online = false;
 
@@ -271,6 +272,20 @@ public class User implements UserEntity {
 
     public void setInvisible(Boolean invisible) {
         this.invisible = invisible;
+    }
+
+
+    /**
+     * Returns true if the other user is muted
+     */
+    public boolean hasMuted(User user) {
+        if (mutes == null || mutes.size() == 0)
+            return false;
+        for (Mute mute : getMutes()) {
+            if (mute.getTarget().getId().equals(user.getId()))
+                return true;
+        }
+        return false;
     }
 
     public List<Mute> getMutes() {

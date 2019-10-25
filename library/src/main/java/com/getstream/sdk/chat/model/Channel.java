@@ -658,6 +658,27 @@ public class Channel {
 
         client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
     }
+
+    /**
+     * Delete a file with a given URL.
+     *
+     * @param url      the file URL
+     * @param callback the result callback
+     */
+    public void deleteFile(@NotNull String url, @NotNull CompletableCallback callback) {
+        client.getUploadStorage().deleteFile(this, url, callback);
+    }
+
+    /**
+     * Delete a image with a given URL.
+     *
+     * @param url      the image URL
+     * @param callback the result callback
+     */
+    public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
+        client.getUploadStorage().deleteImage(this, url, callback);
+    }
+
     // endregion
 
     /**
@@ -850,9 +871,18 @@ public class Channel {
         Message message = event.getMessage();
         for (int i = 0; i < channelState.getMessages().size(); i++) {
             if (message.getId().equals(channelState.getMessages().get(i).getId())) {
+
                 if (event.getType().equals(EventType.MESSAGE_DELETED))
                     message.setText(Constant.MESSAGE_DELETED);
+                else
+                    message.setStatus(MessageStatus.RECEIVED);
+
                 channelState.getMessages().set(i, message);
+
+                // Check updatedMessage is Last or not
+                if (i == channelState.getMessages().size() - 1)
+                    channelState.setLastMessage(message);
+
                 getClient().storage().insertMessageForChannel(this, message);
                 break;
             }
@@ -943,24 +973,20 @@ public class Channel {
     /**
      * edit the channel's custom properties.
      *
-     * @param options       the custom properties
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void update(@NotNull Map<String, Object> options, @Nullable String updateMessage,
-                       @NotNull ChannelCallback callback) {
-        client.updateChannel(this, options, updateMessage, callback);
+    public void update(@Nullable Message updateMessage, @NotNull ChannelCallback callback) {
+        client.updateChannel(this, updateMessage, callback);
     }
 
     /**
      * edit the channel's custom properties.
      *
-     * @param options  the custom properties
      * @param callback the result callback
      */
-    public void update(@NotNull Map<String, Object> options,
-                       @NotNull ChannelCallback callback) {
-        client.updateChannel(this, options, null, callback);
+    public void update(@NotNull ChannelCallback callback) {
+        client.updateChannel(this, null, callback);
     }
 
     /**

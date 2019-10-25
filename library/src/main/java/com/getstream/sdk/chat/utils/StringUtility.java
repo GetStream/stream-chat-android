@@ -1,15 +1,20 @@
 package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 public class StringUtility {
+
+    private static final String TAG = StringUtility.class.getSimpleName();
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
@@ -39,7 +44,9 @@ public class StringUtility {
 
     public static String getDeletedOrMentionedText(Message message) {
         if (message == null) return null;
-        String text = message.getText();
+        // Trimming New Lines
+        String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
+
         if (message.getDeletedAt() != null) {
             text = "_" + Constant.MESSAGE_DELETED + "_";
             return text;
@@ -50,8 +57,12 @@ public class StringUtility {
                 text = text.replace("@" + userName, "**" + "@" + userName + "**");
             }
         }
+        // Markdown for newline
+        text = text.replaceAll("<br/>  <br/>  \n", "\n");
         return text.replaceAll("\n", "<br/>  <br/>  \n");
     }
+
+
 
     public static String getSaltString(String s) {
         String s_ = s.replaceAll("\\s+","");

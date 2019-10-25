@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -20,6 +21,7 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -38,16 +40,18 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
+import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
 import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.request.QueryUserRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
+import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
@@ -64,6 +68,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.storage.StreamPublicStorage;
@@ -74,6 +79,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -258,6 +264,8 @@ public class Client implements WSResponseHandler {
         this.options = options;
         this.state = new ClientState(this);
 
+        Log.d(TAG, "instance created: " + apiKey);
+
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
@@ -333,6 +341,8 @@ public class Client implements WSResponseHandler {
     public synchronized void disconnect() {
         if (state.getCurrentUser() == null) {
             Log.w(TAG, "disconnect was called but setUser was not called yet");
+        } else {
+            Log.d(TAG, "disconnecting");
         }
 
         disconnectWebSocket();
@@ -342,8 +352,13 @@ public class Client implements WSResponseHandler {
         fetchingToken = false;
         cacheUserToken = null;
 
+        builtinHandler.dispatchUserDisconnected();
+        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
+            handler.dispatchUserDisconnected();
+        }
+
         // clear local state
-        state.setCurrentUser(null);
+        state.reset();
         activeChannelMap.clear();
     }
 
@@ -376,6 +391,8 @@ public class Client implements WSResponseHandler {
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
+        } else {
+            Log.d(TAG, "setting user: " + user.getId());
         }
 
         state.setCurrentUser(user);
@@ -540,7 +557,17 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
         tokenProvider.getToken(userToken -> {
-            JSONObject json = buildUserDetailJSON();
+
+            String json = buildUserDetailJSON().toString();
+
+            try{
+                json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            }catch (Throwable throwable){
+                throwable.printStackTrace();
+                onError("Unable to encode user details json: " + json, ClientErrorCode.JSON_ENCODING);
+                return;
+            }
+
             String wsURL = options.getWssURL() + "connect?json=" + json + "&api_key="
                     + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
             Log.d(TAG, "WebSocket URL : " + wsURL);
@@ -593,11 +620,14 @@ public class Client implements WSResponseHandler {
 
     @Override
     public void onError(WsErrorMessage error) {
-        // call onError for everyone
+        onError(error.getError().getMessage(), error.getError().getCode());
+    }
+
+    private void onError(String errMsg, int errCode) {
         List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
         connectSubRegistery.clear();
         for (ClientConnectionCallback waiter : subs) {
-            waiter.onError(error.getError().getMessage(), error.getError().getCode());
+            waiter.onError(errMsg, errCode);
         }
     }
 
@@ -775,17 +805,15 @@ public class Client implements WSResponseHandler {
      * edit the channel's custom properties.
      *
      * @param channel       the channel needs to update
-     * @param options       the custom properties
      * @param updateMessage message allowing you to show a system message in the Channel that something changed
      * @param callback      the result callback
      */
-    public void updateChannel(@NonNull Channel channel, @NotNull Map<String, Object> options,
-                              @Nullable String updateMessage, @NotNull ChannelCallback callback) {
+    public void updateChannel(@NonNull Channel channel, @Nullable Message updateMessage, @NotNull ChannelCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 mService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(options, updateMessage))
+                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
@@ -1171,6 +1199,43 @@ public class Client implements WSResponseHandler {
                 }
             });
     }
+
+    /**
+     * search messages by parameters
+     *
+     * @param request  request options include filter, query string and query options
+     * @param callback the result callback
+     */
+    public void searchMessages(@NotNull SearchMessagesRequest request, @NotNull SearchMessagesCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                String requestString = GsonConverter.Gson().toJson(request);
+                mService.searchMessages(apiKey, clientID, requestString)
+                        .enqueue(new Callback<SearchMessagesResponse>() {
+                            @Override
+                            public void onResponse(Call<SearchMessagesResponse> call, Response<SearchMessagesResponse> response) {
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<SearchMessagesResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
     // endregion
 
     // region Thread
@@ -1355,7 +1420,7 @@ public class Client implements WSResponseHandler {
      */
     public void getReactions(@NotNull String messageId,
                              @NotNull GetReactionsCallback callback) {
-        getReactions(messageId, new PaginationOptions(10, 0), callback);
+        getReactions(messageId, new PaginationOptions.Builder().limit(10).build(), callback);
     }
 
     // endregion
@@ -1474,27 +1539,42 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * Query users and watch user presence
+     * search for users and see if they are online/offline
+     *
+     * @param request  request options include filter, sort options and query options
+     * @param callback the result callback
      */
-    public void queryUsers(@NonNull JSONObject payload,
+    public void queryUsers(QueryUserRequest request,
                            QueryUserListCallback callback) {
-
-        mService.queryUsers(apiKey, getUserId(), clientID, payload).enqueue(new Callback<QueryUserListResponse>() {
+        onSetUserCompleted(new ClientConnectionCallback() {
             @Override
-            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                state.updateUsers(response.body().getUsers());
-                callback.onSuccess(response.body());
+            public void onSuccess(User user) {
+                String requestString = GsonConverter.Gson().toJson(request);
+                mService.queryUsers(apiKey, clientID, requestString)
+                        .enqueue(new Callback<QueryUserListResponse>() {
+                            @Override
+                            public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
+                                state.updateUsers(response.body().getUsers());
+                                callback.onSuccess(response.body());
+                            }
+
+                            @Override
+                            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
+                                if (t instanceof ErrorResponse) {
+                                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                                } else {
+                                    callback.onError(t.getLocalizedMessage(), -1);
+                                }
+                            }
+                        });
             }
 
             @Override
-            public void onFailure(Call<QueryUserListResponse> call, Throwable t) {
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
-                }
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
             }
         });
+
     }
 
     /**
@@ -1841,7 +1921,7 @@ public class Client implements WSResponseHandler {
      * closes the WebSocket connection and sends a connection.change event to all listeners
      */
     public synchronized void disconnectWebSocket() {
-        Log.i(TAG, "disconnecting");
+        Log.i(TAG, "disconnecting websocket");
         if (WSConn != null) {
             WSConn.disconnect();
             WSConn = null;

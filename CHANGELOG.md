@@ -1,3 +1,37 @@
+## October 25th, 2019 - 3.2.0
+
+- Added event interceptors to `ChannelListViewModel`
+
+## October 24th, 2019 - 3.1.0
+
+- Add channel to list when the user is added
+- Add `onUserDisconnected` event
+- Make sure channel list view model is cleared when the user disconnects
+- Fix bug with `setUser` when user data is not correctly URI encoded
+- Add debug/info logging
+
+## Oct 23th, 2019 - 3.0.2
+
+- Fix NPE with restore from background and null users
+
+## Oct 22th, 2019 - 3.0.1
+
+- Fix NPE with empty channel lists
+
+## Oct 21th, 2019 - 3.0.0
+
+- Added support for message search `client.searchMessages`
+- Better support for query user options
+- Update channel update signature
+- Fix disconnection NPE
+- Minor bugfixes
+- Remove file/image support
+- Expose members and watchers pagination options for query channel 
+
+#### Breaking changes
+
+- `Channel.update` signature has changed
+
 ## Oct 16th, 2019 - 2.3.0
 
 - Added support for `getReactions` endpoint
@@ -20,9 +54,6 @@
 - Removed `SendMessageRequest`
 - Updated `sendMessage` and `updateMessage` from `Client`
 - Added devToken function for setUser of Client
-
-## Oct 10th, 2019 - 2.2.1
-
 - Added a callback as an optional last argument for setUser functions
 - Added ClientState which stores users, current user, unreadCount and the current user's mutes
 - Added notification.mutes_updated event
@@ -46,7 +77,6 @@
 - Bugfix: hides attachment drawer after deny permission
 - Add support for update channel endpoint
 - Add PermissionRequestListener for Permission Request
-
 
 ## September 28, 2019 - 2.1.0
 
