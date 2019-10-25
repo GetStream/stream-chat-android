@@ -34,7 +34,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     private int optionsButtonHeight;
     private boolean activeBadgeShow;
     private String offlineText;
-    private String titleWithoutNameText;
+    private String channelWithoutNameText;
 
     public ChannelHeaderViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -43,7 +43,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
                 R.styleable.ChannelHeaderView, 0, 0);
 
         // Channel Title
-        titleWithoutNameText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderWithOutNameTitleText);
+        channelWithoutNameText = a.getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText);
         channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD);
@@ -90,8 +90,8 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         a.recycle();
     }
 
-    public String getTitleWithoutNameText() {
-        return !TextUtils.isEmpty(titleWithoutNameText) ? titleWithoutNameText : context.getString(R.string.stream_channel_unknown_title);
+    public String getChannelWithoutNameText() {
+        return !TextUtils.isEmpty(channelWithoutNameText) ? channelWithoutNameText : context.getString(R.string.stream_channel_unknown_title);
     }
 
     public int getChannelTitleTextSize() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -127,7 +128,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
 
         // set the channel name
-        tv_name.setText(channelName);
+        tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
 
         if (lastMessage != null) {
             // set the lastMessage and last messageDate

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import androidx.annotation.ColorRes;
@@ -31,13 +32,14 @@ public class ChannelListViewStyle extends BaseStyle {
     private int unreadTitleTextStyle;
     private int messageTextStyle;
     private int unreadMessageTextStyle;
-
+    private String channelWithoutNameText;
 
     public ChannelListViewStyle(Context c, AttributeSet attrs) {
         this.setContext(c);
         TypedArray a = c.obtainStyledAttributes(attrs,
                 R.styleable.ChannelListView, 0, 0);
 
+        channelWithoutNameText = a.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText);
         titleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamTitleTextSize, getDimension(R.dimen.stream_channel_item_title));
         messageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamMessageTextSize, getDimension(R.dimen.stream_channel_item_message));
         dateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date));
@@ -128,5 +130,9 @@ public class ChannelListViewStyle extends BaseStyle {
 
     public int getUnreadMessageTextStyle() {
         return unreadMessageTextStyle;
+    }
+
+    public String getChannelWithoutNameText() {
+        return !TextUtils.isEmpty(channelWithoutNameText) ? channelWithoutNameText : context.getString(R.string.stream_channel_unknown_title);
     }
 }

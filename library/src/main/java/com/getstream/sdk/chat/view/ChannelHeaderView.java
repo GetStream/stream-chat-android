@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
@@ -82,7 +81,7 @@ public class ChannelHeaderView extends RelativeLayout {
 
     protected void setHeaderTitle(ChannelState channelState) {
         String channelName = channelState.getChannelNameOrMembers();
-        binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getTitleWithoutNameText());
+        binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText());
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {
