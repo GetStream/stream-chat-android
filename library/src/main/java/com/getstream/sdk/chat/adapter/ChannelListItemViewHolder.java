@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -128,15 +130,23 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         // set the channel name
         tv_name.setText(channelName);
-
+        // set the lastMessage and last messageDate
         if (lastMessage != null) {
-            // set the lastMessage and last messageDate
-            if (markwon == null)
-                markwon = Markwon.builder(context)
-                        .usePlugin(CorePlugin.create())
-                        .usePlugin(LinkifyPlugin.create())
-                        .build();
-            markwon.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            if (TextUtils.isEmpty(lastMessage.getText())) {
+                if (!lastMessage.getAttachments().isEmpty()) {
+                    Attachment attachment = lastMessage.getAttachments().get(0);
+                    tv_last_message.setText(!TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback());
+                } else {
+                    tv_last_message.setText("");
+                }
+            } else {
+                if (markwon == null)
+                    markwon = Markwon.builder(context)
+                            .usePlugin(CorePlugin.create())
+                            .usePlugin(LinkifyPlugin.create())
+                            .build();
+                markwon.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            }
 
             if (lastMessage.isToday())
                 tv_date.setText(lastMessage.getTime());
