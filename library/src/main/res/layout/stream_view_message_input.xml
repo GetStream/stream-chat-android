@@ -171,7 +171,7 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:layout_gravity="center"
-                        android:background="@drawable/stream_ic_file"
+                        android:background="@drawable/stream_ic_folder"
                         android:gravity="center" />
                 </FrameLayout>
 

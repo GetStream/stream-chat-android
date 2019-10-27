@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -7,10 +8,12 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
@@ -38,10 +41,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
 
-    public ConstraintLayout cl_root;
-    public TextView tv_name, tv_last_message, tv_date, tv_click;
-    public ReadStateView<ChannelListViewStyle> read_state;
-    public AvatarGroupView<ChannelListViewStyle> avatarGroupView;
+    private TextView tv_name, tv_last_message, tv_date, tv_click;
+    private ReadStateView<ChannelListViewStyle> read_state;
+    private AvatarGroupView<ChannelListViewStyle> avatarGroupView;
+    private ImageView iv_attachment_type;
 
     private Context context;
 
@@ -70,10 +73,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         channelLongClickListener = l;
     }
 
-    public void findReferences() {
-        cl_root = itemView.findViewById(R.id.cl_root);
+    private void findReferences() {
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_last_message = itemView.findViewById(R.id.tv_last_message);
+        iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
         tv_date = itemView.findViewById(R.id.tv_date);
 
         tv_click = itemView.findViewById(R.id.tv_click);
@@ -87,25 +90,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
         tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
-    }
-
-    public void applyUnreadStyle() {
-        // channel name
-        tv_name.setTextColor(style.getUnreadTitleTextColor());
-        tv_name.setTypeface(Typeface.DEFAULT, style.getUnreadTitleTextStyle());
-
-        // last message
-        tv_last_message.setTypeface(Typeface.DEFAULT, style.getUnreadMessageTextStyle());
-        tv_last_message.setTextColor(style.getUnreadMessageTextColor());
-    }
-
-    public void applyReadStyle() {
-        // channel name
-        tv_name.setTextColor(style.getTitleTextColor());
-        tv_name.setTypeface(Typeface.DEFAULT, style.getTitleTextStyle());
-        // last messsage
-        tv_last_message.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle());
-        tv_last_message.setTextColor(style.getMessageTextColor());
     }
 
     @Override
@@ -155,8 +139,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         });
     }
 
+    @SuppressLint("ResourceType")
     private void configLastMessage(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
+        iv_attachment_type.setVisibility(View.GONE);
         // null check
         if (lastMessage == null){
             tv_last_message.setText("");
@@ -182,13 +168,38 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         if (attachment.getType() == null)
             return;
 
-        switch (attachment.getType()){
+        iv_attachment_type.setVisibility(View.VISIBLE);
+
+        String lastMessageText;
+        @IdRes int attachmentType;
+
+        switch (attachment.getType()) {
             case ModelType.attach_image:
+                lastMessageText = "photo";
+                attachmentType = R.drawable.stream_ic_image;
+                break;
+            case ModelType.attach_file:
+                if (attachment.getMime_type() != null && attachment.getMime_type().contains("video")){
+                    lastMessageText = "video";
+                    attachmentType = R.drawable.stream_ic_video;
+                }else{
+                    lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
+                    attachmentType = R.drawable.stream_ic_file;
+                }
                 break;
             case ModelType.attach_giphy:
+                lastMessageText = "/giphy";
+                attachmentType = R.drawable.stream_ic_gif;
                 break;
+            default:
+                lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
+                attachmentType = R.drawable.stream_ic_file;
+                break;
+
         }
-        tv_last_message.setText(!TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback());
+
+        tv_last_message.setText(lastMessageText);
+        iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
     }
 
     private void configLastMessageDate(ChannelState channelState){
@@ -236,4 +247,29 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         else
             applyUnreadStyle();
     }
+
+    private void applyReadStyle() {
+        // channel name
+        tv_name.setTextColor(style.getTitleTextColor());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getTitleTextStyle());
+        // last messsage
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle());
+        tv_last_message.setTextColor(style.getMessageTextColor());
+        // last Message Attachment Type
+        if (iv_attachment_type.getDrawable() != null)
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getMessageTextColor());
+    }
+
+    private void applyUnreadStyle() {
+        // channel name
+        tv_name.setTextColor(style.getUnreadTitleTextColor());
+        tv_name.setTypeface(Typeface.DEFAULT, style.getUnreadTitleTextStyle());
+        // last message
+        tv_last_message.setTypeface(Typeface.DEFAULT, style.getUnreadMessageTextStyle());
+        tv_last_message.setTextColor(style.getUnreadMessageTextColor());
+        // last Message Attachment Type
+        if (iv_attachment_type.getDrawable() != null)
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getUnreadMessageTextColor());
+    }
+
 }
