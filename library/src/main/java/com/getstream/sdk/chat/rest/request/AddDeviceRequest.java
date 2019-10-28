@@ -22,4 +22,8 @@ public class AddDeviceRequest {
 //        this.user_id = StreamChat.getInstance().getUserId();
         this.push_provider = "firebase";
     }
+
+    public String getId() {
+        return id;
+    }
 }

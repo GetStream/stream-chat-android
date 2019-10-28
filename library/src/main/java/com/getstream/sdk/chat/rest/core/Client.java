@@ -1839,16 +1839,15 @@ public class Client implements WSResponseHandler {
     }
 
     /**
-     * getDevices - Returns the devices associated with a current user
+     * Returns the devices associated with a current user
      */
-    public void getDevices(@NonNull Map<String, String> payload,
-                           GetDevicesCallback callback) {
+    public void getDevices(GetDevicesCallback callback) {
 
         onSetUserCompleted(
                 new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        apiService.getDevices(apiKey, user.getId(), clientID, payload).enqueue(new Callback<GetDevicesResponse>() {
+                        apiService.getDevices(apiKey, user.getId(), clientID).enqueue(new Callback<GetDevicesResponse>() {
                             @Override
                             public void onResponse(Call<GetDevicesResponse> call, Response<GetDevicesResponse> response) {
                                 callback.onSuccess(response.body());
