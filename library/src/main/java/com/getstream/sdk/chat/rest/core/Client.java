@@ -29,6 +29,9 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
@@ -289,16 +292,16 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey, ApiClientOptions options) {
-        this(apiKey, new ApiServiceProvider(options),
-                new WebSocketServiceProvider(options, apiKey),
-                new UploadStorageProvider(options),
+        this(apiKey, new StreamApiServiceProvider(options),
+                new StreamWebSocketServiceProvider(options, apiKey),
+                new StreamUploadStorageProvider(options),
                 null);
     }
 
     public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
-        this(apiKey, new ApiServiceProvider(options),
-                new WebSocketServiceProvider(options, apiKey),
-                new UploadStorageProvider(options),
+        this(apiKey, new StreamApiServiceProvider(options),
+                new StreamWebSocketServiceProvider(options, apiKey),
+                new StreamUploadStorageProvider(options),
                 connectionLiveData);
     }
 

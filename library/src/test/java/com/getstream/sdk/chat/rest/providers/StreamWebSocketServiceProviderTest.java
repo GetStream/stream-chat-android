@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.providers;
 
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /*
  * Created by Anton Bevza on 2019-10-24.
  */
-public class WebSocketServiceProviderTest {
+public class StreamWebSocketServiceProviderTest {
 
     @Test
     void getWsUrlValidTest() throws UnsupportedEncodingException {
@@ -26,7 +26,7 @@ public class WebSocketServiceProviderTest {
         HashMap<String, Object> userDetails = new HashMap<>();
         userDetails.put("testParamKey", "testParam");
         user.setExtraData(userDetails);
-        WebSocketServiceProvider provider = new WebSocketServiceProvider(
+        StreamWebSocketServiceProvider provider = new StreamWebSocketServiceProvider(
                 new TestApiClientOptions("test-base-url://"), "testApiKey");
         String wsUrl = provider.getWsUrl("testUserToken", user);
         String userExpectedJson = "{\"server_determines_connection_id\":true," +

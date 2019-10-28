@@ -13,8 +13,8 @@ import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.ClientState;
-import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -100,10 +100,10 @@ public class ClientTest {
                 any(), any(), any()
         );
 
-        ApiServiceProvider apiServiceProvider = mock(ApiServiceProvider.class);
+        StreamApiServiceProvider apiServiceProvider = mock(StreamApiServiceProvider.class);
         doReturn(apiService).when(apiServiceProvider).provideApiService(any());
 
-        UploadStorageProvider uploadStorageProvider = mock(UploadStorageProvider.class);
+        StreamUploadStorageProvider uploadStorageProvider = mock(StreamUploadStorageProvider.class);
         doReturn(uploadStorage).when(uploadStorageProvider).provideUploadStorage(any(), any());
 
         client = new Client(TEST_API_KEY,
