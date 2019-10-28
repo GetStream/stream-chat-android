@@ -70,7 +70,7 @@ class RetrofitClientTest {
     }
 
     @Test
-    void tokenExpiredTest() throws IOException {
+    void tokenExpiredTest() {
         mockWebServer.enqueue(new MockResponse().setResponseCode(403).setBody(
                 "{\"code\":40}"
         ));

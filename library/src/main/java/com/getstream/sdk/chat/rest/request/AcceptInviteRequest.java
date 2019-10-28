@@ -24,7 +24,7 @@ public class AcceptInviteRequest {
         this.message = message != null ? new AcceptInviteMessage(message) : null;
     }
 
-    private class AcceptInviteMessage {
+    public class AcceptInviteMessage {
 
         @Nullable
         @Expose
@@ -34,5 +34,19 @@ public class AcceptInviteRequest {
         AcceptInviteMessage(@Nullable String text) {
             this.text = text;
         }
+
+        @Nullable
+        public String getText() {
+            return text;
+        }
+    }
+
+    public boolean isAcceptInvite() {
+        return acceptInvite;
+    }
+
+    @Nullable
+    public AcceptInviteMessage getMessage() {
+        return message;
     }
 }
