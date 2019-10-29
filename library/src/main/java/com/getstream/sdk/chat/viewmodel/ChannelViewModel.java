@@ -384,7 +384,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
         Message message = this.channel.getChannelState().getLastMessage();
-        if (message == null || !isEnableMarkRead()) {
+        if (message == null || !isEnableMarkRead() || message.getUserId().equals(client().getUserId())) {
             return;
         }
         if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
@@ -984,10 +984,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             addMessage(message);
         }
 
-        // TODO: I'm reading this code and i don't get what it does, needs some clarification (Thierry)
-        if (client().isConnected()) {
-            channel.getChannelState().setReadDateOfChannelLastMessage(client().getUser(), message.getCreatedAt());
-        }
         // afterwards send the request
         channel.sendMessage(message,
                 new MessageCallback() {
