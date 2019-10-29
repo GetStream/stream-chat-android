@@ -12,16 +12,16 @@ import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.ImagesPlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
-public class MarkDown {
+public class Markdown {
 
-    private static MarkDown instance;
+    private static Markdown instance;
     private Markwon markwon;
 
-    public MarkDown(){
+    public Markdown(){
 
     }
 
-    public MarkDown(Context context) {
+    public Markdown(Context context) {
         markwon = Markwon.builder(context)
                 .usePlugin(CorePlugin.create())
                 .usePlugin(LinkifyPlugin.create())
@@ -35,9 +35,9 @@ public class MarkDown {
         markwon.setMarkdown(textView, text);
     }
 
-    public static MarkDown getInstance(Context context) {
+    public static Markdown getInstance(Context context) {
         if (instance == null)
-            instance = new MarkDown(context);
+            instance = new Markdown(context);
 
         return instance;
     }

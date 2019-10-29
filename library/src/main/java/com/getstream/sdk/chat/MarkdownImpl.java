@@ -2,7 +2,7 @@ package com.getstream.sdk.chat;
 
 import android.widget.TextView;
 
-public class MarkdownImpl extends MarkDown {
+public class MarkdownImpl extends Markdown {
     
     private static MarkdownListener markdownListener;
 

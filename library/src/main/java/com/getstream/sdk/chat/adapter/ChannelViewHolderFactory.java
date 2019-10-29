@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.MarkDown;
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
