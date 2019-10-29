@@ -196,7 +196,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
                 attachmentType = R.drawable.stream_ic_file;
                 break;
-
         }
 
         tv_last_message.setText(lastMessageText);
@@ -242,7 +241,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     private void applyStyle(ChannelState channelState){
-        if (channelState.readLastMessage())
+        Message lastMessage = channelState.getLastMessage();
+        Channel channel = channelState.getChannel();
+        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(channel.getClient().getUserId()));
+        if (channelState.readLastMessage() || outgoing)
             applyReadStyle();
         else
             applyUnreadStyle();
