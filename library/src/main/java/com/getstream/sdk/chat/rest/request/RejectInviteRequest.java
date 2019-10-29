@@ -13,4 +13,7 @@ public class RejectInviteRequest {
     @Expose
     private boolean rejectInvite = true;
 
+    public boolean isRejectInvite() {
+        return rejectInvite;
+    }
 }

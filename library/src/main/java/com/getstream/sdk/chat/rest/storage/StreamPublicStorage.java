@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.storage;
 
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
@@ -139,8 +141,9 @@ public class StreamPublicStorage extends BaseStorage {
         return url;
     }
 
-
-    public GlideUrl signGlideUrl(String url) {
+    @Nullable
+    public GlideUrl signGlideUrl(@Nullable String url) {
+        if (url == null) return null;
         return new GlideUrl(url, new LazyHeaders.Builder()
                 .addHeader("X-requested-by", "stream")
                 .build());

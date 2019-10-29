@@ -8,10 +8,11 @@ import androidx.annotation.Nullable;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
-import java.util.Date;
 import java.util.Random;
 
 public class StringUtility {
+
+    private static final String TAG = StringUtility.class.getSimpleName();
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();

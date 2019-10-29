@@ -2,10 +2,19 @@ package com.getstream.sdk.chat.rest.core;
 
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 
+import static com.getstream.sdk.chat.enums.EventType.NOTIFICATION_MESSAGE_NEW;
+
+
 public abstract class ChatEventHandler {
+
+    public void onUserDisconnected() {}
 
     public void onUserPresenceChanged(Event event) {
     }
@@ -91,6 +100,14 @@ public abstract class ChatEventHandler {
     public void onNotificationMutesUpdated(Channel channel, Event event) {
     }
 
+    // onUserBanned is called when the current user is banned from all channels
+    public void onUserBanned(Event event) {
+    }
+
+    // onUserUnbanned is called when the current user's ban is removed
+    public void onUserUnbanned(Event event) {
+    }
+
     public void onAnyEvent(Event event) {
     }
 
@@ -100,6 +117,10 @@ public abstract class ChatEventHandler {
     }
 
     public void handleEventFromUnregisteredChannel(Client client, Event event) {
+    }
+
+    final void dispatchUserDisconnected() {
+        onUserDisconnected();
     }
 
     final void dispatchChannelEvent(Client client, Event event, ChannelEvent channelEventLambda) {
@@ -177,9 +198,6 @@ public abstract class ChatEventHandler {
             case CONNECTION_RECOVERED:
                 onConnectionRecovered(event);
                 break;
-            case NOTIFICATION_MESSAGE_NEW:
-                dispatchChannelEvent(client, event, this::onNotificationMessageNew);
-                break;
             case NOTIFICATION_MARK_READ:
                 dispatchChannelEvent(client, event, this::onNotificationMarkRead);
                 break;
@@ -192,14 +210,36 @@ public abstract class ChatEventHandler {
             case NOTIFICATION_INVITE_REJECTED:
                 dispatchChannelEvent(client, event, this::onNotificationInviteRejected);
                 break;
+            case NOTIFICATION_MESSAGE_NEW:
             case NOTIFICATION_ADDED_TO_CHANNEL:
-                dispatchChannelEvent(client, event, this::onNotificationAddedToChannel);
+                Channel channel = client.channel(event.getChannel().getCid());
+                channel.query(new ChannelQueryRequest(), new QueryChannelCallback() {
+                    @Override
+                    public void onSuccess(ChannelState response) {
+                        if (event.getType() == NOTIFICATION_MESSAGE_NEW) {
+                            onNotificationMessageNew(channel, event);
+                        } else {
+                            onNotificationAddedToChannel(channel, event);
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+
+                    }
+                });
                 break;
             case NOTIFICATION_REMOVED_FROM_CHANNEL:
                 dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);
                 break;
             case NOTIFICATION_MUTES_UPDATED:
                 dispatchChannelEvent(client, event, this::onNotificationMutesUpdated);
+                break;
+            case USER_BANNED:
+                onUserBanned(event);
+                break;
+            case USER_UNBANNED:
+                onUserUnbanned(event);
                 break;
         }
     }

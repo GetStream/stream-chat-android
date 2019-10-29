@@ -52,8 +52,11 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+
 
 
 /**
@@ -521,15 +524,21 @@ public class MessageInputView extends RelativeLayout
         boolean isEdit = viewModel.isEditing();
         binding.ivSend.setEnabled(false);
         if (isEdit) {
-            Message m = getEditMessage();
-            m.setText(input);
-            m.setAttachments(messageInputClient.getSelectedAttachments());
-            if (messageInputClient.isUploadingFile()){
-                m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-                m.setAttachments(null);
+            Message message = getEditMessage();
+            message.setText(input);
+            List<Attachment>newAttachments = messageInputClient.getSelectedAttachments();
+            if (newAttachments != null
+                    && !newAttachments.isEmpty()){
+                List<Attachment>attachments = message.getAttachments();
+                for (Attachment attachment : newAttachments){
+                    if (attachments == null)
+                        attachments = new ArrayList<>();
+                    attachments.add(attachment);
+                }
+                message.setAttachments(attachments);
             }
 
-            viewModel.editMessage(m, new MessageCallback() {
+            viewModel.editMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
