@@ -143,7 +143,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private void configLastMessage(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
         iv_attachment_type.setVisibility(View.GONE);
-        // null check
+
         if (lastMessage == null){
             tv_last_message.setText("");
             return;
@@ -175,12 +175,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         switch (attachment.getType()) {
             case ModelType.attach_image:
-                lastMessageText = "photo";
+                lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_photo);
                 attachmentType = R.drawable.stream_ic_image;
                 break;
             case ModelType.attach_file:
                 if (attachment.getMime_type() != null && attachment.getMime_type().contains("video")){
-                    lastMessageText = "video";
+                    lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_video);
                     attachmentType = R.drawable.stream_ic_video;
                 }else{
                     lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
@@ -188,7 +188,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 }
                 break;
             case ModelType.attach_giphy:
-                lastMessageText = "/giphy";
+                lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_giphy);
                 attachmentType = R.drawable.stream_ic_gif;
                 break;
             default:
@@ -204,7 +204,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     private void configLastMessageDate(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
-        // null check
         if (lastMessage == null) {
             tv_date.setText("");
             return;
