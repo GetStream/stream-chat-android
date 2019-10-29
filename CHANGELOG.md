@@ -1,10 +1,14 @@
-## Upcoming
+## October 25th, 2019 - 3.2.0
+
+- Added event interceptors to `ChannelListViewModel`
+
+## October 24th, 2019 - 3.1.0
 
 - Add channel to list when the user is added
 - Add `onUserDisconnected` event
 - Make sure channel list view model is cleared when the user disconnects
 - Fix bug with `setUser` when user data is not correctly URI encoded
-- More logging
+- Add debug/info logging
 
 ## Oct 23th, 2019 - 3.0.2
 

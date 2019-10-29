@@ -6,6 +6,8 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
+import static com.getstream.sdk.chat.enums.EventType.NOTIFICATION_MESSAGE_NEW;
+
 public abstract class ChatEventHandler {
 
     public void onUserDisconnected() {}
@@ -189,9 +191,6 @@ public abstract class ChatEventHandler {
             case CONNECTION_RECOVERED:
                 onConnectionRecovered(event);
                 break;
-            case NOTIFICATION_MESSAGE_NEW:
-                dispatchChannelEvent(client, event, this::onNotificationMessageNew);
-                break;
             case NOTIFICATION_MARK_READ:
                 dispatchChannelEvent(client, event, this::onNotificationMarkRead);
                 break;
@@ -204,12 +203,17 @@ public abstract class ChatEventHandler {
             case NOTIFICATION_INVITE_REJECTED:
                 dispatchChannelEvent(client, event, this::onNotificationInviteRejected);
                 break;
+            case NOTIFICATION_MESSAGE_NEW:
             case NOTIFICATION_ADDED_TO_CHANNEL:
                 Channel channel = client.channel(event.getChannel().getCid());
                 channel.query(new ChannelQueryRequest(), new QueryChannelCallback() {
                     @Override
                     public void onSuccess(ChannelState response) {
-                        onNotificationAddedToChannel(channel, event);
+                        if (event.getType() == NOTIFICATION_MESSAGE_NEW) {
+                            onNotificationMessageNew(channel, event);
+                        } else {
+                            onNotificationAddedToChannel(channel, event);
+                        }
                     }
 
                     @Override

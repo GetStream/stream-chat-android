@@ -17,4 +17,8 @@ public class MarkReadRequest {
             map.put("message_id", messageId);
         this.event = map;
     }
+
+    public Map<String, Object> getEvent() {
+        return event;
+    }
 }
