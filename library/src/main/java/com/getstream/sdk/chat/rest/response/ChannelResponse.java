@@ -17,11 +17,6 @@ public class ChannelResponse {
     @Expose
     private Channel channel;
 
-    public ChannelResponse(String duration, Channel channel) {
-        this.duration = duration;
-        this.channel = channel;
-    }
-
     public String getDuration() {
         return duration;
     }

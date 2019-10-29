@@ -21,4 +21,9 @@ public class AddMembersRequest {
     public AddMembersRequest(@NotNull List<String> members) {
         this.members = members;
     }
+
+    @NotNull
+    public List<String> getMembers() {
+        return members;
+    }
 }
