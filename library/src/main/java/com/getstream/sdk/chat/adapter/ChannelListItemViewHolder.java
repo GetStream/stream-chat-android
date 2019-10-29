@@ -17,7 +17,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.MarkDown;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -50,6 +49,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelClickListener;
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
+
+    private MarkDown.SetMarkdown setMarkdown;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -86,6 +87,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
         tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
+    }
+
+    public void setSetMarkdown(MarkDown.SetMarkdown setMarkdown) {
+        this.setMarkdown = setMarkdown;
     }
 
     @Override
@@ -146,7 +151,11 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            MarkDown.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            if (setMarkdown != null)
+                setMarkdown.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            else
+                MarkDown.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+
             return;
         }
 

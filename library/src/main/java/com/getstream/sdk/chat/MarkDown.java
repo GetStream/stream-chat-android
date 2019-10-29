@@ -36,4 +36,8 @@ public class MarkDown {
             instance = new MarkDown(context);
         return instance;
     }
+
+    public interface SetMarkdown{
+        void setText(TextView textView, String text);
+    }
 }
