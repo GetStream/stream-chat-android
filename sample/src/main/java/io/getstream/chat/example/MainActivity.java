@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set your markdown
 //        MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
-//            // TODO: set your Markdown
+//            // TODO: use your Markdown library or the extended Markwon.
 //        });
 
         // setup an onclick listener to capture clicks to the user profile or channel
