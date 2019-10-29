@@ -399,7 +399,6 @@ public class MessageInputView extends RelativeLayout
                 }
             }
 
-//            style.setShowAttachmentButton(granted);
             if (granted)
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             else
