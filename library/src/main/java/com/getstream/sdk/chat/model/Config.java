@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
