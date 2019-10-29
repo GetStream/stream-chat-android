@@ -26,6 +26,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.MarkDown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -365,7 +366,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         tv_text.setVisibility(View.VISIBLE);
         // Set Text
-        StreamChat.markwonInstance.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        MarkDown.getInstance(context).setMarkDown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
         if (message.getDeletedAt() != null) {
             // background

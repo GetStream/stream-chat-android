@@ -15,6 +15,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.getstream.sdk.chat.MarkDown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
@@ -145,7 +146,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            StreamChat.markwonInstance.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            MarkDown.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
             return;
         }
 
