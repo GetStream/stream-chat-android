@@ -17,6 +17,10 @@ public class MarkDown {
     private static MarkDown instance;
     private Markwon markwon;
 
+    public MarkDown(){
+
+    }
+
     public MarkDown(Context context) {
         markwon = Markwon.builder(context)
                 .usePlugin(CorePlugin.create())
@@ -34,10 +38,7 @@ public class MarkDown {
     public static MarkDown getInstance(Context context) {
         if (instance == null)
             instance = new MarkDown(context);
-        return instance;
-    }
 
-    public interface SetMarkdown{
-        void setText(TextView textView, String text);
+        return instance;
     }
 }

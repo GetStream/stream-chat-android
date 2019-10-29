@@ -15,7 +15,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.getstream.sdk.chat.MarkDown;
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -50,7 +50,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
 
-    private MarkDown.SetMarkdown setMarkdown;
+    private MarkdownImpl.MarkdownListener markdownListener;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -89,8 +89,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
     }
 
-    public void setSetMarkdown(MarkDown.SetMarkdown setMarkdown) {
-        this.setMarkdown = setMarkdown;
+    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
+        this.markdownListener = markdownListener;
     }
 
     @Override
@@ -151,10 +151,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            if (setMarkdown != null)
-                setMarkdown.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            if (markdownListener != null)
+                markdownListener.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
             else
-                MarkDown.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+                MarkdownImpl.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
 
             return;
         }
@@ -228,7 +228,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
             }
-
         });
 
         tv_click.setOnLongClickListener(view -> {

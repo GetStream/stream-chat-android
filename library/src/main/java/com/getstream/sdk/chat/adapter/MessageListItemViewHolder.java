@@ -26,7 +26,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.MarkDown;
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -86,6 +86,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Message message;
     private MessageListItem messageListItem;
     private MessageListViewStyle style;
+    private MarkdownImpl.MarkdownListener markdownListener;
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
     private ConstraintSet set;
@@ -175,6 +176,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
         avatarWidth = style.getAvatarWidth();
+    }
+
+    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
+        this.markdownListener = markdownListener;
     }
 
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
@@ -366,7 +371,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         tv_text.setVisibility(View.VISIBLE);
         // Set Text
-        MarkDown.getInstance(context).setMarkDown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        if (markdownListener != null)
+            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        else
+            MarkdownImpl.getInstance(context).setMarkDown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
         if (message.getDeletedAt() != null) {
             // background

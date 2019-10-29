@@ -1,8 +1,11 @@
 package io.getstream.chat.example;
 
 import android.app.Application;
+import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.getstream.sdk.chat.MarkDown;
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -39,5 +42,13 @@ public class BaseApplication extends Application {
                             });
                         }
                 );
+
+//        MarkdownImpl.setMarkdownListener(new MarkdownImpl.MarkdownListener() {
+//            @Override
+//            public void setText(TextView textView, String text) {
+//
+//            }
+//        });
+
     }
 }

@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.getstream.sdk.chat.MarkDown;
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
@@ -25,6 +27,7 @@ public class ChannelViewHolderFactory {
             View v = LayoutInflater.from(parent.getContext()).inflate(style.channelPreviewLayout, parent, false);
             ChannelListItemViewHolder holder = new ChannelListItemViewHolder(v);
             holder.setStyle(style);
+            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setChannelClickListener(adapter.getChannelClickListener());
             holder.setChannelLongClickListener(adapter.getChannelLongClickListener());
             holder.setUserClickListener(adapter.getUserClickListener());
