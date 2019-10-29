@@ -192,32 +192,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     /**
-     * deletes the channel and remove from the current list of channels
-     *
-     * @param channel  the channel needs to hide
-     * @param callback the result callback
-     */
-    public void deleteChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
-        channel.delete(new ChannelCallback() {
-            @Override
-            public void onSuccess(ChannelResponse response) {
-                deleteChannel(channel); // remove the channel from the list of not hidden channels
-                if (callback != null) {
-                    callback.onSuccess(null);
-                }
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, errMsg);
-                if (callback != null) {
-                    callback.onError(errMsg);
-                }
-            }
-        });
-    }
-
-    /**
      * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
      *
      * @param channel  the channel needs to hide

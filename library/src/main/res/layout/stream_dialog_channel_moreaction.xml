@@ -72,32 +72,6 @@
                 android:textColor="#8A000000" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_delete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/stream_ic_delete" />
-
-            <TextView
-                android:layout_width="34dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                style="@style/text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:text="Delete"
-                android:textColor="#8A000000" />
-        </LinearLayout>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="19dp" />

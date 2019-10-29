@@ -6,11 +6,9 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
@@ -54,14 +52,11 @@ public class ChannelMoreActionDialog extends Dialog {
         setCanceledOnTouchOutside(true);
         LinearLayout ll_hide = findViewById(R.id.ll_hide);
         LinearLayout ll_edit = findViewById(R.id.ll_edit);
-        LinearLayout ll_delete = findViewById(R.id.ll_delete);
 
         ll_edit.setVisibility(canEditOrDeleteChannel() ? View.VISIBLE : View.GONE);
-        ll_delete.setVisibility(canEditOrDeleteChannel() ? View.VISIBLE : View.GONE);
 
         ll_hide.setOnClickListener(view-> hideChannel());
         ll_edit.setOnClickListener(view-> editChannel());
-        ll_delete.setOnClickListener(view-> deleteChannel());
     }
 
     private boolean canEditOrDeleteChannel() {
@@ -100,37 +95,7 @@ public class ChannelMoreActionDialog extends Dialog {
 
     private void editChannel(){
         dismiss();
-
     }
-
-    private void deleteChannel(){
-        dismiss();
-        final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setTitle("Do you want to delete this channel?")
-                .setMessage("Deleting this channel will permanently remove your messages!")
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.setOnShowListener(dialog -> {
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                viewModel.deleteChannel(channel, new ResultCallback<Void, String>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Utils.showMessage(context, "Deleted successfully!");
-                    }
-
-                    @Override
-                    public void onError(String s) {
-                        Utils.showMessage(context, s);
-                    }
-                });
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
-    }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -35,7 +35,6 @@
 - Expose members and watchers pagination options for query channel 
 - added `ChannelMoreActionDialog` (Adrian)
 - renamed `MoreActionDialog` to `MessageMoreActionDialog` (Adrian)
-- added `deleteChannel` function to `ChannelListViewModel` (Adrian)
 
 #### Breaking changes
 
