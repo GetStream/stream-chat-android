@@ -1068,7 +1068,8 @@ public class Client implements WSResponseHandler {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
-                response.body().getMessage().setSyncStatus(SYNCED);
+                if (response.body() != null && response.body().getMessage() != null)
+                    response.body().getMessage().setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
