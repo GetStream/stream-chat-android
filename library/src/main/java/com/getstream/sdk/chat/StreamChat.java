@@ -43,7 +43,6 @@ public class StreamChat {
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
     }
-    public static Markwon markwonInstance;
 
     /**
      * @return LiveData object for the total unread messages
@@ -189,14 +188,6 @@ public class StreamChat {
                         onlineStatus.postValue(OnlineStatus.FAILED);
                     }
                 });
-                // Set Markworn
-                markwonInstance = Markwon.builder(context)
-                        .usePlugin(CorePlugin.create())
-                        .usePlugin(LinkifyPlugin.create())
-                        .usePlugin(ImagesPlugin.create())
-                        .usePlugin(TablePlugin.create(context))
-                        .usePlugin(StrikethroughPlugin.create())
-                        .build();
             }
             return true;
         }
