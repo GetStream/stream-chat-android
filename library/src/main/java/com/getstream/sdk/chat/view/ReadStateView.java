@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
@@ -82,7 +81,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         }
         // Count Text
         TextView textView = new TextView(getContext());
-        textView.setText(String.valueOf(reads.size()));
+        textView.setText(String.valueOf(reads.size() - 1));
         textView.setTextColor(style.getReadStateTextColor());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReadStateTextSize());
         textView.setTypeface(Typeface.DEFAULT, style.getReadStateTextStyle());
