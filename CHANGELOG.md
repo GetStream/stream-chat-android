@@ -1,3 +1,8 @@
+## Upcoming
+
+- Fixed transparency issues with user profile images on older devices
+
+
 ## October 25th, 2019 - 3.2.0
 
 - Added event interceptors to `ChannelListViewModel`
