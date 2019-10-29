@@ -119,9 +119,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         applyStyle(channelState);
     }
 
+    // set the channel name
     private void configChannelName(ChannelState channelState){
         String channelName = channelState.getChannelNameOrMembers();
-        tv_name.setText(channelName);
+        tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
     }
 
     private void configAvatarView(ChannelState channelState){

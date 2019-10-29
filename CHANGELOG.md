@@ -1,3 +1,9 @@
+## Upcoming
+
+- Fixed transparency issues with user profile images on older devices
+- Better channel header title for channels without a name
+
+
 ## October 25th, 2019 - 3.2.0
 
 - Added event interceptors to `ChannelListViewModel`
