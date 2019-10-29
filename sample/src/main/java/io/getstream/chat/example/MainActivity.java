@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.view.Dialog.ChannelMoreActionDialog;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
