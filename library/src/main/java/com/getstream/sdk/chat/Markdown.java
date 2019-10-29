@@ -31,7 +31,7 @@ public class Markdown {
                 .build();
     }
 
-    public void setMarkDown(@NonNull TextView textView, @NonNull String text){
+    public void setMarkdown(@NonNull TextView textView, @NonNull String text){
         markwon.setMarkdown(textView, text);
     }
 

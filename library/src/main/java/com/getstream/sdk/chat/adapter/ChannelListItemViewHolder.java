@@ -154,7 +154,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             if (markdownListener != null)
                 markdownListener.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
             else
-                MarkdownImpl.getInstance(context).setMarkDown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+                MarkdownImpl.getInstance(context).setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
 
             return;
         }
