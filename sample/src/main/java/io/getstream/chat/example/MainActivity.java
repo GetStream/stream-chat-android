@@ -37,6 +37,7 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
+import static java.util.UUID.randomUUID;
 
 
 /**
@@ -48,28 +49,25 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final Boolean offlineEnabled = false;
-    final String USER_ID = "bender";
-    // User token is typically provided by your server when the user authenticates
-    final String USER_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ";
+
     private ChannelListViewModel viewModel;
 
     // establish a websocket connection to stream
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
 
-        Crashlytics.setUserIdentifier(USER_ID);
+        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
         if (offlineEnabled) {
             client.enableOfflineStorage();
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
-
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", "Bender");
-        extraData.put("image", "https://bit.ly/321RmWb");
+        extraData.put("name", BuildConfig.USER_NAME);
+        extraData.put("image", BuildConfig.USER_IMAGE);
 
-        User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
+        User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
@@ -82,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
         });
         return client;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = and(eq("type", "messaging"));
+        viewModel.setChannelFilter(filter);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +120,16 @@ public class MainActivity extends AppCompatActivity {
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
+
+
+        // Example on how to ignore some events handled by the VM
+        //    viewModel.setEventInterceptor((event, channel) -> {
+        //        if (event.getType() == EventType.NOTIFICATION_MESSAGE_NEW && event.getMessage() != null) {
+        //            return client.getUser().hasMuted(event.getMessage().getUser());
+        //        }
+        //        return false;
+        //    });
+
         // set the viewModel data for the activity_main.xml layout
         binding.setViewModel(viewModel);
 

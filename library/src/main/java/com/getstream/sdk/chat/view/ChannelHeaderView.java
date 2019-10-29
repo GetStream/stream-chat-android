@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -79,7 +80,8 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void setHeaderTitle(ChannelState channelState) {
-        binding.setChannelName(channelState.getChannelNameOrMembers());
+        String channelName = channelState.getChannelNameOrMembers();
+        binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText());
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {

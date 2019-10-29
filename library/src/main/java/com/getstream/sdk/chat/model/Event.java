@@ -92,6 +92,10 @@ public class Event implements UserEntity {
         return connectionId;
     }
 
+    public void setConnectionId(String connectionId) {
+        this.connectionId = connectionId;
+    }
+
     public boolean isChannelEvent() {
         return cid != null && !cid.equals("*");
     }

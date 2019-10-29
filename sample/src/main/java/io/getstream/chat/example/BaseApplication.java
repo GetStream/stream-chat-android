@@ -19,8 +19,8 @@ public class BaseApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
-        StreamChat.init("qk4nn7rpcn75", new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
-        Crashlytics.setString("apiKey", "qk4nn7rpcn75");
+        StreamChat.init(BuildConfig.API_KEY, new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
+        Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                             if (!task.isSuccessful()) {
