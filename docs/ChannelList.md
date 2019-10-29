@@ -178,11 +178,12 @@ You must use the following properties in your XML to change your ChannelListView
 
 - **Channel Title**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamTitleTextSize`           | dimension             | 15sp    |
-| `app:streamTitleTextColor`          | color                 | BLACK   |
-| `app:streamTitleTextStyle`          | normal, bold, italic  | bold    |
+| Properties                                 | Type                  | Default              |
+| ------------------------------------------ | --------------------- | -------------------- |
+| `app:streamTitleTextSize`                  | dimension             | 15sp                 |
+| `app:streamTitleTextColor`                 | color                 | BLACK                |
+| `app:streamTitleTextStyle`                 | normal, bold, italic  | bold                 |
+| `app:streamChannelWithOutNameTitleText`    | string                | Channel without name |
 
 - **Last Message**
 
