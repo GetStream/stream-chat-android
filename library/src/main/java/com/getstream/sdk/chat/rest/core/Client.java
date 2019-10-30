@@ -28,7 +28,9 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StreamStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
@@ -119,12 +121,13 @@ public class Client implements WSResponseHandler {
 
     // Main Params
     private String apiKey;
-    private BaseStorage uploadStorage;
+
     private Boolean offlineStorage;
     private CachedTokenProvider tokenProvider;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
+    private StorageProvider storageProvider;
     private boolean fetchingToken;
     private String cacheUserToken;
     private Context context;
@@ -132,14 +135,16 @@ public class Client implements WSResponseHandler {
     private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
 
+    private BaseStorage uploadStorage;
     private APIService apiService;
+    private WebSocketService webSocketService;
+    private Storage storage;
 
-    private EventSubscriberRegistry<ChatEventHandler> subRegistery;
+    private EventSubscriberRegistry<ChatEventHandler> subRegistry;
     // registry for callbacks on the setUser connection
-    private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistery;
+    private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistry;
 
     private Map<String, Config> channelTypeConfigs;
-    private WebSocketService webSocketService;
     // endregion
     private ChatEventHandler builtinHandler =
 
@@ -226,7 +231,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelDeleted(Channel channel, Event event) {
-                    storage().deleteChannel(channel);
+                    getStorage().deleteChannel(channel);
                     activeChannelMap.remove(channel.getCid());
                 }
 
@@ -268,16 +273,18 @@ public class Client implements WSResponseHandler {
                   ApiServiceProvider apiServiceProvider,
                   WebSocketServiceProvider webSocketServiceProvider,
                   UploadStorageProvider uploadStorageProvider,
+                  StorageProvider storageProvider,
                   ConnectionLiveData connectionLiveData) {
         connected = false;
         this.apiKey = apiKey;
-        subRegistery = new EventSubscriberRegistry();
-        connectSubRegistery = new EventSubscriberRegistry<>();
+        subRegistry = new EventSubscriberRegistry();
+        connectSubRegistry = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
         offlineStorage = false;
         this.apiServiceProvider = apiServiceProvider;
         this.webSocketServiceProvider = webSocketServiceProvider;
         this.uploadStorageProvider = uploadStorageProvider;
+        this.storageProvider = storageProvider;
         this.state = new ClientState(this);
 
         Log.d(TAG, "instance created: " + apiKey);
@@ -299,6 +306,7 @@ public class Client implements WSResponseHandler {
         this(apiKey, new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
+                new StreamStorageProvider(),
                 null);
     }
 
@@ -306,11 +314,15 @@ public class Client implements WSResponseHandler {
         this(apiKey, new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
+                new StreamStorageProvider(),
                 connectionLiveData);
     }
 
-    public Storage storage() {
-        return Storage.getStorage(this, getContext(), this.offlineStorage);
+    public Storage getStorage() {
+        if (storage == null) {
+            storage = storageProvider.provideStorage(this, getContext(), offlineStorage);
+        }
+        return storage;
     }
 
     public String getApiKey() {
@@ -379,7 +391,7 @@ public class Client implements WSResponseHandler {
         cacheUserToken = null;
 
         builtinHandler.dispatchUserDisconnected();
-        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
+        for (ChatEventHandler handler : subRegistry.getSubscribers()) {
             handler.dispatchUserDisconnected();
         }
 
@@ -389,7 +401,7 @@ public class Client implements WSResponseHandler {
     }
 
     public synchronized void setUser(User user, final TokenProvider provider, ClientConnectionCallback callback) {
-        connectSubRegistery.addSubscription(callback);
+        connectSubRegistry.addSubscription(callback);
         setUser(user, provider);
     }
 
@@ -531,7 +543,7 @@ public class Client implements WSResponseHandler {
      * @return the identifier of the handler, you can use that to remove it, see: {@link #removeEventHandler(Integer)}
      */
     public final int addEventHandler(ChatEventHandler handler) {
-        Integer subID = subRegistery.addSubscription(handler);
+        Integer subID = subRegistry.addSubscription(handler);
         return subID;
     }
 
@@ -543,7 +555,7 @@ public class Client implements WSResponseHandler {
      * @param handlerId the event handler for client events
      */
     public final void removeEventHandler(Integer handlerId) {
-        subRegistery.removeSubscription(handlerId);
+        subRegistry.removeSubscription(handlerId);
     }
 
     /**
@@ -558,7 +570,7 @@ public class Client implements WSResponseHandler {
         if (connected) {
             callback.onSuccess(getUser());
         } else {
-            connectSubRegistery.addSubscription(callback);
+            connectSubRegistry.addSubscription(callback);
         }
     }
 
@@ -607,8 +619,8 @@ public class Client implements WSResponseHandler {
         connected = true;
 
         // call onSuccess for everyone that was waiting
-        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
-        connectSubRegistery.clear();
+        List<ClientConnectionCallback> subs = connectSubRegistry.getSubscribers();
+        connectSubRegistry.clear();
         for (ClientConnectionCallback waiter : subs) {
             waiter.onSuccess(getUser());
         }
@@ -621,8 +633,8 @@ public class Client implements WSResponseHandler {
     }
 
     private void onError(String errMsg, int errCode) {
-        List<ClientConnectionCallback> subs = connectSubRegistery.getSubscribers();
-        connectSubRegistery.clear();
+        List<ClientConnectionCallback> subs = connectSubRegistry.getSubscribers();
+        connectSubRegistry.clear();
         for (ClientConnectionCallback waiter : subs) {
             waiter.onError(errMsg, errCode);
         }
@@ -631,7 +643,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(this, event);
-        for (ChatEventHandler handler : subRegistery.getSubscribers()) {
+        for (ChatEventHandler handler : subRegistry.getSubscribers()) {
             handler.dispatchEvent(this, event);
         }
 
@@ -737,14 +749,12 @@ public class Client implements WSResponseHandler {
 
     // region Channel
     public void queryChannels(QueryChannelsRequest request, QueryChannelListCallback callback) {
-        Client m = this;
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                String userID = user.getId();
                 String payload = GsonConverter.Gson().toJson(request);
 
-                apiService.queryChannels(apiKey, userID, clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
+                apiService.queryChannels(apiKey, getUserId(), clientID, payload).enqueue(new Callback<QueryChannelsResponse>() {
                     @Override
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
@@ -753,7 +763,7 @@ public class Client implements WSResponseHandler {
                                 channelState.getLastMessage().setSyncStatus(SYNCED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
-                            channel.setClient(m);
+                            channel.setClient(Client.this);
                             channel.setLastState(channelState);
                             if (getChannelByCid(channel.getCid()) != null) {
                                 channel = getChannelByCid(channel.getCid());
@@ -774,7 +784,7 @@ public class Client implements WSResponseHandler {
 
                         List<Channel> channels = response.body().getChannels();
 
-                        storage().insertQueryWithChannels(query, channels);
+                        getStorage().insertQueryWithChannels(query, channels);
 
                         // callback
                         callback.onSuccess(response.body());

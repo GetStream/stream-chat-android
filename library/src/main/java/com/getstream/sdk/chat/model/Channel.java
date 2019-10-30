@@ -511,7 +511,7 @@ public class Channel {
                 Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                 // offline storage
 
-                getClient().storage().insertMessagesForChannel(channel, response.body().getMessages());
+                getClient().getStorage().insertMessagesForChannel(channel, response.body().getMessages());
 
                 callback.onSuccess(response.body());
             }
@@ -834,7 +834,7 @@ public class Channel {
     public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         updatedAt = channel.updatedAt;
-        getClient().storage().insertChannel(channel);
+        getClient().getStorage().insertChannel(channel);
     }
 
     public void handleWatcherStart(Event event) {
@@ -856,7 +856,7 @@ public class Channel {
         if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }
-        getClient().storage().insertMessageForChannel(this, message);
+        getClient().getStorage().insertMessageForChannel(this, message);
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {
@@ -868,7 +868,7 @@ public class Channel {
                 if (i == channelState.getMessages().size() - 1)
                     channelState.setLastMessage(message);
 
-                getClient().storage().insertMessageForChannel(this, message);
+                getClient().getStorage().insertMessageForChannel(this, message);
                 break;
             }
         }
