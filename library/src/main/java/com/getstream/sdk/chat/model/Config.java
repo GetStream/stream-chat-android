@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class Config {
     @SerializedName("commands")
     @Expose
     @TypeConverters(CommandListConverter.class)
-    private List<Command> commands;
+    private List<Command> commands = Collections.emptyList();
 
     public String getName() {
         return name;

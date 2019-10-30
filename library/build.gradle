@@ -4,6 +4,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 apply plugin: "de.mannodermaus.android-junit5"
 
+apply plugin: 'jacoco-android'
+
 group = 'com.github.GetStream'
 
 def DEFAULT_COMPILE_SDK_VERSION = 28

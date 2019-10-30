@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.rest.core.providers;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
+import com.getstream.sdk.chat.rest.StreamWebSocketService;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
@@ -34,7 +35,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     public WebSocketService provideWebSocketService(User user, String userToken, WSResponseHandler listener) throws UnsupportedEncodingException {
         String wsUrl = getWsUrl(userToken, user);
         Log.d(TAG, "WebSocket URL : " + wsUrl);
-        return new WebSocketService(wsUrl, user.getUserId(), listener);
+        return new StreamWebSocketService(wsUrl, listener);
     }
 
     @NotNull
