@@ -48,7 +48,6 @@
             android:id="@+id/tv_header_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Today"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -56,8 +55,7 @@
             android:id="@+id/tv_header_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AT 8:33PM"
-            android:textSize="12dp"
+            android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
 
