@@ -8,13 +8,15 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.PaginationOptions;
+import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.ClientState;
-import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
+import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.StorageProvider;
+import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -50,6 +52,7 @@ import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.utils.CallFake;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
+import com.getstream.sdk.chat.storage.Storage;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +65,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
@@ -88,6 +92,8 @@ public class ClientTest {
     private BaseStorage uploadStorage;
     @Mock
     private WebSocketService webSocketService;
+    @Mock
+    private Storage storage;
 
     private Client client;
 
@@ -100,16 +106,20 @@ public class ClientTest {
                 any(), any(), any()
         );
 
-        StreamApiServiceProvider apiServiceProvider = mock(StreamApiServiceProvider.class);
+        ApiServiceProvider apiServiceProvider = mock(ApiServiceProvider.class);
         doReturn(apiService).when(apiServiceProvider).provideApiService(any());
 
-        StreamUploadStorageProvider uploadStorageProvider = mock(StreamUploadStorageProvider.class);
+        UploadStorageProvider uploadStorageProvider = mock(UploadStorageProvider.class);
         doReturn(uploadStorage).when(uploadStorageProvider).provideUploadStorage(any(), any());
+
+        StorageProvider storageProvider = mock(StorageProvider.class);
+        doReturn(storage).when(storageProvider).provideStorage(any(), any(), anyBoolean());
 
         client = new Client(TEST_API_KEY,
                 apiServiceProvider,
                 webSocketServiceProvider,
                 uploadStorageProvider,
+                storageProvider,
                 null);
 
         simulateConnection();
@@ -840,8 +850,7 @@ public class ClientTest {
 
         verify(apiService).queryChannels(TEST_API_KEY, TEST_USER_ID, TEST_CLIENT_ID, payload);
         verify(callback).onSuccess(response);
-
-        //TODO client.queryChannels has a lot of side effects. Need to refactor the method.
+        verify(storage).insertQueryWithChannels(any(QueryChannelsQ.class), eq(response.getChannels()));
     }
 
     private void simulateConnection() {
