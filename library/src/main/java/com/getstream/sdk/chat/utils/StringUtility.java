@@ -63,10 +63,10 @@ public class StringUtility {
     }
 
     @SuppressLint("DefaultLocale")
-    public static String convertVideoLength(long videoLengh) {
-        long hours = videoLengh / 3600;
-        long minutes = (videoLengh % 3600) / 60;
-        long seconds = videoLengh % 60;
+    public static String convertVideoLength(long videoLength) {
+        long hours = videoLength / 3600;
+        long minutes = (videoLength % 3600) / 60;
+        long seconds = videoLength % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 }
