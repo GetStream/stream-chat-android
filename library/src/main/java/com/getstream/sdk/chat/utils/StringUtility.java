@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
+import android.annotation.SuppressLint;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -61,20 +62,11 @@ public class StringUtility {
         return text.replaceAll("\n", "  \n");
     }
 
-
-
-    public static String getSaltString(String s) {
-        String s_ = s.replaceAll("\\s+","");
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder salt = new StringBuilder();
-        int minIndex = Math.min(5, s_.length() - 1);
-        salt.append(s_.substring(0,minIndex));
-        salt.append("-");
-        Random rnd = new Random();
-        while (salt.length() < 18) {
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        return salt.toString();
+    @SuppressLint("DefaultLocale")
+    public static String convertVideoLength(long videoLength) {
+        long hours = videoLength / 3600;
+        long minutes = (videoLength % 3600) / 60;
+        long seconds = videoLength % 60;
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 }

@@ -48,6 +48,9 @@ import java.util.List;
 
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
+import static com.getstream.sdk.chat.enums.Dates.TODAY;
+import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
+
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
@@ -244,7 +247,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             });
 
             if (message.getDate() == null) Message.setStartDay(Arrays.asList(message), null);
-            if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
+            if (message.getDate().equals(TODAY.label) || message.getDate().equals(YESTERDAY.label))
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(message.getDate() + ", " + message.getTime());
