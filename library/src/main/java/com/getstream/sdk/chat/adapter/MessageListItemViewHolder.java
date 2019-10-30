@@ -29,12 +29,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
@@ -287,32 +287,23 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || !messageListItem.isMine()
                 || message.getCreatedAt().getTime() < channelState.getLastMessage().getCreatedAt().getTime()
                 || message.getType().equals(ModelType.message_ephemeral)
-                || message.getStatus() == null
                 || isThread()
                 || isEphemeral())
             return;
 
-        switch (message.getStatus()) {
-            case SENDING:
+        switch (message.getSyncStatus()) {
+            case Sync.LOCAL_ONLY:
                 pb_deliver.setVisibility(View.VISIBLE);
                 iv_deliver.setVisibility(View.GONE);
                 break;
-            case RECEIVED:
+            case Sync.SYNCED:
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.VISIBLE);
                 break;
-            case FAILED:
+            case Sync.IN_MEMORY:
+            case Sync.LOCAL_FAILED:
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.GONE);
-                break;
-            default:
-                if (message.getCreatedAt().getTime() <= channelState.getChannel().getLastMessageDate().getTime()
-                        && channelState.getLastMessage().getId().equals(message.getId())) {
-                    message.setStatus(MessageStatus.RECEIVED);
-                    iv_deliver.setVisibility(View.VISIBLE);
-                    return;
-                }
-                pb_deliver.setVisibility(View.VISIBLE);
                 break;
         }
     }
@@ -335,7 +326,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configSendFailed() {
-        if (message.getStatus() == MessageStatus.FAILED
+        if (message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error)) {
             ll_send_failed.setVisibility(View.VISIBLE);
             tv_failed_text.setText(message.getText());
@@ -362,7 +353,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     boolean isLongClick = false;
     @SuppressLint("ClickableViewAccessibility")
     private void configMessageText() {
-        if (message.getStatus() == MessageStatus.FAILED
+        if (message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error)
                 || (TextUtils.isEmpty(message.getText()) && message.getDeletedAt() == null)) {
             tv_text.setVisibility(View.GONE);
@@ -755,7 +746,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private boolean isDeletedOrFailedMessage() {
         return message.getDeletedAt() != null
-                || message.getStatus() == MessageStatus.FAILED
+                || message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error);
     }
 
