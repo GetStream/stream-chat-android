@@ -18,9 +18,9 @@ import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 public class ChannelMoreActionDialog extends Dialog {
 
-    Channel channel;
-    ChannelListViewModel viewModel;
-    Context context;
+    private Channel channel;
+    private ChannelListViewModel viewModel;
+    private Context context;
     public ChannelMoreActionDialog(@NonNull Context context) {        
         super(context, R.style.DialogTheme);
         this.context = context;
@@ -68,7 +68,7 @@ public class ChannelMoreActionDialog extends Dialog {
         viewModel.hideChannel(channel, new ResultCallback<Void, String>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Utils.showMessage(context, "Hidden successfully!");
+                Utils.showMessage(context, context.getString(R.string.stream_channel_action_hide_alert));
             }
 
             @Override
@@ -83,7 +83,7 @@ public class ChannelMoreActionDialog extends Dialog {
         viewModel.showChannel(channel, new ResultCallback<Void, String>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Utils.showMessage(context, "Shown up successfully!");
+                Utils.showMessage(context, context.getString(R.string.stream_channel_action_show_alert));
             }
 
             @Override

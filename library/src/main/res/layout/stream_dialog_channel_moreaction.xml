@@ -11,12 +11,13 @@
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:paddingBottom="19dp"
-        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <TextView
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+        <Space
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
@@ -33,7 +34,7 @@
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_hide" />
 
-            <TextView
+            <Space
                 android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
@@ -42,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Hide"
+                android:text="@string/stream_channel_action_hide"
                 android:textColor="#8A000000" />
         </LinearLayout>
 
@@ -59,7 +60,7 @@
                 android:layout_height="22dp"
                 android:src="@drawable/stream_ic_edit" />
 
-            <TextView
+            <Space
                 android:layout_width="34dp"
                 android:layout_height="match_parent" />
 
@@ -68,11 +69,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Edit"
+                android:text="@string/stream_channel_action_edit"
                 android:textColor="#8A000000" />
         </LinearLayout>
 
-        <TextView
+        <Space
             android:layout_width="match_parent"
             android:layout_height="19dp" />
     </LinearLayout>

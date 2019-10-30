@@ -35,4 +35,9 @@
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
     <string name="stream_last_message_attachment_giphy">/giphy</string>
+    <!--ChannelMoreAction-->
+    <string name="stream_channel_action_hide_alert">Hidden successfully</string>
+    <string name="stream_channel_action_show_alert">Shown up successfully</string>
+    <string name="stream_channel_action_hide">Hide</string>
+    <string name="stream_channel_action_edit">Edit</string>
 </resources>
