@@ -41,7 +41,7 @@ import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.OnQueryListener;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
@@ -74,7 +74,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.channel = channel;
 
         // fetch offline messages
-        client().storage().selectChannelState(channel.getCid(), new Storage.OnQueryListener<ChannelState>() {
+        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
             @Override
             public void onSuccess(ChannelState channelState) {
                 Log.i(TAG, "Read messages from local cache...");
@@ -978,7 +978,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
-            client().storage().insertMessageForChannel(channel, message);
+            client().getStorage().insertMessageForChannel(channel, message);
 
             // add the message here
             addMessage(message);

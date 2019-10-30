@@ -22,6 +22,7 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.2'
         classpath 'io.fabric.tools:gradle:1.31.1'  // Crashlytics plugin
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.5.1.0" // jUnit5 plugin
+        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

@@ -4,6 +4,8 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 apply plugin: "de.mannodermaus.android-junit5"
 
+apply plugin: 'jacoco-android'
+
 group = 'com.github.GetStream'
 
 def DEFAULT_COMPILE_SDK_VERSION = 28
@@ -34,7 +36,7 @@ android {
     }
 }
 
-final def markdown_version = '4.1.1'
+final def markdown_version = '4.1.2'
 final def jupiter_version = '5.5.1'
 
 dependencies {
@@ -56,6 +58,9 @@ dependencies {
     implementation 'com.github.duanhong169:drawabletoolbox:1.0.7'
     implementation "io.noties.markwon:core:$markdown_version"
     implementation "io.noties.markwon:linkify:$markdown_version"
+    implementation "io.noties.markwon:ext-strikethrough:$markdown_version"
+    implementation "io.noties.markwon:image:$markdown_version"
+    implementation "io.noties.markwon:ext-tables:$markdown_version"
 
     implementation 'com.facebook.fresco:fresco:1.2.0'
     implementation 'me.relex:photodraweeview:1.1.0'
