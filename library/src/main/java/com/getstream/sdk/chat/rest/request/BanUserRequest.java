@@ -41,4 +41,29 @@ public class BanUserRequest {
         this.channelType = channelType;
         this.channelId = channelId;
     }
+
+    @NotNull
+    public String getTargetUserId() {
+        return targetUserId;
+    }
+
+    @Nullable
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    @Nullable
+    public String getReason() {
+        return reason;
+    }
+
+    @Nullable
+    public String getChannelType() {
+        return channelType;
+    }
+
+    @Nullable
+    public String getChannelId() {
+        return channelId;
+    }
 }

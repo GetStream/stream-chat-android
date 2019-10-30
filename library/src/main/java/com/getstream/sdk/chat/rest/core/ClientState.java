@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ClientState {
 
-
     private static final String TAG = ClientState.class.getSimpleName();
 
     @NotNull
@@ -134,7 +133,7 @@ public class ClientState {
         updateUsers(newUsers);
     }
 
-    void updateUsers(List<User> newUsers) {
+    public void updateUsers(List<User> newUsers) {
         Log.d(TAG, "updateUsers");
         Map<String, Channel> channelMap = client.getActiveChannelMap();
 

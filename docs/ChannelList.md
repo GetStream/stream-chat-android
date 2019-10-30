@@ -98,6 +98,46 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
+#### View Model Event handling
+
+The Channel List view model keeps channels in sync using event delegation. 
+
+Events that updates channels:
+
+- `message.new`
+- `message.updated`
+- `message.deleted`
+- `channel.updated`
+- `message.mark_read`
+- `member.added`
+- `member.updated`
+- `member.removed`
+
+Events that add new channels:
+
+- `notification.message_new`
+- `notification.added_to_channel`
+
+Events that remove channels:
+
+- `notification.removed_from_channel`
+- `channel.deleted`
+
+##### Customizing event handling
+
+In some cases you might want to disable the built-in behavior such as automatically add a new channel to the list.
+
+Here's an example on how to ignore new channels when `NOTIFICATION_MESSAGE_NEW` has a message from a muted user
+
+```java
+viewModel.setEventInterceptor((event, channel) -> {
+    if (event.getType() == EventType.NOTIFICATION_MESSAGE_NEW && event.getMessage() != null) {
+        return client.getUser().hasMuted(event.getMessage().getUser());
+    }
+    return false;
+});
+```
+
 #### Listeners
 
 The following listeners can be set
@@ -138,11 +178,12 @@ You must use the following properties in your XML to change your ChannelListView
 
 - **Channel Title**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamTitleTextSize`           | dimension             | 15sp    |
-| `app:streamTitleTextColor`          | color                 | BLACK   |
-| `app:streamTitleTextStyle`          | normal, bold, italic  | bold    |
+| Properties                                 | Type                  | Default              |
+| ------------------------------------------ | --------------------- | -------------------- |
+| `app:streamTitleTextSize`                  | dimension             | 15sp                 |
+| `app:streamTitleTextColor`                 | color                 | BLACK                |
+| `app:streamTitleTextStyle`                 | normal, bold, italic  | bold                 |
+| `app:streamChannelWithOutNameTitleText`    | string                | Channel without name |
 
 - **Last Message**
 

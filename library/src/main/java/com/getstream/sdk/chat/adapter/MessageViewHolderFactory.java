@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.view.ViewGroup;
 
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
@@ -75,6 +76,7 @@ public class MessageViewHolderFactory {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
             holder.setViewHolderFactory(this);
             holder.setStyle(adapter.getStyle());
+            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
             holder.setAttachmentClickListener(adapter.getAttachmentClickListener());

@@ -7,4 +7,8 @@ public class CompletableResponse {
     @SerializedName("duration")
     @Expose
     private String duration;
+
+    public String getDuration() {
+        return duration;
+    }
 }
