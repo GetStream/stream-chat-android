@@ -26,6 +26,9 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     WebView webView;
     ProgressBar progressBar;
 
+    int reloadCount = 0;
+    final int maxReloadCount = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +76,17 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         @Override
         public void onPageFinished(WebView view, String url) {
             if (view.getTitle().equals("")){
-                view.reload();
-                return;
+                if (reloadCount < maxReloadCount){
+                    view.reload();
+                    reloadCount ++;
+                }else {
+                    progressBar.setVisibility(View.GONE);
+                    String errorMsg = AttachmentDocumentActivity.this.getString(R.string.stream_attachment_load_failed_unknown);
+                    Utils.showMessage(AttachmentDocumentActivity.this, errorMsg);
+                }
+            }else {
+                progressBar.setVisibility(View.GONE);
             }
-            progressBar.setVisibility(View.GONE);
         }
 
         @Override
