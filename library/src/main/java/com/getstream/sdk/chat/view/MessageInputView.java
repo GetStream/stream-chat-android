@@ -328,7 +328,6 @@ public class MessageInputView extends RelativeLayout
     }
 
     // endregion
-    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
     public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
@@ -338,6 +337,7 @@ public class MessageInputView extends RelativeLayout
                     file = new File(path);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    clearInsertedMediaStore();
                 }
                 if (file != null) {
                     messageInputClient.progressCapturedMedia(getContext(), imageUri, true);
@@ -353,11 +353,21 @@ public class MessageInputView extends RelativeLayout
                     imageUri = null;
                 } else {
                     messageInputClient.progressCapturedMedia(getContext(), uri, false);
+                    clearInsertedMediaStore();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                clearInsertedMediaStore();
             }
+        }else{
+            clearInsertedMediaStore();
         }
+    }
+
+    private void clearInsertedMediaStore(){
+        if (imageUri != null)
+            getContext().getContentResolver().delete(imageUri, null, null);
+        imageUri = null;
     }
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
