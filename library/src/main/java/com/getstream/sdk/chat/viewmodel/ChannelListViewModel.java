@@ -25,7 +25,7 @@ import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.OnQueryListener;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
@@ -530,7 +530,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      *
      * @param callback the result callback
      */
-    public void queryChannels(Storage.OnQueryListener<List<ChannelState>> callback) {
+    public void queryChannels(OnQueryListener<List<ChannelState>> callback) {
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) {
             Log.i(TAG, "already loading, skip queryChannels");
@@ -539,7 +539,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
-        client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
+        client().getStorage().selectChannelStates(request.query().getId(), 100, new OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
                 if (channels != null && channelStates != null)
@@ -557,7 +557,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     public void queryChannels() {
-        queryChannels(new Storage.OnQueryListener<List<ChannelState>>() {
+        queryChannels(new OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
                 Log.i(TAG, "Read from local cache...");
