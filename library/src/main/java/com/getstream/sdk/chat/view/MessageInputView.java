@@ -373,8 +373,6 @@ public class MessageInputView extends RelativeLayout
                     break;
                 }
             }
-
-            style.setShowAttachmentButton(granted);
             if (granted)
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             else
@@ -426,7 +424,7 @@ public class MessageInputView extends RelativeLayout
             this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
-            if (style.isPermissionSet() || isGrantedPermissions())
+            if (isGrantedPermissions())
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             else if(permissionRequestListener != null)
                 permissionRequestListener.openPermissionRequest();

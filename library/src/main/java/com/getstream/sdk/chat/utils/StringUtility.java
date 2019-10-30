@@ -2,16 +2,11 @@ package com.getstream.sdk.chat.utils;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 public class StringUtility {
 

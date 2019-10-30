@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -22,7 +21,6 @@ import com.getstream.sdk.chat.R;
 public class MessageInputStyle extends BaseStyle {
 
     private boolean showAttachmentButton;
-    private boolean permissionSet;
     private int attachmentButtonIcon;
     private int attachmentButtonDefaultIconColor;
     private int attachmentButtonDefaultIconPressedColor;
@@ -107,9 +105,6 @@ public class MessageInputStyle extends BaseStyle {
         avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
         a.recycle();
-
-        prefs = context.getSharedPreferences(
-                "MessageInputStyle", Context.MODE_PRIVATE);
     }
 
     private Drawable getSelector(@ColorInt int normalColor, @ColorInt int pressedColor,
@@ -130,21 +125,8 @@ public class MessageInputStyle extends BaseStyle {
     }
 
     // Attachment Button
-    private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
-    private final String showAttachmentButtonKey = "showAttachmentButton";
-    private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
-        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
-    }
-
-    public void setShowAttachmentButton(boolean showAttachmentButton) {
-        this.showAttachmentButton = showAttachmentButton;
-        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
-        prefs.edit().putBoolean(permissionSetKey, true).apply();
-    }
-
-    public boolean isPermissionSet() {
-        return prefs.getBoolean(permissionSetKey, false);
+        return showAttachmentButton;
     }
 
     public Drawable getAttachmentButtonIcon(boolean isSelected) {
