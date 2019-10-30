@@ -50,4 +50,10 @@ public class GetDeletedOrMentionedTextTest {
         message.setText(text);
         assertEquals(" .a. ", StringUtility.getDeletedOrMentionedText(message));
     }
+
+    @org.junit.jupiter.api.Test
+    void convertVideoLengthTest() {
+        long videoLength = 216844;
+        assertEquals("60:14:04", StringUtility.convertVideoLength(videoLength));
+    }
 }
