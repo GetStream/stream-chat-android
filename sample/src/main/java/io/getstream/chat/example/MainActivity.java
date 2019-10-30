@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +17,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -134,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
         binding.setViewModel(viewModel);
 
         binding.channelList.setViewModel(viewModel, this);
+
+        // set your markdown
+//        MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
+//            // TODO: use your Markdown library or the extended Markwon.
+//        });
 
         // setup an onclick listener to capture clicks to the user profile or channel
         MainActivity parent = this;

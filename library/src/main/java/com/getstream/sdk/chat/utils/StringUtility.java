@@ -58,8 +58,7 @@ public class StringUtility {
             }
         }
         // Markdown for newline
-        text = text.replaceAll("<br/>  <br/>  \n", "\n");
-        return text.replaceAll("\n", "<br/>  <br/>  \n");
+        return text.replaceAll("\n", "  \n");
     }
 
 

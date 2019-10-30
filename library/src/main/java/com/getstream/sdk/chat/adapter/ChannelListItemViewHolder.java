@@ -15,6 +15,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -33,10 +34,6 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import io.noties.markwon.Markwon;
-import io.noties.markwon.core.CorePlugin;
-import io.noties.markwon.linkify.LinkifyPlugin;
-
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
@@ -53,7 +50,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
 
-    private Markwon markwon;
+    private MarkdownImpl.MarkdownListener markdownListener;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -90,6 +87,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
         tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
+    }
+
+    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
+        this.markdownListener = markdownListener;
     }
 
     @Override
@@ -144,19 +145,17 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private void configLastMessage(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
         iv_attachment_type.setVisibility(View.GONE);
-
         if (lastMessage == null){
             tv_last_message.setText("");
             return;
         }
-        // set Markwon
+
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            if (markwon == null)
-                markwon = Markwon.builder(context)
-                        .usePlugin(CorePlugin.create())
-                        .usePlugin(LinkifyPlugin.create())
-                        .build();
-            markwon.setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            if (markdownListener != null)
+                markdownListener.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+            else
+                MarkdownImpl.getInstance(context).setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
+
             return;
         }
 
@@ -229,7 +228,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             if (this.channelClickListener != null) {
                 this.channelClickListener.onClick(channel);
             }
-
         });
 
         tv_click.setOnLongClickListener(view -> {
