@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -21,10 +22,12 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
@@ -69,7 +72,7 @@ import java.util.List;
  * - Data binding
  */
 public class MessageInputView extends RelativeLayout
-        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+        implements TextWatcher, View.OnFocusChangeListener {
 
     /**
      * Tag for logging purposes
@@ -148,8 +151,16 @@ public class MessageInputView extends RelativeLayout
 
     private void init() {
         binding.setActiveMessageSend(false);
-        binding.ivSend.setOnClickListener(this);
-        binding.ivOpenAttach.setOnClickListener(this);
+        binding.ivSend.setOnClickListener(view ->
+            onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing())
+        );
+        binding.ivOpenAttach.setOnClickListener(view -> {
+            binding.setIsAttachFile(true);
+            if (isGrantedPermissions())
+                messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            else if(permissionRequestListener != null)
+                permissionRequestListener.openPermissionRequest();
+        });
         binding.etMessage.setOnFocusChangeListener(this);
         binding.etMessage.addTextChangedListener(this);
         binding.etMessage.setCallback((InputContentInfoCompat inputContentInfo,
@@ -176,6 +187,7 @@ public class MessageInputView extends RelativeLayout
             onSendMessage("", viewModel.isEditing());
             return true;
         });
+
 
         onBackPressed();
         initAttachmentUI();
@@ -376,7 +388,8 @@ public class MessageInputView extends RelativeLayout
             if (granted)
                 messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             else
-                binding.ivOpenAttach.setVisibility(GONE);
+                showPermissionSettingDialog();
+//                binding.ivOpenAttach.setVisibility(GONE);
 
         }
     }
@@ -391,6 +404,29 @@ public class MessageInputView extends RelativeLayout
                     && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
         } else
             return true;
+    }
+
+    private void showPermissionSettingDialog(){
+        String appName = Utils.getApplicationName(getContext());
+        String msg = appName + getContext().getString(R.string.stream_camera_permission_message);
+        final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(appName)
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                intent.setData(uri);
+                getContext().startActivity(intent);
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
     }
 
     public Message getEditMessage() {
@@ -415,20 +451,6 @@ public class MessageInputView extends RelativeLayout
 
     public void setMessageText(String t) {
         binding.etMessage.setText(t);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.iv_send) {
-            this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
-        } else if (id == R.id.iv_openAttach) {
-            binding.setIsAttachFile(true);
-            if (isGrantedPermissions())
-                messageInputClient.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else if(permissionRequestListener != null)
-                permissionRequestListener.openPermissionRequest();
-        }
     }
 
     @Override
