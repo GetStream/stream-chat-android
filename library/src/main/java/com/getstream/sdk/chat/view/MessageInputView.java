@@ -408,7 +408,7 @@ public class MessageInputView extends RelativeLayout
 
     private void showPermissionSettingDialog(){
         String appName = Utils.getApplicationName(getContext());
-        String msg = appName + getContext().getString(R.string.stream_camera_permission_message);
+        String msg = appName + " " + getContext().getString(R.string.stream_camera_permission_message);
         final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(appName)
                 .setMessage(msg)

@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingBottom="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/ll_composer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -95,11 +95,18 @@
                         android:gravity="center" />
 
                     <TextView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_image"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="right"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
@@ -131,11 +138,18 @@
                         android:gravity="center" />
 
                     <TextView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_camera"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="right"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
@@ -168,11 +182,18 @@
                         android:gravity="center" />
 
                     <TextView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_folder"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="right"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
