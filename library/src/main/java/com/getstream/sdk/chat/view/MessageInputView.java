@@ -257,31 +257,34 @@ public class MessageInputView extends RelativeLayout
 
     // Edit
     private void editMessage(Message message) {
-        if (message == null) {
-            return;
-        }
-
+        if (message == null) return;
+        // Set Text to Inputbox
         binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
             binding.etMessage.setText(message.getText());
             binding.etMessage.setSelection(binding.etMessage.getText().length());
         }
-        if (message.getAttachments() != null && !message.getAttachments().isEmpty()) {
-            for (Attachment attachment : message.getAttachments())
-                attachment.config.setUploaded(true);
 
-            if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
-                String fileType = message.getAttachments().get(0).getMime_type();
-                if (fileType.equals(ModelType.attach_mime_mov) ||
-                        fileType.equals(ModelType.attach_mime_mp4)) {
-                    messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
-                } else {
-                    messageInputClient.onClickOpenSelectFileView(null, message.getAttachments());
-                }
+        // Set Attachments to Inputbox
+        if (message.getAttachments() == null
+                || message.getAttachments().isEmpty()
+                || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
+                || message.getAttachments().get(0).getType().equals(ModelType.attach_unknown))
+            return;
+
+        for (Attachment attachment : message.getAttachments())
+            attachment.config.setUploaded(true);
+
+        if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
+            String fileType = message.getAttachments().get(0).getMime_type();
+            if (fileType.equals(ModelType.attach_mime_mov) ||
+                    fileType.equals(ModelType.attach_mime_mp4)) {
+                messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
             } else {
-                if (!message.getAttachments().get(0).getType().equals(ModelType.attach_giphy))
-                    messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
+                messageInputClient.onClickOpenSelectFileView(null, message.getAttachments());
             }
+        } else {
+            messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
         }
     }
 
