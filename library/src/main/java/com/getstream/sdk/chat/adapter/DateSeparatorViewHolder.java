@@ -5,8 +5,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.enums.Dates;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
+
+import java.util.Date;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
@@ -27,9 +30,16 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
                      MessageListItem messageListItem,
                      int position) {
 
-        String humanizedDate = getRelativeTimeSpanString(messageListItem.getDate().getTime()).toString();
+        String humanizedDate;
+        long messageDate = messageListItem.getDate().getTime();
+        Date now = new Date();
+        if ((now.getTime() - messageDate) < 60 * 1000)
+            humanizedDate = Dates.JUST_NOW.label;
+        else
+            humanizedDate = getRelativeTimeSpanString(messageDate).toString();
+
         tv_header_date.setText(humanizedDate);
-        tv_header_time.setText(" AT " + humanizedDate);
+//        tv_header_time.setText(" AT " + humanizedDate);
     }
 
     @Override

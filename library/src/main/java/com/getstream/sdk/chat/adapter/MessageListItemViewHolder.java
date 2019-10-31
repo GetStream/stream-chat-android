@@ -26,6 +26,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.MessageStatus;
@@ -45,10 +46,10 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import java.util.Arrays;
 import java.util.List;
 
-import io.noties.markwon.Markwon;
-import io.noties.markwon.core.CorePlugin;
-import io.noties.markwon.linkify.LinkifyPlugin;
 import top.defaults.drawabletoolbox.DrawableBuilder;
+
+import static com.getstream.sdk.chat.enums.Dates.TODAY;
+import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
@@ -73,7 +74,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ConstraintLayout cl_reply;
     private ImageView iv_reply;
     private TextView tv_reply;
-    private Markwon markwon;
     private RecyclerView.LayoutManager mLayoutManager;
     private MessageViewHolderFactory viewHolderFactory;
     private ChannelState channelState;
@@ -89,6 +89,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Message message;
     private MessageListItem messageListItem;
     private MessageListViewStyle style;
+    private MarkdownImpl.MarkdownListener markdownListener;
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
     private ConstraintSet set;
@@ -180,6 +181,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         avatarWidth = style.getAvatarWidth();
     }
 
+    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
+        this.markdownListener = markdownListener;
+    }
+
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
     }
@@ -242,7 +247,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             });
 
             if (message.getDate() == null) Message.setStartDay(Arrays.asList(message), null);
-            if (message.getDate().equals("Today") || message.getDate().equals("Yesterday"))
+            if (message.getDate().equals(TODAY.label) || message.getDate().equals(YESTERDAY.label))
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(message.getDate() + ", " + message.getTime());
@@ -369,12 +374,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         tv_text.setVisibility(View.VISIBLE);
         // Set Text
-        if (markwon == null)
-            markwon = Markwon.builder(context)
-                    .usePlugin(CorePlugin.create())
-                    .usePlugin(LinkifyPlugin.create())
-                    .build();
-        markwon.setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        if (markdownListener != null)
+            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        else
+            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
         // Deleted Message
         if (message.getDeletedAt() != null) {
             // background

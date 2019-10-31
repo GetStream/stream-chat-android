@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">GetStreamChatSDK</string>
+    <!--Message Date-->
+    <string name="stream_just_now">Just Now</string>
+    <string name="stream_today">Today</string>
+    <string name="stream_yesterday">Yesterday</string>
 
-    <string name="stream_today">TODAY</string>
-    <string name="stream_yesterday">YESTERDAY</string>
     <string name="stream_hint_enter_a_message">Type a message…</string>
     <!--Chat-->
     <string name="stream_no_connection">Trying to reconnect&#8230;</string>
@@ -35,4 +37,7 @@
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
     <string name="stream_last_message_attachment_giphy">/giphy</string>
+    <!--Attachment View-->
+    <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
+
 </resources>

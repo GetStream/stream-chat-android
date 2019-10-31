@@ -2,7 +2,10 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -12,14 +15,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.utils.Utils;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
  */
 public class AttachmentDocumentActivity extends AppCompatActivity {
+    private final static String TAG = AttachmentDocumentActivity.class.getSimpleName();
 
     WebView webView;
     ProgressBar progressBar;
+
+    int reloadCount = 0;
+    final int maxReloadCount = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +69,35 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            // TODO Auto-generated method stub
             view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
-            super.onPageFinished(view, StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
-            progressBar.setVisibility(View.GONE);
+            if (view.getTitle().equals("")){
+                if (reloadCount < maxReloadCount){
+                    view.reload();
+                    reloadCount ++;
+                }else {
+                    progressBar.setVisibility(View.GONE);
+                    String errorMsg = AttachmentDocumentActivity.this.getString(R.string.stream_attachment_load_failed_unknown);
+                    Utils.showMessage(AttachmentDocumentActivity.this, errorMsg);
+                }
+            }else {
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
+            if (error == null){
+                Log.e(TAG, "The load failed due to an unknown error.");
+                return;
+            }
+
+            Log.e(TAG, error.toString());
+            Utils.showMessage(AttachmentDocumentActivity.this, error.toString());
         }
     }
 }
