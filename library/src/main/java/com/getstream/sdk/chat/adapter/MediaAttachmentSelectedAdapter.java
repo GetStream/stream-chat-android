@@ -70,14 +70,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
-            int cornerRadius = Utils.dpToPx(16);
+            int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
-                    .rectangle()
-                    .solidColor(Color.BLACK)
-                    .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-                    .build());
-
-            binding.ivMask.setShape(context, new DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)

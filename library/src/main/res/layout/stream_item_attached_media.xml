@@ -15,11 +15,11 @@
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
+        <ImageView
             android:id="@+id/iv_mask"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="#66FFFFFF"
+            android:background="@drawable/stream_round_upload_mask"
             app:layout_constraintStart_toStartOf="@+id/iv_media"
             app:layout_constraintEnd_toEndOf="@+id/iv_media"
             app:layout_constraintTop_toTopOf="@+id/iv_media"
