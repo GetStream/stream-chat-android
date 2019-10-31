@@ -64,7 +64,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         boolean hasFile = false;
         boolean hasMedia = false;
         for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
+            if (attachment.getType().equals(ModelType.attach_unknown)) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 hasFile = true;
             } else {
@@ -124,7 +124,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         configAttachViewBackground(lv_attachment_file);
         List<Attachment> attachments = new ArrayList<>();
         for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
+            if (attachment.getType().equals(ModelType.attach_unknown)) continue;
             if (attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
             }
@@ -153,7 +153,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
         for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType() == null) continue;
+            if (attachment.getType().equals(ModelType.attach_unknown)) continue;
             if (!attachment.getType().equals(ModelType.attach_file)) {
                 attachments.add(attachment);
             }
