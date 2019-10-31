@@ -3,6 +3,7 @@
 - Fixed transparency issues with user profile images on older devices
 - Better channel header title for channels without a name
 - Fixed read count difference between own and other users' messages
+- Fixed Video length preview
 
 ## October 25th, 2019 - 3.2.0
 

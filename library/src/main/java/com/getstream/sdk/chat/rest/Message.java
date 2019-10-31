@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import static com.getstream.sdk.chat.enums.Dates.TODAY;
+import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
+
 /**
  * A message
  */
@@ -176,10 +179,10 @@ public class Message implements UserEntity {
 
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
-            message.setDate("Today");
+            message.setDate(TODAY.label);
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             message.setYesterday(true);
-            message.setDate("Yesterday");
+            message.setDate(YESTERDAY.label);
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
             message.setDate(dateFormat1.format(message.getCreatedAt()));
         } else {
