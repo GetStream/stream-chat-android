@@ -27,9 +27,11 @@ import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -38,6 +40,7 @@ import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
@@ -64,6 +67,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -851,6 +855,80 @@ public class ClientTest {
         verify(apiService).queryChannels(TEST_API_KEY, TEST_USER_ID, TEST_CLIENT_ID, payload);
         verify(callback).onSuccess(response);
         verify(storage).insertQueryWithChannels(any(QueryChannelsQ.class), eq(response.getChannels()));
+    }
+
+    @Test
+    void queryChannelWithIdSuccessTest() {
+        ArrayList<Message> messages = new ArrayList<>();
+        messages.add(new Message());
+        HashMap<String, Object> extra = new HashMap<>();
+        String testChannelName = "testName";
+        extra.put("name", testChannelName);
+
+        Channel channelResponse = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID, extra);
+        ChannelState response = new ChannelState();
+        response.setMessages(messages);
+        response.setChannel(channelResponse);
+        QueryChannelCallback callback = mock(QueryChannelCallback.class);
+
+        Channel channel = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID, extra);
+        channel.setChannelState(new ChannelState(channel));
+
+        when(apiService.queryChannel(any(), any(), any(), any(), any(), any()))
+                .thenReturn(CallFake.buildSuccess(response));
+        ChannelQueryRequest request = new ChannelQueryRequest()
+                .withPresence()
+                .withWatch();
+
+        client.queryChannel(channel, request, callback);
+
+        verify(apiService).queryChannel(eq(TEST_CHANNEL_TYPE), eq(TEST_CHANNEL_ID), eq(TEST_API_KEY),
+                eq(TEST_USER_ID), eq(TEST_CLIENT_ID), argThat(argument ->
+                        argument.isWatch()
+                                && argument.isPresence()
+                                && argument.getData().get("name").equals(testChannelName)));
+        verify(callback).onSuccess(response);
+        verify(storage).insertMessagesForChannel(channel, response.getMessages());
+    }
+
+    @Test
+    void queryChannelWithoutIdSuccessTest() {
+        ArrayList<Message> messages = new ArrayList<>();
+        messages.add(new Message());
+        HashMap<String, Object> extra = new HashMap<>();
+        String testChannelName = "testName";
+        extra.put("name", testChannelName);
+
+        Channel channelResponse = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID, extra);
+        ChannelState response = new ChannelState();
+        response.setMessages(messages);
+        response.setChannel(channelResponse);
+        QueryChannelCallback callback = mock(QueryChannelCallback.class);
+
+        Channel channel = new Channel(client, TEST_CHANNEL_TYPE, null, extra);
+        channel.setChannelState(new ChannelState(channel));
+
+        when(apiService.queryChannel(any(), any(), any(), any(), any()))
+                .thenReturn(CallFake.buildSuccess(response));
+        ChannelQueryRequest request = new ChannelQueryRequest()
+                .withPresence()
+                .withWatch();
+
+        client.queryChannel(channel, request, callback);
+
+        verify(apiService).queryChannel(eq(TEST_CHANNEL_TYPE), eq(TEST_API_KEY),
+                eq(TEST_USER_ID), eq(TEST_CLIENT_ID), argThat(argument ->
+                        argument.isWatch()
+                                && argument.isPresence()
+                                && argument.getData().get("name").equals(testChannelName)));
+        verify(callback).onSuccess(response);
+        verify(storage).insertMessagesForChannel(channel, response.getMessages());
+    }
+
+    @Test
+    void disconnectTest() {
+        client.disconnect();
+        verify(webSocketService).disconnect();
     }
 
     private void simulateConnection() {

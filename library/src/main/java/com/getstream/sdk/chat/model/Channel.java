@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +17,6 @@ import androidx.room.TypeConverters;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.MessageStatus;
-import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
@@ -58,10 +56,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
@@ -479,72 +473,14 @@ public class Channel {
     }
 
     /**
-     * query - Query the API, get messages, members or other channel fields
+     * Query the API, get messages, members or other channel fields
+     *
+     * @param request  request options
+     * @param callback the result callback
      */
     public void query(@NonNull ChannelQueryRequest request,
                       @NonNull QueryChannelCallback callback) {
-        Channel channel = this;
-
-        Callback queryChannelCallback = new Callback<ChannelState>() {
-            @Override
-            public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                mergeWithState(response.body());
-                // channels created without ID will get it populated by the API
-                if (id == null) {
-                    id = response.body().getChannel().getCid().split(":")[1];
-                    cid = response.body().getChannel().getCid();
-                }
-                if (channel.config == null)
-                    channel.config = response.body().getChannel().getConfig();
-                if (channel.channelState == null)
-                    channel.channelState = response.body();
-
-                client.addChannelConfig(type, channel.config);
-
-                if (request.isWatch()) {
-                    client.addToActiveChannels(channel);
-                    initialized = true;
-                }
-
-                // update the user references
-                getClient().getState().updateUsersForChannel(channelState);
-
-                Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                // offline storage
-
-                getClient().getStorage().insertMessagesForChannel(channel, response.body().getMessages());
-
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ChannelState> call, Throwable t) {
-                callback.onError(t.getLocalizedMessage(), -1);
-            }
-        };
-
-
-        client.onSetUserCompleted(
-                new ClientConnectionCallback() {
-                    final ChannelQueryRequest queryRequest = request.withData(channel.extraData);
-
-                    @Override
-                    public void onSuccess(User user) {
-                        if (id == null) {
-                            // channels created without ID will get it populated by the API
-                            client.getApiService().queryChannel(channel.type, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
-                        } else {
-                            client.getApiService().queryChannel(channel.type, channel.id, client.getApiKey(), client.getUserId(), client.getClientID(), queryRequest).enqueue(queryChannelCallback);
-                        }
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        callback.onError(errMsg, errCode);
-                    }
-                }
-        );
+        client.queryChannel(this, request, callback);
     }
 
     /**
@@ -753,7 +689,6 @@ public class Channel {
     public void sendAction(@NonNull String messageId,
                            @NonNull SendActionRequest request,
                            @NotNull MessageCallback callback) {
-
         client.sendAction(messageId, request, callback);
     }
 
