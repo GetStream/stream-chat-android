@@ -266,6 +266,7 @@ public class MessageInputView extends RelativeLayout
         }
 
         // Set Attachments to Inputbox
+
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
                 || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
@@ -275,8 +276,9 @@ public class MessageInputView extends RelativeLayout
         for (Attachment attachment : message.getAttachments())
             attachment.config.setUploaded(true);
 
-        if (message.getAttachments().get(0).getType().equals(ModelType.attach_file)) {
-            String fileType = message.getAttachments().get(0).getMime_type();
+        Attachment attachment = message.getAttachments().get(0);
+        if (attachment.getType().equals(ModelType.attach_file)) {
+            String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
                 messageInputClient.onClickOpenSelectMediaView(null, message.getAttachments());
