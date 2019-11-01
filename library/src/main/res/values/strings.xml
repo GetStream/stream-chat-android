@@ -16,8 +16,14 @@
     <string name="stream_action_create_channel">Create activeChannel</string>
     <!--MessageInput-->
     <string name="stream_input_hint">Write a message</string>
+
     <string name="stream_camera_permission_message"> needs camera access so that you can take photos and videos.\nPlease enable it in Settings.</string>
     <string name="stream_storage_permission_message"> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
+
+    <string name="stream_input_upload_media">Upload a photo or video</string>
+    <string name="stream_input_take_picture">Upload from a camera</string>
+    <string name="stream_input_upload_file">Upload a file</string>
+
     <!-- Message Status -->
     <string name="stream_delete_message">This message was deleted.</string>
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>

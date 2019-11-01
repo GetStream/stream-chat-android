@@ -58,9 +58,6 @@ public class RetrofitClient {
 
     public static Retrofit getAuthorizedCDNClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
 
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
-
         TokenAuthInterceptor authInterceptor = new TokenAuthInterceptor(tokenProvider);
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -75,7 +72,6 @@ public class RetrofitClient {
                     }
                     return response;
                 })
-                .addInterceptor(loggingInterceptor)
                 .addInterceptor(chain -> {
                     Request request = chain.request()
                             .newBuilder()
