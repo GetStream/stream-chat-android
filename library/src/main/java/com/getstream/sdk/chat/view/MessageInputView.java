@@ -10,11 +10,8 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -42,6 +39,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
 import com.getstream.sdk.chat.utils.Utils;
@@ -174,41 +172,30 @@ public class MessageInputView extends RelativeLayout {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
                 lockScrollUp = true;
-                new Handler().postDelayed(() -> lockScrollUp = false, 500);
+                postDelayed(() -> lockScrollUp = false, 500);
                 Utils.showSoftKeyboard((Activity) getContext());
             } else
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //noop
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = getMessageText();
+            Log.i(TAG, "Length is " + editable.length());
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
             }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //noop
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String messageText = getMessageText();
-                Log.i(TAG, "Length is " + editable.length());
-                if (messageText.length() > 0) {
-                    viewModel.keystroke();
-                }
-                // detect commands
-                messageInputController.checkCommand(messageText);
-                String s_ = messageText.replaceAll("\\s+","");
-                if (TextUtils.isEmpty(s_))
-                    binding.setActiveMessageSend(false);
-                else
-                    binding.setActiveMessageSend(messageText.length() != 0);
-            }
+            // detect commands
+            messageInputController.checkCommand(messageText);
+            String s_ = messageText.replaceAll("\\s+","");
+            if (TextUtils.isEmpty(s_))
+                binding.setActiveMessageSend(false);
+            else
+                binding.setActiveMessageSend(messageText.length() != 0);
         });
+
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
+
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
