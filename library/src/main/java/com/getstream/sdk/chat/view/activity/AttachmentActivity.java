@@ -3,7 +3,10 @@ package com.getstream.sdk.chat.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -114,6 +117,17 @@ public class AttachmentActivity extends AppCompatActivity {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, StreamChat.getInstance(AttachmentActivity.this).getUploadStorage().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
+            if (error == null){
+                Log.e(TAG, "The load failed due to an unknown error.");
+                return;
+            }
+
+            Log.e(TAG, error.toString());
+            Utils.showMessage(AttachmentActivity.this, error.toString());
         }
     }
 }

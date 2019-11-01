@@ -36,6 +36,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -51,6 +52,7 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
         MessageListView.UserClickListener,
+        MessageInputView.PermissionRequestListener,
         MessageInputView.OpenCameraViewListener {
 
     private ChannelViewModel viewModel;
@@ -77,6 +79,7 @@ public class ChannelActivity extends AppCompatActivity
         ).get(ChannelViewModel.class);
 
         // set listeners
+        binding.messageInput.setPermissionRequestListener(this);
         binding.messageInput.setOpenCameraViewListener(this);
 
         // connect the view model
@@ -96,6 +99,13 @@ public class ChannelActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         binding.messageInput.permissionResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void openPermissionRequest() {
+        PermissionChecker.permissionCheck(this, null);
+        // If you are writing a Channel Screen in a Fragment, use the code below instead of the code above.
+        //   PermissionChecker.permissionCheck(getActivity(), this);
     }
 
     @Override

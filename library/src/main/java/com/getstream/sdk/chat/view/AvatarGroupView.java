@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -12,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
@@ -65,7 +65,6 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         this.lastActiveUsers = null;
         configUIs();
     }
-
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
@@ -79,16 +78,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         if (user != null) {
             configAvatar(user.getImage(), user.getInitials());
         } else if (!TextUtils.isEmpty(channel.getImage())) {
-//            configAvatar(channel.getImage(), channel.getInitials());
-            ImageView imageView = new ImageView(context);
-            Utils.circleImageLoad(imageView, channel.getImage());
-
-            RelativeLayout.LayoutParams params_;
-            params_ = new RelativeLayout.LayoutParams(
-                    (style.getAvatarWidth()),
-                    (style.getAvatarHeight()));
-            imageView.setLayoutParams(params_);
-            this.addView(imageView);
+            configAvatar(channel.getImage(), channel.getInitials());
         } else {
             configUserAvatars();
         }
@@ -97,7 +87,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     private void configUserAvatars() {
         double factor_;
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
-            for (int i = 0; i < (lastActiveUsers.size() < 4 ? lastActiveUsers.size() : 3); i++) {
+            for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
                     configAvatar(user_.getImage(), user_.getInitials());
@@ -112,6 +102,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     if (!Utils.isSVGImage(user_.getImage()))
                         Glide.with(context)
                                 .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(user_.getImage()))
+                                .apply(RequestOptions.circleCropTransform())
                                 .into(imageView);
 
                     RelativeLayout.LayoutParams params;
@@ -126,16 +117,13 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                             (int) (style.getAvatarHeight() / factor_));
 
                     if (lastActiveUsers.size() == 2) {
-                        switch (i) {
-                            case 0:
-                                params.addRule(RelativeLayout.ALIGN_PARENT_START);
-                                params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                                break;
-                            default:
-                                params.addRule(RelativeLayout.ALIGN_PARENT_END);
-                                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                                params.setMarginEnd(20);
-                                break;
+                        if (i == 0) {
+                            params.addRule(RelativeLayout.ALIGN_PARENT_START);
+                            params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                        } else {
+                            params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                            params.setMarginEnd(20);
                         }
                     } else {
                         switch (i) {
@@ -172,6 +160,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         if (!Utils.isSVGImage(image))
             Glide.with(context)
                     .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
+                    .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 
         RelativeLayout.LayoutParams params;

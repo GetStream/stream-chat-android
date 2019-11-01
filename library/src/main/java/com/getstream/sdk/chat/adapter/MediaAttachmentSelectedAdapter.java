@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.io.File;
@@ -69,12 +70,13 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
-            int cornerRadius = Utils.dpToPx(16);
+            int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
+
             if (attachment.config.getFilePath() != null) {
                 File file = new File(attachment.config.getFilePath());
                 if (file.exists()) {
@@ -91,7 +93,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 try {
                     if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||
                             attachment.getMime_type().equals(ModelType.attach_mime_mp4)) {
-                        binding.ivMedia.setImageResource(R.drawable.stream_ic_videoplay);
+                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -99,25 +101,18 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             }
 
             if (attachment.getType().equals(ModelType.attach_file)) {
-                String videoLength;
-                int videoLeng = attachment.config.getVideoLengh();
-                if (videoLeng < 10) {
-                    videoLength = "00:0" + videoLeng;
-                } else if (videoLeng < 60) {
-                    videoLength = "00:" + videoLeng;
-                } else if (videoLeng < 600) {
-                    videoLength = "0" + (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
-                } else {
-                    videoLength = (videoLeng / 60) + (videoLeng % 60 < 10 ? ":0" + videoLeng % 60 : ":" + videoLeng % 60);
-                }
-                binding.tvLength.setText(videoLength);
+                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));
             } else {
                 binding.tvLength.setText("");
             }
-            itemView.setOnClickListener((View v) -> {
-                listener.onItemClick(getAdapterPosition());
-            });
-            if (attachment.config.isUploaded()) binding.progressBar.setVisibility(View.GONE);
+            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
+
+            if (attachment.config.isUploaded()) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.ivMask.setVisibility(View.GONE);
+            }else
+                binding.progressBar.setProgress(attachment.config.getProgress());
+
             binding.executePendingBindings();
         }
     }

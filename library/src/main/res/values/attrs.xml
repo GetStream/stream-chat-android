@@ -8,6 +8,7 @@
     <attr name="streamAvatarBackGroundColor" format="color|reference" />
     <attr name="streamAvatarTextSize" format="dimension|reference" />
     <attr name="streamAvatarTextColor" format="color|reference" />
+    <attr name="streamChannelWithOutNameTitleText" format="string" />
     <attr name="streamAvatarTextStyle">
         <flag name="normal" value="0" />
         <flag name="bold" value="1" />
@@ -35,6 +36,7 @@
         <attr name="streamAvatarTextSize" />
         <attr name="streamAvatarTextColor" />
         <attr name="streamAvatarTextStyle"/>
+        <attr name="streamChannelWithOutNameTitleText"/>
         <!--ReadStateView-->
         <attr name="streamShowReadState"/>
         <attr name="streamReadStateAvatarWidth"/>
@@ -223,7 +225,7 @@
         <attr name="streamAvatarTextSize" />
         <attr name="streamAvatarTextColor" />
         <attr name="streamAvatarTextStyle"/>
-
+        <attr name="streamChannelWithOutNameTitleText"/>
         <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
         <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />
         <attr name="streamChannelHeaderTitleTextStyle">
@@ -243,7 +245,7 @@
 
         <attr name="streamChannelHeaderBackButtonBackground" format="reference" />
 
-        <attr name="streamChannelHeaderOfflineTextStyle" format="string" />
+        <attr name="streamChannelHeaderOfflineText" format="string" />
         <attr name="streamChannelHeaderBackButtonShow" format="boolean" />
 
         <attr name="streamChannelHeaderOptionsButtonBackground" format="reference" />

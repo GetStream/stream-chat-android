@@ -261,11 +261,20 @@ StreamChat.getOnlineStatus().observe(...);
 
 ## Markdown support
 
-Markdown support is based on [Markwon: 4.1.1](https://github.com/noties/Markwon).
+Markdown support is based on [Markwon: 4.1.2](https://github.com/noties/Markwon).
 Currently SDK doesn't support all `Markwon` features and limited to this plugins:
 - [CorePlugin](https://noties.io/Markwon/docs/v4/core/core-plugin.html)
 - [LinkifyPlugin](https://noties.io/Markwon/docs/v4/linkify/)
+- [ImagesPlugin](https://noties.io/Markwon/docs/v4/image/)
+- [StrikethroughPlugin](https://noties.io/Markwon/docs/v4/ext-strikethrough/)
+- [TablePlugin](https://noties.io/Markwon/docs/v4/ext-tables/)
 
+If you want to use another library for `Markdown` or extend the `Markwon` plugins you can use the code below
+```java
+MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
+    // TODO: use your Markdown library or the extended Markwon.
+});
+```
 ## FAQ
 
 ### Channel List loading icons spins forever

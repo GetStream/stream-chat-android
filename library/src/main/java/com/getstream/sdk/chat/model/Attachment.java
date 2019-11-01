@@ -254,7 +254,7 @@ public class Attachment {
         private boolean isSelected = false;
         private int videoLengh = 0;
         private boolean isUploaded = false;
-
+        private int progress = 0;
         public String getFilePath() {
             return filePath;
         }
@@ -285,6 +285,14 @@ public class Attachment {
 
         public void setUploaded(boolean uploaded) {
             isUploaded = uploaded;
+        }
+
+        public int getProgress() {
+            return progress;
+        }
+
+        public void setProgress(int progress) {
+            this.progress = progress;
         }
     }
 

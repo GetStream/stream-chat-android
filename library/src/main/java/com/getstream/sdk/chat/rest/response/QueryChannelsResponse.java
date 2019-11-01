@@ -23,4 +23,8 @@ public class QueryChannelsResponse {
         }
         return channels;
     }
+
+    public void setChannelStates(List<ChannelState> channels) {
+        this.channels = channels;
+    }
 }

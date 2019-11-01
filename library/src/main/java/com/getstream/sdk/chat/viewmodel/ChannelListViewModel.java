@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -26,7 +25,7 @@ import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.OnQueryListener;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
@@ -40,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
     private final String TAG = ChannelListViewModel.class.getSimpleName();
 
+    @NotNull
     private LazyQueryChannelLiveData<List<Channel>> channels;
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
@@ -72,6 +72,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
+        Log.d(TAG, "instance created");
+
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
         initialized = new AtomicBoolean(false);
@@ -87,7 +89,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         sort = new QuerySort().desc("last_message_at");
 
         setupConnectionRecovery();
-        initEventHandlers();
+        setEventHandler(new EventHandler((event, channel) -> false));
 
         new StreamLifecycleObserver(this);
         retryLooper = new Handler();
@@ -111,12 +113,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     private void setChannels(List<ChannelState> newChannelsState) {
-
-
         // - offline loads first
         // - after that we query the API and load more channels
         // - it's possible that the offline results no longer match the query (so we should remove them)
-
         List<Channel> newChannels = new ArrayList<>();
         for (ChannelState chan : newChannelsState) {
             newChannels.add(chan.getChannel());
@@ -139,6 +138,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     @Override
     protected void onCleared() {
         super.onCleared();
+
+        Log.d(TAG, "onCleared");
+
         if (subscriptionId != 0) {
             client().removeEventHandler(subscriptionId);
         }
@@ -255,13 +257,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
+        Log.d(TAG, "resume");
 //        if (!initialized.get() || !client().isConnected())
 //            setLoading();
     }
 
     @Override
     public void stopped() {
-
+        Log.d(TAG, "stopped");
     }
 
     private void setupConnectionRecovery() {
@@ -291,80 +294,137 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
-    private void initEventHandlers() {
-        subscriptionId = client().addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onConnectionChanged(Event event) {
-                if (!event.getOnline()) {
-                    retryLooper.removeCallbacksAndMessages(null);
-                }
-            }
+    private EventHandler eventHandler;
 
-            @Override
-            public void onNotificationMessageNew(Channel channel, Event event) {
-                Message lastMessage = channel.getChannelState().getLastMessage();
-                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
-                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
-                upsertChannel(channel);
-            }
+    public void setEventInterceptor(EventInterceptor interceptor) {
+        this.eventHandler = new EventHandler(interceptor);
+        initEventHandlers();
+    }
 
-            @Override
-            public void onMessageNew(Channel channel, Event event) {
-                Message lastMessage = channel.getChannelState().getLastMessage();
-                Log.i(TAG, "onMessageNew Event: Received a new message with text: " + event.getMessage().getText());
-                Log.i(TAG, "onMessageNew State: Last message is: " + lastMessage.getText());
-                Log.i(TAG, "onMessageNew Unread Count " + channel.getChannelState().getCurrentUserUnreadMessageCount());
-                updateChannel(channel, true);
-            }
+    private void setEventHandler(EventHandler eventHandler) {
+        this.eventHandler = eventHandler;
+        initEventHandlers();
+    }
 
-            @Override
-            public void onMessageUpdated(Channel channel, Event event) {
-                updateChannel(channel, true);
-            }
+    /*
+     * EventInterceptor implementations will receive all events (and channel when applicable) to add
+     * custom behavior.
+     *
+     * shouldDiscard informs the view model what to do next: continue with event handling or
+     * ignore the event.
+     *
+     * This allows the developer to disable some built-in mechanism like automatically add a new
+     * channel to the list.
+     */
+    public interface EventInterceptor {
+        boolean shouldDiscard(Event event, @Nullable Channel channel);
+    }
 
-            @Override
-            public void onMessageDeleted(Channel channel, Event event) {
-                updateChannel(channel, false);
-            }
+    public class EventHandler extends ChatEventHandler {
+        private EventInterceptor interceptor;
 
-            @Override
-            public void onChannelDeleted(Channel channel, Event event) {
-                deleteChannel(channel);
-            }
+        public EventHandler(EventInterceptor interceptor) {
+            this.interceptor = interceptor;
+        }
 
-            @Override
-            public void onChannelUpdated(Channel channel, Event event) {
-                updateChannel(channel, false);
-            }
+        @Override
+        public void onUserDisconnected() {
+            clean();
+        }
 
-            @Override
-            public void onMessageRead(Channel channel, Event event) {
-                updateChannel(channel, false);
+        @Override
+        public void onConnectionChanged(Event event) {
+            if (!event.getOnline()) {
+                retryLooper.removeCallbacksAndMessages(null);
             }
+        }
 
-            @Override
-            public void onMemberAdded(Channel channel, Event event) {
-                super.onMemberAdded(channel, event);
-                updateChannel(channel, false);
-            }
+        @Override
+        public void onNotificationMessageNew(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            upsertChannel(channel);
+        }
 
-            @Override
-            public void onMemberUpdated(Channel channel, Event event) {
-                super.onMemberUpdated(channel, event);
-                updateChannel(channel, false);
-            }
+        @Override
+        public void onNotificationAddedToChannel(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            upsertChannel(channel);
+        }
 
-            @Override
-            public void onMemberRemoved(Channel channel, Event event) {
-                super.onMemberRemoved(channel, event);
-                updateChannel(channel, false);
-            }
-        });
+        @Override
+        public void onNotificationRemovedFromChannel(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            deleteChannel(channel);
+        }
+
+        @Override
+        public void onMessageNew(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, true);
+        }
+
+        @Override
+        public void onMessageUpdated(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, true);
+        }
+
+        @Override
+        public void onMessageDeleted(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+
+        @Override
+        public void onChannelDeleted(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            deleteChannel(channel);
+        }
+
+        @Override
+        public void onChannelUpdated(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+
+        @Override
+        public void onMessageRead(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+
+        @Override
+        public void onMemberAdded(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+
+        @Override
+        public void onMemberUpdated(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+
+        @Override
+        public void onMemberRemoved(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            updateChannel(channel, false);
+        }
+    }
+
+    synchronized private void initEventHandlers() {
+        if (subscriptionId != 0) {
+            client().removeEventHandler(subscriptionId);
+        }
+        subscriptionId = client().addEventHandler(eventHandler);
     }
 
     private boolean updateChannel(Channel channel, boolean moveToTop) {
         List<Channel> channelCopy = channels.getValue();
+        if (channelCopy == null) {
+            channelCopy = new ArrayList<>();
+        }
+
         int idx = channelCopy.lastIndexOf(channel);
 
         if (idx != -1) {
@@ -378,6 +438,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private void upsertChannel(Channel channel) {
         List<Channel> channelCopy = channels.getValue();
+        if (channelCopy == null) {
+            channelCopy = new ArrayList<>();
+        }
         Boolean removed = channelCopy.remove(channel);
         channelCopy.add(0, channel);
         channels.postValue(channelCopy);
@@ -385,6 +448,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private boolean deleteChannel(Channel channel) {
         List<Channel> channelCopy = channels.getValue();
+        if (channelCopy == null) {
+            channelCopy = new ArrayList<>();
+        }
         Boolean removed = channelCopy.remove(channel);
         channels.postValue(channelCopy);
         return removed;
@@ -464,7 +530,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      *
      * @param callback the result callback
      */
-    public void queryChannels(Storage.OnQueryListener<List<ChannelState>> callback) {
+    public void queryChannels(OnQueryListener<List<ChannelState>> callback) {
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) {
             Log.i(TAG, "already loading, skip queryChannels");
@@ -473,7 +539,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
-        client().storage().selectChannelStates(request.query().getId(), 100, new Storage.OnQueryListener<List<ChannelState>>() {
+        client().getStorage().selectChannelStates(request.query().getId(), 100, new OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
                 if (channels != null && channelStates != null)
@@ -491,7 +557,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     public void queryChannels() {
-        queryChannels(new Storage.OnQueryListener<List<ChannelState>>() {
+        queryChannels(new OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
                 Log.i(TAG, "Read from local cache...");
@@ -568,19 +634,22 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
+    private void clean() {
+        retryLooper.removeCallbacksAndMessages(null);
+        initialized.set(true);
+        channels.postValue(new ArrayList<>());
+        setLoadingDone();
+        setLoadingMoreDone();
+        reachedEndOfPagination = false;
+    }
+
     /**
      * Reloads the state of the view model
      */
     public void reload() {
-        retryLooper.removeCallbacksAndMessages(null);
-        initialized.set(true);
-
-        setLoadingDone();
-        setLoadingMoreDone();
-
-        channels.postValue(new ArrayList<>());
+        clean();
         queryChannels();
-        reachedEndOfPagination = false;
+
     }
 
     public QueryChannelListCallback getQueryChannelListCallback() {
