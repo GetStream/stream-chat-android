@@ -38,9 +38,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessageInputClient {
+public class MessageInputController {
 
-    private static final String TAG = MessageInputClient.class.getSimpleName();
+    private static final String TAG = MessageInputController.class.getSimpleName();
 
     ChannelViewModel viewModel;
     Channel channel;
@@ -58,7 +58,7 @@ public class MessageInputClient {
 
     // region Attachment
 
-    public MessageInputClient(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel, MessageInputStyle style) {
+    public MessageInputController(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel, MessageInputStyle style) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;

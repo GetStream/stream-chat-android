@@ -181,7 +181,7 @@ public class MessageListView extends RecyclerView {
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
                 if (attachment == null
-                        || attachment.getType() == null
+                        || attachment.getType().equals(ModelType.attach_unknown)
                         || attachment.getType().equals(ModelType.attach_file)) 
                     return null;
 
@@ -577,8 +577,7 @@ public class MessageListView extends RecyclerView {
     public void showAttachment(Message message, Attachment attachment) {
         String url = null;
         String type = null;
-        if (attachment == null
-                || attachment.getType() == null)
+        if (attachment == null)
             return;
 
         switch (attachment.getType()) {
@@ -619,6 +618,11 @@ public class MessageListView extends RecyclerView {
                 url = attachment.getUrl();
                 break;
         }
+        if (TextUtils.isEmpty(url)){
+            Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_url));
+            return;
+        }
+
         if (type == null) type = attachment.getType();
         Intent intent = new Intent(getContext(), AttachmentActivity.class);
         intent.putExtra("type", type);

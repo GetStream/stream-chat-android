@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -12,6 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
+
+    private static final String TAG = AttachmentGsonAdapter.class.getSimpleName();
+
     @Override
     public void write(JsonWriter writer, Attachment attachment) throws IOException {
 
@@ -142,6 +146,10 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
             // Set Extra Data
             extraData.put(set.getKey(), set.getValue());
         }
+
+        if (attachment.getType() == null)
+            attachment.setType(ModelType.attach_unknown);
+
         attachment.setExtraData(extraData);
         return attachment;
     }
