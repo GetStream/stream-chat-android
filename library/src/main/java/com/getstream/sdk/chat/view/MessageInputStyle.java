@@ -130,19 +130,17 @@ public class MessageInputStyle extends BaseStyle {
 
     // Attachment Button
     private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
-    private final String showAttachmentButtonKey = "showAttachmentButton";
+
     private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
-        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+        return showAttachmentButton;
     }
 
-    public void passedPermissionCheck(boolean showAttachmentButton) {
-        this.showAttachmentButton = showAttachmentButton;
-        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
-        prefs.edit().putBoolean(permissionSetKey, true).apply();
+    public void setCheckPermissions(boolean passedPermissionCheck) {
+        prefs.edit().putBoolean(permissionSetKey, passedPermissionCheck).apply();
     }
 
-    public boolean isPermissionSet() {
+    public boolean passedPermissionCheck() {
         return prefs.getBoolean(permissionSetKey, false);
     }
 

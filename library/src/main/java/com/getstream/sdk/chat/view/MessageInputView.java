@@ -386,16 +386,16 @@ public class MessageInputView extends RelativeLayout
 
             if (storageGranted && cameraGranted) {
                 messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-                style.passedPermissionCheck(true);
+                style.setCheckPermissions(true);
             }else {
                 String message;
                 if (!storageGranted && !cameraGranted) {
                     message = getContext().getString(R.string.stream_both_permissions_message);
                 } else if (!cameraGranted) {
-                    style.passedPermissionCheck(true);
+                    style.setCheckPermissions(true);
                     message = getContext().getString(R.string.stream_camera_permission_message);
                 } else {
-                    style.passedPermissionCheck(true);
+                    style.setCheckPermissions(true);
                     message = getContext().getString(R.string.stream_storage_permission_message);
                 }
                 PermissionChecker.showPermissionSettingDialog(getContext(), message);
@@ -438,7 +438,7 @@ public class MessageInputView extends RelativeLayout
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())
                     && permissionRequestListener != null
-                    && !style.isPermissionSet())
+                    && !style.passedPermissionCheck())
                 permissionRequestListener.openPermissionRequest();
         }
     }
