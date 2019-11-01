@@ -107,7 +107,7 @@ public class MessageInputController {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             int hasCameraPermission = context.checkSelfPermission(Manifest.permission.CAMERA);
             if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-                binding.llCamera.setVisibility(View.GONE);
+//                binding.llCamera.setVisibility(View.GONE);
             }
         }
     }
