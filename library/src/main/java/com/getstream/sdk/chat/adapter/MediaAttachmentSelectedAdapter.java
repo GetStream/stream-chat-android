@@ -70,12 +70,13 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         }
 
         public void bind(Attachment attachment, final OnItemClickListener listener) {
-            int cornerRadius = Utils.dpToPx(16);
+            int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
+
             if (attachment.config.getFilePath() != null) {
                 File file = new File(attachment.config.getFilePath());
                 if (file.exists()) {
@@ -92,7 +93,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 try {
                     if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||
                             attachment.getMime_type().equals(ModelType.attach_mime_mp4)) {
-                        binding.ivMedia.setImageResource(R.drawable.stream_ic_videoplay);
+                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -104,10 +105,14 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            itemView.setOnClickListener((View v) -> {
-                listener.onItemClick(getAdapterPosition());
-            });
-            if (attachment.config.isUploaded()) binding.progressBar.setVisibility(View.GONE);
+            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
+
+            if (attachment.config.isUploaded()) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.ivMask.setVisibility(View.GONE);
+            }else
+                binding.progressBar.setProgress(attachment.config.getProgress());
+
             binding.executePendingBindings();
         }
     }

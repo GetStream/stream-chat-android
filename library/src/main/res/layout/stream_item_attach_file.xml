@@ -28,7 +28,6 @@
         android:lines="1"
         android:maxLines="1"
         android:paddingEnd="10dp"
-        android:text="adfsasd dsfasdfaasd"
         android:textColor="@color/stream_attach_title_text"
         android:textSize="14sp"
         app:layout_constrainedWidth="true"
@@ -39,7 +38,6 @@
         android:id="@+id/tv_file_size"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="412 KB"
         android:textColor="@color/stream_gray_dark"
         android:textSize="12sp"
         android:textStyle="bold"
@@ -53,7 +51,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
-        android:background="@drawable/stream_ic_close_attach"
+        android:background="@drawable/stream_attach_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,10 +67,15 @@
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:max="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
