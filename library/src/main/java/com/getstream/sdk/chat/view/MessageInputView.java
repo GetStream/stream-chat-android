@@ -48,6 +48,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -315,6 +316,10 @@ public class MessageInputView extends RelativeLayout
         binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
+                showPermissionSettingDialog(getContext().getString(R.string.stream_camera_permission_message));
+                return;
+            }
             Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
 
@@ -372,30 +377,36 @@ public class MessageInputView extends RelativeLayout
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            boolean granted = true;
+            boolean storageGranted  = true, cameraGranted = true;
             for (int i = 0; i < permissions.length; i++) {
                 String permission = permissions[i];
                 int grantResult = grantResults[i];
-                if (!permission.equals(Manifest.permission.CAMERA)
-                        && grantResult != PackageManager.PERMISSION_GRANTED) {
-                    granted = false;
-                    break;
+                if (permission.equals(Manifest.permission.CAMERA)){
+                    cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
+                }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                    storageGranted = false;
                 }
             }
-            if (granted)
-                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else
-                showPermissionSettingDialog();
-//                binding.ivOpenAttach.setVisibility(GONE);
 
+            if (storageGranted && cameraGranted)
+                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            else {
+                String message;
+                if (!storageGranted && !cameraGranted)
+                    message = getContext().getString(R.string.stream_both_permissions_message);
+                else if (!cameraGranted)
+                    message = getContext().getString(R.string.stream_camera_permission_message);
+                else
+                    message = getContext().getString(R.string.stream_camera_permission_message);
+
+                showPermissionSettingDialog(message);
+            }
         }
     }
 
-
-
-    private void showPermissionSettingDialog(){
+    private void showPermissionSettingDialog(String message){
         String appName = Utils.getApplicationName(getContext());
-        String msg = appName + " " + getContext().getString(R.string.stream_camera_permission_message);
+        String msg = appName + " " + message;
         final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle(appName)
                 .setMessage(msg)
@@ -448,10 +459,9 @@ public class MessageInputView extends RelativeLayout
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-//            if (isGrantedPermissions())
-//                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-//            else if(permissionRequestListener != null)
-//                permissionRequestListener.openPermissionRequest();
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())
+                    && permissionRequestListener != null)
+                permissionRequestListener.openPermissionRequest();
         }
     }
 
