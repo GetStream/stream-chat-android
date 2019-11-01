@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -104,6 +105,9 @@ public class MessageInputStyle extends BaseStyle {
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
+
+        prefs = context.getSharedPreferences(
+                "MessageInputStyle", Context.MODE_PRIVATE);
         a.recycle();
     }
 
@@ -125,8 +129,21 @@ public class MessageInputStyle extends BaseStyle {
     }
 
     // Attachment Button
+    private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
+    private final String showAttachmentButtonKey = "showAttachmentButton";
+    private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
-        return showAttachmentButton;
+        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+    }
+
+    public void passedPermissionCheck(boolean showAttachmentButton) {
+        this.showAttachmentButton = showAttachmentButton;
+        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
+        prefs.edit().putBoolean(permissionSetKey, true).apply();
+    }
+
+    public boolean isPermissionSet() {
+        return prefs.getBoolean(permissionSetKey, false);
     }
 
     public Drawable getAttachmentButtonIcon(boolean isSelected) {

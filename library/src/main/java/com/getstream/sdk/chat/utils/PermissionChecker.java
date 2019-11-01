@@ -3,11 +3,16 @@ package com.getstream.sdk.chat.utils;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
@@ -96,5 +101,28 @@ public class PermissionChecker {
                     && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
         } else
             return true;
+    }
+
+    public static void showPermissionSettingDialog(Context context, String message){
+        String appName = Utils.getApplicationName(context);
+        String msg = appName + " " + message;
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(appName)
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                intent.setData(uri);
+                context.startActivity(intent);
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
     }
 }

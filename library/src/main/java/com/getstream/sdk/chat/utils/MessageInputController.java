@@ -104,7 +104,7 @@ public class MessageInputController {
         configPermissions();
     }
 
-    private void configPermissions(){
+    public void configPermissions(){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
             binding.ivMediaPermission.setVisibility(View.GONE);
             binding.ivCameraPermission.setVisibility(View.GONE);
@@ -207,7 +207,10 @@ public class MessageInputController {
     }
 
     public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
-        if (!PermissionChecker.isGrantedStoragePermissions(context)) return;
+        if (!PermissionChecker.isGrantedStoragePermissions(context)) {
+            PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
+            return;
+        }
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
@@ -304,7 +307,10 @@ public class MessageInputController {
     }
 
     public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
-        if (!PermissionChecker.isGrantedStoragePermissions(context)) return;
+        if (!PermissionChecker.isGrantedStoragePermissions(context)) {
+            PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
+            return;
+        }
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);

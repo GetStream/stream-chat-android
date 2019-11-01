@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,12 +20,10 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.os.BuildCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
@@ -317,7 +313,7 @@ public class MessageInputView extends RelativeLayout
 
         binding.llCamera.setOnClickListener(v -> {
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
-                showPermissionSettingDialog(getContext().getString(R.string.stream_camera_permission_message));
+                PermissionChecker.showPermissionSettingDialog(getContext(), getContext().getString(R.string.stream_camera_permission_message));
                 return;
             }
             Utils.setButtonDelayEnable(v);
@@ -378,9 +374,10 @@ public class MessageInputView extends RelativeLayout
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
             boolean storageGranted  = true, cameraGranted = true;
+            String permission; int grantResult;
             for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
+                permission = permissions[i];
+                grantResult = grantResults[i];
                 if (permission.equals(Manifest.permission.CAMERA)){
                     cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
                 }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
@@ -388,43 +385,24 @@ public class MessageInputView extends RelativeLayout
                 }
             }
 
-            if (storageGranted && cameraGranted)
+            if (storageGranted && cameraGranted) {
                 messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else {
+                style.passedPermissionCheck(true);
+            }else {
                 String message;
-                if (!storageGranted && !cameraGranted)
+                if (!storageGranted && !cameraGranted) {
                     message = getContext().getString(R.string.stream_both_permissions_message);
-                else if (!cameraGranted)
+                } else if (!cameraGranted) {
+                    style.passedPermissionCheck(true);
                     message = getContext().getString(R.string.stream_camera_permission_message);
-                else
-                    message = getContext().getString(R.string.stream_camera_permission_message);
-
-                showPermissionSettingDialog(message);
+                } else {
+                    style.passedPermissionCheck(true);
+                    message = getContext().getString(R.string.stream_storage_permission_message);
+                }
+                PermissionChecker.showPermissionSettingDialog(getContext(), message);
             }
+            messageInputController.configPermissions();
         }
-    }
-
-    private void showPermissionSettingDialog(String message){
-        String appName = Utils.getApplicationName(getContext());
-        String msg = appName + " " + message;
-        final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                .setTitle(appName)
-                .setMessage(msg)
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.setOnShowListener(dialog -> {
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
-                intent.setData(uri);
-                getContext().startActivity(intent);
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
     }
 
     public Message getEditMessage() {
@@ -460,7 +438,8 @@ public class MessageInputView extends RelativeLayout
             binding.setIsAttachFile(true);
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())
-                    && permissionRequestListener != null)
+                    && permissionRequestListener != null
+                    && !style.isPermissionSet())
                 permissionRequestListener.openPermissionRequest();
         }
     }

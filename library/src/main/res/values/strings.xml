@@ -17,7 +17,7 @@
     <!--MessageInput-->
     <string name="stream_input_hint">Write a message</string>
 
-    <string name="stream_camera_permission_message"> needs camera access so that you can take photos and videos.\nPlease enable it in Settings.</string>
+    <string name="stream_camera_permission_message"> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
     <string name="stream_storage_permission_message"> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
     <string name="stream_both_permissions_message"> needs camera and storage access so that you can take, send and save photos, videos music and the other files.\nPlease enable it in Settings.</string>
 
