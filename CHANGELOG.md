@@ -5,6 +5,8 @@
 - Fixed read count difference between own and other users' messages
 - Fixed Video length preview
 
+## October 31th, 2019 - 3.2.0
+- Renamed `MessageInputClient` to `MessageInputController` (Adrian)
 ## October 25th, 2019 - 3.2.0
 
 - Added event interceptors to `ChannelListViewModel`

@@ -165,9 +165,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         Attachment attachment = lastMessage.getAttachments().get(0);
-        if (attachment.getType() == null)
-            return;
-
         iv_attachment_type.setVisibility(View.VISIBLE);
 
         String lastMessageText;
