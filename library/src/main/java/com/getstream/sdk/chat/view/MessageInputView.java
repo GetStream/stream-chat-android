@@ -338,7 +338,6 @@ public class MessageInputView extends RelativeLayout
     }
 
     // endregion
-    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
     public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {

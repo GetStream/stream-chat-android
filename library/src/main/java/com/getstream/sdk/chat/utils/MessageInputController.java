@@ -104,23 +104,23 @@ public class MessageInputController {
         configPermissions();
     }
 
-    public void configPermissions(){
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+    public void configPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             binding.ivMediaPermission.setVisibility(View.GONE);
             binding.ivCameraPermission.setVisibility(View.GONE);
             binding.ivFilePermission.setVisibility(View.GONE);
             return;
         }
 
-        if ( PermissionChecker.isGrantedCameraPermissions(context)){
+        if (PermissionChecker.isGrantedCameraPermissions(context)) {
             binding.ivMediaPermission.setVisibility(View.GONE);
             binding.ivCameraPermission.setVisibility(View.GONE);
             binding.ivFilePermission.setVisibility(View.GONE);
-        }else if (PermissionChecker.isGrantedStoragePermissions(context)){
+        } else if (PermissionChecker.isGrantedStoragePermissions(context)) {
             binding.ivMediaPermission.setVisibility(View.GONE);
             binding.ivCameraPermission.setVisibility(View.VISIBLE);
             binding.ivFilePermission.setVisibility(View.GONE);
-        }else {
+        } else {
             binding.ivMediaPermission.setVisibility(View.VISIBLE);
             binding.ivCameraPermission.setVisibility(View.VISIBLE);
             binding.ivFilePermission.setVisibility(View.VISIBLE);
