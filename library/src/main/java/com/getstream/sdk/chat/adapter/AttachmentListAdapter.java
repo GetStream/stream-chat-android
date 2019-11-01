@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.ModelType;
 
 import java.util.List;
 
@@ -89,48 +88,8 @@ public class AttachmentListAdapter extends BaseAdapter {
 
 
     private void configureFileAttach(ViewHolder holder, Attachment attachment) {
-        String fileType = attachment.getMime_type();
-        int fileTyineRes = 0;
-        switch (fileType) {
-            case ModelType.attach_mime_pdf:
-                fileTyineRes = R.drawable.stream_ic_file_pdf;
-                break;
-            case ModelType.attach_mime_csv:
-                fileTyineRes = R.drawable.stream_ic_file_csv;
-                break;
-            case ModelType.attach_mime_tar:
-                fileTyineRes = R.drawable.stream_ic_file_tar;
-                break;
-            case ModelType.attach_mime_zip:
-                fileTyineRes = R.drawable.stream_ic_file_zip;
-                break;
-            case ModelType.attach_mime_doc:
-            case ModelType.attach_mime_docx:
-            case ModelType.attach_mime_txt:
-                fileTyineRes = R.drawable.stream_ic_file_doc;
-                break;
-            case ModelType.attach_mime_xlsx:
-                fileTyineRes = R.drawable.stream_ic_file_xls;
-                break;
-            case ModelType.attach_mime_ppt:
-                fileTyineRes = R.drawable.stream_ic_file_ppt;
-                break;
-            case ModelType.attach_mime_mov:
-            case ModelType.attach_mime_mp4:
-                fileTyineRes = R.drawable.stream_ic_file_mov;
-                break;
-            case ModelType.attach_mime_mp3:
-                fileTyineRes = R.drawable.stream_ic_file_mp3;
-                break;
-            default:
-                if (attachment.getMime_type().contains("audio")) {
-                    fileTyineRes = R.drawable.stream_ic_file_mp3;
-                } else if (attachment.getMime_type().contains("video")) {
-                    fileTyineRes = R.drawable.stream_ic_file_mov;
-                }
-                break;
-        }
-        holder.iv_file_thumb.setImageResource(fileTyineRes);
+
+        holder.iv_file_thumb.setImageResource(attachment.getIcon());
 
         holder.tv_file_title.setText(attachment.getTitle());
 
@@ -162,11 +121,11 @@ public class AttachmentListAdapter extends BaseAdapter {
                     holder.progressBar.setVisibility(View.GONE);
                 } else {
                     holder.progressBar.setVisibility(View.VISIBLE);
+                    holder.progressBar.setProgress(attachment.config.getProgress());
                 }
             }
 
         } else {
-            if (attachment.config.isUploaded()) holder.progressBar.setVisibility(View.GONE);
             holder.iv_select_mark.setVisibility(View.GONE);
             holder.tv_close.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.GONE);
