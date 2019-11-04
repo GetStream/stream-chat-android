@@ -311,9 +311,7 @@ public class MessageInputView extends RelativeLayout
         binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
-            Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
-
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.TITLE, "New Picture");
