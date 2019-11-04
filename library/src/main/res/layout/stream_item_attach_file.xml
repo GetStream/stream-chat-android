@@ -59,7 +59,6 @@
         android:id="@+id/iv_20mb_mark"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_margin="5dp"
         android:src="@drawable/stream_ic_file_size_error"
         app:layout_constraintBottom_toBottomOf="@+id/tv_close"
         app:layout_constraintEnd_toEndOf="@+id/tv_close"
