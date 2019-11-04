@@ -107,8 +107,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         if (this.isTotalFileAdapter) {
             if (attachment.config.isSelected())
                 holder.iv_select_mark.setVisibility(View.VISIBLE);
-            if (fileSize >= Constant.MAX_UPLOAD_FILE_SIZE)
-                holder.iv_20mb_mark.setVisibility(View.VISIBLE);
+            holder.iv_20mb_mark.setVisibility(attachment.config.isCanUpload() ? View.INVISIBLE : View.VISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
             if (!attachment.config.isUploaded()) {

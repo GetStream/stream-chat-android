@@ -35,6 +35,7 @@
     <!--Error-->
     <string name="stream_title_error">Error!</string>
     <string name="stream_no_media_error">There is no photo or video.</string>
+    <string name="stream_large_size_file_error">This file is too large to upload. The file size limit is 20MB.</string>
     <string name="stream_no_file_error">There is no file.</string>
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>

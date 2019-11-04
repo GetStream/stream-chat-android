@@ -77,10 +77,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             else
                 binding.ivSelectMark.setVisibility(View.GONE);
 
-            if (file.length() >= Constant.MAX_UPLOAD_FILE_SIZE)
-                binding.iv20mbMark.setVisibility(View.VISIBLE);
-            else
-                binding.iv20mbMark.setVisibility(View.GONE);
+            binding.iv20mbMark.setVisibility(attachment.config.isCanUpload() ? View.INVISIBLE : View.VISIBLE);
 
             if (attachment.getType().equals(ModelType.attach_file)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));
