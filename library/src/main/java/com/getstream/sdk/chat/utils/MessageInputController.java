@@ -446,10 +446,11 @@ public class MessageInputController {
                 openCommandView();
 
             setCommandMentionListItemAdapter(text.startsWith("/"));
-
-            if (commands.isEmpty())
-                closeCommandView();
         }
+
+        if (commands == null || commands.isEmpty())
+            closeCommandView();
+
     }
 
     private void onClickCommandViewOpen(boolean isCommand) {
