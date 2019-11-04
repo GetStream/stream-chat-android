@@ -468,10 +468,11 @@ public class MessageInputController {
                 openCommandView();
 
             setCommandMentionListItemAdapter(text.startsWith("/"));
-
-            if (commands.isEmpty())
-                closeCommandView();
         }
+
+        if (commands == null || commands.isEmpty())
+            closeCommandView();
+
     }
 
     private void onClickCommandViewOpen(boolean isCommand) {
@@ -524,6 +525,9 @@ public class MessageInputController {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
+            List<Command>commands = channel.getConfig().getCommands();
+            if (commands == null || commands.isEmpty()) return;
+
             String commandStr = string.replace("/", "");
             setCommands(commandStr);
             binding.tvCommand.setText(commandStr);
