@@ -2,9 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -25,7 +23,6 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
@@ -219,18 +216,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private void configClickListeners(ChannelState channelState){
         Channel channel = channelState.getChannel();
         tv_click.setOnClickListener(view -> {
-            Utils.setButtonDelayEnable(view);
-            tv_click.setBackgroundColor(Color.parseColor("#14000000"));
-            new Handler().postDelayed(() -> tv_click.setBackgroundColor(0), 500);
-            if (this.channelClickListener != null) {
+            if (this.channelClickListener != null)
                 this.channelClickListener.onClick(channel);
-            }
         });
 
         tv_click.setOnLongClickListener(view -> {
-            if (this.channelLongClickListener != null) {
+            if (this.channelLongClickListener != null)
                 this.channelLongClickListener.onClick(channel);
-            }
+
             return true;
         });
     }
