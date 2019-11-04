@@ -24,6 +24,15 @@
             app:layout_constraintStart_toStartOf="@+id/iv_media"
             app:layout_constraintTop_toTopOf="@+id/iv_media" />
 
+        <ImageView
+            android:id="@+id/iv_20mb_mark"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/stream_ic_file_size_error"
+            app:layout_constraintEnd_toEndOf="@+id/iv_media"
+            app:layout_constraintTop_toTopOf="@+id/iv_media" />
+
         <TextView
             android:id="@+id/tv_length"
             style="@style/text_s"

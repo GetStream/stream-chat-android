@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.util.List;
 
@@ -50,8 +52,6 @@ public class AttachmentListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         final Attachment attachment = attachments.get(position);
-        final String type = attachment.getType();
-
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.stream_item_attach_file, null);
 
@@ -61,6 +61,7 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
 
             holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
+            holder.iv_20mb_mark = convertView.findViewById(R.id.iv_20mb_mark);
             holder.tv_close = convertView.findViewById(R.id.tv_close);
             holder.progressBar = convertView.findViewById(R.id.progressBar);
             convertView.setTag(holder);
@@ -73,6 +74,7 @@ public class AttachmentListAdapter extends BaseAdapter {
                 holder.tv_file_title = convertView.findViewById(R.id.tv_file_title);
                 holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
                 holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
+                holder.iv_20mb_mark = convertView.findViewById(R.id.iv_20mb_mark);
                 holder.tv_close = convertView.findViewById(R.id.tv_close);
                 holder.progressBar = convertView.findViewById(R.id.progressBar);
                 convertView.setTag(holder);
@@ -90,51 +92,35 @@ public class AttachmentListAdapter extends BaseAdapter {
     private void configureFileAttach(ViewHolder holder, Attachment attachment) {
 
         holder.iv_file_thumb.setImageResource(attachment.getIcon());
-
         holder.tv_file_title.setText(attachment.getTitle());
 
-        int fileSize = attachment.getFile_size();
+        holder.iv_20mb_mark.setVisibility(View.INVISIBLE);
+        holder.iv_select_mark.setVisibility(View.GONE);
+        holder.tv_close.setVisibility(View.INVISIBLE);
+        holder.progressBar.setVisibility(View.GONE);
 
-        if (fileSize >= 1024 * 1024) {
-            int fileSizeMB = fileSize / (1024 * 1024);
-            holder.tv_file_size.setText(fileSizeMB + " MB");
-        } else if (fileSize >= 1024) {
-            int fileSizeKB = fileSize / 1024;
-            holder.tv_file_size.setText(fileSizeKB + " KB");
+        long fileSize = attachment.getFile_size();
+        holder.tv_file_size.setText(StringUtility.convertFileSizeByteCount(fileSize, true));
+
+        if (!this.localAttach) return;
+
+        if (this.isTotalFileAdapter) {
+            if (attachment.config.isSelected())
+                holder.iv_select_mark.setVisibility(View.VISIBLE);
+            if (fileSize >= Constant.MAX_UPLOAD_FILE_SIZE)
+                holder.iv_20mb_mark.setVisibility(View.VISIBLE);
         } else {
-            holder.tv_file_size.setText(fileSize + " Bytes");
-        }
-
-        if (this.localAttach) {
-            if (this.isTotalFileAdapter) {
-                holder.tv_close.setVisibility(View.GONE);
-                holder.progressBar.setVisibility(View.GONE);
-                if (attachment.config.isSelected()) {
-                    holder.iv_select_mark.setVisibility(View.VISIBLE);
-                } else {
-                    holder.iv_select_mark.setVisibility(View.GONE);
-                }
-            } else {
-                holder.iv_select_mark.setVisibility(View.GONE);
-                holder.tv_close.setVisibility(View.VISIBLE);
-                if (attachment.config.isUploaded()) {
-                    holder.progressBar.setVisibility(View.GONE);
-                } else {
-                    holder.progressBar.setVisibility(View.VISIBLE);
-                    holder.progressBar.setProgress(attachment.config.getProgress());
-                }
+            holder.tv_close.setVisibility(View.VISIBLE);
+            if (!attachment.config.isUploaded()) {
+                holder.progressBar.setVisibility(View.VISIBLE);
+                holder.progressBar.setProgress(attachment.config.getProgress());
             }
-
-        } else {
-            holder.iv_select_mark.setVisibility(View.GONE);
-            holder.tv_close.setVisibility(View.GONE);
-            holder.progressBar.setVisibility(View.GONE);
         }
     }
 
     // endregion
     public class ViewHolder {
-        ImageView iv_file_thumb, iv_select_mark;
+        ImageView iv_file_thumb, iv_select_mark, iv_20mb_mark;
         TextView tv_file_title, tv_file_size, tv_close;
         ProgressBar progressBar;
     }

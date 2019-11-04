@@ -56,4 +56,14 @@ public class GetDeletedOrMentionedTextTest {
         long videoLength = 216844;
         assertEquals("60:14:04", StringUtility.convertVideoLength(videoLength));
     }
+
+    @org.junit.jupiter.api.Test
+    void convertFileSizeTest() {
+        long fileSize = 999;
+        assertEquals("999 B", StringUtility.convertFileSizeByteCount(fileSize, true));
+        fileSize = 110592;
+        assertEquals("110.6 kB", StringUtility.convertFileSizeByteCount(fileSize, true));
+        fileSize = 452984832;
+        assertEquals("453.0 MB", StringUtility.convertFileSizeByteCount(fileSize, true));
+    }
 }

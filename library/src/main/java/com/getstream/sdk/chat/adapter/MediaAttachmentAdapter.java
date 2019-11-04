@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.io.File;
@@ -75,6 +76,11 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
                 binding.ivSelectMark.setVisibility(View.VISIBLE);
             else
                 binding.ivSelectMark.setVisibility(View.GONE);
+
+            if (file.length() >= Constant.MAX_UPLOAD_FILE_SIZE)
+                binding.iv20mbMark.setVisibility(View.VISIBLE);
+            else
+                binding.iv20mbMark.setVisibility(View.GONE);
 
             if (attachment.getType().equals(ModelType.attach_file)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));

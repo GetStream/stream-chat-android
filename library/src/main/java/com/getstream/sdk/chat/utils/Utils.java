@@ -185,16 +185,14 @@ public class Utils {
                         attachment.setMime_type(ModelType.attach_mime_mp3);
                     }
 
-                    if (!file.exists()) continue;
+                    if (!file.exists() || attachment.getMime_type() == null) continue;
 
-                    if (attachment.getMime_type() != null) {
-                        attachment.setType(ModelType.attach_file);
-                        attachment.setTitle(file.getName());
-                        attachment.config.setFilePath(file.getPath());
-                        long size = file.length();
-                        attachment.setFile_size((int) size);
-                        attachments.add(attachment);
-                    }
+                    attachment.setType(ModelType.attach_file);
+                    attachment.setTitle(file.getName());
+                    attachment.config.setFilePath(file.getPath());
+                    long size = file.length();
+                    attachment.setFile_size((int) size);
+                    attachments.add(attachment);
                 }
             }
         }
