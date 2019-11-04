@@ -503,6 +503,7 @@ public class MessageInputController {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
+            if (channel.getConfig().getCommands() == null) return;
             String commandStr = string.replace("/", "");
             setCommands(commandStr);
             binding.tvCommand.setText(commandStr);
