@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,7 +61,7 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
 
             holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
-            holder.btn_close = convertView.findViewById(R.id.btn_close);
+            holder.tv_close = convertView.findViewById(R.id.tv_close);
             holder.progressBar = convertView.findViewById(R.id.progressBar);
             convertView.setTag(holder);
         } else {
@@ -74,7 +73,7 @@ public class AttachmentListAdapter extends BaseAdapter {
                 holder.tv_file_title = convertView.findViewById(R.id.tv_file_title);
                 holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
                 holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
-                holder.btn_close = convertView.findViewById(R.id.btn_close);
+                holder.tv_close = convertView.findViewById(R.id.tv_close);
                 holder.progressBar = convertView.findViewById(R.id.progressBar);
                 convertView.setTag(holder);
             }
@@ -108,7 +107,7 @@ public class AttachmentListAdapter extends BaseAdapter {
 
         if (this.localAttach) {
             if (this.isTotalFileAdapter) {
-                holder.btn_close.setVisibility(View.GONE);
+                holder.tv_close.setVisibility(View.GONE);
                 holder.progressBar.setVisibility(View.GONE);
                 if (attachment.config.isSelected()) {
                     holder.iv_select_mark.setVisibility(View.VISIBLE);
@@ -117,7 +116,7 @@ public class AttachmentListAdapter extends BaseAdapter {
                 }
             } else {
                 holder.iv_select_mark.setVisibility(View.GONE);
-                holder.btn_close.setVisibility(View.VISIBLE);
+                holder.tv_close.setVisibility(View.VISIBLE);
                 if (attachment.config.isUploaded()) {
                     holder.progressBar.setVisibility(View.GONE);
                 } else {
@@ -128,7 +127,7 @@ public class AttachmentListAdapter extends BaseAdapter {
 
         } else {
             holder.iv_select_mark.setVisibility(View.GONE);
-            holder.btn_close.setVisibility(View.GONE);
+            holder.tv_close.setVisibility(View.GONE);
             holder.progressBar.setVisibility(View.GONE);
         }
     }
@@ -136,8 +135,7 @@ public class AttachmentListAdapter extends BaseAdapter {
     // endregion
     public class ViewHolder {
         ImageView iv_file_thumb, iv_select_mark;
-        TextView tv_file_title, tv_file_size;
-        Button btn_close;
+        TextView tv_file_title, tv_file_size, tv_close;
         ProgressBar progressBar;
     }
 }
