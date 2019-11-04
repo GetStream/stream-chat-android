@@ -57,7 +57,7 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
 
         public void bind(User user, final View.OnClickListener clickListener) {
 //            binding.viewUserAvator.setUser(user,style);
-            binding.tvClose.setOnClickListener((View v) -> {
+            binding.btnClose.setOnClickListener((View v) -> {
                 v.setTag(user);
                 clickListener.onClick(v);
             });

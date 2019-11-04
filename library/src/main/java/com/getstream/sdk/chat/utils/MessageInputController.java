@@ -78,7 +78,7 @@ public class MessageInputController {
 
         binding.getRoot().setBackgroundResource(R.drawable.stream_round_thread_toolbar);
         binding.clTitle.setVisibility(View.VISIBLE);
-        binding.tvClose.setVisibility(View.VISIBLE);
+        binding.btnClose.setVisibility(View.VISIBLE);
 
         binding.clAddFile.setVisibility(View.GONE);
         binding.clCommand.setVisibility(View.GONE);
@@ -97,7 +97,7 @@ public class MessageInputController {
                 break;
             case COMMAND:
             case MENTION:
-                binding.tvClose.setVisibility(View.GONE);
+                binding.btnClose.setVisibility(View.GONE);
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }

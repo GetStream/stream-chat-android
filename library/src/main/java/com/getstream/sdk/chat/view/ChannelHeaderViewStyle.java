@@ -123,7 +123,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
     }
 
     public Drawable getBackButtonBackground() {
-        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.stream_arrow_left);
+        return backButtonBackground != null ? backButtonBackground : getDrawable(R.drawable.stream_button_left);
     }
 
     public boolean isLastActiveShow() {

@@ -48,8 +48,8 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_title"
                 app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
-            <TextView
-                android:id="@+id/tv_close"
+            <Button
+                android:id="@+id/btn_close"
                 style="@style/text"
                 android:layout_width="30dp"
                 android:layout_height="30dp"

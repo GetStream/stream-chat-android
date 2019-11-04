@@ -300,7 +300,7 @@ public class MessageInputView extends RelativeLayout
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-        binding.tvClose.setOnClickListener(v -> {
+        binding.btnClose.setOnClickListener(v -> {
             messageInputController.onClickCloseBackGroundView();
             if (viewModel.isEditing()) {
                 initSendMessage();
