@@ -50,11 +50,10 @@ public class ErrorResponse extends IOException {
         try {
             // avoid consuming the response body stream (might crash other readers)
             message = response.peekBody(Long.MAX_VALUE).string();
-        } catch (IOException e) {
+            return parseError(message);
+        } catch (Throwable e) {
             return new ErrorResponse("", -1, "", 0,"");
         }
-
-        return parseError(message);
     }
 
     public int getCode() {
