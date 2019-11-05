@@ -36,9 +36,9 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class MoreActionDialog extends Dialog {
 
-    Message message;
-    ChannelViewModel viewModel;
-    MessageListViewStyle style;
+    private Message message;
+    private ChannelViewModel viewModel;
+    private MessageListViewStyle style;
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
@@ -56,7 +56,11 @@ public class MoreActionDialog extends Dialog {
 
 
     public MoreActionDialog setMessage(Message message) {
-        this.message = message;
+        if (viewModel.isThread() && message.isThreadParent())
+            this.message = viewModel.getThreadParentMessage().getValue();
+        else
+            this.message = message;
+
         init();
         return this;
     }
@@ -110,6 +114,7 @@ public class MoreActionDialog extends Dialog {
                 viewModel.setEditMessage(message);
                 dismiss();
             });
+
             ll_delete.setOnClickListener(view -> {
                 viewModel.getChannel().deleteMessage(message,
                         new MessageCallback() {
@@ -117,6 +122,8 @@ public class MoreActionDialog extends Dialog {
                             public void onSuccess(MessageResponse response) {
                                 Utils.showMessage(getContext(), "Deleted Successfully");
                                 dismiss();
+                                if (message.isThreadParent())
+                                    viewModel.initThread();
                             }
 
                             @Override

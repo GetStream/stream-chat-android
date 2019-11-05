@@ -619,10 +619,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messagesCopy.set(index, message);
                 messages.postValue(messagesCopy);
             }
-
+            // Check if message is Thread Parent Message
             if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
-//                messagesCopy.set(0, message);
-//                threadMessages.postValue(messagesCopy);
+                message.setId("");
+                message.setThreadParent(true);
+                messagesCopy.set(0, message);
+                threadMessages.postValue(messagesCopy);
+                updated = true;
             }
             Log.d(TAG, "updateMessage:" + updated);
         }
