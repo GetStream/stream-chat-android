@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.rest.User;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class StringUtility {
@@ -76,6 +77,7 @@ public class StringUtility {
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = String.valueOf(("KMGTPE").charAt(exp-1));
-        return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
+        DecimalFormat df = new DecimalFormat("###.##");
+        return df.format(bytes / Math.pow(unit, exp)) + " " + pre + "B";
     }
 }
