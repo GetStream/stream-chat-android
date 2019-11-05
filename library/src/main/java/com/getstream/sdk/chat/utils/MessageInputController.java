@@ -146,7 +146,7 @@ public class MessageInputController {
                 if (!attachments.isEmpty()){
                     mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
                         Attachment attachment = attachments.get(position);
-                        if (!attachment.config.isCanUpload()){
+                        if (attachment.config.isFileTooLarge()){
                             Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
                             return;
                         }
@@ -177,7 +177,7 @@ public class MessageInputController {
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
                         Attachment attachment = attachments.get(position);
-                        if (!attachment.config.isCanUpload()){
+                        if (attachment.config.isFileTooLarge()){
                             Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
                             return;
                         }

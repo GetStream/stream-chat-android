@@ -14,6 +14,6 @@ public final class Constant {
     // File Attach
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 3;
-    public static final int MAX_UPLOAD_FILE_SIZE = 1024 * 1024 * 20;
+    public static final int MAX_UPLOAD_FILE_SIZE = 1024 * 1024 * 20; // 20 MB
 }
 

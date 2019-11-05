@@ -255,7 +255,7 @@ public class Attachment {
         private int videoLengh = 0;
         private boolean isUploaded = false;
         private int progress = 0;
-        private boolean canUpload = true;
+        private boolean fileTooLarge = false;
 
         public String getFilePath() {
             return filePath;
@@ -297,12 +297,12 @@ public class Attachment {
             this.progress = progress;
         }
 
-        public boolean isCanUpload() {
-            return canUpload;
+        public boolean isFileTooLarge() {
+            return fileTooLarge;
         }
 
-        public void setCanUpload(boolean canUpload) {
-            this.canUpload = canUpload;
+        public void setFileTooLarge(boolean fileTooLarge) {
+            this.fileTooLarge = fileTooLarge;
         }
     }
 

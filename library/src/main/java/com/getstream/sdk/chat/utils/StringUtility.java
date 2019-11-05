@@ -71,11 +71,11 @@ public class StringUtility {
     }
 
     @SuppressLint("DefaultLocale")
-    public static String convertFileSizeByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
+    public static String convertFileSizeByteCount(long bytes) {
+        int unit = 1000;
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        String pre = String.valueOf(("KMGTPE").charAt(exp-1));
+        return String.format("%.2f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }
