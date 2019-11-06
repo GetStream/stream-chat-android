@@ -86,7 +86,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         channels = new LazyQueryChannelLiveData<>();
         channels.viewModel = this;
-        sort = new QuerySort().desc("last_message_at");
+        sort = new QuerySort().desc("last_message_at").desc("created_at");
 
         setupConnectionRecovery();
         setEventHandler(new EventHandler((event, channel) -> false));
