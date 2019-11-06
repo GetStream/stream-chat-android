@@ -302,6 +302,7 @@ public class Message implements UserEntity {
         clone.parentId = parentId;
         clone.command = command;
         clone.commandInfo = commandInfo;
+        clone.isThreadParent = isThreadParent;
         clone.status = status;
         return clone;
     }

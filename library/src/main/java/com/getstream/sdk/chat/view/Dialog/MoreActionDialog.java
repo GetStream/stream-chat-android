@@ -39,9 +39,11 @@ public class MoreActionDialog extends Dialog {
     private Message message;
     private ChannelViewModel viewModel;
     private MessageListViewStyle style;
+    private Context context;
 
     public MoreActionDialog(@NonNull Context context) {
         super(context, R.style.DialogTheme);
+        this.context = context;
         Utils.hideSoftKeyboard((Activity) context);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL);
@@ -56,9 +58,11 @@ public class MoreActionDialog extends Dialog {
 
 
     public MoreActionDialog setMessage(Message message) {
-        if (viewModel.isThread() && message.isThreadParent())
-            this.message = viewModel.getThreadParentMessage().getValue();
-        else
+        // Check Thread parent Message
+        if (viewModel.isThread() && message.isThreadParent()){
+            this.message = message.copy();
+            this.message.setId(viewModel.getThreadParentMessage().getValue().getId());
+        }else
             this.message = message;
 
         init();
@@ -88,20 +92,20 @@ public class MoreActionDialog extends Dialog {
 
         ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
-        if (!message.getUserId().equals(StreamChat.getInstance(getContext()).getUserId())) {
+        if (!message.getUserId().equals(StreamChat.getInstance(context).getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
                 viewModel.getChannel().flagMessage(message.getId(), new FlagCallback() {
                     @Override
                     public void onSuccess(FlagResponse response) {
-                        Utils.showMessage(getContext(), "Message has been succesfully flagged");
+                        Utils.showMessage(context, "Message has been succesfully flagged");
                         dismiss();
                     }
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        Utils.showMessage(getContext(), errMsg);
+                        Utils.showMessage(context, errMsg);
                         dismiss();
                     }
                 });
@@ -120,7 +124,7 @@ public class MoreActionDialog extends Dialog {
                         new MessageCallback() {
                             @Override
                             public void onSuccess(MessageResponse response) {
-                                Utils.showMessage(getContext(), "Deleted Successfully");
+                                Utils.showMessage(context, "Deleted Successfully");
                                 dismiss();
                                 if (message.isThreadParent())
                                     viewModel.initThread();
@@ -128,7 +132,7 @@ public class MoreActionDialog extends Dialog {
 
                             @Override
                             public void onError(String errMsg, int errCode) {
-                                Utils.showMessage(getContext(), errMsg);
+                                Utils.showMessage(context, errMsg);
                                 dismiss();
                             }
                         });
@@ -147,7 +151,7 @@ public class MoreActionDialog extends Dialog {
 
             RecyclerView rv_reaction = findViewById(com.getstream.sdk.chat.R.id.rv_reaction);
             RecyclerView.LayoutManager mLayoutManager;
-            mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             rv_reaction.setLayoutManager(mLayoutManager);
             ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
                     message,
@@ -163,7 +167,7 @@ public class MoreActionDialog extends Dialog {
             viewModel.setThreadParentMessage(message);
         });
         ll_copy.setOnClickListener(view -> {
-            ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("label", message.getText());
             clipboard.setPrimaryClip(clip);
             dismiss();
