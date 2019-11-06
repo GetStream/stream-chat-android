@@ -227,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
-                viewModel.addChannels(Arrays.asList(channel.getChannelState()));
+                // If you query channels without `created_at` sort option, please uncomment the line below.
+//                viewModel.addChannels(Arrays.asList(channel.getChannelState()));
                 viewModel.setLoadingDone();
             }
 
