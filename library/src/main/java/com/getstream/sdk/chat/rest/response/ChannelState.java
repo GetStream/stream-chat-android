@@ -208,7 +208,8 @@ public class ChannelState {
                 if (!channel.getClient().fromCurrentUser(w)) {
                     User user = channel.getClient().getState().getUser(w.getUser().getId());
                     Log.d(TAG, "getOtherUsers: watcher: " + user);
-                    users.add(user);
+                    if (!users.contains(user))
+                        users.add(user);
                 }
             }
         }
