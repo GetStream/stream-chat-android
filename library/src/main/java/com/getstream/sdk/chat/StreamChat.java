@@ -18,13 +18,6 @@ import com.getstream.sdk.chat.rest.core.ClientState;
 
 import java.util.List;
 
-import io.noties.markwon.Markwon;
-import io.noties.markwon.core.CorePlugin;
-import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
-import io.noties.markwon.ext.tables.TablePlugin;
-import io.noties.markwon.image.ImagesPlugin;
-import io.noties.markwon.linkify.LinkifyPlugin;
-
 public class StreamChat {
     private static final String TAG = StreamChat.class.getSimpleName();
 

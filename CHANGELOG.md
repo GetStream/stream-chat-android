@@ -1,6 +1,7 @@
 ## Upcoming
 
 - Fix Concurrent modification when removing member from channel
+- Fix Edit/Delete thread parent message
 
 ## November 5th, 2019 - 3.2.1
 

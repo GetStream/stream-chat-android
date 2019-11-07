@@ -59,7 +59,7 @@ public class MoreActionDialog extends Dialog {
 
     public MoreActionDialog setMessage(Message message) {
         // Check Thread parent Message
-        if (viewModel.isThread() && message.isThreadParent()){
+        if (viewModel.isThread() && TextUtils.isEmpty(message.getParentId())){
             this.message = message.copy();
             this.message.setId(viewModel.getThreadParentMessage().getValue().getId());
         }else
@@ -126,7 +126,7 @@ public class MoreActionDialog extends Dialog {
                             public void onSuccess(MessageResponse response) {
                                 Utils.showMessage(context, "Deleted Successfully");
                                 dismiss();
-                                if (message.isThreadParent())
+                                if (TextUtils.isEmpty(message.getParentId()))
                                     viewModel.initThread();
                             }
 

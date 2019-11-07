@@ -311,7 +311,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // Create New message for Parent Message
         Message message = threadParentMessage_.copy();
         message.setId("");
-        message.setThreadParent(true);
 
         if (threadParentMessage_.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
@@ -624,7 +623,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 List<Message> messagesCopy_ = threadMessages.getValue();
                 Message message_ = message.copy();
                 message_.setId("");
-                message_.setThreadParent(true);
                 messagesCopy_.set(0, message_);
                 threadMessages.postValue(messagesCopy_);
                 updated = true;
