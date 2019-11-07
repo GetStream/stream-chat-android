@@ -1,12 +1,13 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.utils.Constant;
 
 import static com.getstream.sdk.chat.enums.EventType.NOTIFICATION_MESSAGE_NEW;
 
@@ -160,7 +161,8 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onMessageUpdated);
                 break;
             case MESSAGE_DELETED:
-                event.getMessage().setText(Constant.MESSAGE_DELETED);
+                event.getMessage().setSyncStatus(Sync.SYNCED);
+                event.getMessage().setText(StreamChat.getContext().getString(R.string.stream_delete_message));
                 dispatchChannelEvent(client, event, this::onMessageDeleted);
                 break;
             case MESSAGE_READ:

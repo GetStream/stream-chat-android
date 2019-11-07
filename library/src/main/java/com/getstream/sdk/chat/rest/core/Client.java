@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
@@ -1073,9 +1075,12 @@ public class Client implements WSResponseHandler {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
-                if (response.body() != null && response.body().getMessage() != null)
+                if (response.body() != null && response.body().getMessage() != null) {
                     response.body().getMessage().setSyncStatus(SYNCED);
-                callback.onSuccess(response.body());
+                    callback.onSuccess(response.body());
+                }else{
+                    callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
+                }
             }
 
             @Override

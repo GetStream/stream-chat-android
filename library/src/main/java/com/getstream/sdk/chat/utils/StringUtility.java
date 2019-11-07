@@ -2,16 +2,13 @@ package com.getstream.sdk.chat.utils;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 public class StringUtility {
 
@@ -49,7 +46,7 @@ public class StringUtility {
         String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
 
         if (message.getDeletedAt() != null) {
-            text = "_" + Constant.MESSAGE_DELETED + "_";
+            text = "_" + StreamChat.getContext().getString(R.string.stream_delete_message) + "_";
             return text;
         }
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {

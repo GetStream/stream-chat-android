@@ -1,8 +1,9 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.utils.Constant;
 
 public abstract class ChatChannelEventHandler {
     public void onAnyEvent(Event event) {
@@ -71,7 +72,8 @@ public abstract class ChatChannelEventHandler {
                 onMessageUpdated(event);
                 break;
             case MESSAGE_DELETED:
-                event.getMessage().setText(Constant.MESSAGE_DELETED);
+                event.getMessage().setSyncStatus(Sync.SYNCED);
+                event.getMessage().setText(StreamChat.getContext().getString(R.string.stream_delete_message));
                 onMessageDeleted(event);
                 break;
             case MESSAGE_READ:
