@@ -1,6 +1,8 @@
 ## Upcoming
 
 - Fix Concurrent modification when removing member from channel
+- Fix Push notification for API version >= 26
+- Add app icon to Sample app
 
 ## November 5th, 2019 - 3.2.1
 
