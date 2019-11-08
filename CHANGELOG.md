@@ -3,6 +3,7 @@
 - Fix Concurrent modification when removing member from channel
 - Fix Sent message progress infinite
 - Fix channel delete event handling in ChannelList view model
+- Fix attachment duplicated issue when message edit
 
 ## November 5th, 2019 - 3.2.1
 
