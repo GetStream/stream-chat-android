@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.rest;
+package com.getstream.sdk.chat.rest.core;
 
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -10,10 +10,11 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Reaction;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.core.ClientState;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.StorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
@@ -71,6 +72,9 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -934,6 +938,10 @@ public class ClientTest {
     void disconnectTest() {
         client.disconnect();
         verify(webSocketService).disconnect();
+        assertNull(client.tokenProvider);
+        assertNull(client.cacheUserToken);
+        assertFalse(client.fetchingToken);
+        assertTrue(client.getActiveChannelMap().isEmpty());
     }
 
     private void simulateConnection() {

@@ -121,19 +121,20 @@ public class Client implements WSResponseHandler {
         this.state = state;
     }
 
+    CachedTokenProvider tokenProvider;
+    String cacheUserToken;
+    boolean fetchingToken;
+
     private ClientState state;
 
     // Main Params
     private String apiKey;
 
     private Boolean offlineStorage;
-    private CachedTokenProvider tokenProvider;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
-    private boolean fetchingToken;
-    private String cacheUserToken;
     private Context context;
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
