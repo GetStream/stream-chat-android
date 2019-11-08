@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -30,6 +29,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -42,6 +42,7 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -160,9 +161,10 @@ public class MessageInputView extends RelativeLayout {
         );
         binding.ivOpenAttach.setOnClickListener(view -> {
             binding.setIsAttachFile(true);
-            if (style.isPermissionSet() || isGrantedPermissions())
-                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else if(permissionRequestListener != null)
+            messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())
+                    && permissionRequestListener != null
+                    && !style.passedPermissionCheck())
                 permissionRequestListener.openPermissionRequest();
         });
     }
@@ -218,6 +220,10 @@ public class MessageInputView extends RelativeLayout {
         binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
+                PermissionChecker.showPermissionSettingDialog(getContext(), getContext().getString(R.string.stream_camera_permission_message));
+                return;
+            }
             Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
 
@@ -409,17 +415,6 @@ public class MessageInputView extends RelativeLayout {
         binding.etMessage.setText("");
     }
 
-    public Message prepareMessage(String input) {
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(messageInputController.getSelectedAttachments());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // set the current user
-        m.setUser(viewModel.client().getUser());
-        return m;
-    }
     // endregion
 
     // region send giphy from keyboard
@@ -520,40 +515,58 @@ public class MessageInputView extends RelativeLayout {
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            boolean granted = true;
+            boolean storageGranted  = true, cameraGranted = true;
+            String permission; int grantResult;
             for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
-                if (!permission.equals(Manifest.permission.CAMERA)
-                        && grantResult != PackageManager.PERMISSION_GRANTED) {
-                    granted = false;
-                    break;
+                permission = permissions[i];
+                grantResult = grantResults[i];
+                if (permission.equals(Manifest.permission.CAMERA)){
+                    cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
+                }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                    storageGranted = false;
                 }
             }
 
-            style.setShowAttachmentButton(granted);
-            if (granted)
+            if (storageGranted && cameraGranted) {
                 messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else
-                binding.ivOpenAttach.setVisibility(GONE);
-
+                style.setCheckPermissions(true);
+            }else {
+                String message;
+                if (!storageGranted && !cameraGranted) {
+                    message = getContext().getString(R.string.stream_both_permissions_message);
+                } else if (!cameraGranted) {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_camera_permission_message);
+                } else {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_storage_permission_message);
+                }
+                PermissionChecker.showPermissionSettingDialog(getContext(), message);
+            }
+            messageInputController.configPermissions();
         }
     }
 
-    private boolean isGrantedPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasStoragePermission = getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int hasReadPermission = getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            int hasCameraPermission = getContext().checkSelfPermission(Manifest.permission.CAMERA);
-            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
-        } else
-            return true;
-    }
     // endregion
 
     // region listeners
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    public Message prepareMessage(String input) {
+        Message m = new Message();
+        m.setText(input);
+        m.setAttachments(messageInputController.getSelectedAttachments());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
+        // set the current user
+        m.setUser(viewModel.client().getUser());
+        return m;
+    }
+
+
 
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;
