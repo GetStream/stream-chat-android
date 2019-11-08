@@ -479,8 +479,12 @@ public class MessageInputController {
                     index = names.length - 1;
 
                 for (int i = 0; i < index; i++){
-                    if (TextUtils.isEmpty(names[i])) continue;
-                    messageStr_ += "@" + names[i];
+                    String name = names[i];
+                    if (TextUtils.isEmpty(name)) continue;
+                    if (messageStr.contains("@" + name))
+                        messageStr_ += "@" + name;
+                    else
+                        messageStr_ += name;
                 }
                 messageStr_ += "@";
                 binding.etMessage.setText(messageStr_ + ((User) commands.get(position)).getName() + " ");
