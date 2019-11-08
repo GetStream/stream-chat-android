@@ -12,4 +12,8 @@ public class MessageResponse {
     public Message getMessage() {
         return message;
     }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
 }

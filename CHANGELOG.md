@@ -1,3 +1,8 @@
+## Upcoming
+
+- Fix Concurrent modification when removing member from channel
+- Fix Sent message progress infinite
+
 ## November 5th, 2019 - 3.2.1
 
 - Fixed transparency issues with user profile images on older devices

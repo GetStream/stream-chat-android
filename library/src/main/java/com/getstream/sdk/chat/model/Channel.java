@@ -16,7 +16,6 @@ import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
@@ -42,7 +41,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
@@ -56,9 +54,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.getstream.sdk.chat.enums.MessageStatus.SENDING;
-import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
 /**
  * A channel
@@ -555,11 +550,6 @@ public class Channel {
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
-
-        message.setSyncStatus(LOCAL_ONLY);
-        // immediately fail if there is no network
-        message.setStatus(getClient().isConnected() ? SENDING : MessageStatus.FAILED);
-
         List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
         if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
             message.setMentionedUsersId(mentionedUserIDs);
@@ -792,7 +782,6 @@ public class Channel {
     public void handleNewMessage(Event event) {
         Message message = event.getMessage();
         Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
-        message.setStatus(MessageStatus.RECEIVED);
         if (!message.getType().equals(ModelType.message_reply) && TextUtils.isEmpty(message.getParentId())) {
             channelState.addMessageSorted(message);
         }
@@ -806,14 +795,7 @@ public class Channel {
         Message message = event.getMessage();
         for (int i = 0; i < channelState.getMessages().size(); i++) {
             if (message.getId().equals(channelState.getMessages().get(i).getId())) {
-
-                if (event.getType().equals(EventType.MESSAGE_DELETED))
-                    message.setText(Constant.MESSAGE_DELETED);
-                else
-                    message.setStatus(MessageStatus.RECEIVED);
-
                 channelState.getMessages().set(i, message);
-
                 // Check updatedMessage is Last or not
                 if (i == channelState.getMessages().size() - 1)
                     channelState.setLastMessage(message);

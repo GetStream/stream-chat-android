@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.models;
 
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.Reaction;
@@ -33,7 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -70,7 +68,6 @@ public class ChannelTest {
         when(client.isConnected()).thenReturn(true);
         channel.sendMessage(message, callback);
 
-        assertEquals(MessageStatus.SENDING, message.getStatus());
         verify(client).sendMessage(channel, message, callback);
     }
 

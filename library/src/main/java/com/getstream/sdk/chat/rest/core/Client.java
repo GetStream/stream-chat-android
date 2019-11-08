@@ -9,9 +9,10 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
@@ -758,7 +759,7 @@ public class Client implements WSResponseHandler {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
                             if (channelState.getLastMessage() != null)
-                                channelState.getLastMessage().setStatus(MessageStatus.RECEIVED);
+                                channelState.getLastMessage().setSyncStatus(SYNCED);
                             Channel channel = channelState.getChannel();
                             addChannelConfig(channel.getType(), channel.getConfig());
                             channel.setClient(Client.this);
@@ -1148,12 +1149,16 @@ public class Client implements WSResponseHandler {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 message.setSyncStatus(SYNCED);
-                callback.onSuccess(response.body());
+                if (response.body() != null && response.body().getMessage() != null) {
+                    response.body().getMessage().setSyncStatus(SYNCED);
+                    callback.onSuccess(response.body());
+                }else{
+                    callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
+                }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setStatus(MessageStatus.FAILED);
                 message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
@@ -1183,11 +1188,15 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                message.setSyncStatus(SYNCED);
+                if (response.body() != null && response.body().getMessage() != null)
+                    response.body().getMessage().setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {

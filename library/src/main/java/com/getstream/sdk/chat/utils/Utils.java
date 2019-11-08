@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -85,6 +86,12 @@ public class Utils {
 
     public static boolean isSVGImage(String url){
         return (TextUtils.isEmpty(url) || url.contains("random_svg"));
+    }
+
+    public static String getApplicationName(Context context) {
+        ApplicationInfo applicationInfo = context.getApplicationInfo();
+        int stringId = applicationInfo.labelRes;
+        return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 
     public static void showMessage(Context mContext, String message) {

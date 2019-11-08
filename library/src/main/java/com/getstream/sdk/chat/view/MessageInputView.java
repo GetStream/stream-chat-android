@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -45,6 +44,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -176,6 +176,7 @@ public class MessageInputView extends RelativeLayout
             onSendMessage("", viewModel.isEditing());
             return true;
         });
+
 
         onBackPressed();
         initAttachmentUI();
@@ -311,6 +312,10 @@ public class MessageInputView extends RelativeLayout
         binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
 
         binding.llCamera.setOnClickListener(v -> {
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
+                PermissionChecker.showPermissionSettingDialog(getContext(), getContext().getString(R.string.stream_camera_permission_message));
+                return;
+            }
             Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
 
@@ -333,7 +338,6 @@ public class MessageInputView extends RelativeLayout
     }
 
     // endregion
-    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
     public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (data == null) {
@@ -368,36 +372,36 @@ public class MessageInputView extends RelativeLayout
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            boolean granted = true;
+            boolean storageGranted  = true, cameraGranted = true;
+            String permission; int grantResult;
             for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
-                if (!permission.equals(Manifest.permission.CAMERA)
-                        && grantResult != PackageManager.PERMISSION_GRANTED) {
-                    granted = false;
-                    break;
+                permission = permissions[i];
+                grantResult = grantResults[i];
+                if (permission.equals(Manifest.permission.CAMERA)){
+                    cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
+                }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                    storageGranted = false;
                 }
             }
 
-            style.setShowAttachmentButton(granted);
-            if (granted)
+            if (storageGranted && cameraGranted) {
                 messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else
-                binding.ivOpenAttach.setVisibility(GONE);
-
+                style.setCheckPermissions(true);
+            }else {
+                String message;
+                if (!storageGranted && !cameraGranted) {
+                    message = getContext().getString(R.string.stream_both_permissions_message);
+                } else if (!cameraGranted) {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_camera_permission_message);
+                } else {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_storage_permission_message);
+                }
+                PermissionChecker.showPermissionSettingDialog(getContext(), message);
+            }
+            messageInputController.configPermissions();
         }
-    }
-
-    private boolean isGrantedPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasStoragePermission = getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int hasReadPermission = getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            int hasCameraPermission = getContext().checkSelfPermission(Manifest.permission.CAMERA);
-            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
-        } else
-            return true;
     }
 
     public Message getEditMessage() {
@@ -431,9 +435,10 @@ public class MessageInputView extends RelativeLayout
             this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
         } else if (id == R.id.iv_openAttach) {
             binding.setIsAttachFile(true);
-            if (style.isPermissionSet() || isGrantedPermissions())
-                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else if(permissionRequestListener != null)
+            messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())
+                    && permissionRequestListener != null
+                    && !style.passedPermissionCheck())
                 permissionRequestListener.openPermissionRequest();
         }
     }
@@ -481,7 +486,6 @@ public class MessageInputView extends RelativeLayout
      */
     public Message prepareMessage(String input) {
         Message m = new Message();
-        m.setStatus(null);
         m.setText(input);
         m.setAttachments(messageInputController.getSelectedAttachments());
         // set the thread id if we are viewing a thread
