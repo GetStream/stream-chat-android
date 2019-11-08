@@ -303,7 +303,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.VISIBLE);
                 break;
-            case Sync.IN_MEMORY:
+            case Sync.IN_MEMORY: // Same as LOCAL_FAILED
             case Sync.LOCAL_FAILED:
                 pb_deliver.setVisibility(View.GONE);
                 iv_deliver.setVisibility(View.GONE);
