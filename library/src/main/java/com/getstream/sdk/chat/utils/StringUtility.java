@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.rest.User;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Random;
 
 public class StringUtility {
@@ -68,5 +69,17 @@ public class StringUtility {
         long minutes = (videoLength % 3600) / 60;
         long seconds = videoLength % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public static String convertMentionedText(String text, String userName) {
+        String mentionSymbol = "@";
+        String[] names = text.split(mentionSymbol);
+        if (text.substring(text.length() -1).equals(mentionSymbol))
+            return text + userName;
+
+        String last = names[names.length - 1];
+        String str = text.substring(0, text.length() - last.length());
+        return str + userName;
     }
 }
