@@ -53,6 +53,7 @@ import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.rest.utils.CallFake;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
 import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -65,6 +66,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -250,17 +252,19 @@ public class ClientTest {
 
     @Test
     void sendMessageSuccessTest() {
+        String testMessageId = "testMessageId";
+        String testMessageText = "testMessageText";
+        Message message = new Message();
+        message.setSyncStatus(Sync.LOCAL_ONLY);
+        message.setId(testMessageId);
+        message.setText(testMessageText);
+
         MessageResponse response = new MessageResponse();
+        response.setMessage(message);
         MessageCallback callback = mock(MessageCallback.class);
 
         when(apiService.sendMessage(any(), any(), any(), any(), any(), any()))
                 .thenReturn(CallFake.buildSuccess(response));
-
-        String testMessageId = "testMessageId";
-        String testMessageText = "testMessageText";
-        Message message = new Message();
-        message.setId(testMessageId);
-        message.setText(testMessageText);
 
         client.sendMessage(new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID), message, callback);
 
@@ -270,6 +274,7 @@ public class ClientTest {
                         && ((LinkedTreeMap) argument.get("message")).get("text").equals(testMessageText)
                 ));
         verify(callback).onSuccess(response);
+        assertEquals((int) response.getMessage().getSyncStatus(), Sync.SYNCED);
     }
 
     @Test
