@@ -66,7 +66,7 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
         text = "@A";
         assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
-        text = "This@A";
+        text = "This@";
         assertEquals("This@Adrian", StringUtility.convertMentionedText(text, userName));
         text = "This a @A";
         assertEquals("This a @Adrian", StringUtility.convertMentionedText(text, userName));

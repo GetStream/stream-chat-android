@@ -2,17 +2,11 @@ package com.getstream.sdk.chat.utils;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Random;
 
 public class StringUtility {
 
@@ -73,13 +67,11 @@ public class StringUtility {
 
     @SuppressLint("DefaultLocale")
     public static String convertMentionedText(String text, String userName) {
-        String mentionSymbol = "@";
-        String[] names = text.split(mentionSymbol);
-        if (text.substring(text.length() -1).equals(mentionSymbol))
+        if (text.substring(text.length() -1).equals("@"))
             return text + userName;
 
+        String[] names = text.split("@");
         String last = names[names.length - 1];
-        String str = text.substring(0, text.length() - last.length());
-        return str + userName;
+        return text.substring(0, text.length() - last.length()) + userName;
     }
 }
