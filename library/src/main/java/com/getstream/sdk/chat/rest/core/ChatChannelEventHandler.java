@@ -1,6 +1,9 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.storage.Sync;
 
 public abstract class ChatChannelEventHandler {
     public void onAnyEvent(Event event) {
@@ -61,12 +64,16 @@ public abstract class ChatChannelEventHandler {
                 onTypingStop(event);
                 break;
             case MESSAGE_NEW:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onMessageNew(event);
                 break;
             case MESSAGE_UPDATED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onMessageUpdated(event);
                 break;
             case MESSAGE_DELETED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
+                event.getMessage().setText(StreamChat.getContext().getString(R.string.stream_delete_message));
                 onMessageDeleted(event);
                 break;
             case MESSAGE_READ:

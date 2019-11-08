@@ -3,6 +3,7 @@ package com.getstream.sdk.chat;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -32,6 +33,7 @@ public class StreamChat {
     private static Integer lastUnreadChannels;
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
+    private static Context context;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -64,6 +66,10 @@ public class StreamChat {
         } else {
             return INSTANCE;
         }
+    }
+
+    public static Context getContext(){
+        return context;
     }
 
     private static void handleConnectedUser() {
@@ -132,7 +138,8 @@ public class StreamChat {
         return init(apiKey, new ApiClientOptions(), context);
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, Context context) {
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context mContext) {
+        StreamChat.context = mContext;
         if (INSTANCE != null) {
             return true;
         }
@@ -140,8 +147,8 @@ public class StreamChat {
         synchronized (Client.class) {
             if (INSTANCE == null) {
                 Log.i(TAG, "calling init for the first time");
-                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(context));
-                INSTANCE.setContext(context);
+                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
+                INSTANCE.setContext(StreamChat.context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 currentUser = new MutableLiveData<>();
                 totalUnreadMessages = new MutableLiveData<>();

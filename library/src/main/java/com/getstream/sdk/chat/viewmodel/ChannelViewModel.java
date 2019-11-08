@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.enums.Pagination;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -542,10 +541,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = getMessages().getValue();
-        for (int i = 0; i < messagesCopy.size(); i++) {
+        for (int i = messagesCopy.size() - 1; i >= 0; i--) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
-                newMessage.setStatus(MessageStatus.RECEIVED);
-                if (oldMessage.getStatus() == MessageStatus.FAILED) {
+                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
                     messagesCopy.remove(oldMessage);
                 } else {
                     messagesCopy.set(i, newMessage);
@@ -677,17 +675,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void checkErrorMessage(){
-        boolean hasErrorMessage = false;
+    private void checkErrorOrPendingMessage(){
+        boolean hasErrorOrPendingMessage = false;
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             Message message = getMessages().getValue().get(i);
-            if (message.getType().equals(ModelType.message_error)) {
+            if (message.getType().equals(ModelType.message_error)
+                    || message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
                 messagesCopy.remove(i);
-                hasErrorMessage = true;
+                hasErrorOrPendingMessage  = true;
             }
         }
-        if (!hasErrorMessage) return;
+        if (!hasErrorOrPendingMessage ) return;
 
         if (isThread()) {
             threadMessages.postValue(messagesCopy);
@@ -696,7 +695,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     private void checkFailedMessage(Message message){
-        if (message.getStatus() != MessageStatus.FAILED)
+        if (message.getSyncStatus() != Sync.LOCAL_FAILED)
             return;
 
         List<Message> messagesCopy = getMessages().getValue();
@@ -972,8 +971,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
-        // Check ErrorMessages
-        checkErrorMessage();
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
         // Check Failed Message
         checkFailedMessage(message);
         // stop typing

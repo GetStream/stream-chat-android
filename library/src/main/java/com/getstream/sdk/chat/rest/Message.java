@@ -13,7 +13,6 @@ import androidx.room.PrimaryKey;
 import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.enums.MessageStatus;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -24,7 +23,6 @@ import com.getstream.sdk.chat.storage.converter.AttachmentListConverter;
 import com.getstream.sdk.chat.storage.converter.CommandInfoConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
-import com.getstream.sdk.chat.storage.converter.MessageStatusConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
@@ -121,9 +119,6 @@ public class Message implements UserEntity {
 
     @TypeConverters(CommandInfoConverter.class)
     private Map<String, String> commandInfo;
-
-    @TypeConverters({MessageStatusConverter.class})
-    private MessageStatus status;
 
     @NonNull
     @TypeConverters(ExtraDataConverter.class)
@@ -246,13 +241,6 @@ public class Message implements UserEntity {
         this.userID = userID;
     }
 
-    public MessageStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(MessageStatus status) {
-        this.status = status;
-    }
 
     @Override
     public boolean equals(@Nullable Object obj) {
@@ -300,7 +288,7 @@ public class Message implements UserEntity {
         clone.parentId = parentId;
         clone.command = command;
         clone.commandInfo = commandInfo;
-        clone.status = status;
+        clone.syncStatus = syncStatus;
         return clone;
     }
 
