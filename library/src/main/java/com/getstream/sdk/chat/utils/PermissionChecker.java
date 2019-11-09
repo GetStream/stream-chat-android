@@ -2,17 +2,24 @@ package com.getstream.sdk.chat.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PermissionChecker {
+
     public static void permissionCheck(@NonNull Activity activity, @Nullable Fragment fragment) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -45,4 +52,49 @@ public class PermissionChecker {
         }
     }
 
+
+    public static boolean isGrantedStoragePermissions(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasStoragePermission = context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int hasReadPermission = context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
+                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED);
+        } else
+            return true;
+    }
+
+    public static boolean isGrantedCameraPermissions(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasStoragePermission = context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int hasReadPermission = context.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
+            int hasCameraPermission = context.checkSelfPermission(Manifest.permission.CAMERA);
+            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
+                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED)
+                    && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
+        } else
+            return true;
+    }
+
+    public static void showPermissionSettingDialog(Context context, String message){
+        String appName = Utils.getApplicationName(context);
+        String msg = appName + " " + message;
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(appName)
+                .setMessage(msg)
+                .setPositiveButton(android.R.string.ok, null)
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        alertDialog.setOnShowListener(dialog -> {
+            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            button.setOnClickListener(v -> {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                intent.setData(uri);
+                context.startActivity(intent);
+                alertDialog.dismiss();
+            });
+        });
+        alertDialog.show();
+    }
 }

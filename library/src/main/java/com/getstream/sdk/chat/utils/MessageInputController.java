@@ -1,9 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -103,15 +101,31 @@ public class MessageInputController {
         }
         binding.tvTitle.setText(type.label);
         messageInputType = type;
-        // Check Camera Permission is allowed or not.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            int hasCameraPermission = context.checkSelfPermission(Manifest.permission.CAMERA);
-            if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
-                binding.llCamera.setVisibility(View.GONE);
-            }
-        }
+        configPermissions();
     }
 
+    public void configPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            binding.ivMediaPermission.setVisibility(View.GONE);
+            binding.ivCameraPermission.setVisibility(View.GONE);
+            binding.ivFilePermission.setVisibility(View.GONE);
+            return;
+        }
+
+        if (PermissionChecker.isGrantedCameraPermissions(context)) {
+            binding.ivMediaPermission.setVisibility(View.GONE);
+            binding.ivCameraPermission.setVisibility(View.GONE);
+            binding.ivFilePermission.setVisibility(View.GONE);
+        } else if (PermissionChecker.isGrantedStoragePermissions(context)) {
+            binding.ivMediaPermission.setVisibility(View.GONE);
+            binding.ivCameraPermission.setVisibility(View.VISIBLE);
+            binding.ivFilePermission.setVisibility(View.GONE);
+        } else {
+            binding.ivMediaPermission.setVisibility(View.VISIBLE);
+            binding.ivCameraPermission.setVisibility(View.VISIBLE);
+            binding.ivFilePermission.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void onClickCloseBackGroundView() {
         binding.clTitle.setVisibility(View.GONE);
@@ -200,6 +214,10 @@ public class MessageInputController {
     }
 
     public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
+        if (!PermissionChecker.isGrantedStoragePermissions(context)) {
+            PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
+            return;
+        }
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
@@ -296,6 +314,10 @@ public class MessageInputController {
     }
 
     public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
+        if (!PermissionChecker.isGrantedStoragePermissions(context)) {
+            PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
+            return;
+        }
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);

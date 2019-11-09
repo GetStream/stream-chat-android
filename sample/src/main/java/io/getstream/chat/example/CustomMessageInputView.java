@@ -115,7 +115,6 @@ public class CustomMessageInputView extends RelativeLayout {
                 }
             });
         } else {
-            message.setStatus(null);
             viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {

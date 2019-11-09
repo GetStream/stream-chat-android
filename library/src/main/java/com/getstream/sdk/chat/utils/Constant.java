@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.utils;
 
 public final class Constant {
 
-    public static final String MESSAGE_DELETED = "This message was deleted.";
     public static final int DEFAULT_LIMIT = 50;
 
     public static final String TAG_CHANNEL_RESPONSE_ID = "TAG_CHANNEL_RESPONSE_ID";
