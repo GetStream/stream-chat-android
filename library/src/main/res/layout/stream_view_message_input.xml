@@ -99,6 +99,14 @@
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_image_black"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:id="@+id/iv_media_permission"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="end"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
@@ -137,6 +145,14 @@
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_camera"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:id="@+id/iv_camera_permission"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="end"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
@@ -176,6 +192,14 @@
                         android:layout_gravity="center"
                         android:background="@drawable/stream_ic_folder"
                         android:gravity="center" />
+
+                    <ImageView
+                        android:id="@+id/iv_file_permission"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="end"
+                        android:layout_margin="3dp"
+                        android:src="@drawable/stream_ic_error" />
                 </FrameLayout>
 
                 <TextView
