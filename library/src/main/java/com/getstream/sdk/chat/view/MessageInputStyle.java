@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.R;
 public class MessageInputStyle extends BaseStyle {
 
     private boolean showAttachmentButton;
-    private boolean permissionSet;
     private int attachmentButtonIcon;
     private int attachmentButtonDefaultIconColor;
     private int attachmentButtonDefaultIconPressedColor;
@@ -106,10 +105,10 @@ public class MessageInputStyle extends BaseStyle {
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
-        a.recycle();
 
         prefs = context.getSharedPreferences(
                 "MessageInputStyle", Context.MODE_PRIVATE);
+        a.recycle();
     }
 
     private Drawable getSelector(@ColorInt int normalColor, @ColorInt int pressedColor,
@@ -131,19 +130,17 @@ public class MessageInputStyle extends BaseStyle {
 
     // Attachment Button
     private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
-    private final String showAttachmentButtonKey = "showAttachmentButton";
+
     private final String permissionSetKey = "permissionSetKey";
     public boolean showAttachmentButton() {
-        return prefs.getBoolean(showAttachmentButtonKey, showAttachmentButton);
+        return showAttachmentButton;
     }
 
-    public void setShowAttachmentButton(boolean showAttachmentButton) {
-        this.showAttachmentButton = showAttachmentButton;
-        prefs.edit().putBoolean(showAttachmentButtonKey, showAttachmentButton).apply();
-        prefs.edit().putBoolean(permissionSetKey, true).apply();
+    public void setCheckPermissions(boolean passedPermissionCheck) {
+        prefs.edit().putBoolean(permissionSetKey, passedPermissionCheck).apply();
     }
 
-    public boolean isPermissionSet() {
+    public boolean passedPermissionCheck() {
         return prefs.getBoolean(permissionSetKey, false);
     }
 

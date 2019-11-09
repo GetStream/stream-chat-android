@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -178,11 +179,13 @@ public class ChannelState {
     }
 
     public void removeMemberById(@NotNull String userId) {
-        if (members != null) {
-            for (Member member : members) {
-                if (member.getUserId().equals(userId)) {
-                    members.remove(member);
-                }
+        if (members == null || members.isEmpty())
+            return;
+        
+        for (Iterator<Member> it = members.iterator(); it.hasNext(); ) {
+            Member member = it.next();
+            if (member.getUserId().equals(userId)) {
+                it.remove();
             }
         }
     }
@@ -208,7 +211,8 @@ public class ChannelState {
                 if (!channel.getClient().fromCurrentUser(w)) {
                     User user = channel.getClient().getState().getUser(w.getUser().getId());
                     Log.d(TAG, "getOtherUsers: watcher: " + user);
-                    users.add(user);
+                    if (!users.contains(user))
+                        users.add(user);
                 }
             }
         }

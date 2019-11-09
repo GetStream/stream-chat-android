@@ -1,12 +1,20 @@
 ## Upcoming
 
+- Fix Concurrent modification when removing member from channel
+- Fix Sent message progress infinite
+- Fix channel delete event handling in ChannelList view model
+- Fix attachment duplicated issue when message edit
+
+## November 5th, 2019 - 3.2.1
+
 - Fixed transparency issues with user profile images on older devices
 - Better channel header title for channels without a name
 - Fixed read count difference between own and other users' messages
 - Fixed Video length preview
+- Catch error body parsing errors
+- Do not show commands list UI when all commands are disabled
+- Renamed `MessageInputClient` to `MessageInputController`
 
-## October 31th, 2019 - 3.2.0
-- Renamed `MessageInputClient` to `MessageInputController` (Adrian)
 ## October 25th, 2019 - 3.2.0
 
 - Added event interceptors to `ChannelListViewModel`
