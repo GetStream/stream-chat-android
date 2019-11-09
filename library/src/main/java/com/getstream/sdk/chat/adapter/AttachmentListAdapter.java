@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
+import java.io.File;
 import java.util.List;
 
 public class AttachmentListAdapter extends BaseAdapter {
@@ -106,7 +108,8 @@ public class AttachmentListAdapter extends BaseAdapter {
         if (this.isTotalFileAdapter) {
             if (attachment.config.isSelected())
                 holder.iv_select_mark.setVisibility(View.VISIBLE);
-            holder.iv_20mb_mark.setVisibility(attachment.config.isFileTooLarge() ? View.VISIBLE : View.INVISIBLE);
+            File file = new File(attachment.config.getFilePath());
+            holder.iv_20mb_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
             if (!attachment.config.isUploaded()) {

@@ -197,7 +197,6 @@ public class Utils {
                     attachment.setType(ModelType.attach_file);
                     attachment.setTitle(file.getName());
                     attachment.config.setFilePath(file.getPath());
-                    attachment.config.setFileTooLarge(file.length() > Constant.MAX_UPLOAD_FILE_SIZE);
                     long size = file.length();
                     attachment.setFile_size((int) size);
                     attachments.add(attachment);
@@ -251,7 +250,6 @@ public class Utils {
             File file = new File(imagecursor.getString(dataColumnIndex));
             if (!file.exists()) continue;
             attachment.config.setFilePath(imagecursor.getString(dataColumnIndex));
-            attachment.config.setFileTooLarge(file.length()> Constant.MAX_UPLOAD_FILE_SIZE);
             if (t == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.setType(ModelType.attach_image);
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {

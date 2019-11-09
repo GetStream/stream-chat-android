@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             else
                 binding.ivSelectMark.setVisibility(View.GONE);
 
-            binding.iv20mbMark.setVisibility(attachment.config.isFileTooLarge() ? View.VISIBLE : View.INVISIBLE);
+            binding.iv20mbMark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
 
             if (attachment.getType().equals(ModelType.attach_file)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));
