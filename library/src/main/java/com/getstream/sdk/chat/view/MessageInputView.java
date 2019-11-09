@@ -566,8 +566,6 @@ public class MessageInputView extends RelativeLayout {
         return m;
     }
 
-
-
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;
     }
