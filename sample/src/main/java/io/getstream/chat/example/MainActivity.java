@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -28,6 +27,8 @@ import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -154,6 +155,9 @@ public class MainActivity extends AppCompatActivity {
         });
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
         binding.ivSwitchUser.setOnClickListener(view -> showSwitchUserDialog());
+
+        String json = loadJSONFromAsset();
+        Log.d(TAG, "Json File: " + json);
     }
 
     // region create new channel
@@ -262,6 +266,30 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public static final String USER_DATA_FILENAME = "users-config.json";
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open(USER_DATA_FILENAME);
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
     // endregion
 }
