@@ -6,21 +6,11 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetDeletedOrMentionedTextTest {
-
-    @org.junit.jupiter.api.Test
-    void getDeletedMarkDownTextTest() {
-        Message message = new Message();
-        message.setDeletedAt(new Date());
-        message.setText("Test Message");
-        String expectedMessage = "_" + Constant.MESSAGE_DELETED + "_";
-        assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
-    }
 
     @org.junit.jupiter.api.Test
     void getMentionedMarkDownTextTest() {
