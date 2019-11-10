@@ -509,6 +509,8 @@ public class MessageInputView extends RelativeLayout
                 for (Attachment attachment : newAttachments){
                     if (attachments == null)
                         attachments = new ArrayList<>();
+                    if (attachments.contains(attachment))
+                        continue;
                     attachments.add(attachment);
                 }
                 message.setAttachments(attachments);

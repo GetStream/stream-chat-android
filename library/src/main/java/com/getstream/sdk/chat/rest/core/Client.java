@@ -236,8 +236,7 @@ public class Client implements WSResponseHandler {
 
                 @Override
                 public void onChannelDeleted(Channel channel, Event event) {
-                    getStorage().deleteChannel(channel);
-                    activeChannelMap.remove(channel.getCid());
+                    channel.handleChannelDeleted(event.getChannel());
                 }
 
                 @Override
@@ -650,6 +649,11 @@ public class Client implements WSResponseHandler {
         Channel channel = getChannelByCid(event.getCid());
         if (channel != null) {
             channel.handleChannelEvent(event);
+
+            //If channel was deleted remove it from active channels
+            if (event.getType().equals(EventType.CHANNEL_DELETED)) {
+                activeChannelMap.remove(channel.getCid());
+            }
         }
     }
 
