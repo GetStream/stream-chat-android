@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="@+id/iv_media" />
 
         <ImageView
-            android:id="@+id/iv_20mb_mark"
+            android:id="@+id/iv_large_file_mark"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_margin="5dp"

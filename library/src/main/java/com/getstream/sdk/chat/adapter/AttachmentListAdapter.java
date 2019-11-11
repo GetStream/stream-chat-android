@@ -62,7 +62,7 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
 
             holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
-            holder.iv_20mb_mark = convertView.findViewById(R.id.iv_20mb_mark);
+            holder.iv_large_file_mark = convertView.findViewById(R.id.iv_large_file_mark);
             holder.tv_close = convertView.findViewById(R.id.tv_close);
             holder.progressBar = convertView.findViewById(R.id.progressBar);
             convertView.setTag(holder);
@@ -75,7 +75,7 @@ public class AttachmentListAdapter extends BaseAdapter {
                 holder.tv_file_title = convertView.findViewById(R.id.tv_file_title);
                 holder.tv_file_size = convertView.findViewById(R.id.tv_file_size);
                 holder.iv_select_mark = convertView.findViewById(R.id.iv_select_mark);
-                holder.iv_20mb_mark = convertView.findViewById(R.id.iv_20mb_mark);
+                holder.iv_large_file_mark = convertView.findViewById(R.id.iv_large_file_mark);
                 holder.tv_close = convertView.findViewById(R.id.tv_close);
                 holder.progressBar = convertView.findViewById(R.id.progressBar);
                 convertView.setTag(holder);
@@ -95,7 +95,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         holder.iv_file_thumb.setImageResource(attachment.getIcon());
         holder.tv_file_title.setText(attachment.getTitle());
 
-        holder.iv_20mb_mark.setVisibility(View.INVISIBLE);
+        holder.iv_large_file_mark.setVisibility(View.INVISIBLE);
         holder.iv_select_mark.setVisibility(View.GONE);
         holder.tv_close.setVisibility(View.INVISIBLE);
         holder.progressBar.setVisibility(View.GONE);
@@ -109,7 +109,7 @@ public class AttachmentListAdapter extends BaseAdapter {
             if (attachment.config.isSelected())
                 holder.iv_select_mark.setVisibility(View.VISIBLE);
             File file = new File(attachment.config.getFilePath());
-            holder.iv_20mb_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
+            holder.iv_large_file_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
             if (!attachment.config.isUploaded()) {
@@ -121,7 +121,7 @@ public class AttachmentListAdapter extends BaseAdapter {
 
     // endregion
     public class ViewHolder {
-        ImageView iv_file_thumb, iv_select_mark, iv_20mb_mark;
+        ImageView iv_file_thumb, iv_select_mark, iv_large_file_mark;
         TextView tv_file_title, tv_file_size, tv_close;
         ProgressBar progressBar;
     }

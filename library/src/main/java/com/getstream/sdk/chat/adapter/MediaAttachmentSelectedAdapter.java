@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.Utils;
 
 import java.io.File;
 import java.util.List;
