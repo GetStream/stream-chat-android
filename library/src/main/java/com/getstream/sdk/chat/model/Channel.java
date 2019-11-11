@@ -837,6 +837,11 @@ public class Channel {
         getClient().getStorage().insertChannel(channel);
     }
 
+    public void handleChannelDeleted(Channel channel) {
+        deletedAt = channel.deletedAt;
+        getClient().getStorage().deleteChannel(channel);
+    }
+
     public void handleWatcherStart(Event event) {
         channelState.addWatcher(new Watcher(event.getUser(), event.getCreatedAt()));
         channelState.setWatcherCount(event.getWatcherCount().intValue());
