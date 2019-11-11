@@ -24,6 +24,10 @@ public abstract class BaseQueryChannelRequest<T extends BaseQueryChannelRequest<
         return watch;
     }
 
+    public boolean isPresence() {
+        return presence;
+    }
+
     public T withWatch() {
         BaseQueryChannelRequest clone = this.cloneOpts();
         clone.watch = true;
