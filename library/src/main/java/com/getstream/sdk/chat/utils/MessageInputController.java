@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
@@ -159,13 +161,7 @@ public class MessageInputController {
             ((Activity) context).runOnUiThread(() -> {
                 if (!attachments.isEmpty()){
                     mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                        Attachment attachment = attachments.get(position);
-                        File file = new File(attachment.config.getFilePath());
-                        if (file.length()> Constant.MAX_UPLOAD_FILE_SIZE){
-                            Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
-                            return;
-                        }
-                        attachment.config.setSelected(!attachment.config.isSelected());
+                        Attachment attachment = getAttachment(attachments, position);
                         mediaAttachmentAdapter.notifyItemChanged(position);
                         updateComposerViewBySelectedMedia(attachments, attachment);
                     });
@@ -191,13 +187,7 @@ public class MessageInputController {
                     binding.lvFile.setAdapter(fileAttachmentAdapter);
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
-                        Attachment attachment = attachments.get(position);
-                        File file = new File(attachment.config.getFilePath());
-                        if (file.length()> Constant.MAX_UPLOAD_FILE_SIZE){
-                            Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
-                            return;
-                        }
-                        attachment.config.setSelected(!attachment.config.isSelected());
+                        Attachment attachment = getAttachment(attachments, position);
                         fileAttachmentAdapter.notifyDataSetChanged();
                         updateComposerViewBySelectedFile(attachments, attachment);
                     });
@@ -213,6 +203,18 @@ public class MessageInputController {
                 }
             });
         }
+    }
+
+    @Nullable
+    private Attachment getAttachment(List<Attachment> attachments, int position) {
+        Attachment attachment = attachments.get(position);
+        File file = new File(attachment.config.getFilePath());
+        if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
+            Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
+            return null;
+        }
+        attachment.config.setSelected(!attachment.config.isSelected());
+        return attachment;
     }
 
     public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
