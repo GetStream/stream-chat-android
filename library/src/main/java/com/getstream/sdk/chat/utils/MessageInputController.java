@@ -162,6 +162,7 @@ public class MessageInputController {
                 if (!attachments.isEmpty()){
                     mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
                         Attachment attachment = getAttachment(attachments, position);
+                        if (attachment == null) return;
                         mediaAttachmentAdapter.notifyItemChanged(position);
                         updateComposerViewBySelectedMedia(attachments, attachment);
                     });
@@ -188,6 +189,7 @@ public class MessageInputController {
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
                         Attachment attachment = getAttachment(attachments, position);
+                        if (attachment == null) return;
                         fileAttachmentAdapter.notifyDataSetChanged();
                         updateComposerViewBySelectedFile(attachments, attachment);
                     });
