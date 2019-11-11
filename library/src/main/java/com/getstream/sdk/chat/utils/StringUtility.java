@@ -72,6 +72,7 @@ public class StringUtility {
     @SuppressLint("DefaultLocale")
     public static String convertFileSizeByteCount(long bytes) {
         int unit = 1000;
+        if (bytes <= 0) return 0 + " B";
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = String.valueOf(("KMGTPE").charAt(exp-1));

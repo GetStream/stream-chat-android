@@ -2,7 +2,6 @@ package com.getstream.sdk.chat;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.util.ArrayList;
@@ -57,5 +56,9 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals("452.98 MB", StringUtility.convertFileSizeByteCount(fileSize));
         fileSize = 900000;
         assertEquals("900 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = 0;
+        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = -100;
+        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
     }
 }
