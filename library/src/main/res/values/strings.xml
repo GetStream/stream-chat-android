@@ -24,7 +24,11 @@
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
     <string name="stream_input_upload_file">Upload a file</string>
-
+    <!-- Folder Name -->
+    <string name="stream_image">Images</string>
+    <string name="stream_video">Video</string>
+    <string name="stream_audio">Audio</string>
+    <string name="stream_document">Documents</string>
     <!-- Message Status -->
     <string name="stream_delete_message">This message was deleted.</string>
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>

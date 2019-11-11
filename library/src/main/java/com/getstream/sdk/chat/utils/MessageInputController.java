@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -400,28 +401,28 @@ public class MessageInputController {
     // endregion
 
     // region Camera
-    public void progressCapturedMedia(Context context, Uri contentUri, boolean isImage) {
-        Cursor cursor = null;
-        try {
-            String[] proj = isImage ? new String[]{MediaStore.Images.Media.DATA} : new String[]{MediaStore.Video.Media.DATA, MediaStore.Video.Media.RESOLUTION, MediaStore.Video.VideoColumns.DURATION};
-            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-            int column_index = isImage ? cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA) : cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-            cursor.moveToFirst();
-            File file = new File(cursor.getString(column_index));
-            if (file.exists()) {
-                convertAttachment(file, cursor, isImage);
-            } else {
-                Log.d(TAG, "No Captured Video");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
 
+    public void progressCapturedMedia(File file, boolean isImage) {
+        convertAttachment(file, isImage);
+    }
+    private void convertAttachment(File file, boolean isImage) {
+        Attachment attachment = new Attachment();
+        attachment.config.setFilePath(file.getPath());
+        attachment.config.setSelected(true);
+        if (isImage) {
+            attachment.setType(ModelType.attach_image);
+        } else {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(context, Uri.fromFile(file));
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long videolengh = Long.parseLong(time );
+            retriever.release();
+            attachment.config.setVideoLengh((int) (videolengh / 1000));
+            attachment.setType(ModelType.attach_file);
+            attachment.setMime_type(ModelType.attach_mime_mp4);
+        }
+        updateComposerViewBySelectedMedia(null, attachment);
+    }
     private void convertAttachment(File file, Cursor cursor, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());

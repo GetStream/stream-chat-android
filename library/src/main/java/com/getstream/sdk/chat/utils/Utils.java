@@ -27,7 +27,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
@@ -266,15 +265,6 @@ public class Utils {
         }
 
         return attachments;
-    }
-
-    @Nullable
-    public static File getFileFromUri(Uri uri){
-        String path = uri.getPath();
-        if(path == null)
-            return null;
-        else
-            return new File(path);
     }
 
     public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {
