@@ -321,8 +321,6 @@ public class MessageInputView extends RelativeLayout
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
             imageUri = getContext().getContentResolver().insert(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -342,25 +340,30 @@ public class MessageInputView extends RelativeLayout
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             File file = Utils.getFileFromUri(imageUri);
             if (file == null && data == null) {
-               Utils.showMessage(getContext(), "Unknown error");
-               return;
+                Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
+                clearInsertedMediaStore();
+                return;
             }
-            if (file != null)
+            if (data == null)
                 messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-            else{
+            else {
                 Uri uri = data.getData();
                 if (uri == null)
                     messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                else
+                else {
                     messageInputController.progressCapturedMedia(getContext(), uri, false);
+                    clearInsertedMediaStore();
+                }
             }
-        }
-        clearInsertedMediaStore();
-    }
-    private void clearInsertedMediaStore(){
-        getContext().getContentResolver().delete(imageUri, null, null);
+        } else
+            clearInsertedMediaStore();
         imageUri = null;
     }
+
+    private void clearInsertedMediaStore(){
+        getContext().getContentResolver().delete(imageUri, null, null);
+    }
+
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
