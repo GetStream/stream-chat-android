@@ -57,7 +57,11 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         // Check Message Update
         Message oldLastMessage = oldChannel.getChannelState().getLastMessage();
         Message newLastMessage = newChannel.getChannelState().getLastMessage();
-        if (oldLastMessage != null && oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
+        if (oldLastMessage != null &&
+                newLastMessage != null &&
+                newLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
             return false;
         }
         // Check Message Delete

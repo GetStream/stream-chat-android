@@ -342,13 +342,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         @Override
         public void onNotificationMessageNew(Channel channel, Event event) {
             if (interceptor.shouldDiscard(event, channel)) return;
-            upsertChannel(channel);
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
         }
 
         @Override
         public void onNotificationAddedToChannel(Channel channel, Event event) {
             if (interceptor.shouldDiscard(event, channel)) return;
-            upsertChannel(channel);
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
         }
 
         @Override
