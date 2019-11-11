@@ -340,43 +340,25 @@ public class MessageInputView extends RelativeLayout
     // endregion
     public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                File file = null;
-                try {
-                    String path = imageUri.getPath();
-                    file = new File(path);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    clearInsertedMediaStore();
-                }
-                if (file != null) {
-                    messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                }
-                return;
+            File file = Utils.getFileFromUri(imageUri);
+            if (file == null && data == null) {
+               Utils.showMessage(getContext(), "Unknown error");
+               return;
             }
-            try {
+            if (file != null)
+                messageInputController.progressCapturedMedia(getContext(), imageUri, true);
+            else{
                 Uri uri = data.getData();
-                if (uri == null) {
-                    if (imageUri != null)
-                        messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                } else {
+                if (uri == null)
+                    messageInputController.progressCapturedMedia(getContext(), imageUri, true);
+                else
                     messageInputController.progressCapturedMedia(getContext(), uri, false);
-                    clearInsertedMediaStore();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                clearInsertedMediaStore();
             }
-        }else{
-            clearInsertedMediaStore();
         }
+        clearInsertedMediaStore();
     }
-
     private void clearInsertedMediaStore(){
-        if (imageUri != null)
-            getContext().getContentResolver().delete(imageUri, null, null);
+        getContext().getContentResolver().delete(imageUri, null, null);
         imageUri = null;
     }
     /*Used for handling requestPermissionsResult*/
