@@ -97,4 +97,8 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
         clone.messages = messages;
         return clone;
     }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
 }
