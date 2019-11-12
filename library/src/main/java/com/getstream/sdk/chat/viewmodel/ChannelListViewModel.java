@@ -342,13 +342,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         @Override
         public void onNotificationMessageNew(Channel channel, Event event) {
             if (interceptor.shouldDiscard(event, channel)) return;
-            upsertChannel(channel);
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
         }
 
         @Override
         public void onNotificationAddedToChannel(Channel channel, Event event) {
             if (interceptor.shouldDiscard(event, channel)) return;
-            upsertChannel(channel);
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
         }
 
         @Override
@@ -441,7 +445,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
         }
-        Boolean removed = channelCopy.remove(channel);
         channelCopy.add(0, channel);
         channels.postValue(channelCopy);
     }
@@ -451,7 +454,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
         }
-        Boolean removed = channelCopy.remove(channel);
+        boolean removed = channelCopy.remove(channel);
         channels.postValue(channelCopy);
         return removed;
     }

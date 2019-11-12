@@ -2,19 +2,14 @@ package com.getstream.sdk.chat.view;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.text.Editable;
+import android.os.StrictMode;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -43,8 +38,11 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
+import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -68,15 +66,13 @@ import java.util.List;
  * - Customization via attrs/style
  * - Data binding
  */
-public class MessageInputView extends RelativeLayout
-        implements View.OnClickListener, TextWatcher, View.OnFocusChangeListener {
+public class MessageInputView extends RelativeLayout {
 
     /**
      * Tag for logging purposes
      */
     final String TAG = MessageInputView.class.getSimpleName();
-    /** Store the image if you take a picture */
-    Uri imageUri;
+
     /** If you are allowed to scroll up or not */
     boolean lockScrollUp = false;
 
@@ -98,6 +94,7 @@ public class MessageInputView extends RelativeLayout
     
     private MessageInputController messageInputController;
 
+    // region constructor
     public MessageInputView(Context context) {
         super(context);
         binding = initBinding(context);
@@ -109,7 +106,9 @@ public class MessageInputView extends RelativeLayout
         binding = initBinding(context);
         applyStyle();
     }
+    // endregion
 
+    // region init
     private StreamViewMessageInputBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         return StreamViewMessageInputBinding.inflate(inflater, this, true);
@@ -124,6 +123,15 @@ public class MessageInputView extends RelativeLayout
         binding.setLifecycleOwner(lifecycleOwner);
         init();
         observeUIs(lifecycleOwner);
+    }
+
+    private void init() {
+        binding.setActiveMessageSend(false);
+        configOnClickListener();
+        configInputEditText();
+        configAttachmentUI();
+        onBackPressed();
+        setKeyboardEventListener();
     }
 
     private void applyStyle() {
@@ -146,46 +154,87 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
     }
 
-    private void init() {
-        binding.setActiveMessageSend(false);
-        binding.ivSend.setOnClickListener(this);
-        binding.ivOpenAttach.setOnClickListener(this);
-        binding.etMessage.setOnFocusChangeListener(this);
-        binding.etMessage.addTextChangedListener(this);
-        binding.etMessage.setCallback((InputContentInfoCompat inputContentInfo,
-                                       int flags, Bundle opts) -> {
-            if (BuildCompat.isAtLeastQ()
-                    && (flags & InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
-                try {
-                    inputContentInfo.requestPermission();
-                } catch (Exception e) {
-                    return false;
-                }
-            }
-            if (inputContentInfo.getLinkUri() == null)
-                return false;
+    private void configOnClickListener(){
+        binding.ivSend.setOnClickListener(view ->
+                onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing())
+        );
+        binding.ivOpenAttach.setOnClickListener(view -> {
+            binding.setIsAttachFile(true);
+            messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())
+                    && permissionRequestListener != null
+                    && !style.passedPermissionCheck())
+                permissionRequestListener.openPermissionRequest();
+        });
+    }
 
-            String url = inputContentInfo.getLinkUri().toString();
-            Log.d(TAG, "getLinkUri:" + url);
-            Attachment attachment = new Attachment();
-            attachment.setThumbURL(url);
-            attachment.setTitleLink(url);
-            attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
-            attachment.setType(ModelType.attach_giphy);
-            messageInputController.setSelectedAttachments(Arrays.asList(attachment));
-            onSendMessage("", viewModel.isEditing());
-            return true;
+    private void configInputEditText(){
+        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
+            viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
+            if (hasFocus) {
+                lockScrollUp = true;
+                postDelayed(() -> lockScrollUp = false, 500);
+                Utils.showSoftKeyboard((Activity) getContext());
+            } else
+                Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        onBackPressed();
-        initAttachmentUI();
-        KeyboardVisibilityEvent.setEventListener(
-                (Activity) getContext(), (boolean isOpen) -> {
-                    if (!isOpen) {
-                        binding.etMessage.clearFocus();
-                        onBackPressed();
-                    }
-                });
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = getMessageText();
+            Log.i(TAG, "Length is " + editable.length());
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
+            }
+            // detect commands
+            messageInputController.checkCommand(messageText);
+            String s_ = messageText.replaceAll("\\s+","");
+            if (TextUtils.isEmpty(s_))
+                binding.setActiveMessageSend(false);
+            else
+                binding.setActiveMessageSend(messageText.length() != 0);
+        });
+
+        binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
+    }
+
+
+    private void configAttachmentUI() {
+        // TODO: make the attachment UI into it's own view and allow you to change it.
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style);
+        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
+        binding.rvMedia.hasFixedSize();
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
+        int spanCount = 4;  // 4 columns
+        int spacing = 2;    // 1 px
+        boolean includeEdge = false;
+        binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
+        binding.tvClose.setOnClickListener(v -> {
+            messageInputController.onClickCloseBackGroundView();
+            if (viewModel.isEditing()) {
+                initSendMessage();
+                clearFocus();
+            }
+        });
+
+        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
+
+        binding.llCamera.setOnClickListener(v -> {
+            if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
+                PermissionChecker.showPermissionSettingDialog(getContext(), getContext().getString(R.string.stream_camera_permission_message));
+                return;
+            }
+            Utils.setButtonDelayEnable(v);
+            messageInputController.onClickCloseBackGroundView();
+            Intent takePictureIntent = CaptureController.getTakePictureIntent(getContext());
+            Intent takeVideoIntent = CaptureController.getTakeVideoIntent(getContext());
+            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            if (this.openCameraViewListener != null)
+                openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
+        });
+        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(v, null));
     }
 
     private void onBackPressed() {
@@ -220,6 +269,38 @@ public class MessageInputView extends RelativeLayout
         });
     }
 
+    private void setKeyboardEventListener(){
+        KeyboardVisibilityEvent.setEventListener(
+                (Activity) getContext(), (boolean isOpen) -> {
+                    if (!isOpen) {
+                        binding.etMessage.clearFocus();
+                        onBackPressed();
+                    }
+                });
+    }
+
+    public Message getEditMessage() {
+        return viewModel.getEditMessage().getValue();
+    }
+
+    public void setEnabled(boolean enabled) {
+        binding.etMessage.setEnabled(true);
+    }
+
+    public void clearFocus() {
+        binding.etMessage.clearFocus();
+    }
+
+    public String getMessageText() {
+        return binding.etMessage.getText().toString();
+    }
+
+    public void setMessageText(String t) {
+        binding.etMessage.setText(t);
+    }
+    // endregion
+
+    // region observe
     private void observeUIs(LifecycleOwner lifecycleOwner) {
         viewModel.getInputType().observe(lifecycleOwner, inputType -> {
             switch (inputType) {
@@ -254,242 +335,13 @@ public class MessageInputView extends RelativeLayout
             }
         });
     }
-
-    // Edit
-    private void editMessage(Message message) {
-        if (message == null) return;
-        // Set Text to Inputbox
-        binding.etMessage.requestFocus();
-        if (!TextUtils.isEmpty(message.getText())) {
-            binding.etMessage.setText(message.getText());
-            binding.etMessage.setSelection(binding.etMessage.getText().length());
-        }
-
-        // Set Attachments to Inputbox
-
-        if (message.getAttachments() == null
-                || message.getAttachments().isEmpty()
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_unknown))
-            return;
-
-        for (Attachment attachment : message.getAttachments())
-            attachment.config.setUploaded(true);
-
-        Attachment attachment = message.getAttachments().get(0);
-        if (attachment.getType().equals(ModelType.attach_file)) {
-            String fileType = attachment.getMime_type();
-            if (fileType.equals(ModelType.attach_mime_mov) ||
-                    fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
-            } else {
-                messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
-            }
-        } else {
-            messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
-        }
-    }
-
-    private void initAttachmentUI() {
-        // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style);
-        binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
-        binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
-        int spanCount = 4;  // 4 columns
-        int spacing = 2;    // 1 px
-        boolean includeEdge = false;
-        binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
-        binding.tvClose.setOnClickListener(v -> {
-            messageInputController.onClickCloseBackGroundView();
-            if (viewModel.isEditing()) {
-                initSendMessage();
-                clearFocus();
-            }
-        });
-
-        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
-
-        binding.llCamera.setOnClickListener(v -> {
-            Utils.setButtonDelayEnable(v);
-            messageInputController.onClickCloseBackGroundView();
-
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-            imageUri = getContext().getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-
-            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-
-            if (this.openCameraViewListener != null)
-                openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
-        });
-        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(v, null));
-    }
-
     // endregion
-    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
-    public void captureMedia(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                File file = null;
-                try {
-                    String path = imageUri.getPath();
-                    file = new File(path);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (file != null) {
-                    messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                }
-                return;
-            }
-            try {
-                Uri uri = data.getData();
-                if (uri == null) {
-                    if (imageUri != null)
-                        messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                } else {
-                    messageInputController.progressCapturedMedia(getContext(), uri, false);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    /*Used for handling requestPermissionsResult*/
-    public void permissionResult(int requestCode, @NonNull String[] permissions,
-                                 @NonNull int[] grantResults) {
-        if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            boolean granted = true;
-            for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
-                if (!permission.equals(Manifest.permission.CAMERA)
-                        && grantResult != PackageManager.PERMISSION_GRANTED) {
-                    granted = false;
-                    break;
-                }
-            }
 
-            style.setShowAttachmentButton(granted);
-            if (granted)
-                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else
-                binding.ivOpenAttach.setVisibility(GONE);
-
-        }
-    }
-
-    private boolean isGrantedPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasStoragePermission = getContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            int hasReadPermission = getContext().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE);
-            int hasCameraPermission = getContext().checkSelfPermission(Manifest.permission.CAMERA);
-            return (hasStoragePermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasReadPermission == PackageManager.PERMISSION_GRANTED)
-                    && (hasCameraPermission == PackageManager.PERMISSION_GRANTED);
-        } else
-            return true;
-    }
-
-    public Message getEditMessage() {
-        return viewModel.getEditMessage().getValue();
-    }
-
-    public void setEnabled(boolean enabled) {
-        binding.etMessage.setEnabled(true);
-    }
-
-    public void clearFocus() {
-        binding.etMessage.clearFocus();
-    }
-
-    public boolean requestInputFocus() {
-        return binding.etMessage.requestFocus();
-    }
-
-    public String getMessageText() {
-        return binding.etMessage.getText().toString();
-    }
-
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
-    }
-
-    @Override
-    public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.iv_send) {
-            this.onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing());
-        } else if (id == R.id.iv_openAttach) {
-            binding.setIsAttachFile(true);
-            if (style.isPermissionSet() || isGrantedPermissions())
-                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
-            else if(permissionRequestListener != null)
-                permissionRequestListener.openPermissionRequest();
-        }
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        //noop
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        //noop
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        String messageText = this.getMessageText();
-        Log.i(TAG, "Length is " + s.length());
-        if (messageText.length() > 0) {
-            viewModel.keystroke();
-        }
-        // detect commands
-        messageInputController.checkCommand(messageText);
-        String s_ = messageText.replaceAll("\\s+","");
-        if (TextUtils.isEmpty(s_))
-            binding.setActiveMessageSend(false);
-        else
-            binding.setActiveMessageSend(messageText.length() != 0);
-    }
-
-    @Override
-    public void onFocusChange(View v, boolean hasFocus) {
-        viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
-        if (hasFocus) {
-            lockScrollUp = true;
-            new Handler().postDelayed(() -> lockScrollUp = false, 500);
-            Utils.showSoftKeyboard((Activity) getContext());
-        } else
-            Utils.hideSoftKeyboard((Activity) getContext());
-    }
-
+    // region send message
     /**
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    public Message prepareMessage(String input) {
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(messageInputController.getSelectedAttachments());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // set the current user
-        m.setUser(viewModel.client().getUser());
-        return m;
-    }
 
     private void onSendMessage(String input, boolean isEdit) {
         binding.ivSend.setEnabled(false);
@@ -555,7 +407,150 @@ public class MessageInputView extends RelativeLayout
         binding.etMessage.setText("");
     }
 
-    // region Set Listeners
+    // endregion
+
+    // region send giphy from keyboard
+    private boolean sendGiphyFromKeyboard(InputContentInfoCompat inputContentInfo,
+                                       int flags, Bundle opts){
+        if (BuildCompat.isAtLeastQ()
+                && (flags & InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
+            try {
+                inputContentInfo.requestPermission();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        if (inputContentInfo.getLinkUri() == null) return false;
+
+        String url = inputContentInfo.getLinkUri().toString();
+        Attachment attachment = new Attachment();
+        attachment.setThumbURL(url);
+        attachment.setTitleLink(url);
+        attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
+        attachment.setType(ModelType.attach_giphy);
+        messageInputController.setSelectedAttachments(Arrays.asList(attachment));
+        onSendMessage("", viewModel.isEditing());
+        return true;
+    }
+    // endregion
+
+    // region edit message
+    private void editMessage(Message message) {
+        if (message == null) return;
+        // Set Text to Inputbox
+        binding.etMessage.requestFocus();
+        if (!TextUtils.isEmpty(message.getText())) {
+            binding.etMessage.setText(message.getText());
+            binding.etMessage.setSelection(binding.etMessage.getText().length());
+        }
+
+        // Set Attachments to Inputbox
+
+        if (message.getAttachments() == null
+                || message.getAttachments().isEmpty()
+                || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
+                || message.getAttachments().get(0).getType().equals(ModelType.attach_unknown))
+            return;
+
+        for (Attachment attachment : message.getAttachments())
+            attachment.config.setUploaded(true);
+
+        Attachment attachment = message.getAttachments().get(0);
+        if (attachment.getType().equals(ModelType.attach_file)) {
+            String fileType = attachment.getMime_type();
+            if (fileType.equals(ModelType.attach_mime_mov) ||
+                    fileType.equals(ModelType.attach_mime_mp4)) {
+                messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+            } else {
+                messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
+            }
+        } else {
+            messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+        }
+    }
+    // endregion
+
+    // region permission check
+    public void captureMedia(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            File imageFile = CaptureController.getCaptureFile(true);
+            File vieoFile = CaptureController.getCaptureFile(false);
+            if (imageFile == null && vieoFile == null) {
+                Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
+                return;
+            }
+            if (imageFile != null && imageFile.length() > 0) {
+                messageInputController.progressCapturedMedia(imageFile, true);
+                updateGallery(imageFile);
+            }else if (vieoFile != null && vieoFile.length() > 0) {
+                messageInputController.progressCapturedMedia(vieoFile, false);
+                updateGallery(vieoFile);
+            }else
+                Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
+        }
+    }
+
+    private void updateGallery(File outputFile){
+        final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        final Uri contentUri = Uri.fromFile(outputFile);
+        scanIntent.setData(contentUri);
+        getContext().sendBroadcast(scanIntent);
+    }
+    /*Used for handling requestPermissionsResult*/
+    public void permissionResult(int requestCode, @NonNull String[] permissions,
+                                 @NonNull int[] grantResults) {
+        if (requestCode == Constant.PERMISSIONS_REQUEST) {
+            boolean storageGranted  = true, cameraGranted = true;
+            String permission; int grantResult;
+            for (int i = 0; i < permissions.length; i++) {
+                permission = permissions[i];
+                grantResult = grantResults[i];
+                if (permission.equals(Manifest.permission.CAMERA)){
+                    cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
+                }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                    storageGranted = false;
+                }
+            }
+
+            if (storageGranted && cameraGranted) {
+                messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
+                style.setCheckPermissions(true);
+            }else {
+                String message;
+                if (!storageGranted && !cameraGranted) {
+                    message = getContext().getString(R.string.stream_both_permissions_message);
+                } else if (!cameraGranted) {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_camera_permission_message);
+                } else {
+                    style.setCheckPermissions(true);
+                    message = getContext().getString(R.string.stream_storage_permission_message);
+                }
+                PermissionChecker.showPermissionSettingDialog(getContext(), message);
+            }
+            messageInputController.configPermissions();
+        }
+    }
+
+    // endregion
+
+    // region listeners
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    public Message prepareMessage(String input) {
+        Message m = new Message();
+        m.setText(input);
+        m.setAttachments(messageInputController.getSelectedAttachments());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
+        // set the current user
+        m.setUser(viewModel.client().getUser());
+        return m;
+    }
+
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;
     }
@@ -568,16 +563,12 @@ public class MessageInputView extends RelativeLayout
         this.openCameraViewListener = l;
     }
 
-
-    // region Listeners
-
     /**
      * Used for listening to the sendMessage event
      */
     public interface SendMessageListener {
         void onSendMessageSuccess(Message message);
         void onSendMessageError(String errMsg);
-
     }
 
     /**
