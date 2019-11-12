@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -484,9 +487,21 @@ public class MessageInputView extends RelativeLayout {
                 messageInputController.progressCapturedMedia(vieoFile, false);
             else
                 Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
+
+            updateGallery();
         }
     }
 
+    private void updateGallery(){
+        MediaScannerConnection.scanFile(getContext(),
+                new String[] { Environment.getExternalStorageDirectory().toString() },
+                null, (String path, Uri uri)->
+                {
+                    Log.i("ExternalStorage", "Scanned " + path + ":");
+                    Log.i("ExternalStorage", "-> uri=" + uri);
+                }
+        );
+    }
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {

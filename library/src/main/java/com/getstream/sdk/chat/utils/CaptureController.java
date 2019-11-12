@@ -49,7 +49,7 @@ public class CaptureController {
 
     private static String getFolderPath(boolean isImage, Context context) {
         String appName = Utils.getApplicationName(context);
-        File f1 = new File(Environment.getExternalStorageDirectory() + "/" + "Pictures", appName /*context.getString(isImage ? R.string.stream_image : R.string.stream_video)*/);
+        File f1 = new File(Environment.getExternalStorageDirectory() + "/" + appName, context.getString(isImage ? R.string.stream_image : R.string.stream_video));
         if (!f1.exists()) {
             f1.mkdirs();
         }
