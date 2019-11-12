@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
@@ -90,10 +91,10 @@ public class ChannelHeaderView extends RelativeLayout {
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
 
         if (now.getTime() - lastActive.getTime() < 60000) {
-            timeAgo = "just now";
+            timeAgo = getContext().getString(R.string.stream_channel_header_active_now);
         }
 
-        binding.setChannelLastActive(String.format("Active %s", timeAgo));
+        binding.setChannelLastActive(String.format(getContext().getString(R.string.stream_channel_header_active), timeAgo));
     }
 
     protected void configHeaderAvatar(ChannelState channelState) {
