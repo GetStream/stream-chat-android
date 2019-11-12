@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -481,26 +479,22 @@ public class MessageInputView extends RelativeLayout {
                 Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
                 return;
             }
-            if (imageFile != null && imageFile.length() > 0)
+            if (imageFile != null && imageFile.length() > 0) {
                 messageInputController.progressCapturedMedia(imageFile, true);
-            else if (vieoFile != null && vieoFile.length() > 0)
+                updateGallery(imageFile);
+            }else if (vieoFile != null && vieoFile.length() > 0) {
                 messageInputController.progressCapturedMedia(vieoFile, false);
-            else
+                updateGallery(vieoFile);
+            }else
                 Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
-
-            updateGallery();
         }
     }
 
-    private void updateGallery(){
-        MediaScannerConnection.scanFile(getContext(),
-                new String[] { Environment.getExternalStorageDirectory().toString() },
-                null, (String path, Uri uri)->
-                {
-                    Log.i("ExternalStorage", "Scanned " + path + ":");
-                    Log.i("ExternalStorage", "-> uri=" + uri);
-                }
-        );
+    private void updateGallery(File outputFile){
+        final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        final Uri contentUri = Uri.fromFile(outputFile);
+        scanIntent.setData(contentUri);
+        getContext().sendBroadcast(scanIntent);
     }
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
