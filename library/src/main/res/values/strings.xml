@@ -51,8 +51,10 @@
     <!--ChannelMoreAction-->
     <string name="stream_channel_action_hide_alert">Hidden successfully</string>
     <string name="stream_channel_action_show_alert">Shown up successfully</string>
+    <string name="stream_channel_action_update_alert">Updated successfully</string>
     <string name="stream_channel_action_hide">Hide</string>
     <string name="stream_channel_action_edit">Edit</string>
+    <string name="stream_channel_update_message">The name and image of this channel have changed!</string>
     <!--Attachment View-->
     <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
     <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>

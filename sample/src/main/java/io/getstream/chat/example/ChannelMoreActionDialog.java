@@ -105,11 +105,11 @@ public class ChannelMoreActionDialog extends Dialog {
         channel.setName("Updated " + new Random().nextInt(100));
         channel.setImage("https://i.imgur.com/1Oe1TDf.jpg");
         Message message = new Message();
-        message.setText("Changed name and image of this channel!");
+        message.setText(context.getString(R.string.stream_channel_update_message));
         channel.update(message, new ChannelCallback() {
             @Override
             public void onSuccess(ChannelResponse response) {
-                Utils.showMessage(context, context.getString(R.string.stream_channel_action_show_alert));
+                Utils.showMessage(context, context.getString(R.string.stream_channel_action_update_alert));
             }
 
             @Override
