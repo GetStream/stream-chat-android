@@ -2,15 +2,9 @@ package io.getstream.chat.example;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
@@ -32,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
@@ -152,34 +147,9 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
+        binding.ivAdd.setOnClickListener(v->createNewChannel());
     }
 
-    void createNewChannelDialog(View view) {
-        final EditText inputName = new EditText(this);
-        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        inputName.setHint("Type a channel name");
-        final AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle("Create a Channel")
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.setView(inputName);
-        alertDialog.setOnShowListener(dialog -> {
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                String channelName = inputName.getText().toString();
-                if (TextUtils.isEmpty(channelName)) {
-                    inputName.setError("Invalid Name!");
-                    return;
-                }
-                createNewChannel(channelName);
-                //switchUser("broken-waterfall-5", "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg");
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
-    }
 
     void switchUser(String userId, String token) {
         Client client = StreamChat.getInstance(getApplication());
@@ -203,17 +173,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void createNewChannel(String channelName) {
+    void createNewChannel() {
         Client client = configureStreamClient();
-
+        String channelName = "Private Chat About the Kingdom";
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
-
+        extraData.put("image", "https://bit.ly/2F3KEoM");
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
         extraData.put("members", members);
 
-        String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+        String channelId = channelName.replaceAll(" ", "-").toLowerCase() + new Random().nextInt(100);
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
