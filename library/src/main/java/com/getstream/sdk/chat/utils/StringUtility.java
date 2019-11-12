@@ -66,4 +66,14 @@ public class StringUtility {
         long seconds = videoLength % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
+
+    @SuppressLint("DefaultLocale")
+    public static String convertMentionedText(String text, String userName) {
+        if (text.substring(text.length() -1).equals("@"))
+            return text + userName;
+
+        String[] names = text.split("@");
+        String last = names[names.length - 1];
+        return text.substring(0, text.length() - last.length()) + userName;
+    }
 }
