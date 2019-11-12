@@ -27,6 +27,8 @@ public class UpdateChannelRequest {
     private Message updateMessage;
 
     public UpdateChannelRequest(@NotNull Map<String, Object> data, @Nullable Message updateMessage) {
+        // check reserved field
+        data.remove("members");
         this.data = data;
         this.updateMessage = updateMessage;
     }
