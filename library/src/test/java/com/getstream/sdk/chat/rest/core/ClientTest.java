@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -203,8 +204,7 @@ public class ClientTest {
                 eq(TEST_CHANNEL_ID),
                 eq(TEST_API_KEY),
                 eq(TEST_CLIENT_ID),
-                argThat(argument -> argument.getData().get("name").equals(channel.getName())
-                        && argument.getUpdateMessage().getText().equals(updateMessage.getText())));
+                argThat(argument -> ((Map)argument.get("data")).get("name").equals(channel.getName())));
         verify(callback).onSuccess(response);
     }
 

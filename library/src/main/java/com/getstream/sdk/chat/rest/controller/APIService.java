@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
 import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -52,7 +51,7 @@ public interface APIService {
     Call<ChannelState> queryChannel(@Path("type") String channelType, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String clientID, @Body ChannelQueryRequest request);
 
     @POST("/channels/{type}/{id}")
-    Call<ChannelResponse> updateChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body UpdateChannelRequest body);
+    Call<ChannelResponse> updateChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID, @Body Map body);
 
     @DELETE("/channels/{type}/{id}")
     Call<ChannelResponse> deleteChannel(@Path("type") String channelType, @Path("id") String channelId, @Query("api_key") String apiKey, @Query("client_id") String clientID);
