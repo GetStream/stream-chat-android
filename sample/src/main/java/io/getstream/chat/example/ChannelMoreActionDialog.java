@@ -118,6 +118,18 @@ public class ChannelMoreActionDialog extends Dialog {
                 Log.d(TAG, "Channel Update Error: " + errMsg);
             }
         });
+//        channel.update(new ChannelCallback() {
+//            @Override
+//            public void onSuccess(ChannelResponse response) {
+//                Utils.showMessage(context, context.getString(R.string.stream_channel_action_update_alert));
+//            }
+//
+//            @Override
+//            public void onError(String errMsg, int errCode) {
+//                Utils.showMessage(context, errMsg);
+//                Log.d(TAG, "Channel Update Error: " + errMsg);
+//            }
+//        });
         dismiss();
     }
 
