@@ -42,12 +42,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
+        <Button
             android:id="@+id/iv_add"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="30dp"
-            android:background="@drawable/add"
+            android:background="@drawable/add_ripple_selector"
             app:isGone="@{safeUnbox(viewModel.loading)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
