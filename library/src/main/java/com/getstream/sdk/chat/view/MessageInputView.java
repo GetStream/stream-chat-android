@@ -2,14 +2,13 @@ package com.getstream.sdk.chat.view;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,6 +39,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -72,8 +72,7 @@ public class MessageInputView extends RelativeLayout {
      * Tag for logging purposes
      */
     final String TAG = MessageInputView.class.getSimpleName();
-    /** Store the image if you take a picture */
-    Uri imageUri;
+
     /** If you are allowed to scroll up or not */
     boolean lockScrollUp = false;
 
@@ -226,19 +225,12 @@ public class MessageInputView extends RelativeLayout {
             }
             Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
-
-            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            ContentValues values = new ContentValues();
-            values.put(MediaStore.Images.Media.TITLE, "New Picture");
-            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
-            imageUri = getContext().getContentResolver().insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-
-            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            Intent takePictureIntent = CaptureController.getTakePictureIntent(getContext());
+            Intent takeVideoIntent = CaptureController.getTakeVideoIntent(getContext());
             Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
-
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
@@ -476,40 +468,33 @@ public class MessageInputView extends RelativeLayout {
             messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
         }
     }
-
     // endregion
 
     // region permission check
-    // TODO: the name of this method is weird (progres..)? perhaps captureMedia?
     public void captureMedia(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (data == null) {
-                File file = null;
-                try {
-                    String path = imageUri.getPath();
-                    file = new File(path);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (file != null) {
-                    messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                }
+            File imageFile = CaptureController.getCaptureFile(true);
+            File vieoFile = CaptureController.getCaptureFile(false);
+            if (imageFile == null && vieoFile == null) {
+                Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
                 return;
             }
-            try {
-                Uri uri = data.getData();
-                if (uri == null) {
-                    if (imageUri != null)
-                        messageInputController.progressCapturedMedia(getContext(), imageUri, true);
-                    imageUri = null;
-                } else {
-                    messageInputController.progressCapturedMedia(getContext(), uri, false);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            if (imageFile != null && imageFile.length() > 0) {
+                messageInputController.progressCapturedMedia(imageFile, true);
+                updateGallery(imageFile);
+            }else if (vieoFile != null && vieoFile.length() > 0) {
+                messageInputController.progressCapturedMedia(vieoFile, false);
+                updateGallery(vieoFile);
+            }else
+                Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
         }
+    }
+
+    private void updateGallery(File outputFile){
+        final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        final Uri contentUri = Uri.fromFile(outputFile);
+        scanIntent.setData(contentUri);
+        getContext().sendBroadcast(scanIntent);
     }
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
