@@ -1157,7 +1157,7 @@ public class Client implements WSResponseHandler {
                 if (response.body() != null && response.body().getMessage() != null) {
                     response.body().getMessage().setSyncStatus(SYNCED);
                     callback.onSuccess(response.body());
-                }else{
+                } else {
                     callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
                 }
             }
