@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,7 +39,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ReadStateView<ChannelListViewStyle> read_state;
     private AvatarGroupView<ChannelListViewStyle> avatarGroupView;
     private ImageView iv_attachment_type;
-    private Button btn_wrapper;
+    private View click_area;
     private Context context;
 
     private ChannelListView.UserClickListener userClickListener;
@@ -74,7 +73,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
         tv_date = itemView.findViewById(R.id.tv_date);
 
-        btn_wrapper = itemView.findViewById(R.id.btn_wrapper);
+        click_area = itemView.findViewById(R.id.click_area);
         avatarGroupView = itemView.findViewById(R.id.avatar_group);
         read_state = itemView.findViewById(R.id.read_state);
     }
@@ -216,12 +215,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     private void configClickListeners(ChannelState channelState){
         Channel channel = channelState.getChannel();
-        btn_wrapper.setOnClickListener(view -> {
+        click_area.setOnClickListener(view -> {
             if (this.channelClickListener != null)
                 this.channelClickListener.onClick(channel);
         });
 
-        btn_wrapper.setOnLongClickListener(view -> {
+        click_area.setOnLongClickListener(view -> {
             if (this.channelLongClickListener != null)
                 this.channelLongClickListener.onClick(channel);
 

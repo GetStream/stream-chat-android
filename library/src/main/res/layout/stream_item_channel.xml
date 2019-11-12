@@ -81,8 +81,8 @@
             android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <Button
-            android:id="@+id/btn_wrapper"
+        <View
+            android:id="@+id/click_area"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?attr/selectableItemBackground"
