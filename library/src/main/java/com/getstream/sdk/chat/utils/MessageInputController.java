@@ -445,7 +445,7 @@ public class MessageInputController {
             closeCommandView();
         }else if (text.length() == 1) {
             onClickCommandViewOpen(text.startsWith("/"));
-        } else if (text.endsWith("@") && binding.clCommand.getVisibility() != View.VISIBLE) {
+        } else if (text.endsWith("@")) {
             onClickCommandViewOpen(false);
         } else {
             setCommandsMentionUsers(text);
@@ -477,20 +477,9 @@ public class MessageInputController {
                 binding.etMessage.setText("/" + ((Command) commands.get(position)).getName() + " ");
             else {
                 String messageStr = binding.etMessage.getText().toString();
-                String[] names = messageStr.split("@");
-                String messageStr_ = "";
-                int index;
-                if (messageStr.substring(messageStr.length() -1).equals("@"))
-                    index = names.length;
-                else
-                    index = names.length - 1;
-
-                for (int i = 0; i < index; i++){
-                    if (TextUtils.isEmpty(names[i])) continue;
-                    messageStr_ += "@" + names[i];
-                }
-                messageStr_ += "@";
-                binding.etMessage.setText(messageStr_ + ((User) commands.get(position)).getName() + " ");
+                String userName = ((User) commands.get(position)).getName();
+                String converted = StringUtility.convertMentionedText(messageStr, userName);
+                binding.etMessage.setText(converted);
             }
             binding.etMessage.setSelection(binding.etMessage.getText().length());
             closeCommandView();
@@ -518,7 +507,8 @@ public class MessageInputController {
             binding.tvCommand.setText(commandStr);
         } else {
             String[] names = string.split("@");
-            setMentionUsers(names[names.length - 1]);
+            if (names.length > 0)
+                setMentionUsers(names[names.length - 1]);
         }
     }
 
