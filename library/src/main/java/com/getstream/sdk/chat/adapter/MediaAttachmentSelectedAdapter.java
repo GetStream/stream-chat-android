@@ -105,7 +105,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 binding.tvLength.setText("");
             }
             itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
-
+            binding.btnClose.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
             if (attachment.config.isUploaded()) {
                 binding.progressBar.setVisibility(View.GONE);
                 binding.ivMask.setVisibility(View.GONE);

@@ -61,4 +61,24 @@ public class GetDeletedOrMentionedTextTest {
         fileSize = -100;
         assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
     }
+
+    void convertMentionTextTest() {
+        String text;
+        String userName = "Adrian";
+
+        text = "@";
+        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@A";
+        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "This@";
+        assertEquals("This@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "This a @A";
+        assertEquals("This a @Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@This a @";
+        assertEquals("@@@This a @Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@This a @@@@";
+        assertEquals("@@@This a @@@@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@Adrian a @@This is @A";
+        assertEquals("@@@Adrian a @@This is @Adrian", StringUtility.convertMentionedText(text, userName));
+    }
 }
