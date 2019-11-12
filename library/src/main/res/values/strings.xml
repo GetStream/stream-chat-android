@@ -24,7 +24,11 @@
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
     <string name="stream_input_upload_file">Upload a file</string>
-
+    <!-- Folder Name -->
+    <string name="stream_image">Images</string>
+    <string name="stream_video">Video</string>
+    <string name="stream_audio">Audio</string>
+    <string name="stream_document">Documents</string>
     <!-- Message Status -->
     <string name="stream_delete_message">This message was deleted.</string>
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
@@ -44,6 +48,7 @@
     <string name="stream_no_media_error">There is no photo or video.</string>
     <string name="stream_large_size_file_error">This file is too large to upload. The file size limit is 20MB.</string>
     <string name="stream_no_file_error">There is no file.</string>
+    <string name="stream_take_photo_failed">Failed due to an unknown error.</string>
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
