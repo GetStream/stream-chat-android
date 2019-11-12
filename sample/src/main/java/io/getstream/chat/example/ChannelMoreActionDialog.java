@@ -3,6 +3,7 @@ package io.getstream.chat.example;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -12,11 +13,18 @@ import androidx.annotation.NonNull;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
+import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
+import java.util.Random;
+
 public class ChannelMoreActionDialog extends Dialog {
+
+    private static final String TAG = ChannelMoreActionDialog.class.getSimpleName();
 
     private Channel channel;
     private ChannelListViewModel viewModel;
@@ -94,6 +102,22 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void editChannel(){
+        channel.setName("Updated " + new Random().nextInt(100));
+        channel.setImage("https://i.imgur.com/1Oe1TDf.jpg");
+        Message message = new Message();
+        message.setText("Changed name and image of this channel!");
+        channel.update(message, new ChannelCallback() {
+            @Override
+            public void onSuccess(ChannelResponse response) {
+                Utils.showMessage(context, context.getString(R.string.stream_channel_action_show_alert));
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Utils.showMessage(context, errMsg);
+                Log.d(TAG, "Channel Update Error: " + errMsg);
+            }
+        });
         dismiss();
     }
 
