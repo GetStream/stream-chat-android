@@ -46,6 +46,7 @@ import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
 import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
+import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
@@ -53,6 +54,7 @@ import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -119,19 +121,20 @@ public class Client implements WSResponseHandler {
         this.state = state;
     }
 
+    CachedTokenProvider tokenProvider;
+    String cacheUserToken;
+    boolean fetchingToken;
+
     private ClientState state;
 
     // Main Params
     private String apiKey;
 
     private Boolean offlineStorage;
-    private CachedTokenProvider tokenProvider;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
-    private boolean fetchingToken;
-    private String cacheUserToken;
     private Context context;
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
@@ -907,6 +910,81 @@ public class Client implements WSResponseHandler {
                                 }
                             }
                         });
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
+    }
+
+    /**
+     * Query the API, get messages, members or other channel fields
+     *
+     * @param channel  query data for this channel
+     * @param request  request options
+     * @param callback the result callback
+     */
+    public void queryChannel(Channel channel, ChannelQueryRequest request, QueryChannelCallback callback) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                final ChannelQueryRequest queryRequest = request.withData(channel.getExtraData());
+                Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
+                    @Override
+                    public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                        Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                        channel.mergeWithState(response.body());
+                        // channels created without ID will get it populated by the API
+                        if (channel.getId() == null) {
+                            channel.setId(response.body().getChannel().getCid().split(":")[1]);
+                            channel.setCid(response.body().getChannel().getCid());
+                        }
+                        if (channel.getConfig() == null) {
+                            channel.setConfig(response.body().getChannel().getConfig());
+                        }
+                        if (channel.getChannelState() == null) {
+                            channel.setChannelState(response.body());
+                        }
+                        if (channel.getCreatedByUser() == null) {
+                            channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
+                        }
+                        
+                        addChannelConfig(channel.getType(), channel.getConfig());
+
+                        if (queryRequest.isWatch()) {
+                            addToActiveChannels(channel);
+                            channel.setInitialized(true);
+                        }
+
+                        // update the user references
+                        getState().updateUsersForChannel(channel.getChannelState());
+
+                        Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                        // offline storage
+
+                        getStorage().insertMessagesForChannel(channel, response.body().getMessages());
+                        callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ChannelState> call, Throwable t) {
+                        if (t instanceof ErrorResponse) {
+                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                        } else {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    }
+                };
+                if (channel.getId() == null) {
+                    // channels created without ID will get it populated by the API
+                    apiService.queryChannel(channel.getType(), apiKey, getUserId(), clientID,
+                            queryRequest).enqueue(requestCallback);
+                } else {
+                    apiService.queryChannel(channel.getType(), channel.getId(), apiKey, getUserId(),
+                            clientID, queryRequest).enqueue(requestCallback);
+                }
             }
 
             @Override

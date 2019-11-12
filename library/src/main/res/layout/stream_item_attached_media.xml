@@ -36,8 +36,8 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
 
-        <TextView
-            android:id="@+id/tv_close"
+        <Button
+            android:id="@+id/btn_close"
             style="@style/text"
             android:layout_width="20dp"
             android:layout_height="20dp"

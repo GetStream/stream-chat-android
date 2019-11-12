@@ -284,6 +284,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         if (isDeletedOrFailedMessage()
                 || message == null
+                || channelState.getLastMessage() == null
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()

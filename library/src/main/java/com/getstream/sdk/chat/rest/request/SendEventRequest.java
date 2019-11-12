@@ -13,4 +13,8 @@ public class SendEventRequest {
     public SendEventRequest(Map event) {
         this.event = event;
     }
+
+    public Map<String, Object> getEvent() {
+        return event;
+    }
 }
