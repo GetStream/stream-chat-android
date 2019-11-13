@@ -1,60 +1,62 @@
 <resources>
-    <string name="app_name">GetStreamChatSDK</string>
+    <string name="app_name" translatable="false">GetStreamChatSDK</string>
     <!--Message Date-->
-    <string name="stream_just_now">Just Now</string>
-    <string name="stream_today">Today</string>
-    <string name="stream_yesterday">Yesterday</string>
+    <string name="stream_just_now" translation_description="">Just Now</string>
+    <string name="stream_today" translation_description="">Today</string>
+    <string name="stream_yesterday" translation_description="">Yesterday</string>
 
-    <string name="stream_hint_enter_a_message">Type a message…</string>
+    <string name="stream_hint_enter_a_message" translation_description="">Type a message…</string>
     <!--Chat-->
-    <string name="stream_no_connection">Trying to reconnect&#8230;</string>
-    <string name="stream_command_title">Commands matching</string>
+    <string name="stream_no_connection" translation_description="">Trying to reconnect&#8230;</string>
+    <string name="stream_command_title" translation_description="">Commands matching</string>
 
-    <string name="stream_mention_title">Searching for people</string>
-    <string name="stream_you">(you)</string>
+    <string name="stream_mention_title" translation_description="">Searching for people</string>
+    <string name="stream_you" translation_description="">(you)</string>
     <!-- Menu actions -->
-    <string name="stream_action_create_channel">Create activeChannel</string>
+    <string name="stream_action_create_channel" translation_description="">Create activeChannel</string>
     <!--MessageInput-->
-    <string name="stream_input_hint">Write a message</string>
+    <string name="stream_input_hint" translation_description="">Write a message</string>
 
-    <string name="stream_camera_permission_message"> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
-    <string name="stream_storage_permission_message"> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
-    <string name="stream_both_permissions_message"> needs camera and storage access so that you can take, send and save photos, videos music and the other files.\nPlease enable it in Settings.</string>
+    <string name="stream_camera_permission_message" translation_description=""> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
+    <string name="stream_storage_permission_message" translation_description=""> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
+    <string name="stream_both_permissions_message" translation_description=""> needs camera and storage access so that you can take, send and save photos, videos music and the other files.\nPlease enable it in Settings.</string>
 
-    <string name="stream_input_upload_media">Upload a photo or video</string>
-    <string name="stream_input_take_picture">Upload from a camera</string>
-    <string name="stream_input_upload_file">Upload a file</string>
+    <string name="stream_input_upload_media" translation_description="">Upload a photo or video</string>
+    <string name="stream_input_take_picture" translation_description="">Upload from a camera</string>
+    <string name="stream_input_upload_file" translation_description="">Upload a file</string>
     <!-- Folder Name -->
-    <string name="stream_image">Images</string>
-    <string name="stream_video">Video</string>
-    <string name="stream_audio">Audio</string>
-    <string name="stream_document">Documents</string>
+    <string name="stream_image" translation_description="">Images</string>
+    <string name="stream_video" translation_description="">Video</string>
+    <string name="stream_audio" translation_description="">Audio</string>
+    <string name="stream_document" translation_description="">Documents</string>
     <!-- Message Status -->
-    <string name="stream_delete_message">This message was deleted.</string>
-    <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
-    <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
-    <string name="stream_message_invalid_response">Response or message is empty.</string>
+    <string name="stream_delete_message" translation_description="">This message was deleted.</string>
+    <string name="stream_message_failed_send" translation_description="">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
+    <string name="stream_message_invalid_command" translation_description="">UNSENT ּ• INVALID COMMAND</string>
+    <string name="stream_message_invalid_response" translation_description="">Response or message is empty.</string>
     <!--Thread-->
-    <string name="stream_reply_count">%d reply.</string>
-    <string name="stream_replies_count">%d replies.</string>
-    <string name="stream_thread_separator">Start of a new thread</string>
+    <plurals name="stream_reply_count">
+        <item quantity="one" translation_description="">%d reply</item>
+        <item quantity="other" translation_description="">%d replies</item>
+    </plurals>
+    <string name="stream_thread_separator" translation_description="">Start of a new thread</string>
     <!--Chat Screen-->
-    <string name="stream_title_media">Select your photo or video</string>
-    <string name="stream_title_file">Select your file</string>
-    <string name="stream_channel_unknown_title">Channel without name</string>
-    <string name="stream_channel_offlineText">Waiting for network&#8230;</string>
-    <string name="stream_channel_header_active">Active %s</string>
-    <string name="stream_channel_header_active_now">just now</string>
+    <string name="stream_title_media" translation_description="">Select your photo or video</string>
+    <string name="stream_title_file" translation_description="">Select your file</string>
+    <string name="stream_channel_unknown_title" translation_description="">Channel without name</string>
+    <string name="stream_channel_offlineText" translation_description="">Waiting for network&#8230;</string>
+    <string name="stream_channel_header_active" translation_description="">Active %s</string>
+    <string name="stream_channel_header_active_now" translation_description="">just now</string>
     <!--Error-->
-    <string name="stream_title_error">Error!</string>
-    <string name="stream_no_media_error">There is no photo or video.</string>
-    <string name="stream_no_file_error">There is no file.</string>
-    <string name="stream_take_photo_failed">Failed due to an unknown error.</string>
+    <string name="stream_title_error" translation_description="">Error!</string>
+    <string name="stream_no_media_error" translation_description="">There is no photo or video.</string>
+    <string name="stream_no_file_error" translation_description="">There is no file.</string>
+    <string name="stream_take_photo_failed" translation_description="">Failed due to an unknown error.</string>
     <!--Last Message Type-->
-    <string name="stream_last_message_attachment_photo">photo</string>
-    <string name="stream_last_message_attachment_video">video</string>
-    <string name="stream_last_message_attachment_giphy">/giphy</string>
+    <string name="stream_last_message_attachment_photo" translation_description="">photo</string>
+    <string name="stream_last_message_attachment_video" translation_description="">video</string>
+    <string name="stream_last_message_attachment_giphy" translation_description="">/giphy</string>
     <!--Attachment View-->
-    <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
-    <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>
+    <string name="stream_attachment_load_failed_unknown" translation_description="">The load failed due to an unknown error.</string>
+    <string name="stream_attachment_invalid_url" translation_description="">The load failed due to the invalid url.</string>
 </resources>
