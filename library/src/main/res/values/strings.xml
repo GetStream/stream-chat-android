@@ -15,7 +15,15 @@
     <!-- Menu actions -->
     <string name="stream_action_create_channel" translation_description="">Create activeChannel</string>
     <!--MessageInput-->
+
     <string name="stream_input_hint" translation_description="">Write a message</string>
+    <string name="stream_input_type_add_file" translation_description="">Add a file</string>
+    <string name="stream_input_type_edit_message" translation_description="">Edit a message</string>
+    <string name="stream_input_type_select_gallery" translation_description="">Select your photo or video</string>
+    <string name="stream_input_type_select_file" translation_description="">Select your file</string>
+    <string name="stream_input_type_command" translation_description="">Commands matching</string>
+    <string name="stream_input_type_auto_mention" translation_description="">Searching for people</string>
+
 
     <string name="stream_camera_permission_message" translation_description=""> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
     <string name="stream_storage_permission_message" translation_description=""> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
@@ -36,10 +44,10 @@
     <string name="stream_message_invalid_response" translation_description="">Response or message is empty.</string>
     <!--Thread-->
     <plurals name="stream_reply_count">
-        <item quantity="one" translation_description="">%d reply</item>
-        <item quantity="other" translation_description="">%d replies</item>
+        <item quantity="one" translation_description="Text indicating when the message has a reply, singular.'1 reply'.">%d reply</item>
+        <item quantity="other" translation_description="Text indicating when the message has replies, plural.'3 replies'.">%d replies</item>
     </plurals>
-    <string name="stream_thread_separator" translation_description="">Start of a new thread</string>
+    <string name="stream_thread_separator">Start of a new thread</string>
     <!--Chat Screen-->
     <string name="stream_title_media" translation_description="">Select your photo or video</string>
     <string name="stream_title_file" translation_description="">Select your file</string>
