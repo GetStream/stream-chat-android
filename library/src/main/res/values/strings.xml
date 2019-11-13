@@ -35,8 +35,10 @@
     <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <string name="stream_message_invalid_response">Response or message is empty.</string>
     <!--Thread-->
-    <string name="stream_reply_count">%d reply.</string>
-    <string name="stream_replies_count">%d replies.</string>
+    <plurals name="stream_reply_count">
+        <item quantity="one" translation_description="">%d reply</item>
+        <item quantity="other" translation_description="">%d replies</item>
+    </plurals>
     <string name="stream_thread_separator">Start of a new thread</string>
     <!--Chat Screen-->
     <string name="stream_title_media">Select your photo or video</string>
