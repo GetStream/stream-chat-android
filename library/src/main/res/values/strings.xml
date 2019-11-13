@@ -16,6 +16,12 @@
     <string name="stream_action_create_channel">Create activeChannel</string>
     <!--MessageInput-->
     <string name="stream_input_hint">Write a message</string>
+    <string name="stream_input_type_add_file">Add a file</string>
+    <string name="stream_input_type_edit_message">Edit a message</string>
+    <string name="stream_input_type_select_gallery">Select your photo or video</string>
+    <string name="stream_input_type_select_file">Select your file</string>
+    <string name="stream_input_type_command">Commands matching</string>
+    <string name="stream_input_type_auto_mention">Searching for people</string>
 
     <string name="stream_camera_permission_message"> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
     <string name="stream_storage_permission_message"> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
@@ -35,8 +41,10 @@
     <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <string name="stream_message_invalid_response">Response or message is empty.</string>
     <!--Thread-->
-    <string name="stream_reply_count">%d reply.</string>
-    <string name="stream_replies_count">%d replies.</string>
+    <plurals name="stream_reply_count">
+        <item quantity="one" translation_description="Text indicating when the message has a reply, singular.'1 reply'.">%d reply</item>
+        <item quantity="other" translation_description="Text indicating when the message has replies, plural.'3 replies'.">%d replies</item>
+    </plurals>
     <string name="stream_thread_separator">Start of a new thread</string>
     <!--Chat Screen-->
     <string name="stream_title_media">Select your photo or video</string>
