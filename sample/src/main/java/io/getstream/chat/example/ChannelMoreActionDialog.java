@@ -106,11 +106,6 @@ public class ChannelMoreActionDialog extends Dialog {
         channel.setImage("https://i.imgur.com/1Oe1TDf.jpg");
         Message message = new Message();
         message.setText(context.getString(R.string.stream_channel_update_message));
-        updateChannel();
-        dismiss();
-    }
-
-    private void updateChannel(Message message){
         channel.update(message, new ChannelCallback() {
             @Override
             public void onSuccess(ChannelResponse response) {
@@ -123,22 +118,9 @@ public class ChannelMoreActionDialog extends Dialog {
                 Log.d(TAG, "Channel Update Error: " + errMsg);
             }
         });
+        dismiss();
     }
 
-    private void updateChannel(){
-        channel.update(new ChannelCallback() {
-            @Override
-            public void onSuccess(ChannelResponse response) {
-                Utils.showMessage(context, context.getString(R.string.stream_channel_action_update_alert));
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Utils.showMessage(context, errMsg);
-                Log.d(TAG, "Channel Update Error: " + errMsg);
-            }
-        });
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
