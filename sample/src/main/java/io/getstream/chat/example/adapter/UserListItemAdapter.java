@@ -7,23 +7,24 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 
-import com.getstream.sdk.chat.rest.User;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.getstream.sdk.chat.StreamChat;
 
 import java.util.List;
 
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.ItemUserBinding;
+import io.getstream.chat.example.utils.UserConfig;
 
 public class UserListItemAdapter extends BaseAdapter {
 
-    private final String TAG = UserListItemAdapter.class.getSimpleName();
     private LayoutInflater layoutInflater;
-    private List<Object> users;
+    private List<UserConfig> users;
 
 
-    public UserListItemAdapter(Context context, List<Object> users) {
+    public UserListItemAdapter(Context context, List<UserConfig> users) {
         this.layoutInflater = LayoutInflater.from(context);
         this.users = users;
     }
@@ -45,18 +46,16 @@ public class UserListItemAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewDataBinding binding;
+        ItemUserBinding binding;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.item_user, null);
             binding = DataBindingUtil.bind(convertView);
             convertView.setTag(binding);
         } else {
-            binding = (ViewDataBinding) convertView.getTag();
+            binding = (ItemUserBinding) convertView.getTag();
         }
-        User user = (User) users.get(position);
-        ItemUserBinding userBinding = (ItemUserBinding) binding;
-        userBinding.setUser(user);
-
+        UserConfig user = users.get(position);
+        binding.setUser(user);
         return binding.getRoot();
     }
 }
