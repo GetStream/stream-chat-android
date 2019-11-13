@@ -6,7 +6,6 @@
     <string name="stream_yesterday">Ieri</string>
     <string name="stream_input_type_add_file">Aggiungi un file</string>
     <string name="stream_attachment_load_failed_unknown">Il caricamento non è riuscito a causa di un errore sconosciuto.</string>
-    <string name="stream_audio">Audio</string>
     <string name="stream_channel_offlineText">In attesa di rete ...</string>
     <string name="stream_channel_unknown_title">Canale senza nome</string>
     <string name="stream_delete_message">Questo messaggio è stato cancellato</string>
@@ -24,4 +23,17 @@
     <string name="stream_camera_permission_message">necessita dell\'accesso alla fotocamera e allo spazio di archiviazione per poter scattare foto e video. Si prega di abilitarlo in Impostazioni.</string>
     <string name="stream_channel_header_active">Attiva %s</string>
     <string name="stream_channel_header_active_now">proprio adesso</string>
+    <string name="stream_image">immagini</string>
+    <string name="stream_input_camera_title">Cattura immagini o video</string>
+    <string name="stream_last_message_attachment_video">video</string>
+    <string name="stream_message_failed_send">MESSAGGIO NON RIUSCITO ּ • FARE CLIC PER PROVARE DI NUOVO</string>
+    <string name="stream_message_invalid_command">INVIATO ּ • COMANDO NON VALIDO</string>
+    <string name="stream_you">(voi)</string>
+    <string name="stream_message_invalid_response">La risposta o il messaggio è vuoto.</string>
+    <string name="stream_no_file_error">Non ci sono file.</string>
+    <string name="stream_no_media_error">Non ci sono foto o video.</string>
+    <string name="stream_storage_permission_message">necessita dell\'accesso alla memoria per poter inviare e salvare foto, video, musica e altri file. Si prega di abilitarlo in Impostazioni.</string>
+    <string name="stream_take_photo_failed">Non riuscito a causa di un errore sconosciuto.</string>
+    <string name="stream_thread_separator">Inizio di una nuova discussione</string>
+    <string name="stream_video">video</string>
 </resources>

@@ -6,7 +6,6 @@
     <string name="stream_yesterday">Gestern</string>
     <string name="stream_input_type_add_file">Datei hinzufügen</string>
     <string name="stream_attachment_load_failed_unknown">Das Laden ist aufgrund eines unbekannten Fehlers fehlgeschlagen.</string>
-    <string name="stream_audio">Audio</string>
     <string name="stream_channel_offlineText">Warte auf Netzwerk…</string>
     <string name="stream_channel_unknown_title">Kanal ohne Namen</string>
     <string name="stream_delete_message">Diese Nachricht wurde gelöscht.</string>
@@ -24,4 +23,17 @@
     <string name="stream_camera_permission_message">benötigt Kamera- und Speicherzugriff, damit Sie Fotos und Videos aufnehmen können. Bitte aktivieren Sie es in den Einstellungen.</string>
     <string name="stream_channel_header_active">Aktiv %s</string>
     <string name="stream_channel_header_active_now">gerade jetzt</string>
+    <string name="stream_image">Bilder</string>
+    <string name="stream_input_camera_title">Bild oder Video aufnehmen</string>
+    <string name="stream_last_message_attachment_video">Video</string>
+    <string name="stream_message_failed_send">NACHRICHT FEHLGESCHLAGEN ּ • KLICKEN, UM WIEDER ZU VERSUCHEN</string>
+    <string name="stream_message_invalid_command">UNSENT ּ • UNGÜLTIGER BEFEHL</string>
+    <string name="stream_you">(Sie)</string>
+    <string name="stream_message_invalid_response">Antwort oder Nachricht ist leer.</string>
+    <string name="stream_no_file_error">Es gibt keine Datei.</string>
+    <string name="stream_no_media_error">Es gibt kein Foto oder Video.</string>
+    <string name="stream_storage_permission_message">"benötigt Speicherzugriff, damit Sie Fotos, Videos, Musik und andere Dateien senden und speichern können. Bitte aktivieren Sie es in den Einstellungen. "</string>
+    <string name="stream_take_photo_failed">Fehlgeschlagen aufgrund eines unbekannten Fehlers.</string>
+    <string name="stream_thread_separator">Start eines neuen Threads</string>
+    <string name="stream_video">Video</string>
 </resources>
