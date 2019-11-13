@@ -204,7 +204,8 @@ public class ClientTest {
                 eq(TEST_CHANNEL_ID),
                 eq(TEST_API_KEY),
                 eq(TEST_CLIENT_ID),
-                argThat(argument -> ((Map)argument.get("data")).get("name").equals(channel.getName())));
+                argThat(argument -> argument.getData().get("name").equals(channel.getName())
+                        && argument.getUpdateMessage().getText().equals(updateMessage.getText())));
         verify(callback).onSuccess(response);
     }
 
