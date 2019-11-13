@@ -423,7 +423,7 @@ public class Client implements WSResponseHandler {
      * @param user     the user to set as current
      * @param provider the Token Provider used to obtain the auth token for the user
      */
-    public synchronized void setUser(User user, @NotNull final TokenProvider provider) {
+    public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
         if (user == null) {
             Log.w(TAG, "user can't be null. If you want to reset current user you need to call client.disconnect()");
             return;
