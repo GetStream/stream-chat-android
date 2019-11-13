@@ -265,7 +265,7 @@ public class ChannelState {
             List<User> top3 = users.subList(0, Math.min(3, users.size()));
             List<String> usernames = new ArrayList<>();
             for (User u : top3) {
-                if(u == null) continue;
+                if (u == null) continue;
                 usernames.add(u.getName());
             }
 
@@ -368,9 +368,10 @@ public class ChannelState {
         return lastMessage;
     }
 
-    public void setLastMessage(@Nullable  Message lastMessage) {
-        if(lastMessage == null) return;
-        if (lastMessage.getDeletedAt() != null){
+    public void setLastMessage(@Nullable Message lastMessage) {
+        if (lastMessage == null) return;
+
+        if (lastMessage.getDeletedAt() != null) {
             this.lastMessage = computeLastMessage();
             return;
         }
@@ -425,15 +426,19 @@ public class ChannelState {
     }
 
     private void addOrUpdateMessage(Message newMessage) {
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            if (messages.get(i).getId().equals(newMessage.getId())) {
-                messages.set(i, newMessage);
-                return;
+        if (messages.size() > 0) {
+            for (int i = messages.size() - 1; i >= 0; i--) {
+                if (messages.get(i).getId().equals(newMessage.getId())) {
+                    messages.set(i, newMessage);
+                    return;
+                }
+                if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
+                    messages.add(newMessage);
+                    return;
+                }
             }
-            if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
-                messages.add(newMessage);
-                return;
-            }
+        } else {
+            messages.add(newMessage);
         }
     }
 
