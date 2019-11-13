@@ -423,14 +423,16 @@ public class Client implements WSResponseHandler {
      * @param user     the user to set as current
      * @param provider the Token Provider used to obtain the auth token for the user
      */
-    public synchronized void setUser(User user, final TokenProvider provider) {
-
+    public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
+        if (user == null) {
+            Log.w(TAG, "user can't be null. If you want to reset current user you need to call client.disconnect()");
+            return;
+        }
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
-        } else {
-            Log.d(TAG, "setting user: " + user.getId());
         }
+        Log.d(TAG, "setting user: " + user.getId());
 
         state.setCurrentUser(user);
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
