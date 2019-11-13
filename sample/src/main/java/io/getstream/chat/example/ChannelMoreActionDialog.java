@@ -133,6 +133,7 @@ public class ChannelMoreActionDialog extends Dialog {
         dismiss();
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         dismiss();

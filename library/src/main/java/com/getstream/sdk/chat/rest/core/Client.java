@@ -64,6 +64,7 @@ import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
 import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -81,6 +82,7 @@ import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -822,15 +824,10 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                Map<String, Object> body = new HashMap<>();
-                // check reserved field
-                channel.getExtraData().remove("members");
-                body.put("data",channel.getExtraData());
-                if (updateMessage != null) {
-                    String str = GsonConverter.Gson().toJson(updateMessage);
-                    body.put("message", GsonConverter.Gson().fromJson(str, Map.class));
-                }
-                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID, body)
+                UpdateChannelRequest request = new UpdateChannelRequest(channel.getExtraData(), updateMessage);
+                Log.d(TAG, "Request: " + new Gson().toJson(request));
+                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
+                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
