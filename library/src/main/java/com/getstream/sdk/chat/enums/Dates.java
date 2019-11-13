@@ -1,9 +1,12 @@
 package com.getstream.sdk.chat.enums;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
+
 public enum Dates {
-    TODAY("Today"),
-    YESTERDAY("Yesterday"),
-    JUST_NOW("Just Now");
+    TODAY(StreamChat.getContext().getString(R.string.stream_today)),
+    YESTERDAY(StreamChat.getContext().getString(R.string.stream_yesterday)),
+    JUST_NOW(StreamChat.getContext().getString(R.string.stream_just_now));
 
     public final String label;
 
