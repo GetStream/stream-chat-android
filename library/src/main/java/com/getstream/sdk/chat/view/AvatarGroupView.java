@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -151,11 +153,9 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     }
 
     private void configAvatar(String image, String initial) {
-        CircularImageView imageView = new CircularImageView(context);
-        imageView.setBorderColor(style.getAvatarBorderColor());
-        imageView.setPlaceholder(initial,
-                style.getAvatarBackGroundColor(),
-                style.getAvatarInitialTextColor());
+
+        ImageView imageView = new ImageView(context);
+        imageView.setBackgroundColor(Color.RED);
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
@@ -163,15 +163,12 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 
-        RelativeLayout.LayoutParams params;
-        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (style.getAvatarInitialTextSize()),
-                style.getAvatarInitialTextStyle());
-        params = new RelativeLayout.LayoutParams(
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 (style.getAvatarWidth()),
                 (style.getAvatarHeight()));
         imageView.setLayoutParams(params);
-        this.addView(imageView);
+
+        addView(imageView);
     }
 
 }
