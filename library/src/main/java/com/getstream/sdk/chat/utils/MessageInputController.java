@@ -466,7 +466,7 @@ public class MessageInputController {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
+        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_input_type_command : R.string.stream_input_type_auto_mention);
         binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
         setCommandMentionListItemAdapter(isCommand);
