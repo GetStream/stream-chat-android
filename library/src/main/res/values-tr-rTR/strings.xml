@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">Geçersiz url nedeniyle yükleme başarısız oldu.</string>
+    <string name="stream_just_now">Şu anda</string>
+    <string name="stream_today">Bugün</string>
+</resources>

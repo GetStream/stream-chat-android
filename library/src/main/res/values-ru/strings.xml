@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">Загрузка не удалась из-за неверного URL.</string>
+    <string name="stream_just_now">Прямо сейчас</string>
+    <string name="stream_today">сегодня</string>
+</resources>

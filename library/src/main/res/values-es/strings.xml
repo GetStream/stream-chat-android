@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">La carga falló debido a la URL no válida.</string>
+    <string name="stream_just_now">Justo ahora</string>
+    <string name="stream_today">Hoy</string>
+</resources>

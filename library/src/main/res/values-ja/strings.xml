@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>
+    <string name="stream_just_now">ちょうど今</string>
+    <string name="stream_today">今日</string>
+</resources>

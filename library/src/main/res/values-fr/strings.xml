@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">Le chargement a échoué en raison de l\'URL invalide.</string>
+    <string name="stream_just_now">Juste maintenant</string>
+    <string name="stream_today">Aujourd\'hui</string>
+</resources>

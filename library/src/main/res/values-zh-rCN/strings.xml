@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">由于网址无效，加载失败。</string>
+    <string name="stream_just_now">现在</string>
+    <string name="stream_today">今天</string>
+</resources>

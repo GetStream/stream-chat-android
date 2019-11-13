@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">Das Laden ist aufgrund der ungültigen URL fehlgeschlagen.</string>
+    <string name="stream_just_now">Gerade jetzt</string>
+    <string name="stream_today">Heute</string>
+</resources>
