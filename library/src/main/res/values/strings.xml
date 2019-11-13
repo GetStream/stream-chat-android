@@ -16,6 +16,12 @@
     <string name="stream_action_create_channel">Create activeChannel</string>
     <!--MessageInput-->
     <string name="stream_input_hint">Write a message</string>
+    <string name="stream_input_type_add_file">Add a file</string>
+    <string name="stream_input_type_edit_message">Edit a message</string>
+    <string name="stream_input_type_select_gallery">Select your photo or video</string>
+    <string name="stream_input_type_select_file">Select your file</string>
+    <string name="stream_input_type_command">Commands matching</string>
+    <string name="stream_input_type_auto_mention">Searching for people</string>
 
     <string name="stream_camera_permission_message"> needs camera and storage access so that you can take photos and videos.\nPlease enable it in Settings.</string>
     <string name="stream_storage_permission_message"> needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
@@ -24,25 +30,34 @@
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
     <string name="stream_input_upload_file">Upload a file</string>
-
+    <!-- Folder Name -->
+    <string name="stream_image">Images</string>
+    <string name="stream_video">Video</string>
+    <string name="stream_audio">Audio</string>
+    <string name="stream_document">Documents</string>
     <!-- Message Status -->
     <string name="stream_delete_message">This message was deleted.</string>
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
     <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <string name="stream_message_invalid_response">Response or message is empty.</string>
     <!--Thread-->
-    <string name="stream_reply_count">%d reply.</string>
-    <string name="stream_replies_count">%d replies.</string>
+    <plurals name="stream_reply_count">
+        <item quantity="one" translation_description="Text indicating when the message has a reply, singular.'1 reply'.">%d reply</item>
+        <item quantity="other" translation_description="Text indicating when the message has replies, plural.'3 replies'.">%d replies</item>
+    </plurals>
     <string name="stream_thread_separator">Start of a new thread</string>
     <!--Chat Screen-->
     <string name="stream_title_media">Select your photo or video</string>
     <string name="stream_title_file">Select your file</string>
     <string name="stream_channel_unknown_title">Channel without name</string>
     <string name="stream_channel_offlineText">Waiting for network&#8230;</string>
+    <string name="stream_channel_header_active">Active %s</string>
+    <string name="stream_channel_header_active_now">just now</string>
     <!--Error-->
     <string name="stream_title_error">Error!</string>
     <string name="stream_no_media_error">There is no photo or video.</string>
     <string name="stream_no_file_error">There is no file.</string>
+    <string name="stream_take_photo_failed">Failed due to an unknown error.</string>
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>

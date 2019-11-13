@@ -25,9 +25,9 @@
             android:paddingStart="20dp"
             android:paddingBottom="20dp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -48,8 +48,8 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_title"
                 app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
-            <TextView
-                android:id="@+id/tv_close"
+            <Button
+                android:id="@+id/btn_close"
                 style="@style/text"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
@@ -65,7 +65,6 @@
             android:id="@+id/cl_add_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
             android:paddingBottom="10dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/ll_composer"
@@ -77,8 +76,10 @@
                 android:id="@+id/ll_media"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:paddingStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -121,8 +122,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:paddingStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ll_media">
 
@@ -165,8 +168,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
+                android:background="?attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:paddingStart="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ll_camera">

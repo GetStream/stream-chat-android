@@ -46,4 +46,25 @@ public class GetDeletedOrMentionedTextTest {
         long videoLength = 216844;
         assertEquals("60:14:04", StringUtility.convertVideoLength(videoLength));
     }
+
+    @org.junit.jupiter.api.Test
+    void convertMentionTextTest() {
+        String text;
+        String userName = "Adrian";
+
+        text = "@";
+        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@A";
+        assertEquals("@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "This@";
+        assertEquals("This@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "This a @A";
+        assertEquals("This a @Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@This a @";
+        assertEquals("@@@This a @Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@This a @@@@";
+        assertEquals("@@@This a @@@@Adrian", StringUtility.convertMentionedText(text, userName));
+        text = "@@@Adrian a @@This is @A";
+        assertEquals("@@@Adrian a @@This is @Adrian", StringUtility.convertMentionedText(text, userName));
+    }
 }

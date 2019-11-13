@@ -152,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
             // open your user profile
         });
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
-        binding.ivSwitchUser.setOnClickListener(view -> showSwitchUserDialog());
     }
 
     // region create new channel

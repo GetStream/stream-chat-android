@@ -2,12 +2,11 @@ package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -76,7 +75,7 @@ public class MessageInputController {
 
         binding.getRoot().setBackgroundResource(R.drawable.stream_round_thread_toolbar);
         binding.clTitle.setVisibility(View.VISIBLE);
-        binding.tvClose.setVisibility(View.VISIBLE);
+        binding.btnClose.setVisibility(View.VISIBLE);
 
         binding.clAddFile.setVisibility(View.GONE);
         binding.clCommand.setVisibility(View.GONE);
@@ -95,7 +94,7 @@ public class MessageInputController {
                 break;
             case COMMAND:
             case MENTION:
-                binding.tvClose.setVisibility(View.GONE);
+                binding.btnClose.setVisibility(View.GONE);
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
@@ -400,36 +399,22 @@ public class MessageInputController {
     // endregion
 
     // region Camera
-    public void progressCapturedMedia(Context context, Uri contentUri, boolean isImage) {
-        Cursor cursor = null;
-        try {
-            String[] proj = isImage ? new String[]{MediaStore.Images.Media.DATA} : new String[]{MediaStore.Video.Media.DATA, MediaStore.Video.Media.RESOLUTION, MediaStore.Video.VideoColumns.DURATION};
-            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-            int column_index = isImage ? cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA) : cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA);
-            cursor.moveToFirst();
-            File file = new File(cursor.getString(column_index));
-            if (file.exists()) {
-                convertAttachment(file, cursor, isImage);
-            } else {
-                Log.d(TAG, "No Captured Video");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
 
-    private void convertAttachment(File file, Cursor cursor, boolean isImage) {
+    public void progressCapturedMedia(File file, boolean isImage) {
+        convertAttachment(file, isImage);
+    }
+    private void convertAttachment(File file, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
         attachment.config.setSelected(true);
         if (isImage) {
             attachment.setType(ModelType.attach_image);
         } else {
-            float videolengh = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(context, Uri.fromFile(file));
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long videolengh = Long.parseLong(time );
+            retriever.release();
             attachment.config.setVideoLengh((int) (videolengh / 1000));
             attachment.setType(ModelType.attach_file);
             attachment.setMime_type(ModelType.attach_mime_mp4);
@@ -460,7 +445,7 @@ public class MessageInputController {
             closeCommandView();
         }else if (text.length() == 1) {
             onClickCommandViewOpen(text.startsWith("/"));
-        } else if (text.endsWith("@") && binding.clCommand.getVisibility() != View.VISIBLE) {
+        } else if (text.endsWith("@")) {
             onClickCommandViewOpen(false);
         } else {
             setCommandsMentionUsers(text);
@@ -492,20 +477,9 @@ public class MessageInputController {
                 binding.etMessage.setText("/" + ((Command) commands.get(position)).getName() + " ");
             else {
                 String messageStr = binding.etMessage.getText().toString();
-                String[] names = messageStr.split("@");
-                String messageStr_ = "";
-                int index;
-                if (messageStr.substring(messageStr.length() -1).equals("@"))
-                    index = names.length;
-                else
-                    index = names.length - 1;
-
-                for (int i = 0; i < index; i++){
-                    if (TextUtils.isEmpty(names[i])) continue;
-                    messageStr_ += "@" + names[i];
-                }
-                messageStr_ += "@";
-                binding.etMessage.setText(messageStr_ + ((User) commands.get(position)).getName() + " ");
+                String userName = ((User) commands.get(position)).getName();
+                String converted = StringUtility.convertMentionedText(messageStr, userName);
+                binding.etMessage.setText(converted);
             }
             binding.etMessage.setSelection(binding.etMessage.getText().length());
             closeCommandView();
@@ -533,7 +507,8 @@ public class MessageInputController {
             binding.tvCommand.setText(commandStr);
         } else {
             String[] names = string.split("@");
-            setMentionUsers(names[names.length - 1]);
+            if (names.length > 0)
+                setMentionUsers(names[names.length - 1]);
         }
     }
 

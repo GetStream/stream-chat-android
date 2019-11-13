@@ -284,6 +284,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         if (isDeletedOrFailedMessage()
                 || message == null
+                || channelState.getLastMessage() == null
                 || TextUtils.isEmpty(message.getId())
                 || !messageListItem.getPositions().contains(MessageViewHolderFactory.Position.BOTTOM)
                 || !messageListItem.getMessageReadBy().isEmpty()
@@ -485,18 +486,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
+        int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
                 || isDeletedOrFailedMessage()
                 || (position == 0 && message.isThreadParent())
-                || message.getReplyCount() == 0
+                || replyCount == 0
                 || isThread()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
 
         cl_reply.setVisibility(View.VISIBLE);
-        tv_reply.setText(message.getReplyCount() + (message.getReplyCount() == 1 ? " reply" : " replies"));
+        tv_reply.setText(tv_reply.getContext().getResources().getQuantityString(R.plurals.stream_reply_count, replyCount, replyCount));
 
         cl_reply.setOnClickListener(view -> {
             if (messageClickListener != null)
