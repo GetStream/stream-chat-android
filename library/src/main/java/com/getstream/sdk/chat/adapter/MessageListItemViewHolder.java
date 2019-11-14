@@ -491,7 +491,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
                 || isDeletedOrFailedMessage()
                 || (position == 0 && TextUtils.isEmpty(message.getId()))
-                || (position == 0 && message.isThreadParent())
                 || replyCount == 0
                 || isThread()) {
             cl_reply.setVisibility(View.GONE);
