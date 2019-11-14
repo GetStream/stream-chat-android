@@ -10,6 +10,7 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
+            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
             app:tabIconTint="@drawable/tab_icon_color_selector"
             android:layout_height="?attr/actionBarSize"

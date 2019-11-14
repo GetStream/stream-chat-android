@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import android.util.Log;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -40,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
         return adapter;
     }
 
-    private @DrawableRes int getTabIcon(int position){
+    private int getTabIcon(int position){
         if (position == 0)
-            return R.drawable.ic_image;
+            return R.drawable.ic_chat;
         else
-            return R.drawable.ic_file;
+            return R.drawable.ic_person;
     }
 
     private String getTabTitle(int position){
