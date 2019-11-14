@@ -3,17 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelListViewModel" />
-
-        <variable
-            name="isSwitchedUser"
-            type="Boolean" />
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,44 +14,6 @@
             app:tabIconTint="@drawable/tab_icon_color_selector"
             android:layout_height="?attr/actionBarSize"
             app:layout_constraintTop_toTopOf="parent"/>
-
-        <com.getstream.sdk.chat.view.ChannelListView
-            android:id="@+id/channelList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/stream_gray_background"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tabs" />
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:isGone="@{!safeUnbox(viewModel.loading)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ProgressBar
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginBottom="16dp"
-            app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-        <Button
-            android:id="@+id/iv_add"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="30dp"
-            android:background="@drawable/add_ripple_selector"
-            app:isGone="@{safeUnbox(viewModel.loading)}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager"
