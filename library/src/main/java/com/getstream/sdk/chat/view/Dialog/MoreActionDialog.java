@@ -58,13 +58,7 @@ public class MoreActionDialog extends Dialog {
 
 
     public MoreActionDialog setMessage(Message message) {
-        // Check Thread parent Message
-        if (viewModel.isThread() && TextUtils.isEmpty(message.getParentId())){
-            this.message = message.copy();
-            this.message.setId(viewModel.getThreadParentMessage().getValue().getId());
-        }else
-            this.message = message;
-
+        this.message = message;
         init();
         return this;
     }
