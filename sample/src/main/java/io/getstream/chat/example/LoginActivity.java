@@ -21,7 +21,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     private UserListItemAdapter adapter;
-    private List<UserConfig>users;
     private ListView lv_users;
 
     @Override
@@ -43,11 +42,10 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        users = UserStorage.getUsers();
-        adapter = new UserListItemAdapter(this, users);
+        adapter = new UserListItemAdapter(this, UserStorage.getUsers());
         lv_users.setAdapter(adapter);
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l)-> {
-            UserStorage.setCurrentUser(users.get(position).getId());
+            UserStorage.setCurrentUser(UserStorage.getUsers().get(position).getId());
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();

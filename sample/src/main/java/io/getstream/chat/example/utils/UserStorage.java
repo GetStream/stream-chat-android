@@ -18,17 +18,20 @@ public class UserStorage {
     private static Context context;
     private static SharedPreferences preferences;
     private static List<UserConfig>users;
+
     private static final String USER_DATA_FILENAME = "users-config.json";
+    private static final String CURRENT_USER_ID = "current-user-id";
+    private static final String APP_PREFERENCE = "AppPreferences";
 
     public static void init(Context mContext) {
         context = mContext;
-        preferences = context.getSharedPreferences("AppPreferences", Activity.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(APP_PREFERENCE, Activity.MODE_PRIVATE);
         parseJson();
     }
 
     @Nullable
     public static UserConfig getCurrentUser() {
-        String currentUserId = preferences.getString("current-user-id", null);
+        String currentUserId = preferences.getString(CURRENT_USER_ID, null);
         if (currentUserId == null || users == null)
             return null;
 
@@ -41,16 +44,12 @@ public class UserStorage {
     }
 
     public static void setCurrentUser(String userId){
-        preferences.edit().putString("current-user-id", userId).apply();
+        preferences.edit().putString(CURRENT_USER_ID, userId).apply();
     }
 
     @Nullable
     public static List<UserConfig> getUsers() {
         return users;
-    }
-
-    public static boolean isLoggedIn() {
-        return preferences.getBoolean("logged-in", false);
     }
 
     public static void logout() {
