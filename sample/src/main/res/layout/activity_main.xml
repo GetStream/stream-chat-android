@@ -20,6 +20,7 @@
         tools:context="io.getstream.chat.example.MainActivity">
 
 
+
         <com.getstream.sdk.chat.view.ChannelListView
             android:id="@+id/channelList"
             android:layout_width="match_parent"
@@ -58,20 +59,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/ll_bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:text="@string/tab_channel"/>
-        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

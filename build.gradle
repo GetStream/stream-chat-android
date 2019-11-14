@@ -5,6 +5,26 @@ buildscript {
         buildToolsVersion = "28.0.3"
         minSdkVersion = 21
         compileSdkVersion = 28
+        appCompatVersion = '1.1.0'
+        constraintLayoutVersion = '2.0.0-beta2'
+        espressoVersion = '3.2.0'
+        glideVersion = '4.9.0'
+        googleServiceVersion = '4.3.2'
+        gradleVersion = '3.5.2'
+        gradlePluginVersion = '2.1'
+        crashlyticsVersion = '2.10.1'
+        fabricVersion = '1.31.1'
+        firebaseMessagingVersion = '20.0.0'
+        firebaseCoreVersion = '17.2.0'
+        jacocoVersion = '0.1.4'
+        junitVersion = '4.12'
+        legacySupportVersion = '1.0.0'
+        lifecycleVersion = '2.1.0'
+        mannodermausVersion = '1.5.1.0'
+        materialVersion = '1.1.0-alpha09'
+        retrofitVersion = '2.5.0'
+        recyclerViewVersion = '1.0.0'
+        runnerVersion = '1.2.0'
     }
 
     repositories {
@@ -16,13 +36,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.2'
-//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-        classpath 'com.google.gms:google-services:4.3.2'
-        classpath 'io.fabric.tools:gradle:1.31.1'  // Crashlytics plugin
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.5.1.0" // jUnit5 plugin
-        classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
+        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
+        classpath "com.google.gms:google-services:$googleServiceVersion"
+        classpath "io.fabric.tools:gradle:$fabricVersion"  // Crashlytics plugin
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion" // jUnit5 plugin
+        classpath "com.dicedmelon.gradle:jacoco-android:$jacocoVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
