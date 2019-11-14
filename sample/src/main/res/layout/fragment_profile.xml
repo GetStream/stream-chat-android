@@ -5,16 +5,12 @@
     <data>
 
         <variable
-            name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelListViewModel" />
+            name="image"
+            type="String" />
 
         <variable
-            name="isSwitchedUser"
-            type="Boolean" />
-
-        <variable
-            name="user"
-            type="com.getstream.sdk.chat.rest.User" />
+            name="name"
+            type="String" />
     </data>
 
     <FrameLayout
@@ -30,28 +26,30 @@
                 android:id="@+id/avatar"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                app:setCircleImage="@{user.image}"
+                android:layout_marginTop="60dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:setCircleImage="@{image}" />
 
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@{name}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:text="@{user.name}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/avatar" />
 
             <Button
                 android:id="@+id/btn_log_out"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="20dp"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
                 android:text="@string/logout"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"

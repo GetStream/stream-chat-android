@@ -11,17 +11,19 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:padding="5dp">
 
         <ImageView
             android:id="@+id/avatar"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
             app:setCircleImage="@{user.image}"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_username"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_username" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_username"
@@ -33,7 +35,8 @@
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/avatar"
+            app:layout_constraintTop_toTopOf="@+id/avatar" />
 
         <TextView
             android:id="@+id/tv_id"
@@ -42,9 +45,9 @@
             android:layout_margin="5dp"
             android:text="@{@string/user_id(user.id)}"
             android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_username"
+            app:layout_constraintBottom_toBottomOf="@+id/avatar"
             app:layout_constraintStart_toEndOf="@+id/tv_username"
-            app:layout_constraintTop_toTopOf="@+id/tv_username" />
+            app:layout_constraintTop_toTopOf="@+id/avatar" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
