@@ -14,7 +14,7 @@
         android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
         android:theme="@style/StreamChat.Themes.Dark">
-        <activity android:name=".LoginActivity" android:theme="@style/Theme.AppCompat.Light" android:label="Login">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
