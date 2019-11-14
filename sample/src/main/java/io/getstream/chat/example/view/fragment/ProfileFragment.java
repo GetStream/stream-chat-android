@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -32,16 +31,10 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
+        Client client = StreamChat.getInstance(getContext());
+        binding.setUser(client.getUser());
+        binding.btnLogOut.setOnClickListener(view -> logOut());
 
-        if (UserStorage.getCurrentUser() == null){
-            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
-        }else {
-            String USER_NAME = UserStorage.getCurrentUser().getName();
-            String USER_IMAGE = UserStorage.getCurrentUser().getImage();
-            binding.setName(USER_NAME);
-            binding.setImage(USER_IMAGE);
-            binding.btnLogOut.setOnClickListener(view -> logOut());
-        }
         return binding.getRoot();
     }
 

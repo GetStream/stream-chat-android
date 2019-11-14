@@ -5,12 +5,8 @@
     <data>
 
         <variable
-            name="image"
-            type="String" />
-
-        <variable
-            name="name"
-            type="String" />
+            name="user"
+            type="com.getstream.sdk.chat.rest.User" />
     </data>
 
     <FrameLayout
@@ -30,14 +26,14 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:setCircleImage="@{image}" />
+                app:setCircleImage="@{user.image}" />
 
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@{name}"
+                android:text="@{user.name}"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"

@@ -53,5 +53,4 @@ public class MainActivity extends AppCompatActivity {
             return getString(R.string.tab_profile);
     }
 
-    // endregion
 }
