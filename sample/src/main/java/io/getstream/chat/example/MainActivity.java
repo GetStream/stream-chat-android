@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -158,6 +159,28 @@ public class MainActivity extends AppCompatActivity {
             // open your user profile
         });
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
+        binding.tabs.addTab(binding.tabs.newTab().setIcon(R.drawable.ic_image).setText(getString(R.string.tab_channel)));
+        binding.tabs.addTab(binding.tabs.newTab().setIcon(R.drawable.ic_file).setText(getString(R.string.tab_profile)));
+        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     // region create new channel

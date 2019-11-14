@@ -19,7 +19,12 @@
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.MainActivity">
 
-
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            app:tabIconTint="@drawable/tab_icon_color_selector"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <com.getstream.sdk.chat.view.ChannelListView
             android:id="@+id/channelList"
@@ -27,7 +32,7 @@
             android:layout_height="0dp"
             android:background="@color/stream_gray_background"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/tabs" />
 
         <ProgressBar
             android:layout_width="wrap_content"
