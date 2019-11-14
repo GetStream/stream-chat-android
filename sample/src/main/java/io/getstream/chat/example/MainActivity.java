@@ -3,17 +3,13 @@ package io.getstream.chat.example;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
-
 import io.getstream.chat.example.adapter.ViewPagerAdapter;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
-
 
 /**
  * This activity shows a list of channels
@@ -21,6 +17,7 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    MenuItem prevMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,29 +25,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.viewPager.setAdapter(createCardAdapter());
-        new TabLayoutMediator(binding.tabs, binding.viewPager,(@NonNull TabLayout.Tab tab, int position)-> {
-            tab.setIcon(getTabIcon(position));
-            tab.setText(getTabTitle(position));
-                }).attach();
+        binding.tabs.setOnNavigationItemSelectedListener(item -> {
+            int position = 0;
+                        switch (item.getItemId()) {
+                            case R.id.action_channel:
+                                binding.viewPager.setCurrentItem(0);
+                                position = 0;
+                                break;
+                            case R.id.action_profile:
+                                binding.viewPager.setCurrentItem(1);
+                                position = 1;
+                                break;
+                        }
+
+                        if (prevMenuItem != null)
+                            prevMenuItem.setChecked(false);
+                        else
+                            binding.tabs.getMenu().getItem(0).setChecked(false);
+
+                        binding.tabs.getMenu().getItem(position).setChecked(true);
+                        prevMenuItem = binding.tabs.getMenu().getItem(position);
+                        return false;
+                });
     }
 
     private ViewPagerAdapter createCardAdapter() {
         ViewPagerAdapter adapter = new ViewPagerAdapter(this);
         return adapter;
-    }
-
-    private int getTabIcon(int position){
-        if (position == 0)
-            return R.drawable.ic_chat;
-        else
-            return R.drawable.ic_person;
-    }
-
-    private String getTabTitle(int position){
-        if (position == 0)
-            return getString(R.string.tab_channel);
-        else
-            return getString(R.string.tab_profile);
     }
 
 }
