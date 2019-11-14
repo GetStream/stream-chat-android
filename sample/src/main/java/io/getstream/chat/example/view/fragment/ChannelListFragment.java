@@ -37,6 +37,7 @@ import java.util.List;
 
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
+import io.getstream.chat.example.utils.UserStorage;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -126,11 +127,10 @@ public class ChannelListFragment extends Fragment {
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getContext());
 
-        Intent intent = getActivity().getIntent();
-        String USER_ID = intent.getStringExtra("id");
-        String USER_TOKEN = intent.getStringExtra("token");
-        String USER_NAME = intent.getStringExtra("name");
-        String USER_IMAGE = intent.getStringExtra("image");
+        String USER_ID = UserStorage.getCurrentUser().getId();
+        String USER_TOKEN = UserStorage.getCurrentUser().getToken();
+        String USER_NAME = UserStorage.getCurrentUser().getName();
+        String USER_IMAGE = UserStorage.getCurrentUser().getImage();
 
         Crashlytics.setUserIdentifier(USER_ID);
         if (offlineEnabled) {

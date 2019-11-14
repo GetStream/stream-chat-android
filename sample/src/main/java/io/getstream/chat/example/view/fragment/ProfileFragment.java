@@ -9,12 +9,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.Client;
 
 import io.getstream.chat.example.LoginActivity;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
+import io.getstream.chat.example.utils.UserStorage;
 
 public class ProfileFragment extends Fragment {
 
@@ -31,21 +33,27 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
 
-        Intent i = getActivity().getIntent();
-        String USER_NAME = i.getStringExtra("name");
-        String USER_IMAGE = i.getStringExtra("image");
-        binding.setName(USER_NAME);
-        binding.setImage(USER_IMAGE);
-        binding.btnLogOut.setOnClickListener(view -> {
-            Client client = StreamChat.getInstance(getContext());
-            client.disconnect();
-            Intent intent = new Intent(getContext(), LoginActivity.class);
-            startActivity(intent);
-            getActivity().finish();
-        });
+        if (UserStorage.getCurrentUser() == null){
+            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+        }else {
+            String USER_NAME = UserStorage.getCurrentUser().getName();
+            String USER_IMAGE = UserStorage.getCurrentUser().getImage();
+            binding.setName(USER_NAME);
+            binding.setImage(USER_IMAGE);
+            binding.btnLogOut.setOnClickListener(view -> logOut());
+        }
         return binding.getRoot();
     }
 
+    public void logOut(){
+        UserStorage.logout();
+        Client client = StreamChat.getInstance(getContext());
+        client.disconnect();
+
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
 
 
     @Override

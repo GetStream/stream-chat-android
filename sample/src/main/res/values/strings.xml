@@ -4,5 +4,5 @@
     <string name="tab_profile">Profile</string>
     <string name="user_id">(%s)</string>
     <string name="logout">Logout</string>
-
+    <string name="failed_load_json">Failed to load User Data.</string>
 </resources>
