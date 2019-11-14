@@ -3,7 +3,6 @@
     <string name="tab_channel">Channels</string>
     <string name="tab_profile">Profile</string>
     <string name="user_id">(%s)</string>
+    <string name="logout">Logout</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
