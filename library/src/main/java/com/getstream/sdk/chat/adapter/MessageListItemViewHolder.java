@@ -486,18 +486,20 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configReplyView() {
+        int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
                 || isDeletedOrFailedMessage()
                 || (position == 0 && TextUtils.isEmpty(message.getId()))
-                || message.getReplyCount() == 0
+                || (position == 0 && message.isThreadParent())
+                || replyCount == 0
                 || isThread()) {
             cl_reply.setVisibility(View.GONE);
             return;
         }
 
         cl_reply.setVisibility(View.VISIBLE);
-        tv_reply.setText(message.getReplyCount() + (message.getReplyCount() == 1 ? " reply" : " replies"));
+        tv_reply.setText(tv_reply.getContext().getResources().getQuantityString(R.plurals.stream_reply_count, replyCount, replyCount));
 
         cl_reply.setOnClickListener(view -> {
             if (messageClickListener != null)
