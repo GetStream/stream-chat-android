@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.viewpager2.widget.ViewPager2;
 
 import io.getstream.chat.example.adapter.ViewPagerAdapter;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
@@ -26,27 +27,31 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.viewPager.setAdapter(createCardAdapter());
         binding.tabs.setOnNavigationItemSelectedListener(item -> {
-            int position = 0;
-                        switch (item.getItemId()) {
-                            case R.id.action_channel:
-                                binding.viewPager.setCurrentItem(0);
-                                position = 0;
-                                break;
-                            case R.id.action_profile:
-                                binding.viewPager.setCurrentItem(1);
-                                position = 1;
-                                break;
-                        }
+            switch (item.getItemId()) {
+                case R.id.action_channel:
+                    binding.viewPager.setCurrentItem(0);
+                    break;
+                case R.id.action_profile:
+                    binding.viewPager.setCurrentItem(1);
+                    break;
+            }
 
-                        if (prevMenuItem != null)
-                            prevMenuItem.setChecked(false);
-                        else
-                            binding.tabs.getMenu().getItem(0).setChecked(false);
+            return false;
+        });
 
-                        binding.tabs.getMenu().getItem(position).setChecked(true);
-                        prevMenuItem = binding.tabs.getMenu().getItem(position);
-                        return false;
-                });
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                if (prevMenuItem != null)
+                    prevMenuItem.setChecked(false);
+                else
+                    binding.tabs.getMenu().getItem(0).setChecked(false);
+
+                binding.tabs.getMenu().getItem(position).setChecked(true);
+                prevMenuItem = binding.tabs.getMenu().getItem(position);
+            }
+        });
     }
 
     private ViewPagerAdapter createCardAdapter() {
