@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -27,12 +29,14 @@ import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import io.getstream.chat.example.adapter.ViewPagerAdapter;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
@@ -161,26 +165,29 @@ public class MainActivity extends AppCompatActivity {
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
         binding.tabs.addTab(binding.tabs.newTab().setIcon(R.drawable.ic_image).setText(getString(R.string.tab_channel)));
         binding.tabs.addTab(binding.tabs.newTab().setIcon(R.drawable.ic_file).setText(getString(R.string.tab_profile)));
-        binding.tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
+        binding.viewPager.setAdapter(createCardAdapter());
+        new TabLayoutMediator(binding.tabs, binding.viewPager,(@NonNull TabLayout.Tab tab, int position)-> {
+            tab.setIcon(getTabIcon(position));
+            tab.setText(getTabTitle(position));
+                }).attach();
+    }
+    private ViewPagerAdapter createCardAdapter() {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(this);
+        return adapter;
+    }
 
-                } else {
+    private @DrawableRes int getTabIcon(int position){
+        if (position == 0)
+            return R.drawable.ic_image;
+        else
+            return R.drawable.ic_file;
+    }
 
-                }
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
+    private String getTabTitle(int position){
+        if (position == 0)
+            return getString(R.string.tab_channel);
+        else
+            return getString(R.string.tab_profile);
     }
 
     // region create new channel

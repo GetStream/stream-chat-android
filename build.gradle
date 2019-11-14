@@ -16,6 +16,7 @@ buildscript {
         fabricVersion = '1.31.1'
         firebaseMessagingVersion = '20.0.0'
         firebaseCoreVersion = '17.2.0'
+        fragmentVersion = '1.1.0-alpha09'
         jacocoVersion = '0.1.4'
         junitVersion = '4.12'
         legacySupportVersion = '1.0.0'
@@ -25,6 +26,7 @@ buildscript {
         retrofitVersion = '2.5.0'
         recyclerViewVersion = '1.0.0'
         runnerVersion = '1.2.0'
+        viewPagerVersion = '1.0.0-rc01'
     }
 
     repositories {
