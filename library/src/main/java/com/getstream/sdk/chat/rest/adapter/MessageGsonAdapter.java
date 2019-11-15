@@ -27,6 +27,14 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
 
         HashMap<String, Object> data = new HashMap<>();
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
+        /*
+         * When serializing Message if the message object is null,
+         * this TypeAdapter should not be called, however currently called this function.
+         * Added null check to prevent NPE if null.
+         *
+         * This issue was before Gson 2.4 but currently we are using the latest version.
+         *      https://stackoverflow.com/a/55884142/798165
+         */
         if (message == null){
             adapter.write(writer, data);
             return;
