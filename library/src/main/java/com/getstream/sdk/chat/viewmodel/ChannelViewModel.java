@@ -969,6 +969,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         checkFailedMessage(message);
         // stop typing
         stopTyping();
+        // Check uploading file
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            addMessage(message);
+            return;
+        }
 
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
