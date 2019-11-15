@@ -336,10 +336,12 @@ public class MessageInputController {
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
+                    binding.setActiveMessageSend(true);
                     uploadingFile = false;
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
+                    attachmentListener.onAddAttachments();
                 }
 
                 @Override
@@ -352,7 +354,7 @@ public class MessageInputController {
 
                 @Override
                 public void onProgress(Integer percentage) {
-                    uploadingFile = false;
+                    uploadingFile = true;
                     attachment.config.setProgress(percentage);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
                 }
