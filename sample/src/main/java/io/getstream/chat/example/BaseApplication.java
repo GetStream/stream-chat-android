@@ -5,8 +5,6 @@ import android.app.Application;
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -23,20 +21,10 @@ public class BaseApplication extends Application {
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
-                            if (!task.isSuccessful()) {
-                                return;
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                StreamChat.getNotificationsManager().setFirebaseToken(
+                                        task.getResult().getToken(), this);
                             }
-                            StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
-                                @Override
-                                public void onSuccess(CompletableResponse response) {
-                                    // device is now registered!
-                                }
-
-                                @Override
-                                public void onError(String errMsg, int errCode) {
-                                    // something went wrong registering this device, ouch!
-                                }
-                            });
                         }
                 );
     }

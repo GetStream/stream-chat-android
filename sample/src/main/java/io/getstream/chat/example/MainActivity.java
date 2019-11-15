@@ -79,6 +79,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         return client;
+        /*User user = new User("broken-waterfall-5");
+        client.setUser(user, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg",
+                new ClientConnectionCallback() {
+                    @Override
+                    public void onSuccess(User user) {
+                        Log.i(TAG, String.format("Connection established for user %s", user.getName()));
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
+                    }
+                });
+        return client;*/
     }
 
     @Override
@@ -211,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> members = new ArrayList<>();
         members.add(client.getUser().getId());
+        members.add("bender");
         extraData.put("members", members);
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();

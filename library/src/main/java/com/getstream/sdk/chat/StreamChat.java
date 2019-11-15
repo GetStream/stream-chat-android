@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.notifications.NotificationsManager;
+import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
@@ -34,6 +36,7 @@ public class StreamChat {
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
     private static Context context;
+    private static NotificationsManager notificationsManager;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -68,7 +71,7 @@ public class StreamChat {
         }
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return context;
     }
 
@@ -130,16 +133,29 @@ public class StreamChat {
                         currentUser.postValue(state.getCurrentUser());
                     }
                 }
+
+
+                //TODO call this method only if app in background
+                notificationsManager.onReceiveWebSocketEvent(event, context);
             }
         });
     }
 
     public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context);
+        return init(apiKey, new ApiClientOptions(), context, new StreamNotificationsManager());
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context mContext) {
-        StreamChat.context = mContext;
+    public static synchronized boolean init(String apiKey,
+                                            ApiClientOptions apiClientOptions,
+                                            @NonNull Context context) {
+        return init(apiKey, apiClientOptions, context, new StreamNotificationsManager());
+    }
+
+    public static synchronized boolean init(String apiKey,
+                                            ApiClientOptions apiClientOptions,
+                                            @NonNull Context context,
+                                            NotificationsManager notificationsManager) {
+        StreamChat.context = context;
         if (INSTANCE != null) {
             return true;
         }
@@ -153,6 +169,7 @@ public class StreamChat {
                 currentUser = new MutableLiveData<>();
                 totalUnreadMessages = new MutableLiveData<>();
                 unreadChannels = new MutableLiveData<>();
+                StreamChat.notificationsManager = notificationsManager;
                 handleConnectedUser();
 
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
@@ -193,4 +210,7 @@ public class StreamChat {
         }
     }
 
+    public static NotificationsManager getNotificationsManager() {
+        return notificationsManager;
+    }
 }
