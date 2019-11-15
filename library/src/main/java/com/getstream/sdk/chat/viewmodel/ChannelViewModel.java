@@ -1011,6 +1011,39 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
+
+    /**
+     * Edit message
+     *
+     * @param message  the Message sent
+     * @param callback the result callback
+     */
+    public void editMessage(Message message, @NonNull MessageCallback callback) {
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            replaceMessage(message, message);
+            return;
+        }
+
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
+
+        channel.updateMessage(message, callback);
+    }
+
+    public void editMessage(Message message) {
+        editMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
     /**
      * sendGiphy - Send giphy with shuffle and cancel.
      *
