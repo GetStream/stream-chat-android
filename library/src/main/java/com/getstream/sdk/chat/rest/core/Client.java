@@ -828,8 +828,7 @@ public class Client implements WSResponseHandler {
             public void onSuccess(User user) {
                 UpdateChannelRequest request = new UpdateChannelRequest(channel.getExtraData(), updateMessage);
                 Log.d(TAG, "Request: " + new Gson().toJson(request));
-                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
+                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
