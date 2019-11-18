@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
@@ -69,11 +70,27 @@ public class StringUtility {
 
     @SuppressLint("DefaultLocale")
     public static String convertMentionedText(String text, String userName) {
-        if (text.substring(text.length() -1).equals("@"))
+        if (text.substring(text.length() - 1).equals("@"))
             return text + userName;
 
         String[] names = text.split("@");
         String last = names[names.length - 1];
         return text.substring(0, text.length() - last.length()) + userName;
+    }
+
+    public static String getChannelIdFromCid(@NonNull String cid) {
+        String[] array = cid.split(":");
+        if (array.length > 1) {
+            return array[1];
+        }
+        return null;
+    }
+
+    public static String getChannelTypeFromCid(@NonNull String cid) {
+        String[] array = cid.split(":");
+        if (array.length > 1) {
+            return array[0];
+        }
+        return null;
     }
 }

@@ -25,4 +25,19 @@ public interface NotificationOptions {
     NotificationCompat.Builder getNotificationBuilder(Context context);
 
     Intent getDefaultLauncherIntent(Context context);
+
+    ContentIntentProvider getContentIntentProvider();
+
+    void setNotificationChannelId(String notificationChannelId);
+
+    void setNotificationChannelName(String notificationChannelName);
+
+    void setNotificationChannel(NotificationChannel notificationChannel);
+
+    void setNotificationBuilder(NotificationCompat.Builder notificationBuilder);
+
+    void setDefaultLauncherIntent(Intent defaultLauncherIntent);
+
+    void setContentIntentProvider(ContentIntentProvider contentIntentProvider);
+
 }

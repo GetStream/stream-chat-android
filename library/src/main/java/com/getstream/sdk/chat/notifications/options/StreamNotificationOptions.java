@@ -2,25 +2,33 @@ package com.getstream.sdk.chat.notifications.options;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.model.Event;
+import com.google.firebase.messaging.RemoteMessage;
 
 /*
  * Created by Anton Bevza on 2019-11-15.
  */
 public class StreamNotificationOptions implements NotificationOptions {
+
+    private static final int DEFAULT_REQUEST_CODE = 999;
+
     private String notificationChannelId;
     private String notificationChannelName;
     private NotificationChannel notificationChannel;
     private NotificationCompat.Builder notificationBuilder;
     private Intent defaultLauncherIntent;
+    private ContentIntentProvider contentIntentProvider;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -82,23 +90,61 @@ public class StreamNotificationOptions implements NotificationOptions {
         }
     }
 
+    @Override
+    public ContentIntentProvider getContentIntentProvider() {
+        if (contentIntentProvider != null) {
+            return contentIntentProvider;
+        } else {
+            return new ContentIntentProvider() {
+                @Override
+                public PendingIntent getIntentForFirebaseMessage(@NonNull Context context,
+                                                                 @NonNull RemoteMessage remoteMessage) {
+                    return getDefaultContentIntent(context);
+                }
+
+                @Override
+                public PendingIntent getIntentForWebSocketEvent(@NonNull Context context,
+                                                                @NonNull Event event) {
+                    return getDefaultContentIntent(context);
+                }
+            };
+        }
+    }
+
+    @Override
     public void setNotificationChannelId(String notificationChannelId) {
         this.notificationChannelId = notificationChannelId;
     }
 
+    @Override
     public void setNotificationChannelName(String notificationChannelName) {
         this.notificationChannelName = notificationChannelName;
     }
 
+    @Override
     public void setNotificationChannel(NotificationChannel notificationChannel) {
         this.notificationChannel = notificationChannel;
     }
 
+    @Override
     public void setNotificationBuilder(NotificationCompat.Builder notificationBuilder) {
         this.notificationBuilder = notificationBuilder;
     }
 
+    @Override
     public void setDefaultLauncherIntent(Intent defaultLauncherIntent) {
         this.defaultLauncherIntent = defaultLauncherIntent;
+    }
+
+    @Override
+    public void setContentIntentProvider(ContentIntentProvider contentIntentProvider) {
+        this.contentIntentProvider = contentIntentProvider;
+    }
+
+    private PendingIntent getDefaultContentIntent(Context context) {
+        return PendingIntent.getActivity(context,
+                DEFAULT_REQUEST_CODE,
+                getDefaultLauncherIntent(context),
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

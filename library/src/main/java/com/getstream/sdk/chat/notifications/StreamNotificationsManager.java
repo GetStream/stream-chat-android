@@ -57,11 +57,15 @@ public class StreamNotificationsManager implements NotificationsManager {
         NotificationCompat.Builder builder = notificationOptions.getNotificationBuilder(context);
         Map<String, String> payload = remoteMessage.getData();
 
-        Log.d(TAG, "onMessageReceived: " + remoteMessage.toString() + " data: " + payload);
+        Log.d(TAG, "onReceiveFirebaseMessage: " + remoteMessage.toString() + " data: " + payload);
 
         if (!payload.isEmpty()) {
             builder.setContentTitle(remoteMessage.getData().get(TITLE_KEY))
-                    .setContentText(remoteMessage.getData().get(BODY_KEY));
+                    .setContentText(remoteMessage.getData().get(BODY_KEY))
+                    .setContentIntent(
+                            notificationOptions.getContentIntentProvider()
+                                    .getIntentForFirebaseMessage(context, remoteMessage)
+                    );
             showNotification(builder.build(), context);
         }
     }
@@ -71,9 +75,12 @@ public class StreamNotificationsManager implements NotificationsManager {
         NotificationCompat.Builder builder = notificationOptions.getNotificationBuilder(context);
 
         if (event.getMessage() != null) {
-            builder.setContentTitle(event.getCid())
-                    .setContentText(event.getMessage().getText());
-            //TODO add method for getting appropriate intent for launch activity on notification tap
+            builder.setContentTitle(event.getMessage().getUser().getName())
+                    .setContentText(event.getMessage().getText())
+                    .setContentIntent(
+                            notificationOptions.getContentIntentProvider()
+                                    .getIntentForWebSocketEvent(context, event)
+                    );
             showNotification(builder.build(), context);
         }
     }
@@ -89,5 +96,10 @@ public class StreamNotificationsManager implements NotificationsManager {
         }
 
         notificationManager.notify((int) System.currentTimeMillis(), notification);
+    }
+
+    @Override
+    public NotificationOptions getNotificationsOptions() {
+        return notificationOptions;
     }
 }

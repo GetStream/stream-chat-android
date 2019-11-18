@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class StreamChat {
     private static final String TAG = StreamChat.class.getSimpleName();
+    private static final long WEB_SOCKET_DISCONNECT_DELAY = 10000; // 10 sec
 
     private static Client INSTANCE;
 
@@ -37,6 +39,7 @@ public class StreamChat {
     private static boolean userWasInitialized;
     private static Context context;
     private static NotificationsManager notificationsManager;
+    private static Handler delayedDisconnectWebSocketHandler = new Handler();
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -134,9 +137,9 @@ public class StreamChat {
                     }
                 }
 
-
-                //TODO call this method only if app in background
-                notificationsManager.onReceiveWebSocketEvent(event, context);
+                if (lifecycleStopped) {
+                    notificationsManager.onReceiveWebSocketEvent(event, context);
+                }
             }
         });
     }
@@ -185,7 +188,10 @@ public class StreamChat {
                                 Log.i(TAG, "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
-                                    INSTANCE.reconnectWebSocket();
+                                    delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+                                    if (!INSTANCE.isConnected()) {
+                                        INSTANCE.reconnectWebSocket();
+                                    }
                                 }
                             }
 
@@ -193,9 +199,7 @@ public class StreamChat {
                             public void stopped() {
                                 Log.i(TAG, "detected stop");
                                 lifecycleStopped = true;
-                                if (INSTANCE != null) {
-                                    INSTANCE.disconnectWebSocket();
-                                }
+                                disconnectWebSocketWithDelay();
                             }
                         });
                     }
@@ -212,5 +216,14 @@ public class StreamChat {
 
     public static NotificationsManager getNotificationsManager() {
         return notificationsManager;
+    }
+
+    private static void disconnectWebSocketWithDelay() {
+        delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+        delayedDisconnectWebSocketHandler.postDelayed(() -> {
+            if (INSTANCE != null) {
+                INSTANCE.disconnectWebSocket();
+            }
+        }, WEB_SOCKET_DISCONNECT_DELAY);
     }
 }
