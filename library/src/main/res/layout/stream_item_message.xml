@@ -88,39 +88,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_gap_attach" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_reply"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/iv_reply"
+        android:layout_width="20dp"
         android:layout_height="25dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/stream_message_corner_radius2"
+        android:layout_marginBottom="7dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_text">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_text"
+        tools:ignore="ContentDescription" />
 
-        <ImageView
-            android:id="@+id/iv_reply"
-            android:layout_width="20dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/stream_message_corner_radius2"
-            android:layout_marginBottom="7dp"
-            android:background="@drawable/stream_ic_reply_incoming"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/tv_reply"
-            style="@style/text_s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="3dp"
-            android:paddingEnd="3dp"
-            android:textColor="#006CFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/iv_reply"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tv_reply"
+        style="@style/text_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:textColor="#006CFF"
+        app:layout_constraintTop_toTopOf="@+id/iv_reply"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_reply"
+        app:layout_constraintStart_toEndOf="@+id/iv_reply" />
 
     <TextView
         android:id="@+id/tv_username"
@@ -140,7 +129,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_username"
-        app:layout_constraintTop_toBottomOf="@+id/cl_reply"
+        app:layout_constraintTop_toBottomOf="@+id/iv_reply"
         app:layout_constraintVertical_bias="1" />
 
     <com.getstream.sdk.chat.view.ReadStateView

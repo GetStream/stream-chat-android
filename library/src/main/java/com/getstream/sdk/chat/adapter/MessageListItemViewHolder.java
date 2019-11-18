@@ -72,7 +72,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private ImageView iv_deliver;
     private AttachmentListView alv_attachments;
     // Replay
-    private ConstraintLayout cl_reply;
     private ImageView iv_reply;
     private TextView tv_reply;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -106,7 +105,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         avatar = itemView.findViewById(R.id.avatar);
 
-        cl_reply = itemView.findViewById(R.id.cl_reply);
         iv_reply = itemView.findViewById(R.id.iv_reply);
         tv_reply = itemView.findViewById(R.id.tv_reply);
 
@@ -500,14 +498,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || (position == 0 && message.isThreadParent())
                 || replyCount == 0
                 || isThread()) {
-            cl_reply.setVisibility(View.GONE);
+            iv_reply.setVisibility(View.GONE);
+            tv_reply.setVisibility(View.GONE);
             return;
         }
-
-        cl_reply.setVisibility(View.VISIBLE);
+        iv_reply.setVisibility(View.VISIBLE);
+        tv_reply.setVisibility(View.VISIBLE);
         tv_reply.setText(tv_reply.getContext().getResources().getQuantityString(R.plurals.stream_reply_count, replyCount, replyCount));
 
-        cl_reply.setOnClickListener(view -> {
+        iv_reply.setOnClickListener(view -> {
+            if (messageClickListener != null)
+                messageClickListener.onMessageClick(message, position);
+        });
+        tv_reply.setOnClickListener(view -> {
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
         });
@@ -520,7 +523,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMarginStartEnd() {
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(alv_attachments);
-        configMarginStartEnd_(cl_reply);
+        configMarginStartEnd_(iv_reply);
         configMarginStartEnd_(tv_username);
         configMarginStartEnd_(tv_messagedate);
     }
@@ -668,34 +671,35 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     private void configParamsReply() {
-        if (cl_reply.getVisibility() != View.VISIBLE) return;
+        if (iv_reply.getVisibility() != View.VISIBLE) return;
         // Clear Constraint
-        set.clone(cl_reply);
+        set.clone((ConstraintLayout) itemView);
         set.clear(R.id.tv_reply, ConstraintSet.START);
         set.clear(R.id.tv_reply, ConstraintSet.END);
         set.clear(R.id.iv_reply, ConstraintSet.START);
         set.clear(R.id.iv_reply, ConstraintSet.END);
-        set.applyTo(cl_reply);
+        set.applyTo((ConstraintLayout) itemView);
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) cl_reply.getLayoutParams();
         ConstraintLayout.LayoutParams paramsArrow = (ConstraintLayout.LayoutParams) iv_reply.getLayoutParams();
         ConstraintLayout.LayoutParams paramsText = (ConstraintLayout.LayoutParams) tv_reply.getLayoutParams();
-
+        @IdRes int layoutId;
+        if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+            layoutId = tv_text.getId();
+        } else {
+            layoutId = alv_attachments.getId();
+        }
         // Set Constraint
         if (messageListItem.isTheirs()) {
             iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_incoming);
-            params.horizontalBias = 0f;
-            paramsText.endToEnd = cl_reply.getId();
-            paramsArrow.startToStart = cl_reply.getId();
+            paramsArrow.horizontalBias = 0f;
+            paramsArrow.startToStart = layoutId;
             paramsText.startToEnd = iv_reply.getId();
         } else {
             iv_reply.setBackgroundResource(R.drawable.stream_ic_reply_outgoing);
-            params.horizontalBias = 1f;
-            paramsArrow.endToEnd = cl_reply.getId();
-            paramsText.startToStart = cl_reply.getId();
-            paramsArrow.startToEnd = tv_reply.getId();
+            paramsArrow.horizontalBias = 1f;
+            paramsArrow.endToEnd = layoutId;
+            paramsText.endToStart = iv_reply.getId();
         }
-        cl_reply.setLayoutParams(params);
         iv_reply.setLayoutParams(paramsArrow);
         tv_reply.setLayoutParams(paramsText);
     }
