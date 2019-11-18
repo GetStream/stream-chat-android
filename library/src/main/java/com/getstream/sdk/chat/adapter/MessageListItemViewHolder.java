@@ -399,8 +399,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private boolean isLongClick = false;
     private void configMessageTextClickListener(){
         tv_text.setOnClickListener(view -> {
-            if ( isFailedMessage()) return;
             Log.i(TAG, "onMessageClick: " + position);
+            if (isFailedMessage() && !StreamChat.getInstance(context).isConnected()) return;
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
         });
