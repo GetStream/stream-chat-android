@@ -328,11 +328,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
         tv_text.setVisibility(View.VISIBLE);
-        // set Text
+        // Set Text
         configMessageTextViewText();
-        // set style
+        // Set Style
         configMessageTextStyle();
-        // background
+        // Set Background
         configMessageTextBackground();
         // Set Click Listener
         configMessageTextClickListener();
