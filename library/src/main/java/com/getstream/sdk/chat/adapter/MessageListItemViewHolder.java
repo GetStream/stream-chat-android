@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -331,17 +330,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getType().equals(ModelType.message_error)) {
             tv_failed_des.setVisibility(View.VISIBLE);
             tv_text.setText(message.getText());
-            // Set Style
-//            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-//            tv_text.setTextColor(style.getMessageTextColorMine());
-//            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
 
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            itemView.setBackground(background);
+            tv_text.setBackground(background);
 
-            itemView.setOnClickListener(view -> {
+            tv_text.setOnClickListener(view -> {
                 if (!StreamChat.getInstance(context).isConnected()) return;
                 if (messageClickListener != null)
                     messageClickListener.onMessageClick(message, position);
