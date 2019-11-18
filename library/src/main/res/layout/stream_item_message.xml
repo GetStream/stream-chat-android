@@ -8,7 +8,7 @@
     <Space
         android:id="@+id/space_header"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_message_header_gap_height"
+        android:layout_height="@dimen/stream_message_header_space_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -16,15 +16,15 @@
     <Space
         android:id="@+id/space_same_user"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_message_gap"
+        android:layout_height="@dimen/stream_message_same_user_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space_header" />
 
     <Space
-        android:id="@+id/space_reaction"
-        android:layout_width="@dimen/stream_message_reaction_space_width"
-        android:layout_height="@dimen/stream_message_reaction_space_height"
+        android:id="@+id/space_reaction_tail"
+        android:layout_width="@dimen/stream_message_reaction_tail_space_width"
+        android:layout_height="@dimen/stream_message_reaction_tail_space_height"
         android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/tv_text"
         app:layout_constraintTop_toTopOf="@+id/tv_text" />
@@ -50,9 +50,9 @@
         tools:listitem="@layout/stream_item_reaction" />
 
     <Space
-        android:id="@+id/tv_gap_reaction"
+        android:id="@+id/space_reaction"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="@dimen/stream_message_reaction_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
@@ -64,12 +64,12 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
+        app:layout_constraintTop_toBottomOf="@+id/space_reaction" />
 
     <Space
         android:id="@+id/space_attachment"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/stream_message_gap"
+        android:layout_height="@dimen/stream_message_attachment_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/attachmentview" />
@@ -79,10 +79,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
-        android:paddingStart="10dp"
-        android:paddingTop="5dp"
-        android:paddingEnd="10dp"
-        android:paddingBottom="5dp"
+        android:paddingStart="@dimen/stream_message_text_padding_start"
+        android:paddingTop="@dimen/stream_message_text_padding_top"
+        android:paddingEnd="@dimen/stream_message_text_padding_end"
+        android:paddingBottom="@dimen/stream_message_text_padding_bottom"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,10 +90,10 @@
 
     <ImageView
         android:id="@+id/iv_reply"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="@dimen/stream_message_corner_radius2"
-        android:layout_marginBottom="7dp"
+        android:layout_width="@dimen/stream_message_reply_width"
+        android:layout_height="@dimen/stream_message_reply_height"
+        android:layout_marginTop="@dimen/stream_message_reply_margin_top"
+        android:layout_marginBottom="@dimen/stream_message_reply_margin_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_text"
@@ -104,9 +104,9 @@
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="3dp"
-        android:paddingEnd="3dp"
-        android:textColor="#006CFF"
+        android:paddingStart="@dimen/stream_message_reply_padding"
+        android:paddingEnd="@dimen/stream_message_reply_padding"
+        android:textColor="@color/stream_message_reply_text"
         app:layout_constraintTop_toTopOf="@+id/iv_reply"
         app:layout_constraintBottom_toBottomOf="@+id/iv_reply"
         app:layout_constraintStart_toEndOf="@+id/iv_reply" />
@@ -114,9 +114,9 @@
     <TextView
         android:id="@+id/tv_username"
         style="@style/text_s"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -125,12 +125,11 @@
         style="@style/text_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="@dimen/stream_message_date_margin_start"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_username"
-        app:layout_constraintTop_toBottomOf="@+id/iv_reply"
-        app:layout_constraintVertical_bias="1" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_reply" />
 
     <com.getstream.sdk.chat.view.ReadStateView
         android:id="@+id/read_state"
@@ -142,10 +141,8 @@
 
     <com.getstream.sdk.chat.view.AvatarGroupView
         android:id="@+id/avatar"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="15dp"
+        android:layout_width="@dimen/stream_message_avatar_width"
+        android:layout_height="@dimen/stream_message_avatar_height"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -153,9 +150,9 @@
 
     <ImageView
         android:id="@+id/iv_deliver"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="@dimen/stream_message_deliver_width"
+        android:layout_height="@dimen/stream_message_deliver_heigth"
+        android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:src="@drawable/stream_ic_delivered_unseen"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
@@ -164,9 +161,9 @@
 
     <ProgressBar
         android:id="@+id/pb_deliver"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_marginStart="2dp"
+        android:layout_width="@dimen/stream_message_deliver_width"
+        android:layout_height="@dimen/stream_message_deliver_heigth"
+        android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/avatar"
         app:layout_constraintStart_toEndOf="@id/avatar"
