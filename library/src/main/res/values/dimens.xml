@@ -25,6 +25,12 @@
     <dimen name="stream_read_state_avatar_height">14dp</dimen>
     <dimen name="stream_read_state_avatar_width">14dp</dimen>
     <!--Message Item-->
+    <dimen name="stream_message_header_gap_height">15dp</dimen>
+    <dimen name="stream_message_reaction_space_width">8dp</dimen>
+    <dimen name="stream_message_reaction_space_height">5dp</dimen>
+
+
+
     <dimen name="stream_message_avatar_height">32dp</dimen>
     <dimen name="stream_message_avatar_width">32dp</dimen>
     <dimen name="stream_message_corner_radius1">16dp</dimen>

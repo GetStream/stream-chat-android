@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.DimenRes;
@@ -63,8 +64,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private RecyclerView rv_reaction;
     private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_tail;
-    private TextView tv_reaction_space;
-    private TextView tv_gap_header, tv_gap_sameUser, tv_gap_reaction, tv_gap_media_file, tv_gap_attach;
+    private Space space_reaction, space_header, space_same_user, tv_gap_reaction, space_attachment;
     private TextView tv_username, tv_messagedate;
     // Delivered Indicator
     private ReadStateView<MessageListViewStyle> read_state;
@@ -99,7 +99,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         rv_reaction = itemView.findViewById(R.id.rv_reaction);
         iv_tail = itemView.findViewById(R.id.iv_tail);
-        tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
+        space_reaction = itemView.findViewById(R.id.space_reaction);
 
         tv_text = itemView.findViewById(R.id.tv_text);
 
@@ -111,11 +111,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_username = itemView.findViewById(R.id.tv_username);
         tv_messagedate = itemView.findViewById(R.id.tv_messagedate);
 
-        tv_gap_header = itemView.findViewById(R.id.tv_gap_header);
-        tv_gap_sameUser = itemView.findViewById(R.id.tv_gap_sameUser);
+        space_header = itemView.findViewById(R.id.space_header);
+        space_same_user = itemView.findViewById(R.id.space_same_user);
         tv_gap_reaction = itemView.findViewById(R.id.tv_gap_reaction);
-        tv_gap_media_file = itemView.findViewById(R.id.tv_gap_media_file);
-        tv_gap_attach = itemView.findViewById(R.id.tv_gap_attach);
+        space_attachment = itemView.findViewById(R.id.space_attachment);
 
         alv_attachments = itemView.findViewById(R.id.attachmentview);
 
@@ -214,13 +213,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configPositionsStyle() {
         // TOP position has a rounded top left corner and extra spacing
         // BOTTOM position shows the user avatar & message time
-        tv_gap_header.setVisibility(View.GONE);
-        tv_gap_sameUser.setVisibility(View.VISIBLE);
+        space_header.setVisibility(View.GONE);
+        space_same_user.setVisibility(View.VISIBLE);
         // TOP
         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
             // extra spacing
-            tv_gap_header.setVisibility(View.VISIBLE);
-            tv_gap_sameUser.setVisibility(View.GONE);
+            space_header.setVisibility(View.VISIBLE);
+            space_same_user.setVisibility(View.GONE);
         }
         // BOTTOM
         if (positions.contains(MessageViewHolderFactory.Position.BOTTOM)) {
@@ -253,22 +252,18 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
 
         // Attach Gap
-        tv_gap_attach.setVisibility(alv_attachments.getVisibility());
+        space_attachment.setVisibility(alv_attachments.getVisibility());
         if (alv_attachments.getVisibility() == View.VISIBLE && TextUtils.isEmpty(message.getText()))
-            tv_gap_attach.setVisibility(View.GONE);
+            space_attachment.setVisibility(View.GONE);
 
         // Reaction Gap
         tv_gap_reaction.setVisibility(rv_reaction.getVisibility());
 
         // ONLY_FOR_DEBUG
         if (false) {
-            tv_gap_header.setBackgroundResource(R.color.stream_gap_header);
-            tv_gap_sameUser.setBackgroundResource(R.color.stream_gap_message);
-            try {
-                tv_gap_media_file.setBackgroundResource(R.color.stream_gap_media_file);
-            } catch (Exception e) {
-            }
-            tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
+            space_header.setBackgroundResource(R.color.stream_gap_header);
+            space_same_user.setBackgroundResource(R.color.stream_gap_message);
+            space_attachment.setBackgroundResource(R.color.stream_gap_attach);
             tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
         }
     }
@@ -471,13 +466,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                 || message.getReactionCounts().size() == 0) {
             rv_reaction.setVisibility(View.GONE);
             iv_tail.setVisibility(View.GONE);
-            tv_reaction_space.setVisibility(View.GONE);
+            space_reaction.setVisibility(View.GONE);
             return;
         }
         configStyleReactionView();
         rv_reaction.setVisibility(View.VISIBLE);
         iv_tail.setVisibility(View.VISIBLE);
-        tv_reaction_space.setVisibility(View.VISIBLE);
+        space_reaction.setVisibility(View.VISIBLE);
         rv_reaction.setAdapter(new ReactionListItemAdapter(context,
                 message.getReactionCounts(),
                 channelState.getChannel().getReactionTypes(),
@@ -570,8 +565,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsReactionSpace() {
         if (iv_tail.getVisibility() != View.VISIBLE) return;
         set.clone((ConstraintLayout) itemView);
-        set.clear(R.id.tv_reaction_space, ConstraintSet.START);
-        set.clear(R.id.tv_reaction_space, ConstraintSet.END);
+        set.clear(R.id.space_reaction, ConstraintSet.START);
+        set.clear(R.id.space_reaction, ConstraintSet.END);
         set.applyTo((ConstraintLayout) itemView);
 
         @IdRes int layoutId;
@@ -581,15 +576,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             layoutId = alv_attachments.getId();
         }
 
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_reaction_space.getLayoutParams();
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) space_reaction.getLayoutParams();
         if (messageListItem.isMine())
             params.endToStart = layoutId;
         else
             params.startToEnd = layoutId;
-        tv_reaction_space.setLayoutParams(params);
+        space_reaction.setLayoutParams(params);
         rv_reaction.post(() -> {
             params.width = rv_reaction.getHeight() / 3;
-            tv_reaction_space.setLayoutParams(params);
+            space_reaction.setLayoutParams(params);
         });
     }
 
@@ -602,9 +597,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) iv_tail.getLayoutParams();
         if (messageListItem.isMine())
-            params.startToStart = tv_reaction_space.getId();
+            params.startToStart = space_reaction.getId();
         else
-            params.endToEnd = tv_reaction_space.getId();
+            params.endToEnd = space_reaction.getId();
         rv_reaction.post(() -> {
             params.height = rv_reaction.getHeight();
             params.width = rv_reaction.getHeight();
@@ -635,15 +630,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                         params.startToStart = R.id.tv_text;
                 } else {
                     if (messageListItem.isMine())
-                        params.startToStart = R.id.tv_reaction_space;
+                        params.startToStart = R.id.space_reaction;
                     else
-                        params.endToEnd = R.id.tv_reaction_space;
+                        params.endToEnd = R.id.space_reaction;
                 }
             } else {
                 if (messageListItem.isMine())
-                    params.startToStart = R.id.tv_reaction_space;
+                    params.startToStart = R.id.space_reaction;
                 else
-                    params.endToEnd = R.id.tv_reaction_space;
+                    params.endToEnd = R.id.space_reaction;
             }
             rv_reaction.setLayoutParams(params);
             rv_reaction.setVisibility(View.VISIBLE);

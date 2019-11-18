@@ -5,26 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_gap_header"
+    <Space
+        android:id="@+id/space_header"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="@dimen/stream_message_header_gap_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_gap_sameUser"
+    <Space
+        android:id="@+id/space_same_user"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_gap"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gap_header" />
+        app:layout_constraintTop_toBottomOf="@+id/space_header" />
 
-    <TextView
-        android:id="@+id/tv_reaction_space"
-        android:layout_width="8dp"
-        android:layout_height="5dp"
+    <Space
+        android:id="@+id/space_reaction"
+        android:layout_width="@dimen/stream_message_reaction_space_width"
+        android:layout_height="@dimen/stream_message_reaction_space_height"
         android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/tv_text"
         app:layout_constraintTop_toTopOf="@+id/tv_text" />
@@ -46,10 +46,10 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gap_sameUser"
+        app:layout_constraintTop_toBottomOf="@+id/space_same_user"
         tools:listitem="@layout/stream_item_reaction" />
 
-    <TextView
+    <Space
         android:id="@+id/tv_gap_reaction"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -66,8 +66,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_gap_reaction" />
 
-    <TextView
-        android:id="@+id/tv_gap_attach"
+    <Space
+        android:id="@+id/space_attachment"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_message_gap"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,7 +86,7 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_gap_attach" />
+        app:layout_constraintTop_toBottomOf="@+id/space_attachment" />
 
     <ImageView
         android:id="@+id/iv_reply"
