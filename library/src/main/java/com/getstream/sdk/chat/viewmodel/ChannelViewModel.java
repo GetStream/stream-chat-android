@@ -972,6 +972,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         checkFailedMessage(message);
         // stop typing
         stopTyping();
+        // Check uploading file
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            addMessage(message);
+            return;
+        }
 
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
@@ -1000,6 +1005,39 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     public void sendMessage(Message message) {
         sendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+
+    /**
+     * Edit message
+     *
+     * @param message  the Message sent
+     * @param callback the result callback
+     */
+    public void editMessage(Message message, @NonNull MessageCallback callback) {
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            replaceMessage(message, message);
+            return;
+        }
+
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
+
+        channel.updateMessage(message, callback);
+    }
+
+    public void editMessage(Message message) {
+        editMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
 

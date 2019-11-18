@@ -6,6 +6,8 @@
 - Fix Sent message progress infinite
 - Fix channel delete event handling in ChannelList view model
 - Fix attachment duplicated issue when message edit
+- Add File Upload 2.0
+- Add editMessage function in Channel View Model
 
 
 ## November 5th, 2019 - 3.2.1
