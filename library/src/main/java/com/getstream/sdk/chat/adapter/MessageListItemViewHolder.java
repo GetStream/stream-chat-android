@@ -330,13 +330,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configMessageText() {
         if ((TextUtils.isEmpty(message.getText())
-                && message.getDeletedAt() == null)){
+                && !isDeletedMessage())){
             tv_text.setVisibility(View.GONE);
             return;
         }
         tv_text.setVisibility(View.VISIBLE);
         // set Text
-        configMessageTextString();
+        configMessageTextViewText();
         // set style
         configMessageTextStyle();
         // background
@@ -345,7 +345,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configMessageTextClickListener();
     }
 
-    private void configMessageTextString(){
+    private void configMessageTextViewText(){
         if (isFailedMessage()){
             // Set Failed Message Title Text
             SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -406,10 +406,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private boolean isLongClick = false;
     private void configMessageTextClickListener(){
         tv_text.setOnClickListener(view -> {
+            if ( isFailedMessage()) return;
             Log.i(TAG, "onMessageClick: " + position);
-            if (messageClickListener != null) {
+            if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
-            }
         });
 
         tv_text.setOnLongClickListener(view -> {
