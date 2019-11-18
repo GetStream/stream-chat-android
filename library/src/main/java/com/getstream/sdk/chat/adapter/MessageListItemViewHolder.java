@@ -7,7 +7,11 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -57,7 +61,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     int avatarWidth;
     private TextView tv_text;
     private RecyclerView rv_reaction;
-    private TextView tv_failed_des;
     private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_tail;
     private TextView tv_reaction_space;
@@ -100,7 +103,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
 
         tv_text = itemView.findViewById(R.id.tv_text);
-        tv_failed_des = itemView.findViewById(R.id.tv_failed_des);
 
         avatar = itemView.findViewById(R.id.avatar);
 
@@ -149,7 +151,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // region Init
     private void init() {
         // Configure UIs
-        configSendFailed();
         configMessageText();
         configAttachmentView();
         configReactionView();
@@ -278,7 +279,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
-        if (isDeletedOrFailedMessage()
+        if (isDeletedMessage()
+                || isFailedMessage()
                 || message == null
                 || channelState.getLastMessage() == null
                 || TextUtils.isEmpty(message.getId())
@@ -310,7 +312,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     private void configReadIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
-        if (isDeletedOrFailedMessage()
+        if (isDeletedMessage()
+                || isFailedMessage()
                 || readBy.isEmpty()
                 || isThread()
                 || isEphemeral()) {
@@ -325,65 +328,52 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configSendFailed() {
-        if (message.getSyncStatus() == Sync.LOCAL_FAILED
-                || message.getType().equals(ModelType.message_error)) {
-            tv_failed_des.setVisibility(View.VISIBLE);
-            tv_text.setText(message.getText());
-
-            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
-            tv_failed_des.setText(context.getResources().getText(failedDes));
-            Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            tv_text.setBackground(background);
-
-            tv_text.setOnClickListener(view -> {
-                if (!StreamChat.getInstance(context).isConnected()) return;
-                if (messageClickListener != null)
-                    messageClickListener.onMessageClick(message, position);
-            });
-        } else {
-            tv_failed_des.setVisibility(View.GONE);
+    private void configMessageText() {
+        if ((TextUtils.isEmpty(message.getText())
+                && message.getDeletedAt() == null)){
+            tv_text.setVisibility(View.GONE);
+            return;
         }
+        tv_text.setVisibility(View.VISIBLE);
+        // set Text
+        configMessageTextString();
+        // set style
+        configMessageTextStyle();
+        // background
+        configMessageTextBackground();
+        // Set Click Listener
+        configMessageTextClickListener();
     }
 
-    boolean isLongClick = false;
-    @SuppressLint("ClickableViewAccessibility")
-    private void configMessageText() {
-        if (message.getSyncStatus() == Sync.LOCAL_FAILED
-                || message.getType().equals(ModelType.message_error)
-                || (TextUtils.isEmpty(message.getText()) && message.getDeletedAt() == null)) {
-//            tv_text.setVisibility(View.GONE);
+    private void configMessageTextString(){
+        if (isFailedMessage()){
+            // Set Failed Message Title Text
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
+            SpannableString str1= new SpannableString(context.getResources().getText(failedDes));
+            str1.setSpan(new ForegroundColorSpan(Color.GRAY), 0, str1.length(), 0);
+            str1.setSpan(new RelativeSizeSpan(0.7f), 0,str1.length(), 0);
+            builder.append(str1);
+            builder.append("\n");
+            // Set Failed Message Description Text
+            SpannableString str2= new SpannableString(message.getText());
+            builder.append(str2);
+            tv_text.setText(builder, TextView.BufferType.SPANNABLE);
             return;
         }
 
-        tv_text.setVisibility(View.VISIBLE);
-        // Set Text
         if (markdownListener != null)
             markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
         else
             MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        // Deleted Message
-        if (message.getDeletedAt() != null) {
-            // background
-            tv_text.setBackgroundResource(0);
-            // style
+    }
+
+    private void configMessageTextStyle(){
+        if (isDeletedMessage()){
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size));
             tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
             return;
         }
-        // background
-        if (StringUtility.isEmoji(message.getText())) {
-            tv_text.setBackgroundResource(0);
-        } else {
-            Drawable background;
-            if (message.getAttachments() != null && !message.getAttachments().isEmpty())
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
-            else
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-
-            tv_text.setBackground(background);
-        }
-        // set style
         if (messageListItem.isMine()) {
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
             tv_text.setTextColor(style.getMessageTextColorMine());
@@ -393,7 +383,28 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setTextColor(style.getMessageTextColorTheirs());
             tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
         }
-        // Set Click Listener
+    }
+
+    private void configMessageTextBackground(){
+        Drawable background;
+        if (isFailedMessage()){
+            background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+        }else if (isDeletedMessage() || StringUtility.isEmoji(message.getText())) {
+            background = null;
+        } else {
+            if (message.getAttachments() != null && !message.getAttachments().isEmpty())
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
+            else
+                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+        }
+        if (background != null)
+            tv_text.setBackground(background);
+        else
+            tv_text.setBackgroundResource(0);
+    }
+
+    private boolean isLongClick = false;
+    private void configMessageTextClickListener(){
         tv_text.setOnClickListener(view -> {
             Log.i(TAG, "onMessageClick: " + position);
             if (messageClickListener != null) {
@@ -402,6 +413,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
 
         tv_text.setOnLongClickListener(view -> {
+            if (isDeletedMessage() || isFailedMessage()) return true;
             isLongClick = true;
             if (this.messageLongClickListener != null)
                 this.messageLongClickListener.onMessageLongClick(message);
@@ -411,6 +423,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_text.setMovementMethod(new Utils.TextViewLinkHandler() {
             @Override
             public void onLinkClick(String url) {
+                if (isDeletedMessage() || isFailedMessage()) return;
                 if (isLongClick){
                     isLongClick = false;
                     return;
@@ -421,9 +434,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-
     private void configAttachmentView() {
-        if (isDeletedOrFailedMessage()
+        if (isDeletedMessage()
+                || isFailedMessage()
                 || this.message.getAttachments() == null
                 || this.message.getAttachments().isEmpty()) {
             alv_attachments.setVisibility(View.GONE);
@@ -452,7 +465,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     @SuppressLint("ClickableViewAccessibility")
     private void configReactionView() {
-        if (isDeletedOrFailedMessage()
+        if (isDeletedMessage()
+                || isFailedMessage()
                 || !style.isReactionEnabled()
                 || !channelState.getChannel().getConfig().isReactionsEnabled()
                 || message.getReactionCounts() == null
@@ -481,7 +495,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
-                || isDeletedOrFailedMessage()
+                || isDeletedMessage()
+                || isFailedMessage()
                 || (position == 0 && message.isThreadParent())
                 || replyCount == 0
                 || isThread()) {
@@ -505,7 +520,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMarginStartEnd() {
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(alv_attachments);
-//        configMarginStartEnd_(ll_send_failed);
         configMarginStartEnd_(cl_reply);
         configMarginStartEnd_(tv_username);
         configMarginStartEnd_(tv_messagedate);
@@ -741,9 +755,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.viewHolderFactory = viewHolderFactory;
     }
 
-    private boolean isDeletedOrFailedMessage() {
-        return message.getDeletedAt() != null
-                || message.getSyncStatus() == Sync.LOCAL_FAILED
+    private boolean isDeletedMessage() {
+        return message.getDeletedAt() != null;
+    }
+
+    private boolean isFailedMessage(){
+        return message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error);
     }
 
