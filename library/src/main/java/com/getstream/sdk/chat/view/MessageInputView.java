@@ -237,7 +237,7 @@ public class MessageInputView extends RelativeLayout {
             messageInputController.onClickCloseBackGroundView();
             Intent takePictureIntent = CaptureController.getTakePictureIntent(getContext());
             Intent takeVideoIntent = CaptureController.getTakeVideoIntent(getContext());
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
+            Intent chooserIntent = Intent.createChooser(takePictureIntent, getContext().getString(R.string.stream_input_camera_title));
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
