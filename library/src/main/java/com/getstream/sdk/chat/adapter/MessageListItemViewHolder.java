@@ -58,8 +58,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     int avatarWidth;
     private TextView tv_text;
     private RecyclerView rv_reaction;
-    private LinearLayout ll_send_failed;
-    private TextView tv_failed_text, tv_failed_des;
+    private TextView tv_failed_des;
     private AvatarGroupView<MessageListViewStyle> avatar;
     private ImageView iv_tail;
     private TextView tv_reaction_space;
@@ -102,10 +101,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_reaction_space = itemView.findViewById(R.id.tv_reaction_space);
 
         tv_text = itemView.findViewById(R.id.tv_text);
-
-        ll_send_failed = itemView.findViewById(R.id.ll_send_failed);
         tv_failed_des = itemView.findViewById(R.id.tv_failed_des);
-        tv_failed_text = itemView.findViewById(R.id.tv_failed_text);
+
         avatar = itemView.findViewById(R.id.avatar);
 
         cl_reply = itemView.findViewById(R.id.cl_reply);
@@ -332,25 +329,25 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configSendFailed() {
         if (message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error)) {
-            ll_send_failed.setVisibility(View.VISIBLE);
-            tv_failed_text.setText(message.getText());
+            tv_failed_des.setVisibility(View.VISIBLE);
+            tv_text.setText(message.getText());
             // Set Style
-            tv_failed_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-            tv_failed_text.setTextColor(style.getMessageTextColorMine());
-            tv_failed_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+//            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
+//            tv_text.setTextColor(style.getMessageTextColorMine());
+//            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
 
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
             tv_failed_des.setText(context.getResources().getText(failedDes));
             Drawable background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
-            ll_send_failed.setBackground(background);
+            itemView.setBackground(background);
 
-            ll_send_failed.setOnClickListener(view -> {
+            itemView.setOnClickListener(view -> {
                 if (!StreamChat.getInstance(context).isConnected()) return;
                 if (messageClickListener != null)
                     messageClickListener.onMessageClick(message, position);
             });
         } else {
-            ll_send_failed.setVisibility(View.GONE);
+            tv_failed_des.setVisibility(View.GONE);
         }
     }
 
@@ -360,7 +357,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         if (message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error)
                 || (TextUtils.isEmpty(message.getText()) && message.getDeletedAt() == null)) {
-            tv_text.setVisibility(View.GONE);
+//            tv_text.setVisibility(View.GONE);
             return;
         }
 
@@ -513,7 +510,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMarginStartEnd() {
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(alv_attachments);
-        configMarginStartEnd_(ll_send_failed);
+//        configMarginStartEnd_(ll_send_failed);
         configMarginStartEnd_(cl_reply);
         configMarginStartEnd_(tv_username);
         configMarginStartEnd_(tv_messagedate);
