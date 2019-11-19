@@ -12,4 +12,7 @@
     <string name="channel_update_message_hint">Type a message name</string>
     <string name="channel_update_name_error">Invalid Name!</string>
     <string name="channel_update_message_error">Invalid Message!</string>
+    <string name="channel_update_with_message">with system message</string>
+    <string name="OK">OK</string>
+    <string name="Cancel">Cancel</string>
 </resources>

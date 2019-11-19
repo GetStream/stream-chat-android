@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -108,10 +109,12 @@ public class ChannelMoreActionDialog extends Dialog {
 
     private void createNewChannelDialog() {
         dismiss();
+
         final View eidtChannelLayout = getLayoutInflater().inflate(R.layout.dialog_update_channel, null);
         EditText et_channel_name = eidtChannelLayout.findViewById(R.id.et_channel_name);
         EditText et_update_message = eidtChannelLayout.findViewById(R.id.et_update_message);
         CheckBox checkBox = eidtChannelLayout.findViewById(R.id.checkbox);
+
         (eidtChannelLayout.findViewById(R.id.button_close)).setOnClickListener(view -> editChannelDialog.dismiss());
         (eidtChannelLayout.findViewById(R.id.button_ok)).setOnClickListener(view -> {
             if (et_channel_name.getText().toString().isEmpty()) {
@@ -123,8 +126,12 @@ public class ChannelMoreActionDialog extends Dialog {
                 return;
             }
             editChannel(et_channel_name.getText().toString(), "https://i.imgur.com/1Oe1TDf.jpg", et_update_message.getText().toString());
+            editChannelDialog.dismiss();
         });
 
+        checkBox.setOnCheckedChangeListener((CompoundButton compoundButton, boolean b) ->
+                et_update_message.setVisibility(b ? View.VISIBLE : View.GONE)
+        );
         editChannelDialog = new BottomSheetDialog(context);
         editChannelDialog.setContentView(eidtChannelLayout);
         editChannelDialog.show();
