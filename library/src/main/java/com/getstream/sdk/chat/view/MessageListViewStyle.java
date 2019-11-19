@@ -63,6 +63,13 @@ public class MessageListViewStyle extends BaseStyle {
     // Thread
     private boolean threadEnabled;
 
+    // Date Separator
+    private int dateSeparatorSize;
+    private int dateSeparatorStyle;
+    private int dateSeparatorPosition;
+    private int dateSeparatorColor;
+    private String dateSeparatorFormat;
+
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
         setContext(c);
@@ -145,6 +152,12 @@ public class MessageListViewStyle extends BaseStyle {
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
+
+        // Date Separator
+        dateSeparatorSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorSize, getDimension(R.dimen.stream_attach_file_size_text));
+        dateSeparatorColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorColor, getColor(R.color.stream_attach_file_size_text));
+        dateSeparatorStyle = a.getColor(R.styleable.MessageListView_streamDateSeparatorStyle, Typeface.BOLD);
+
         a.recycle();
     }
 
@@ -312,5 +325,27 @@ public class MessageListViewStyle extends BaseStyle {
 
     public boolean isThreadEnabled() {
         return threadEnabled;
+    }
+
+    // Date Separator
+
+    public int getDateSeparatorSize() {
+        return dateSeparatorSize;
+    }
+
+    public int getDateSeparatorStyle() {
+        return dateSeparatorStyle;
+    }
+
+    public int getDateSeparatorPosition() {
+        return dateSeparatorPosition;
+    }
+
+    public int getDateSeparatorColor() {
+        return dateSeparatorColor;
+    }
+
+    public String getDateSeparatorFormat() {
+        return dateSeparatorFormat;
     }
 }

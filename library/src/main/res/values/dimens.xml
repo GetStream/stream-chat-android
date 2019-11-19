@@ -50,6 +50,8 @@
     <dimen name="stream_attach_file_size_text">12sp</dimen>
     <!--Thread-->
     <dimen name="stream_thread_toolbar_radius">10dp</dimen>
+    <!--Date Separator-->
+    
     <!--exomedia-->
     <dimen name="stream_exomedia_min_button_height">44dp</dimen>
     <dimen name="stream_exomedia_leanback_ripple_selector_size">90dp</dimen>
