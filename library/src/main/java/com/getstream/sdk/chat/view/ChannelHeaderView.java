@@ -132,7 +132,7 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
         binding.tvActive.setTextColor(style.getLastActiveTextColor());
         binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
-        binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : INVISIBLE);
+        binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : GONE);
         // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         binding.tvBack.setBackground(style.getBackButtonBackground());
