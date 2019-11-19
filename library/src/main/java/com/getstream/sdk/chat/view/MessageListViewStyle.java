@@ -67,11 +67,10 @@ public class MessageListViewStyle extends BaseStyle {
     private int dateSeparatorDateTextSize;
     private int dateSeparatorDateTextStyle;
     private int dateSeparatorDateTextColor;
-    private int dateSeparatorDateTextGravity;
     private int dateSeparatorLineColor;
     private int dateSeparatorLineWidth;
+    private int dateSeparatorLineDrawable;
     private String dateSeparatorFormat;
-    private boolean dateSeparatorShow;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -155,16 +154,14 @@ public class MessageListViewStyle extends BaseStyle {
         readStateTextStyle = a.getInt(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
-
         // Date Separator
         dateSeparatorDateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text));
         dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_date_separator_text));
         dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
-        dateSeparatorDateTextGravity = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextGravity, -1);
 
         dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_text));
         dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_date_separator_text));
-
+        dateSeparatorLineDrawable = a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1);
         a.recycle();
     }
 
@@ -344,10 +341,6 @@ public class MessageListViewStyle extends BaseStyle {
         return dateSeparatorDateTextStyle;
     }
 
-    public int getDateSeparatorDateTextGravity() {
-        return dateSeparatorDateTextGravity;
-    }
-
     public int getDateSeparatorDateTextColor() {
         return dateSeparatorDateTextColor;
     }
@@ -364,7 +357,7 @@ public class MessageListViewStyle extends BaseStyle {
         return dateSeparatorLineWidth;
     }
 
-    public boolean isDateSeparatorShow() {
-        return dateSeparatorShow;
+    public int getDateSeparatorLineDrawable() {
+        return dateSeparatorLineDrawable;
     }
 }

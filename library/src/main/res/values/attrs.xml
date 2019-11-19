@@ -222,13 +222,9 @@
         </attr>
         <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
         <attr name="streamDateSeparatorLineColor" format="color" />
-        <attr name="streamDateSeparatorDateTextGravity">
-            <flag name="left" value="0" />
-            <flag name="center" value="1" />
-            <flag name="right" value="2" />
-        </attr>
+        <attr name="streamDateSeparatorLineDrawable" format="reference" />
+
         <attr name="streamDateSeparatFormat" format="string" />
-        <attr name="streamDateSeparatorShow" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
