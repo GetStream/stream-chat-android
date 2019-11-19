@@ -3,51 +3,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="vertical"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        android:padding="15dp">
-
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
-
-        <TextView
-            android:id="@+id/tv_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:text="Testse ddasdfasd asdfasdf       fdsaf asd asdfa  vfdsfas af as  dfadf asdfa  dsfas  dfasdfasf"
-            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
-
+        app:layout_behavior="@string/bottom_sheet_behavior">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:gravity="right"
-            android:orientation="horizontal">
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="15dp">
 
-            <Button
-                android:id="@+id/button_close"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            <TextView
+                android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="CLOSE" />
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-            <Button
-                android:id="@+id/button_ok"
-                style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+            <TextView
+                android:id="@+id/tv_detail"
                 android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:text="Testse ddasdfasd asdfasdf       fdsaf asd asdfa  vfdsfas af as  dfadf asdfa  dsfas  dfasdfasf"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="OK" />
+                android:layout_marginTop="15dp"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/button_close"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CLOSE" />
+
+                <Button
+                    android:id="@+id/button_ok"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

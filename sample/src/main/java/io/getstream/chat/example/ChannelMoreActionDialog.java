@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -103,31 +104,26 @@ public class ChannelMoreActionDialog extends Dialog {
             }
         });
     }
-
+    private BottomSheetDialog mBottomSheetDialog;
     private void createNewChannelDialog() {
-        final EditText inputName = new EditText(context);
-        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        inputName.setHint(context.getString(R.string.stream_channel_update_hint));
-        final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.stream_channel_update_Title))
-                .setPositiveButton(android.R.string.ok, null)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
-        alertDialog.setView(inputName);
-        alertDialog.setOnShowListener(dialog -> {
-            Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            button.setOnClickListener(v -> {
-                String channelName = inputName.getText().toString();
-                if (TextUtils.isEmpty(channelName)) {
-                    inputName.setError(context.getString(R.string.stream_channel_update_name_error));
-                    return;
-                }
-                editChannel(channelName);
-                alertDialog.dismiss();
-            });
-        });
-        alertDialog.show();
         dismiss();
+        final View bottomSheetLayout = getLayoutInflater().inflate(R.layout.stream_dialog_update_channel, null);
+        (bottomSheetLayout.findViewById(R.id.button_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetDialog.dismiss();
+            }
+        });
+        (bottomSheetLayout.findViewById(R.id.button_ok)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Ok button clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mBottomSheetDialog = new BottomSheetDialog(context);
+        mBottomSheetDialog.setContentView(bottomSheetLayout);
+        mBottomSheetDialog.show();
     }
 
     private void editChannel(String channelName){
