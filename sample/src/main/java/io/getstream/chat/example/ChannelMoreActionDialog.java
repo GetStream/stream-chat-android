@@ -17,7 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
-import com.getstream.sdk.chat.R;
+
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 public class ChannelMoreActionDialog extends Dialog {
 
@@ -104,10 +105,11 @@ public class ChannelMoreActionDialog extends Dialog {
             }
         });
     }
+
     private BottomSheetDialog mBottomSheetDialog;
     private void createNewChannelDialog() {
         dismiss();
-        final View bottomSheetLayout = getLayoutInflater().inflate(R.layout.stream_dialog_update_channel, null);
+        final View bottomSheetLayout = getLayoutInflater().inflate(R.layout.dialog_update_channel, null);
         (bottomSheetLayout.findViewById(R.id.button_close)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
