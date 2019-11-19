@@ -50,7 +50,7 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean reactionEnabled;
-
+    //
     // ReactionView
     private int reactionViewBgDrawable;
     private int reactionViewBgColor;
@@ -62,6 +62,9 @@ public class MessageListViewStyle extends BaseStyle {
     private int reactionInputEmojiMargin;
     // Thread
     private boolean threadEnabled;
+    // User name and Message date
+    private boolean userNameShow;
+    private boolean messageDateShow;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -145,6 +148,9 @@ public class MessageListViewStyle extends BaseStyle {
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
+        userNameShow = a.getBoolean(R.styleable.MessageListView_streamUserNameShow, true);
+        messageDateShow = a.getBoolean(R.styleable.MessageListView_streamMessageDateShow, true);
+
         a.recycle();
     }
 
@@ -309,8 +315,16 @@ public class MessageListViewStyle extends BaseStyle {
     }
 
     // Thread
-
     public boolean isThreadEnabled() {
         return threadEnabled;
+    }
+    // User name and Message Date
+
+    public boolean isUserNameShow() {
+        return userNameShow;
+    }
+
+    public boolean isMessageDateShow() {
+        return messageDateShow;
     }
 }

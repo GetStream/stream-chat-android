@@ -212,6 +212,9 @@
         </attr>
         <!--Thread-->
         <attr name="streamThreadEnabled" format="boolean" />
+        <!-- User name and Message date-->
+        <attr name="streamUserNameShow" format="boolean" />
+        <attr name="streamMessageDateShow" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

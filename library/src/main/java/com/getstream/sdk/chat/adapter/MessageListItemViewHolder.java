@@ -162,6 +162,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configReadIndicator();
         // apply position related style tweaks
         configPositionsStyle();
+        configUserNameAndMessageDateStyle();
         // Configure Layout Params
         configMarginStartEnd();
         configParamsMessageText();
@@ -275,6 +276,15 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             }
             tv_gap_attach.setBackgroundResource(R.color.stream_gap_attach);
             tv_gap_reaction.setBackgroundResource(R.color.stream_gap_reaction);
+        }
+    }
+
+    private void configUserNameAndMessageDateStyle(){
+        if (!style.isUserNameShow()){
+            tv_username.setVisibility(View.GONE);
+        }
+        if (!style.isMessageDateShow()){
+            tv_messagedate.setVisibility(View.GONE);
         }
     }
 
@@ -550,6 +560,18 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configParamsMessageDate() {
         if (tv_messagedate.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_messagedate.getLayoutParams();
+        if (!style.isUserNameShow() && style.isMessageDateShow()){
+            set.clone((ConstraintLayout) itemView);
+            set.clear(R.id.tv_messagedate, ConstraintSet.START);
+            set.applyTo((ConstraintLayout) itemView);
+            @IdRes int layoutId;
+            if (this.message.getAttachments() == null || this.message.getAttachments().isEmpty()) {
+                layoutId = tv_text.getId();
+            } else {
+                layoutId = alv_attachments.getId();
+            }
+            params.startToStart = layoutId;
+        }
         if (messageListItem.isTheirs()) {
             params.horizontalBias = 0f;
         } else {
