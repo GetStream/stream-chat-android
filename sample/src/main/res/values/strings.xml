@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name" translatable="false">ChatSample</string>
+    <!--ChannelMoreAction-->
+    <string name="channel_action_hide_alert">Hidden successfully</string>
+    <string name="channel_action_show_alert">Shown up successfully</string>
+    <string name="channel_action_update_alert">Updated successfully</string>
+    <string name="channel_action_hide">Hide</string>
+    <string name="channel_action_edit">Edit</string>
+    <string name="channel_update_message">The name and image of this channel have changed!</string>
+    <string name="channel_update_Title">Update a Channel</string>
+    <string name="channel_update_title_hint">Type a channel name</string>
+    <string name="channel_update_message_hint">Type a message name</string>
+    <string name="channel_update_name_error">Invalid Name!</string>
+    <string name="channel_update_message_error">Invalid Message!</string>
 </resources>

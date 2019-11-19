@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/stream_channel_action_hide"
+                android:text="@string/channel_action_hide"
                 android:textColor="#8A000000" />
         </LinearLayout>
 
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="@string/stream_channel_action_edit"
+                android:text="@string/channel_action_edit"
                 android:textColor="#8A000000" />
         </LinearLayout>
 

@@ -48,16 +48,6 @@
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
-    <!--ChannelMoreAction-->
-    <string name="stream_channel_action_hide_alert">Hidden successfully</string>
-    <string name="stream_channel_action_show_alert">Shown up successfully</string>
-    <string name="stream_channel_action_update_alert">Updated successfully</string>
-    <string name="stream_channel_action_hide">Hide</string>
-    <string name="stream_channel_action_edit">Edit</string>
-    <string name="stream_channel_update_message">The name and image of this channel have changed!</string>
-    <string name="stream_channel_update_Title">Update a Channel</string>
-    <string name="stream_channel_update_hint">Type a channel name</string>
-    <string name="stream_channel_update_name_error">Invalid Name!</string>
 
     <string name="stream_last_message_attachment_giphy" translatable="false">/giphy</string>
 
