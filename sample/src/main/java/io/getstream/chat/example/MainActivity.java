@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
     void createNewChannelDialog() {
         final EditText inputName = new EditText(this);
-        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
         final AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Create a Channel")
