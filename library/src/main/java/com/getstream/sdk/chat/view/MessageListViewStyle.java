@@ -79,11 +79,11 @@ public class MessageListViewStyle extends BaseStyle {
         // Message Text
         messageTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeMine, getDimension(R.dimen.stream_message_text_font_size));
         messageTextColorMine = a.getColor(R.styleable.MessageListView_streamMessageTextColorMine, Color.BLACK);
-        messageTextStyleMine = a.getColor(R.styleable.MessageListView_streamMessageTextStyleMine, Typeface.NORMAL);
+        messageTextStyleMine = a.getInt(R.styleable.MessageListView_streamMessageTextStyleMine, Typeface.NORMAL);
 
         messageTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeTheirs, getDimension(R.dimen.stream_message_text_font_size));
         messageTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK);
-        messageTextStyleTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
+        messageTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
         // Message Bubble
         messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
@@ -109,15 +109,15 @@ public class MessageListViewStyle extends BaseStyle {
         // Attachment
         attachmentTitleTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.stream_attach_title_text));
         attachmentTitleTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.stream_attach_title_text));
-        attachmentTitleTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
+        attachmentTitleTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
 
         attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.stream_attach_description_text));
         attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_attach_description_text));
-        attachmentDescriptionTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
+        attachmentDescriptionTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
 
         attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text));
         attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_attach_file_size_text));
-        attachmentFileSizeTextStyle = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
+        attachmentFileSizeTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
@@ -149,14 +149,14 @@ public class MessageListViewStyle extends BaseStyle {
 
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
-        readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
+        readStateTextStyle = a.getInt(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
         // Thread
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
 
         // Date Separator
-        dateSeparatorSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorSize, getDimension(R.dimen.stream_attach_file_size_text));
-        dateSeparatorColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorColor, getColor(R.color.stream_attach_file_size_text));
-        dateSeparatorStyle = a.getColor(R.styleable.MessageListView_streamDateSeparatorStyle, Typeface.BOLD);
+        dateSeparatorSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorSize, getDimension(R.dimen.stream_date_separator_text));
+        dateSeparatorColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorColor, getColor(R.color.stream_date_separator_text));
+        dateSeparatorStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorStyle, Typeface.BOLD);
 
         a.recycle();
     }

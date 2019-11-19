@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -15,13 +17,11 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
-    private TextView tv_header_date, tv_header_time;
+    private TextView tv_date;
 
     public DateSeparatorViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
-
-        tv_header_date = itemView.findViewById(R.id.tv_header_date);
-        tv_header_time = itemView.findViewById(R.id.tv_header_time);
+        tv_date = itemView.findViewById(R.id.tv_date);
     }
 
     @Override
@@ -38,8 +38,14 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
         else
             humanizedDate = getRelativeTimeSpanString(messageDate).toString();
 
-        tv_header_date.setText(humanizedDate);
-//        tv_header_time.setText(" AT " + humanizedDate);
+        tv_date.setText(humanizedDate);
+        applyStyle();
+    }
+
+    private void applyStyle(){
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateSeparatorSize());
+        tv_date.setTextColor(style.getDateSeparatorColor());
+        tv_date.setTypeface(Typeface.DEFAULT, style.getDateSeparatorStyle());
     }
 
     @Override
