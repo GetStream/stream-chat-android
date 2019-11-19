@@ -70,7 +70,6 @@ public class MessageListViewStyle extends BaseStyle {
     private int dateSeparatorLineColor;
     private int dateSeparatorLineWidth;
     private int dateSeparatorLineDrawable;
-    private String dateSeparatorFormat;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -114,11 +113,11 @@ public class MessageListViewStyle extends BaseStyle {
         attachmentTitleTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
 
         attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.stream_attach_description_text));
-        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_attach_description_text));
+        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_gray_dark));
         attachmentDescriptionTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
 
         attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text));
-        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_attach_file_size_text));
+        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_gray_dark));
         attachmentFileSizeTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
@@ -156,11 +155,11 @@ public class MessageListViewStyle extends BaseStyle {
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
         // Date Separator
         dateSeparatorDateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text));
-        dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_date_separator_text));
+        dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_gray_dark));
         dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
 
         dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_text));
-        dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_date_separator_text));
+        dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_gray_dark));
         dateSeparatorLineDrawable = a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1);
         a.recycle();
     }
@@ -343,10 +342,6 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getDateSeparatorDateTextColor() {
         return dateSeparatorDateTextColor;
-    }
-
-    public String getDateSeparatorFormat() {
-        return dateSeparatorFormat;
     }
 
     public int getDateSeparatorLineColor() {

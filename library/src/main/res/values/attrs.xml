@@ -223,8 +223,6 @@
         <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
         <attr name="streamDateSeparatorLineColor" format="color" />
         <attr name="streamDateSeparatorLineDrawable" format="reference" />
-
-        <attr name="streamDateSeparatFormat" format="string" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

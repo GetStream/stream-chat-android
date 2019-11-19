@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
@@ -22,6 +23,8 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     private MessageListViewStyle style;
     private Context context;
+    private MessageListItem messageListItem;
+
     private TextView tv_date;
     private ImageView iv_line_right, iv_line_left;
 
@@ -35,9 +38,15 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     @Override
     public void bind(Context context,
                      ChannelState channelState,
-                     MessageListItem messageListItem,
+                     @NonNull MessageListItem messageListItem,
                      int position) {
         this.context = context;
+        this.messageListItem = messageListItem;
+        configDate();
+        applyStyle();
+    }
+
+    private void configDate(){
         String humanizedDate;
         long messageDate = messageListItem.getDate().getTime();
         Date now = new Date();
@@ -47,9 +56,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
             humanizedDate = getRelativeTimeSpanString(messageDate).toString();
 
         tv_date.setText(humanizedDate);
-        applyStyle();
     }
-
     private void applyStyle(){
 
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateSeparatorDateTextSize());

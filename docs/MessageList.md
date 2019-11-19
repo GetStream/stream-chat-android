@@ -233,11 +233,22 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamAttachmentTitleTextColor`      | color                | #026DFE |
 | `app:streamAttachmentTitleTextStyle`      | normal, bold, italic | bold    |
 | `app:streamAttachmentDescriptionTextSize` | dimension            | 11sp    |
-| `app:streamAttachmentDescriptionTextColor`| color                | #989898 |
+| `app:streamAttachmentDescriptionTextColor`| color                | DKGRAY  |
 | `app:streamAttachmentDescriptionTextStyle`| normal, bold, italic | normal  |
 | `app:streamAttachmentFileSizeTextSize`    | dimension            | 12sp    |
-| `app:streamAttachmentFileSizeTextColor`   | color                | #989898 |
+| `app:streamAttachmentFileSizeTextColor`   | color                | DKGRAY  |
 | `app:streamAttachmentFileSizeTextStyle`   | normal, bold, italic | bold    |
+
+- **Date Separator**
+
+| Properties                                | Type                   | Default |
+| ----------------------------------------- | ---------------------- | ------- |
+| `app:streamDateSeparatorDateTextSize`     | dimension              | 12sp    |
+| `app:streamDateSeparatorDateTextColor`    | color                  | DKGRAY  |
+| `app:streamDateSeparatorDateTextStyle`    | normal, bold, italic   | bold    |
+| `app:streamDateSeparatorLineWidth`        | dimension              | 1px     |
+| `app:streamDateSeparatorLineColor`        | color                  | DKGRAY  |
+| `app:streamDateSeparatorLineDrawable`     | reference              | -       |
 
 - **Thread**
 
