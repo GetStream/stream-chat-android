@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.core;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -130,12 +131,15 @@ public class Client implements WSResponseHandler {
     // Main Params
     private String apiKey;
 
+    private ApiClientOptions apiClientOptions;
     private Boolean offlineStorage;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
     private Context context;
+    private Handler delayedDisconnectWebSocketHandler = new Handler();
+
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
@@ -269,6 +273,7 @@ public class Client implements WSResponseHandler {
             };
 
     public Client(String apiKey,
+                  ApiClientOptions apiClientOptions,
                   ApiServiceProvider apiServiceProvider,
                   WebSocketServiceProvider webSocketServiceProvider,
                   UploadStorageProvider uploadStorageProvider,
@@ -276,6 +281,7 @@ public class Client implements WSResponseHandler {
                   ConnectionLiveData connectionLiveData) {
         connected = false;
         this.apiKey = apiKey;
+        this.apiClientOptions = apiClientOptions;
         subRegistry = new EventSubscriberRegistry();
         connectSubRegistry = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
@@ -302,7 +308,9 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey, ApiClientOptions options) {
-        this(apiKey, new StreamApiServiceProvider(options),
+        this(apiKey,
+                options,
+                new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
                 new StreamStorageProvider(),
@@ -310,7 +318,9 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
-        this(apiKey, new StreamApiServiceProvider(options),
+        this(apiKey,
+                options,
+                new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
                 new StreamStorageProvider(),
@@ -952,7 +962,7 @@ public class Client implements WSResponseHandler {
                         if (channel.getCreatedByUser() == null) {
                             channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
                         }
-                        
+
                         addChannelConfig(channel.getType(), channel.getConfig());
 
                         if (queryRequest.isWatch()) {
@@ -2010,6 +2020,16 @@ public class Client implements WSResponseHandler {
                     }
                 }
         );
+    }
+
+    public void cancelDelayedWebSocketDisconnect() {
+        delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+    }
+
+    public void disconnectWebSocketWithDelay() {
+        delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+        delayedDisconnectWebSocketHandler.postDelayed(this::disconnectWebSocket,
+                apiClientOptions.getWebSocketDisconnectDelay());
     }
 
     /**
