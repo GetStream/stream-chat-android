@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>
+    <string name="stream_just_now">ちょうど今</string>
+    <string name="stream_today">今日</string>
+    <string name="stream_yesterday">昨日</string>
+    <string name="stream_input_type_add_file">ファイルを追加する</string>
+    <string name="stream_attachment_load_failed_unknown">不明なエラーのため、ロードに失敗しました。</string>
+    <string name="stream_channel_offlineText">ネットワークを待っています…</string>
+    <string name="stream_channel_unknown_title">名前のないチャンネル</string>
+    <string name="stream_delete_message">このメッセージは削除されました。</string>
+    <string name="stream_input_type_command">一致するコマンド</string>
+    <string name="stream_input_hint">メッセージを書く</string>
+    <string name="stream_input_take_picture">カメラからアップロードする</string>
+    <string name="stream_input_type_edit_message">メッセージを編集する</string>
+    <string name="stream_input_type_select_file">ファイルを選択してください</string>
+    <string name="stream_input_type_select_gallery">写真またはビデオを選択してください</string>
+    <string name="stream_input_type_auto_mention">人を探す</string>
+    <string name="stream_input_upload_file">ファイルをアップロードする</string>
+    <string name="stream_input_upload_media">写真またはビデオをアップロードする</string>
+    <string name="stream_last_message_attachment_photo">写真</string>
+    <string name="stream_both_permissions_message">には、写真、ビデオ、音楽、その他のファイルを撮影、送信、保存できるように、カメラとストレージへのアクセスが必要です。 設定で有効にしてください。</string>
+    <string name="stream_camera_permission_message">には、写真とビデオを撮影できるように、カメラとストレージへのアクセスが必要です。 設定で有効にしてください。</string>
+    <string name="stream_channel_header_active">アクティブ %s</string>
+    <string name="stream_channel_header_active_now">ちょうど今</string>
+    <string name="stream_image">画像</string>
+    <string name="stream_input_camera_title">画像またはビデオをキャプチャする</string>
+    <string name="stream_last_message_attachment_video">ビデオ</string>
+    <string name="stream_message_failed_send">メッセージが失敗しましたּ•もう一度クリックして試してください</string>
+    <string name="stream_message_invalid_command">未送信ּ•無効なコマンド</string>
+    <string name="stream_you">（君は）</string>
+    <string name="stream_message_invalid_response">応答またはメッセージが空です。</string>
+    <string name="stream_no_file_error">ファイルがありません。</string>
+    <string name="stream_no_media_error">写真やビデオはありません。</string>
+    <string name="stream_storage_permission_message">には、写真、ビデオ、音楽、その他のファイルを送信して保存できるように、ストレージへのアクセスが必要です。 設定で有効にしてください。</string>
+    <string name="stream_take_photo_failed">不明なエラーのため失敗しました。</string>
+    <string name="stream_thread_separator">新しいスレッドの開始</string>
+    <string name="stream_video">ビデオ</string>
+</resources>
