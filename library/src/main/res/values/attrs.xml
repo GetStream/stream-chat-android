@@ -213,14 +213,22 @@
         <!--Thread-->
         <attr name="streamThreadEnabled" format="boolean" />
         <!--Date Separator-->
-        <attr name="streamDateSeparatorSize" format="dimension|reference" />
-        <attr name="streamDateSeparatorColor" format="color" />
-        <attr name="streamDateSeparatorStyle">
+        <attr name="streamDateSeparatorDateTextSize" format="dimension|reference" />
+        <attr name="streamDateSeparatorDateTextColor" format="color" />
+        <attr name="streamDateSeparatorDateTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+        <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
+        <attr name="streamDateSeparatorLineColor" format="color" />
+        <attr name="streamDateSeparatorDateTextGravity">
+            <flag name="left" value="0" />
+            <flag name="center" value="1" />
+            <flag name="right" value="2" />
+        </attr>
         <attr name="streamDateSeparatFormat" format="string" />
+        <attr name="streamDateSeparatorShow" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

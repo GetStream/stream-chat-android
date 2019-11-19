@@ -64,11 +64,14 @@ public class MessageListViewStyle extends BaseStyle {
     private boolean threadEnabled;
 
     // Date Separator
-    private int dateSeparatorSize;
-    private int dateSeparatorStyle;
-    private int dateSeparatorPosition;
-    private int dateSeparatorColor;
+    private int dateSeparatorDateTextSize;
+    private int dateSeparatorDateTextStyle;
+    private int dateSeparatorDateTextColor;
+    private int dateSeparatorDateTextGravity;
+    private int dateSeparatorLineColor;
+    private int dateSeparatorLineWidth;
     private String dateSeparatorFormat;
+    private boolean dateSeparatorShow;
 
     public MessageListViewStyle(Context c, AttributeSet attrs) {
         // parse the attributes
@@ -154,9 +157,13 @@ public class MessageListViewStyle extends BaseStyle {
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
 
         // Date Separator
-        dateSeparatorSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorSize, getDimension(R.dimen.stream_date_separator_text));
-        dateSeparatorColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorColor, getColor(R.color.stream_date_separator_text));
-        dateSeparatorStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorStyle, Typeface.BOLD);
+        dateSeparatorDateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text));
+        dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_date_separator_text));
+        dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
+        dateSeparatorDateTextGravity = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextGravity, -1);
+
+        dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_text));
+        dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_date_separator_text));
 
         a.recycle();
     }
@@ -329,23 +336,35 @@ public class MessageListViewStyle extends BaseStyle {
 
     // Date Separator
 
-    public int getDateSeparatorSize() {
-        return dateSeparatorSize;
+    public int getDateSeparatorDateTextSize() {
+        return dateSeparatorDateTextSize;
     }
 
-    public int getDateSeparatorStyle() {
-        return dateSeparatorStyle;
+    public int getDateSeparatorDateTextStyle() {
+        return dateSeparatorDateTextStyle;
     }
 
-    public int getDateSeparatorPosition() {
-        return dateSeparatorPosition;
+    public int getDateSeparatorDateTextGravity() {
+        return dateSeparatorDateTextGravity;
     }
 
-    public int getDateSeparatorColor() {
-        return dateSeparatorColor;
+    public int getDateSeparatorDateTextColor() {
+        return dateSeparatorDateTextColor;
     }
 
     public String getDateSeparatorFormat() {
         return dateSeparatorFormat;
+    }
+
+    public int getDateSeparatorLineColor() {
+        return dateSeparatorLineColor;
+    }
+
+    public int getDateSeparatorLineWidth() {
+        return dateSeparatorLineWidth;
+    }
+
+    public boolean isDateSeparatorShow() {
+        return dateSeparatorShow;
     }
 }
