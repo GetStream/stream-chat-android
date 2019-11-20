@@ -197,7 +197,6 @@ public class MessageInputView extends RelativeLayout {
             else
                 binding.setActiveMessageSend(messageText.length() != 0);
         });
-
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
@@ -369,22 +368,31 @@ public class MessageInputView extends RelativeLayout {
      You can overwrite this method in case you want to attach more custom properties to the message
      */
     public void onSendMessage(Message message) {
-        if (viewModel.isThread())
-            message.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // set the current user
-        message.setUser(viewModel.client().getUser());
-
+        if (messageInputManager != null)
+            setUserOnMessage(message);
         onSendMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                if (messageInputManager != null)
+                viewModel.setEditMessage(null);
+                if (messageInputManager != null){
+                    viewModel.setEditMessage(null);
                     messageInputManager.onSendMessageSuccess(response.getMessage());
+                }else {
+                    initSendMessage();
+                    if (isEdit()) clearFocus();
+                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                if (messageInputManager != null)
+                if (messageInputManager != null) {
+                    viewModel.setEditMessage(null);
                     messageInputManager.onSendMessageError(errMsg);
+                } else {
+                    Utils.showMessage(getContext(), errMsg);
+                    initSendMessage();
+                    if (isEdit()) clearFocus();
+                }
             }
         });
     }
@@ -399,36 +407,14 @@ public class MessageInputView extends RelativeLayout {
     private void onSendMessage() {
         String input = binding.etMessage.getText().toString();
         binding.ivSend.setEnabled(false);
-        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(input), new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                binding.ivSend.setEnabled(true);
-                initSendMessage();
-                if (isEdit())
-                    clearFocus();
-                if (messageInputManager != null)
-                    messageInputManager.onSendMessageSuccess(response.getMessage());
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                initSendMessage();
-                binding.ivSend.setEnabled(true);
-                if (isEdit())
-                    clearFocus();
-                if (messageInputManager != null) {
-                    messageInputManager.onSendMessageError(errMsg);
-                } else {
-                    Utils.showMessage(getContext(), errMsg);
-                }
-            }
-        });
+        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(input));
     }
 
     private void initSendMessage() {
         messageInputController.initSendMessage();
         viewModel.setEditMessage(null);
         binding.etMessage.setText("");
+        binding.ivSend.setEnabled(true);
     }
 
     // endregion
@@ -466,8 +452,11 @@ public class MessageInputView extends RelativeLayout {
     private void editMessage(Message message) {
         if (message == null) return;
 
-        if (messageInputManager != null)
+        if (messageInputManager != null){
             messageInputManager.onEditMessage(message);
+            return;
+        }
+
         // Set Text to Inputbox
         binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
@@ -573,11 +562,7 @@ public class MessageInputView extends RelativeLayout {
         Message m = new Message();
         m.setText(input);
         m.setAttachments(messageInputController.getSelectedAttachments());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // set the current user
-        m.setUser(viewModel.client().getUser());
+        setUserOnMessage(m);
         // Check file uploading
         if (messageInputController.isUploadingFile()){
             String clientSideID = viewModel.getChannel().getClient().generateMessageID();
@@ -587,6 +572,14 @@ public class MessageInputView extends RelativeLayout {
             m.setAttachments(null);
         }
         return m;
+    }
+
+    private void setUserOnMessage(Message message){
+        // set the current user
+        message.setUser(viewModel.client().getUser());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            message.setParentId(viewModel.getThreadParentMessage().getValue().getId());
     }
 
     public void setMessageInputManager(StreamMessageInputManager messageInputManager) {

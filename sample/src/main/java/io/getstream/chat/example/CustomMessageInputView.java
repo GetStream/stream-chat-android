@@ -47,7 +47,7 @@ public class CustomMessageInputView extends MessageInputView
                 viewModel.keystroke();
             }
         });
-        binding.setLifecycleOwner(lifecycleOwner);
+//        binding.setLifecycleOwner(lifecycleOwner);
         setMessageInputManager(this);
     }
 
