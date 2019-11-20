@@ -26,11 +26,16 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
-            android:background="#f3f5f8"
             app:layout_constraintBottom_toTopOf="@+id/message_input"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/stream_gray"
+            app:layout_constraintTop_toBottomOf="@+id/messageList"/>
 
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"
