@@ -212,6 +212,18 @@
         </attr>
         
         <attr name="streamThreadEnabled" format="boolean" />
+        <!--Date Separator-->
+        <attr name="streamDateSeparatorDateTextSize" format="dimension|reference" />
+        <attr name="streamDateSeparatorDateTextColor" format="color" />
+        <attr name="streamDateSeparatorDateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
+        <attr name="streamDateSeparatorLineColor" format="color" />
+        <attr name="streamDateSeparatorLineDrawable" format="reference" />
+
         <attr name="streamUserNameShow" format="boolean" />
         <attr name="streamMessageDateShow" format="boolean" />
     </declare-styleable>
