@@ -4,10 +4,8 @@ import android.content.Intent;
 
 import com.getstream.sdk.chat.rest.Message;
 
-public interface MessageInputManager {
+public interface StreamMessageInputManager {
     void onSendMessageSuccess(Message message);
+    void onEditMessage(Message message);
     void onSendMessageError(String errMsg);
-    void onAddAttachments();
-    void openPermissionRequest();
-    void openCameraView(Intent intent, int REQUEST_CODE);
 }

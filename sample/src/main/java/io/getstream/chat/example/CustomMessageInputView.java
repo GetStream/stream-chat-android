@@ -1,7 +1,6 @@
 package io.getstream.chat.example;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -9,7 +8,8 @@ import android.view.LayoutInflater;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.interfaces.MessageInputManager;
+
+import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -21,14 +21,12 @@ import java.util.Arrays;
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
 public class CustomMessageInputView extends MessageInputView
-        implements MessageInputManager {
+        implements StreamMessageInputManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
-    // our connection to the channel scope
-//    private ChannelViewModel viewModel;
 
     public CustomMessageInputView(Context context) {
         super(context);
@@ -40,47 +38,46 @@ public class CustomMessageInputView extends MessageInputView
         initBinding(context);
     }
 
-    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        super.setViewModel(model, lifecycleOwner);
+    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        super.setViewModel(viewModel, lifecycleOwner);
+        // Set Keystroke
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = getMessageText();
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
+            }
+        });
         binding.setLifecycleOwner(lifecycleOwner);
-        // Edit Message
-//        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+        setMessageInputManager(this);
     }
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Set Keystroke
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = getMessageText();
-            Log.i(TAG, "Length is " + editable.length());
-            if (messageText.length() > 0) {
-//                viewModel.keystroke();
-            }
-        });
+
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = new Message();
             message.setText(binding.etMessage.getText().toString());
-            super.onSendMessage();
+            super.onSendMessage(message);
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
-            super.onSendMessage();
+            super.onSendMessage(message);
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
-            super.onSendMessage();
+            super.onSendMessage(message);
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
-            super.onSendMessage();
+            super.onSendMessage(message);
         });
     }
 
@@ -115,8 +112,13 @@ public class CustomMessageInputView extends MessageInputView
         return attachment;
     }
 
-    // Edit Message
-    private void editMessage(Message message) {
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        binding.etMessage.setText("");
+    }
+
+    @Override
+    public void onEditMessage(Message message) {
         if (message == null
                 || TextUtils.isEmpty(message.getText())) return;
 
@@ -125,38 +127,8 @@ public class CustomMessageInputView extends MessageInputView
         binding.etMessage.setSelection(binding.etMessage.getText().length());
     }
 
-
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
-    }
-
-    public String getMessageText() {
-        return binding.etMessage.getText().toString();
-    }
-
-
-    @Override
-    public void onSendMessageSuccess(Message message) {
-        
-    }
-
     @Override
     public void onSendMessageError(String errMsg) {
-
-    }
-
-    @Override
-    public void onAddAttachments() {
-
-    }
-
-    @Override
-    public void openPermissionRequest() {
-
-    }
-
-    @Override
-    public void openCameraView(Intent intent, int REQUEST_CODE) {
-
+        binding.etMessage.setText("");
     }
 }

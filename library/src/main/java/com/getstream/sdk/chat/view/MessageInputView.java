@@ -32,6 +32,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
+import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -84,7 +85,7 @@ public class MessageInputView extends RelativeLayout {
      */
     private MessageInputStyle style;
     /** Fired when a message is sent */
-    private SendMessageListener sendMessageListener;
+    private StreamMessageInputManager messageInputManager;
     /** Permission Request listener */
     private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
@@ -289,8 +290,23 @@ public class MessageInputView extends RelativeLayout {
                 });
     }
 
-    public Message getEditMessage() {
-        return viewModel.getEditMessage().getValue();
+    @NonNull
+    private Message getEditMessage(String input) {
+        Message message = viewModel.getEditMessage().getValue();
+        message.setText(input);
+        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+        if (newAttachments != null
+                && !newAttachments.isEmpty()){
+            List<Attachment>attachments = message.getAttachments();
+            for (Attachment attachment : newAttachments){
+                if (attachments == null)
+                    attachments = new ArrayList<>();
+                attachments.add(attachment);
+            }
+            message.setAttachments(attachments);
+        }
+
+        return message;
     }
 
     public void setEnabled(boolean enabled) {
@@ -352,65 +368,61 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
+    public void onSendMessage(Message message) {
+        if (viewModel.isThread())
+            message.setParentId(viewModel.getThreadParentMessage().getValue().getId());
+        // set the current user
+        message.setUser(viewModel.client().getUser());
 
-    public void onSendMessage() {
-        String input = binding.etMessage.getText().toString();
-        boolean isEdit = viewModel.isEditing();
-        binding.ivSend.setEnabled(false);
-        if (isEdit) {
-            Message message = getEditMessage();
-            message.setText(input);
-            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-            if (newAttachments != null
-                    && !newAttachments.isEmpty()){
-                List<Attachment>attachments = message.getAttachments();
-                for (Attachment attachment : newAttachments){
-                    if (attachments == null)
-                        attachments = new ArrayList<>();
-                    attachments.add(attachment);
-                }
-                message.setAttachments(attachments);
+        onSendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (messageInputManager != null)
+                    messageInputManager.onSendMessageSuccess(response.getMessage());
             }
 
-            viewModel.editMessage(message, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    Utils.hideSoftKeyboard((Activity) getContext());
-                    clearFocus();
-                }
+            @Override
+            public void onError(String errMsg, int errCode) {
+                if (messageInputManager != null)
+                    messageInputManager.onSendMessageError(errMsg);
+            }
+        });
+    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    clearFocus();
-                }
-            });
-        } else {
-            Message m = prepareMessage(input);
-            viewModel.sendMessage(m, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    binding.ivSend.setEnabled(true);
-                    initSendMessage();
-                    if (sendMessageListener != null)
-                        sendMessageListener.onSendMessageSuccess(response.getMessage());
-                }
+    public void onSendMessage(Message message, MessageCallback callback) {
+        if (isEdit())
+            viewModel.editMessage(message, callback);
+        else
+            viewModel.sendMessage(message, callback);
+    }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(errMsg);
-                    } else {
-                        Utils.showMessage(getContext(), errMsg);
-                    }
+    private void onSendMessage() {
+        String input = binding.etMessage.getText().toString();
+        binding.ivSend.setEnabled(false);
+        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(input), new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                binding.ivSend.setEnabled(true);
+                initSendMessage();
+                if (isEdit())
+                    clearFocus();
+                if (messageInputManager != null)
+                    messageInputManager.onSendMessageSuccess(response.getMessage());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                initSendMessage();
+                binding.ivSend.setEnabled(true);
+                if (isEdit())
+                    clearFocus();
+                if (messageInputManager != null) {
+                    messageInputManager.onSendMessageError(errMsg);
+                } else {
+                    Utils.showMessage(getContext(), errMsg);
                 }
-            });
-        }
+            }
+        });
     }
 
     private void initSendMessage() {
@@ -447,9 +459,15 @@ public class MessageInputView extends RelativeLayout {
     }
     // endregion
 
+    private boolean isEdit(){
+        return viewModel.isEditing();
+    }
     // region edit message
     private void editMessage(Message message) {
         if (message == null) return;
+
+        if (messageInputManager != null)
+            messageInputManager.onEditMessage(message);
         // Set Text to Inputbox
         binding.etMessage.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
@@ -458,7 +476,6 @@ public class MessageInputView extends RelativeLayout {
         }
 
         // Set Attachments to Inputbox
-
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
                 || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
@@ -572,8 +589,8 @@ public class MessageInputView extends RelativeLayout {
         return m;
     }
 
-    public void setOnSendMessageListener(SendMessageListener l) {
-        this.sendMessageListener = l;
+    public void setMessageInputManager(StreamMessageInputManager messageInputManager) {
+        this.messageInputManager = messageInputManager;
     }
 
     public void setPermissionRequestListener(PermissionRequestListener l) {
@@ -582,14 +599,6 @@ public class MessageInputView extends RelativeLayout {
 
     public void setOpenCameraViewListener(OpenCameraViewListener l) {
         this.openCameraViewListener = l;
-    }
-
-    /**
-     * Used for listening to the sendMessage event
-     */
-    public interface SendMessageListener {
-        void onSendMessageSuccess(Message message);
-        void onSendMessageError(String errMsg);
     }
 
     /**
