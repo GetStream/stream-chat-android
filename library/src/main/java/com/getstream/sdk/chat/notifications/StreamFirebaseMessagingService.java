@@ -1,4 +1,4 @@
-package io.getstream.chat.example;
+package com.getstream.sdk.chat.notifications;
 
 import androidx.annotation.NonNull;
 
@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-public class CCFirebaseMessagingService extends FirebaseMessagingService {
+public class StreamFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {

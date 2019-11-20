@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.ClientState;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
 
@@ -206,9 +207,21 @@ public class StreamChat {
                         onlineStatus.postValue(OnlineStatus.FAILED);
                     }
                 });
+                registerFirebaseToken(context);
             }
             return true;
         }
+    }
+
+    private static void registerFirebaseToken(Context context) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                StreamChat.getNotificationsManager().setFirebaseToken(
+                                        task.getResult().getToken(), context);
+                            }
+                        }
+                );
     }
 
     public static NotificationsManager getNotificationsManager() {

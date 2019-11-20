@@ -6,7 +6,6 @@ import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -19,13 +18,5 @@ public class BaseApplication extends Application {
         FirebaseApp.initializeApp(getApplicationContext());
         StreamChat.init(BuildConfig.API_KEY, new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                StreamChat.getNotificationsManager().setFirebaseToken(
-                                        task.getResult().getToken(), this);
-                            }
-                        }
-                );
     }
 }
