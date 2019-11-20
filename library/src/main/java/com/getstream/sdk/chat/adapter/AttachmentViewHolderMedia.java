@@ -35,7 +35,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_logo;
 
-    private ConstraintLayout cl_action;
+    private ConstraintLayout cl_des, cl_action;
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
     private MessageListView.GiphySendListener giphySendListener;
     private Client client;
@@ -48,6 +48,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         iv_command_logo = itemView.findViewById(R.id.iv_command_logo);
+        cl_des = itemView.findViewById(R.id.cl_des);
         // Giphy
         cl_action = itemView.findViewById(R.id.cl_action);
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
@@ -77,11 +78,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(context, background);
-//        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configAction() {
-
         if (message.getType().equals(ModelType.message_ephemeral)
                 && message.getCommand() != null
                 && message.getCommand().equals(ModelType.attach_giphy)) {
@@ -131,24 +130,12 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         }
     }
 
-    private void configMediaAttach() {  
-        
+    private void configMediaAttach() {
         final String type = attachment.getType();
-        String attachUrl = attachment.getImageURL();
-        if (attachment.getType().equals(ModelType.attach_image)) {
-            attachUrl = attachment.getImageURL();
-        } else if (attachment.getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachment.getThumbURL();
-        } else if (attachment.getType().equals(ModelType.attach_video)) {
-            attachUrl = attachment.getThumbURL();
-        } else {
-            if (attachUrl == null) attachUrl = attachment.getImage();
-        }
-
         configImageThumbBackground();
 
         Glide.with(context)
-                .load(client.getUploadStorage().signGlideUrl(attachUrl))
+                .load(client.getUploadStorage().signGlideUrl(getAssetUrl(type)))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 
@@ -156,28 +143,28 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_title.setText(attachment.getTitle());
         tv_media_des.setText(attachment.getText());
 
-        if (attachment.getType().equals(ModelType.attach_giphy))
-            iv_command_logo.setVisibility(View.VISIBLE);
-        else
-            iv_command_logo.setVisibility(View.GONE);
+        tv_media_title.setVisibility(!TextUtils.isEmpty(attachment.getTitle()) ? View.VISIBLE : View.GONE);
+        tv_media_des.setVisibility(!TextUtils.isEmpty(attachment.getText()) ? View.VISIBLE : View.GONE);
+        tv_media_play.setVisibility(type.equals(ModelType.attach_video) ? View.VISIBLE : View.GONE);
+        iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
-        if (TextUtils.isEmpty(attachment.getText()))
-            tv_media_des.setVisibility(View.GONE);
-        else
-            tv_media_des.setVisibility(View.VISIBLE);
-
-        if (TextUtils.isEmpty(attachment.getTitle()))
-            tv_media_title.setVisibility(View.GONE);
-        else
-            tv_media_title.setVisibility(View.VISIBLE);
-
-        if (type.equals(ModelType.attach_video))
-            tv_media_play.setVisibility(View.VISIBLE);
-        else
-            tv_media_play.setVisibility(View.GONE);
-
+        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE){
+            Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
+            cl_des.setBackground(background);
+        }
     }
 
+    private String getAssetUrl(String type){
+        switch (type) {
+            case ModelType.attach_image:
+                return attachment.getImageURL();
+            case ModelType.attach_giphy:
+            case ModelType.attach_video:
+                return attachment.getThumbURL();
+            default:
+                return TextUtils.isEmpty(attachment.getImageURL()) ? attachment.getImage() : attachment.getImageURL();
+        }
+    }
     private void applyStyle() {
         tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
         tv_media_title.setTextColor(style.getAttachmentTitleTextColor());

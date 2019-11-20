@@ -243,6 +243,61 @@ public class MessageListView extends RecyclerView {
                         .cornerRadii(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius)
                         .build();
             }
+
+            @Override
+            public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions){
+                topLeftRadius = 0;
+                topRightRadius = 0;
+                if (mine) {
+                    if (style.getMessageBubbleDrawableMine() != null)
+                        return style.getMessageBubbleDrawableMine();
+                    if (message.getSyncStatus() == Sync.LOCAL_FAILED
+                            || message.getType().equals(ModelType.message_error)) {
+                        bgColor = getResources().getColor(R.color.stream_message_failed);
+                    } else {
+                        bgColor = style.getMessageBackgroundColorMine();
+                    }
+                    strokeColor = style.getMessageBorderColorMine();
+                    strokeWidth = style.getMessageBorderWidthMine();
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusMine();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusMine();
+
+                    if (isDefaultBubble()) {
+                        bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        } else {
+                            bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        }
+                    }
+                } else {
+                    if (style.getMessageBubbleDrawableTheirs() != null)
+                        return style.getMessageBubbleDrawableTheirs();
+
+                    bottomRightRadius = style.getMessageBottomRightCornerRadiusTheirs();
+                    bottomLeftRadius = style.getMessageBottomLeftCornerRadiusTheirs();
+                    bgColor = style.getMessageBackgroundColorTheirs();
+                    strokeColor = style.getMessageBorderColorTheirs();
+                    strokeWidth = style.getMessageBorderWidthTheirs();
+
+                    if (isDefaultBubble()) {
+                        bottomRightRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
+                        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        } else {
+                            bottomLeftRadius = getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        }
+                    }
+                }
+
+                return new DrawableBuilder()
+                        .rectangle()
+                        .strokeColor(strokeColor)
+                        .strokeWidth(strokeWidth)
+                        .solidColor(bgColor)
+                        .cornerRadii(topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius)
+                        .build();
+            }
         });
     }
 
@@ -694,8 +749,8 @@ public class MessageListView extends RecyclerView {
 
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
-
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+        Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
     }
     // endregion
 
