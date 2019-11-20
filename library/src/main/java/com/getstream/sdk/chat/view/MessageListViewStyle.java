@@ -50,7 +50,6 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean reactionEnabled;
-
     // ReactionView
     private int reactionViewBgDrawable;
     private int reactionViewBgColor;
@@ -60,8 +59,10 @@ public class MessageListViewStyle extends BaseStyle {
     private int reactionInputBgColor;
     private int reactionInputEmojiSize;
     private int reactionInputEmojiMargin;
-    // Thread
+
     private boolean threadEnabled;
+    private boolean userNameShow;
+    private boolean messageDateShow;
 
     // Date Separator
     private int dateSeparatorDateTextSize;
@@ -147,13 +148,12 @@ public class MessageListViewStyle extends BaseStyle {
         showReadState = a.getBoolean(R.styleable.MessageListView_streamShowReadState, true);
         readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarWidth, getDimension(R.dimen.stream_read_state_avatar_width));
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
-
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
-        readStateTextStyle = a.getInt(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
-        // Thread
+        readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
+
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
-        // Date Separator
+
         dateSeparatorDateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text));
         dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_gray_dark));
         dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
@@ -161,6 +161,10 @@ public class MessageListViewStyle extends BaseStyle {
         dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_text));
         dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_gray_dark));
         dateSeparatorLineDrawable = a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1);
+
+        userNameShow = a.getBoolean(R.styleable.MessageListView_streamUserNameShow, true);
+        messageDateShow = a.getBoolean(R.styleable.MessageListView_streamMessageDateShow, true);
+
         a.recycle();
     }
 
@@ -289,9 +293,7 @@ public class MessageListViewStyle extends BaseStyle {
         return attachmentFileSizeTextStyle;
     }
 
-
     // Reaction Dialog
-
     public boolean isReactionEnabled() {
         return reactionEnabled;
     }
@@ -324,11 +326,11 @@ public class MessageListViewStyle extends BaseStyle {
         return reactionInputEmojiMargin;
     }
 
-    // Thread
 
     public boolean isThreadEnabled() {
         return threadEnabled;
     }
+
 
     // Date Separator
 
@@ -354,5 +356,13 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getDateSeparatorLineDrawable() {
         return dateSeparatorLineDrawable;
+    }
+
+    public boolean isUserNameShow() {
+        return userNameShow;
+    }
+
+    public boolean isMessageDateShow() {
+        return messageDateShow;
     }
 }

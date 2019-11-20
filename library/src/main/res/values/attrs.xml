@@ -210,7 +210,7 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <!--Thread-->
+        
         <attr name="streamThreadEnabled" format="boolean" />
         <!--Date Separator-->
         <attr name="streamDateSeparatorDateTextSize" format="dimension|reference" />
@@ -223,6 +223,9 @@
         <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
         <attr name="streamDateSeparatorLineColor" format="color" />
         <attr name="streamDateSeparatorLineDrawable" format="reference" />
+
+        <attr name="streamUserNameShow" format="boolean" />
+        <attr name="streamMessageDateShow" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">

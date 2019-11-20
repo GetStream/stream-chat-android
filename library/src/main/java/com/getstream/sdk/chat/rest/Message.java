@@ -490,4 +490,8 @@ public class Message implements UserEntity {
     public void setSyncStatus(@Sync.Status Integer syncStatus) {
         this.syncStatus = syncStatus;
     }
+
+    public boolean hasAttachments(){
+        return getAttachments() != null && !getAttachments().isEmpty();
+    }
 }
