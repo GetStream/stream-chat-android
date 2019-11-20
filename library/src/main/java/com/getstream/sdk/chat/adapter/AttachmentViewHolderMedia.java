@@ -135,7 +135,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         configImageThumbBackground();
 
         Glide.with(context)
-                .load(client.getUploadStorage().signGlideUrl(getAssetUrl(type)))
+                .load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 
@@ -154,17 +154,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         }
     }
 
-    private String getAssetUrl(String type){
-        switch (type) {
-            case ModelType.attach_image:
-                return attachment.getImageURL();
-            case ModelType.attach_giphy:
-            case ModelType.attach_video:
-                return attachment.getThumbURL();
-            default:
-                return TextUtils.isEmpty(attachment.getImageURL()) ? attachment.getImage() : attachment.getImageURL();
-        }
-    }
     private void applyStyle() {
         tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
         tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
