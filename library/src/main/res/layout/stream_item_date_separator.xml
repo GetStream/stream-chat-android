@@ -13,7 +13,7 @@
     <ImageView
         android:id="@+id/iv_line_left"
         android:layout_width="0dp"
-        android:layout_height="@dimen/stream_date_separator_line_height"
+        android:layout_height="@dimen/stream_date_separator_line_width"
         android:layout_marginStart="@dimen/stream_date_separator_line_margin_start"
         app:layout_constraintBottom_toBottomOf="@+id/tv_date"
         app:layout_constraintEnd_toStartOf="@+id/tv_date"
@@ -24,7 +24,7 @@
     <ImageView
         android:id="@+id/iv_line_right"
         android:layout_width="0dp"
-        android:layout_height="@dimen/stream_date_separator_line_height"
+        android:layout_height="@dimen/stream_date_separator_line_width"
         android:layout_marginEnd="@dimen/stream_date_separator_line_margin_end"
         app:layout_constraintBottom_toBottomOf="@+id/tv_date"
         app:layout_constraintEnd_toEndOf="parent"

@@ -158,7 +158,7 @@ public class MessageListViewStyle extends BaseStyle {
         dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_gray_dark));
         dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
 
-        dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_text));
+        dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_line_width));
         dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_gray_dark));
         dateSeparatorLineDrawable = a.getResourceId(R.styleable.MessageListView_streamDateSeparatorLineDrawable, -1);
 

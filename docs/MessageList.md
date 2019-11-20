@@ -161,16 +161,16 @@ You must use the following properties in your XML to change your MessageListView
 
 - **AvatarView**
 
-| Properties                         | Type                   | Default |
-| ---------------------------------- | ---------------------- | ------- |
-| `app:streamAvatarWidth`            | dimension              | 32dp    |
-| `app:streamAvatarHeight`           | dimension              | 32dp    |
-| `app:streamAvatarBorderWidth`      | dimension              | 3dp     |
-| `app:streamAvatarBorderColor`      | color                  | WHITE   |
-| `app:streamAvatarBackGroundColor`  | color                  | DKGRAY  |
-| `app:streamAvatarTextSize`         | dimension              | 14sp    |
-| `app:streamAvatarTextColor`        | color                  | WHITE   |
-| `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
+| Properties                         | Type                   | Default          |
+| ---------------------------------- | ---------------------- | ---------------- |
+| `app:streamAvatarWidth`            | dimension              | 32dp             |
+| `app:streamAvatarHeight`           | dimension              | 32dp             |
+| `app:streamAvatarBorderWidth`      | dimension              | 3dp              |
+| `app:streamAvatarBorderColor`      | color                  | WHITE            |
+| `app:streamAvatarBackGroundColor`  | color                  | stream_gray_dark |
+| `app:streamAvatarTextSize`         | dimension              | 14sp             |
+| `app:streamAvatarTextColor`        | color                  | WHITE            |
+| `app:streamAvatarTextStyle`        | normal, bold, italic   | bold             |
 
 - **ReadStateView**
 
@@ -225,28 +225,28 @@ You must use the following properties in your XML to change your MessageListView
 
 - **AttachmentView**
 
-| Properties                                | Type                 | Default |
-| ----------------------------------------- | -------------------- | ------- |
-| `app:streamAttachmentTitleTextSize`       | dimension            | 13sp    |
-| `app:streamAttachmentTitleTextColor`      | color                | #026DFE |
-| `app:streamAttachmentTitleTextStyle`      | normal, bold, italic | bold    |
-| `app:streamAttachmentDescriptionTextSize` | dimension            | 11sp    |
-| `app:streamAttachmentDescriptionTextColor`| color                | DKGRAY  |
-| `app:streamAttachmentDescriptionTextStyle`| normal, bold, italic | normal  |
-| `app:streamAttachmentFileSizeTextSize`    | dimension            | 12sp    |
-| `app:streamAttachmentFileSizeTextColor`   | color                | DKGRAY  |
-| `app:streamAttachmentFileSizeTextStyle`   | normal, bold, italic | bold    |
+| Properties                                | Type                 | Default          |
+| ----------------------------------------- | -------------------- | ---------------- |
+| `app:streamAttachmentTitleTextSize`       | dimension            | 13sp             |
+| `app:streamAttachmentTitleTextColor`      | color                | #026DFE          |
+| `app:streamAttachmentTitleTextStyle`      | normal, bold, italic | bold             |
+| `app:streamAttachmentDescriptionTextSize` | dimension            | 11sp             |
+| `app:streamAttachmentDescriptionTextColor`| color                | stream_gray_dark |
+| `app:streamAttachmentDescriptionTextStyle`| normal, bold, italic | normal           |
+| `app:streamAttachmentFileSizeTextSize`    | dimension            | 12sp             |
+| `app:streamAttachmentFileSizeTextColor`   | color                | stream_gray_dark |
+| `app:streamAttachmentFileSizeTextStyle`   | normal, bold, italic | bold             |
 
 - **Date Separator**
 
-| Properties                                | Type                   | Default |
-| ----------------------------------------- | ---------------------- | ------- |
-| `app:streamDateSeparatorDateTextSize`     | dimension              | 12sp    |
-| `app:streamDateSeparatorDateTextColor`    | color                  | DKGRAY  |
-| `app:streamDateSeparatorDateTextStyle`    | normal, bold, italic   | bold    |
-| `app:streamDateSeparatorLineWidth`        | dimension              | 1px     |
-| `app:streamDateSeparatorLineColor`        | color                  | DKGRAY  |
-| `app:streamDateSeparatorLineDrawable`     | reference              | -       |
+| Properties                                | Type                   | Default           |
+| ----------------------------------------- | ---------------------- | ----------------- |
+| `app:streamDateSeparatorDateTextSize`     | dimension              | 12sp              |
+| `app:streamDateSeparatorDateTextColor`    | color                  | stream_gray_dark  |
+| `app:streamDateSeparatorDateTextStyle`    | normal, bold, italic   | bold              |
+| `app:streamDateSeparatorLineWidth`        | dimension              | 1dp               |
+| `app:streamDateSeparatorLineColor`        | color                  | stream_gray_dark  |
+| `app:streamDateSeparatorLineDrawable`     | reference              | -                 |
 
 - **User name and message date**
 
