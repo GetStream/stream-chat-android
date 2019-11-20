@@ -50,7 +50,6 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean reactionEnabled;
-    //
     // ReactionView
     private int reactionViewBgDrawable;
     private int reactionViewBgColor;
@@ -60,9 +59,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int reactionInputBgColor;
     private int reactionInputEmojiSize;
     private int reactionInputEmojiMargin;
-    // Thread
+
     private boolean threadEnabled;
-    // User name and Message date
     private boolean userNameShow;
     private boolean messageDateShow;
 
@@ -142,11 +140,10 @@ public class MessageListViewStyle extends BaseStyle {
         showReadState = a.getBoolean(R.styleable.MessageListView_streamShowReadState, true);
         readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarWidth, getDimension(R.dimen.stream_read_state_avatar_width));
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
-
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
-        // Thread
+
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
         userNameShow = a.getBoolean(R.styleable.MessageListView_streamUserNameShow, true);
         messageDateShow = a.getBoolean(R.styleable.MessageListView_streamMessageDateShow, true);
@@ -279,9 +276,7 @@ public class MessageListViewStyle extends BaseStyle {
         return attachmentFileSizeTextStyle;
     }
 
-
     // Reaction Dialog
-
     public boolean isReactionEnabled() {
         return reactionEnabled;
     }
@@ -314,11 +309,10 @@ public class MessageListViewStyle extends BaseStyle {
         return reactionInputEmojiMargin;
     }
 
-    // Thread
+
     public boolean isThreadEnabled() {
         return threadEnabled;
     }
-    // User name and Message Date
 
     public boolean isUserNameShow() {
         return userNameShow;
