@@ -17,6 +17,8 @@
 - Catch error body parsing errors
 - Do not show commands list UI when all commands are disabled
 - Renamed `MessageInputClient` to `MessageInputController`
+- Added streamUserNameShow and streamMessageDateShow in `MessageListViewStyle`
+- Fixed channel header title position issue when Last Active is hidden
 
 ## October 25th, 2019 - 3.2.0
 
@@ -29,7 +31,7 @@
 - Make sure channel list view model is cleared when the user disconnects
 - Fix bug with `setUser` when user data is not correctly URI encoded
 - Add debug/info logging
-
+- Add Attrs for DateSeparator
 ## Oct 23th, 2019 - 3.0.2
 
 - Fix NPE with restore from background and null users
