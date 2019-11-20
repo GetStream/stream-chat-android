@@ -223,8 +223,6 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamMessageBorderWidthMine`              | dimension            | 1dp       |
 | `app:streamMessageBorderWidthTheirs`            | dimension            | 1dp       |
 
-
-
 - **AttachmentView**
 
 | Properties                                | Type                 | Default |
@@ -238,6 +236,13 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamAttachmentFileSizeTextSize`    | dimension            | 12sp    |
 | `app:streamAttachmentFileSizeTextColor`   | color                | #989898 |
 | `app:streamAttachmentFileSizeTextStyle`   | normal, bold, italic | bold    |
+
+- **User name and message date**
+
+| Properties                          | Type                   | Default |
+| ----------------------------------- | ---------------------- | ------- |
+| `app:streamUserNameShow`            |   boolean              | true    |
+| `app:streamMessageDateShow`         |   boolean              | true    |
 
 - **Thread**
 

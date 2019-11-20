@@ -210,8 +210,10 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <!--Thread-->
+        
         <attr name="streamThreadEnabled" format="boolean" />
+        <attr name="streamUserNameShow" format="boolean" />
+        <attr name="streamMessageDateShow" format="boolean" />
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
