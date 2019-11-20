@@ -353,7 +353,7 @@ public class MessageInputView extends RelativeLayout {
      You can overwrite this method in case you want to attach more custom properties to the message
      */
 
-    private void onSendMessage() {
+    public void onSendMessage() {
         String input = binding.etMessage.getText().toString();
         boolean isEdit = viewModel.isEditing();
         binding.ivSend.setEnabled(false);

@@ -1,34 +1,34 @@
 package io.getstream.chat.example;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.getstream.sdk.chat.interfaces.MessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 import java.util.Arrays;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView extends RelativeLayout {
+public class CustomMessageInputView extends MessageInputView
+        implements MessageInputManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
     // our connection to the channel scope
-    private ChannelViewModel viewModel;
+//    private ChannelViewModel viewModel;
 
     public CustomMessageInputView(Context context) {
         super(context);
@@ -41,10 +41,10 @@ public class CustomMessageInputView extends RelativeLayout {
     }
 
     public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        this.viewModel = model;
+        super.setViewModel(model, lifecycleOwner);
         binding.setLifecycleOwner(lifecycleOwner);
         // Edit Message
-        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+//        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
     }
 
     private void initBinding(Context context) {
@@ -55,67 +55,35 @@ public class CustomMessageInputView extends RelativeLayout {
             String messageText = getMessageText();
             Log.i(TAG, "Length is " + editable.length());
             if (messageText.length() > 0) {
-                viewModel.keystroke();
+//                viewModel.keystroke();
             }
         });
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = new Message();
             message.setText(binding.etMessage.getText().toString());
-            sendMessage(message);
+            super.onSendMessage();
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
-            sendMessage(message);
+            super.onSendMessage();
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
-            sendMessage(message);
+            super.onSendMessage();
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
             Message message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
-            sendMessage(message);
+            super.onSendMessage();
         });
     }
 
-    private void sendMessage(Message message) {
-        if (viewModel.isEditing()) {
-            viewModel.getEditMessage().getValue().setText(message.getText());
-            viewModel.getChannel().updateMessage(viewModel.getEditMessage().getValue(), new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    binding.etMessage.setText("");
-                    viewModel.setEditMessage(null);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    binding.etMessage.setText("");
-                }
-            });
-        } else {
-            message.setUser(viewModel.client().getUser());
-            viewModel.sendMessage(message, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.i(TAG, "Sent message successfully!");
-                    binding.etMessage.setText("");
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.i(TAG, errMsg);
-                    binding.etMessage.setText("");
-                }
-            });
-        }
-    }
 
     // Get Attachment: Image, Giphy, File
     private Attachment getAttachment(String modelType) {
@@ -164,5 +132,31 @@ public class CustomMessageInputView extends RelativeLayout {
 
     public String getMessageText() {
         return binding.etMessage.getText().toString();
+    }
+
+
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+
+    }
+
+    @Override
+    public void onAddAttachments() {
+
+    }
+
+    @Override
+    public void openPermissionRequest() {
+
+    }
+
+    @Override
+    public void openCameraView(Intent intent, int REQUEST_CODE) {
+
     }
 }
