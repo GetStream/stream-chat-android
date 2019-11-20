@@ -24,6 +24,7 @@
     <color name="stream_message_background_outgoing">#0D000000</color>
     <color name="stream_message_stroke">#14000000</color>
     <color name="stream_message_failed">#1AD0021B</color>
+    <color name="stream_message_reply_text">#006CFF</color>
     <color name="stream_reaction_input_background">#292929</color>
 
     <color name="stream_attach_title_text">#026DFE</color>
