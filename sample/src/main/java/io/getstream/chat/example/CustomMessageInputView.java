@@ -1,9 +1,7 @@
 package io.getstream.chat.example;
 
 import android.content.Context;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +15,8 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-
 import java.util.Arrays;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
@@ -53,25 +51,13 @@ public class CustomMessageInputView extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
         // Set Keystroke
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String messageText = binding.etMessage.getText().toString();
-                Log.i(TAG, "Length is " + s.length());
-                if (messageText.length() > 0) {
-                    viewModel.keystroke(null);
-                }
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = getMessageText();
+            Log.i(TAG, "Length is " + editable.length());
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
             }
         });
-
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = new Message();
@@ -105,7 +91,6 @@ public class CustomMessageInputView extends RelativeLayout {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     binding.etMessage.setText("");
-                    ;
                     viewModel.setEditMessage(null);
                 }
 
@@ -115,6 +100,7 @@ public class CustomMessageInputView extends RelativeLayout {
                 }
             });
         } else {
+            message.setUser(viewModel.client().getUser());
             viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
