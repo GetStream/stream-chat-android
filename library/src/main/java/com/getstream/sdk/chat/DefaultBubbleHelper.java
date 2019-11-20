@@ -30,6 +30,8 @@ public class DefaultBubbleHelper {
                         return style.getMessageBubbleDrawableMine();
 
                     configParamsMine(style);
+
+                    // set background for Failed or Error message
                     if (message.getSyncStatus() == Sync.LOCAL_FAILED
                             || message.getType().equals(ModelType.message_error))
                         bgColor = context.getResources().getColor(R.color.stream_message_failed);
@@ -61,6 +63,8 @@ public class DefaultBubbleHelper {
                     configParamsMine(style);
                     if (isDefaultBubble(style, context)) {
                         applyStyleDefaultMine(positions, context);
+
+                        // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
@@ -72,9 +76,9 @@ public class DefaultBubbleHelper {
 
                     if (isDefaultBubble(style, context)) {
                         applyStyleDefaultTheirs(positions, context);
+                        // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
-
                     }
                 }
                 bgColor = Color.WHITE;
@@ -91,7 +95,8 @@ public class DefaultBubbleHelper {
                     if (style.getMessageBubbleDrawableTheirs() != null)
                         return style.getMessageBubbleDrawableTheirs();
                     configParamsTheirs(style);
-                    applyStyleDefaultTheirs(positions, context);
+                    if (isDefaultBubble(style, context))
+                        applyStyleDefaultTheirs(positions, context);
                 }
                 topLeftRadius = 0;
                 topRightRadius = 0;
