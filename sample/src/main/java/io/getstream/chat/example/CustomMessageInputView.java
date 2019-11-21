@@ -5,9 +5,9 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
-
 
 import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
@@ -16,7 +16,9 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
 import java.util.Arrays;
+import java.util.HashMap;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
@@ -47,38 +49,52 @@ public class CustomMessageInputView extends MessageInputView
                 viewModel.keystroke();
             }
         });
-//        binding.setLifecycleOwner(lifecycleOwner);
         setMessageInputManager(this);
     }
-
+    Message message;
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
 
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setText(binding.etMessage.getText().toString());
-            super.onSendMessage(message);
+            message = new Message(binding.etMessage.getText().toString());
+            onSendMessage();
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
-            Message message = new Message();
+            message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
-            super.onSendMessage(message);
+            onSendMessage();
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
-            Message message = new Message();
+            message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
-            super.onSendMessage(message);
+            onSendMessage();
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
-            Message message = new Message();
+            message = new Message();
             message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
-            super.onSendMessage(message);
+            onSendMessage();
         });
+    }
+
+    @Override
+    public Message prepareMessage(Message message_) {
+        // note that you typically want to use custom fields on attachments instead of messages
+        // attachment UI is easier to customize than the message UI
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("mycustomfield", "123");
+        message.setExtraData(extraData);
+
+        return super.prepareMessage(message);
+    }
+
+    @Override
+    protected Message getEditMessage(String input) {
+        return super.getEditMessage(binding.etMessage.getText().toString());
     }
 
 
@@ -131,4 +147,5 @@ public class CustomMessageInputView extends MessageInputView
     public void onSendMessageError(String errMsg) {
         binding.etMessage.setText("");
     }
+
 }

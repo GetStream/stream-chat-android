@@ -76,9 +76,6 @@ public class MessageInputView extends RelativeLayout {
      */
     final String TAG = MessageInputView.class.getSimpleName();
 
-    /** If you are allowed to scroll up or not */
-//    boolean lockScrollUp = false;
-
     private StreamViewMessageInputBinding binding;
     /**
      * Styling class for the MessageInput
@@ -96,9 +93,6 @@ public class MessageInputView extends RelativeLayout {
     private ChannelViewModel viewModel;
 
     private MessageInputController messageInputController;
-
-    /*The pendingMessage for uploading File*/
-    private Message pendingMessage;
 
     // region constructor
     public MessageInputView(Context context) {
@@ -176,8 +170,6 @@ public class MessageInputView extends RelativeLayout {
         binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
-               /* lockScrollUp = true;
-                postDelayed(() -> lockScrollUp = false, 500);*/
                 Utils.showSoftKeyboard((Activity) getContext());
             } else
                 Utils.hideSoftKeyboard((Activity) getContext());
@@ -289,22 +281,24 @@ public class MessageInputView extends RelativeLayout {
                 });
     }
 
-    @NonNull
-    private Message getEditMessage(String input) {
+
+    protected Message getEditMessage(String input) {
         Message message = viewModel.getEditMessage().getValue();
         message.setText(input);
-        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-        if (newAttachments != null
-                && !newAttachments.isEmpty()){
-            List<Attachment>attachments = message.getAttachments();
-            for (Attachment attachment : newAttachments){
-                if (attachments == null)
-                    attachments = new ArrayList<>();
-                attachments.add(attachment);
+        // if use Stream MessageInputView
+        if (messageInputManager == null){
+            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+            if (newAttachments != null
+                    && !newAttachments.isEmpty()){
+                List<Attachment>attachments = message.getAttachments();
+                for (Attachment attachment : newAttachments){
+                    if (attachments == null)
+                        attachments = new ArrayList<>();
+                    attachments.add(attachment);
+                }
+                message.setAttachments(attachments);
             }
-            message.setAttachments(attachments);
         }
-
         return message;
     }
 
@@ -350,7 +344,7 @@ public class MessageInputView extends RelativeLayout {
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
-            if (messageListScrollup /*&& !lockScrollUp*/)
+            if (messageListScrollup)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
         viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage -> {
@@ -367,47 +361,41 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    public void onSendMessage(Message message) {
-        if (messageInputManager != null)
-            setUserOnMessage(message);
-        onSendMessage(message, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                viewModel.setEditMessage(null);
-                if (messageInputManager != null){
-                    viewModel.setEditMessage(null);
-                    messageInputManager.onSendMessageSuccess(response.getMessage());
-                }else {
-                    initSendMessage();
-                    if (isEdit()) clearFocus();
-                }
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                if (messageInputManager != null) {
-                    viewModel.setEditMessage(null);
-                    messageInputManager.onSendMessageError(errMsg);
-                } else {
-                    Utils.showMessage(getContext(), errMsg);
-                    initSendMessage();
-                    if (isEdit()) clearFocus();
-                }
-            }
-        });
-    }
-
-    public void onSendMessage(Message message, MessageCallback callback) {
+    private void onSendMessage(Message message, MessageCallback callback) {
         if (isEdit())
             viewModel.editMessage(message, callback);
         else
             viewModel.sendMessage(message, callback);
     }
 
-    private void onSendMessage() {
+    protected void onSendMessage() {
         String input = binding.etMessage.getText().toString();
         binding.ivSend.setEnabled(false);
-        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(input));
+        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(new Message(input)),
+                new MessageCallback() {
+                    @Override
+                    public void onSuccess(MessageResponse response) {
+                        if (messageInputManager != null) {
+                            viewModel.setEditMessage(null);
+                            messageInputManager.onSendMessageSuccess(response.getMessage());
+                        } else {
+                            initSendMessage();
+                            if (isEdit()) clearFocus();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String errMsg, int errCode) {
+                        if (messageInputManager != null) {
+                            viewModel.setEditMessage(null);
+                            messageInputManager.onSendMessageError(errMsg);
+                        } else {
+                            Utils.showMessage(getContext(), errMsg);
+                            initSendMessage();
+                            if (isEdit()) clearFocus();
+                        }
+                    }
+                });
     }
 
     private void initSendMessage() {
@@ -558,31 +546,31 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    public Message prepareMessage(String input) {
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(messageInputController.getSelectedAttachments());
-        setUserOnMessage(m);
+    public Message prepareMessage(Message m) {
+//        Message m = new Message();
+//        m.setText(input);
+        // set the current user
+        m.setUser(viewModel.client().getUser());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
         // Check file uploading
-        if (messageInputController.isUploadingFile()){
-            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
-            m.setId(clientSideID);
-            m.setCreatedAt(new Date());
-            m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-            m.setAttachments(null);
+        if (messageInputManager != null){
+            m.setAttachments(messageInputController.getSelectedAttachments());
+            if (messageInputController.isUploadingFile()){
+                String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+                m.setId(clientSideID);
+                m.setCreatedAt(new Date());
+                m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
+                m.setAttachments(null);
+            }
         }
+
         return m;
     }
 
-    private void setUserOnMessage(Message message){
-        // set the current user
-        message.setUser(viewModel.client().getUser());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            message.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-    }
 
-    public void setMessageInputManager(StreamMessageInputManager messageInputManager) {
+    protected void setMessageInputManager(StreamMessageInputManager messageInputManager) {
         this.messageInputManager = messageInputManager;
     }
 
