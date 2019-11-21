@@ -245,7 +245,6 @@ Have a look at the above example and add the following code to `CustomMessageInp
 package io.getstream.chat.example;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -267,8 +266,7 @@ import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView extends MessageInputView
-        implements MessageInputManager {
+public class CustomMessageInputView extends MessageInputView implements MessageInputManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
@@ -316,13 +314,10 @@ public class CustomMessageInputView extends MessageInputView
         });
     }
 
-    private void configKeystroke(ChannelViewModel viewModel){
-        // Set Keystroke
+    private void configKeystroke(ChannelViewModel viewModel) {
         EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = binding.etMessage.getText().toString();
-            if (messageText.length() > 0) {
+            if (binding.etMessage.getText().toString().length() > 0)
                 viewModel.keystroke();
-            }
         });
     }
 
@@ -358,15 +353,12 @@ public class CustomMessageInputView extends MessageInputView
 
     @Override
     public void onEditMessage(Message message) {
-        if (message == null
-                || TextUtils.isEmpty(message.getText())) return;
-
         binding.etMessage.requestFocus();
         binding.etMessage.setText(message.getText());
         binding.etMessage.setSelection(binding.etMessage.getText().length());
     }
 
-    private void clearEditText(){
+    private void clearEditText() {
         binding.etMessage.setText("");
     }
 
@@ -396,7 +388,7 @@ public class CustomMessageInputView extends MessageInputView
                 attachment.setMime_type(ModelType.attach_mime_mp4);
                 break;
         }
-        List<Attachment>attachments = new ArrayList<>();
+        List<Attachment> attachments = new ArrayList<>();
         attachments.add(attachment);
         return attachments;
     }
