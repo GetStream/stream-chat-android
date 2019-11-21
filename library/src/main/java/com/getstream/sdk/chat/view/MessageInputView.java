@@ -402,17 +402,19 @@ public class MessageInputView extends RelativeLayout {
 
     protected Message getEditMessage() {
         Message message = viewModel.getEditMessage().getValue();
-        message.setText(binding.etMessage.getText().toString());
-        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-        if (newAttachments != null
-                && !newAttachments.isEmpty()){
-            List<Attachment>attachments = message.getAttachments();
-            for (Attachment attachment : newAttachments){
-                if (attachments == null)
-                    attachments = new ArrayList<>();
-                attachments.add(attachment);
+        if (messageInputManager == null){
+            message.setText(binding.etMessage.getText().toString());
+            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+            if (newAttachments != null
+                    && !newAttachments.isEmpty()){
+                List<Attachment>attachments = message.getAttachments();
+                for (Attachment attachment : newAttachments){
+                    if (attachments == null)
+                        attachments = new ArrayList<>();
+                    attachments.add(attachment);
+                }
+                message.setAttachments(attachments);
             }
-            message.setAttachments(attachments);
         }
         return message;
     }

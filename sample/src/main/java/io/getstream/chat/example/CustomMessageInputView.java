@@ -16,8 +16,9 @@ import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
@@ -43,14 +44,16 @@ public class CustomMessageInputView extends MessageInputView
         super.setViewModel(viewModel, lifecycleOwner);
         // Set Keystroke
         EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = getMessageText();
+            String messageText = binding.etMessage.getText().toString();
             if (messageText.length() > 0) {
                 viewModel.keystroke();
             }
         });
         setMessageInputManager(this);
     }
-    Message newMessage, editMessage;
+
+    Message newMessage;
+
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
@@ -63,19 +66,19 @@ public class CustomMessageInputView extends MessageInputView
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
             newMessage = new Message();
-            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
+            newMessage.setAttachments(getAttachments(ModelType.attach_image));
             onSendMessage();
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
             newMessage = new Message();
-            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
+            newMessage.setAttachments(getAttachments(ModelType.attach_giphy));
             onSendMessage();
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
             newMessage = new Message();
-            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
+            newMessage.setAttachments(getAttachments(ModelType.attach_file));
             onSendMessage();
         });
     }
@@ -87,18 +90,42 @@ public class CustomMessageInputView extends MessageInputView
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
         newMessage.setExtraData(extraData);
-        
+
         return newMessage;
     }
 
     @Override
     public Message getEditMessage() {
-        editMessage.setText(binding.etMessage.getText().toString());
-        return editMessage;
+        Message message = super.getEditMessage();
+        message.setText(binding.etMessage.getText().toString());
+        return message;
     }
 
-    // Get Attachment: Image, Giphy, File
-    private Attachment getAttachment(String modelType) {
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        clearEditText();
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+        clearEditText();
+    }
+
+    @Override
+    public void onEditMessage(Message message) {
+        if (message == null
+                || TextUtils.isEmpty(message.getText())) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+    }
+
+    private void clearEditText(){
+        binding.etMessage.setText("");
+    }
+
+    private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();
         String url;
         switch (modelType) {
@@ -124,35 +151,8 @@ public class CustomMessageInputView extends MessageInputView
                 attachment.setMime_type(ModelType.attach_mime_mp4);
                 break;
         }
-        return attachment;
+        List<Attachment>attachments = new ArrayList<>();
+        attachments.add(attachment);
+        return attachments;
     }
-
-    @Override
-    public void onSendMessageSuccess(Message message) {
-        clearEditText();
-    }
-
-    @Override
-    public void onSendMessageError(String errMsg) {
-        clearEditText();
-    }
-
-    @Override
-    public void onEditMessage(Message message) {
-        if (message == null
-                || TextUtils.isEmpty(message.getText())) return;
-
-        binding.etMessage.requestFocus();
-        binding.etMessage.setText(message.getText());
-        binding.etMessage.setSelection(binding.etMessage.getText().length());
-
-        editMessage = message;
-    }
-
-
-
-    private void clearEditText(){
-        binding.etMessage.setText("");
-    }
-
 }

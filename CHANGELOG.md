@@ -7,6 +7,9 @@
 - Fix attachment duplicated issue when message edit
 - Add File Upload 2.0
 - Add editMessage function in Channel View Model
+- Add StreamMessageInputManager
+- Update CustomMessageInputView
+- Remove CustomMessageInputView2
 
 ## November 5th, 2019 - 3.2.1
 

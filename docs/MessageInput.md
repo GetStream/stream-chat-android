@@ -245,36 +245,34 @@ Have a look at the above example and add the following code to `CustomMessageInp
 package io.getstream.chat.example;
 
 import android.content.Context;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView extends RelativeLayout {
+public class CustomMessageInputView extends MessageInputView
+        implements StreamMessageInputManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
-    // our connection to the channel scope
-    private ChannelViewModel viewModel;
 
     public CustomMessageInputView(Context context) {
         super(context);
@@ -286,98 +284,92 @@ public class CustomMessageInputView extends RelativeLayout {
         initBinding(context);
     }
 
-    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        this.viewModel = model;
-        binding.setLifecycleOwner(lifecycleOwner);
-        // Edit Message
-        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        super.setViewModel(viewModel, lifecycleOwner);
+        // Set Keystroke
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = binding.etMessage.getText().toString();
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
+            }
+        });
+        setMessageInputManager(this);
     }
+
+    Message newMessage;
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Set Keystroke
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String messageText = binding.etMessage.getText().toString();
-                Log.i(TAG, "Length is " + s.length());
-                if (messageText.length() > 0) {
-                    viewModel.keystroke();
-                }
-            }
-        });
 
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setText(binding.etMessage.getText().toString());
-            sendMessage(message);
+            newMessage = new Message(binding.etMessage.getText().toString());
+            onSendMessage();
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
-            sendMessage(message);
+            newMessage = new Message();
+            newMessage.setAttachments(getAttachments(ModelType.attach_image));
+            onSendMessage();
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
-            sendMessage(message);
+            newMessage = new Message();
+            newMessage.setAttachments(getAttachments(ModelType.attach_giphy));
+            onSendMessage();
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
-            sendMessage(message);
+            newMessage = new Message();
+            newMessage.setAttachments(getAttachments(ModelType.attach_file));
+            onSendMessage();
         });
     }
 
-    private void sendMessage(Message message) {
-        if (viewModel.isEditing()) {
-            viewModel.getEditMessage().getValue().setText(message.getText());
-            viewModel.getChannel().updateMessage(viewModel.getEditMessage().getValue(), new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    binding.etMessage.setText("");
-                    ;
-                    viewModel.setEditMessage(null);
-                }
+    @Override
+    public Message prepareMessage() {
+        // note that you typically want to use custom fields on attachments instead of messages
+        // attachment UI is easier to customize than the message UI
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("mycustomfield", "123");
+        newMessage.setExtraData(extraData);
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    binding.etMessage.setText("");
-                }
-            });
-        } else {
-            message.setStatus(null);
-            viewModel.sendMessage(message, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.i(TAG, "Sent message successfully!");
-                    binding.etMessage.setText("");
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.i(TAG, errMsg);
-                    binding.etMessage.setText("");
-                }
-            });
-        }
+        return newMessage;
     }
 
-    // Get Attachment: Image, Giphy, File
-    private Attachment getAttachment(String modelType) {
+    @Override
+    public Message getEditMessage() {
+        Message message = super.getEditMessage();
+        message.setText(binding.etMessage.getText().toString());
+        return message;
+    }
+
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        clearEditText();
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+        clearEditText();
+    }
+
+    @Override
+    public void onEditMessage(Message message) {
+        if (message == null
+                || TextUtils.isEmpty(message.getText())) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+    }
+
+    private void clearEditText(){
+        binding.etMessage.setText("");
+    }
+
+    private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();
         String url;
         switch (modelType) {
@@ -403,29 +395,11 @@ public class CustomMessageInputView extends RelativeLayout {
                 attachment.setMime_type(ModelType.attach_mime_mp4);
                 break;
         }
-        return attachment;
-    }
-
-    // Edit Message
-    private void editMessage(Message message) {
-        if (message == null
-                || TextUtils.isEmpty(message.getText())) return;
-
-        binding.etMessage.requestFocus();
-        binding.etMessage.setText(message.getText());
-        binding.etMessage.setSelection(binding.etMessage.getText().length());
-    }
-
-
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
-    }
-
-    public String getMessageText() {
-        return binding.etMessage.getText().toString();
+        List<Attachment>attachments = new ArrayList<>();
+        attachments.add(attachment);
+        return attachments;
     }
 }
-
 ```
 
 #### Step 3: Edit activity_channel.xml
