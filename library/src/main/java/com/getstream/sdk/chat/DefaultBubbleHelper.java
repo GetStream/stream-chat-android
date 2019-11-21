@@ -52,8 +52,7 @@ public class DefaultBubbleHelper {
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
                 if (attachment == null
-                        || attachment.getType().equals(ModelType.attach_unknown)
-                        || attachment.getType().equals(ModelType.attach_file))
+                        || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
                 if (mine) {
@@ -63,10 +62,12 @@ public class DefaultBubbleHelper {
                     configParamsMine(style);
                     if (isDefaultBubble(style, context)) {
                         applyStyleDefaultMine(positions, context);
-
                         // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        // set corner radius if message has multi attachments
+                        if (message.getAttachments().indexOf(attachment)>0)
+                            topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 } else {
                     if (style.getMessageBubbleDrawableTheirs() != null)
@@ -79,6 +80,9 @@ public class DefaultBubbleHelper {
                         // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                        // set corner radius if message has multi attachments
+                        if (message.getAttachments().indexOf(attachment)>0)
+                            topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 }
                 bgColor = Color.WHITE;
