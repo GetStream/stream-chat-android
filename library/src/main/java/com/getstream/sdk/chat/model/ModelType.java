@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import android.text.TextUtils;
+
 public class ModelType {
     // Channel Type
     public static final String channel_unknown = "unknown";
@@ -47,4 +49,16 @@ public class ModelType {
     public static final String action_send = "send";
     public static final String action_shuffle = "shuffle";
     public static final String action_cancel = "cancel";
+
+    public static String getAssetUrl(Attachment attachment){
+        switch (attachment.getType()) {
+            case ModelType.attach_image:
+                return attachment.getImageURL();
+            case ModelType.attach_giphy:
+            case ModelType.attach_video:
+                return attachment.getThumbURL();
+            default:
+                return TextUtils.isEmpty(attachment.getImageURL()) ? attachment.getImage() : attachment.getImageURL();
+        }
+    }
 }
