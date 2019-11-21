@@ -150,15 +150,18 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    if (!lockScrollUp)
-                        viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
+                    // delay of 100 milliseconds to prevent the effect when the keyboard is displayed.
+                    postDelayed(() -> {
+                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition);
+                        lVPosition = currentLastVisible;
+                    }, 100);
                     fVPosition = currentFirstVisible;
-                    lVPosition = currentLastVisible;
                     viewModel.setThreadParentPosition(lVPosition);
                 }
             }
         });
-        // Lock for 0.5s setMessageListScrollUp when keyboard shows up
+
+        // Lock for 500 milliseconds setMessageListScrollUp when the keyboard is displayed.
         this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
                                         int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
             if (bottom < oldBottom) {
