@@ -77,7 +77,7 @@ public class MessageInputView extends RelativeLayout {
     final String TAG = MessageInputView.class.getSimpleName();
 
     /** If you are allowed to scroll up or not */
-    boolean lockScrollUp = false;
+//    boolean lockScrollUp = false;
 
     private StreamViewMessageInputBinding binding;
     /**
@@ -176,8 +176,8 @@ public class MessageInputView extends RelativeLayout {
         binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
-                lockScrollUp = true;
-                postDelayed(() -> lockScrollUp = false, 500);
+               /* lockScrollUp = true;
+                postDelayed(() -> lockScrollUp = false, 500);*/
                 Utils.showSoftKeyboard((Activity) getContext());
             } else
                 Utils.hideSoftKeyboard((Activity) getContext());
@@ -350,7 +350,7 @@ public class MessageInputView extends RelativeLayout {
 
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
-            if (messageListScrollup && !lockScrollUp)
+            if (messageListScrollup /*&& !lockScrollUp*/)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
         viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage -> {

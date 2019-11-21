@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -67,7 +68,8 @@ public class MessageListView extends RecyclerView {
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-
+    /** If you are allowed to scroll up or not */
+    boolean lockScrollUp = true;
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -148,11 +150,20 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
+                    if (!lockScrollUp)
+                        viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
                     fVPosition = currentFirstVisible;
                     lVPosition = currentLastVisible;
                     viewModel.setThreadParentPosition(lVPosition);
                 }
+            }
+        });
+
+        this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
+                                        int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
+            if (bottom < oldBottom) {
+                lockScrollUp = true;
+                postDelayed(() -> lockScrollUp = false, 500);
             }
         });
         super.setAdapter(adapter);
