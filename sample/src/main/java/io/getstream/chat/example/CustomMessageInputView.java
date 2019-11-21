@@ -3,12 +3,13 @@ package io.getstream.chat.example;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
+import com.getstream.sdk.chat.interfaces.MessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -23,7 +24,7 @@ import java.util.List;
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
 public class CustomMessageInputView extends MessageInputView
-        implements StreamMessageInputManager {
+        implements MessageInputManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
@@ -108,6 +109,7 @@ public class CustomMessageInputView extends MessageInputView
 
     @Override
     public void onSendMessageError(String errMsg) {
+        Log.d(TAG, "Failed sending message! :" + errMsg);
         clearEditText();
     }
 

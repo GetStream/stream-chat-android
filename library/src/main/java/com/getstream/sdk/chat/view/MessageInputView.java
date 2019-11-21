@@ -32,7 +32,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.interfaces.StreamMessageInputManager;
+import com.getstream.sdk.chat.interfaces.MessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -82,7 +82,7 @@ public class MessageInputView extends RelativeLayout {
      */
     private MessageInputStyle style;
     /** Fired when a message is sent */
-    private StreamMessageInputManager messageInputManager;
+    private MessageInputManager messageInputManager;
     /** Permission Request listener */
     private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
@@ -555,7 +555,7 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-    protected void setMessageInputManager(StreamMessageInputManager messageInputManager) {
+    protected void setMessageInputManager(MessageInputManager messageInputManager) {
         this.messageInputManager = messageInputManager;
     }
 
