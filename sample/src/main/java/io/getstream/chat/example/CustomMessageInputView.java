@@ -3,7 +3,6 @@ package io.getstream.chat.example;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.Nullable;
@@ -51,52 +50,52 @@ public class CustomMessageInputView extends MessageInputView
         });
         setMessageInputManager(this);
     }
-    Message message;
+    Message newMessage, editMessage;
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
 
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            message = new Message(binding.etMessage.getText().toString());
+            newMessage = new Message(binding.etMessage.getText().toString());
             onSendMessage();
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
-            message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
+            newMessage = new Message();
+            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
             onSendMessage();
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
-            message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
+            newMessage = new Message();
+            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
             onSendMessage();
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
-            message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
+            newMessage = new Message();
+            newMessage.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
             onSendMessage();
         });
     }
 
     @Override
-    public Message prepareMessage(Message message_) {
+    public Message prepareMessage() {
         // note that you typically want to use custom fields on attachments instead of messages
         // attachment UI is easier to customize than the message UI
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
-        message.setExtraData(extraData);
-
-        return super.prepareMessage(message);
+        newMessage.setExtraData(extraData);
+        
+        return newMessage;
     }
 
     @Override
-    protected Message getEditMessage(String input) {
-        return super.getEditMessage(binding.etMessage.getText().toString());
+    public Message getEditMessage() {
+        editMessage.setText(binding.etMessage.getText().toString());
+        return editMessage;
     }
-
 
     // Get Attachment: Image, Giphy, File
     private Attachment getAttachment(String modelType) {
@@ -130,7 +129,12 @@ public class CustomMessageInputView extends MessageInputView
 
     @Override
     public void onSendMessageSuccess(Message message) {
-        binding.etMessage.setText("");
+        clearEditText();
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+        clearEditText();
     }
 
     @Override
@@ -141,10 +145,13 @@ public class CustomMessageInputView extends MessageInputView
         binding.etMessage.requestFocus();
         binding.etMessage.setText(message.getText());
         binding.etMessage.setSelection(binding.etMessage.getText().length());
+
+        editMessage = message;
     }
 
-    @Override
-    public void onSendMessageError(String errMsg) {
+
+
+    private void clearEditText(){
         binding.etMessage.setText("");
     }
 

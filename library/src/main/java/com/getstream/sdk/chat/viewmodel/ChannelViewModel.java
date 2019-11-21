@@ -960,6 +960,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void sendMessage(Message message, MessageCallback callback) {
+        // set the current user
+        message.setUser(client().getUser());
+        // set the thread id if we are viewing a thread
+        if (isThread())
+            message.setParentId(getThreadParentMessage().getValue().getId());
+
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }

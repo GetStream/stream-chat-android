@@ -281,27 +281,6 @@ public class MessageInputView extends RelativeLayout {
                 });
     }
 
-
-    protected Message getEditMessage(String input) {
-        Message message = viewModel.getEditMessage().getValue();
-        message.setText(input);
-        // if use Stream MessageInputView
-        if (messageInputManager == null){
-            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-            if (newAttachments != null
-                    && !newAttachments.isEmpty()){
-                List<Attachment>attachments = message.getAttachments();
-                for (Attachment attachment : newAttachments){
-                    if (attachments == null)
-                        attachments = new ArrayList<>();
-                    attachments.add(attachment);
-                }
-                message.setAttachments(attachments);
-            }
-        }
-        return message;
-    }
-
     public void setEnabled(boolean enabled) {
         binding.etMessage.setEnabled(true);
     }
@@ -369,33 +348,31 @@ public class MessageInputView extends RelativeLayout {
     }
 
     protected void onSendMessage() {
-        String input = binding.etMessage.getText().toString();
         binding.ivSend.setEnabled(false);
-        onSendMessage(isEdit() ? getEditMessage(input) : prepareMessage(new Message(input)),
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        if (messageInputManager != null) {
-                            viewModel.setEditMessage(null);
-                            messageInputManager.onSendMessageSuccess(response.getMessage());
-                        } else {
-                            initSendMessage();
-                            if (isEdit()) clearFocus();
-                        }
-                    }
+        onSendMessage(isEdit() ? getEditMessage() : prepareMessage(), new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (messageInputManager != null) {
+                    viewModel.setEditMessage(null);
+                    messageInputManager.onSendMessageSuccess(response.getMessage());
+                } else {
+                    initSendMessage();
+                    if (isEdit()) clearFocus();
+                }
+            }
 
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        if (messageInputManager != null) {
-                            viewModel.setEditMessage(null);
-                            messageInputManager.onSendMessageError(errMsg);
-                        } else {
-                            Utils.showMessage(getContext(), errMsg);
-                            initSendMessage();
-                            if (isEdit()) clearFocus();
-                        }
-                    }
-                });
+            @Override
+            public void onError(String errMsg, int errCode) {
+                if (messageInputManager != null) {
+                    viewModel.setEditMessage(null);
+                    messageInputManager.onSendMessageError(errMsg);
+                } else {
+                    Utils.showMessage(getContext(), errMsg);
+                    initSendMessage();
+                    if (isEdit()) clearFocus();
+                }
+            }
+        });
     }
 
     private void initSendMessage() {
@@ -405,6 +382,40 @@ public class MessageInputView extends RelativeLayout {
         binding.ivSend.setEnabled(true);
     }
 
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    protected Message prepareMessage() {
+        Message message = new Message(binding.etMessage.getText().toString());
+        // Check file uploading
+        message.setAttachments(messageInputController.getSelectedAttachments());
+        if (messageInputController.isUploadingFile()){
+            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+            message.setId(clientSideID);
+            message.setCreatedAt(new Date());
+            message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
+            message.setAttachments(null);
+        }
+        return message;
+    }
+
+    protected Message getEditMessage() {
+        Message message = viewModel.getEditMessage().getValue();
+        message.setText(binding.etMessage.getText().toString());
+        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+        if (newAttachments != null
+                && !newAttachments.isEmpty()){
+            List<Attachment>attachments = message.getAttachments();
+            for (Attachment attachment : newAttachments){
+                if (attachments == null)
+                    attachments = new ArrayList<>();
+                attachments.add(attachment);
+            }
+            message.setAttachments(attachments);
+        }
+        return message;
+    }
     // endregion
 
     // region send giphy from keyboard
@@ -542,34 +553,6 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-    /**
-     Prepare message takes the message input string and returns a message object
-     You can overwrite this method in case you want to attach more custom properties to the message
-     */
-    public Message prepareMessage(Message m) {
-//        Message m = new Message();
-//        m.setText(input);
-        // set the current user
-        m.setUser(viewModel.client().getUser());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // Check file uploading
-        if (messageInputManager != null){
-            m.setAttachments(messageInputController.getSelectedAttachments());
-            if (messageInputController.isUploadingFile()){
-                String clientSideID = viewModel.getChannel().getClient().generateMessageID();
-                m.setId(clientSideID);
-                m.setCreatedAt(new Date());
-                m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-                m.setAttachments(null);
-            }
-        }
-
-        return m;
-    }
-
-
     protected void setMessageInputManager(StreamMessageInputManager messageInputManager) {
         this.messageInputManager = messageInputManager;
     }
