@@ -154,16 +154,16 @@ You must use the following properties in your XML to change your ChannelListView
 
 - **AvatarView**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamAvatarWidth`             | dimension             | 40dp    |
-| `app:streamAvatarHeight`            | dimension             | 40dp    |
-| `app:streamAvatarBorderWidth`       | dimension             | 3dp     |
-| `app:streamAvatarBorderColor`       | color                 | WHITE   |
-| `app:streamAvatarBackGroundColor`   | color                 | DKGRAY  |
-| `app:streamAvatarTextSize`          | dimension             | 14sp    |
-| `app:streamAvatarTextColor`         | color                 | WHITE   |
-| `app:streamAvatarTextStyle`         | normal, bold, italic  | bold    |
+| Properties                          | Type                  | Default          |
+| ----------------------------------- | --------------------- | ---------------- |
+| `app:streamAvatarWidth`             | dimension             | 40dp             |
+| `app:streamAvatarHeight`            | dimension             | 40dp             |
+| `app:streamAvatarBorderWidth`       | dimension             | 3dp              |
+| `app:streamAvatarBorderColor`       | color                 | WHITE            |
+| `app:streamAvatarBackGroundColor`   | color                 | stream_gray_dark |
+| `app:streamAvatarTextSize`          | dimension             | 14sp             |
+| `app:streamAvatarTextColor`         | color                 | WHITE            |
+| `app:streamAvatarTextStyle`         | normal, bold, italic  | bold             |
 
 - **ReadStateView**
 
@@ -187,18 +187,18 @@ You must use the following properties in your XML to change your ChannelListView
 
 - **Last Message**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamMessageTextSize`         | dimension             | 13sp    |
-| `app:streamMessageTextColor`        | color                 | DKGRAY  |
-| `app:streamMessageTextStyle`        | normal, bold, italic  | normal  |
+| Properties                          | Type                  | Default          |
+| ----------------------------------- | --------------------- | ---------------- |
+| `app:streamMessageTextSize`         | dimension             | 13sp             |
+| `app:streamMessageTextColor`        | color                 | stream_gray_dark |
+| `app:streamMessageTextStyle`        | normal, bold, italic  | normal           |
 
 - **Last Message Date**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamLastMessageDateTextSize` | dimension             | 11sp    |
-| `app:streamLastMessageDateTextColor`| color                 | DKGRAY  |
+| Properties                          | Type                  | Default          |
+| ----------------------------------- | --------------------- | ---------------- |
+| `app:streamLastMessageDateTextSize` | dimension             | 11sp             |
+| `app:streamLastMessageDateTextColor`| color                 | stream_gray_dark |
 
 - **Unread Channel Title**
 
