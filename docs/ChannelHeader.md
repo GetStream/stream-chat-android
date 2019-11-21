@@ -223,7 +223,7 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 | `app:streamChannelHeaderOfflineText`             | string               | Waiting for network... |
 | `app:streamChannelHeaderLastActiveShow`          | boolean              | true                   |
 | `app:streamChannelHeaderLastActiveTextSize`      | dimension            | 11sp                   |
-| `app:streamChannelHeaderLastActiveTextColor`     | color                | DKGRAY                 |
+| `app:streamChannelHeaderLastActiveTextColor`     | color                | stream_gray_dark       |
 | `app:streamChannelHeaderLastActiveTextStyle`     | normal, bold, italic | normal                 |
 
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stream_attachment_invalid_url">Загрузка не удалась из-за неверного URL.</string>
+    <string name="stream_just_now">Прямо сейчас</string>
+    <string name="stream_today">сегодня</string>
+    <string name="stream_yesterday">Вчерашний день</string>
+    <string name="stream_input_type_add_file">Добавить файл</string>
+    <string name="stream_attachment_load_failed_unknown">Загрузка не удалась из-за неизвестной ошибки.</string>
+    <string name="stream_channel_offlineText">В ожидании сети ...</string>
+    <string name="stream_channel_unknown_title">Канал без названия</string>
+    <string name="stream_delete_message">Это сообщение было удалено.</string>
+    <string name="stream_input_type_command">Соответствие команд</string>
+    <string name="stream_input_hint">Напишите сообщение</string>
+    <string name="stream_input_take_picture">Загрузить с камеры</string>
+    <string name="stream_input_type_edit_message">Редактировать сообщение</string>
+    <string name="stream_input_type_select_file">Выберите ваш файл</string>
+    <string name="stream_input_type_select_gallery">Выберите свое фото или видео</string>
+    <string name="stream_input_type_auto_mention">В поисках людей</string>
+    <string name="stream_input_upload_file">Загрузить файл</string>
+    <string name="stream_input_upload_media">Загрузить фото или видео</string>
+    <string name="stream_last_message_attachment_photo">Фото</string>
+    <string name="stream_both_permissions_message">нужен доступ к камере и хранилищу, чтобы вы могли снимать, отправлять и сохранять фотографии, видео, музыку и другие файлы. Пожалуйста, включите его в настройках.</string>
+    <string name="stream_camera_permission_message">требуется камера и доступ к хранилищу, чтобы вы могли снимать фотографии и видео. Пожалуйста, включите его в настройках.</string>
+    <string name="stream_channel_header_active">активный %s</string>
+    <string name="stream_channel_header_active_now">прямо сейчас</string>
+    <string name="stream_image">Картинки</string>
+    <string name="stream_input_camera_title">Захват изображения или видео</string>
+    <string name="stream_last_message_attachment_video">видео</string>
+    <string name="stream_message_failed_send">СООБЩЕНИЕ НЕ СДЕЛАНО ּ • НАЖМИТЕ, ЧТОБЫ ПОПРОБОВАТЬ</string>
+    <string name="stream_message_invalid_command">UNSENT ּ • НЕВЕРНАЯ КОМАНДА</string>
+    <string name="stream_you">(вы)</string>
+    <string name="stream_message_invalid_response">Ответ или сообщение пусто.</string>
+    <string name="stream_no_file_error">Там нет файла.</string>
+    <string name="stream_no_media_error">Там нет фото или видео.</string>
+    <string name="stream_storage_permission_message">необходим доступ к хранилищу, чтобы вы могли отправлять и сохранять фотографии, видео, музыку и другие файлы. Пожалуйста, включите его в настройках.</string>
+    <string name="stream_take_photo_failed">Ошибка из-за неизвестной ошибки.</string>
+    <string name="stream_thread_separator">Начало новой темы</string>
+    <string name="stream_video">видео</string>
+</resources>

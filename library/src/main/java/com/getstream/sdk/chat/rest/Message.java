@@ -196,45 +196,6 @@ public class Message implements UserEntity {
         return message.getText().startsWith("/");
     }
 
-    public static String differentTime(String dateStr) {
-        if (TextUtils.isEmpty(dateStr)) return null;
-        Date lastActiveDate = null;
-        try {
-            lastActiveDate = Utils.messageDateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Date dateTwo = new Date();
-        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
-        String timeElapsed = TimeElapsed(timeDiff);
-        String differTime = "";
-        if (timeElapsed.contains("Just now"))
-            differTime = "Active: " + timeElapsed;
-        else
-            differTime = "Active: " + timeElapsed + " ago";
-
-        return differTime;
-    }
-
-    public static String TimeElapsed(long seconds) {
-        String elapsed;
-        if (seconds < 60) {
-            elapsed = "Just now";
-        } else if (seconds < 60 * 60) {
-            int minutes = (int) (seconds / 60);
-            elapsed = minutes + " " + ((minutes > 1) ? "mins" : "min");
-        } else if (seconds < 24 * 60 * 60) {
-            int hours = (int) (seconds / (60 * 60));
-            elapsed = hours + " " + ((hours > 1) ? "hours" : "hour");
-        } else {
-            int days = (int) (seconds / (24 * 60 * 60));
-            elapsed = days + " " + ((days > 1) ? "days" : "day");
-        }
-        return elapsed;
-    }
-
     public String getUserID() {
         return userID;
     }
@@ -528,5 +489,9 @@ public class Message implements UserEntity {
 
     public void setSyncStatus(@Sync.Status Integer syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public boolean hasAttachments(){
+        return getAttachments() != null && !getAttachments().isEmpty();
     }
 }
