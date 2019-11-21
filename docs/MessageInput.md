@@ -272,7 +272,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
-    Message newMessage;
+    private ChannelViewModel viewModel;
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -281,8 +281,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
+        this.viewModel = viewModel;
         setMessageInputManager(this);
-        configKeystroke(viewModel);
+        configKeystroke();
     }
 
     private void initBinding(Context context) {
@@ -291,53 +292,50 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            newMessage = new Message(binding.etMessage.getText().toString());
-            onSendMessage();
+            Message message;
+            String text = binding.etMessage.getText().toString();
+            if (!viewModel.isEditing())
+                message = new Message(text);
+            else {
+                message = viewModel.getEditMessage().getValue();
+                message.setText(text);
+            }
+            // if you want to set custom data, uncomment the line below.
+            // setExtraData(message);
+            onSendMessage(message);
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
-            newMessage = new Message();
-            newMessage.setAttachments(getAttachments(ModelType.attach_image));
-            onSendMessage();
+            Message message = new Message();
+            message.setAttachments(getAttachments(ModelType.attach_image));
+            onSendMessage(message);
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
-            newMessage = new Message();
-            newMessage.setAttachments(getAttachments(ModelType.attach_giphy));
-            onSendMessage();
+            Message message = new Message();
+            message.setAttachments(getAttachments(ModelType.attach_giphy));
+            onSendMessage(message);
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
-            newMessage = new Message();
-            newMessage.setAttachments(getAttachments(ModelType.attach_file));
-            onSendMessage();
+            Message message = new Message();
+            message.setAttachments(getAttachments(ModelType.attach_file));
+            onSendMessage(message);
         });
     }
 
-    private void configKeystroke(ChannelViewModel viewModel) {
+    private void configKeystroke() {
         EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
             if (binding.etMessage.getText().toString().length() > 0)
                 viewModel.keystroke();
         });
     }
 
-    // Override this function to send new message
-    @Override
-    public Message prepareMessage() {
-        // note that you typically want to use custom fields on attachments instead of messages
+    // note that you typically want to use custom fields on attachments instead of messages
+    private void setExtraData(Message message){
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
-        newMessage.setExtraData(extraData);
-
-        return newMessage;
-    }
-
-    // Override this function to edit message
-    @Override
-    public Message getEditMessage() {
-        Message message = super.getEditMessage();
-        message.setText(binding.etMessage.getText().toString());
-        return message;
+        message.setExtraData(extraData);
     }
 
     @Override

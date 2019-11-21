@@ -347,9 +347,13 @@ public class MessageInputView extends RelativeLayout {
             viewModel.sendMessage(message, callback);
     }
 
-    protected void onSendMessage() {
+    private void onSendMessage(){
+        onSendMessage(isEdit() ? getEditMessage() : prepareMessage());
+    }
+
+    protected void onSendMessage(Message message) {
         binding.ivSend.setEnabled(false);
-        onSendMessage(isEdit() ? getEditMessage() : prepareMessage(), new MessageCallback() {
+        onSendMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 if (messageInputManager != null) {
@@ -386,7 +390,7 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    protected Message prepareMessage() {
+    private Message prepareMessage() {
         Message message = new Message(binding.etMessage.getText().toString());
         // Check file uploading
         message.setAttachments(messageInputController.getSelectedAttachments());
@@ -400,21 +404,20 @@ public class MessageInputView extends RelativeLayout {
         return message;
     }
 
-    protected Message getEditMessage() {
+    private Message getEditMessage() {
         Message message = viewModel.getEditMessage().getValue();
-        if (messageInputManager == null){
-            message.setText(binding.etMessage.getText().toString());
-            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-            if (newAttachments != null
-                    && !newAttachments.isEmpty()){
-                List<Attachment>attachments = message.getAttachments();
-                for (Attachment attachment : newAttachments){
-                    if (attachments == null)
-                        attachments = new ArrayList<>();
-                    attachments.add(attachment);
-                }
-                message.setAttachments(attachments);
+        message.setText(binding.etMessage.getText().toString());
+        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+        if (newAttachments != null
+                && !newAttachments.isEmpty()){
+            List<Attachment>attachments = message.getAttachments();
+            for (Attachment attachment : newAttachments){
+                if (attachments == null)
+                    attachments = new ArrayList<>();
+                if (attachments.contains(attachment)) continue;
+                attachments.add(attachment);
             }
+            message.setAttachments(attachments);
         }
         return message;
     }
