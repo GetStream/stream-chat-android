@@ -274,11 +274,7 @@ public class CustomMessageInputView extends MessageInputView
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
-
-    public CustomMessageInputView(Context context) {
-        super(context);
-        initBinding(context);
-    }
+    Message newMessage;
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -287,17 +283,9 @@ public class CustomMessageInputView extends MessageInputView
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
-        // Set Keystroke
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = binding.etMessage.getText().toString();
-            if (messageText.length() > 0) {
-                viewModel.keystroke();
-            }
-        });
         setMessageInputManager(this);
+        configKeystroke(viewModel);
     }
-
-    Message newMessage;
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -328,10 +316,20 @@ public class CustomMessageInputView extends MessageInputView
         });
     }
 
+    private void configKeystroke(ChannelViewModel viewModel){
+        // Set Keystroke
+        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+            String messageText = binding.etMessage.getText().toString();
+            if (messageText.length() > 0) {
+                viewModel.keystroke();
+            }
+        });
+    }
+
+    // Override this function to send new message
     @Override
     public Message prepareMessage() {
         // note that you typically want to use custom fields on attachments instead of messages
-        // attachment UI is easier to customize than the message UI
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
         newMessage.setExtraData(extraData);
@@ -339,6 +337,7 @@ public class CustomMessageInputView extends MessageInputView
         return newMessage;
     }
 
+    // Override this function to edit message
     @Override
     public Message getEditMessage() {
         Message message = super.getEditMessage();
@@ -353,7 +352,7 @@ public class CustomMessageInputView extends MessageInputView
 
     @Override
     public void onSendMessageError(String errMsg) {
-        Log.d(TAG, "Failed sending message! :" + errMsg);
+        Log.d(TAG, "Failed send message! :" + errMsg);
         clearEditText();
     }
 
@@ -402,6 +401,7 @@ public class CustomMessageInputView extends MessageInputView
         return attachments;
     }
 }
+
 ```
 
 #### Step 3: Edit activity_channel.xml
