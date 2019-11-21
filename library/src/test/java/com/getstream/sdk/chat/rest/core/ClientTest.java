@@ -126,6 +126,7 @@ public class ClientTest {
         doReturn(storage).when(storageProvider).provideStorage(any(), any(), anyBoolean());
 
         client = new Client(TEST_API_KEY,
+                new ApiClientOptions(),
                 apiServiceProvider,
                 webSocketServiceProvider,
                 uploadStorageProvider,
