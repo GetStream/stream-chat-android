@@ -63,7 +63,7 @@ public class DefaultBubbleHelper {
                         applyStyleDefaultMine(positions, context);
                         // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomRightRadius = bottomLeftRadius = 0;
                         // set corner radius if message has multi attachments
                         if (message.getAttachments().indexOf(attachment)>0)
                             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
@@ -77,7 +77,7 @@ public class DefaultBubbleHelper {
                         applyStyleDefaultTheirs(positions, context);
                         // set corner radius if the attachment has title or description
                         if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
+                            bottomRightRadius = bottomLeftRadius = 0;
                         // set corner radius if message has multi attachments
                         if (message.getAttachments().indexOf(attachment)>0)
                             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
@@ -102,8 +102,7 @@ public class DefaultBubbleHelper {
                     if (isDefaultBubble(style, context))
                         applyStyleDefaultTheirs(positions, context);
                 }
-                topLeftRadius = 0;
-                topRightRadius = 0;
+                topLeftRadius = topRightRadius = 0;
                 return getBubbleDrawable();
             }
         };
