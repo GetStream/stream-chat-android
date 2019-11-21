@@ -36,16 +36,16 @@ You must use the following properties in your XML to change your MessageInputVie
 
 - **Attachment Button**
 
-| Properties                                          | Type          | Default    |
-| --------------------------------------------------- | ------------- | ---------- |
-| `app:streamShowAttachmentButton`                    | boolean       | true       |
-| `app:streamAttachmentButtonDefaultIconColor`        | color         | DKGRAY     |
-| `app:streamAttachmentButtonDefaultIconPressedColor` | color         | WHITE      |
-| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LTGRAY     |
-| `app:streamAttachmentButtonSelectedIconColor`       | color         | BLACK      |
-| `app:streamAttachmentButtonIcon`                    | reference     | -          |
-| `app:streamAttachmentButtonWidth`                   | dimension     | 25dp       |
-| `app:streamAttachmentButtonHeight`                  | dimension     | 25dp       |
+| Properties                                          | Type          | Default          |
+| --------------------------------------------------- | ------------- | ---------------- |
+| `app:streamShowAttachmentButton`                    | boolean       | true             |
+| `app:streamAttachmentButtonDefaultIconColor`        | color         | stream_gray_dark |
+| `app:streamAttachmentButtonDefaultIconPressedColor` | color         | WHITE            |
+| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LTGRAY           |
+| `app:streamAttachmentButtonSelectedIconColor`       | color         | BLACK            |
+| `app:streamAttachmentButtonIcon`                    | reference     | -                |
+| `app:streamAttachmentButtonWidth`                   | dimension     | 25dp             |
+| `app:streamAttachmentButtonHeight`                  | dimension     | 25dp             |
 
 
 - **Send Button**
@@ -62,13 +62,13 @@ You must use the following properties in your XML to change your MessageInputVie
 		
 - **Input Text**
 
-| Properties                  | Type                  | Default         |
-| --------------------------- | --------------------- | --------------- |
-| `app:streamInputHint`       | string                | Write a message |
-| `app:streamInputTextSize`   | dimension             | 15sp            |
-| `app:streamInputTextColor`  | color                 | BLACK           |
-| `app:streamInputHintColor`  | color                 | DKGRAY          |
-| `app:streamInputTextStyle`  | normal, bold, italic  | normal          |
+| Properties                  | Type                  | Default          |
+| --------------------------- | --------------------- | ---------------- |
+| `app:streamInputHint`       | string                | Write a message  |
+| `app:streamInputTextSize`   | dimension             | 15sp             |
+| `app:streamInputTextColor`  | color                 | BLACK            |
+| `app:streamInputHintColor`  | color                 | stream_gray_dark |
+| `app:streamInputTextStyle`  | normal, bold, italic  | normal           |
 
 
 
@@ -360,7 +360,7 @@ public class CustomMessageInputView extends RelativeLayout {
             });
         } else {
             message.setStatus(null);
-            viewModel.onSendMessage(message, new MessageCallback() {
+            viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     Log.i(TAG, "Sent message successfully!");
