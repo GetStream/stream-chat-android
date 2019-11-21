@@ -140,7 +140,7 @@ public class Message implements UserEntity {
 
     public Message(String text) {
         this();
-        this.setText(text);
+        setText(text);
     }
 
     // region Set Date and Time
