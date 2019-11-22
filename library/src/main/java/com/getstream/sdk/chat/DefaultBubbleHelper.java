@@ -52,8 +52,7 @@ public class DefaultBubbleHelper {
             @Override
             public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
                 if (attachment == null
-                        || attachment.getType().equals(ModelType.attach_unknown)
-                        || attachment.getType().equals(ModelType.attach_file))
+                        || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
                 if (mine) {

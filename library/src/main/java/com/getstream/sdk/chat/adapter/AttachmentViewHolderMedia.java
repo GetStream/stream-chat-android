@@ -155,13 +155,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
+        boolean isMine = getMessageListItem().isMine();
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize(isMine));
+        tv_media_title.setTextColor(style.getAttachmentTitleTextColor(isMine));
+        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle(isMine));
 
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize(isMine));
+        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor(isMine));
+        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle(isMine));
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
