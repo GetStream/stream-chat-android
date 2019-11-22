@@ -199,6 +199,31 @@ public class MessageInputView extends RelativeLayout {
             binding.setActiveMessageSend(messageText.length() != 0);
     }
 
+    private void configMessageInputBackground(LifecycleOwner lifecycleOwner){
+        if (!editText.equals(binding.etMessage)) return;
+
+        viewModel.getInputType().observe(lifecycleOwner, inputType -> {
+            switch (inputType) {
+                case DEFAULT:
+                    binding.llComposer.setBackground(style.getInputBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing()));
+                    break;
+                case SELECT:
+                    binding.llComposer.setBackground(style.getInputSelectedBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
+                    break;
+                case EDIT:
+                    binding.llComposer.setBackground(style.getInputEditBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
+                    messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE);
+                    break;
+            }
+        });
+    }
+
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
         messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  ()-> {
@@ -306,27 +331,7 @@ public class MessageInputView extends RelativeLayout {
 
     // region observe
     private void observeUIs(LifecycleOwner lifecycleOwner) {
-        viewModel.getInputType().observe(lifecycleOwner, inputType -> {
-            switch (inputType) {
-                case DEFAULT:
-                    binding.llComposer.setBackground(style.getInputBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing()));
-                    break;
-                case SELECT:
-                    binding.llComposer.setBackground(style.getInputSelectedBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
-                    break;
-                case EDIT:
-                    binding.llComposer.setBackground(style.getInputEditBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
-                    messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE);
-                    break;
-            }
-        });
-
+        configMessageInputBackground(lifecycleOwner);
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
             if (messageListScrollup)
@@ -467,6 +472,7 @@ public class MessageInputView extends RelativeLayout {
         }
 
         if (!editText.equals(binding.etMessage)) return;
+
         // Set Attachments to Inputbox
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
