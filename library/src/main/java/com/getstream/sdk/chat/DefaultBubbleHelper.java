@@ -26,8 +26,8 @@ public class DefaultBubbleHelper {
             @Override
             public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
                 if (mine) {
-                    if (style.getMessageBubbleDrawableMine() != null)
-                        return style.getMessageBubbleDrawableMine();
+                    if (style.getMessageBubbleDrawableMine() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableMine());
 
                     configParamsMine(style);
 
@@ -39,8 +39,8 @@ public class DefaultBubbleHelper {
                     if (isDefaultBubble(style, context))
                         applyStyleDefaultMine(positions, context);
                 } else {
-                    if (style.getMessageBubbleDrawableTheirs() != null)
-                        return style.getMessageBubbleDrawableTheirs();
+                    if (style.getMessageBubbleDrawableTheirs() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableTheirs());
 
                     configParamsTheirs(style);
                     if (isDefaultBubble(style, context))
@@ -57,8 +57,8 @@ public class DefaultBubbleHelper {
                     return null;
 
                 if (mine) {
-                    if (style.getMessageBubbleDrawableMine() != null)
-                        return style.getMessageBubbleDrawableMine();
+                    if (style.getMessageBubbleDrawableMine() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableMine());
 
                     configParamsMine(style);
                     if (isDefaultBubble(style, context)) {
@@ -69,8 +69,8 @@ public class DefaultBubbleHelper {
                             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 } else {
-                    if (style.getMessageBubbleDrawableTheirs() != null)
-                        return style.getMessageBubbleDrawableTheirs();
+                    if (style.getMessageBubbleDrawableTheirs() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableTheirs());
 
                     configParamsTheirs(style);
 
@@ -92,8 +92,8 @@ public class DefaultBubbleHelper {
                     if (isDefaultBubble(style, context))
                         applyStyleDefaultMine(positions, context);
                 } else {
-                    if (style.getMessageBubbleDrawableTheirs() != null)
-                        return style.getMessageBubbleDrawableTheirs();
+                    if (style.getMessageBubbleDrawableTheirs() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableTheirs());
                     configParamsTheirs(style);
                     if (isDefaultBubble(style, context))
                         applyStyleDefaultTheirs(positions, context);

@@ -20,8 +20,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageTextStyleMine;
     private int messageTextStyleTheirs;
     // Message Bubble
-    private Drawable messageBubbleDrawableMine;
-    private Drawable messageBubbleDrawableTheirs;
+    private int messageBubbleDrawableMine;
+    private int messageBubbleDrawableTheirs;
     private int messageTopLeftCornerRadiusMine;
     private int messageTopRightCornerRadiusMine;
     private int messageBottomRightCornerRadiusMine;
@@ -87,8 +87,8 @@ public class MessageListViewStyle extends BaseStyle {
         messageTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK);
         messageTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
         // Message Bubble
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
+        messageBubbleDrawableMine = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1);
+        messageBubbleDrawableTheirs = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1);
 
         messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopLeftCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
         messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopRightCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
@@ -192,11 +192,11 @@ public class MessageListViewStyle extends BaseStyle {
         return messageTextStyleTheirs;
     }
 
-    public Drawable getMessageBubbleDrawableMine() {
+    public int getMessageBubbleDrawableMine() {
         return messageBubbleDrawableMine;
     }
 
-    public Drawable getMessageBubbleDrawableTheirs() {
+    public int getMessageBubbleDrawableTheirs() {
         return messageBubbleDrawableTheirs;
     }
 
