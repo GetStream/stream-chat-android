@@ -230,38 +230,18 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 #### Step 2: Create `CustomMessageInputView`
 
-As a next step we need to connect your message input to the rest of the UI.
-There a few things to think about:
+As a next step we need to extend `MessageInputView` so wyu can use all features by extending `MessageInputView` simply.
 
-* Typing events
-* Sending messages (optionally with attachments)
-* Editing a message
+What should not be missed is that you must connect your message input `EditText` to connect *super* class.
+
+```java
+setEditText(`your message input EditText`)
+```
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
 ```java
-package io.getstream.chat.example;
-
-import android.content.Context;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-
-import com.getstream.sdk.chat.interfaces.MessageInputManager;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.view.MessageInputView;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
+...
 
 public class CustomMessageInputView extends MessageInputView implements MessageInputManager {
 
@@ -280,7 +260,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Don't miss this line to set Edit text!
+        // Don't miss this line to set editText!
         setEditText(binding.etMessage);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
@@ -327,10 +307,10 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         Log.d(TAG, "Failed send message! :" + errMsg);
     }
 
-    // If you want to customize editing message you can override the function below
+    // If you want to customize editing message behavior you can override the function below
 //    @Override
 //    public void editMessage(Message message) {
-//        // TODO: Customize Edit Message behavior.
+//        // TODO: Customize Editing Message behavior.
 //    }
 
     private List<Attachment> getAttachments(String modelType) {

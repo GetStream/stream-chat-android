@@ -38,7 +38,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Don't miss this line to set Edit text!
+        // Don't miss this line to set editText!
         setEditText(binding.etMessage);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
@@ -85,10 +85,10 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         Log.d(TAG, "Failed send message! :" + errMsg);
     }
 
-    // If you want to customize editing message you can override the function below
+    // If you want to customize editing message behavior you can override the function below
 //    @Override
 //    public void editMessage(Message message) {
-//        // TODO: Customize Edit Message behavior.
+//        // TODO: Customize Editing Message behavior.
 //    }
 
     private List<Attachment> getAttachments(String modelType) {
