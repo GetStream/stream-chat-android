@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.interfaces.MessageInputManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -26,9 +25,6 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
-    // binding for this view
-    private ViewCustomMessageInputBinding binding;
-
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initBinding(context);
@@ -37,17 +33,17 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
         setMessageInputManager(this);
-        // First of the typing.start and typing.stop events based on the users keystrokes.
-        EditTextUtils.afterTextChanged(binding.etMessage, this::keyStroke);
     }
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
+        ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
+        // Don't miss this line to set Edit text!
+        setEditText(binding.etMessage);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = isEdit() ? getEditMessage() : new Message();
-            message.setText(getMessageString());
+            message.setText(getMessageText());
             // if you want to set custom data, uncomment the line below.
             // setExtraData(message);
             onSendMessage(message);
@@ -79,31 +75,19 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         message.setExtraData(extraData);
     }
 
-    private String getMessageString(){
-        return binding.etMessage.getText().toString();
-    }
-
     @Override
     public void onSendMessageSuccess(Message message) {
-        clearEditText();
+        Log.d(TAG, "Sent message! :" + message.getText());
     }
 
     @Override
     public void onSendMessageError(String errMsg) {
         Log.d(TAG, "Failed send message! :" + errMsg);
-        clearEditText();
     }
 
-    @Override
-    public void onEditMessage(Message message) {
-        binding.etMessage.requestFocus();
-        binding.etMessage.setText(message.getText());
-        binding.etMessage.setSelection(binding.etMessage.getText().length());
-    }
-
-    private void clearEditText() {
-        binding.etMessage.setText("");
-    }
+    // If you want to more handle to edit message you can override the function below
+//    @Override
+//    public void editMessage(Message message) { }
 
     private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();

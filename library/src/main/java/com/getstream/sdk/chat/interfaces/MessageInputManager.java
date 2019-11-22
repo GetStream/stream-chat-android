@@ -6,6 +6,4 @@ public interface MessageInputManager {
     void onSendMessageSuccess(Message message);
 
     void onSendMessageError(String errMsg);
-
-    void onEditMessage(Message message);
 }

@@ -16,6 +16,7 @@ import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,7 @@ import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.EditTextUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
+import com.getstream.sdk.chat.utils.GifEditText;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -91,19 +93,16 @@ public class MessageInputView extends RelativeLayout {
      * The viewModel for handling typing etc.
      */
     protected ChannelViewModel viewModel;
+    protected EditText editText;
 
     private MessageInputController messageInputController;
 
     // region constructor
-    public MessageInputView(Context context) {
-        super(context);
-        binding = initBinding(context);
-    }
-
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
         parseAttr(context, attrs);
         binding = initBinding(context);
+        setEditText(binding.etMessage);
         applyStyle();
     }
     // endregion
@@ -123,6 +122,10 @@ public class MessageInputView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         init();
         observeUIs(lifecycleOwner);
+    }
+
+    protected void setEditText(EditText editText) {
+        this.editText = editText;
     }
 
     private void init() {
@@ -147,11 +150,11 @@ public class MessageInputView extends RelativeLayout {
         // Input Background
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
-        binding.etMessage.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
-        binding.etMessage.setHint(style.getInputHint());
-        binding.etMessage.setTextColor(style.getInputTextColor());
-        binding.etMessage.setHintTextColor(style.getInputHintColor());
-        binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
+        editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
+        editText.setHint(style.getInputHint());
+        editText.setTextColor(style.getInputTextColor());
+        editText.setHintTextColor(style.getInputHintColor());
+        editText.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
     }
 
     private void configOnClickListener(){
@@ -167,7 +170,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void configInputEditText(){
-        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
+        editText.setOnFocusChangeListener((View view, boolean hasFocus)-> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
                 Utils.showSoftKeyboard((Activity) getContext());
@@ -175,11 +178,12 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        EditTextUtils.afterTextChanged(binding.etMessage, this::keyStroke);
-        binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
+        EditTextUtils.afterTextChanged(editText, this::keyStroke);
+        if (editText instanceof GifEditText)
+            ((GifEditText)editText).setCallback(this::sendGiphyFromKeyboard);
     }
 
-    protected void keyStroke(Editable editable){
+    private void keyStroke(Editable editable){
         if (editable.toString().length() > 0)
             viewModel.keystroke();
         if (messageInputManager != null) return;
@@ -276,26 +280,26 @@ public class MessageInputView extends RelativeLayout {
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
                     if (!isOpen) {
-                        binding.etMessage.clearFocus();
+                        editText.clearFocus();
                         onBackPressed();
                     }
                 });
     }
 
     public void setEnabled(boolean enabled) {
-        binding.etMessage.setEnabled(true);
+        editText.setEnabled(true);
     }
 
     public void clearFocus() {
-        binding.etMessage.clearFocus();
+        editText.clearFocus();
     }
 
     public String getMessageText() {
-        return binding.etMessage.getText().toString();
+        return editText.getText().toString();
     }
 
     public void setMessageText(String t) {
-        binding.etMessage.setText(t);
+        editText.setText(t);
     }
     // endregion
 
@@ -357,25 +361,19 @@ public class MessageInputView extends RelativeLayout {
         onSendMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                if (messageInputManager != null) {
-                    viewModel.setEditMessage(null);
+                if (messageInputManager != null)
                     messageInputManager.onSendMessageSuccess(response.getMessage());
-                } else {
-                    initSendMessage();
-                    if (isEdit()) clearFocus();
-                }
+                initSendMessage();
+                if (isEdit()) clearFocus();
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                if (messageInputManager != null) {
-                    viewModel.setEditMessage(null);
+                if (messageInputManager != null)
                     messageInputManager.onSendMessageError(errMsg);
-                } else {
-                    Utils.showMessage(getContext(), errMsg);
-                    initSendMessage();
-                    if (isEdit()) clearFocus();
-                }
+                Utils.showMessage(getContext(), errMsg);
+                initSendMessage();
+                if (isEdit()) clearFocus();
             }
         });
     }
@@ -383,7 +381,7 @@ public class MessageInputView extends RelativeLayout {
     private void initSendMessage() {
         messageInputController.initSendMessage();
         viewModel.setEditMessage(null);
-        binding.etMessage.setText("");
+        editText.setText("");
         binding.ivSend.setEnabled(true);
     }
 
@@ -448,7 +446,7 @@ public class MessageInputView extends RelativeLayout {
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
         messageInputController.setSelectedAttachments(Arrays.asList(attachment));
-        binding.etMessage.setText("");
+        editText.setText("");
         onSendMessage();
         return true;
     }
@@ -458,21 +456,17 @@ public class MessageInputView extends RelativeLayout {
         return viewModel.isEditing();
     }
     // region edit message
-    private void editMessage(Message message) {
+    protected void editMessage(Message message) {
         if (message == null) return;
 
-        if (messageInputManager != null){
-            messageInputManager.onEditMessage(message);
-            return;
-        }
-
         // Set Text to Inputbox
-        binding.etMessage.requestFocus();
+        editText.requestFocus();
         if (!TextUtils.isEmpty(message.getText())) {
-            binding.etMessage.setText(message.getText());
-            binding.etMessage.setSelection(binding.etMessage.getText().length());
+            editText.setText(message.getText());
+            editText.setSelection(editText.getText().length());
         }
 
+        if (messageInputManager != null) return;
         // Set Attachments to Inputbox
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
@@ -563,8 +557,8 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-    protected void setMessageInputManager(MessageInputManager messageInputManager) {
-        this.messageInputManager = messageInputManager;
+    protected void setMessageInputManager(MessageInputManager manager) {
+        this.messageInputManager = manager;
     }
 
     public void setPermissionRequestListener(PermissionRequestListener l) {
