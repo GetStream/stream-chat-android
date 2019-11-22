@@ -80,7 +80,6 @@ public class DefaultBubbleHelper {
                             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 }
-                bgColor = Color.WHITE;
                 return getBubbleDrawable();
             }
 
