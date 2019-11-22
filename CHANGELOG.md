@@ -9,7 +9,7 @@
 - Add editMessage function in Channel View Model
 - Add MessageInputManager
 - Update CustomMessageInputView
-- Remove CustomMessageInputView2
+- Update CustomMessageInputView2
 
 ## November 5th, 2019 - 3.2.1
 
