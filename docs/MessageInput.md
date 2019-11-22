@@ -228,14 +228,14 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 </layout>
 ```
 
-#### Step 2: Create `CustomMessageInputView`
+#### Step 2: Create CustomMessageInputView
 
-As a next step we need to extend `MessageInputView` so wyu can use all features by extending `MessageInputView` simply.
+As a next step we need to extend `MessageInputView` so you can use all features by extending `MessageInputView` simply.
 
-What should not be missed is that you must connect your message input `EditText` to connect *super* class.
+What should not be missed is that you must connect your message input `EditText` to connect **super** class.
 
 ```java
-setEditText(`your message input EditText`)
+setEditText(*your message input EditText*)
 ```
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
