@@ -235,7 +235,7 @@ As a next step we need to extend `MessageInputView` so you can use all features 
 What should not be missed is that you must connect your message input `EditText` to connect **super** class.
 
 ```java
-setEditText(*your_message_input_editText*)
+setEditText(your_message_input_editText)
 ```
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
