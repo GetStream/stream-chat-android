@@ -85,9 +85,11 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         Log.d(TAG, "Failed send message! :" + errMsg);
     }
 
-    // If you want to more handle to edit message you can override the function below
+    // If you want to customize editing message you can override the function below
 //    @Override
-//    public void editMessage(Message message) { }
+//    public void editMessage(Message message) {
+//        // TODO: Customize Edit Message behavior.
+//    }
 
     private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();

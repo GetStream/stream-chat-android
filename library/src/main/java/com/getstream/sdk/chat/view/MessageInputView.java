@@ -186,7 +186,8 @@ public class MessageInputView extends RelativeLayout {
     private void keyStroke(Editable editable){
         if (editable.toString().length() > 0)
             viewModel.keystroke();
-        if (messageInputManager != null) return;
+
+        if (!editText.equals(binding.etMessage)) return;
 
         String messageText = getMessageText();
         // detect commands
@@ -352,8 +353,9 @@ public class MessageInputView extends RelativeLayout {
             viewModel.sendMessage(message, callback);
     }
 
-    private void onSendMessage(){
-        onSendMessage(isEdit() ? prepareEditMessage() : prepareNewMessage());
+    protected void onSendMessage(){
+        Message message = isEdit() ? getEditMessage(): new Message(getMessageText());
+        onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
     }
 
     protected void onSendMessage(Message message) {
@@ -389,8 +391,7 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    public Message prepareNewMessage() {
-        Message message = new Message(getMessageText());
+    protected Message prepareNewMessage(Message message) {
         // Check file uploading
         message.setAttachments(messageInputController.getSelectedAttachments());
         if (messageInputController.isUploadingFile()){
@@ -403,8 +404,7 @@ public class MessageInputView extends RelativeLayout {
         return message;
     }
 
-    public Message prepareEditMessage() {
-        Message message = getEditMessage();
+    protected Message prepareEditMessage(Message message) {
         message.setText(getMessageText());
         List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
         if (newAttachments != null
@@ -466,7 +466,7 @@ public class MessageInputView extends RelativeLayout {
             editText.setSelection(editText.getText().length());
         }
 
-        if (messageInputManager != null) return;
+        if (!editText.equals(binding.etMessage)) return;
         // Set Attachments to Inputbox
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
