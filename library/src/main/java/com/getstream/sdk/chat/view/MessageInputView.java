@@ -9,9 +9,9 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -90,7 +90,7 @@ public class MessageInputView extends RelativeLayout {
     /**
      * The viewModel for handling typing etc.
      */
-    private ChannelViewModel viewModel;
+    protected ChannelViewModel viewModel;
 
     private MessageInputController messageInputController;
 
@@ -175,23 +175,24 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = getMessageText();
-            Log.i(TAG, "Length is " + editable.length());
-            if (messageText.length() > 0) {
-                viewModel.keystroke();
-            }
-            // detect commands
-            messageInputController.checkCommand(messageText);
-            String s_ = messageText.replaceAll("\\s+","");
-            if (TextUtils.isEmpty(s_))
-                binding.setActiveMessageSend(false);
-            else
-                binding.setActiveMessageSend(messageText.length() != 0);
-        });
+        EditTextUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
+    protected void keyStroke(Editable editable){
+        if (editable.toString().length() > 0)
+            viewModel.keystroke();
+        if (messageInputManager != null) return;
+
+        String messageText = getMessageText();
+        // detect commands
+        messageInputController.checkCommand(messageText);
+        String s_ = messageText.replaceAll("\\s+","");
+        if (TextUtils.isEmpty(s_))
+            binding.setActiveMessageSend(false);
+        else
+            binding.setActiveMessageSend(messageText.length() != 0);
+    }
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
@@ -254,7 +255,7 @@ public class MessageInputView extends RelativeLayout {
                     initSendMessage();
                     return true;
                 }
-                if (!TextUtils.isEmpty(binding.etMessage.getText().toString())) {
+                if (!TextUtils.isEmpty(getMessageText())) {
                     initSendMessage();
                     return true;
                 }
@@ -348,7 +349,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void onSendMessage(){
-        onSendMessage(isEdit() ? getEditMessage() : prepareMessage());
+        onSendMessage(isEdit() ? prepareEditMessage() : prepareNewMessage());
     }
 
     protected void onSendMessage(Message message) {
@@ -390,8 +391,8 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    private Message prepareMessage() {
-        Message message = new Message(binding.etMessage.getText().toString());
+    public Message prepareNewMessage() {
+        Message message = new Message(getMessageText());
         // Check file uploading
         message.setAttachments(messageInputController.getSelectedAttachments());
         if (messageInputController.isUploadingFile()){
@@ -404,9 +405,9 @@ public class MessageInputView extends RelativeLayout {
         return message;
     }
 
-    private Message getEditMessage() {
-        Message message = viewModel.getEditMessage().getValue();
-        message.setText(binding.etMessage.getText().toString());
+    public Message prepareEditMessage() {
+        Message message = getEditMessage();
+        message.setText(getMessageText());
         List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
         if (newAttachments != null
                 && !newAttachments.isEmpty()){
@@ -420,6 +421,10 @@ public class MessageInputView extends RelativeLayout {
             message.setAttachments(attachments);
         }
         return message;
+    }
+
+    protected Message getEditMessage(){
+        return viewModel.getEditMessage().getValue();
     }
     // endregion
 
@@ -449,7 +454,7 @@ public class MessageInputView extends RelativeLayout {
     }
     // endregion
 
-    private boolean isEdit(){
+    protected boolean isEdit(){
         return viewModel.isEditing();
     }
     // region edit message

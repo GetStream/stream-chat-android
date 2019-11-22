@@ -28,7 +28,6 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     // binding for this view
     private ViewCustomMessageInputBinding binding;
-    private ChannelViewModel viewModel;
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -37,25 +36,18 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
-        this.viewModel = viewModel;
         setMessageInputManager(this);
-        configKeystroke();
+        // First of the typing.start and typing.stop events based on the users keystrokes.
+        EditTextUtils.afterTextChanged(binding.etMessage, this::keyStroke);
     }
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            Message message;
-            String text = binding.etMessage.getText().toString();
-            if (!viewModel.isEditing())
-                message = new Message(text);
-            else {
-                message = viewModel.getEditMessage().getValue();
-                message.setText(text);
-            }
+            Message message = isEdit() ? getEditMessage() : new Message();
+            message.setText(getMessageString());
             // if you want to set custom data, uncomment the line below.
             // setExtraData(message);
             onSendMessage(message);
@@ -80,18 +72,15 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         });
     }
 
-    private void configKeystroke() {
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
-            if (binding.etMessage.getText().toString().length() > 0)
-                viewModel.keystroke();
-        });
-    }
-
     // note that you typically want to use custom fields on attachments instead of messages
     private void setExtraData(Message message){
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
         message.setExtraData(extraData);
+    }
+
+    private String getMessageString(){
+        return binding.etMessage.getText().toString();
     }
 
     @Override
