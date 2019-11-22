@@ -20,7 +20,8 @@ public class CustomMessageInputView2 extends MessageInputView implements Message
     }
 
     @Override
-    public Message prepareNewMessage(Message message){
+    public Message prepareNewMessage(Message mMessage){
+        Message message = super.prepareNewMessage(mMessage);
         // note that you typically want to use custom fields on attachments instead of messages
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
