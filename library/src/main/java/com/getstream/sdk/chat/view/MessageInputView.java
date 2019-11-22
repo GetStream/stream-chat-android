@@ -102,7 +102,7 @@ public class MessageInputView extends RelativeLayout {
         super(context, attrs);
         parseAttr(context, attrs);
         binding = initBinding(context);
-        setEditText(binding.etMessage);
+        editText = binding.etMessage;
         applyStyle();
     }
     // endregion
@@ -122,10 +122,6 @@ public class MessageInputView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         init();
         observeUIs(lifecycleOwner);
-    }
-
-    protected void setEditText(EditText editText) {
-        this.editText = editText;
     }
 
     private void init() {

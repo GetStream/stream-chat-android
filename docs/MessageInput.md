@@ -234,10 +234,6 @@ As a next step we need to extend `MessageInputView` so you can use all features 
 
 What should not be missed is that you must connect your message input `EditText` to connect **super** class.
 
-```java
-setEditText(your_message_input_editText)
-```
-
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
 ```java
@@ -261,7 +257,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
         // Don't miss this line to set editText!
-        setEditText(binding.etMessage);
+        editText = binding.etMessage;
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = isEdit() ? getEditMessage() : new Message();

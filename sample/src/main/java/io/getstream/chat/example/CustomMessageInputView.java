@@ -39,7 +39,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
         // Don't miss this line to set editText!
-        setEditText(binding.etMessage);
+        editText = binding.etMessage;
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = isEdit() ? getEditMessage() : new Message();
