@@ -7,6 +7,7 @@
 - Fix attachment duplicated issue when message edit
 - Add File Upload 2.0
 - Add editMessage function in Channel View Model
+- Fix JSON encoding always omits null fields
 
 ## November 5th, 2019 - 3.2.1
 

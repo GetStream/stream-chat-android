@@ -148,8 +148,6 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         setupWS();
 
         shuttingDown = false;
-
-
     }
 
     @Override
