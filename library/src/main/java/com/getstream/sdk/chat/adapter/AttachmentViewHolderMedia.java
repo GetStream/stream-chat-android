@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -20,6 +19,7 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -157,11 +157,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private void applyStyle() {
         tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
         tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
-
+        TextViewUtils.setCustomTextFont(tv_media_title, style.getAttachmentTitleTextFontPath(), style.getAttachmentTitleTextStyle(), context);
         tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
         tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
+        TextViewUtils.setCustomTextFont(tv_media_des, style.getAttachmentDescriptionTextFontPath(), style.getAttachmentDescriptionTextStyle(), context);
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {

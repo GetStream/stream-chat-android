@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -14,6 +15,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
@@ -56,9 +58,19 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         imageView.setPlaceholder(user.getInitials(),
                 style.getAvatarBackGroundColor(),
                 style.getReadStateTextColor());
-        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (style.getReadStateTextSize()),
-                style.getReadStateTextStyle());
+
+        if (!TextUtils.isEmpty(style.getReadStateTextFontPath())) {
+            try {
+                Typeface font = Typeface.createFromAsset(getContext().getAssets(), style.getReadStateTextFontPath());
+                imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                        (style.getReadStateTextSize()), font);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } else
+            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                   (style.getReadStateTextSize()),
+                    style.getReadStateTextStyle());
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
@@ -84,7 +96,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         textView.setText(String.valueOf(reads.size() - 1));
         textView.setTextColor(style.getReadStateTextColor());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReadStateTextSize());
-        textView.setTypeface(Typeface.DEFAULT, style.getReadStateTextStyle());
+        TextViewUtils.setCustomTextFont(textView, style.getReadStateTextFontPath(), style.getReadStateTextStyle(), getContext());
         textView.setGravity(Gravity.CENTER);
         textView.setId(2);
 

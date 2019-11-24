@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.SpannableString;
@@ -39,6 +38,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.AttachmentListView;
 import com.getstream.sdk.chat.view.AvatarGroupView;
@@ -379,7 +379,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize(messageListItem.isMine()));
         tv_text.setTextColor(style.getMessageTextColor(messageListItem.isMine()));
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle(messageListItem.isMine()));
+        TextViewUtils.setCustomTextFont(tv_text, style.getMessageTextFontPath(messageListItem.isMine()), style.getMessageTextStyle(messageListItem.isMine()), context);
     }
 
     private void configMessageTextBackground(){
