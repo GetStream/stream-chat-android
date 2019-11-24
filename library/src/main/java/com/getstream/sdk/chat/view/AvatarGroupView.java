@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -28,7 +29,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
     STYLE style;
     List<User> lastActiveUsers;
     User user;
-    double factor = 1.7;
+    float factor = 1.7f;
 
     public AvatarGroupView(Context context) {
         super(context);
@@ -65,10 +66,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         this.lastActiveUsers = null;
         configUIs();
     }
+
     private void configUIs() {
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) this.getLayoutParams();
-        if (params != null){
+        if (params != null) {
             params.width = style.getAvatarWidth();
             params.height = style.getAvatarHeight();
             this.setLayoutParams(params);
@@ -76,45 +78,31 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         removeAllViews();
         if (user != null) {
-            configAvatar(user.getImage(), user.getInitials());
+            configSingleAvatar(user.getImage(), user.getInitials());
         } else if (!TextUtils.isEmpty(channel.getImage())) {
-            configAvatar(channel.getImage(), channel.getInitials());
+            configSingleAvatar(channel.getImage(), channel.getInitials());
         } else {
             configUserAvatars();
         }
     }
 
     private void configUserAvatars() {
-        double factor_;
+
         if (lastActiveUsers != null && !lastActiveUsers.isEmpty()) {
             for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
-                    configAvatar(user_.getImage(), user_.getInitials());
+                    configSingleAvatar(user_.getImage(), user_.getInitials());
                 } else {
                     CircularImageView imageView = new CircularImageView(context);
-
-                    imageView.setBorderColor(style.getAvatarBorderColor());
-                    imageView.setPlaceholder(user_.getInitials(),
-                            style.getAvatarBackGroundColor(),
-                            style.getAvatarInitialTextColor());
-
-                    if (!Utils.isSVGImage(user_.getImage()))
-                        Glide.with(context)
-                                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(user_.getImage()))
-                                .apply(RequestOptions.circleCropTransform())
-                                .into(imageView);
-
-                    RelativeLayout.LayoutParams params;
-                    factor_ = factor;
+                    configAvatarView(imageView, user_.getImage(), user_.getInitials(), factor);
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
                             style.getAvatarBorderWidth());
-                    imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                            (int) (style.getAvatarInitialTextSize() / factor_),
-                            style.getAvatarInitialTextStyle());
+
+                    RelativeLayout.LayoutParams params;
                     params = new RelativeLayout.LayoutParams(
-                            (int) (style.getAvatarWidth() / factor_),
-                            (int) (style.getAvatarHeight() / factor_));
+                            (int) (style.getAvatarWidth() / factor),
+                            (int) (style.getAvatarHeight() / factor));
 
                     if (lastActiveUsers.size() == 2) {
                         if (i == 0) {
@@ -146,12 +134,22 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                 }
             }
         } else {
-            configAvatar(channel.getImage(), channel.getInitials());
+            configSingleAvatar(channel.getImage(), channel.getInitials());
         }
     }
 
-    private void configAvatar(String image, String initial) {
+    private void configSingleAvatar(String image, String initial) {
         CircularImageView imageView = new CircularImageView(context);
+        configAvatarView(imageView, image, initial, 1);
+        RelativeLayout.LayoutParams params;
+        params = new RelativeLayout.LayoutParams(
+                (style.getAvatarWidth()),
+                (style.getAvatarHeight()));
+        imageView.setLayoutParams(params);
+        this.addView(imageView);
+    }
+
+    private void configAvatarView(CircularImageView imageView, String image, String initial, float factor) {
         imageView.setBorderColor(style.getAvatarBorderColor());
         imageView.setPlaceholder(initial,
                 style.getAvatarBackGroundColor(),
@@ -162,16 +160,17 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
-
-        RelativeLayout.LayoutParams params;
-        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (style.getAvatarInitialTextSize()),
-                style.getAvatarInitialTextStyle());
-        params = new RelativeLayout.LayoutParams(
-                (style.getAvatarWidth()),
-                (style.getAvatarHeight()));
-        imageView.setLayoutParams(params);
-        this.addView(imageView);
+        if (!TextUtils.isEmpty(style.getAvatarInitialTextFontPath())) {
+            try {
+                Typeface font = Typeface.createFromAsset(getContext().getAssets(), style.getAvatarInitialTextFontPath());
+                imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                        (int) (style.getAvatarInitialTextSize() / factor), font);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        } else
+            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    (int) (style.getAvatarInitialTextSize() / factor),
+                    style.getAvatarInitialTextStyle());
     }
-
 }

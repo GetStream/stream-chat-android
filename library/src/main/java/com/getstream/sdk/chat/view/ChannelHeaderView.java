@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
@@ -127,20 +128,12 @@ public class ChannelHeaderView extends RelativeLayout {
         // Title
         binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
         binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        if (!TextUtils.isEmpty(style.getChannelTitleTextFontPath())){
-            try {
-                Typeface font = Typeface.createFromAsset(getContext().getAssets(), style.getChannelTitleTextFontPath());
-                binding.tvChannelName.setTypeface(font);
-            }catch (RuntimeException e){
-                e.printStackTrace();
-            }
-        }else
-            binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        TextViewUtils.setCustomTextFont(binding.tvChannelName, style.getChannelTitleTextFontPath(), style.getChannelTitleTextStyle(), getContext());
 
         // Last Active
         binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
         binding.tvActive.setTextColor(style.getLastActiveTextColor());
-        binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
+        TextViewUtils.setCustomTextFont(binding.tvActive, style.getLastActiveTextFontPath(), style.getLastActiveTextStyle(), getContext());
         binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : GONE);
         // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);

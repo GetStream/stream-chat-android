@@ -39,7 +39,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
@@ -182,7 +182,7 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+        TextViewUtils.afterTextChanged(binding.etMessage, editable -> {
             String messageText = getMessageText();
             Log.i(TAG, "Length is " + editable.length());
             if (messageText.length() > 0) {

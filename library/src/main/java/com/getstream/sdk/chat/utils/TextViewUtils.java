@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat.utils;
 
+import android.content.Context;
+import android.graphics.Typeface;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
-public class EditTextUtils {
+public class TextViewUtils {
     interface Actions{
         interface BeforeChangedAction{
             void act(CharSequence s, int start, int count, int after);
@@ -74,5 +77,17 @@ public class EditTextUtils {
                 action.act(editable);
             }
         });
+    }
+
+    public static void setCustomTextFont(TextView textView, String fontPath, int textStyle, Context context){
+        if (!TextUtils.isEmpty(fontPath)){
+            try {
+                Typeface font = Typeface.createFromAsset(context.getAssets(), fontPath);
+                textView.setTypeface(font);
+            }catch (RuntimeException e){
+                e.printStackTrace();
+            }
+        }else
+            textView.setTypeface(Typeface.DEFAULT, textStyle);
     }
 }

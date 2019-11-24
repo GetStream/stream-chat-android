@@ -19,6 +19,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
     private int lastActiveTextSize;
     private int lastActiveTextColor;
+    private String lastActiveTextFontPath;
     private int lastActiveTextStyle;
 
     private boolean backButtonShow;
@@ -51,6 +52,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         // Last Active
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark));
+        lastActiveTextFontPath = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextFontPath);
         lastActiveTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL);
         offlineText = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText);
 
@@ -64,6 +66,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.ChannelHeaderView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextFontPath = a.getString(R.styleable.ChannelHeaderView_streamAvatarTextFontPath);
         avatarInitialTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamAvatarTextStyle, Typeface.BOLD);
 
         lastActiveShow = a.getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true);
@@ -115,6 +118,10 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
     public int getLastActiveTextColor() {
         return lastActiveTextColor;
+    }
+
+    public String getLastActiveTextFontPath() {
+        return lastActiveTextFontPath;
     }
 
     public int getLastActiveTextStyle() {

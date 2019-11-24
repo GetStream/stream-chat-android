@@ -25,12 +25,15 @@ public class BaseStyle {
     protected int avatarBackGroundColor;
     protected int avatarInitialTextSize;
     protected int avatarInitialTextColor;
+    protected String avatarInitialTextFontPath;
     protected int avatarInitialTextStyle;
+
     protected boolean showReadState;
     protected int readStateAvatarWidth;
     protected int readStateAvatarHeight;
     protected int readStateTextSize;
     protected int readStateTextColor;
+    protected String readStateTextFontPath;
     protected int readStateTextStyle;
 
     public Context getContext() {
@@ -105,6 +108,10 @@ public class BaseStyle {
         return avatarInitialTextColor;
     }
 
+    public String getAvatarInitialTextFontPath() {
+        return avatarInitialTextFontPath;
+    }
+
     public int getAvatarInitialTextStyle() {
         return avatarInitialTextStyle;
     }
@@ -139,6 +146,10 @@ public class BaseStyle {
 
     public int getReadStateTextColor() {
         return readStateTextColor;
+    }
+
+    public String getReadStateTextFontPath() {
+        return readStateTextFontPath;
     }
 
     public int getReadStateTextStyle() {
