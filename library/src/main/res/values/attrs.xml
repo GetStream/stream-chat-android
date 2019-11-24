@@ -242,6 +242,7 @@
         <attr name="streamChannelWithOutNameTitleText"/>
         <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
         <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderTitleTextFontPath" format="string" />
         <attr name="streamChannelHeaderTitleTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />

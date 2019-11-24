@@ -11,15 +11,15 @@ import android.util.AttributeSet;
 import com.getstream.sdk.chat.R;
 
 public class ChannelHeaderViewStyle extends BaseStyle {
-    private int channelTitleTextSize;
-    private int lastActiveTextSize;
-    // Color
-    private int channelTitleTextColor;
-    private int lastActiveTextColor;
-    // Style
-    private int channelTitleTextStyle;
-    private int lastActiveTextStyle;
 
+    private int channelTitleTextSize;
+    private int channelTitleTextColor;
+    private int channelTitleTextStyle;
+    private String channelTitleTextFontPath;
+
+    private int lastActiveTextSize;
+    private int lastActiveTextColor;
+    private int lastActiveTextStyle;
 
     private boolean backButtonShow;
     private boolean lastActiveShow;
@@ -47,7 +47,7 @@ public class ChannelHeaderViewStyle extends BaseStyle {
         channelTitleTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials));
         channelTitleTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials));
         channelTitleTextStyle = a.getInt(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD);
-
+        channelTitleTextFontPath = a.getString(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextFontPath);
         // Last Active
         lastActiveTextSize = (int) a.getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date));
         lastActiveTextColor = a.getColor(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark));
@@ -103,6 +103,10 @@ public class ChannelHeaderViewStyle extends BaseStyle {
 
     public int getChannelTitleTextStyle() {
         return channelTitleTextStyle;
+    }
+
+    public String getChannelTitleTextFontPath() {
+        return channelTitleTextFontPath;
     }
 
     public int getLastActiveTextSize() {

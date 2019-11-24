@@ -127,7 +127,13 @@ public class ChannelHeaderView extends RelativeLayout {
         // Title
         binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
         binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        if (!TextUtils.isEmpty(style.getChannelTitleTextFontPath())){
+            Typeface font = Typeface.createFromAsset(getContext().getAssets(), style.getChannelTitleTextFontPath());
+            binding.tvChannelName.setTypeface(font);
+        }else{
+            binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        }
+
         // Last Active
         binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
         binding.tvActive.setTextColor(style.getLastActiveTextColor());
