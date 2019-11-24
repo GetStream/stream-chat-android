@@ -141,7 +141,7 @@ public class MessageInputView extends RelativeLayout {
 
     private void applyStyle() {
         // Attachment Button
-        binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
+        binding.ivOpenAttach.setVisibility(style.isShowAttachmentButton() ? VISIBLE : GONE);
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
@@ -156,7 +156,12 @@ public class MessageInputView extends RelativeLayout {
         binding.etMessage.setHint(style.getInputHint());
         binding.etMessage.setTextColor(style.getInputTextColor());
         binding.etMessage.setHintTextColor(style.getInputHintColor());
-        binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
+        TextViewUtils.setCustomTextFont(binding.etMessage, style.getInputTextFontPath(), style.getInputTextStyle(), getContext());
+        TextViewUtils.setCustomTextFont(binding.tvTitle, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
+        TextViewUtils.setCustomTextFont(binding.tvCommand, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
+        TextViewUtils.setCustomTextFont(binding.tvUploadPhotoVideo, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
+        TextViewUtils.setCustomTextFont(binding.tvUploadFile, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
+        TextViewUtils.setCustomTextFont(binding.tvUploadCamera, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
     }
 
     private void configOnClickListener(){

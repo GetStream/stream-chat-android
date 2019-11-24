@@ -147,6 +147,15 @@
         <attr name="streamInputBackground" format="reference" />
         <attr name="streamInputSelectedBackground" format="reference" />
         <attr name="streamInputEditBackground" format="reference" />
+
+        <attr name="streamInputBackgroundTextSize" format="dimension|reference" />
+        <attr name="streamInputBackgroundTextColor" format="color|reference" />
+        <attr name="streamInputBackgroundTextFontPath" format="string" />
+        <attr name="streamInputBackgroundTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">

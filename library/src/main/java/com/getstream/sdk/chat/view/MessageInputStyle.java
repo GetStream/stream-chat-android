@@ -45,10 +45,17 @@ public class MessageInputStyle extends BaseStyle {
     private int inputTextSize;
     private int inputTextColor;
     private int inputHintColor;
+    private String inputTextFontPath;
     private int inputTextStyle;
+
     private Drawable inputBackground;
     private Drawable inputSelectedBackground;
     private Drawable inputEditBackground;
+
+    private int inputBackgroundTextSize;
+    private int inputBackgroundTextColor;
+    private String inputBackgroundTextFontPath;
+    private int inputBackgroundTextStyle;
 
     public MessageInputStyle(Context context, AttributeSet attrs) {
         setContext(context);
@@ -88,12 +95,17 @@ public class MessageInputStyle extends BaseStyle {
         inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputTextSize, getDimension(R.dimen.stream_input_text_size));
         inputTextColor = a.getColor(R.styleable.MessageInputView_streamInputTextColor, getColor(R.color.stream_black));
         inputHintColor = a.getColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.stream_gray_dark));
+        inputTextFontPath = a.getString(R.styleable.MessageInputView_streamInputTextFontPath);
         inputTextStyle = a.getInt(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL);
 
         inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer));
         inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select));
         inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.stream_round_message_composer_edit));
 
+        inputBackgroundTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputBackgroundTextSize, getDimension(R.dimen.stream_input_text_size));
+        inputBackgroundTextColor = a.getColor(R.styleable.MessageInputView_streamInputBackgroundTextColor, getColor(R.color.stream_black));
+        inputBackgroundTextFontPath = a.getString(R.styleable.MessageInputView_streamInputBackgroundTextFontPath);
+        inputBackgroundTextStyle = a.getInt(R.styleable.MessageInputView_streamInputBackgroundTextStyle, Typeface.NORMAL);
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height));
@@ -104,6 +116,7 @@ public class MessageInputStyle extends BaseStyle {
 
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextFontPath = a.getString(R.styleable.MessageInputView_streamAvatarTextFontPath);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
 
         prefs = context.getSharedPreferences(
@@ -129,10 +142,10 @@ public class MessageInputStyle extends BaseStyle {
     }
 
     // Attachment Button
-    private SharedPreferences prefs; // Used for write/read showAttachmentButton from Request permissions
+    private SharedPreferences prefs; // Used for write/read isShowAttachmentButton from Request permissions
 
     private final String permissionSetKey = "permissionSetKey";
-    public boolean showAttachmentButton() {
+    public boolean isShowAttachmentButton() {
         return showAttachmentButton;
     }
 
@@ -213,5 +226,66 @@ public class MessageInputStyle extends BaseStyle {
 
     public Drawable getInputEditBackground() {
         return inputEditBackground;
+    }
+
+
+    public int getAttachmentButtonIcon() {
+        return attachmentButtonIcon;
+    }
+
+    public int getAttachmentButtonDefaultIconColor() {
+        return attachmentButtonDefaultIconColor;
+    }
+
+    public int getAttachmentButtonDefaultIconPressedColor() {
+        return attachmentButtonDefaultIconPressedColor;
+    }
+
+    public int getAttachmentButtonDefaultIconDisabledColor() {
+        return attachmentButtonDefaultIconDisabledColor;
+    }
+
+    public int getAttachmentButtonSelectedIconColor() {
+        return attachmentButtonSelectedIconColor;
+    }
+
+    public int getInputButtonIcon() {
+        return inputButtonIcon;
+    }
+
+    public int getInputButtonDefaultIconColor() {
+        return inputButtonDefaultIconColor;
+    }
+
+    public int getInputButtonEditIconColor() {
+        return inputButtonEditIconColor;
+    }
+
+    public int getInputButtonDefaultIconPressedColor() {
+        return inputButtonDefaultIconPressedColor;
+    }
+
+    public int getInputButtonDefaultIconDisabledColor() {
+        return inputButtonDefaultIconDisabledColor;
+    }
+
+    public String getInputTextFontPath() {
+        return inputTextFontPath;
+    }
+
+    public int getInputBackgroundTextSize() {
+        return inputBackgroundTextSize;
+    }
+
+    public int getInputBackgroundTextColor() {
+        return inputBackgroundTextColor;
+    }
+
+    public String getInputBackgroundTextFontPath() {
+        return inputBackgroundTextFontPath;
+    }
+
+    public int getInputBackgroundTextStyle() {
+        return inputBackgroundTextStyle;
     }
 }
