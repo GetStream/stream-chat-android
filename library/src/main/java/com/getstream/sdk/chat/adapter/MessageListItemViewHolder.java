@@ -377,15 +377,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
             return;
         }
-        if (messageListItem.isMine()) {
-            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-            tv_text.setTextColor(style.getMessageTextColorMine());
-            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
-        } else {
-            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
-            tv_text.setTextColor(style.getMessageTextColorTheirs());
-            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
-        }
+        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize(messageListItem.isMine()));
+        tv_text.setTextColor(style.getMessageTextColor(messageListItem.isMine()));
+        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle(messageListItem.isMine()));
     }
 
     private void configMessageTextBackground(){

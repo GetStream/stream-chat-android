@@ -19,6 +19,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageTextColorTheirs;
     private int messageTextStyleMine;
     private int messageTextStyleTheirs;
+    private String messageTextFontPathMine;
+    private String messageTextFontPathTheirs;
     // Message Bubble
     private Drawable messageBubbleDrawableMine;
     private Drawable messageBubbleDrawableTheirs;
@@ -39,14 +41,17 @@ public class MessageListViewStyle extends BaseStyle {
     // Attachment
     private int attachmentTitleTextSize;
     private int attachmentTitleTextColor;
+    private String attachmentTitleTextFontPath;
     private int attachmentTitleTextStyle;
 
     private int attachmentDescriptionTextSize;
     private int attachmentDescriptionTextColor;
+    private String attachmentDescriptionTextFontPath;
     private int attachmentDescriptionTextStyle;
 
     private int attachmentFileSizeTextSize;
     private int attachmentFileSizeTextColor;
+    private String attachmentFileSizeTextFontPath;
     private int attachmentFileSizeTextStyle;
     // Reaction
     private boolean reactionEnabled;
@@ -66,8 +71,9 @@ public class MessageListViewStyle extends BaseStyle {
 
     // Date Separator
     private int dateSeparatorDateTextSize;
-    private int dateSeparatorDateTextStyle;
     private int dateSeparatorDateTextColor;
+    private String dateSeparatorDateTextFontPath;
+    private int dateSeparatorDateTextStyle;
     private int dateSeparatorLineColor;
     private int dateSeparatorLineWidth;
     private int dateSeparatorLineDrawable;
@@ -142,6 +148,7 @@ public class MessageListViewStyle extends BaseStyle {
 
         avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
         avatarInitialTextColor = a.getColor(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE);
+        avatarInitialTextFontPath = a.getString(R.styleable.MessageListView_streamAvatarTextFontPath);
         avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD);
 
         // Read State
@@ -150,6 +157,7 @@ public class MessageListViewStyle extends BaseStyle {
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
         readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
         readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
+        readStateTextFontPath = a.getString(R.styleable.MessageListView_streamReadStateTextFontPath);
         readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
 
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
@@ -168,92 +176,53 @@ public class MessageListViewStyle extends BaseStyle {
         a.recycle();
     }
 
-    public int getMessageTextSizeMine() {
-        return messageTextSizeMine;
+    public int getMessageTextSize(boolean isMine) {
+        return isMine ? messageTextSizeMine : messageTextSizeTheirs;
     }
 
-    public int getMessageTextSizeTheirs() {
-        return messageTextSizeTheirs;
+    public int getMessageTextColor(boolean isMine) {
+        return isMine ? messageTextColorMine : messageTextColorTheirs;
     }
 
-    public int getMessageTextColorMine() {
-        return messageTextColorMine;
+    public int getMessageTextStyle(boolean isMine) {
+        return isMine ? messageTextStyleMine : messageTextStyleTheirs;
     }
 
-    public int getMessageTextColorTheirs() {
-        return messageTextColorTheirs;
+    public String getMessageTextFontPath(boolean isMine) {
+        return isMine ? messageTextFontPathMine : messageTextFontPathTheirs;
     }
 
-    public int getMessageTextStyleMine() {
-        return messageTextStyleMine;
+    public Drawable getMessageBubbleDrawable(boolean isMine) {
+        return isMine ? messageBubbleDrawableMine : messageBubbleDrawableTheirs;
     }
 
-    public int getMessageTextStyleTheirs() {
-        return messageTextStyleTheirs;
+    public int getMessageTopLeftCornerRadius(boolean isMine) {
+        return isMine ? messageTopLeftCornerRadiusMine : messageTopLeftCornerRadiusTheirs;
     }
 
-    public Drawable getMessageBubbleDrawableMine() {
-        return messageBubbleDrawableMine;
+    public int getMessageTopRightCornerRadius(boolean isMine) {
+        return isMine ? messageTopRightCornerRadiusMine : messageTopRightCornerRadiusTheirs;
     }
 
-    public Drawable getMessageBubbleDrawableTheirs() {
-        return messageBubbleDrawableTheirs;
+    public int getMessageBottomRightCornerRadius(boolean isMine) {
+        return isMine ? messageBottomRightCornerRadiusMine : messageBottomRightCornerRadiusTheirs;
     }
 
-    public int getMessageTopLeftCornerRadiusMine() {
-        return messageTopLeftCornerRadiusMine;
+    public int getMessageBottomLeftCornerRadius(boolean isMine) {
+        return isMine ? messageBottomLeftCornerRadiusMine : messageBottomLeftCornerRadiusTheirs;
     }
 
-    public int getMessageTopRightCornerRadiusMine() {
-        return messageTopRightCornerRadiusMine;
+    public int getMessageBackgroundColor(boolean isMine) {
+        return isMine ? messageBackgroundColorMine : messageBackgroundColorTheirs;
     }
 
-    public int getMessageBottomRightCornerRadiusMine() {
-        return messageBottomRightCornerRadiusMine;
+
+    public int getMessageBorderColor(boolean isMine) {
+        return isMine ? messageBorderColorMine : messageBorderColorTheirs;
     }
 
-    public int getMessageBottomLeftCornerRadiusMine() {
-        return messageBottomLeftCornerRadiusMine;
-    }
-
-    public int getMessageTopLeftCornerRadiusTheirs() {
-        return messageTopLeftCornerRadiusTheirs;
-    }
-
-    public int getMessageTopRightCornerRadiusTheirs() {
-        return messageTopRightCornerRadiusTheirs;
-    }
-
-    public int getMessageBottomRightCornerRadiusTheirs() {
-        return messageBottomRightCornerRadiusTheirs;
-    }
-
-    public int getMessageBottomLeftCornerRadiusTheirs() {
-        return messageBottomLeftCornerRadiusTheirs;
-    }
-
-    public int getMessageBackgroundColorMine() {
-        return messageBackgroundColorMine;
-    }
-
-    public int getMessageBackgroundColorTheirs() {
-        return messageBackgroundColorTheirs;
-    }
-
-    public int getMessageBorderColorMine() {
-        return messageBorderColorMine;
-    }
-
-    public int getMessageBorderColorTheirs() {
-        return messageBorderColorTheirs;
-    }
-
-    public int getMessageBorderWidthMine() {
-        return messageBorderWidthMine;
-    }
-
-    public int getMessageBorderWidthTheirs() {
-        return messageBorderWidthTheirs;
+    public int getMessageBorderWidth(boolean isMine) {
+        return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
     }
 
     // Attachment
@@ -263,6 +232,10 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getAttachmentTitleTextColor() {
         return attachmentTitleTextColor;
+    }
+
+    public String getAttachmentTitleTextFontPath() {
+        return attachmentTitleTextFontPath;
     }
 
     public int getAttachmentTitleTextStyle() {
@@ -277,6 +250,10 @@ public class MessageListViewStyle extends BaseStyle {
         return attachmentDescriptionTextColor;
     }
 
+    public String getAttachmentDescriptionTextFontPath() {
+        return attachmentDescriptionTextFontPath;
+    }
+
     public int getAttachmentDescriptionTextStyle() {
         return attachmentDescriptionTextStyle;
     }
@@ -287,6 +264,10 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getAttachmentFileSizeTextColor() {
         return attachmentFileSizeTextColor;
+    }
+
+    public String getAttachmentFileSizeTextFontPath() {
+        return attachmentFileSizeTextFontPath;
     }
 
     public int getAttachmentFileSizeTextStyle() {
@@ -336,6 +317,10 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getDateSeparatorDateTextSize() {
         return dateSeparatorDateTextSize;
+    }
+
+    public String getDateSeparatorDateTextFontPath() {
+        return dateSeparatorDateTextFontPath;
     }
 
     public int getDateSeparatorDateTextStyle() {

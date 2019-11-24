@@ -228,47 +228,6 @@ public class MessageInputStyle extends BaseStyle {
         return inputEditBackground;
     }
 
-
-    public int getAttachmentButtonIcon() {
-        return attachmentButtonIcon;
-    }
-
-    public int getAttachmentButtonDefaultIconColor() {
-        return attachmentButtonDefaultIconColor;
-    }
-
-    public int getAttachmentButtonDefaultIconPressedColor() {
-        return attachmentButtonDefaultIconPressedColor;
-    }
-
-    public int getAttachmentButtonDefaultIconDisabledColor() {
-        return attachmentButtonDefaultIconDisabledColor;
-    }
-
-    public int getAttachmentButtonSelectedIconColor() {
-        return attachmentButtonSelectedIconColor;
-    }
-
-    public int getInputButtonIcon() {
-        return inputButtonIcon;
-    }
-
-    public int getInputButtonDefaultIconColor() {
-        return inputButtonDefaultIconColor;
-    }
-
-    public int getInputButtonEditIconColor() {
-        return inputButtonEditIconColor;
-    }
-
-    public int getInputButtonDefaultIconPressedColor() {
-        return inputButtonDefaultIconPressedColor;
-    }
-
-    public int getInputButtonDefaultIconDisabledColor() {
-        return inputButtonDefaultIconDisabledColor;
-    }
-
     public String getInputTextFontPath() {
         return inputTextFontPath;
     }
