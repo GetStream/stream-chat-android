@@ -55,38 +55,47 @@
         <attr name="streamReadStateTextColor" />
         <attr name="streamReadStateTextFontPath" />
         <attr name="streamReadStateTextStyle" />
-        <!--LastMessageDate-->
-        <attr name="streamLastMessageDateTextColor" format="color|reference" />
-        <attr name="streamLastMessageDateTextSize" format="dimension|reference" />
-        <attr name="streamLastMessageDateTextFontPath" format="string" />
         <!--Title-->
-        <attr name="streamTitleTextColor" format="color|reference" />
-        <attr name="streamTitleTextSize" format="dimension|reference" />
-        <attr name="streamTitleTextFontPath" format="string" />
-        <attr name="streamTitleTextStyle">
+        <attr name="streamChannelTitleTextSize" format="dimension|reference" />
+        <attr name="streamChannelTitleTextColor" format="color|reference" />
+        <attr name="streamChannelTitleUnreadTextColor" format="color|reference" />
+        <attr name="streamChannelTitleTextFontPath" format="string" />
+        <attr name="streamChannelTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamChannelTitleUnreadTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
         <!--Last Message-->
-        <attr name="streamMessageTextColor" format="color|reference" />
-        <attr name="streamMessageTextSize" format="dimension|reference" />
-        <attr name="streamMessageTextFontPath" format="string" />
-        <attr name="streamMessageTextStyle">
+        <attr name="streamLastMessageTextSize" format="dimension|reference" />
+        <attr name="streamLastMessageTextColor" format="color|reference" />
+        <attr name="streamLastMessageUnreadTextColor" format="color|reference" />
+        <attr name="streamLastMessageTextFontPath" format="string" />
+        <attr name="streamLastMessageTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <!--Unread ChannelTitle-->
-        <attr name="streamUnreadTitleTextColor" format="color|reference" />
-        <attr name="streamUnreadTitleTextStyle">
+        <attr name="streamLastMessageUnreadTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <!--Unread LastMessage-->
-        <attr name="streamUnreadMessageTextColor" format="color|reference" />
-        <attr name="streamUnreadMessageTextStyle">
+        <!--LastMessageDate-->
+        <attr name="streamLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamLastMessageDateTextColor" format="color|reference" />
+        <attr name="streamLastMessageDateUnreadTextColor" format="color|reference" />
+        <attr name="streamLastMessageDateTextFontPath" format="string" />
+        <attr name="streamLastMessageDateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamLastMessageDateUnreadTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />

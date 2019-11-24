@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
@@ -80,10 +81,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     public void setStyle(ChannelListViewStyle style) {
         this.style = style;
-        tv_date.setTextColor(style.getDateTextColor());
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateTextSize());
-        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getTitleTextSize());
-        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize());
     }
 
     public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
@@ -229,6 +226,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     private void applyStyle(ChannelState channelState){
+        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
+        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastMessageTextSize());
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastMessageDateTextSize());
+
         Message lastMessage = channelState.getLastMessage();
         Channel channel = channelState.getChannel();
         boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(channel.getClient().getUserId()));
@@ -240,26 +241,31 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     private void applyReadStyle() {
         // channel name
-        tv_name.setTextColor(style.getTitleTextColor());
-        tv_name.setTypeface(Typeface.DEFAULT, style.getTitleTextStyle());
+        tv_name.setTextColor(style.getChannelTitleTextColor());
+        TextViewUtils.setCustomTextFont(tv_name, style.getChannelTitleTextFontPath(), style.getChannelTitleTextStyle(), context);
         // last messsage
-        tv_last_message.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle());
-        tv_last_message.setTextColor(style.getMessageTextColor());
+        tv_last_message.setTextColor(style.getLastMessageTextColor());
+        TextViewUtils.setCustomTextFont(tv_last_message, style.getLastMessageTextFontPath(), style.getLastMessageTextStyle(), context);
+
+        tv_date.setTextColor(style.getLastMessageDateTextColor());
+        TextViewUtils.setCustomTextFont(tv_date, style.getLastMessageDateTextFontPath(), style.getLastMessageDateTextStyle(), context);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getMessageTextColor());
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getLastMessageTextColor());
     }
 
     private void applyUnreadStyle() {
         // channel name
-        tv_name.setTextColor(style.getUnreadTitleTextColor());
-        tv_name.setTypeface(Typeface.DEFAULT, style.getUnreadTitleTextStyle());
+        tv_name.setTextColor(style.getChannelTitleUnreadTextColor());
+        TextViewUtils.setCustomTextFont(tv_name, style.getChannelTitleTextFontPath(), style.getChannelTitleUnreadTextStyle(), context);
         // last message
-        tv_last_message.setTypeface(Typeface.DEFAULT, style.getUnreadMessageTextStyle());
-        tv_last_message.setTextColor(style.getUnreadMessageTextColor());
+        tv_last_message.setTextColor(style.getLastMessageUnreadTextColor());
+        TextViewUtils.setCustomTextFont(tv_last_message, style.getLastMessageTextFontPath(), style.getLastMessageUnreadTextStyle(), context);
+        tv_date.setTextColor(style.getLastMessageDateUnreadTextColor());
+        TextViewUtils.setCustomTextFont(tv_date, style.getLastMessageDateTextFontPath(), style.getLastMessageDateUnreadTextStyle(), context);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getUnreadMessageTextColor());
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.getLastMessageUnreadTextColor());
     }
 
 }
