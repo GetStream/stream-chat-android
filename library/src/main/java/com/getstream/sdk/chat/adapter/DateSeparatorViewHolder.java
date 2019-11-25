@@ -51,7 +51,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
         long messageDate = messageListItem.getDate().getTime();
         Date now = new Date();
         if ((now.getTime() - messageDate) < 60 * 1000)
-            humanizedDate = Dates.JUST_NOW.label;
+            humanizedDate = Dates.JUST_NOW.getLabel();
         else
             humanizedDate = getRelativeTimeSpanString(messageDate).toString();
 
