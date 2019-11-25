@@ -29,10 +29,14 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH'))
-            storePassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
-            keyAlias System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
-            keyPassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
+            if (checkSigningEnvVars()) {
+                storeFile file(System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH'))
+                storePassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
+                keyAlias System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
+                keyPassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
+            } else {
+                logger.warn('Release env vars are not defined')
+            }
         }
     }
 
@@ -56,7 +60,7 @@ android {
             buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
             buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
             buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
-            buildConfigField "String", "USER_IMAGE",  "\"${defaultUserImage}\""
+            buildConfigField "String", "USER_IMAGE", "\"${defaultUserImage}\""
         }
 
         debug {
@@ -129,3 +133,12 @@ dependencies {
 
 }
 apply plugin: 'com.google.gms.google-services'
+
+def checkSigningEnvVars() {
+    def storagePath = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH')
+    def password = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
+    def keyAlias = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
+    def keyPassword = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
+
+    return storagePath != null && password != null && keyAlias != null && keyPassword != null
+}
