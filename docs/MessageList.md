@@ -225,26 +225,28 @@ You must use the following properties in your XML to change your MessageListView
 
 - **AttachmentView**
 
-| Properties                                      | Type                 | Default          |
-| ----------------------------------------------- | -------------------- | ---------------- |
-| `app:streamAttachmentTitleTextSizeMine`         | dimension            | 13sp             |
-| `app:streamAttachmentTitleTextSizeTheirs`       | dimension            | 13sp             |
-| `app:streamAttachmentTitleTextColorMine`        | color                | #026DFE          |
-| `app:streamAttachmentTitleTextColorTheirs`      | color                | #026DFE          |
-| `app:streamAttachmentTitleTextStyleMine`        | normal, bold, italic | bold             |
-| `app:streamAttachmentTitleTextStyleTheirs`      | normal, bold, italic | bold             |
-| `app:streamAttachmentDescriptionTextSizeMine`   | dimension            | 11sp             |
-| `app:streamAttachmentDescriptionTextSizeTheirs` | dimension            | 11sp             |
-| `app:streamAttachmentDescriptionTextColorMine`  | color                | stream_gray_dark |
-| `app:streamAttachmentDescriptionTextColorTheirs`| color                | stream_gray_dark |
-| `app:streamAttachmentDescriptionTextStyleMine`  | normal, bold, italic | normal           |
-| `app:streamAttachmentDescriptionTextStyleTheirs`| normal, bold, italic | normal           |
-| `app:streamAttachmentFileSizeTextSizeMine`      | dimension            | 12sp             |
-| `app:streamAttachmentFileSizeTextSizeTheirs`    | dimension            | 12sp             |
-| `app:streamAttachmentFileSizeTextColorMine`     | color                | stream_gray_dark |
-| `app:streamAttachmentFileSizeTextColorTheirs`   | color                | stream_gray_dark |
-| `app:streamAttachmentFileSizeTextStyleMine`     | normal, bold, italic | bold             |
-| `app:streamAttachmentFileSizeTextStyleTheirs`   | normal, bold, italic | bold             |
+| Properties                                      | Type                 | Default                            |
+| ----------------------------------------------- | -------------------- | ---------------------------------- |
+| `app:streamAttachmentBackgroundColorMine`       | color                | streamMessageBackgroundColorMine   |
+| `app:streamAttachmentBackgroundColorTheirs`     | color                | streamMessageBackgroundColorTheirs |
+| `app:streamAttachmentTitleTextSizeMine`         | dimension            | 13sp                               |
+| `app:streamAttachmentTitleTextSizeTheirs`       | dimension            | 13sp                               |
+| `app:streamAttachmentTitleTextColorMine`        | color                | #026DFE                            |
+| `app:streamAttachmentTitleTextColorTheirs`      | color                | #026DFE                            |
+| `app:streamAttachmentTitleTextStyleMine`        | normal, bold, italic | bold                               |
+| `app:streamAttachmentTitleTextStyleTheirs`      | normal, bold, italic | bold                               |
+| `app:streamAttachmentDescriptionTextSizeMine`   | dimension            | 11sp                               |
+| `app:streamAttachmentDescriptionTextSizeTheirs` | dimension            | 11sp                               |
+| `app:streamAttachmentDescriptionTextColorMine`  | color                | stream_gray_dark                   |
+| `app:streamAttachmentDescriptionTextColorTheirs`| color                | stream_gray_dark                   |
+| `app:streamAttachmentDescriptionTextStyleMine`  | normal, bold, italic | normal                             |
+| `app:streamAttachmentDescriptionTextStyleTheirs`| normal, bold, italic | normal                             |
+| `app:streamAttachmentFileSizeTextSizeMine`      | dimension            | 12sp                               |
+| `app:streamAttachmentFileSizeTextSizeTheirs`    | dimension            | 12sp                               |
+| `app:streamAttachmentFileSizeTextColorMine`     | color                | stream_gray_dark                   |
+| `app:streamAttachmentFileSizeTextColorTheirs`   | color                | stream_gray_dark                   |
+| `app:streamAttachmentFileSizeTextStyleMine`     | normal, bold, italic | bold                               |
+| `app:streamAttachmentFileSizeTextStyleTheirs`   | normal, bold, italic | bold                               |
 
 - **Date Separator**
 

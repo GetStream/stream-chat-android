@@ -37,6 +37,9 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
     // Attachment
+    private int attachmentBackgroundColorMine;
+    private int attachmentBackgroundColorTheirs;
+
     private int attachmentTitleTextSizeMine;
     private int attachmentTitleTextColorMine;
     private int attachmentTitleTextStyleMine;
@@ -121,6 +124,8 @@ public class MessageListViewStyle extends BaseStyle {
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
         // Attachment
+        attachmentBackgroundColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorMine, messageBackgroundColorMine);
+        attachmentBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorTheirs, messageBackgroundColorTheirs);
         attachmentTitleTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSizeMine, getDimension(R.dimen.stream_attach_title_text));
         attachmentTitleTextColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColorMine, getColor(R.color.stream_attach_title_text));
         attachmentTitleTextStyleMine = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyleMine, Typeface.BOLD);
@@ -192,95 +197,58 @@ public class MessageListViewStyle extends BaseStyle {
         a.recycle();
     }
 
-    public int getMessageTextSizeMine() {
-        return messageTextSizeMine;
+    public int getMessageTextSize(boolean isMine) {
+        return isMine ? messageTextSizeMine : messageTextSizeTheirs;
     }
 
-    public int getMessageTextSizeTheirs() {
-        return messageTextSizeTheirs;
+    public int getMessageTextColor(boolean isMine) {
+        return isMine ? messageTextColorMine : messageTextColorTheirs;
     }
 
-    public int getMessageTextColorMine() {
-        return messageTextColorMine;
+    public int getMessageTextStyle(boolean isMine) {
+        return isMine ? messageTextStyleMine : messageTextStyleTheirs;
     }
 
-    public int getMessageTextColorTheirs() {
-        return messageTextColorTheirs;
+    public int getMessageBubbleDrawable(boolean isMine) {
+        return isMine ? messageBubbleDrawableMine : messageBubbleDrawableTheirs;
     }
 
-    public int getMessageTextStyleMine() {
-        return messageTextStyleMine;
+    public int getMessageTopLeftCornerRadius(boolean isMine) {
+        return isMine ? messageTopLeftCornerRadiusMine : messageTopLeftCornerRadiusTheirs;
     }
 
-    public int getMessageTextStyleTheirs() {
-        return messageTextStyleTheirs;
+    public int getMessageTopRightCornerRadius(boolean isMine) {
+        return isMine ? messageTopRightCornerRadiusMine : messageTopRightCornerRadiusTheirs;
     }
 
-    public int getMessageBubbleDrawableMine() {
-        return messageBubbleDrawableMine;
+    public int getMessageBottomRightCornerRadius(boolean isMine) {
+        return isMine ? messageBottomRightCornerRadiusMine : messageBottomRightCornerRadiusTheirs;
     }
 
-    public int getMessageBubbleDrawableTheirs() {
-        return messageBubbleDrawableTheirs;
+    public int getMessageBottomLeftCornerRadius(boolean isMine) {
+        return isMine ? messageBottomLeftCornerRadiusMine : messageBottomLeftCornerRadiusTheirs;
     }
 
-    public int getMessageTopLeftCornerRadiusMine() {
-        return messageTopLeftCornerRadiusMine;
+    public int getMessageBackgroundColor(boolean isMine) {
+        return isMine ? messageBackgroundColorMine : messageBackgroundColorTheirs;
     }
 
-    public int getMessageTopRightCornerRadiusMine() {
-        return messageTopRightCornerRadiusMine;
+
+    public int getMessageBorderColor(boolean isMine) {
+        return isMine ? messageBorderColorMine : messageBorderColorTheirs;
     }
 
-    public int getMessageBottomRightCornerRadiusMine() {
-        return messageBottomRightCornerRadiusMine;
-    }
-
-    public int getMessageBottomLeftCornerRadiusMine() {
-        return messageBottomLeftCornerRadiusMine;
-    }
-
-    public int getMessageTopLeftCornerRadiusTheirs() {
-        return messageTopLeftCornerRadiusTheirs;
-    }
-
-    public int getMessageTopRightCornerRadiusTheirs() {
-        return messageTopRightCornerRadiusTheirs;
-    }
-
-    public int getMessageBottomRightCornerRadiusTheirs() {
-        return messageBottomRightCornerRadiusTheirs;
-    }
-
-    public int getMessageBottomLeftCornerRadiusTheirs() {
-        return messageBottomLeftCornerRadiusTheirs;
-    }
-
-    public int getMessageBackgroundColorMine() {
-        return messageBackgroundColorMine;
-    }
-
-    public int getMessageBackgroundColorTheirs() {
-        return messageBackgroundColorTheirs;
-    }
-
-    public int getMessageBorderColorMine() {
-        return messageBorderColorMine;
-    }
-
-    public int getMessageBorderColorTheirs() {
-        return messageBorderColorTheirs;
-    }
-
-    public int getMessageBorderWidthMine() {
-        return messageBorderWidthMine;
-    }
-
-    public int getMessageBorderWidthTheirs() {
-        return messageBorderWidthTheirs;
+    public int getMessageBorderWidth(boolean isMine) {
+        return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
     }
 
     // Attachment
+
+
+    public int getAttachmentBackgroundColor(boolean isMine) {
+        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
+    }
+
     public int getAttachmentTitleTextSize(boolean isMine) {
         return isMine ? attachmentTitleTextSizeMine : attachmentTitleTextSizeTheirs;
     }
