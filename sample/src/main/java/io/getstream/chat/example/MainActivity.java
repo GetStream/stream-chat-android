@@ -81,15 +81,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = and(eq("type", "messaging"));
-        viewModel.setChannelFilter(filter);
-    }
-
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("MainActivity", "onCreate");
         super.onCreate(savedInstanceState);
