@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
@@ -61,9 +60,6 @@ public class DefaultBubbleHelper {
                     configParamsMine(style);
                     if (isDefaultBubble(style, context)) {
                         applyStyleDefaultMine(positions, context);
-                        // set corner radius if the attachment has title or description
-                        if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomRightRadius = bottomLeftRadius = 0;
                         // set corner radius if message has multi attachments
                         if (message.getAttachments().indexOf(attachment) > 0)
                             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
@@ -75,17 +71,14 @@ public class DefaultBubbleHelper {
                     configParamsTheirs(style);
                     if (isDefaultBubble(style, context)) {
                         applyStyleDefaultTheirs(positions, context);
-                        // set corner radius if the attachment has title or description
-                        if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                            bottomRightRadius = bottomLeftRadius = 0;
                         // set corner radius if message has multi attachments
                         if (message.getAttachments().indexOf(attachment) > 0)
                             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                     }
                 }
-                // set background color when attachment type is not file
-                if (!attachment.getType().equals(ModelType.attach_file))
-                    bgColor = Color.WHITE;
+                // set corner radius if the attachment has title or description
+                if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
+                    bottomRightRadius = bottomLeftRadius = 0;
                 return getBubbleDrawable();
             }
 
