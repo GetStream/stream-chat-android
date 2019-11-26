@@ -14,7 +14,7 @@ public enum Dates {
     private final int labelId;
 
     public String getLabel() {
-        return StreamChat.getContext().getString(labelId);
+        return StreamChat.getStrings().get(labelId);
     }
 
     Dates(@StringRes int labelId) {
