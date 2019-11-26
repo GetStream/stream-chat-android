@@ -42,6 +42,16 @@ public class StreamChat {
         return onlineStatus;
     }
 
+    private static String fontPath;
+
+    public static String getFontPath() {
+        return fontPath;
+    }
+
+    public static void setFontPath(String fontPath) {
+        StreamChat.fontPath = fontPath;
+    }
+
     /**
      * @return LiveData object for the total unread messages
      */

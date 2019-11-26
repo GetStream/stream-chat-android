@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
+import com.getstream.sdk.chat.StreamChat;
+
 public class TextViewUtils {
     interface Actions{
         interface BeforeChangedAction{
@@ -80,9 +82,12 @@ public class TextViewUtils {
     }
 
     public static void setCustomTextFont(TextView textView, String fontPath, int textStyle, Context context){
-        if (!TextUtils.isEmpty(fontPath)){
+
+        String fontPath_ = TextUtils.isEmpty(StreamChat.getFontPath())? fontPath : StreamChat.getFontPath();
+
+        if (!TextUtils.isEmpty(fontPath_)){
             try {
-                Typeface font = Typeface.createFromAsset(context.getAssets(), fontPath);
+                Typeface font = Typeface.createFromAsset(context.getAssets(), fontPath_);
                 textView.setTypeface(font);
             }catch (RuntimeException e){
                 e.printStackTrace();
