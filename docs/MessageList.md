@@ -259,10 +259,19 @@ You must use the following properties in your XML to change your MessageListView
 
 - **User name and message date**
 
-| Properties                          | Type                   | Default |
-| ----------------------------------- | ---------------------- | ------- |
-| `app:streamUserNameShow`            |   boolean              | true    |
-| `app:streamMessageDateShow`         |   boolean              | true    |
+| Properties                             | Type                   | Default          |
+| -------------------------------------- | ---------------------- | ---------------- |
+| `app:streamMessageUserNameTextSize`    | dimension              | 11sp             |
+| `app:streamMessageUserNameTextColor`   | color                  | stream_gray_dark |
+| `app:streamMessageUserNameTextStyle`   | normal, bold, italic   | normal           |
+| `app:streamMessageDateTextSizeMine`    | dimension              | 11sp             |
+| `app:streamMessageDateTextSizeTheirs`  | dimension              | 11sp             |
+| `app:streamMessageDateTextColorMine`   | color                  | stream_gray_dark |
+| `app:streamMessageDateTextColorTheirs` | color                  | stream_gray_dark |
+| `app:streamMessageDateTextStyleMine`   | normal, bold, italic   | normal           |
+| `app:streamMessageDateTextStyleTheirs` | normal, bold, italic   | normal           |
+| `app:streamUserNameShow`               |   boolean              | true             |
+| `app:streamMessageDateShow`            |   boolean              | true             |
 
 - **Thread**
 

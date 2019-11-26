@@ -168,6 +168,31 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <attr name="streamMessageUserNameTextSize" format="dimension|reference" />
+        <attr name="streamMessageUserNameTextColor" format="color" />
+        <attr name="streamMessageUserNameTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamMessageDateTextSizeMine" format="dimension|reference" />
+        <attr name="streamMessageDateTextColorMine" format="color" />
+        <attr name="streamMessageDateTextFontPathMine" format="string" />
+        <attr name="streamMessageDateTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamMessageDateTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamMessageDateTextColorTheirs" format="color" />
+        <attr name="streamMessageDateTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamMessageBubbleDrawableMine" format="reference" />
         <attr name="streamMessageBubbleDrawableTheirs" format="reference" />
 
