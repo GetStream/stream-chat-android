@@ -3,7 +3,7 @@
     <string name="stream_just_now">Just Now</string>
     <string name="stream_today">Today</string>
     <string name="stream_yesterday">Yesterday</string>
-    <string name="stream_message_date">%s ,%s</string>
+    <string name="stream_message_date">%1$s %2$s</string>
     <!--Chat-->
     <string name="stream_you">(you)</string>
     <!--MessageInput-->
