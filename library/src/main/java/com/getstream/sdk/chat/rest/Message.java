@@ -174,10 +174,10 @@ public class Message implements UserEntity {
 
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
-            message.setDate(TODAY.label);
+            message.setDate(TODAY.getLabel());
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             message.setYesterday(true);
-            message.setDate(YESTERDAY.label);
+            message.setDate(YESTERDAY.getLabel());
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
             message.setDate(dateFormat1.format(message.getCreatedAt()));
         } else {
