@@ -1,4 +1,4 @@
-## Upcoming
+## November 5th, 2019 - 3.3.0
 
 - Fix Concurrent modification when removing member from channel
 - Fix automention input issue
@@ -8,6 +8,7 @@
 - Add File Upload 2.0
 - Add editMessage function in Channel View Model
 - Fix JSON encoding always omits null fields
+- Sample app: add version header, release version signing
 
 ## November 5th, 2019 - 3.2.1
 
