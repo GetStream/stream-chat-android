@@ -85,6 +85,8 @@ public class DefaultBubbleHelper {
             @Override
             public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
                 if (mine) {
+                    if (style.getMessageBubbleDrawableMine() != -1)
+                        return context.getDrawable(style.getMessageBubbleDrawableMine());
                     configParamsMine(style);
                     if (isDefaultBubble(style, context))
                         applyStyleDefaultMine(positions, context);
