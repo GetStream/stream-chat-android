@@ -155,12 +155,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
-        TextViewUtils.setCustomTextFont(tv_media_title, style.getAttachmentTitleTextFontPath(), style.getAttachmentTitleTextStyle(), context);
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
-        TextViewUtils.setCustomTextFont(tv_media_des, style.getAttachmentDescriptionTextFontPath(), style.getAttachmentDescriptionTextStyle(), context);
+
+        boolean isMine = getMessageListItem().isMine();
+        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize(isMine));
+        tv_media_title.setTextColor(style.getAttachmentTitleTextColor(isMine));
+        TextViewUtils.setCustomTextFont(tv_media_title, style.getAttachmentTitleTextFontPath(), style.getAttachmentTitleTextStyle(isMine), context);
+        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize(isMine));
+        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor(isMine));
+        TextViewUtils.setCustomTextFont(tv_media_des, style.getAttachmentDescriptionTextFontPath(), style.getAttachmentDescriptionTextStyle(isMine), context);
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
