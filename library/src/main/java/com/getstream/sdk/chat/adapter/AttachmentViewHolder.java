@@ -111,7 +111,14 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configAttachViewBackground(View view) {
-        view.setBackground(style.getMessageBubbleDrawable(getMessageListItem().isMine()));
+
+        Drawable background;
+        if (getMessageListItem().isMine()) {
+            background = context.getDrawable(style.getMessageBubbleDrawableMine());
+        } else {
+            background = context.getDrawable(style.getMessageBubbleDrawableTheirs());
+        }
+        view.setBackground(background);
     }
 
 

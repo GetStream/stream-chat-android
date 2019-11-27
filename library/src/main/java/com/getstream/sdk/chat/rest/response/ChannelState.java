@@ -467,6 +467,7 @@ public class ChannelState {
 
         if (incoming.messages != null) {
             addMessagesSorted(incoming.messages);
+            lastMessage = computeLastMessage();
         }
 
         if (incoming.watchers != null) {

@@ -22,6 +22,8 @@ import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 
 import org.jetbrains.annotations.NotNull;
+import com.getstream.sdk.chat.utils.strings.StringsProvider;
+import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
 import java.util.List;
 
@@ -40,11 +42,22 @@ public class StreamChat {
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
     private static Context context;
+    private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
+    }
+
+    private static String fontPath;
+
+    public static String getFontPath() {
+        return fontPath;
+    }
+
+    public static void setFontPath(String fontPath) {
+        StreamChat.fontPath = fontPath;
     }
 
     /**
@@ -78,6 +91,17 @@ public class StreamChat {
 
     public static Context getContext(){
         return context;
+    }
+
+    public static StringsProvider getStrings(){
+        return stringsProvider;
+    }
+
+    /**
+     * For unit tests purposes only
+     */
+    public static void setStringsProvider(StringsProvider stringsProvider){
+        StreamChat.stringsProvider = stringsProvider;
     }
 
     private static void handleConnectedUser() {
@@ -160,8 +184,7 @@ public class StreamChat {
         return init(apiKey, new ApiClientOptions(), context);
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context mContext) {
-        StreamChat.context = mContext;
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context) {
         if (INSTANCE != null) {
             return true;
         }
@@ -169,7 +192,11 @@ public class StreamChat {
         synchronized (Client.class) {
             if (INSTANCE == null) {
 
-                fontsManager = new FontsManagerImpl(mContext);
+                StreamChat.context = context;
+                stringsProvider = new StringsProviderImpl(context);
+
+
+                fontsManager = new FontsManagerImpl(context);
 
                 Log.i(TAG, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
