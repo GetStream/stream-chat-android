@@ -266,6 +266,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
+        style.messageUserNameText.apply(tv_username);
+
+        if(messageListItem.isMine()) {
+            style.messageDateTextMine.apply(tv_messagedate);
+        } else {
+            style.messageDateTextTheirs.apply(tv_messagedate);
+        }
     }
 
     private boolean isBottomPosition() {

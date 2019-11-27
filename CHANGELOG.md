@@ -14,7 +14,7 @@
 - Add editMessage function in Channel View Model
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
-
+- Add Message Username and Date attrs
 ## November 5th, 2019 - 3.2.1
 
 - Fixed transparency issues with user profile images on older devices

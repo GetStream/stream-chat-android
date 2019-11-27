@@ -33,6 +33,10 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderColorTheirs;
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
+
+    public TextStyle messageUserNameText;
+    public TextStyle messageDateTextMine;
+    public TextStyle messageDateTextTheirs;
     // Attachment
     public TextStyle attachmentTitleTextMine;
     public TextStyle attachmentTitleTextTheirs;
@@ -109,6 +113,28 @@ public class MessageListViewStyle extends BaseStyle {
 
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
+
+        messageUserNameText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamMessageUserNameTextSize, getDimension(R.dimen.stream_attach_description_text))
+                .color(R.styleable.MessageListView_streamMessageUserNameTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamMessageUserNameTextFontAssets, R.styleable.MessageListView_streamMessageUserNameTextFont)
+                .style(R.styleable.MessageListView_streamMessageUserNameTextStyle, Typeface.BOLD)
+                .build();
+
+        messageDateTextMine = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamMessageDateTextSizeMine, getDimension(R.dimen.stream_attach_description_text))
+                .color(R.styleable.MessageListView_streamMessageDateTextColorMine, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamMessageDateTextFontAssetsMine, R.styleable.MessageListView_streamMessageDateTextFontMine)
+                .style(R.styleable.MessageListView_streamMessageDateTextStyleMine, Typeface.NORMAL)
+                .build();
+
+        messageDateTextTheirs = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamMessageDateTextSizeTheirs, getDimension(R.dimen.stream_attach_description_text))
+                .color(R.styleable.MessageListView_streamMessageDateTextColorTheirs, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamMessageDateTextFontAssetsTheirs, R.styleable.MessageListView_streamMessageDateTextFontTheirs)
+                .style(R.styleable.MessageListView_streamMessageDateTextStyleTheirs, Typeface.NORMAL)
+                .build();
+
         // Attachment
         attachmentTitleTextMine = new TextStyle.Builder(a)
                 .size(R.styleable.MessageListView_streamAttachmentTitleTextSizeMine, getDimension(R.dimen.stream_attach_title_text))
