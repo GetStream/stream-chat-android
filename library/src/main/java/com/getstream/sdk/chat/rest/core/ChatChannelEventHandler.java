@@ -80,9 +80,11 @@ public abstract class ChatChannelEventHandler {
                 onMessageRead(event);
                 break;
             case REACTION_NEW:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onReactionNew(event);
                 break;
             case REACTION_DELETED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onReactionDeleted(event);
                 break;
             case MEMBER_ADDED:

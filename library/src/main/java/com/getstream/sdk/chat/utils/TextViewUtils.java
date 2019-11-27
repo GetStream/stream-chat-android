@@ -4,7 +4,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
-public class EditTextUtils {
+
+public class TextViewUtils {
     interface Actions{
         interface BeforeChangedAction{
             void act(CharSequence s, int start, int count, int after);

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.SpannableString;
@@ -380,14 +379,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
             return;
         }
-        if (messageListItem.isMine()) {
-            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeMine());
-            tv_text.setTextColor(style.getMessageTextColorMine());
-            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleMine());
+
+        if(messageListItem.isMine()) {
+            style.messageTextMine.apply(tv_text);
         } else {
-            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSizeTheirs());
-            tv_text.setTextColor(style.getMessageTextColorTheirs());
-            tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyleTheirs());
+            style.messageTextTheirs.apply(tv_text);
         }
     }
 
