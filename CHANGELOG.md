@@ -16,6 +16,7 @@
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
 - Added AttachmentBackgroundColorMine/Theirs
+- Add Message Username and Date attrs
 
 ## November 5th, 2019 - 3.2.1
 
