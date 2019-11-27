@@ -224,6 +224,8 @@
 
         <attr name="streamMessageUserNameTextSize" format="dimension|reference" />
         <attr name="streamMessageUserNameTextColor" format="color" />
+        <attr name="streamMessageUserNameTextFont" format="reference" />
+        <attr name="streamMessageUserNameTextFontAssets" format="string" />
         <attr name="streamMessageUserNameTextStyle">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />

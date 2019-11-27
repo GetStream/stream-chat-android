@@ -266,14 +266,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
+        style.messageUserNameText.apply(tv_username);
 
-        tv_username.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageUserNameTextSize());
-        tv_username.setTextColor(style.getMessageUserNameTextColor());
-        tv_username.setTypeface(Typeface.DEFAULT, style.getMessageUserNameTextStyle());
-
-        tv_messagedate.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageDateTextSize(messageListItem.isMine()));
-        tv_messagedate.setTextColor(style.getMessageDateTextColor(messageListItem.isMine()));
-        tv_messagedate.setTypeface(Typeface.DEFAULT, style.getMessageDateTextStyle(messageListItem.isMine()));
+        if(messageListItem.isMine()) {
+            style.messageDateTextMine.apply(tv_messagedate);
+        } else {
+            style.messageDateTextTheirs.apply(tv_messagedate);
+        }
     }
 
     private boolean isBottomPosition() {
