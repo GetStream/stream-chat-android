@@ -10,6 +10,33 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 This library includes both a low level chat SDK and a set of reusable UI components.
 Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
+**Quick Links**
+
+* [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
+* [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
+* [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin)
+* [Chat UI Kit](https://getstream.io/chat/ui-kit/)
+
+## Java/Kotlin Chat Tutorial
+
+The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make common changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
+
+## Example App
+
+This repo includes a fully functional example app. To run the example app:
+
+```
+git clone git@github.com:GetStream/stream-chat-android.git
+```
+
+Open the project in Android Studio. 
+
+## Docs
+
+The [styleguidist docs for stream-chat-react](https://getstream.github.io/stream-chat-react/) document how all the components work. 
+
+The React components are created using the stream-chat-js library. If you're customizing the components it's important to learn how the Chat Server API works. You'll want to review our [JS chat API docs](https://getstream.io/chat/docs/js/).
+
 ## Installing the Java Chat SDK
 
 - **Step 1** Add repository into root build.gradle
