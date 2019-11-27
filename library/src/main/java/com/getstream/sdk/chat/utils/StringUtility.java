@@ -46,7 +46,7 @@ public class StringUtility {
         String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
 
         if (message.getDeletedAt() != null) {
-            text = "_" + StreamChat.getContext().getString(R.string.stream_delete_message) + "_";
+            text = "_" + StreamChat.getStrings().get(R.string.stream_delete_message) + "_";
             return text;
         }
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
