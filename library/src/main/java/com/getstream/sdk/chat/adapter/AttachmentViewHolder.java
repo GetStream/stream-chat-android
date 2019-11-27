@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -18,8 +17,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.style.FontsManager;
-import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -224,10 +221,11 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         if(getMessageListItem().isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
+            style.attachmentDescriptionTextMine.apply(tv_media_des);
         } else {
             style.attachmentTitleTextTheirs.apply(tv_media_title);
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des);
         }
 
-        style.attachmentDescriptionText.apply(tv_media_des);
     }
 }

@@ -263,6 +263,26 @@
         <attr name="streamAttachmentBackgroundColorMine" format="color" />
         <attr name="streamAttachmentBackgroundColorTheirs" format="color" />
 
+        <attr name="streamAttachmentDescriptionTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentDescriptionTextColorMine" format="color" />
+        <attr name="streamAttachmentDescriptionTextFontMine" format="reference"/>
+        <attr name="streamAttachmentDescriptionTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentDescriptionTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamAttachmentDescriptionTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentDescriptionTextColorTheirs" format="color" />
+        <attr name="streamAttachmentDescriptionTextFontTheirs" format="reference"/>
+        <attr name="streamAttachmentDescriptionTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentDescriptionTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference"/>
         <attr name="streamAttachmentDescriptionTextColor" format="color"/>
         <attr name="streamAttachmentDescriptionTextFontAssets" format="string"/>

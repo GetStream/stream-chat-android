@@ -155,11 +155,11 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
         if (getMessageListItem().isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
+            style.attachmentDescriptionTextMine.apply(tv_media_des);
         } else {
             style.attachmentTitleTextTheirs.apply(tv_media_title);
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des);
         }
-
-        style.attachmentDescriptionText.apply(tv_media_des);
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
