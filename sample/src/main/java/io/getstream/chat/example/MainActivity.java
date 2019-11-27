@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Set custom intent provider for receiving message and events from firebase and WS
         StreamChat.getNotificationsManager().getNotificationsOptions().setContentIntentProvider(
                 new ContentIntentProvider() {
                     @Override
@@ -116,14 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
         return client;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = and(eq("type", "messaging"));
-        viewModel.setChannelFilter(filter);
     }
 
     @Override
