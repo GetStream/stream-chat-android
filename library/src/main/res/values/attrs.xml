@@ -314,21 +314,21 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference"/>
-        <attr name="streamAttachmentDescriptionTextColor" format="color"/>
-        <attr name="streamAttachmentDescriptionTextFont" format="reference"/>
-        <attr name="streamAttachmentDescriptionTextFontAssets" format="string"/>
-        <attr name="streamAttachmentDescriptionTextStyle">
+        <attr name="streamAttachmentFileSizeTextSizeMine" format="dimension|reference"/>
+        <attr name="streamAttachmentFileSizeTextColorMine" format="color"/>
+        <attr name="streamAttachmentFileSizeTextFontMine" format="reference"/>
+        <attr name="streamAttachmentFileSizeTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentFileSizeTextStyleMine">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>
         </attr>
 
-        <attr name="streamAttachmentFileSizeTextSize" format="dimension|reference"/>
-        <attr name="streamAttachmentFileSizeTextColor" format="color"/>
-        <attr name="streamAttachmentFileSizeTextFont" format="reference"/>
-        <attr name="streamAttachmentFileSizeTextFontAssets" format="string"/>
-        <attr name="streamAttachmentFileSizeTextStyle">
+        <attr name="streamAttachmentFileSizeTextSizeTheirs" format="dimension|reference"/>
+        <attr name="streamAttachmentFileSizeTextColorTheirs" format="color"/>
+        <attr name="streamAttachmentFileSizeTextFontTheirs" format="reference"/>
+        <attr name="streamAttachmentFileSizeTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentFileSizeTextStyleTheirs">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>

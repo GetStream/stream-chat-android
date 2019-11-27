@@ -171,17 +171,21 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamAvatarTextSize`         | dimension              | 14sp             |
 | `app:streamAvatarTextColor`        | color                  | WHITE            |
 | `app:streamAvatarTextStyle`        | normal, bold, italic   | bold             |
+| `app:streamAvatarTextFont`         | reference              | -                |
+| `app:streamAvatarTextFontAssets`   | string                 | -                |
 
 - **ReadStateView**
 
-| Properties                         | Type                   | Default |
-| ---------------------------------- | ---------------------- | ------- |
-| `app:streamShowReadState`          | boolean                | true    |
-| `app:streamReadStateAvatarWidth`   | dimension              | 14dp    |
-| `app:streamReadStateAvatarHeight`  | dimension              | 14dp    |
-| `app:streamReadStateTextSize`      | dimension              | 8sp     |
-| `app:streamReadStateTextColor`     | color                  | BLACK   |
-| `app:streamReadStateTextStyle`     | normal, bold, italic   | bold    |
+| Properties                          | Type                   | Default |
+| ----------------------------------- | ---------------------- | ------- |
+| `app:streamShowReadState`           | boolean                | true    |
+| `app:streamReadStateAvatarWidth`    | dimension              | 14dp    |
+| `app:streamReadStateAvatarHeight`   | dimension              | 14dp    |
+| `app:streamReadStateTextSize`       | dimension              | 8sp     |
+| `app:streamReadStateTextColor`      | color                  | BLACK   |
+| `app:streamReadStateTextStyle`      | normal, bold, italic   | bold    |
+| `app:streamReadStateTextFont`       | reference              | -       |
+| `app:streamReadStateTextFontAssets` | string                 | -       |
 
 - **Reaction**
 
@@ -206,6 +210,10 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamMessageTextColorTheirs`              | color                | BLACK     |
 | `app:streamMessageTextStyleMine`                | normal, bold, italic | normal    |
 | `app:streamMessageTextStyleTheirs`              | normal, bold, italic | normal    |
+| `app:streamMessageTextFontMine`                 | reference            | -         |
+| `app:streamMessageTextFontTheirs`               | reference            | -         |
+| `app:streamMessageTextFontMineAssets`           | string               | -         |
+| `app:streamMessageTextFontTheirsAssets`         | string               | -         |
 | `app:streamMessageBubbleDrawableMine`           | reference            | -         |
 | `app:streamMessageBubbleDrawableTheirs`         | reference            | -         |
 | `app:streamMessageTopLeftCornerRadiusMine`      | dimension            | 16dp      |
@@ -225,55 +233,73 @@ You must use the following properties in your XML to change your MessageListView
 
 - **AttachmentView**
 
-| Properties                                      | Type                 | Default                            |
-| ----------------------------------------------- | -------------------- | ---------------------------------- |
-| `app:streamAttachmentBackgroundColorMine`       | color                | streamMessageBackgroundColorMine   |
-| `app:streamAttachmentBackgroundColorTheirs`     | color                | streamMessageBackgroundColorTheirs |
-| `app:streamAttachmentTitleTextSizeMine`         | dimension            | 13sp                               |
-| `app:streamAttachmentTitleTextSizeTheirs`       | dimension            | 13sp                               |
-| `app:streamAttachmentTitleTextColorMine`        | color                | #026DFE                            |
-| `app:streamAttachmentTitleTextColorTheirs`      | color                | #026DFE                            |
-| `app:streamAttachmentTitleTextStyleMine`        | normal, bold, italic | bold                               |
-| `app:streamAttachmentTitleTextStyleTheirs`      | normal, bold, italic | bold                               |
-| `app:streamAttachmentDescriptionTextSizeMine`   | dimension            | 11sp                               |
-| `app:streamAttachmentDescriptionTextSizeTheirs` | dimension            | 11sp                               |
-| `app:streamAttachmentDescriptionTextColorMine`  | color                | stream_gray_dark                   |
-| `app:streamAttachmentDescriptionTextColorTheirs`| color                | stream_gray_dark                   |
-| `app:streamAttachmentDescriptionTextStyleMine`  | normal, bold, italic | normal                             |
-| `app:streamAttachmentDescriptionTextStyleTheirs`| normal, bold, italic | normal                             |
-| `app:streamAttachmentFileSizeTextSizeMine`      | dimension            | 12sp                               |
-| `app:streamAttachmentFileSizeTextSizeTheirs`    | dimension            | 12sp                               |
-| `app:streamAttachmentFileSizeTextColorMine`     | color                | stream_gray_dark                   |
-| `app:streamAttachmentFileSizeTextColorTheirs`   | color                | stream_gray_dark                   |
-| `app:streamAttachmentFileSizeTextStyleMine`     | normal, bold, italic | bold                               |
-| `app:streamAttachmentFileSizeTextStyleTheirs`   | normal, bold, italic | bold                               |
+| Properties                                            | Type                 | Default                            |
+| ----------------------------------------------------- | -------------------- | ---------------------------------- |
+| `app:streamAttachmentBackgroundColorMine`             | color                | streamMessageBackgroundColorMine   |
+| `app:streamAttachmentBackgroundColorTheirs`           | color                | streamMessageBackgroundColorTheirs |
+| `app:streamAttachmentTitleTextSizeMine`               | dimension            | 13sp                               |
+| `app:streamAttachmentTitleTextSizeTheirs`             | dimension            | 13sp                               |
+| `app:streamAttachmentTitleTextColorMine`              | color                | #026DFE                            |
+| `app:streamAttachmentTitleTextColorTheirs`            | color                | #026DFE                            |
+| `app:streamAttachmentTitleTextStyleMine`              | normal, bold, italic | bold                               |
+| `app:streamAttachmentTitleTextStyleTheirs`            | normal, bold, italic | bold                               |
+| `app:streamAttachmentTitleTextFontMine`               | reference            | -                                  |
+| `app:streamAttachmentTitleTextFontTheirs`             | reference            | -                                  |
+| `app:streamAttachmentTitleTextFontAssetsMine`         | string               | -                                  |
+| `app:streamAttachmentTitleTextFontAssetsTheirs`       | string               | -                                  |
+| `app:streamAttachmentDescriptionTextSizeMine`         | dimension            | 11sp                               |
+| `app:streamAttachmentDescriptionTextSizeTheirs`       | dimension            | 11sp                               |
+| `app:streamAttachmentDescriptionTextColorMine`        | color                | stream_gray_dark                   |
+| `app:streamAttachmentDescriptionTextColorTheirs`      | color                | stream_gray_dark                   |
+| `app:streamAttachmentDescriptionTextStyleMine`        | normal, bold, italic | normal                             |
+| `app:streamAttachmentDescriptionTextStyleTheirs`      | normal, bold, italic | normal                             |
+| `app:streamAttachmentDescriptionTextFontMine`         | reference            | -                                  |
+| `app:streamAttachmentDescriptionTextFontTheirs`       | reference            | -                                  |
+| `app:streamAttachmentDescriptionTextFontAssetsMine`   | string               | -                                  |
+| `app:streamAttachmentDescriptionTextFontAssetsTheirs` | string               | -                                  |
+| `app:streamAttachmentFileSizeTextSizeMine`            | dimension            | 12sp                               |
+| `app:streamAttachmentFileSizeTextSizeTheirs`          | dimension            | 12sp                               |
+| `app:streamAttachmentFileSizeTextColorMine`           | color                | stream_gray_dark                   |
+| `app:streamAttachmentFileSizeTextColorTheirs`         | color                | stream_gray_dark                   |
+| `app:streamAttachmentFileSizeTextStyleMine`           | normal, bold, italic | bold                               |
+| `app:streamAttachmentFileSizeTextStyleTheirs`         | normal, bold, italic | bold                               |
+| `app:streamAttachmentFileSizeTextFontMine`            | reference            | -                                  |
+| `app:streamAttachmentFileSizeTextFontTheirs`          | reference            | -                                  |
+| `app:streamAttachmentFileSizeTextFontAssetsMine`      | string               | -                                  |
+| `app:streamAttachmentFileSizeTextFontAssetsTheirs`    | string               | -                                  |
 
 - **Date Separator**
 
-| Properties                                | Type                   | Default           |
-| ----------------------------------------- | ---------------------- | ----------------- |
-| `app:streamDateSeparatorDateTextSize`     | dimension              | 12sp              |
-| `app:streamDateSeparatorDateTextColor`    | color                  | stream_gray_dark  |
-| `app:streamDateSeparatorDateTextStyle`    | normal, bold, italic   | bold              |
-| `app:streamDateSeparatorLineWidth`        | dimension              | 1dp               |
-| `app:streamDateSeparatorLineColor`        | color                  | stream_gray_dark  |
-| `app:streamDateSeparatorLineDrawable`     | reference              | -                 |
+| Properties                                  | Type                   | Default           |
+| ------------------------------------------- | ---------------------- | ----------------- |
+| `app:streamDateSeparatorDateTextSize`       | dimension              | 12sp              |
+| `app:streamDateSeparatorDateTextColor`      | color                  | stream_gray_dark  |
+| `app:streamDateSeparatorDateTextStyle`      | normal, bold, italic   | bold              |
+| `app:streamDateSeparatorDateTextFont`       | reference              | -                 |
+| `app:streamDateSeparatorDateTextFontAssets` | string                 | -                 |
+| `app:streamDateSeparatorLineWidth`          | dimension              | 1dp               |
+| `app:streamDateSeparatorLineColor`          | color                  | stream_gray_dark  |
+| `app:streamDateSeparatorLineDrawable`       | reference              | -                 |
 
 - **User name and message date**
 
-| Properties                             | Type                   | Default          |
-| -------------------------------------- | ---------------------- | ---------------- |
-| `app:streamMessageUserNameTextSize`    | dimension              | 11sp             |
-| `app:streamMessageUserNameTextColor`   | color                  | stream_gray_dark |
-| `app:streamMessageUserNameTextStyle`   | normal, bold, italic   | normal           |
-| `app:streamMessageDateTextSizeMine`    | dimension              | 11sp             |
-| `app:streamMessageDateTextSizeTheirs`  | dimension              | 11sp             |
-| `app:streamMessageDateTextColorMine`   | color                  | stream_gray_dark |
-| `app:streamMessageDateTextColorTheirs` | color                  | stream_gray_dark |
-| `app:streamMessageDateTextStyleMine`   | normal, bold, italic   | normal           |
-| `app:streamMessageDateTextStyleTheirs` | normal, bold, italic   | normal           |
-| `app:streamUserNameShow`               |   boolean              | true             |
-| `app:streamMessageDateShow`            |   boolean              | true             |
+| Properties                                | Type                   | Default          |
+| ----------------------------------------- | ---------------------- | ---------------- |
+| `app:streamMessageUserNameTextSize`       | dimension              | 11sp             |
+| `app:streamMessageUserNameTextColor`      | color                  | stream_gray_dark |
+| `app:streamMessageUserNameTextStyle`      | normal, bold, italic   | normal           |
+| `app:streamMessageUserNameTextFont`       | reference              | -                |
+| `app:streamMessageUserNameTextFontAssets` | string                 | -                |
+| `app:streamMessageDateTextSizeMine`       | dimension              | 11sp             |
+| `app:streamMessageDateTextSizeTheirs`     | dimension              | 11sp             |
+| `app:streamMessageDateTextColorMine`      | color                  | stream_gray_dark |
+| `app:streamMessageDateTextColorTheirs`    | color                  | stream_gray_dark |
+| `app:streamMessageDateTextStyleMine`      | normal, bold, italic   | normal           |
+| `app:streamMessageDateTextStyleTheirs`    | normal, bold, italic   | normal           |
+| `app:streamMessageDateTextFontMine`       | reference              | -                |
+| `app:streamMessageDateTextFontAssetsMine` | string                 | -                |
+| `app:streamUserNameShow`                  | boolean                | true             |
+| `app:streamMessageDateShow`               | boolean                | true             |
 
 - **Thread**
 
