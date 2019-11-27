@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.OnQueryListener;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
