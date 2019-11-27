@@ -142,3 +142,11 @@ def checkSigningEnvVars() {
 
     return storagePath != null && password != null && keyAlias != null && keyPassword != null
 }
+
+gradle.taskGraph.useFilter { task ->
+    /**
+     * Ignores release unit tests.
+     * As it's assembled with releaseSdkVersion, which might be outdated
+     */
+    return task.name != 'testReleaseUnitTest'
+}
