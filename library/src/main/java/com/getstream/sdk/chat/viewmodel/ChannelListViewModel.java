@@ -364,21 +364,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         @Override
         public void onMessageNew(Channel channel, Event event) {
-            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageUpdated(Channel channel, Event event) {
-            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageDeleted(Channel channel, Event event) {
-            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }

@@ -453,7 +453,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onMessageNew(Event event) {
-                event.getMessage().setSyncStatus(Sync.SYNCED);
                 upsertMessage(event.getMessage());
                 channelState.postValue(channel.getChannelState());
                 if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
@@ -480,13 +479,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onMessageUpdated(Event event) {
-                event.getMessage().setSyncStatus(Sync.SYNCED);
                 updateMessage(event.getMessage());
             }
 
             @Override
             public void onMessageDeleted(Event event) {
-                event.getMessage().setSyncStatus(Sync.SYNCED);
                 deleteMessage(event.getMessage());
             }
 
