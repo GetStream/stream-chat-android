@@ -1,19 +1,26 @@
 package com.getstream.sdk.chat.enums;
 
+import androidx.annotation.StringRes;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 
-public enum  MessageInputType {
-    EDIT_MESSAGE(StreamChat.getContext().getString(R.string.stream_input_type_edit_message)),
-    ADD_FILE(StreamChat.getContext().getString(R.string.stream_input_type_add_file)),
-    UPLOAD_MEDIA(StreamChat.getContext().getString(R.string.stream_input_type_select_gallery)),
-    UPLOAD_FILE(StreamChat.getContext().getString(R.string.stream_input_type_select_file)),
-    COMMAND(StreamChat.getContext().getString(R.string.stream_input_type_command)),
-    MENTION(StreamChat.getContext().getString(R.string.stream_input_type_auto_mention));
+public enum MessageInputType {
+    EDIT_MESSAGE(R.string.stream_input_type_edit_message),
+    ADD_FILE(R.string.stream_input_type_add_file),
+    UPLOAD_MEDIA(R.string.stream_input_type_select_gallery),
+    UPLOAD_FILE(R.string.stream_input_type_select_file),
+    COMMAND(R.string.stream_input_type_command),
+    MENTION(R.string.stream_input_type_auto_mention);
 
-    public final String label;
+    @StringRes
+    private final int labelId;
 
-    MessageInputType(String label) {
-        this.label = label;
+    public String getLabel() {
+        return StreamChat.getContext().getString(labelId);
+    }
+
+    MessageInputType(@StringRes int labelId) {
+        this.labelId = labelId;
     }
 }

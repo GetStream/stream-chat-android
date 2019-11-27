@@ -20,8 +20,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageTextStyleMine;
     private int messageTextStyleTheirs;
     // Message Bubble
-    private Drawable messageBubbleDrawableMine;
-    private Drawable messageBubbleDrawableTheirs;
+    private int messageBubbleDrawableMine;
+    private int messageBubbleDrawableTheirs;
     private int messageTopLeftCornerRadiusMine;
     private int messageTopRightCornerRadiusMine;
     private int messageBottomRightCornerRadiusMine;
@@ -37,17 +37,29 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
     // Attachment
-    private int attachmentTitleTextSize;
-    private int attachmentTitleTextColor;
-    private int attachmentTitleTextStyle;
+    private int attachmentTitleTextSizeMine;
+    private int attachmentTitleTextColorMine;
+    private int attachmentTitleTextStyleMine;
 
-    private int attachmentDescriptionTextSize;
-    private int attachmentDescriptionTextColor;
-    private int attachmentDescriptionTextStyle;
+    private int attachmentTitleTextSizeTheirs;
+    private int attachmentTitleTextColorTheirs;
+    private int attachmentTitleTextStyleTheirs;
 
-    private int attachmentFileSizeTextSize;
-    private int attachmentFileSizeTextColor;
-    private int attachmentFileSizeTextStyle;
+    private int attachmentDescriptionTextSizeMine;
+    private int attachmentDescriptionTextColorMine;
+    private int attachmentDescriptionTextStyleMine;
+
+    private int attachmentDescriptionTextSizeTheirs;
+    private int attachmentDescriptionTextColorTheirs;
+    private int attachmentDescriptionTextStyleTheirs;
+
+    private int attachmentFileSizeTextSizeMine;
+    private int attachmentFileSizeTextColorMine;
+    private int attachmentFileSizeTextStyleMine;
+
+    private int attachmentFileSizeTextSizeTheirs;
+    private int attachmentFileSizeTextColorTheirs;
+    private int attachmentFileSizeTextStyleTheirs;
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -87,8 +99,8 @@ public class MessageListViewStyle extends BaseStyle {
         messageTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK);
         messageTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
         // Message Bubble
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
+        messageBubbleDrawableMine = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1);
+        messageBubbleDrawableTheirs = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1);
 
         messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopLeftCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
         messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopRightCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
@@ -109,17 +121,29 @@ public class MessageListViewStyle extends BaseStyle {
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
         // Attachment
-        attachmentTitleTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.stream_attach_title_text));
-        attachmentTitleTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.stream_attach_title_text));
-        attachmentTitleTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
+        attachmentTitleTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSizeMine, getDimension(R.dimen.stream_attach_title_text));
+        attachmentTitleTextColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColorMine, getColor(R.color.stream_attach_title_text));
+        attachmentTitleTextStyleMine = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyleMine, Typeface.BOLD);
 
-        attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.stream_attach_description_text));
-        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_gray_dark));
-        attachmentDescriptionTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
+        attachmentTitleTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSizeTheirs, getDimension(R.dimen.stream_attach_title_text));
+        attachmentTitleTextColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColorTheirs, getColor(R.color.stream_attach_title_text));
+        attachmentTitleTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyleTheirs, Typeface.BOLD);
 
-        attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text));
-        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_gray_dark));
-        attachmentFileSizeTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
+        attachmentDescriptionTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSizeMine, getDimension(R.dimen.stream_attach_description_text));
+        attachmentDescriptionTextColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColorMine, getColor(R.color.stream_gray_dark));
+        attachmentDescriptionTextStyleMine = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyleMine, Typeface.NORMAL);
+
+        attachmentDescriptionTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSizeTheirs, getDimension(R.dimen.stream_attach_description_text));
+        attachmentDescriptionTextColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColorTheirs, getColor(R.color.stream_gray_dark));
+        attachmentDescriptionTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyleTheirs, Typeface.NORMAL);
+
+        attachmentFileSizeTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSizeMine, getDimension(R.dimen.stream_attach_file_size_text));
+        attachmentFileSizeTextColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColorMine, getColor(R.color.stream_gray_dark));
+        attachmentFileSizeTextStyleMine = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyleMine, Typeface.BOLD);
+
+        attachmentFileSizeTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSizeTheirs, getDimension(R.dimen.stream_attach_file_size_text));
+        attachmentFileSizeTextColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColorTheirs, getColor(R.color.stream_gray_dark));
+        attachmentFileSizeTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyleTheirs, Typeface.BOLD);
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
@@ -192,11 +216,11 @@ public class MessageListViewStyle extends BaseStyle {
         return messageTextStyleTheirs;
     }
 
-    public Drawable getMessageBubbleDrawableMine() {
+    public int getMessageBubbleDrawableMine() {
         return messageBubbleDrawableMine;
     }
 
-    public Drawable getMessageBubbleDrawableTheirs() {
+    public int getMessageBubbleDrawableTheirs() {
         return messageBubbleDrawableTheirs;
     }
 
@@ -257,40 +281,40 @@ public class MessageListViewStyle extends BaseStyle {
     }
 
     // Attachment
-    public int getAttachmentTitleTextSize() {
-        return attachmentTitleTextSize;
+    public int getAttachmentTitleTextSize(boolean isMine) {
+        return isMine ? attachmentTitleTextSizeMine : attachmentTitleTextSizeTheirs;
     }
 
-    public int getAttachmentTitleTextColor() {
-        return attachmentTitleTextColor;
+    public int getAttachmentTitleTextColor(boolean isMine) {
+        return isMine ? attachmentTitleTextColorMine : attachmentTitleTextColorTheirs;
     }
 
-    public int getAttachmentTitleTextStyle() {
-        return attachmentTitleTextStyle;
+    public int getAttachmentTitleTextStyle(boolean isMine) {
+        return isMine ? attachmentTitleTextStyleMine : attachmentTitleTextStyleTheirs;
     }
 
-    public int getAttachmentDescriptionTextSize() {
-        return attachmentDescriptionTextSize;
+    public int getAttachmentDescriptionTextSize(boolean isMine) {
+        return isMine ? attachmentDescriptionTextSizeMine : attachmentDescriptionTextSizeTheirs;
     }
 
-    public int getAttachmentDescriptionTextColor() {
-        return attachmentDescriptionTextColor;
+    public int getAttachmentDescriptionTextColor(boolean isMine) {
+        return isMine ? attachmentDescriptionTextColorMine : attachmentDescriptionTextColorTheirs;
     }
 
-    public int getAttachmentDescriptionTextStyle() {
-        return attachmentDescriptionTextStyle;
+    public int getAttachmentDescriptionTextStyle(boolean isMine) {
+        return isMine ? attachmentDescriptionTextStyleMine : attachmentDescriptionTextStyleTheirs;
     }
 
-    public int getAttachmentFileSizeTextSize() {
-        return attachmentFileSizeTextSize;
+    public int getAttachmentFileSizeTextSize(boolean isMine) {
+        return isMine ? attachmentFileSizeTextSizeMine : attachmentFileSizeTextSizeTheirs;
     }
 
-    public int getAttachmentFileSizeTextColor() {
-        return attachmentFileSizeTextColor;
+    public int getAttachmentFileSizeTextColor(boolean isMine) {
+        return isMine ? attachmentFileSizeTextColorMine : attachmentFileSizeTextColorTheirs;
     }
 
-    public int getAttachmentFileSizeTextStyle() {
-        return attachmentFileSizeTextStyle;
+    public int getAttachmentFileSizeTextStyle(boolean isMine) {
+        return isMine ? attachmentFileSizeTextStyleMine : attachmentFileSizeTextStyleTheirs;
     }
 
     // Reaction Dialog
