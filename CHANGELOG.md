@@ -1,3 +1,7 @@
+## Upcoming
+
+- Ignore sample app release unit tests, keep debug tests
+
 ## November 5th, 2019 - 3.3.0
 
 - Fix Concurrent modification when removing member from channel
@@ -10,7 +14,7 @@
 - Add editMessage function in Channel View Model
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
-
+- Added AttachmentBackgroundColorMine/Theirs
 
 ## November 5th, 2019 - 3.2.1
 
