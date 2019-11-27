@@ -221,7 +221,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        style.attachmentTitleText.apply(tv_media_title);
+
+        if(getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_media_title);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_media_title);
+        }
+
         style.attachmentDescriptionText.apply(tv_media_des);
     }
 }

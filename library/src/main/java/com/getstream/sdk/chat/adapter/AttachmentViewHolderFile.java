@@ -47,7 +47,14 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        style.attachmentTitleText.apply(tv_file_title);
+
+        if(getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_file_title);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_file_title);
+        }
+
+
         style.attachmentFileSizeText.apply(tv_file_size);
     }
 

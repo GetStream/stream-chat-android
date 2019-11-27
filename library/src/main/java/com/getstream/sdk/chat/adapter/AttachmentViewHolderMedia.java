@@ -4,13 +4,10 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -19,12 +16,12 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
@@ -148,14 +145,20 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play.setVisibility(type.equals(ModelType.attach_video) ? View.VISIBLE : View.GONE);
         iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
-        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE){
+        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
             Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
             cl_des.setBackground(background);
         }
     }
 
     private void applyStyle() {
-        style.attachmentTitleText.apply(tv_media_title);
+
+        if (getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_media_title);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_media_title);
+        }
+
         style.attachmentDescriptionText.apply(tv_media_des);
     }
 

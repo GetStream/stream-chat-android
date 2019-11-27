@@ -240,15 +240,28 @@
         <attr name="streamMessageBorderWidthMine" format="dimension|reference"/>
         <attr name="streamMessageBorderWidthTheirs" format="dimension|reference"/>
         <!-- Attachment-->
-        <attr name="streamAttachmentTitleTextSize" format="dimension|reference"/>
-        <attr name="streamAttachmentTitleTextColor" format="color"/>
-        <attr name="streamAttachmentTitleTextFont" format="reference"/>
-        <attr name="streamAttachmentTitleTextFontAssets" format="string"/>
-        <attr name="streamAttachmentTitleTextStyle">
+        <attr name="streamAttachmentTitleTextSizeMine" format="dimension|reference"/>
+        <attr name="streamAttachmentTitleTextColorMine" format="color"/>
+        <attr name="streamAttachmentTitleTextFontMine" format="reference"/>
+        <attr name="streamAttachmentTitleTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentTitleTextStyleMine">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>
         </attr>
+
+        <attr name="streamAttachmentTitleTextSizeTheirs" format="dimension|reference"/>
+        <attr name="streamAttachmentTitleTextColorTheirs" format="color"/>
+        <attr name="streamAttachmentTitleTextFontTheirs" format="reference"/>
+        <attr name="streamAttachmentTitleTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentTitleTextStyleTheirs">
+            <flag name="normal" value="0"/>
+            <flag name="bold" value="1"/>
+            <flag name="italic" value="2"/>
+        </attr>
+
+        <attr name="streamAttachmentBackgroundColorMine" format="color" />
+        <attr name="streamAttachmentBackgroundColorTheirs" format="color" />
 
         <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference"/>
         <attr name="streamAttachmentDescriptionTextColor" format="color"/>
