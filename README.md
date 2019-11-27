@@ -33,9 +33,17 @@ Open the project in Android Studio. Setup your emulator (we're using Pixel 3, AP
 
 ## Docs
 
-The [styleguidist docs for stream-chat-react](https://getstream.github.io/stream-chat-react/) document how all the components work. 
+### UI Components
 
-The React components are created using the stream-chat-js library. If you're customizing the components it's important to learn how the Chat Server API works. You'll want to review our [JS chat API docs](https://getstream.io/chat/docs/js/).
+* [Channel List](./docs/ChannelList.md)
+* [Message List](./docs/MessageList.md)
+* [Message Input](./docs/MessageInput.md)
+* [Channel Header](./docs/ChannelHeader.md)
+
+### Chat API
+
+The low level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+You typically start out by using our UI components, and afterwards build your own as needed using the low level API.
 
 ## Installing the Java Chat SDK
 
@@ -253,17 +261,7 @@ Connection status to Chat is available via `StreamChat.getOnlineStatus()` which 
 StreamChat.getOnlineStatus().observe(...);
 ```
 
-## UI Components
 
-* [Channel List](./docs/ChannelList.md)
-* [Message List](./docs/MessageList.md)
-* [Message Input](./docs/MessageInput.md)
-* [Channel Header](./docs/ChannelHeader.md)
-
-## Documentation
-
-[Java Chat Tutorial page](https://getstream.io/tutorials/android-chat/)
-[Official API Docs](https://getstream.io/chat/docs)
 
 ## Supported features
 
