@@ -14,6 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.Dates;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Date;
@@ -59,9 +60,8 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
     private void applyStyle(){
 
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateSeparatorDateTextSize());
-        tv_date.setTextColor(style.getDateSeparatorDateTextColor());
-        tv_date.setTypeface(Typeface.DEFAULT, style.getDateSeparatorDateTextStyle());
+        style.dateSeparatorDateText.apply(tv_date);
+
         if (style.getDateSeparatorLineDrawable() != -1) {
             int drawable = style.getDateSeparatorLineDrawable();
             iv_line_right.setBackground(context.getDrawable(drawable));
