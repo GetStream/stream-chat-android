@@ -11,7 +11,7 @@
 
     <attr name="streamAvatarTextSize" format="dimension|reference"/>
     <attr name="streamAvatarTextColor" format="color|reference"/>
-    <attr name="streamAvatarTextFont" format="string"/>
+    <attr name="streamAvatarTextFont" format="reference"/>
     <attr name="streamAvatarTextFontAssets" format="string"/>
     <attr name="streamAvatarTextStyle">
         <flag name="normal" value="0"/>
@@ -28,6 +28,7 @@
 
     <attr name="streamReadStateTextSize" format="dimension|reference"/>
     <attr name="streamReadStateTextColor" format="color|reference"/>
+    <attr name="streamReadStateTextFont" format="reference"/>
     <attr name="streamReadStateTextFontAssets" format="string"/>
     <attr name="streamReadStateTextStyle">
         <flag name="normal" value="0"/>
@@ -45,8 +46,8 @@
         <attr name="streamAvatarBackGroundColor"/>
         <attr name="streamAvatarTextSize"/>
         <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFontAssets"/>
         <attr name="streamAvatarTextFont"/>
+        <attr name="streamAvatarTextFontAssets"/>
         <attr name="streamAvatarTextStyle"/>
         <attr name="streamChannelWithOutNameTitleText"/>
         <!--ReadStateView-->
@@ -62,8 +63,8 @@
         <attr name="streamChannelTitleTextSize" format="dimension|reference"/>
         <attr name="streamChannelTitleTextColor" format="color|reference"/>
         <attr name="streamChannelTitleUnreadTextColor" format="color|reference"/>
-        <attr name="streamChannelTitleTextFontAssets" format="string"/>
         <attr name="streamChannelTitleTextFont" format="reference"/>
+        <attr name="streamChannelTitleTextFontAssets" format="string"/>
         <attr name="streamChannelTitleTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -78,8 +79,8 @@
         <attr name="streamLastMessageTextSize" format="dimension|reference"/>
         <attr name="streamLastMessageTextColor" format="color|reference"/>
         <attr name="streamLastMessageUnreadTextColor" format="color|reference"/>
-        <attr name="streamLastMessageTextFontAssets" format="string"/>
         <attr name="streamLastMessageTextFont" format="reference"/>
+        <attr name="streamLastMessageTextFontAssets" format="string"/>
         <attr name="streamLastMessageTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -94,8 +95,8 @@
         <attr name="streamLastMessageDateTextSize" format="dimension|reference"/>
         <attr name="streamLastMessageDateTextColor" format="color|reference"/>
         <attr name="streamLastMessageDateUnreadTextColor" format="color|reference"/>
-        <attr name="streamLastMessageDateTextFontAssets" format="string"/>
         <attr name="streamLastMessageDateTextFont" format="reference"/>
+        <attr name="streamLastMessageDateTextFontAssets" format="string"/>
         <attr name="streamLastMessageDateTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -185,8 +186,8 @@
         <attr name="streamReadStateAvatarHeight"/>
         <attr name="streamReadStateTextSize"/>
         <attr name="streamReadStateTextColor"/>
-        <attr name="streamReadStateTextFontAssets"/>
         <attr name="streamReadStateTextFont"/>
+        <attr name="streamReadStateTextFontAssets"/>
         <attr name="streamReadStateTextStyle"/>
 
         <!--Reaction-->
@@ -206,8 +207,8 @@
 
         <attr name="streamMessageTextColorMine" format="color"/>
         <attr name="streamMessageTextColorTheirs" format="color"/>
-        <attr name="streamMessageTextFontMineAssets" format="string"/>
         <attr name="streamMessageTextFontMine" format="reference"/>
+        <attr name="streamMessageTextFontMineAssets" format="string"/>
         <attr name="streamMessageTextFontTheirs" format="reference"/>
         <attr name="streamMessageTextFontTheirsAssets" format="string"/>
         <attr name="streamMessageTextStyleMine">
@@ -231,7 +232,8 @@
 
         <attr name="streamMessageDateTextSizeMine" format="dimension|reference" />
         <attr name="streamMessageDateTextColorMine" format="color" />
-        <attr name="streamMessageDateTextFontPathMine" format="string" />
+        <attr name="streamMessageDateTextFontMine" format="reference" />
+        <attr name="streamMessageDateTextFontAssetsMine" format="string" />
         <attr name="streamMessageDateTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
@@ -240,6 +242,8 @@
 
         <attr name="streamMessageDateTextSizeTheirs" format="dimension|reference" />
         <attr name="streamMessageDateTextColorTheirs" format="color" />
+        <attr name="streamMessageDateTextFontTheirs" format="reference" />
+        <attr name="streamMessageDateTextFontAssetsTheirs" format="string" />
         <attr name="streamMessageDateTextStyleTheirs">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
@@ -310,8 +314,8 @@
 
         <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference"/>
         <attr name="streamAttachmentDescriptionTextColor" format="color"/>
-        <attr name="streamAttachmentDescriptionTextFontAssets" format="string"/>
         <attr name="streamAttachmentDescriptionTextFont" format="reference"/>
+        <attr name="streamAttachmentDescriptionTextFontAssets" format="string"/>
         <attr name="streamAttachmentDescriptionTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -320,8 +324,8 @@
 
         <attr name="streamAttachmentFileSizeTextSize" format="dimension|reference"/>
         <attr name="streamAttachmentFileSizeTextColor" format="color"/>
-        <attr name="streamAttachmentFileSizeTextFontAssets" format="string"/>
         <attr name="streamAttachmentFileSizeTextFont" format="reference"/>
+        <attr name="streamAttachmentFileSizeTextFontAssets" format="string"/>
         <attr name="streamAttachmentFileSizeTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -332,8 +336,8 @@
         <!--Date Separator-->
         <attr name="streamDateSeparatorDateTextSize" format="dimension|reference"/>
         <attr name="streamDateSeparatorDateTextColor" format="color"/>
-        <attr name="streamDateSeparatorDateTextFontAssets" format="string"/>
         <attr name="streamDateSeparatorDateTextFont" format="reference"/>
+        <attr name="streamDateSeparatorDateTextFontAssets" format="string"/>
         <attr name="streamDateSeparatorDateTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
@@ -357,8 +361,8 @@
         <attr name="streamAvatarBackGroundColor"/>
         <attr name="streamAvatarTextSize"/>
         <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFontAssets"/>
         <attr name="streamAvatarTextFont"/>
+        <attr name="streamAvatarTextFontAssets"/>
         <attr name="streamAvatarTextStyle"/>
         <attr name="streamChannelWithOutNameTitleText"/>
         <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference"/>
@@ -374,8 +378,8 @@
         <attr name="streamChannelHeaderLastActiveShow" format="boolean"/>
         <attr name="streamChannelHeaderLastActiveTextSize" format="dimension|reference"/>
         <attr name="streamChannelHeaderLastActiveTextColor" format="color|reference"/>
-        <attr name="streamChannelHeaderLastActiveTextFontAssets" format="string"/>
         <attr name="streamChannelHeaderLastActiveTextFont" format="reference"/>
+        <attr name="streamChannelHeaderLastActiveTextFontAssets" format="string"/>
         <attr name="streamChannelHeaderLastActiveTextStyle">
             <flag name="normal" value="0"/>
             <flag name="bold" value="1"/>
