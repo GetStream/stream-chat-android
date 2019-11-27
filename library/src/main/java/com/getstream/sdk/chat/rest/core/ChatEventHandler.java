@@ -163,7 +163,7 @@ public abstract class ChatEventHandler {
                 break;
             case MESSAGE_DELETED:
                 event.getMessage().setSyncStatus(Sync.SYNCED);
-                event.getMessage().setText(StreamChat.getContext().getString(R.string.stream_delete_message));
+                event.getMessage().setText(StreamChat.getStrings().get(R.string.stream_delete_message));
                 dispatchChannelEvent(client, event, this::onMessageDeleted);
                 break;
             case MESSAGE_READ:

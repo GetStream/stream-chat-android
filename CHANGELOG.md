@@ -1,6 +1,7 @@
 ## Upcoming
 
 - Ignore sample app release unit tests, keep debug tests
+- Added AttachmentBackgroundColorMine/Theirs
 
 ## November 5th, 2019 - 3.3.0
 

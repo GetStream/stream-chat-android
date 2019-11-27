@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingBottom="20dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="10dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/ll_composer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -110,6 +110,7 @@
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/tv_upload_photo_video"
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -156,6 +157,7 @@
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/tv_upload_camera"
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -203,6 +205,7 @@
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/tv_upload_file"
                     style="@style/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
