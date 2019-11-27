@@ -1,18 +1,9 @@
 package com.getstream.sdk.chat.utils;
 
-import android.content.Context;
-import android.graphics.Typeface;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.style.StreamChatStyle;
-
-import androidx.annotation.FontRes;
-import androidx.core.content.res.ResourcesCompat;
 
 public class TextViewUtils {
     interface Actions{

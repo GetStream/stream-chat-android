@@ -18,8 +18,8 @@ public class MessageListViewStyle extends BaseStyle {
     public TextStyle messageTextTheirs;
 
     // Message Bubble
-    private Drawable messageBubbleDrawableMine;
-    private Drawable messageBubbleDrawableTheirs;
+    private int messageBubbleDrawableMine;
+    private int messageBubbleDrawableTheirs;
     private int messageTopLeftCornerRadiusMine;
     private int messageTopRightCornerRadiusMine;
     private int messageBottomRightCornerRadiusMine;
@@ -83,8 +83,8 @@ public class MessageListViewStyle extends BaseStyle {
                 .build();
 
         // Message Bubble
-        messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
-        messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
+        messageBubbleDrawableMine = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1);
+        messageBubbleDrawableTheirs = a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1);
 
         messageTopLeftCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopLeftCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
         messageTopRightCornerRadiusMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTopRightCornerRadiusMine, getDimension(R.dimen.stream_message_corner_radius1));
@@ -200,7 +200,7 @@ public class MessageListViewStyle extends BaseStyle {
 //        return isMine ? messageTextFontPathMine : messageTextFontPathTheirs;
 //    }
 
-    public Drawable getMessageBubbleDrawable(boolean isMine) {
+    public int getMessageBubbleDrawable(boolean isMine) {
         return isMine ? messageBubbleDrawableMine : messageBubbleDrawableTheirs;
     }
 

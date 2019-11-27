@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -48,16 +47,6 @@ public class StreamChat {
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
-    }
-
-    private static String fontPath;
-
-    public static String getFontPath() {
-        return fontPath;
-    }
-
-    public static void setFontPath(String fontPath) {
-        StreamChat.fontPath = fontPath;
     }
 
     /**

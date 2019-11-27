@@ -25,8 +25,8 @@ public class DefaultBubbleHelper {
         return new MessageListView.BubbleHelper() {
             @Override
             public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
-                if (style.getMessageBubbleDrawableMine() != -1)
-                    return context.getDrawable(style.getMessageBubbleDrawableMine());
+                if (style.getMessageBubbleDrawable(mine) != -1)
+                    return context.getDrawable(style.getMessageBubbleDrawable(mine));
 
                 configParams(style, mine);
                 if (isDefaultBubble(style, mine, context))
@@ -46,8 +46,8 @@ public class DefaultBubbleHelper {
                         || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
-                if (style.getMessageBubbleDrawableTheirs() != -1)
-                    return context.getDrawable(style.getMessageBubbleDrawableTheirs());
+                if (style.getMessageBubbleDrawable(mine) != -1)
+                    return context.getDrawable(style.getMessageBubbleDrawable(mine));
 
                 configParams(style, mine);
                 if (isDefaultBubble(style, mine, context))
@@ -67,13 +67,9 @@ public class DefaultBubbleHelper {
 
             @Override
             public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions){
-                if (mine){
-                    if (style.getMessageBubbleDrawableMine() != -1)
-                        return context.getDrawable(style.getMessageBubbleDrawableMine());
-                }else {
-                    if (style.getMessageBubbleDrawableTheirs() != -1)
-                        return context.getDrawable(style.getMessageBubbleDrawableTheirs());
-                }
+                if (style.getMessageBubbleDrawable(mine)!= -1)
+                    return context.getDrawable(style.getMessageBubbleDrawable(mine));
+
                 configParams(style, mine);
                 if (isDefaultBubble(style, mine, context))
                     applyStyleDefault(positions, mine, context);

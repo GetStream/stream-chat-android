@@ -30,7 +30,6 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.*;
 
