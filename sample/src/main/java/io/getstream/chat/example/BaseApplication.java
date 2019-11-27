@@ -23,7 +23,8 @@ public class BaseApplication extends Application {
         StreamChat.init(BuildConfig.API_KEY, new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
         StreamChat.initStyle(
                 new StreamChatStyle.Builder()
-                        .setDefaultFont(R.font.calistoga_regular)
+                        //.setDefaultFont(R.font.lilyofthe_valley)
+                        //.setDefaultFont("fonts/odibeesans_regular.ttf")
                         .build()
         );
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
