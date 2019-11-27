@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.OnQueryListener;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
@@ -363,18 +364,21 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         @Override
         public void onMessageNew(Channel channel, Event event) {
+            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageUpdated(Channel channel, Event event) {
+            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, true);
         }
 
         @Override
         public void onMessageDeleted(Channel channel, Event event) {
+            event.getMessage().setSyncStatus(Sync.SYNCED);
             if (interceptor.shouldDiscard(event, channel)) return;
             updateChannel(channel, false);
         }
