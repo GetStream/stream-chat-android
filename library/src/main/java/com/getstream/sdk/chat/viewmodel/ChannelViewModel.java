@@ -652,7 +652,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (message.getId().equals(messagesCopy.get(i).getId())) {
-                messagesCopy.remove(i);
+                messagesCopy.set(i, message);
                 if (isThread()) {
                     if (i == 0)
                         initThread();
