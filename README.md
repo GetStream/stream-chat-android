@@ -29,7 +29,7 @@ This repo includes a fully functional example app. To run the example app:
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Open the project in Android Studio. 
+Open the project in Android Studio. Setup your emulator (we're using Pixel 3, API 29 at the moment). Note that the gradle sync process can take some time when you first open the project. 
 
 ## Docs
 
