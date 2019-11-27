@@ -42,6 +42,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
@@ -122,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         viewModel.setChannelFilter(filter);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i("MainActivity", "onCreate");
@@ -188,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
             // open your user profile
         });
         binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
+
+        initToolbar(binding);
     }
 
     // open the channel activity
@@ -279,5 +284,10 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void initToolbar(ActivityMainBinding binding) {
+        binding.toolbar.setTitle("Stream Chat");
+        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }
 }

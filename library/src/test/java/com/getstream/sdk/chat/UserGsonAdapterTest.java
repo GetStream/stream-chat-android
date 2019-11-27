@@ -25,4 +25,15 @@ public class UserGsonAdapterTest {
         assertEquals("{\"image\":\"image-url\",\"id\":\"123\"}", json);
     }
 
+    @org.junit.jupiter.api.Test
+    void encodeEmptyUserTest() {
+        User user = new User();
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
+        user.setLastActive(new Date());
+        user.setId("123");
+
+        String json = GsonConverter.Gson().toJson(user);
+        assertEquals("{\"id\":\"123\"}", json);
+    }
 }

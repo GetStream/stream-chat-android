@@ -19,6 +19,8 @@ import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.ClientState;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.getstream.sdk.chat.utils.strings.StringsProvider;
+import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class StreamChat {
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
     private static Context context;
+    private static StringsProvider stringsProvider;
     private static NotificationsManager notificationsManager;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
@@ -74,6 +77,17 @@ public class StreamChat {
 
     public static Context getContext() {
         return context;
+    }
+
+    public static StringsProvider getStrings(){
+        return stringsProvider;
+    }
+
+    /**
+     * For unit tests purposes only
+     */
+    public static void setStringsProvider(StringsProvider stringsProvider){
+        StreamChat.stringsProvider = stringsProvider;
     }
 
     private static void handleConnectedUser() {
@@ -163,6 +177,10 @@ public class StreamChat {
         Log.i(TAG, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
+
+                StreamChat.context = context;
+                stringsProvider = new StringsProviderImpl(context);
+
                 Log.i(TAG, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
                 INSTANCE.setContext(StreamChat.context);

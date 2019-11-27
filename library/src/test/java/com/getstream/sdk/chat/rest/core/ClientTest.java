@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.core;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.Filters;
@@ -58,6 +59,7 @@ import com.getstream.sdk.chat.rest.utils.CallFake;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
 import com.getstream.sdk.chat.storage.Storage;
 import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.utils.strings.StubStringsProvider;
 import com.google.gson.internal.LinkedTreeMap;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +71,7 @@ import org.mockito.MockitoAnnotations;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,6 +112,9 @@ public class ClientTest {
 
     @BeforeEach
     void initTest() throws IOException {
+
+        StreamChat.setStringsProvider(new StubStringsProvider());
+
         MockitoAnnotations.initMocks(this);
 
         WebSocketServiceProvider webSocketServiceProvider = mock(WebSocketServiceProvider.class);
@@ -870,7 +876,12 @@ public class ClientTest {
     @Test
     void queryChannelWithIdSuccessTest() {
         ArrayList<Message> messages = new ArrayList<>();
-        messages.add(new Message());
+        Message message = new Message();
+        Date data = new Date();
+        message.setCreatedAt(data);
+        message.setUpdatedAt(data);
+
+        messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
         String testChannelName = "testName";
         extra.put("name", testChannelName);
@@ -904,7 +915,13 @@ public class ClientTest {
     @Test
     void queryChannelWithoutIdSuccessTest() {
         ArrayList<Message> messages = new ArrayList<>();
-        messages.add(new Message());
+        Message message = new Message();
+
+        Date data = new Date();
+        message.setCreatedAt(data);
+        message.setUpdatedAt(data);
+
+        messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
         String testChannelName = "testName";
         extra.put("name", testChannelName);
@@ -951,4 +968,5 @@ public class ClientTest {
         event.setConnectionId(TEST_CLIENT_ID);
         client.connectionResolved(event);
     }
+
 }

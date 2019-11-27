@@ -187,30 +187,56 @@
         <attr name="streamMessageBorderWidthMine" format="dimension|reference" />
         <attr name="streamMessageBorderWidthTheirs" format="dimension|reference" />
         <!-- Attachment-->
-        <attr name="streamAttachmentTitleTextSize" format="dimension|reference" />
-        <attr name="streamAttachmentTitleTextColor" format="color" />
-        <attr name="streamAttachmentTitleTextStyle">
+        <attr name="streamAttachmentBackgroundColorMine" format="color" />
+        <attr name="streamAttachmentBackgroundColorTheirs" format="color" />
+        <attr name="streamAttachmentTitleTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentTitleTextColorMine" format="color" />
+        <attr name="streamAttachmentTitleTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentDescriptionTextSize" format="dimension|reference" />
-        <attr name="streamAttachmentDescriptionTextColor" format="color" />
-        <attr name="streamAttachmentDescriptionTextStyle">
+        <attr name="streamAttachmentTitleTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentTitleTextColorTheirs" format="color" />
+        <attr name="streamAttachmentTitleTextStyleTheirs">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentFileSizeTextSize" format="dimension|reference" />
-        <attr name="streamAttachmentFileSizeTextColor" format="color" />
-        <attr name="streamAttachmentFileSizeTextStyle">
+        <attr name="streamAttachmentDescriptionTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentDescriptionTextColorMine" format="color" />
+        <attr name="streamAttachmentDescriptionTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        
+
+        <attr name="streamAttachmentDescriptionTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentDescriptionTextColorTheirs" format="color" />
+        <attr name="streamAttachmentDescriptionTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamAttachmentFileSizeTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentFileSizeTextColorMine" format="color" />
+        <attr name="streamAttachmentFileSizeTextStyleMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <attr name="streamAttachmentFileSizeTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentFileSizeTextColorTheirs" format="color" />
+        <attr name="streamAttachmentFileSizeTextStyleTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamThreadEnabled" format="boolean" />
         <!--Date Separator-->
         <attr name="streamDateSeparatorDateTextSize" format="dimension|reference" />
