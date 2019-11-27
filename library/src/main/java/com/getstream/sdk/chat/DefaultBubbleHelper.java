@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
@@ -28,7 +27,7 @@ public class DefaultBubbleHelper {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return context.getDrawable(style.getMessageBubbleDrawable(mine));
 
-                configParams(style, mine);
+                configParams(style, mine, false);
                 if (isDefaultBubble(style, mine, context))
                     applyStyleDefault(positions, mine, context);
                 if (mine) {
@@ -49,40 +48,34 @@ public class DefaultBubbleHelper {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return context.getDrawable(style.getMessageBubbleDrawable(mine));
 
-                configParams(style, mine);
+                configParams(style, mine, true);
                 if (isDefaultBubble(style, mine, context))
                     applyStyleDefault(positions, mine, context);
-                if (mine) {
-                    // set corner radius if the attachment has title or description
-                    if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                        bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
-                }else {
-                    // set corner radius if the attachment has title or description
-                    if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
-                        bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
-                }
-                bgColor = Color.WHITE;
+
+                // set corner radius if the attachment has title or description
+                if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
+                    bottomLeftRadius = bottomRightRadius = 0;
+
                 return getBubbleDrawable();
             }
 
             @Override
             public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions){
-                if (style.getMessageBubbleDrawable(mine)!= -1)
+                if (style.getMessageBubbleDrawable(mine) != -1)
                     return context.getDrawable(style.getMessageBubbleDrawable(mine));
 
-                configParams(style, mine);
+                configParams(style, mine, true);
                 if (isDefaultBubble(style, mine, context))
                     applyStyleDefault(positions, mine, context);
 
-                topLeftRadius = 0;
-                topRightRadius = 0;
+                topLeftRadius = topRightRadius = 0;
                 return getBubbleDrawable();
             }
         };
     }
 
-    private static void configParams(MessageListViewStyle style, boolean isMine){
-        bgColor = style.getMessageBackgroundColor(isMine);
+    private static void configParams(MessageListViewStyle style, boolean isMine, boolean isAttachment){
+        bgColor = isAttachment ? style.getAttachmentBackgroundColor(isMine) : style.getMessageBackgroundColor(isMine);
         strokeColor = style.getMessageBorderColor(isMine);
         strokeWidth = style.getMessageBorderWidth(isMine);
         topLeftRadius = style.getMessageTopLeftCornerRadius(isMine);

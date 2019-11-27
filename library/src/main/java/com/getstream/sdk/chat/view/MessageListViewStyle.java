@@ -35,9 +35,13 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
     // Attachment
+
     public TextStyle attachmentTitleText;
     public TextStyle attachmentDescriptionText;
     public TextStyle attachmentFileSizeText;
+
+    private int attachmentBackgroundColorMine;
+    private int attachmentBackgroundColorTheirs;
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -106,10 +110,10 @@ public class MessageListViewStyle extends BaseStyle {
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
         // Attachment
         attachmentTitleText = new TextStyle.Builder(a)
-                .size(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.stream_attach_title_text))
-                .color(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.stream_attach_title_text))
+                .size(R.styleable.MessageListView_streamAttachmentTitleTextSizeMine, getDimension(R.dimen.stream_attach_title_text))
+                .color(R.styleable.MessageListView_streamAttachmentTitleTextColorMine, getColor(R.color.stream_attach_title_text))
                 .font(R.styleable.MessageListView_streamAttachmentTitleTextFontAssets, R.styleable.MessageListView_streamAttachmentTitleTextFont)
-                .style(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD)
+                .style(R.styleable.MessageListView_streamAttachmentTitleTextStyleMine, Typeface.BOLD)
                 .build();
 
         attachmentDescriptionText = new TextStyle.Builder(a)
@@ -126,6 +130,8 @@ public class MessageListViewStyle extends BaseStyle {
                 .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD)
                 .build();
 
+        attachmentBackgroundColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorMine, messageBackgroundColorMine);
+        attachmentBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorTheirs, messageBackgroundColorTheirs);
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
@@ -184,22 +190,6 @@ public class MessageListViewStyle extends BaseStyle {
         a.recycle();
     }
 
-//    public int getMessageTextSize(boolean isMine) {
-//        return isMine ? messageTextMine : messageTextSizeTheirs;
-//    }
-//
-//    public int getMessageTextColor(boolean isMine) {
-//        return isMine ? messageTextColorMine : messageTextColorTheirs;
-//    }
-//
-//    public int getMessageTextStyle(boolean isMine) {
-//        return isMine ? messageTextStyleMine : messageTextStyleTheirs;
-//    }
-//
-//    public String getMessageTextFontPath(boolean isMine) {
-//        return isMine ? messageTextFontPathMine : messageTextFontPathTheirs;
-//    }
-
     public int getMessageBubbleDrawable(boolean isMine) {
         return isMine ? messageBubbleDrawableMine : messageBubbleDrawableTheirs;
     }
@@ -233,6 +223,12 @@ public class MessageListViewStyle extends BaseStyle {
         return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
     }
 
+    // Attachment
+
+
+    public int getAttachmentBackgroundColor(boolean isMine) {
+        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
+    }
     // Reaction Dialog
     public boolean isReactionEnabled() {
         return reactionEnabled;
