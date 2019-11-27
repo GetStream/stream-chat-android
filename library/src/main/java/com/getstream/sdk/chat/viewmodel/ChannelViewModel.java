@@ -561,7 +561,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-
+        
         if (message.getType().equals(ModelType.message_reply)
                 || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()

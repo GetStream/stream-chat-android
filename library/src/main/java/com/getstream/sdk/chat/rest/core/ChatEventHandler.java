@@ -170,9 +170,11 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onMessageRead);
                 break;
             case REACTION_NEW:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 dispatchChannelEvent(client, event, this::onReactionNew);
                 break;
             case REACTION_DELETED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 dispatchChannelEvent(client, event, this::onReactionDeleted);
                 break;
             case MEMBER_ADDED:
