@@ -2,13 +2,42 @@
 
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
 
-[stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
+[stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low level chat SDK and a set of reusable UI components. Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
-As a first step try the tutorial: [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java), [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin).
+**Quick Links**
 
-You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
-This library includes both a low level chat SDK and a set of reusable UI components.
-Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
+* [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
+* [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
+* [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin)
+* [Chat UI Kit](https://getstream.io/chat/ui-kit/)
+
+## Java/Kotlin Chat Tutorial
+
+The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make common changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
+
+## Example App
+
+This repo includes a fully functional example app. To run the example app:
+
+```
+git clone git@github.com:GetStream/stream-chat-android.git
+```
+
+Open the project in Android Studio. Setup your emulator (we're using Pixel 3, API 29 at the moment). Note that the gradle sync process can take some time when you first open the project. 
+
+## Docs
+
+### UI Components
+
+* [Channel List](./docs/ChannelList.md)
+* [Message List](./docs/MessageList.md)
+* [Message Input](./docs/MessageInput.md)
+* [Channel Header](./docs/ChannelHeader.md)
+
+### Chat API
+
+The low level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+You typically start out by using our UI components, and afterwards build your own as needed using the low level API.
 
 ## Installing the Java Chat SDK
 
@@ -226,17 +255,7 @@ Connection status to Chat is available via `StreamChat.getOnlineStatus()` which 
 StreamChat.getOnlineStatus().observe(...);
 ```
 
-## UI Components
 
-* [Channel List](./docs/ChannelList.md)
-* [Message List](./docs/MessageList.md)
-* [Message Input](./docs/MessageInput.md)
-* [Channel Header](./docs/ChannelHeader.md)
-
-## Documentation
-
-[Java Chat Tutorial page](https://getstream.io/tutorials/android-chat/)
-[Official API Docs](https://getstream.io/chat/docs)
 
 ## Supported features
 
