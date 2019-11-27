@@ -11,62 +11,66 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
 
 public class ChannelListViewStyle extends BaseStyle {
+
     final String TAG = ChannelListViewStyle.class.getSimpleName();
-    // dimensions
-    // layouts
+
     public @LayoutRes
     int channelPreviewLayout;
-    // Channel Title
-    private int channelTitleTextSize;
-    private int channelTitleTextColor;
-    private int channelTitleUnreadTextColor;
-    private String channelTitleTextFontPath;
-    private int channelTitleTextStyle;
-    private int channelTitleUnreadTextStyle;
+
+    public final TextStyle channelTitleText;
+    public final TextStyle channelTitleUnreadText;
+    public final TextStyle lastMessage;
+    public final TextStyle lastMessageUnread;
+    public final TextStyle lastMessageDateText;
+    public final TextStyle lastMessageDateUnreadText;
+
     private String channelWithoutNameText;
-    // Last Message
-    private int lastMessageTextSize;
-    private int lastMessageTextColor;
-    private int lastMessageUnreadTextColor;
-    private String lastMessageTextFontPath;
-    private int lastMessageTextStyle;
-    private int lastMessageUnreadTextStyle;
-    // Last Message Date
-    private int lastMessageDateTextSize;
-    private int lastMessageDateTextColor;
-    private int lastMessageDateUnreadTextColor;
-    private String lastMessageDateTextFontPath;
-    private int lastMessageDateTextStyle;
-    private int lastMessageDateUnreadTextStyle;
 
     public ChannelListViewStyle(Context c, AttributeSet attrs) {
         this.setContext(c);
         TypedArray a = c.obtainStyledAttributes(attrs,
                 R.styleable.ChannelListView, 0, 0);
 
-        channelTitleTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title));
-        channelTitleTextColor = a.getColor(R.styleable.ChannelListView_streamChannelTitleTextColor, getColor(R.color.stream_black));
-        channelTitleUnreadTextColor = a.getColor(R.styleable.ChannelListView_streamChannelTitleUnreadTextColor, getColor(R.color.stream_black));
-        channelTitleTextFontPath = a.getString(R.styleable.ChannelListView_streamChannelTitleTextFontPath);
-        channelTitleTextStyle = a.getInt(R.styleable.ChannelListView_streamChannelTitleTextStyle, Typeface.BOLD);
-        channelTitleUnreadTextStyle = a.getInt(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD);
+        channelTitleText = new TextStyle.Builder(a)
+                .size(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title))
+                .color(R.styleable.ChannelListView_streamChannelTitleTextColor, getColor(R.color.stream_black))
+                .font(R.styleable.ChannelListView_streamChannelTitleTextFontAssets, R.styleable.ChannelListView_streamChannelTitleTextFont)
+                .style(R.styleable.ChannelListView_streamChannelTitleTextStyle, Typeface.BOLD)
+                .build();
+
+        channelTitleUnreadText = new TextStyle.Builder(a)
+                .style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
+                .color(R.styleable.ChannelListView_streamChannelTitleUnreadTextColor, getColor(R.color.stream_black))
+                .build();
+
         channelWithoutNameText = a.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText);
 
-        lastMessageTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamLastMessageTextSize, getDimension(R.dimen.stream_channel_item_message));
-        lastMessageTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageTextColor, getColor(R.color.stream_gray_dark));
-        lastMessageUnreadTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageUnreadTextColor, getColor(R.color.stream_black));
-        lastMessageTextFontPath = a.getString(R.styleable.ChannelListView_streamLastMessageTextFontPath);
-        lastMessageTextStyle = a.getInt(R.styleable.ChannelListView_streamLastMessageTextStyle, Typeface.NORMAL);
-        lastMessageUnreadTextStyle = a.getInt(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD);
+        lastMessage = new TextStyle.Builder(a)
+                .size(R.styleable.ChannelListView_streamLastMessageTextSize, getDimension(R.dimen.stream_channel_item_message))
+                .color(R.styleable.ChannelListView_streamLastMessageTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.ChannelListView_streamLastMessageTextFontAssets, R.styleable.ChannelListView_streamLastMessageTextFont)
+                .style(R.styleable.ChannelListView_streamLastMessageTextStyle, Typeface.NORMAL)
+                .build();
 
-        lastMessageDateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date));
-        lastMessageDateTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_gray_dark));
-        lastMessageDateUnreadTextColor = a.getColor(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_black));
-        lastMessageDateTextFontPath = a.getString(R.styleable.ChannelListView_streamLastMessageDateTextFontPath);
-        lastMessageDateTextStyle = a.getInt(R.styleable.ChannelListView_streamLastMessageDateTextStyle, Typeface.NORMAL);
-        lastMessageDateUnreadTextStyle = a.getInt(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD);
+        lastMessageUnread = new TextStyle.Builder(a)
+                .style(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD)
+                .color(R.styleable.ChannelListView_streamLastMessageUnreadTextColor, getColor(R.color.stream_black))
+                .build();
+
+        lastMessageDateText = new TextStyle.Builder(a)
+                .size(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date))
+                .color(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.ChannelListView_streamLastMessageDateTextFontAssets, R.styleable.ChannelListView_streamLastMessageDateTextFont)
+                .style(R.styleable.ChannelListView_streamLastMessageDateTextStyle, Typeface.NORMAL)
+                .build();
+
+        lastMessageDateUnreadText = new TextStyle.Builder(a)
+                .style(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD)
+                .color(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_black))
+                .build();
 
         channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.stream_item_channel);
         // Avatar
@@ -77,19 +81,24 @@ public class ChannelListViewStyle extends BaseStyle {
         avatarBorderColor = a.getColor(R.styleable.ChannelListView_streamAvatarBorderColor, Color.WHITE);
         avatarBackGroundColor = a.getColor(R.styleable.ChannelListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.ChannelListView_streamAvatarTextColor, Color.WHITE);
-        avatarInitialTextFontPath = a.getString(R.styleable.ChannelListView_streamAvatarTextFontPath);
-        avatarInitialTextStyle = a.getInt(R.styleable.ChannelListView_streamAvatarTextStyle, Typeface.BOLD);
+        avatarInitialText = new TextStyle.Builder(a)
+                .size(R.styleable.ChannelListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials))
+                .color(R.styleable.ChannelListView_streamAvatarTextColor, Color.WHITE)
+                .font(R.styleable.ChannelListView_streamAvatarTextFontAssets, R.styleable.ChannelListView_streamAvatarTextFont)
+                .style(R.styleable.ChannelListView_streamAvatarTextStyle, Typeface.BOLD)
+                .build();
+
         // Read State
         showReadState = a.getBoolean(R.styleable.ChannelListView_streamShowReadState, true);
         readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarWidth, getDimension(R.dimen.stream_read_state_avatar_width));
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
 
-        readStateTextSize = a.getDimensionPixelSize(R.styleable.ChannelListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.ChannelListView_streamReadStateTextColor, Color.BLACK);
-        readStateTextFontPath = a.getString(R.styleable.ChannelListView_streamReadStateTextFontPath);
-        readStateTextStyle = a.getInt(R.styleable.ChannelListView_streamReadStateTextStyle, Typeface.BOLD);
+        readStateText = new TextStyle.Builder(a)
+                .size(R.styleable.ChannelListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size))
+                .color(R.styleable.ChannelListView_streamReadStateTextColor, Color.BLACK)
+                .font(R.styleable.ChannelListView_streamReadStateTextFontAssets, R.styleable.ChannelListView_streamReadStateTextFont)
+                .style(R.styleable.ChannelListView_streamReadStateTextStyle, Typeface.BOLD)
+                .build();
 
         a.recycle();
     }
@@ -98,80 +107,8 @@ public class ChannelListViewStyle extends BaseStyle {
         avatarBorderColor = color;
     }
 
-    public int getChannelTitleTextSize() {
-        return channelTitleTextSize;
-    }
-
-    public int getChannelTitleTextColor() {
-        return channelTitleTextColor;
-    }
-
-    public String getChannelTitleTextFontPath() {
-        return channelTitleTextFontPath;
-    }
-
-    public int getChannelTitleTextStyle() {
-        return channelTitleTextStyle;
-    }
-
-    public int getChannelTitleUnreadTextStyle() {
-        return channelTitleUnreadTextStyle;
-    }
-
-    public int getChannelTitleUnreadTextColor() {
-        return channelTitleUnreadTextColor;
-    }
-
     public String getChannelWithoutNameText() {
         return !TextUtils.isEmpty(channelWithoutNameText) ? channelWithoutNameText : context.getString(R.string.stream_channel_unknown_title);
-    }
-
-    public int getLastMessageTextSize() {
-        return lastMessageTextSize;
-    }
-
-    public int getLastMessageTextColor() {
-        return lastMessageTextColor;
-    }
-
-    public String getLastMessageTextFontPath() {
-        return lastMessageTextFontPath;
-    }
-
-    public int getLastMessageTextStyle() {
-        return lastMessageTextStyle;
-    }
-
-    public int getLastMessageUnreadTextColor() {
-        return lastMessageUnreadTextColor;
-    }
-
-    public int getLastMessageUnreadTextStyle() {
-        return lastMessageUnreadTextStyle;
-    }
-
-    public int getLastMessageDateTextSize() {
-        return lastMessageDateTextSize;
-    }
-
-    public int getLastMessageDateTextColor() {
-        return lastMessageDateTextColor;
-    }
-
-    public int getLastMessageDateUnreadTextColor() {
-        return lastMessageDateUnreadTextColor;
-    }
-
-    public String getLastMessageDateTextFontPath() {
-        return lastMessageDateTextFontPath;
-    }
-
-    public int getLastMessageDateTextStyle() {
-        return lastMessageDateTextStyle;
-    }
-
-    public int getLastMessageDateUnreadTextStyle() {
-        return lastMessageDateUnreadTextStyle;
     }
 
     public int getChannelPreviewLayout() {

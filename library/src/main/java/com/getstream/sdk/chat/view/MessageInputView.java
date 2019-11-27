@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -29,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -38,6 +38,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
@@ -152,16 +153,13 @@ public class MessageInputView extends RelativeLayout {
         // Input Background
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
-        binding.etMessage.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
-        binding.etMessage.setHint(style.getInputHint());
-        binding.etMessage.setTextColor(style.getInputTextColor());
-        binding.etMessage.setHintTextColor(style.getInputHintColor());
-        TextViewUtils.setCustomTextFont(binding.etMessage, style.getInputTextFontPath(), style.getInputTextStyle(), getContext());
-        TextViewUtils.setCustomTextFont(binding.tvTitle, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
-        TextViewUtils.setCustomTextFont(binding.tvCommand, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
-        TextViewUtils.setCustomTextFont(binding.tvUploadPhotoVideo, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
-        TextViewUtils.setCustomTextFont(binding.tvUploadFile, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
-        TextViewUtils.setCustomTextFont(binding.tvUploadCamera, style.getInputBackgroundTextFontPath(), style.getInputBackgroundTextStyle(), getContext());
+        style.inputText.apply(binding.etMessage);
+
+        style.inputBackgroundText.apply(binding.tvTitle);
+        style.inputBackgroundText.apply(binding.tvCommand);
+        style.inputBackgroundText.apply(binding.tvUploadPhotoVideo);
+        style.inputBackgroundText.apply(binding.tvUploadFile);
+        style.inputBackgroundText.apply(binding.tvUploadCamera);
     }
 
     private void configOnClickListener(){

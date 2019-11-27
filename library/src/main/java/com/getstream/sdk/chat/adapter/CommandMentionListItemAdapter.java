@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +10,12 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.TextViewUtils;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.view.BaseStyle;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -78,9 +78,11 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         binding.setCommand(command);
         if (style instanceof MessageInputStyle){
             MessageInputStyle style_ = (MessageInputStyle)style;
-            TextViewUtils.setCustomTextFont(binding.tvCommand, style_.getInputBackgroundTextFontPath(), style_.getInputBackgroundTextStyle(), context);
-            TextViewUtils.setCustomTextFont(binding.tvDes, style_.getInputBackgroundTextFontPath(), style_.getInputBackgroundTextStyle(), context);
-            TextViewUtils.setCustomTextFont(binding.tvArg, style_.getInputBackgroundTextFontPath(), style_.getInputBackgroundTextStyle(), context);
+            FontsManager fontsManager = StreamChat.getFontsManager();
+
+            style_.inputBackgroundText.apply(binding.tvCommand);
+            style_.inputBackgroundText.apply(binding.tvDes);
+            style_.inputBackgroundText.apply(binding.tvArg);
         }
     }
 
@@ -88,10 +90,10 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         User user = (User) commands.get(position);
         binding.setUser(user);
         binding.avatar.setUser(user, style);
-        if (style instanceof MessageInputStyle){
+        if (style instanceof MessageInputStyle) {
             MessageInputStyle style_ = (MessageInputStyle)style;
-            TextViewUtils.setCustomTextFont(binding.tvUsername, style_.getInputBackgroundTextFontPath(), style_.getInputBackgroundTextStyle(), context);
-            TextViewUtils.setCustomTextFont(binding.tvYou, style_.getInputBackgroundTextFontPath(), style_.getInputBackgroundTextStyle(), context);
+            style_.inputBackgroundText.apply(binding.tvUsername);
+            style_.inputBackgroundText.apply(binding.tvYou);
         }else if (style instanceof MessageListViewStyle){
 
         }

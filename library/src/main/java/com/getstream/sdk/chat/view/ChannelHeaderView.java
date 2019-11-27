@@ -126,14 +126,10 @@ public class ChannelHeaderView extends RelativeLayout {
 
     private void applyStyle() {
         // Title
-        binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
-        binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        TextViewUtils.setCustomTextFont(binding.tvChannelName, style.getChannelTitleTextFontPath(), style.getChannelTitleTextStyle(), getContext());
+        style.channelTitleText.apply(binding.tvChannelName);
 
         // Last Active
-        binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
-        binding.tvActive.setTextColor(style.getLastActiveTextColor());
-        TextViewUtils.setCustomTextFont(binding.tvActive, style.getLastActiveTextFontPath(), style.getLastActiveTextStyle(), getContext());
+        style.lastActiveText.apply(binding.tvActive);
         binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : GONE);
         // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);

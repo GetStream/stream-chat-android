@@ -15,6 +15,7 @@ import androidx.annotation.DrawableRes;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
 
 /**
  * Style for MessageInputStyle customization by xml attributes
@@ -42,20 +43,13 @@ public class MessageInputStyle extends BaseStyle {
 
     private String inputHint;
 
-    private int inputTextSize;
-    private int inputTextColor;
-    private int inputHintColor;
-    private String inputTextFontPath;
-    private int inputTextStyle;
+    public TextStyle inputText;
 
     private Drawable inputBackground;
     private Drawable inputSelectedBackground;
     private Drawable inputEditBackground;
 
-    private int inputBackgroundTextSize;
-    private int inputBackgroundTextColor;
-    private String inputBackgroundTextFontPath;
-    private int inputBackgroundTextStyle;
+    public TextStyle inputBackgroundText;
 
     public MessageInputStyle(Context context, AttributeSet attrs) {
         setContext(context);
@@ -92,20 +86,25 @@ public class MessageInputStyle extends BaseStyle {
         // Input Text
         inputHint = a.getString(R.styleable.MessageInputView_streamInputHint);
 
-        inputTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputTextSize, getDimension(R.dimen.stream_input_text_size));
-        inputTextColor = a.getColor(R.styleable.MessageInputView_streamInputTextColor, getColor(R.color.stream_black));
-        inputHintColor = a.getColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.stream_gray_dark));
-        inputTextFontPath = a.getString(R.styleable.MessageInputView_streamInputTextFontPath);
-        inputTextStyle = a.getInt(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL);
+        inputText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageInputView_streamInputTextSize, getDimension(R.dimen.stream_input_text_size))
+                .color(R.styleable.MessageInputView_streamInputTextColor, getColor(R.color.stream_black))
+                .hintColor(R.styleable.MessageInputView_streamInputHintColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageInputView_streamInputTextFontAssets, R.styleable.MessageInputView_streamInputTextFont)
+                .style(R.styleable.MessageInputView_streamInputTextStyle, Typeface.NORMAL)
+                .build();
 
         inputBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputBackground, R.drawable.stream_round_message_composer));
         inputSelectedBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputSelectedBackground, R.drawable.stream_round_message_composer_select));
         inputEditBackground = getDrawable(a.getResourceId(R.styleable.MessageInputView_streamInputEditBackground, R.drawable.stream_round_message_composer_edit));
 
-        inputBackgroundTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamInputBackgroundTextSize, getDimension(R.dimen.stream_input_text_size));
-        inputBackgroundTextColor = a.getColor(R.styleable.MessageInputView_streamInputBackgroundTextColor, getColor(R.color.stream_black));
-        inputBackgroundTextFontPath = a.getString(R.styleable.MessageInputView_streamInputBackgroundTextFontPath);
-        inputBackgroundTextStyle = a.getInt(R.styleable.MessageInputView_streamInputBackgroundTextStyle, Typeface.NORMAL);
+        inputBackgroundText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageInputView_streamInputBackgroundTextSize, getDimension(R.dimen.stream_input_text_size))
+                .color(R.styleable.MessageInputView_streamInputBackgroundTextColor, getColor(R.color.stream_black))
+                .font(R.styleable.MessageInputView_streamInputBackgroundTextFontAssets, R.styleable.MessageInputView_streamInputBackgroundTextFont)
+                .style(R.styleable.MessageInputView_streamInputBackgroundTextStyle, Typeface.NORMAL)
+                .build();
+
         // Avatar
         avatarWidth = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width));
         avatarHeight = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height));
@@ -114,10 +113,12 @@ public class MessageInputStyle extends BaseStyle {
         avatarBorderColor = a.getColor(R.styleable.MessageInputView_streamAvatarBorderColor, Color.WHITE);
         avatarBackGroundColor = a.getColor(R.styleable.MessageInputView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE);
-        avatarInitialTextFontPath = a.getString(R.styleable.MessageInputView_streamAvatarTextFontPath);
-        avatarInitialTextStyle = a.getInt(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD);
+        avatarInitialText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageInputView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials))
+                .color(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE)
+                .font(R.styleable.MessageInputView_streamAvatarTextFontAssets, R.styleable.MessageInputView_streamAvatarTextFont)
+                .style(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD)
+                .build();
 
         prefs = context.getSharedPreferences(
                 "MessageInputStyle", Context.MODE_PRIVATE);
@@ -199,22 +200,6 @@ public class MessageInputStyle extends BaseStyle {
         return TextUtils.isEmpty(inputHint) ? context.getString(R.string.stream_input_hint) : inputHint;
     }
 
-    public int getInputTextSize() {
-        return inputTextSize;
-    }
-
-    public int getInputTextColor() {
-        return inputTextColor;
-    }
-
-    public int getInputHintColor() {
-        return inputHintColor;
-    }
-
-    public int getInputTextStyle() {
-        return inputTextStyle;
-    }
-
     // Inputbox Background
     public Drawable getInputBackground() {
         return inputBackground;
@@ -226,25 +211,5 @@ public class MessageInputStyle extends BaseStyle {
 
     public Drawable getInputEditBackground() {
         return inputEditBackground;
-    }
-
-    public String getInputTextFontPath() {
-        return inputTextFontPath;
-    }
-
-    public int getInputBackgroundTextSize() {
-        return inputBackgroundTextSize;
-    }
-
-    public int getInputBackgroundTextColor() {
-        return inputBackgroundTextColor;
-    }
-
-    public String getInputBackgroundTextFontPath() {
-        return inputBackgroundTextFontPath;
-    }
-
-    public int getInputBackgroundTextStyle() {
-        return inputBackgroundTextStyle;
     }
 }

@@ -8,19 +8,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
 
 public class MessageListViewStyle extends BaseStyle {
     private static final String TAG = MessageListViewStyle.class.getSimpleName();
 
     // Message text
-    private int messageTextSizeMine;
-    private int messageTextSizeTheirs;
-    private int messageTextColorMine;
-    private int messageTextColorTheirs;
-    private int messageTextStyleMine;
-    private int messageTextStyleTheirs;
-    private String messageTextFontPathMine;
-    private String messageTextFontPathTheirs;
+    public TextStyle messageTextMine;
+    public TextStyle messageTextTheirs;
+
     // Message Bubble
     private Drawable messageBubbleDrawableMine;
     private Drawable messageBubbleDrawableTheirs;
@@ -39,20 +35,9 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
     // Attachment
-    private int attachmentTitleTextSize;
-    private int attachmentTitleTextColor;
-    private String attachmentTitleTextFontPath;
-    private int attachmentTitleTextStyle;
-
-    private int attachmentDescriptionTextSize;
-    private int attachmentDescriptionTextColor;
-    private String attachmentDescriptionTextFontPath;
-    private int attachmentDescriptionTextStyle;
-
-    private int attachmentFileSizeTextSize;
-    private int attachmentFileSizeTextColor;
-    private String attachmentFileSizeTextFontPath;
-    private int attachmentFileSizeTextStyle;
+    public TextStyle attachmentTitleText;
+    public TextStyle attachmentDescriptionText;
+    public TextStyle attachmentFileSizeText;
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -70,10 +55,8 @@ public class MessageListViewStyle extends BaseStyle {
     private boolean messageDateShow;
 
     // Date Separator
-    private int dateSeparatorDateTextSize;
-    private int dateSeparatorDateTextColor;
-    private String dateSeparatorDateTextFontPath;
-    private int dateSeparatorDateTextStyle;
+    public TextStyle dateSeparatorDateText;
+
     private int dateSeparatorLineColor;
     private int dateSeparatorLineWidth;
     private int dateSeparatorLineDrawable;
@@ -85,15 +68,20 @@ public class MessageListViewStyle extends BaseStyle {
                 R.styleable.MessageListView, 0, 0);
 
         // Message Text
-        messageTextSizeMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeMine, getDimension(R.dimen.stream_message_text_font_size));
-        messageTextColorMine = a.getColor(R.styleable.MessageListView_streamMessageTextColorMine, Color.BLACK);
-        messageTextFontPathMine = a.getString(R.styleable.MessageListView_streamMessageTextFontPathMine);
-        messageTextStyleMine = a.getInt(R.styleable.MessageListView_streamMessageTextStyleMine, Typeface.NORMAL);
+        messageTextMine = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamMessageTextSizeMine, getDimension(R.dimen.stream_message_text_font_size))
+                .color(R.styleable.MessageListView_streamMessageTextColorMine, Color.BLACK)
+                .font(R.styleable.MessageListView_streamMessageTextFontMineAssets, R.styleable.MessageListView_streamMessageTextFontMine)
+                .style(R.styleable.MessageListView_streamMessageTextStyleMine, Typeface.NORMAL)
+                .build();
 
-        messageTextSizeTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageTextSizeTheirs, getDimension(R.dimen.stream_message_text_font_size));
-        messageTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK);
-        messageTextFontPathTheirs = a.getString(R.styleable.MessageListView_streamMessageTextFontPathTheirs);
-        messageTextStyleTheirs = a.getInt(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL);
+        messageTextTheirs = new TextStyle.Builder(a)
+                .size( R.styleable.MessageListView_streamMessageTextSizeTheirs, getDimension(R.dimen.stream_message_text_font_size))
+                .color(R.styleable.MessageListView_streamMessageTextColorTheirs, Color.BLACK)
+                .font(R.styleable.MessageListView_streamMessageTextFontTheirsAssets, R.styleable.MessageListView_streamMessageTextFontTheirs)
+                .style(R.styleable.MessageListView_streamMessageTextStyleTheirs, Typeface.NORMAL)
+                .build();
+
         // Message Bubble
         messageBubbleDrawableMine = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableMine, -1));
         messageBubbleDrawableTheirs = getDrawable(a.getResourceId(R.styleable.MessageListView_streamMessageBubbleDrawableTheirs, -1));
@@ -117,20 +105,27 @@ public class MessageListViewStyle extends BaseStyle {
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
         // Attachment
-        attachmentTitleTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.stream_attach_title_text));
-        attachmentTitleTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.stream_attach_title_text));
-        attachmentTitleTextFontPath = a.getString(R.styleable.MessageListView_streamAttachmentTitleTextFontPath);
-        attachmentTitleTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD);
+        attachmentTitleText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAttachmentTitleTextSize, getDimension(R.dimen.stream_attach_title_text))
+                .color(R.styleable.MessageListView_streamAttachmentTitleTextColor, getColor(R.color.stream_attach_title_text))
+                .font(R.styleable.MessageListView_streamAttachmentTitleTextFontAssets, R.styleable.MessageListView_streamAttachmentTitleTextFont)
+                .style(R.styleable.MessageListView_streamAttachmentTitleTextStyle, Typeface.BOLD)
+                .build();
 
-        attachmentDescriptionTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.stream_attach_description_text));
-        attachmentDescriptionTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_gray_dark));
-        attachmentDescriptionTextFontPath = a.getString(R.styleable.MessageListView_streamAttachmentDescriptionTextFontPath);
-        attachmentDescriptionTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL);
+        attachmentDescriptionText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAttachmentDescriptionTextSize, getDimension(R.dimen.stream_attach_description_text))
+                .color(R.styleable.MessageListView_streamAttachmentDescriptionTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamAttachmentDescriptionTextFontAssets, R.styleable.MessageListView_streamAttachmentDescriptionTextFont)
+                .style(R.styleable.MessageListView_streamAttachmentDescriptionTextStyle, Typeface.NORMAL)
+                .build();
 
-        attachmentFileSizeTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text));
-        attachmentFileSizeTextColor = a.getColor(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_gray_dark));
-        attachmentFileSizeTextFontPath = a.getString(R.styleable.MessageListView_streamAttachmentFileSizeTextFontPath);
-        attachmentFileSizeTextStyle = a.getInt(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD);
+        attachmentFileSizeText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text))
+                .color(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamAttachmentFileSizeTextFontAssets, R.styleable.MessageListView_streamAttachmentFileSizeTextFont)
+                .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD)
+                .build();
+
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
@@ -151,26 +146,33 @@ public class MessageListViewStyle extends BaseStyle {
         avatarBorderColor = a.getColor(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE);
         avatarBackGroundColor = a.getColor(R.styleable.MessageListView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark));
 
-        avatarInitialTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials));
-        avatarInitialTextColor = a.getColor(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE);
-        avatarInitialTextFontPath = a.getString(R.styleable.MessageListView_streamAvatarTextFontPath);
-        avatarInitialTextStyle = a.getInt(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD);
+        avatarInitialText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials))
+                .color(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE)
+                .font(R.styleable.MessageListView_streamAvatarTextFontAssets, R.styleable.MessageListView_streamAvatarTextFont)
+                .style(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD)
+                .build();
 
         // Read State
         showReadState = a.getBoolean(R.styleable.MessageListView_streamShowReadState, true);
         readStateAvatarWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarWidth, getDimension(R.dimen.stream_read_state_avatar_width));
         readStateAvatarHeight = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateAvatarHeight, getDimension(R.dimen.stream_read_state_avatar_height));
-        readStateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size));
-        readStateTextColor = a.getColor(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK);
-        readStateTextFontPath = a.getString(R.styleable.MessageListView_streamReadStateTextFontPath);
-        readStateTextStyle = a.getColor(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD);
+
+        readStateText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamReadStateTextSize, getDimension(R.dimen.stream_read_state_text_size))
+                .color(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK)
+                .font(R.styleable.MessageListView_streamReadStateTextFontAssets, R.styleable.MessageListView_streamReadStateTextFont)
+                .style(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD)
+                .build();
 
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
 
-        dateSeparatorDateTextSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text));
-        dateSeparatorDateTextColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_gray_dark));
-        dateSeparatorDateTextFontPath = a.getString(R.styleable.MessageListView_streamDateSeparatorDateTextFontPath);
-        dateSeparatorDateTextStyle = a.getInt(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD);
+        dateSeparatorDateText = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamDateSeparatorDateTextSize, getDimension(R.dimen.stream_date_separator_text))
+                .color(R.styleable.MessageListView_streamDateSeparatorDateTextColor, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamDateSeparatorDateTextFontAssets, R.styleable.MessageListView_streamDateSeparatorDateTextFont)
+                .style(R.styleable.MessageListView_streamDateSeparatorDateTextStyle, Typeface.BOLD)
+                .build();
 
         dateSeparatorLineWidth = a.getDimensionPixelSize(R.styleable.MessageListView_streamDateSeparatorLineWidth, getDimension(R.dimen.stream_date_separator_line_width));
         dateSeparatorLineColor = a.getColor(R.styleable.MessageListView_streamDateSeparatorLineColor, getColor(R.color.stream_gray_dark));
@@ -182,21 +184,21 @@ public class MessageListViewStyle extends BaseStyle {
         a.recycle();
     }
 
-    public int getMessageTextSize(boolean isMine) {
-        return isMine ? messageTextSizeMine : messageTextSizeTheirs;
-    }
-
-    public int getMessageTextColor(boolean isMine) {
-        return isMine ? messageTextColorMine : messageTextColorTheirs;
-    }
-
-    public int getMessageTextStyle(boolean isMine) {
-        return isMine ? messageTextStyleMine : messageTextStyleTheirs;
-    }
-
-    public String getMessageTextFontPath(boolean isMine) {
-        return isMine ? messageTextFontPathMine : messageTextFontPathTheirs;
-    }
+//    public int getMessageTextSize(boolean isMine) {
+//        return isMine ? messageTextMine : messageTextSizeTheirs;
+//    }
+//
+//    public int getMessageTextColor(boolean isMine) {
+//        return isMine ? messageTextColorMine : messageTextColorTheirs;
+//    }
+//
+//    public int getMessageTextStyle(boolean isMine) {
+//        return isMine ? messageTextStyleMine : messageTextStyleTheirs;
+//    }
+//
+//    public String getMessageTextFontPath(boolean isMine) {
+//        return isMine ? messageTextFontPathMine : messageTextFontPathTheirs;
+//    }
 
     public Drawable getMessageBubbleDrawable(boolean isMine) {
         return isMine ? messageBubbleDrawableMine : messageBubbleDrawableTheirs;
@@ -229,55 +231,6 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getMessageBorderWidth(boolean isMine) {
         return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
-    }
-
-    // Attachment
-    public int getAttachmentTitleTextSize() {
-        return attachmentTitleTextSize;
-    }
-
-    public int getAttachmentTitleTextColor() {
-        return attachmentTitleTextColor;
-    }
-
-    public String getAttachmentTitleTextFontPath() {
-        return attachmentTitleTextFontPath;
-    }
-
-    public int getAttachmentTitleTextStyle() {
-        return attachmentTitleTextStyle;
-    }
-
-    public int getAttachmentDescriptionTextSize() {
-        return attachmentDescriptionTextSize;
-    }
-
-    public int getAttachmentDescriptionTextColor() {
-        return attachmentDescriptionTextColor;
-    }
-
-    public String getAttachmentDescriptionTextFontPath() {
-        return attachmentDescriptionTextFontPath;
-    }
-
-    public int getAttachmentDescriptionTextStyle() {
-        return attachmentDescriptionTextStyle;
-    }
-
-    public int getAttachmentFileSizeTextSize() {
-        return attachmentFileSizeTextSize;
-    }
-
-    public int getAttachmentFileSizeTextColor() {
-        return attachmentFileSizeTextColor;
-    }
-
-    public String getAttachmentFileSizeTextFontPath() {
-        return attachmentFileSizeTextFontPath;
-    }
-
-    public int getAttachmentFileSizeTextStyle() {
-        return attachmentFileSizeTextStyle;
     }
 
     // Reaction Dialog
@@ -320,22 +273,6 @@ public class MessageListViewStyle extends BaseStyle {
 
 
     // Date Separator
-
-    public int getDateSeparatorDateTextSize() {
-        return dateSeparatorDateTextSize;
-    }
-
-    public String getDateSeparatorDateTextFontPath() {
-        return dateSeparatorDateTextFontPath;
-    }
-
-    public int getDateSeparatorDateTextStyle() {
-        return dateSeparatorDateTextStyle;
-    }
-
-    public int getDateSeparatorDateTextColor() {
-        return dateSeparatorDateTextColor;
-    }
 
     public int getDateSeparatorLineColor() {
         return dateSeparatorLineColor;

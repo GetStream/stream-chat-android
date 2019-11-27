@@ -60,9 +60,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
     private void applyStyle(){
 
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getDateSeparatorDateTextSize());
-        tv_date.setTextColor(style.getDateSeparatorDateTextColor());
-        TextViewUtils.setCustomTextFont(tv_date, style.getDateSeparatorDateTextFontPath(), style.getDateSeparatorDateTextStyle(), context);
+        style.dateSeparatorDateText.apply(tv_date);
 
         if (style.getDateSeparatorLineDrawable() != -1) {
             int drawable = style.getDateSeparatorLineDrawable();

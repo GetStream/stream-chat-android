@@ -1,25 +1,25 @@
 package com.getstream.sdk.chat.view;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.RelativeLayout;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
@@ -153,24 +153,15 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         imageView.setBorderColor(style.getAvatarBorderColor());
         imageView.setPlaceholder(initial,
                 style.getAvatarBackGroundColor(),
-                style.getAvatarInitialTextColor());
+                style.avatarInitialText.color);
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
                     .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
-        if (!TextUtils.isEmpty(style.getAvatarInitialTextFontPath())) {
-            try {
-                Typeface font = Typeface.createFromAsset(getContext().getAssets(), style.getAvatarInitialTextFontPath());
-                imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        (int) (style.getAvatarInitialTextSize() / factor), font);
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-        } else
-            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    (int) (style.getAvatarInitialTextSize() / factor),
-                    style.getAvatarInitialTextStyle());
+
+        FontsManager fontsManager = StreamChat.getFontsManager();
+        fontsManager.setFont(style.avatarInitialText, imageView, factor);
     }
 }

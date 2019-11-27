@@ -7,6 +7,13 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.TextView;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.style.StreamChatStyle;
+
+import androidx.annotation.FontRes;
+import androidx.core.content.res.ResourcesCompat;
+
 public class TextViewUtils {
     interface Actions{
         interface BeforeChangedAction{
@@ -77,17 +84,5 @@ public class TextViewUtils {
                 action.act(editable);
             }
         });
-    }
-
-    public static void setCustomTextFont(TextView textView, String fontPath, int textStyle, Context context){
-        if (!TextUtils.isEmpty(fontPath)){
-            try {
-                Typeface font = Typeface.createFromAsset(context.getAssets(), fontPath);
-                textView.setTypeface(font);
-            }catch (RuntimeException e){
-                e.printStackTrace();
-            }
-        }else
-            textView.setTypeface(Typeface.DEFAULT, textStyle);
     }
 }

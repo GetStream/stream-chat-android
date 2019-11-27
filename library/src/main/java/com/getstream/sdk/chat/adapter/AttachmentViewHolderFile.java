@@ -47,13 +47,8 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        tv_file_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_file_title.setTextColor(style.getAttachmentTitleTextColor());
-        TextViewUtils.setCustomTextFont(tv_file_title, style.getAttachmentTitleTextFontPath(), style.getAttachmentTitleTextStyle(), context);
-
-        tv_file_size.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentFileSizeTextSize());
-        tv_file_size.setTextColor(style.getAttachmentFileSizeTextColor());
-        TextViewUtils.setCustomTextFont(tv_file_size, style.getAttachmentFileSizeTextFontPath(), style.getAttachmentFileSizeTextStyle(), context);
+        style.attachmentTitleText.apply(tv_file_title);
+        style.attachmentFileSizeText.apply(tv_file_size);
     }
 
     private void configAttachment() {

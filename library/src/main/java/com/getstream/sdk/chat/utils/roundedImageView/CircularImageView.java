@@ -245,7 +245,7 @@ public class CircularImageView
     private void setPlaceholderTextInternal(String text,
                                             @ColorInt int color,
                                             int textSize,
-                                            int typeface,
+                                            int style,
                                             boolean invalidate) {
         // Takes only the first character as the place holder
         mText = formatPlaceholderText(text);
@@ -261,8 +261,8 @@ public class CircularImageView
         if (null != mTextPaint) {
             mTextPaint.setColor(color);
             mTextPaint.setTextSize(textSize);
-            if (0 != typeface) {
-                Typeface typeface_ = Typeface.create(Typeface.DEFAULT, typeface);
+            if (0 != style) {
+                Typeface typeface_ = Typeface.create(Typeface.DEFAULT, style);
                 mTextPaint.setTypeface(typeface_);
             }
         }
@@ -427,13 +427,14 @@ public class CircularImageView
      * @param size
      */
     public final void setPlaceholderTextSize(int unit,
-                                             int size, int typeface) {
+                                             int size,
+                                             int style) {
         if (size < 0) {
             throw new IllegalArgumentException("Text size cannot be less than zero.");
         }
 
         int scaledSize = (int) TypedValue.applyDimension(unit, size, getResources().getDisplayMetrics());
-        setPlaceholderTextInternal(mText, mTextColor, scaledSize, typeface, true);
+        setPlaceholderTextInternal(mText, mTextColor, scaledSize, style, true);
     }
 
     /**

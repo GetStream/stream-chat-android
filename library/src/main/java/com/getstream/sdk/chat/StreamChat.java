@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -16,6 +17,11 @@ import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.core.ClientState;
+import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.style.FontsManagerImpl;
+import com.getstream.sdk.chat.style.StreamChatStyle;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,6 +40,8 @@ public class StreamChat {
     private static boolean lifecycleStopped;
     private static boolean userWasInitialized;
     private static Context context;
+    private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
+    private static FontsManager fontsManager;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -134,6 +142,20 @@ public class StreamChat {
         });
     }
 
+    public static void initStyle(StreamChatStyle style){
+        chatStyle = style;
+    }
+
+    @NotNull
+    public static StreamChatStyle getChatStyle() {
+        return chatStyle;
+    }
+
+    @NotNull
+    public static FontsManager getFontsManager(){
+        return fontsManager;
+    }
+
     public static synchronized boolean init(String apiKey, Context context) {
         return init(apiKey, new ApiClientOptions(), context);
     }
@@ -146,6 +168,9 @@ public class StreamChat {
         Log.i(TAG, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
+
+                fontsManager = new FontsManagerImpl(mContext);
+
                 Log.i(TAG, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
                 INSTANCE.setContext(StreamChat.context);
