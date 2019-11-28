@@ -547,5 +547,13 @@ public class ChannelState {
             return true;
         } else return myReadDate.getTime() > getLastMessage().getCreatedAt().getTime();
     }
+
+    @Override
+    public String toString() {
+        return "ChannelState{" +
+                "cid='" + cid + '\'' +
+                ", channel=" + channel +
+                '}';
+    }
 }
 
