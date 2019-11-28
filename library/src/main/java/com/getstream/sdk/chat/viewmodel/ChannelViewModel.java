@@ -999,6 +999,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     public void onError(String errMsg, int errCode) {
                         updateFailedMessage(message);
                         callback.onError(errMsg, errCode);
+                        message.setSyncStatus(Sync.LOCAL_FAILED);
                     }
                 });
     }

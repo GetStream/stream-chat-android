@@ -952,7 +952,7 @@ public class Client implements WSResponseHandler {
                         if (channel.getCreatedByUser() == null) {
                             channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
                         }
-                        
+
                         addChannelConfig(channel.getType(), channel.getConfig());
 
                         if (queryRequest.isWatch()) {

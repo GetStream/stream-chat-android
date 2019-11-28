@@ -31,6 +31,7 @@
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
     <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <string name="stream_message_invalid_response">Response or message is empty.</string>
+    <string name="stream_message_empty">Empty messages not allowed.</string>
     <!--Thread-->
     <plurals name="stream_reply_count">
         <item quantity="one">%d reply</item>

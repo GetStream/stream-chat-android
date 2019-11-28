@@ -15,6 +15,8 @@ import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.EventSubscriberRegistry;
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -550,18 +552,28 @@ public class Channel {
     // region Message
     public void sendMessage(@NonNull Message message,
                             @NonNull MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
-            message.setMentionedUsersId(mentionedUserIDs);
-        client.sendMessage(this, message, callback);
+        if ((message.getText() == null || message.getText().isEmpty())
+                && (message.getAttachments() == null || message.getAttachments().isEmpty())) {
+            callback.onError(StreamChat.getContext().getString(R.string.stream_message_empty), -1);
+        } else {
+            List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
+            if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+                message.setMentionedUsersId(mentionedUserIDs);
+            client.sendMessage(this, message, callback);
+        }
     }
 
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
-            message.setMentionedUsersId(mentionedUserIDs);
-        client.updateMessage(message, callback);
+        if ((message.getText() == null || message.getText().isEmpty())
+                && (message.getAttachments() == null || message.getAttachments().isEmpty())) {
+            callback.onError(StreamChat.getContext().getString(R.string.stream_message_empty), -1);
+        } else {
+            List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
+            if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+                message.setMentionedUsersId(mentionedUserIDs);
+            client.updateMessage(message, callback);
+        }
     }
 
     public void deleteMessage(@NonNull Message message,
