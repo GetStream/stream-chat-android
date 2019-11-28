@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
@@ -427,6 +428,10 @@ public class MessageInputController {
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
+        if (file.length()> Constant.MAX_UPLOAD_FILE_SIZE){
+            Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
+            return;
+        }
         convertAttachment(file, isImage);
     }
     private void convertAttachment(File file, boolean isImage) {
