@@ -15,6 +15,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -206,7 +207,10 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("members", members);
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+        Config conf = new Config();
+
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
         viewModel.setLoading();

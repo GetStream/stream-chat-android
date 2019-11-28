@@ -10,6 +10,9 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
@@ -38,6 +41,12 @@ public class StringUtility {
                 "[\u203C\u2049]\uFE0F?|[\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE]\uFE0F?|" +
                 "[\u00A9\u00AE]\uFE0F?|[\u2122\u2139]\uFE0F?|\uD83C\uDC04\uFE0F?|\uD83C\uDCCF\uFE0F?|" +
                 "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
+    }
+
+    public static boolean isHasMarkdown(String message) {
+        String pattenr = "[*@_~#{\\[\\]\"'|>]";
+        boolean isHasMarkdown = Pattern.compile(pattenr).matcher(message).find();
+        return isHasMarkdown;
     }
 
     public static String getDeletedOrMentionedText(Message message) {
@@ -69,7 +78,7 @@ public class StringUtility {
 
     @SuppressLint("DefaultLocale")
     public static String convertMentionedText(String text, String userName) {
-        if (text.substring(text.length() -1).equals("@"))
+        if (text.substring(text.length() - 1).equals("@"))
             return text + userName;
 
         String[] names = text.split("@");
