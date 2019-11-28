@@ -9,11 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -32,11 +27,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
-import static java.util.UUID.randomUUID;
 
 
 /**
@@ -79,15 +77,6 @@ public class MainActivity extends AppCompatActivity {
         });
         return client;
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = and(eq("type", "messaging"));
-        viewModel.setChannelFilter(filter);
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +141,9 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
+
         binding.ivAdd.setOnClickListener(v ->createNewChannelDialog());
+        initToolbar(binding);
     }
 
     void createNewChannelDialog() {
@@ -245,5 +236,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // endregion
+
+    private void initToolbar(ActivityMainBinding binding) {
+        binding.toolbar.setTitle("Stream Chat");
+        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
+    }
 
 }

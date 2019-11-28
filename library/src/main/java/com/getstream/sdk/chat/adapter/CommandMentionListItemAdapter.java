@@ -10,11 +10,15 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.view.BaseStyle;
+import com.getstream.sdk.chat.view.MessageInputStyle;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
@@ -22,11 +26,13 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
 
     private final String TAG = CommandMentionListItemAdapter.class.getSimpleName();
     private LayoutInflater layoutInflater;
+    private Context context;
     private List<Object> commands;
     private boolean isCommand;
     private STYLE style;
 
     public CommandMentionListItemAdapter(Context context, List<Object> commands, STYLE style, boolean isCommand) {
+        this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.commands = commands;
         this.style = style;
@@ -60,15 +66,37 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
 
         if (isCommand) {
-            Command command = (Command) commands.get(position);
-            ((StreamItemCommandBinding) binding).setCommand(command);
+            configCommands((StreamItemCommandBinding)binding, position);
         } else {
-            User user = (User) commands.get(position);
-            StreamItemMentionBinding mentionBinding = (StreamItemMentionBinding) binding;
-            mentionBinding.setUser(user);
-            mentionBinding.avatar.setUser(user, style);
+            configMentions((StreamItemMentionBinding)binding, position);
         }
         return binding.getRoot();
+    }
+
+    public void configCommands(StreamItemCommandBinding binding, int position){
+        Command command = (Command) commands.get(position);
+        binding.setCommand(command);
+        if (style instanceof MessageInputStyle){
+            MessageInputStyle style_ = (MessageInputStyle)style;
+            FontsManager fontsManager = StreamChat.getFontsManager();
+
+            style_.inputBackgroundText.apply(binding.tvCommand);
+            style_.inputBackgroundText.apply(binding.tvDes);
+            style_.inputBackgroundText.apply(binding.tvArg);
+        }
+    }
+
+    public void configMentions(StreamItemMentionBinding binding, int position){
+        User user = (User) commands.get(position);
+        binding.setUser(user);
+        binding.avatar.setUser(user, style);
+        if (style instanceof MessageInputStyle) {
+            MessageInputStyle style_ = (MessageInputStyle)style;
+            style_.inputBackgroundText.apply(binding.tvUsername);
+            style_.inputBackgroundText.apply(binding.tvYou);
+        }else if (style instanceof MessageListViewStyle){
+
+        }
     }
 
     public void setCommands(List<Object> commands) {

@@ -1,15 +1,14 @@
 package com.getstream.sdk.chat.rest.providers;
 
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
-import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,23 +17,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class StreamWebSocketServiceProviderTest {
 
-    @Test
-    void getWsUrlValidTest() throws UnsupportedEncodingException {
-        User user = new User("testId");
-        user.setName("TestName");
-        user.setImage("testImageUrl");
-        HashMap<String, Object> userDetails = new HashMap<>();
-        userDetails.put("testParamKey", "testParam");
-        user.setExtraData(userDetails);
-        StreamWebSocketServiceProvider provider = new StreamWebSocketServiceProvider(
-                new TestApiClientOptions("test-base-url://"), "testApiKey");
-        String wsUrl = provider.getWsUrl("testUserToken", user);
-        String userExpectedJson = "{\"server_determines_connection_id\":true," +
-                "\"user_id\":\"testId\",\"user_details\":{\"name\":\"TestName\",\"image\":\"testImageUrl\"," +
-                "\"testParamKey\":\"testParam\",\"id\":\"testId\"}}";
-        userExpectedJson = URLEncoder.encode(userExpectedJson, StandardCharsets.UTF_8.toString());
-        String expectedUrl = "test-base-url://connect?json=" + userExpectedJson + "&api_key=testApiKey&" +
-                "authorization=testUserToken&stream-auth-type=jwt";
-        assertEquals(expectedUrl, wsUrl);
+    StreamWebSocketServiceProvider provider;
+    String apiKey;
+
+    @BeforeEach
+    void setUp() {
+        apiKey = "test-key";
+        provider = new StreamWebSocketServiceProvider(new ApiClientOptions(), apiKey);
     }
+
+    @Test
+    void getWsUrlTest() throws UnsupportedEncodingException {
+        User user = new User();
+        user.setId("123");
+        user.setImage("image \" url");
+
+        String url = provider.getWsUrl("token", user);
+        assertEquals("wss://chat-us-east-1.stream-io-api.com/connect?json=%7B%22user_id%22%3A%22123%22%2C%22user_details%22%3A%7B%22image%22%3A%22image+%5C%22+url%22%2C%22id%22%3A%22123%22%7D%2C%22server_determines_connection_id%22%3Atrue%7D&api_key=test-key&authorization=token&stream-auth-type=jwt", url);
+    }
+
+    @Test
+    void buildUserDetailJSONTest() {
+        User user = new User();
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
+        user.setLastActive(new Date());
+        user.setId("123");
+
+        String json = provider.buildUserDetailJSON(user);
+        assertEquals("{\"user_id\":\"123\",\"user_details\":{\"id\":\"123\"},\"server_determines_connection_id\":true}", json);
+    }
+
+    @Test
+    void buildUserWithImageDetailJSONTest() {
+        User user = new User();
+        user.setImage("imageurl");
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
+        user.setLastActive(new Date());
+        user.setId("123");
+
+        String json = provider.buildUserDetailJSON(user);
+        assertEquals("{\"user_id\":\"123\",\"user_details\":{\"image\":\"imageurl\",\"id\":\"123\"},\"server_determines_connection_id\":true}", json);
+    }
+
 }

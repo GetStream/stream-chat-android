@@ -14,6 +14,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+def appVersion = "16.0"
 
 android {
     compileSdkVersion 28
@@ -22,21 +23,49 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 13
-        versionName "13.0"
+        versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            if (checkSigningEnvVars()) {
+                storeFile file(System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH'))
+                storePassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
+                keyAlias System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
+                keyPassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
+            } else {
+                logger.warn('Release env vars are not defined')
+            }
+        }
+    }
+
     buildTypes {
+
+        def defaultApiKey = 'qk4nn7rpcn75'
+        def defaultUserId = 'bender'
+        def defaultUserToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ'
+        def defaultUserName = 'Bender'
+        def defaultUserImage = 'https://bit.ly/321RmWb'
+
         release {
             minifyEnabled true
             shrinkResources true
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
+
+            buildConfigField "String", "API_KEY", "\"${defaultApiKey}\""
+            buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
+            buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
+            buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
+            buildConfigField "String", "USER_IMAGE", "\"${defaultUserImage}\""
         }
-//        debug {
-//            minifyEnabled false
-//            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android-optim    ize.txt'), 'proguard-rules.pro'
-//        }
-        all {
+
+        debug {
+            minifyEnabled false
+            shrinkResources false
 
             def customApiKey = System.getenv('STREAM_CHAT_API_KEY')
             def customUserId = System.getenv('STREAM_CHAT_USER_ID')
@@ -44,27 +73,40 @@ android {
             def customUserName = System.getenv('STREAM_CHAT_USER_NAME')
             def customUserImage = System.getenv('STREAM_CHAT_USER_IMAGE')
 
-            def defaultApiKey = 'qk4nn7rpcn75'
-            def defaultUserId = 'bender'
-            def defaultUserToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ'
-            def defaultUserName = 'Bender'
-            def defaultUserImage = 'https://bit.ly/321RmWb'
+            buildConfigField "String", "SDK_VERSION", '"master"'
 
             buildConfigField "String", "API_KEY", '"' + (customApiKey ? customApiKey : defaultApiKey) + '"'
             buildConfigField "String", "USER_ID", '"' + (customUserId ? customUserId : defaultUserId) + '"'
             buildConfigField "String", "USER_TOKEN", '"' + (customUserToken ? customUserToken : defaultUserToken) + '"'
             buildConfigField "String", "USER_NAME", '"' + (customUserName ? customUserName : defaultUserName) + '"'
             buildConfigField "String", "USER_IMAGE", '"' + (customUserImage ? customUserImage : defaultUserImage) + '"'
+        }
 
-            println(customUserName)
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                def buildType = variant.name
+                def version = variant.versionName
+
+                if (buildType == 'debug') {
+                    outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}]-[sdk-master].apk"
+                } else {
+                    outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}]-[sdk-${releaseSdkVersion}].apk"
+                }
+
+            }
         }
     }
+
     dataBinding {
         enabled = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
     }
 }
 
@@ -73,7 +115,9 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation project(':library')
+
+    releaseImplementation "com.github.getstream:stream-chat-android:$releaseSdkVersion"
+    debugImplementation project(':library')
 
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
@@ -89,3 +133,20 @@ dependencies {
 
 }
 apply plugin: 'com.google.gms.google-services'
+
+def checkSigningEnvVars() {
+    def storagePath = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH')
+    def password = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
+    def keyAlias = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
+    def keyPassword = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
+
+    return storagePath != null && password != null && keyAlias != null && keyPassword != null
+}
+
+gradle.taskGraph.useFilter { task ->
+    /**
+     * Ignores release unit tests.
+     * As it's assembled with releaseSdkVersion, which might be outdated
+     */
+    return task.name != 'testReleaseUnitTest'
+}
