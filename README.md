@@ -294,6 +294,29 @@ MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
     // TODO: use your Markdown library or the extended Markwon.
 });
 ```
+
+## Setup custom font
+
+You can set custom fonts for the entire library or for specific UI components.
+
+1. First of all you must put your own font file(s) (.ttf, .otf,…) in your `assets` or `res` folder.
+
+2. Setup for whole library
+
+You can register your custom fonts by `StreamChat.initStyle(StreamChatStyle)`
+```java
+StreamChat.initStyle(
+        new StreamChatStyle.Builder()
+                .setDefaultFont(R.font.your_custom_font)
+               //.setDefaultFont("fonts/your_custom_font.ttf")
+                .build()
+```
+
+3. Setup for specific UI components
+
+You can set custom fonts for specific UI components with or without settings for the entire library.  
+See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
+
 ## FAQ
 
 ### Channel List loading icons spins forever
