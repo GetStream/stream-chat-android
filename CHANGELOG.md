@@ -2,11 +2,12 @@
 
 - Ignore sample app release unit tests, keep debug tests
 - Added AttachmentBackgroundColorMine/Theirs
+- Fix Edit/Delete thread parent message
+- Replace fadein/fadeout animation of parent/current thread with default RecyclerView animation
 
 ## November 5th, 2019 - 3.3.0
 
 - Fix Concurrent modification when removing member from channel
-- Fix Edit/Delete thread parent message
 - Fix automention input issue
 - Fix Sent message progress infinite
 - Fix channel delete event handling in ChannelList view model
@@ -15,7 +16,6 @@
 - Add editMessage function in Channel View Model
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
-- Added AttachmentBackgroundColorMine/Theirs
 - Add Message Username and Date attrs
 
 ## November 5th, 2019 - 3.2.1
