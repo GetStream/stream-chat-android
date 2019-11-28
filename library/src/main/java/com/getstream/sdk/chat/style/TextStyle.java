@@ -15,8 +15,8 @@ public class TextStyle {
     public String fontAssetsPath = null;
     public int style = -1;
     public int size = -1;
-    public int color = -1;
-    public int hintColor = -1;
+    public int color = 0;
+    public int hintColor = 0;
 
     @Nullable
     public Typeface getFont() {
@@ -30,10 +30,10 @@ public class TextStyle {
         if (size != -1)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
 
-        if (color != -1)
+        if (color != 0)
             textView.setTextColor(color);
 
-        if (hintColor != -1)
+        if (hintColor != 0)
             textView.setHintTextColor(hintColor);
 
         fontsManager.setFont(this, textView);

@@ -43,7 +43,8 @@ public class MessageListViewStyle extends BaseStyle {
 
     public TextStyle attachmentDescriptionTextMine;
     public TextStyle attachmentDescriptionTextTheirs;
-    public TextStyle attachmentFileSizeText;
+    public TextStyle attachmentFileSizeTextMine;
+    public TextStyle attachmentFileSizeTextTheirs;
     private int attachmentBackgroundColorMine;
     private int attachmentBackgroundColorTheirs;
 
@@ -167,11 +168,18 @@ public class MessageListViewStyle extends BaseStyle {
                 .style(R.styleable.MessageListView_streamAttachmentDescriptionTextStyleTheirs, Typeface.NORMAL)
                 .build();
 
-        attachmentFileSizeText = new TextStyle.Builder(a)
-                .size(R.styleable.MessageListView_streamAttachmentFileSizeTextSize, getDimension(R.dimen.stream_attach_file_size_text))
-                .color(R.styleable.MessageListView_streamAttachmentFileSizeTextColor, getColor(R.color.stream_gray_dark))
-                .font(R.styleable.MessageListView_streamAttachmentFileSizeTextFontAssets, R.styleable.MessageListView_streamAttachmentFileSizeTextFont)
-                .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyle, Typeface.BOLD)
+        attachmentFileSizeTextMine = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAttachmentFileSizeTextSizeMine, getDimension(R.dimen.stream_attach_file_size_text))
+                .color(R.styleable.MessageListView_streamAttachmentFileSizeTextColorMine, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamAttachmentFileSizeTextFontAssetsMine, R.styleable.MessageListView_streamAttachmentFileSizeTextFontMine)
+                .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyleMine, Typeface.BOLD)
+                .build();
+
+        attachmentFileSizeTextTheirs = new TextStyle.Builder(a)
+                .size(R.styleable.MessageListView_streamAttachmentFileSizeTextSizeTheirs, getDimension(R.dimen.stream_attach_file_size_text))
+                .color(R.styleable.MessageListView_streamAttachmentFileSizeTextColorTheirs, getColor(R.color.stream_gray_dark))
+                .font(R.styleable.MessageListView_streamAttachmentFileSizeTextFontAssetsTheirs, R.styleable.MessageListView_streamAttachmentFileSizeTextFontTheirs)
+                .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyleTheirs, Typeface.BOLD)
                 .build();
 
         // Reaction
