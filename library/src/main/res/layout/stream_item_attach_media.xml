@@ -66,7 +66,6 @@
         android:id="@+id/cl_action"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_margin="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +80,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:gravity="center"
-            android:text="Send"
+            android:text="@string/stream_giphy_send"
             android:textColor="@color/stream_white"
             app:layout_constraintEnd_toStartOf="@+id/tv_action_shuffle"
             app:layout_constraintStart_toStartOf="parent" />
@@ -92,7 +91,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Shuffle"
+            android:text="@string/stream_giphy_shuffle"
             app:layout_constraintEnd_toStartOf="@+id/tv_action_cancel"
             app:layout_constraintStart_toEndOf="@+id/tv_action_send" />
 
@@ -104,7 +103,7 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:gravity="center"
-            android:text="Cancel"
+            android:text="@string/stream_giphy_cancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_action_shuffle" />
     </androidx.constraintlayout.widget.ConstraintLayout>
