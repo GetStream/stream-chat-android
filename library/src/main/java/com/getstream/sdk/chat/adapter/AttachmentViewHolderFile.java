@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -50,12 +48,11 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
         if(getMessageListItem().isMine()) {
             style.attachmentTitleTextMine.apply(tv_file_title);
+            style.attachmentFileSizeTextMine.apply(tv_file_size);
         } else {
             style.attachmentTitleTextTheirs.apply(tv_file_title);
+            style.attachmentFileSizeTextTheirs.apply(tv_file_size);
         }
-
-
-        style.attachmentFileSizeText.apply(tv_file_size);
     }
 
     private void configAttachment() {
