@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.SpannableString;
@@ -267,6 +266,13 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
+        style.messageUserNameText.apply(tv_username);
+
+        if(messageListItem.isMine()) {
+            style.messageDateTextMine.apply(tv_messagedate);
+        } else {
+            style.messageDateTextTheirs.apply(tv_messagedate);
+        }
     }
 
     private boolean isBottomPosition() {
@@ -372,9 +378,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
             return;
         }
-        tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getMessageTextSize(messageListItem.isMine()));
-        tv_text.setTextColor(style.getMessageTextColor(messageListItem.isMine()));
-        tv_text.setTypeface(Typeface.DEFAULT, style.getMessageTextStyle(messageListItem.isMine()));
+
+        if(messageListItem.isMine()) {
+            style.messageTextMine.apply(tv_text);
+        } else {
+            style.messageTextTheirs.apply(tv_text);
+        }
     }
 
     private void configMessageTextBackground() {
@@ -478,9 +487,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
+                || (position == 0 && TextUtils.isEmpty(message.getId()))
                 || isDeletedMessage()
                 || isFailedMessage()
-                || (position == 0 && message.isThreadParent())
                 || replyCount == 0
                 || isThread()) {
             iv_reply.setVisibility(View.GONE);

@@ -124,8 +124,6 @@ public class Message implements UserEntity {
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
-    private boolean isThreadParent = false; /*Used to tag Thread Parent Message*/
-
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -446,14 +444,6 @@ public class Message implements UserEntity {
 
     public void setCommandInfo(Map<String, String> commandInfo) {
         this.commandInfo = commandInfo;
-    }
-
-    public boolean isThreadParent() {
-        return isThreadParent;
-    }
-
-    public void setThreadParent(boolean threadParent) {
-        isThreadParent = threadParent;
     }
 
     @Override
