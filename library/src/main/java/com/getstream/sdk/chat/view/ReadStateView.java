@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
@@ -48,6 +49,8 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
+        FontsManager fontsManager = StreamChat.getFontsManager();
+
         User user = reads.get(0).getUser();
         String image = user.getImage();
         // Avatar
@@ -55,10 +58,17 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         imageView.setPlaceholder(user.getInitials(),
                 style.getAvatarBackGroundColor(),
-                style.getReadStateTextColor());
-        imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                (style.getReadStateTextSize()),
-                style.getReadStateTextStyle());
+                style.readStateText.color);
+
+        Typeface typeface = fontsManager.getFont(style.readStateText);
+
+        if (typeface != null) {
+            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                    (style.readStateText.size), typeface);
+        } else
+            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
+                   (style.readStateText.size),
+                    style.readStateText.style);
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
@@ -80,11 +90,13 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
             return;
         }
         // Count Text
+
         TextView textView = new TextView(getContext());
         textView.setText(String.valueOf(reads.size() - 1));
-        textView.setTextColor(style.getReadStateTextColor());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReadStateTextSize());
-        textView.setTypeface(Typeface.DEFAULT, style.getReadStateTextStyle());
+
+        textView.setTextColor(style.readStateText.color);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.readStateText.size);
+        fontsManager.setFont(style.readStateText, textView);
         textView.setGravity(Gravity.CENTER);
         textView.setId(2);
 

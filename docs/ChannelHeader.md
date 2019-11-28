@@ -206,6 +206,8 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 | `app:streamAvatarTextSize`                       | dimension            | 14sp       |
 | `app:streamAvatarTextColor`                      | color                | WHITE      |
 | `app:streamAvatarTextStyle`                      | normal, bold, italic | bold       |
+| `app:streamAvatarTextFont`                       | reference            | -          |
+| `app:streamAvatarTextFontAssets`                 | string               | -          |
 
 - **Header Title**
 
@@ -215,17 +217,20 @@ You must use the following properties in your XML to change your ChannelHeaderVi
 | `app:streamChannelHeaderTitleTextSize`           | dimension            | 16sp                 |
 | `app:streamChannelHeaderTitleTextColor`          | color                | BLACK                |
 | `app:streamChannelHeaderTitleTextStyle`          | normal, bold, italic | bold                 |
+| `app:streamChannelHeaderTitleTextFont`           | reference            | -                    |
+| `app:streamChannelHeaderTitleTextFontAssets`     | string               | -                    |
 		
 - **Last Active**
 
-| Properties                                       | Type                 | Default                |
-| ------------------------------------------------ | -------------------- | ---------------------- |
-| `app:streamChannelHeaderOfflineText`             | string               | Waiting for network... |
-| `app:streamChannelHeaderLastActiveShow`          | boolean              | true                   |
-| `app:streamChannelHeaderLastActiveTextSize`      | dimension            | 11sp                   |
-| `app:streamChannelHeaderLastActiveTextColor`     | color                | stream_gray_dark       |
-| `app:streamChannelHeaderLastActiveTextStyle`     | normal, bold, italic | normal                 |
-
+| Properties                                        | Type                 | Default                |
+| ------------------------------------------------- | -------------------- | ---------------------- |
+| `app:streamChannelHeaderOfflineText`              | string               | Waiting for network... |
+| `app:streamChannelHeaderLastActiveShow`           | boolean              | true                   |
+| `app:streamChannelHeaderLastActiveTextSize`       | dimension            | 11sp                   |
+| `app:streamChannelHeaderLastActiveTextColor`      | color                | stream_gray_dark       |
+| `app:streamChannelHeaderLastActiveTextStyle`      | normal, bold, italic | normal                 |
+| `app:streamChannelHeaderLastActiveTextFont`       | reference            | -                      |
+| `app:streamChannelHeaderLastActiveTextFontAssets` | string               | -                      |
 
 - **Back Button**
 

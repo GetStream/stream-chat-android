@@ -124,8 +124,6 @@ public class Message implements UserEntity {
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
-    private boolean isThreadParent = false; /*Used to tag Thread Parent Message*/
-
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -167,10 +165,10 @@ public class Message implements UserEntity {
 
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
-            message.setDate(TODAY.label);
+            message.setDate(TODAY.getLabel());
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             message.setYesterday(true);
-            message.setDate(YESTERDAY.label);
+            message.setDate(YESTERDAY.getLabel());
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
             DateFormat dayName = new SimpleDateFormat("EEEE");
             message.setDate(dayName.format(message.getCreatedAt()));
@@ -442,14 +440,6 @@ public class Message implements UserEntity {
 
     public void setCommandInfo(Map<String, String> commandInfo) {
         this.commandInfo = commandInfo;
-    }
-
-    public boolean isThreadParent() {
-        return isThreadParent;
-    }
-
-    public void setThreadParent(boolean threadParent) {
-        isThreadParent = threadParent;
     }
 
     @Override
