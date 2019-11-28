@@ -2,9 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,13 +45,14 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        tv_file_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_file_title.setTextColor(style.getAttachmentTitleTextColor());
-        tv_file_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
 
-        tv_file_size.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentFileSizeTextSize());
-        tv_file_size.setTextColor(style.getAttachmentFileSizeTextColor());
-        tv_file_size.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentFileSizeTextStyle());
+        if(getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_file_title);
+            style.attachmentFileSizeTextMine.apply(tv_file_size);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_file_title);
+            style.attachmentFileSizeTextTheirs.apply(tv_file_size);
+        }
     }
 
     private void configAttachment() {

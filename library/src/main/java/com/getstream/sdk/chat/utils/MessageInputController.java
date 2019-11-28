@@ -112,7 +112,7 @@ public class MessageInputController {
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
-        binding.tvTitle.setText(type.label);
+        binding.tvTitle.setText(type.getLabel());
         messageInputType = type;
         configPermissions();
     }
