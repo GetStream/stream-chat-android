@@ -2,6 +2,8 @@
 
 - Ignore sample app release unit tests, keep debug tests
 - Added AttachmentBackgroundColorMine/Theirs
+- Fix Edit/Delete thread parent message
+- Replace fadein/fadeout animation of parent/current thread with default RecyclerView animation
 
 ## November 5th, 2019 - 3.3.0
 
@@ -15,6 +17,7 @@
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
 - Add Message Username and Date attrs
+
 ## November 5th, 2019 - 3.2.1
 
 - Fixed transparency issues with user profile images on older devices

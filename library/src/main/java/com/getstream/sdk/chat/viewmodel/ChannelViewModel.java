@@ -306,13 +306,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return threadParentMessage.getValue() != null;
     }
 
-    private void configThread(Message threadParentMessage_) {
-        // Create New message for Parent Message
-        Message message = threadParentMessage_.copy();
-        message.setId("");
-        message.setThreadParent(true);
+    private void configThread(Message message) {
 
-        if (threadParentMessage_.getReplyCount() == 0) {
+        if (message.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
             threadMessages.postValue(new ArrayList<Message>() {
                 {
@@ -320,7 +316,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), 30, null, new GetRepliesCallback() {
+            channel.getReplies(message.getId(), 30, null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
@@ -616,6 +612,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             if (updated) {
                 messagesCopy.set(index, message);
                 messages.postValue(messagesCopy);
+            }
+            // Check if message is Thread Parent Message
+            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
+                List<Message> messagesCopy_ = threadMessages.getValue();
+                messagesCopy_.set(0, message);
+                threadMessages.postValue(messagesCopy_);
+                updated = true;
             }
             Log.d(TAG, "updateMessage:" + updated);
         }
@@ -994,9 +997,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        Message clone = message.copy();
-
-                        updateFailedMessage(clone);
+                        updateFailedMessage(message);
                         callback.onError(errMsg, errCode);
                     }
                 });

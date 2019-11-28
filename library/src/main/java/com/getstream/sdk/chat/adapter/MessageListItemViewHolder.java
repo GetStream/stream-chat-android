@@ -487,9 +487,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
+                || (position == 0 && TextUtils.isEmpty(message.getId()))
                 || isDeletedMessage()
                 || isFailedMessage()
-                || (position == 0 && message.isThreadParent())
                 || replyCount == 0
                 || isThread()) {
             iv_reply.setVisibility(View.GONE);
