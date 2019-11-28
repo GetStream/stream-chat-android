@@ -314,7 +314,7 @@ StreamChat.initStyle(
 
 3. Setup for specific UI components
 
-You can set custom fonts for specific UI components with or without settings for the entire library.
+You can set custom fonts for specific UI components with or without settings for the entire library.  
 See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
 
 ## FAQ
