@@ -73,16 +73,18 @@ public abstract class ChatChannelEventHandler {
                 break;
             case MESSAGE_DELETED:
                 event.getMessage().setSyncStatus(Sync.SYNCED);
-                event.getMessage().setText(StreamChat.getContext().getString(R.string.stream_delete_message));
+                event.getMessage().setText(StreamChat.getStrings().get(R.string.stream_delete_message));
                 onMessageDeleted(event);
                 break;
             case MESSAGE_READ:
                 onMessageRead(event);
                 break;
             case REACTION_NEW:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onReactionNew(event);
                 break;
             case REACTION_DELETED:
+                event.getMessage().setSyncStatus(Sync.SYNCED);
                 onReactionDeleted(event);
                 break;
             case MEMBER_ADDED:

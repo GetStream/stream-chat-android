@@ -2,16 +2,12 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -25,6 +21,7 @@ import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
@@ -148,20 +145,21 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play.setVisibility(type.equals(ModelType.attach_video) ? View.VISIBLE : View.GONE);
         iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
-        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE){
+        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
             Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
             cl_des.setBackground(background);
         }
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
 
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
+        if (getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_media_title);
+            style.attachmentDescriptionTextMine.apply(tv_media_des);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_media_title);
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des);
+        }
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {

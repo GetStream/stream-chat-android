@@ -33,6 +33,8 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamAvatarTextSize`         | dimension              | 14sp    |
 | `app:streamAvatarTextColor`        | color                  | WHITE   |
 | `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
+| `app:streamAvatarTextFont`         | reference              | -       |
+| `app:streamAvatarTextFontAssets`   | string                 | -       |
 
 - **Attachment Button**
 
@@ -62,23 +64,29 @@ You must use the following properties in your XML to change your MessageInputVie
 		
 - **Input Text**
 
-| Properties                  | Type                  | Default          |
-| --------------------------- | --------------------- | ---------------- |
-| `app:streamInputHint`       | string                | Write a message  |
-| `app:streamInputTextSize`   | dimension             | 15sp             |
-| `app:streamInputTextColor`  | color                 | BLACK            |
-| `app:streamInputHintColor`  | color                 | stream_gray_dark |
-| `app:streamInputTextStyle`  | normal, bold, italic  | normal           |
-
+| Properties                      | Type                  | Default          |
+| ------------------------------- | --------------------- | ---------------- |
+| `app:streamInputHint`           | string                | Write a message  |
+| `app:streamInputTextSize`       | dimension             | 15sp             |
+| `app:streamInputTextColor`      | color                 | BLACK            |
+| `app:streamInputHintColor`      | color                 | stream_gray_dark |
+| `app:streamInputTextStyle`      | normal, bold, italic  | normal           |
+| `app:streamInputTextFont`       | reference             | -                |
+| `app:streamInputTextFontAssets` | string                | -                |
 
 
 - **Input Background**
 
-| Properties                          | Type        | Default |
-| ----------------------------------- | ----------- | ------- |
-| `app:streamInputBackground`         | reference   | -       |
-| `app:streamInputSelectedBackground` | reference   | -       |
-| `app:streamInputEditBackground`     | reference   | -       |
+| Properties                                | Type                  | Default |
+| ----------------------------------------- | --------------------- | ------- |
+| `app:streamInputBackground`               | reference             | -       |
+| `app:streamInputSelectedBackground`       | reference             | -       |
+| `app:streamInputEditBackground`           | reference             | -       |
+| `app:streamInputBackgroundTextSize`       | dimension             | 15sp    |
+| `app:streamInputBackgroundTextColor`      | color                 | BLACK   |
+| `app:streamInputBackgroundTextStyle`      | normal, bold, italic  | normal  |
+| `app:streamInputBackgroundTextFont`       | reference             | -       |
+| `app:streamInputBackgroundTextFontAssets` | string                | -       |
 
 
 #### Listeners

@@ -5,14 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +39,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GifEditText;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -135,7 +133,7 @@ public class MessageInputView extends RelativeLayout {
 
     private void applyStyle() {
         // Attachment Button
-        binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
+        binding.ivOpenAttach.setVisibility(style.isShowAttachmentButton() ? VISIBLE : GONE);
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
@@ -146,11 +144,12 @@ public class MessageInputView extends RelativeLayout {
         // Input Background
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
-        editText.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
-        editText.setHint(style.getInputHint());
-        editText.setTextColor(style.getInputTextColor());
-        editText.setHintTextColor(style.getInputHintColor());
-        editText.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
+        style.inputText.apply(editText);
+        style.inputBackgroundText.apply(binding.tvTitle);
+        style.inputBackgroundText.apply(binding.tvCommand);
+        style.inputBackgroundText.apply(binding.tvUploadPhotoVideo);
+        style.inputBackgroundText.apply(binding.tvUploadFile);
+        style.inputBackgroundText.apply(binding.tvUploadCamera);
     }
 
     private void configOnClickListener(){
@@ -174,7 +173,7 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        EditTextUtils.afterTextChanged(editText, this::keyStroke);
+        TextViewUtils.afterTextChanged(editText, this::keyStroke);
         if (editText instanceof GifEditText)
             ((GifEditText)editText).setCallback(this::sendGiphyFromKeyboard);
     }
