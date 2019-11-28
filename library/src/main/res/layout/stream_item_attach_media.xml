@@ -35,6 +35,16 @@
         app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
         app:layout_constraintTop_toTopOf="@+id/iv_media_thumb" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_media_thumb" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_des"
         android:layout_width="match_parent"
