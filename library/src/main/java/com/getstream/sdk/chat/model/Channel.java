@@ -956,4 +956,12 @@ public class Channel {
     public void setCreatedByUserID(String createdByUserID) {
         this.createdByUserID = createdByUserID;
     }
+
+    @Override
+    public String toString() {
+        return "Channel{" +
+                "id='" + id + '\'' + "," +
+                "name='" + getName() + '\'' +
+                '}';
+    }
 }

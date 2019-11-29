@@ -539,8 +539,9 @@ public class MessageInputController {
         Log.d(TAG, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channel.getChannelState().getMembers().size(); i++) {
-            Member member = channel.getChannelState().getMembers().get(i);
+        List<Member> members = channel.getChannelState().getMembers();
+        for (int i = 0; i < members.size(); i++) {
+            Member member = members.get(i);
             User user = member.getUser();
             if (user.getName().toLowerCase().contains(string.toLowerCase()))
                 commands.add(user);
