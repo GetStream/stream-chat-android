@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 prevMenuItem = binding.tabs.getMenu().getItem(position);
             }
         });
+
+        initToolbar(binding);
     }
 
     private ViewPagerAdapter createCardAdapter() {
@@ -59,4 +61,8 @@ public class MainActivity extends AppCompatActivity {
         return adapter;
     }
 
+    private void initToolbar(ActivityMainBinding binding) {
+        binding.toolbar.setTitle("Stream Chat");
+        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
+    }
 }

@@ -15,7 +15,7 @@
             android:layout_height="0dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toTopOf="@+id/tabs"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/tabs"
@@ -26,5 +26,15 @@
             app:itemIconTint="@drawable/tab_icon_color_selector"
             app:itemTextColor="@drawable/tab_icon_color_selector"
             app:menu="@menu/bottom_navigation_menu" />
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            tools:title="Title"
+            tools:subtitle="Subtitle"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

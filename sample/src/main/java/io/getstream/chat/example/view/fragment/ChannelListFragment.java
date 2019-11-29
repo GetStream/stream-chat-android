@@ -155,8 +155,6 @@ public class ChannelListFragment extends Fragment {
         });
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
 
-        initToolbar(binding);
-
         return binding.getRoot();
     }
 
@@ -232,10 +230,5 @@ public class ChannelListFragment extends Fragment {
         viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
         FilterObject filter = and(eq("type", "messaging"));
         viewModel.setChannelFilter(filter);
-    }
-
-    private void initToolbar(FragmentChannelListBinding binding) {
-        binding.toolbar.setTitle("Stream Chat");
-        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }
 }
