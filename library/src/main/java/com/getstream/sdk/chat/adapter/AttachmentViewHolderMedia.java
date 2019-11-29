@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -16,6 +17,8 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -34,8 +37,23 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     private ConstraintLayout cl_des, cl_action;
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+    private ProgressBar progressBar;
+
     private MessageListView.GiphySendListener giphySendListener;
     private Client client;
+    private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
+        @Override
+        public void onSuccess(MessageResponse response) {
+            enableSendGiphyButtons(true);
+        }
+
+        @Override
+        public void onError(String errMsg, int errCode) {
+            enableSendGiphyButtons(true);
+            Utils.showMessage(context, errMsg);
+        }
+    };
+
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -46,6 +64,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         iv_command_logo = itemView.findViewById(R.id.iv_command_logo);
         cl_des = itemView.findViewById(R.id.cl_des);
+        progressBar = itemView.findViewById(R.id.progressBar);
         // Giphy
         cl_action = itemView.findViewById(R.id.cl_action);
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
@@ -109,18 +128,23 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
             cl_action.setVisibility(View.VISIBLE);
 
-            tv_action_send.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.SEND);
+            tv_action_send.setOnClickListener(view -> {
+                if (giphySendListener != null){
+                    enableSendGiphyButtons(false);
+                    giphySendListener.onGiphySend(message, GiphyAction.SEND, sendGiphyMessageCallback);
+                }
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
+                if (giphySendListener != null){
+                    enableSendGiphyButtons(false);
+                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE, sendGiphyMessageCallback);
+                }
             });
             tv_action_cancel.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
+                if (giphySendListener != null){
+                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL, sendGiphyMessageCallback);
+                }
             });
         } else {
             cl_action.setVisibility(View.GONE);
@@ -160,6 +184,13 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             style.attachmentTitleTextTheirs.apply(tv_media_title);
             style.attachmentDescriptionTextTheirs.apply(tv_media_des);
         }
+    }
+
+    private void enableSendGiphyButtons(boolean isEnable){
+        progressBar.setVisibility(isEnable ? View.GONE : View.VISIBLE);
+        tv_action_send.setEnabled(isEnable);
+        tv_action_shuffle.setEnabled(isEnable);
+        tv_action_cancel.setEnabled(isEnable);
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
