@@ -28,7 +28,7 @@
                 android:layout_height="0dp"
                 android:background="@color/stream_gray_background"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
             <ProgressBar
                 android:layout_width="wrap_content"
