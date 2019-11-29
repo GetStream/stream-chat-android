@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -20,6 +22,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -33,7 +36,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
 
 
@@ -103,8 +105,7 @@ public class MainActivity extends AppCompatActivity {
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
-        FilterObject filter = and(eq("type", "messaging"));
-
+        FilterObject filter = eq("type", "messaging").put("hidden",true);
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     // region More action
+
     void showMoreActionDialog(Channel channel){
         new ChannelMoreActionDialog(this)
                 .setChannelListViewModel(viewModel)
@@ -235,9 +237,27 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+
+
     // endregion
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.show_hidden_channel, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.action_hidden_channel) {
+            Utils.showMessage(this, "Click Menu!");
+            return true;
+        }
+        return false;
+    }
 
     private void initToolbar(ActivityMainBinding binding) {
+        setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle("Stream Chat");
         binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }
