@@ -1,5 +1,15 @@
 ## Upcoming
 
+## November 28th, 2019 - 3.4.1
+
+- Fix Giphy buttons alignments
+- Add Giphy error cases handling
+- Update http related issues documentation
+
+## November 28th, 2019 - 3.4.0
+
+- Custom font fot the whole SDK
+- Custom font per TextView
 - Ignore sample app release unit tests, keep debug tests
 - Added AttachmentBackgroundColorMine/Theirs
 - Fix Edit/Delete thread parent message
