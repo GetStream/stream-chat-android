@@ -58,18 +58,23 @@ public class ChannelListFragment extends Fragment {
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getContext());
 
-        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
+        String USER_ID = UserStorage.getCurrentUser().getId();
+        String USER_TOKEN = UserStorage.getCurrentUser().getToken();
+        String USER_NAME = UserStorage.getCurrentUser().getName();
+        String USER_IMAGE = UserStorage.getCurrentUser().getImage();
+
+        Crashlytics.setUserIdentifier(USER_ID);
         if (offlineEnabled) {
             client.enableOfflineStorage();
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", BuildConfig.USER_NAME);
-        extraData.put("image", BuildConfig.USER_IMAGE);
+        extraData.put("name", USER_NAME);
+        extraData.put("image", USER_IMAGE);
 
-        User user = new User(BuildConfig.USER_ID, extraData);
-        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
+        User user = new User(USER_ID, extraData);
+        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
