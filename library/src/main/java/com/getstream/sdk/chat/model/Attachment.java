@@ -255,6 +255,7 @@ public class Attachment {
         private int videoLengh = 0;
         private boolean isUploaded = false;
         private int progress = 0;
+
         public String getFilePath() {
             return filePath;
         }
@@ -294,6 +295,7 @@ public class Attachment {
         public void setProgress(int progress) {
             this.progress = progress;
         }
+
     }
 
 }

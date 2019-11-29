@@ -107,6 +107,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                         if (imageMatrix == null) {// && mPaddingTop == 0 && mPaddingLeft == 0) {
                             drawable.draw(drawableCanvas);
                         } else {
+                            if (drawableCanvas == null) return;
                             int drawableSaveCount = drawableCanvas.getSaveCount();
                             drawableCanvas.save();
                             drawableCanvas.concat(imageMatrix);

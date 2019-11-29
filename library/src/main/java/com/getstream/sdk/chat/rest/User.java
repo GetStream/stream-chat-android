@@ -311,4 +311,12 @@ public class User implements UserEntity {
     public void setBanned(Boolean banned) {
         this.banned = banned;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
