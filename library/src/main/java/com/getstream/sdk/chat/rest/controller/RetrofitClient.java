@@ -56,6 +56,43 @@ public class RetrofitClient {
             .build();
     }
 
+    public static Retrofit getAnonymousClient(ApiClientOptions options) {
+
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .writeTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .readTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .addInterceptor(chain -> {
+                    Request request = chain.request();
+                    Response response = chain.proceed(request);
+                    if (!response.isSuccessful()) {
+                        throw ErrorResponse.parseError(response);
+                    }
+                    return response;
+                })
+                .addInterceptor(loggingInterceptor)
+                .addInterceptor(chain -> {
+                    Request request = chain.request()
+                            .newBuilder()
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("stream-auth-type", "anonymous")
+                            .addHeader("Accept-Encoding", "application/gzip")
+                            .build();
+                    return chain.proceed(request);
+                })
+                .followRedirects(false)
+                .build();
+
+        return new Retrofit.Builder()
+                .baseUrl(options.getHttpURL())
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
+                .build();
+    }
+
     public static Retrofit getAuthorizedCDNClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
 
         TokenAuthInterceptor authInterceptor = new TokenAuthInterceptor(tokenProvider);

@@ -79,6 +79,7 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
+import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
@@ -589,6 +590,18 @@ public class Client implements WSResponseHandler {
         });
     }
 
+    private synchronized void anonymousConnect() {
+        Log.i(TAG, "client.anonymousConnect was called");
+        try {
+            webSocketService = webSocketServiceProvider.provideAnonymousWebSocketService(getUser(), this);
+            apiService = apiServiceProvider.provideAnonymousApiService();
+            uploadStorage = uploadStorageProvider.provideAnonymousUploadStorage(this);
+            webSocketService.connect();
+        } catch (UnsupportedEncodingException e) {
+            onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+        }
+    }
+
     public Channel channel(String cid) {
         String[] parts = cid.split(":", 2);
         return channel(parts[0], parts[1], new HashMap<>());
@@ -952,7 +965,7 @@ public class Client implements WSResponseHandler {
                         if (channel.getCreatedByUser() == null) {
                             channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
                         }
-                        
+
                         addChannelConfig(channel.getType(), channel.getConfig());
 
                         if (queryRequest.isWatch()) {
@@ -1677,12 +1690,72 @@ public class Client implements WSResponseHandler {
      * Setup an anonymous session
      */
     public void setAnonymousUser() {
+        apiService = apiServiceProvider.provideAnonymousApiService();
+
+        String uuid = randomUUID().toString();
+        this.clientID = uuid + "--" + uuid;
+
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("anon", "true");
+
+        User user = new User(uuid, extraData);
+        state.setCurrentUser(user);
+
+        anonymousConnect();
     }
 
     /**
      * Setup a temporary guest user
+     *
+     * @param user Data about this user. IE {name: "john"}
      */
     public void setGuestUser(User user) {
+        Map<String, String> body = new HashMap<>();
+        body.put("name", user.getName());
+
+        CachedTokenProvider guestTokenProvider = new CachedTokenProvider() {
+            @Override
+            public void getToken(TokenProvider.TokenProviderListener listener) {
+                // use the cached token if possible
+                String guestToken = "guest";
+                listener.onSuccess(guestToken());
+                //listener.onSuccess(Base64.encodeToString(guestToken.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP));
+            }
+
+            @Override
+            public void tokenExpired() {
+                Log.d(TAG, "Guest token is wrong: guest");
+            }
+        };
+
+        apiService = apiServiceProvider.provideApiService(guestTokenProvider);
+        apiService.setGuestUser(apiKey, body).enqueue(new Callback<TokenResponse>() {
+            @Override
+            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                System.out.println(response);
+            }
+
+            @Override
+            public void onFailure(Call<TokenResponse> call, Throwable t) {
+                System.out.println(t);
+            }
+        });
+    }
+
+    public String guestToken() {
+
+        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
+
+        String guestToken = "guest";
+        String payloadBase64 = Base64.encodeToString(guestToken.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+        String guestSignature = "guesttoken";
+
+        String[] a = new String[3];
+        a[0] = header;
+        a[1] = payloadBase64;
+        a[2] = guestSignature;
+
+        return TextUtils.join(".", a);
     }
 
     /**

@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 
 import java.util.Map;
@@ -74,6 +75,9 @@ public interface APIService {
     // endregion
 
     // region User
+    @POST("/guest")
+    Call<TokenResponse> setGuestUser(@Query("api_key") String apiKey, @Body Map<String, String> body);
+
     @GET("/users")
     Call<QueryUserListResponse> queryUsers(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
 

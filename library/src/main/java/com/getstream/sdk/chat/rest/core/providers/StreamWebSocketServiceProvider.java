@@ -38,6 +38,13 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
         return new StreamWebSocketService(wsUrl, listener);
     }
 
+    @Override
+    public WebSocketService provideAnonymousWebSocketService(User user, WSResponseHandler listener) throws UnsupportedEncodingException {
+        String wsUrl = getAnonymusWsUrl(user);
+        Log.d(TAG, "WebSocket URL : " + wsUrl);
+        return new StreamWebSocketService(wsUrl, listener);
+    }
+
     @NotNull
     public String getWsUrl(String userToken, User user) throws UnsupportedEncodingException {
         String json = buildUserDetailJSON(user);
@@ -52,11 +59,29 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
         }
     }
 
+    @NotNull
+    public String getAnonymusWsUrl(User user) throws UnsupportedEncodingException {
+        String json = buildUserDetailJSON(user);
+
+        try {
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
+                    + apiKey + "&stream-auth-type=" + "anonymous";
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
+        }
+    }
+
     public String buildUserDetailJSON(User user) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("user_details", user);
-        data.put("user_id", user.getId());
         data.put("server_determines_connection_id", true);
+        try {
+            data.put("user_id", user.getId());
+        } catch (NullPointerException e) {
+            //ignore
+        }
         return GsonConverter.Gson().toJson(data);
     }
 }
