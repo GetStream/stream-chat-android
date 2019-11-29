@@ -15,4 +15,5 @@
     <string name="channel_update_with_message">with system message</string>
     <string name="OK">OK</string>
     <string name="Cancel">Cancel</string>
+    <string name="menu_show_hidden_channels">Hidden Channels</string>
 </resources>
