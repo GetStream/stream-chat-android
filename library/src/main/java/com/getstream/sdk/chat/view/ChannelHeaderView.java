@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
@@ -125,14 +126,11 @@ public class ChannelHeaderView extends RelativeLayout {
 
     private void applyStyle() {
         // Title
-        binding.tvChannelName.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getChannelTitleTextSize());
-        binding.tvChannelName.setTextColor(style.getChannelTitleTextColor());
-        binding.tvChannelName.setTypeface(Typeface.DEFAULT, style.getChannelTitleTextStyle());
+        style.channelTitleText.apply(binding.tvChannelName);
+
         // Last Active
-        binding.tvActive.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getLastActiveTextSize());
-        binding.tvActive.setTextColor(style.getLastActiveTextColor());
-        binding.tvActive.setTypeface(Typeface.DEFAULT, style.getLastActiveTextStyle());
-        binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : INVISIBLE);
+        style.lastActiveText.apply(binding.tvActive);
+        binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : GONE);
         // Back Button
         binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
         binding.tvBack.setBackground(style.getBackButtonBackground());

@@ -2,16 +2,13 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -20,11 +17,14 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
@@ -35,10 +35,25 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
     private ImageView iv_command_logo;
 
-    private ConstraintLayout cl_action;
+    private ConstraintLayout cl_des, cl_action;
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
+    private ProgressBar progressBar;
+
     private MessageListView.GiphySendListener giphySendListener;
     private Client client;
+    private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
+        @Override
+        public void onSuccess(MessageResponse response) {
+            enableSendGiphyButtons(true);
+        }
+
+        @Override
+        public void onError(String errMsg, int errCode) {
+            enableSendGiphyButtons(true);
+            Utils.showMessage(context, errMsg);
+        }
+    };
+
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -48,6 +63,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_media_play = itemView.findViewById(R.id.tv_media_play);
         tv_media_des = itemView.findViewById(R.id.tv_media_des);
         iv_command_logo = itemView.findViewById(R.id.iv_command_logo);
+        cl_des = itemView.findViewById(R.id.cl_des);
+        progressBar = itemView.findViewById(R.id.progressBar);
         // Giphy
         cl_action = itemView.findViewById(R.id.cl_action);
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
@@ -77,11 +94,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
                 getMessageListItem().getPositions(),
                 attachment);
         iv_media_thumb.setShape(context, background);
-//        iv_media_thumb.setBackgroundDrawable(background);
     }
 
     private void configAction() {
-
         if (message.getType().equals(ModelType.message_ephemeral)
                 && message.getCommand() != null
                 && message.getCommand().equals(ModelType.attach_giphy)) {
@@ -113,42 +128,35 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
             cl_action.setVisibility(View.VISIBLE);
 
-            tv_action_send.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.SEND);
+            tv_action_send.setOnClickListener(view -> {
+                if (giphySendListener != null){
+                    enableSendGiphyButtons(false);
+                    giphySendListener.onGiphySend(message, GiphyAction.SEND, sendGiphyMessageCallback);
+                }
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
+                if (giphySendListener != null){
+                    enableSendGiphyButtons(false);
+                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE, sendGiphyMessageCallback);
+                }
             });
             tv_action_cancel.setOnClickListener((View v) -> {
-                if (giphySendListener != null)
-                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
+                if (giphySendListener != null){
+                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL, sendGiphyMessageCallback);
+                }
             });
         } else {
             cl_action.setVisibility(View.GONE);
         }
     }
 
-    private void configMediaAttach() {  
-        
+    private void configMediaAttach() {
         final String type = attachment.getType();
-        String attachUrl = attachment.getImageURL();
-        if (attachment.getType().equals(ModelType.attach_image)) {
-            attachUrl = attachment.getImageURL();
-        } else if (attachment.getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachment.getThumbURL();
-        } else if (attachment.getType().equals(ModelType.attach_video)) {
-            attachUrl = attachment.getThumbURL();
-        } else {
-            if (attachUrl == null) attachUrl = attachment.getImage();
-        }
-
         configImageThumbBackground();
 
         Glide.with(context)
-                .load(client.getUploadStorage().signGlideUrl(attachUrl))
+                .load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 
@@ -156,36 +164,33 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_media_title.setText(attachment.getTitle());
         tv_media_des.setText(attachment.getText());
 
-        if (attachment.getType().equals(ModelType.attach_giphy))
-            iv_command_logo.setVisibility(View.VISIBLE);
-        else
-            iv_command_logo.setVisibility(View.GONE);
+        tv_media_title.setVisibility(!TextUtils.isEmpty(attachment.getTitle()) ? View.VISIBLE : View.GONE);
+        tv_media_des.setVisibility(!TextUtils.isEmpty(attachment.getText()) ? View.VISIBLE : View.GONE);
+        tv_media_play.setVisibility(type.equals(ModelType.attach_video) ? View.VISIBLE : View.GONE);
+        iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
-        if (TextUtils.isEmpty(attachment.getText()))
-            tv_media_des.setVisibility(View.GONE);
-        else
-            tv_media_des.setVisibility(View.VISIBLE);
-
-        if (TextUtils.isEmpty(attachment.getTitle()))
-            tv_media_title.setVisibility(View.GONE);
-        else
-            tv_media_title.setVisibility(View.VISIBLE);
-
-        if (type.equals(ModelType.attach_video))
-            tv_media_play.setVisibility(View.VISIBLE);
-        else
-            tv_media_play.setVisibility(View.GONE);
-
+        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
+            Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
+            cl_des.setBackground(background);
+        }
     }
 
     private void applyStyle() {
-        tv_media_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentTitleTextSize());
-        tv_media_title.setTextColor(style.getAttachmentTitleTextColor());
-        tv_media_title.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentTitleTextStyle());
 
-        tv_media_des.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getAttachmentDescriptionTextSize());
-        tv_media_des.setTextColor(style.getAttachmentDescriptionTextColor());
-        tv_media_des.setTypeface(Typeface.DEFAULT_BOLD, style.getAttachmentDescriptionTextStyle());
+        if (getMessageListItem().isMine()) {
+            style.attachmentTitleTextMine.apply(tv_media_title);
+            style.attachmentDescriptionTextMine.apply(tv_media_des);
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_media_title);
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des);
+        }
+    }
+
+    private void enableSendGiphyButtons(boolean isEnable){
+        progressBar.setVisibility(isEnable ? View.GONE : View.VISIBLE);
+        tv_action_send.setEnabled(isEnable);
+        tv_action_shuffle.setEnabled(isEnable);
+        tv_action_cancel.setEnabled(isEnable);
     }
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {

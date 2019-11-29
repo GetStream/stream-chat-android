@@ -1,10 +1,32 @@
 ## Upcoming
 
+## November 28th, 2019 - 3.4.1
+
+- Fix Giphy buttons alignments
+- Add Giphy error cases handling
+- Update http related issues documentation
+
+## November 28th, 2019 - 3.4.0
+
+- Custom font fot the whole SDK
+- Custom font per TextView
+- Ignore sample app release unit tests, keep debug tests
+- Added AttachmentBackgroundColorMine/Theirs
+- Fix Edit/Delete thread parent message
+- Replace fadein/fadeout animation of parent/current thread with default RecyclerView animation
+
+## November 5th, 2019 - 3.3.0
+
 - Fix Concurrent modification when removing member from channel
 - Fix automention input issue
 - Fix Sent message progress infinite
 - Fix channel delete event handling in ChannelList view model
 - Fix attachment duplicated issue when message edit
+- Add File Upload 2.0
+- Add editMessage function in Channel View Model
+- Fix JSON encoding always omits null fields
+- Sample app: add version header, release version signing
+- Add Message Username and Date attrs
 
 ## November 5th, 2019 - 3.2.1
 
@@ -15,6 +37,10 @@
 - Catch error body parsing errors
 - Do not show commands list UI when all commands are disabled
 - Renamed `MessageInputClient` to `MessageInputController`
+- Added Large file(20MB) check for uploading file
+- Added streamUserNameShow and streamMessageDateShow in `MessageListViewStyle`
+- Fixed channel header title position issue when Last Active is hidden
+
 
 ## October 25th, 2019 - 3.2.0
 
@@ -27,7 +53,7 @@
 - Make sure channel list view model is cleared when the user disconnects
 - Fix bug with `setUser` when user data is not correctly URI encoded
 - Add debug/info logging
-
+- Add Attrs for DateSeparator
 ## Oct 23th, 2019 - 3.0.2
 
 - Fix NPE with restore from background and null users

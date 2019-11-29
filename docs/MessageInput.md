@@ -33,19 +33,21 @@ You must use the following properties in your XML to change your MessageInputVie
 | `app:streamAvatarTextSize`         | dimension              | 14sp    |
 | `app:streamAvatarTextColor`        | color                  | WHITE   |
 | `app:streamAvatarTextStyle`        | normal, bold, italic   | bold    |
+| `app:streamAvatarTextFont`         | reference              | -       |
+| `app:streamAvatarTextFontAssets`   | string                 | -       |
 
 - **Attachment Button**
 
-| Properties                                          | Type          | Default    |
-| --------------------------------------------------- | ------------- | ---------- |
-| `app:streamShowAttachmentButton`                    | boolean       | true       |
-| `app:streamAttachmentButtonDefaultIconColor`        | color         | DKGRAY     |
-| `app:streamAttachmentButtonDefaultIconPressedColor` | color         | WHITE      |
-| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LTGRAY     |
-| `app:streamAttachmentButtonSelectedIconColor`       | color         | BLACK      |
-| `app:streamAttachmentButtonIcon`                    | reference     | -          |
-| `app:streamAttachmentButtonWidth`                   | dimension     | 25dp       |
-| `app:streamAttachmentButtonHeight`                  | dimension     | 25dp       |
+| Properties                                          | Type          | Default          |
+| --------------------------------------------------- | ------------- | ---------------- |
+| `app:streamShowAttachmentButton`                    | boolean       | true             |
+| `app:streamAttachmentButtonDefaultIconColor`        | color         | stream_gray_dark |
+| `app:streamAttachmentButtonDefaultIconPressedColor` | color         | WHITE            |
+| `app:streamAttachmentButtonDefaultIconDisabledColor`| color         | LTGRAY           |
+| `app:streamAttachmentButtonSelectedIconColor`       | color         | BLACK            |
+| `app:streamAttachmentButtonIcon`                    | reference     | -                |
+| `app:streamAttachmentButtonWidth`                   | dimension     | 25dp             |
+| `app:streamAttachmentButtonHeight`                  | dimension     | 25dp             |
 
 
 - **Send Button**
@@ -62,23 +64,29 @@ You must use the following properties in your XML to change your MessageInputVie
 		
 - **Input Text**
 
-| Properties                  | Type                  | Default         |
-| --------------------------- | --------------------- | --------------- |
-| `app:streamInputHint`       | string                | Write a message |
-| `app:streamInputTextSize`   | dimension             | 15sp            |
-| `app:streamInputTextColor`  | color                 | BLACK           |
-| `app:streamInputHintColor`  | color                 | DKGRAY          |
-| `app:streamInputTextStyle`  | normal, bold, italic  | normal          |
-
+| Properties                      | Type                  | Default          |
+| ------------------------------- | --------------------- | ---------------- |
+| `app:streamInputHint`           | string                | Write a message  |
+| `app:streamInputTextSize`       | dimension             | 15sp             |
+| `app:streamInputTextColor`      | color                 | BLACK            |
+| `app:streamInputHintColor`      | color                 | stream_gray_dark |
+| `app:streamInputTextStyle`      | normal, bold, italic  | normal           |
+| `app:streamInputTextFont`       | reference             | -                |
+| `app:streamInputTextFontAssets` | string                | -                |
 
 
 - **Input Background**
 
-| Properties                          | Type        | Default |
-| ----------------------------------- | ----------- | ------- |
-| `app:streamInputBackground`         | reference   | -       |
-| `app:streamInputSelectedBackground` | reference   | -       |
-| `app:streamInputEditBackground`     | reference   | -       |
+| Properties                                | Type                  | Default |
+| ----------------------------------------- | --------------------- | ------- |
+| `app:streamInputBackground`               | reference             | -       |
+| `app:streamInputSelectedBackground`       | reference             | -       |
+| `app:streamInputEditBackground`           | reference             | -       |
+| `app:streamInputBackgroundTextSize`       | dimension             | 15sp    |
+| `app:streamInputBackgroundTextColor`      | color                 | BLACK   |
+| `app:streamInputBackgroundTextStyle`      | normal, bold, italic  | normal  |
+| `app:streamInputBackgroundTextFont`       | reference             | -       |
+| `app:streamInputBackgroundTextFontAssets` | string                | -       |
 
 
 #### Listeners
@@ -360,7 +368,7 @@ public class CustomMessageInputView extends RelativeLayout {
             });
         } else {
             message.setStatus(null);
-            viewModel.onSendMessage(message, new MessageCallback() {
+            viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     Log.i(TAG, "Sent message successfully!");

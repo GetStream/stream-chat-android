@@ -306,13 +306,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return threadParentMessage.getValue() != null;
     }
 
-    private void configThread(Message threadParentMessage_) {
-        // Create New message for Parent Message
-        Message message = threadParentMessage_.copy();
-        message.setId("");
-        message.setThreadParent(true);
+    private void configThread(Message message) {
 
-        if (threadParentMessage_.getReplyCount() == 0) {
+        if (message.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
             threadMessages.postValue(new ArrayList<Message>() {
                 {
@@ -320,7 +316,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
             });
         } else {
-            channel.getReplies(threadParentMessage_.getId(), 30, null, new GetRepliesCallback() {
+            channel.getReplies(message.getId(), 30, null, new GetRepliesCallback() {
                 @Override
                 public void onSuccess(GetRepliesResponse response) {
                     List<Message> newMessages = new ArrayList<>(response.getMessages());
@@ -561,7 +557,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-
+        
         if (message.getType().equals(ModelType.message_reply)
                 || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
@@ -617,6 +613,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messagesCopy.set(index, message);
                 messages.postValue(messagesCopy);
             }
+            // Check if message is Thread Parent Message
+            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
+                List<Message> messagesCopy_ = threadMessages.getValue();
+                messagesCopy_.set(0, message);
+                threadMessages.postValue(messagesCopy_);
+                updated = true;
+            }
             Log.d(TAG, "updateMessage:" + updated);
         }
         return updated;
@@ -652,7 +655,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (message.getId().equals(messagesCopy.get(i).getId())) {
-                messagesCopy.remove(i);
+                messagesCopy.set(i, message);
                 if (isThread()) {
                     if (i == 0)
                         initThread();
@@ -969,6 +972,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         checkFailedMessage(message);
         // stop typing
         stopTyping();
+        // Check uploading file
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            addMessage(message);
+            return;
+        }
 
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
@@ -989,9 +997,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                     @Override
                     public void onError(String errMsg, int errCode) {
-                        Message clone = message.copy();
-
-                        updateFailedMessage(clone);
+                        updateFailedMessage(message);
                         callback.onError(errMsg, errCode);
                     }
                 });
@@ -999,6 +1005,39 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     public void sendMessage(Message message) {
         sendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
+    }
+
+
+    /**
+     * Edit message
+     *
+     * @param message  the Message sent
+     * @param callback the result callback
+     */
+    public void editMessage(Message message, @NonNull MessageCallback callback) {
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+            replaceMessage(message, message);
+            return;
+        }
+
+        // Check Error or Pending Messages
+        checkErrorOrPendingMessage();
+
+        channel.updateMessage(message, callback);
+    }
+
+    public void editMessage(Message message) {
+        editMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
 
@@ -1020,7 +1059,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public void sendGiphy(Message message,
                           GiphyAction action,
-                          MessageCallback callback) {
+                          @NonNull MessageCallback callback) {
         Map<String, String> map = new HashMap<>();
         switch (action) {
             case SEND:

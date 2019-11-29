@@ -6,32 +6,33 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
 
-import com.getstream.sdk.chat.R;
-
 public class BaseStyle {
 
     protected Context context;
     protected Resources resources;
+
     protected int avatarWidth;
     protected int avatarHeight;
+
     protected int avatarBorderWidth;
     protected int avatarBorderColor;
     protected int avatarBackGroundColor;
-    protected int avatarInitialTextSize;
-    protected int avatarInitialTextColor;
-    protected int avatarInitialTextStyle;
+
+    protected TextStyle avatarInitialText;
+    protected TextStyle readStateText;
+
     protected boolean showReadState;
     protected int readStateAvatarWidth;
     protected int readStateAvatarHeight;
-    protected int readStateTextSize;
-    protected int readStateTextColor;
-    protected int readStateTextStyle;
 
     public Context getContext() {
         return context;
@@ -97,17 +98,6 @@ public class BaseStyle {
         return avatarHeight;
     }
 
-    public int getAvatarInitialTextSize() {
-        return avatarInitialTextSize;
-    }
-
-    public int getAvatarInitialTextColor() {
-        return avatarInitialTextColor;
-    }
-
-    public int getAvatarInitialTextStyle() {
-        return avatarInitialTextStyle;
-    }
 
     public int getAvatarBorderWidth() {
         return avatarBorderWidth;
@@ -131,17 +121,5 @@ public class BaseStyle {
 
     public int getReadStateAvatarHeight() {
         return readStateAvatarHeight;
-    }
-
-    public int getReadStateTextSize() {
-        return readStateTextSize;
-    }
-
-    public int getReadStateTextColor() {
-        return readStateTextColor;
-    }
-
-    public int getReadStateTextStyle() {
-        return readStateTextStyle;
     }
 }

@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-task connectedCheck{}
+
+task connectedCheck {}
 buildscript {
     ext {
         buildToolsVersion = "28.0.3"
@@ -50,8 +51,12 @@ buildscript {
 }
 
 
-
 allprojects {
+
+    ext {
+        releaseSdkVersion = '3.4.1'
+    }
+
     repositories {
         google()
         jcenter()

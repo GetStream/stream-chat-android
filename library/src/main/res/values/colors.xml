@@ -21,15 +21,13 @@
     <color name="stream_chat_no_connection">#1AD0021B</color>
     <!--Message Item-->
     <color name="stream_message_background_incoming">#FFFFFF</color>
-    <color name="stream_message_background_outgoing">#0D000000</color>
-    <color name="stream_message_stroke">#14000000</color>
+    <color name="stream_message_background_outgoing">#EDEDED</color>
+    <color name="stream_message_stroke">#E6E6E6</color>
     <color name="stream_message_failed">#1AD0021B</color>
+    <color name="stream_message_reply_text">#006CFF</color>
     <color name="stream_reaction_input_background">#292929</color>
 
     <color name="stream_attach_title_text">#026DFE</color>
-    <color name="stream_attach_description_text">#989898</color>
-    <color name="stream_attach_file_size_text">#989898</color>
-
     <!--exomedia-->
     <color name="stream_exomedia_default_controls_button_normal">#FFFFFFFF</color>
     <color name="stream_exomedia_default_controls_button_pressed">#FFE0E0E0</color>

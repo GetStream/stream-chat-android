@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -29,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -37,8 +37,10 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.EditTextUtils;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
@@ -51,6 +53,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
@@ -91,8 +94,11 @@ public class MessageInputView extends RelativeLayout {
      * The viewModel for handling typing etc.
      */
     private ChannelViewModel viewModel;
-    
+
     private MessageInputController messageInputController;
+
+    /*The pendingMessage for uploading File*/
+    private Message pendingMessage;
 
     // region constructor
     public MessageInputView(Context context) {
@@ -136,7 +142,7 @@ public class MessageInputView extends RelativeLayout {
 
     private void applyStyle() {
         // Attachment Button
-        binding.ivOpenAttach.setVisibility(style.showAttachmentButton() ? VISIBLE : GONE);
+        binding.ivOpenAttach.setVisibility(style.isShowAttachmentButton() ? VISIBLE : GONE);
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
         binding.ivOpenAttach.getLayoutParams().width = style.getAttachmentButtonWidth();
         binding.ivOpenAttach.getLayoutParams().height = style.getAttachmentButtonHeight();
@@ -147,17 +153,17 @@ public class MessageInputView extends RelativeLayout {
         // Input Background
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
-        binding.etMessage.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getInputTextSize());
-        binding.etMessage.setHint(style.getInputHint());
-        binding.etMessage.setTextColor(style.getInputTextColor());
-        binding.etMessage.setHintTextColor(style.getInputHintColor());
-        binding.etMessage.setTypeface(Typeface.DEFAULT, style.getInputTextStyle());
+        style.inputText.apply(binding.etMessage);
+
+        style.inputBackgroundText.apply(binding.tvTitle);
+        style.inputBackgroundText.apply(binding.tvCommand);
+        style.inputBackgroundText.apply(binding.tvUploadPhotoVideo);
+        style.inputBackgroundText.apply(binding.tvUploadFile);
+        style.inputBackgroundText.apply(binding.tvUploadCamera);
     }
 
     private void configOnClickListener(){
-        binding.ivSend.setOnClickListener(view ->
-                onSendMessage(binding.etMessage.getText().toString(), viewModel.isEditing())
-        );
+        binding.ivSend.setOnClickListener(view -> onSendMessage());
         binding.ivOpenAttach.setOnClickListener(view -> {
             binding.setIsAttachFile(true);
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
@@ -179,7 +185,7 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        EditTextUtils.afterTextChanged(binding.etMessage, editable -> {
+        TextViewUtils.afterTextChanged(binding.etMessage, editable -> {
             String messageText = getMessageText();
             Log.i(TAG, "Length is " + editable.length());
             if (messageText.length() > 0) {
@@ -200,7 +206,14 @@ public class MessageInputView extends RelativeLayout {
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style);
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  ()-> {
+            if (binding.ivSend.isEnabled()) return;
+            for (Attachment attachment : messageInputController.getSelectedAttachments())
+                if (!attachment.config.isUploaded())
+                    return;
+
+            onSendMessage();
+        });
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
         binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
@@ -227,7 +240,7 @@ public class MessageInputView extends RelativeLayout {
             messageInputController.onClickCloseBackGroundView();
             Intent takePictureIntent = CaptureController.getTakePictureIntent(getContext());
             Intent takeVideoIntent = CaptureController.getTakeVideoIntent(getContext());
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, "Capture Image or Video");
+            Intent chooserIntent = Intent.createChooser(takePictureIntent, getContext().getString(R.string.stream_input_camera_title));
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
@@ -343,9 +356,10 @@ public class MessageInputView extends RelativeLayout {
      You can overwrite this method in case you want to attach more custom properties to the message
      */
 
-    private void onSendMessage(String input, boolean isEdit) {
+    private void onSendMessage() {
+        String input = binding.etMessage.getText().toString();
+        boolean isEdit = viewModel.isEditing();
         binding.ivSend.setEnabled(false);
-
         if (isEdit) {
             Message message = getEditMessage();
             message.setText(input);
@@ -361,11 +375,12 @@ public class MessageInputView extends RelativeLayout {
                 message.setAttachments(attachments);
             }
 
-            viewModel.getChannel().updateMessage(message,  new MessageCallback() {
+            viewModel.editMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     initSendMessage();
                     binding.ivSend.setEnabled(true);
+                    Utils.hideSoftKeyboard((Activity) getContext());
                     clearFocus();
                 }
 
@@ -429,7 +444,8 @@ public class MessageInputView extends RelativeLayout {
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
         messageInputController.setSelectedAttachments(Arrays.asList(attachment));
-        onSendMessage("", viewModel.isEditing());
+        binding.etMessage.setText("");
+        onSendMessage();
         return true;
     }
     // endregion
@@ -548,6 +564,14 @@ public class MessageInputView extends RelativeLayout {
             m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
         // set the current user
         m.setUser(viewModel.client().getUser());
+        // Check file uploading
+        if (messageInputController.isUploadingFile()){
+            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+            m.setId(clientSideID);
+            m.setCreatedAt(new Date());
+            m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
+            m.setAttachments(null);
+        }
         return m;
     }
 

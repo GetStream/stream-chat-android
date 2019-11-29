@@ -467,6 +467,7 @@ public class ChannelState {
 
         if (incoming.messages != null) {
             addMessagesSorted(incoming.messages);
+            lastMessage = computeLastMessage();
         }
 
         if (incoming.watchers != null) {
@@ -545,6 +546,14 @@ public class ChannelState {
         } else if (getLastMessage() == null) {
             return true;
         } else return myReadDate.getTime() > getLastMessage().getCreatedAt().getTime();
+    }
+
+    @Override
+    public String toString() {
+        return "ChannelState{" +
+                "cid='" + cid + '\'' +
+                ", channel=" + channel +
+                '}';
     }
 }
 

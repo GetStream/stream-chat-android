@@ -124,8 +124,6 @@ public class Message implements UserEntity {
     @TypeConverters(ExtraDataConverter.class)
     private HashMap<String, Object> extraData;
 
-    private boolean isThreadParent = false; /*Used to tag Thread Parent Message*/
-
     private boolean isStartDay = false;
     private boolean isYesterday = false;
     private boolean isToday = false;
@@ -174,10 +172,10 @@ public class Message implements UserEntity {
 
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
-            message.setDate(TODAY.label);
+            message.setDate(TODAY.getLabel());
         } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
             message.setYesterday(true);
-            message.setDate(YESTERDAY.label);
+            message.setDate(YESTERDAY.getLabel());
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
             message.setDate(dateFormat1.format(message.getCreatedAt()));
         } else {
@@ -194,45 +192,6 @@ public class Message implements UserEntity {
 
     public static boolean isCommandMessage(Message message) {
         return message.getText().startsWith("/");
-    }
-
-    public static String differentTime(String dateStr) {
-        if (TextUtils.isEmpty(dateStr)) return null;
-        Date lastActiveDate = null;
-        try {
-            lastActiveDate = Utils.messageDateFormat.parse(dateStr);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        Date dateTwo = new Date();
-        long timeDiff = Math.abs(lastActiveDate.getTime() - dateTwo.getTime()) / 1000;
-        String timeElapsed = TimeElapsed(timeDiff);
-        String differTime = "";
-        if (timeElapsed.contains("Just now"))
-            differTime = "Active: " + timeElapsed;
-        else
-            differTime = "Active: " + timeElapsed + " ago";
-
-        return differTime;
-    }
-
-    public static String TimeElapsed(long seconds) {
-        String elapsed;
-        if (seconds < 60) {
-            elapsed = "Just now";
-        } else if (seconds < 60 * 60) {
-            int minutes = (int) (seconds / 60);
-            elapsed = minutes + " " + ((minutes > 1) ? "mins" : "min");
-        } else if (seconds < 24 * 60 * 60) {
-            int hours = (int) (seconds / (60 * 60));
-            elapsed = hours + " " + ((hours > 1) ? "hours" : "hour");
-        } else {
-            int days = (int) (seconds / (24 * 60 * 60));
-            elapsed = days + " " + ((days > 1) ? "days" : "day");
-        }
-        return elapsed;
     }
 
     public String getUserID() {
@@ -487,14 +446,6 @@ public class Message implements UserEntity {
         this.commandInfo = commandInfo;
     }
 
-    public boolean isThreadParent() {
-        return isThreadParent;
-    }
-
-    public void setThreadParent(boolean threadParent) {
-        isThreadParent = threadParent;
-    }
-
     @Override
     public String getUserId() {
         if (user == null) {
@@ -528,5 +479,9 @@ public class Message implements UserEntity {
 
     public void setSyncStatus(@Sync.Status Integer syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public boolean hasAttachments(){
+        return getAttachments() != null && !getAttachments().isEmpty();
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatSample</string>
+    <string name="app_name" translatable="false">ChatSample</string>
     <string name="login">Login</string>
     <string name="tab_channel">Channels</string>
     <string name="tab_profile">Profile</string>

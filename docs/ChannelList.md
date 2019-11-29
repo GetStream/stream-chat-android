@@ -154,16 +154,18 @@ You must use the following properties in your XML to change your ChannelListView
 
 - **AvatarView**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamAvatarWidth`             | dimension             | 40dp    |
-| `app:streamAvatarHeight`            | dimension             | 40dp    |
-| `app:streamAvatarBorderWidth`       | dimension             | 3dp     |
-| `app:streamAvatarBorderColor`       | color                 | WHITE   |
-| `app:streamAvatarBackGroundColor`   | color                 | DKGRAY  |
-| `app:streamAvatarTextSize`          | dimension             | 14sp    |
-| `app:streamAvatarTextColor`         | color                 | WHITE   |
-| `app:streamAvatarTextStyle`         | normal, bold, italic  | bold    |
+| Properties                         | Type                  | Default          |
+| ---------------------------------- | --------------------- | ---------------- |
+| `app:streamAvatarWidth`            | dimension             | 40dp             |
+| `app:streamAvatarHeight`           | dimension             | 40dp             |
+| `app:streamAvatarBorderWidth`      | dimension             | 3dp              |
+| `app:streamAvatarBorderColor`      | color                 | WHITE            |
+| `app:streamAvatarBackGroundColor`  | color                 | stream_gray_dark |
+| `app:streamAvatarTextSize`         | dimension             | 14sp             |
+| `app:streamAvatarTextColor`        | color                 | WHITE            |
+| `app:streamAvatarTextStyle`        | normal, bold, italic  | bold             |
+| `app:streamAvatarTextFont`         | reference             | -                |
+| `app:streamAvatarTextFontAssets`   | string                | -                |
 
 - **ReadStateView**
 
@@ -175,44 +177,43 @@ You must use the following properties in your XML to change your ChannelListView
 | `app:streamReadStateTextSize`       | dimension             | 8sp     |
 | `app:streamReadStateTextColor`      | color                 | BLACK   |
 | `app:streamReadStateTextStyle`      | normal, bold, italic  | bold    |
+| `app:streamReadStateTextFont`       | reference             | -       |
+| `app:streamReadStateTextFontAssets` | string                | -       |
 
 - **Channel Title**
 
 | Properties                                 | Type                  | Default              |
 | ------------------------------------------ | --------------------- | -------------------- |
-| `app:streamTitleTextSize`                  | dimension             | 15sp                 |
-| `app:streamTitleTextColor`                 | color                 | BLACK                |
-| `app:streamTitleTextStyle`                 | normal, bold, italic  | bold                 |
+| `app:streamChannelTitleTextSize`           | dimension             | 15sp                 |
+| `app:streamChannelTitleTextColor`          | color                 | BLACK                |
+| `app:streamChannelTitleUnreadTextColor`    | color                 | BLACK                |
+| `app:streamChannelTitleTextStyle`          | normal, bold, italic  | bold                 |
+| `app:streamChannelTitleUnreadTextStyle`    | normal, bold, italic  | bold                 |
 | `app:streamChannelWithOutNameTitleText`    | string                | Channel without name |
 
 - **Last Message**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamMessageTextSize`         | dimension             | 13sp    |
-| `app:streamMessageTextColor`        | color                 | DKGRAY  |
-| `app:streamMessageTextStyle`        | normal, bold, italic  | normal  |
+| Properties                              | Type                  | Default          |
+| --------------------------------------- | --------------------- | ---------------- |
+| `app:streamLastMessageTextSize`         | dimension             | 13sp             |
+| `app:streamLastMessageTextColor`        | color                 | stream_gray_dark |
+| `app:streamLastMessageUnreadTextColor`  | color                 | BLACK            |
+| `app:streamLastMessageTextStyle`        | normal, bold, italic  | normal           |
+| `app:streamLastMessageUnreadTextStyle`  | normal, bold, italic  | bold             |
+| `app:streamLastMessageTextFont`         | reference             | -                |
+| `app:streamLastMessageTextFontAssets`   | string                | -                |
 
 - **Last Message Date**
 
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamLastMessageDateTextSize` | dimension             | 11sp    |
-| `app:streamLastMessageDateTextColor`| color                 | DKGRAY  |
-
-- **Unread Channel Title**
-
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamUnreadTitleTextColor`    | color                 | BLACK   |
-| `app:streamUnreadTitleTextStyle`    | normal, bold, italic  | bold    |
-
-- **Unread Last Message**
-
-| Properties                          | Type                  | Default |
-| ----------------------------------- | --------------------- | ------- |
-| `app:streamUnreadMessageTextColor`  | color                 | BLACK   |
-| `app:streamUnreadMessageTextStyle`  | normal, bold, italic  | bold    |
+| Properties                                 | Type                  | Default          |
+| ------------------------------------------ | --------------------- | ---------------- |
+| `app:streamLastMessageDateTextSize`        | dimension             | 11sp             |
+| `app:streamLastMessageDateTextColor`       | color                 | stream_gray_dark |
+| `app:streamLastMessageDateUnreadTextColor` | color                 | BLACK            |
+| `app:streamLastMessageDateTextStyle`       | normal, bold, italic  | normal           |
+| `app:streamLastMessageDateUnreadTextStyle` | normal, bold, italic  | bold             |
+| `app:streamLastMessageDateTextFont`        | reference             | -                |
+| `app:streamLastMessageDateTextFontAssets`  | string                | -                |
 
 - **Custom Layout**
 

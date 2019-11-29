@@ -6,11 +6,11 @@ import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.rest.StreamWebSocketService;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.Client;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -40,7 +40,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
 
     @NotNull
     public String getWsUrl(String userToken, User user) throws UnsupportedEncodingException {
-        String json = buildUserDetailJSON(user).toString();
+        String json = buildUserDetailJSON(user);
 
         try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
@@ -52,21 +52,11 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
         }
     }
 
-    private JSONObject buildUserDetailJSON(User user) {
-        HashMap<String, Object> jsonParameter = new HashMap<>();
-        HashMap<String, Object> userDetails = new HashMap<>();
-
-        if (user.getExtraData() != null) {
-            userDetails = new HashMap<>(user.getExtraData());
-        }
-
-        userDetails.put("id", user.getId());
-        userDetails.put("name", user.getName());
-        userDetails.put("image", user.getImage());
-
-        jsonParameter.put("user_details", userDetails);
-        jsonParameter.put("user_id", user.getId());
-        jsonParameter.put("server_determines_connection_id", true);
-        return new JSONObject(jsonParameter);
+    public String buildUserDetailJSON(User user) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("user_details", user);
+        data.put("user_id", user.getId());
+        data.put("server_determines_connection_id", true);
+        return GsonConverter.Gson().toJson(data);
     }
 }

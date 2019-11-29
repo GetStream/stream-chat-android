@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
@@ -29,6 +32,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.view.MessageInputStyle;
+import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.io.File;
@@ -39,32 +43,43 @@ public class MessageInputController {
 
     private static final String TAG = MessageInputController.class.getSimpleName();
 
-    ChannelViewModel viewModel;
-    Channel channel;
-    MessageInputStyle style;
-    MediaAttachmentAdapter mediaAttachmentAdapter = null;
-    MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
-    CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
-    List<Object> commands = null;
-    Context context;
-    StreamViewMessageInputBinding binding;
-    AttachmentListAdapter fileAttachmentAdapter = null;
-    AttachmentListAdapter selectedFileAttachmentAdapter = null;
-    MessageInputType messageInputType;
+    private ChannelViewModel viewModel;
+    private Channel channel;
+    private MessageInputStyle style;
+    private MediaAttachmentAdapter mediaAttachmentAdapter = null;
+    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
+    private CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
+    private List<Object> commands = null;
+    private Context context;
+    private StreamViewMessageInputBinding binding;
+    private AttachmentListAdapter fileAttachmentAdapter = null;
+    private AttachmentListAdapter selectedFileAttachmentAdapter = null;
+    private MessageInputType messageInputType;
     private List<Attachment> selectedAttachments = null;
+    private MessageInputView.AttachmentListener attachmentListener;
+    private boolean uploadingFile = false;
 
     // region Attachment
 
-    public MessageInputController(Context context, StreamViewMessageInputBinding binding, ChannelViewModel viewModel, MessageInputStyle style) {
+    public MessageInputController(Context context,
+                                  StreamViewMessageInputBinding binding,
+                                  ChannelViewModel viewModel,
+                                  MessageInputStyle style,
+                                  MessageInputView.AttachmentListener attachmentListener) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
         this.channel = viewModel.getChannel();
         this.style = style;
+        this.attachmentListener = attachmentListener;
     }
 
     public List<Attachment> getSelectedAttachments() {
         return selectedAttachments;
+    }
+
+    public boolean isUploadingFile() {
+        return uploadingFile;
     }
 
     public void setSelectedAttachments(List<Attachment> selectedAttachments) {
@@ -98,7 +113,7 @@ public class MessageInputController {
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
-        binding.tvTitle.setText(type.label);
+        binding.tvTitle.setText(type.getLabel());
         messageInputType = type;
         configPermissions();
     }
@@ -158,8 +173,8 @@ public class MessageInputController {
             ((Activity) context).runOnUiThread(() -> {
                 if (!attachments.isEmpty()){
                     mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                        Attachment attachment = attachments.get(position);
-                        attachment.config.setSelected(!attachment.config.isSelected());
+                        Attachment attachment = getAttachment(attachments, position);
+                        if (attachment == null) return;
                         mediaAttachmentAdapter.notifyItemChanged(position);
                         updateComposerViewBySelectedMedia(attachments, attachment);
                     });
@@ -185,9 +200,8 @@ public class MessageInputController {
                     binding.lvFile.setAdapter(fileAttachmentAdapter);
                     binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                            int position, long id) -> {
-                        Attachment attachment = attachments.get(position);
-
-                        attachment.config.setSelected(!attachment.config.isSelected());
+                        Attachment attachment = getAttachment(attachments, position);
+                        if (attachment == null) return;
                         fileAttachmentAdapter.notifyDataSetChanged();
                         updateComposerViewBySelectedFile(attachments, attachment);
                     });
@@ -203,6 +217,18 @@ public class MessageInputController {
                 }
             });
         }
+    }
+
+    @Nullable
+    private Attachment getAttachment(List<Attachment> attachments, int position) {
+        Attachment attachment = attachments.get(position);
+        File file = new File(attachment.config.getFilePath());
+        if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
+            Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
+            return null;
+        }
+        attachment.config.setSelected(!attachment.config.isSelected());
+        return attachment;
     }
 
     public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
@@ -224,12 +250,12 @@ public class MessageInputController {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            binding.ivSend.setEnabled(false);
+            uploadingFile = true;
             UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
                     binding.setActiveMessageSend(true);
-                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     File file = new File(attachment.config.getFilePath());
                     if (attachment.getType().equals(ModelType.attach_image)) {
                         attachment.setImageURL(response.getFileUrl());
@@ -241,13 +267,14 @@ public class MessageInputController {
                         attachment.setAssetURL(response.getFileUrl());
                     }
                     attachment.config.setUploaded(true);
-                    selectedMediaAttachmentAdapter.notifyItemChanged(selectedAttachments.size() - 1);
+                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                    attachmentListener.onAddAttachments();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
                     binding.setActiveMessageSend(true);
-                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     attachment.config.setSelected(false);
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedMedia(attachments, attachment);
@@ -257,6 +284,7 @@ public class MessageInputController {
                 public void onProgress(Integer percentage) {
                     attachment.config.setProgress(percentage);
                     selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                    uploadingFile = true;
                 }
             };
             if (attachment.getType().equals(ModelType.attach_image)) {
@@ -270,16 +298,14 @@ public class MessageInputController {
         setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
 
         if (selectedAttachments.size() > 0) {
-            binding.setActiveMessageSend(true);
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
         }
     }
 
     private void setSelectedMediaAttachmentRecyclerViewAdapter(final List<Attachment> attachments) {
-        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, (int position) -> {
+        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
             Attachment attachment1 = selectedAttachments.get(position);
             attachment1.config.setSelected(false);
             selectedAttachments.remove(attachment1);
@@ -320,26 +346,29 @@ public class MessageInputController {
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
-            binding.ivSend.setEnabled(false);
+            uploadingFile = true;
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
-                    binding.ivSend.setEnabled(true);
+                    binding.setActiveMessageSend(true);
+                    uploadingFile = false;
                     attachment.setAssetURL(response.getFileUrl());
                     attachment.config.setUploaded(true);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
+                    attachmentListener.onAddAttachments();
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
                     attachment.config.setSelected(false);
-                    binding.ivSend.setEnabled(true);
+                    uploadingFile = false;
                     Utils.showMessage(context, errMsg);
                     updateComposerViewBySelectedFile(attachments, attachment);
                 }
 
                 @Override
                 public void onProgress(Integer percentage) {
+                    uploadingFile = true;
                     attachment.config.setProgress(percentage);
                     selectedFileAttachmentAdapter.notifyDataSetChanged();
                 }
@@ -351,10 +380,8 @@ public class MessageInputController {
 
         if (selectedAttachments.size() > 0) {
             viewModel.setInputType(InputType.SELECT);
-            binding.setActiveMessageSend(true);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
         }
     }
 
@@ -401,6 +428,10 @@ public class MessageInputController {
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
+        if (file.length()> Constant.MAX_UPLOAD_FILE_SIZE){
+            Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
+            return;
+        }
         convertAttachment(file, isImage);
     }
     private void convertAttachment(File file, boolean isImage) {
@@ -466,7 +497,7 @@ public class MessageInputController {
         } else {
             setMentionUsers("");
         }
-        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_command_title : R.string.stream_mention_title);
+        String title = binding.tvTitle.getContext().getResources().getString(isCommand ? R.string.stream_input_type_command : R.string.stream_input_type_auto_mention);
         binding.tvTitle.setText(title);
         binding.tvCommand.setText("");
         setCommandMentionListItemAdapter(isCommand);
@@ -526,8 +557,9 @@ public class MessageInputController {
         Log.d(TAG, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        for (int i = 0; i < channel.getChannelState().getMembers().size(); i++) {
-            Member member = channel.getChannelState().getMembers().get(i);
+        List<Member> members = channel.getChannelState().getMembers();
+        for (int i = 0; i < members.size(); i++) {
+            Member member = members.get(i);
             User user = member.getUser();
             if (user.getName().toLowerCase().contains(string.toLowerCase()))
                 commands.add(user);
