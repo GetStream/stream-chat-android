@@ -4,16 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.List;
 
 import io.getstream.chat.example.adapter.UserListItemAdapter;
-import io.getstream.chat.example.utils.UserConfig;
 import io.getstream.chat.example.utils.UserStorage;
 
 public class LoginActivity extends AppCompatActivity {

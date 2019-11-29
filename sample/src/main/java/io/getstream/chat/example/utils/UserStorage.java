@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -56,17 +56,17 @@ public class UserStorage {
         setCurrentUser(null);
     }
 
-    private static List<UserConfig> parseJson(){
-        String json = loadJSONFromAsset();
-        if (json == null)
-            return null;
-
-        Gson gson = new Gson();
-        users = gson.fromJson(json, new TypeToken<List<UserConfig>>(){}.getType());
-        return users;
+    private static void parseJson(){
+        try {
+            String json = loadJSONFromAsset();
+            Gson gson = new Gson();
+            users = gson.fromJson(json, new TypeToken<List<UserConfig>>(){}.getType());
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 
-    private static String loadJSONFromAsset() {
+    private static String loadJSONFromAsset() throws FileNotFoundException {
         String json;
         try {
             InputStream is = context.getAssets().open(USER_DATA_FILENAME);
@@ -75,9 +75,9 @@ public class UserStorage {
             is.read(buffer);
             is.close();
             json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw new FileNotFoundException("Unable to find user data json file.");
         }
         return json;
     }
