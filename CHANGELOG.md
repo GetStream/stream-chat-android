@@ -37,8 +37,10 @@
 - Catch error body parsing errors
 - Do not show commands list UI when all commands are disabled
 - Renamed `MessageInputClient` to `MessageInputController`
+- Added Large file(20MB) check for uploading file
 - Added streamUserNameShow and streamMessageDateShow in `MessageListViewStyle`
 - Fixed channel header title position issue when Last Active is hidden
+
 
 ## October 25th, 2019 - 3.2.0
 
