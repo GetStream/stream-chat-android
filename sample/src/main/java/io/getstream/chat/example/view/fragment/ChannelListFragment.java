@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import io.getstream.chat.example.BuildConfig;
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
 import io.getstream.chat.example.utils.UserStorage;
@@ -53,6 +54,34 @@ public class ChannelListFragment extends Fragment {
     private FragmentChannelListBinding binding;
     private ChannelListViewModel viewModel;
 
+    // establish a websocket connection to stream
+    protected Client configureStreamClient() {
+        Client client = StreamChat.getInstance(getContext());
+
+        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
+        if (offlineEnabled) {
+            client.enableOfflineStorage();
+        }
+        Crashlytics.setBool("offlineEnabled", offlineEnabled);
+
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", BuildConfig.USER_NAME);
+        extraData.put("image", BuildConfig.USER_IMAGE);
+
+        User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.i(TAG, String.format("Connection established for user %s", user.getName()));
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
+            }
+        });
+        return client;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,45 +149,14 @@ public class ChannelListFragment extends Fragment {
             // open your user profile
         });
         binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
+
+        initToolbar(binding);
+
         return binding.getRoot();
     }
 
-
-    protected Client configureStreamClient() {
-        Client client = StreamChat.getInstance(getContext());
-
-        String USER_ID = UserStorage.getCurrentUser().getId();
-        String USER_TOKEN = UserStorage.getCurrentUser().getToken();
-        String USER_NAME = UserStorage.getCurrentUser().getName();
-        String USER_IMAGE = UserStorage.getCurrentUser().getImage();
-
-        Crashlytics.setUserIdentifier(USER_ID);
-        if (offlineEnabled) {
-            client.enableOfflineStorage();
-        }
-        Crashlytics.setBool("offlineEnabled", offlineEnabled);
-
-        HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", USER_NAME);
-        extraData.put("image", USER_IMAGE);
-
-        User user = new User(USER_ID, extraData);
-        client.setUser(user, USER_TOKEN, new ClientConnectionCallback() {
-            @Override
-            public void onSuccess(User user) {
-                Log.i(TAG, String.format("Connection established for user %s", user.getName()));
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
-            }
-        });
-        return client;
-    }
-
     // region create new channel
-    void showCreateNewChannelDialog() {
+    private void showCreateNewChannelDialog() {
         final EditText inputName = new EditText(getContext());
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
@@ -183,7 +181,7 @@ public class ChannelListFragment extends Fragment {
         alertDialog.show();
     }
 
-    void createNewChannel(String channelName) {
+    private void createNewChannel(String channelName) {
         Client client = configureStreamClient();
 
         HashMap<String, Object> extraData = new HashMap<>();
@@ -229,5 +227,10 @@ public class ChannelListFragment extends Fragment {
         viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
         FilterObject filter = and(eq("type", "messaging"));
         viewModel.setChannelFilter(filter);
+    }
+
+    private void initToolbar(FragmentChannelListBinding binding) {
+        binding.toolbar.setTitle("Stream Chat");
+        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }
 }
