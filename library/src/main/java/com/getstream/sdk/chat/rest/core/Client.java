@@ -1151,32 +1151,37 @@ public class Client implements WSResponseHandler {
                             @NonNull Message message,
                             MessageCallback callback) {
 
-        String str = GsonConverter.Gson().toJson(message);
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
+        if ((message.getText() == null || message.getText().isEmpty())
+                && (message.getAttachments() == null || message.getAttachments().isEmpty())) {
+            callback.onError(StreamChat.getContext().getString(R.string.stream_message_empty), -1);
+        } else {
+            String str = GsonConverter.Gson().toJson(message);
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
 
-        apiService.sendMessage(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, map).enqueue(new Callback<MessageResponse>() {
-            @Override
-            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                message.setSyncStatus(SYNCED);
-                if (response.body() != null && response.body().getMessage() != null) {
-                    response.body().getMessage().setSyncStatus(SYNCED);
-                    callback.onSuccess(response.body());
-                } else {
-                    callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
+            apiService.sendMessage(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, map).enqueue(new Callback<MessageResponse>() {
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    message.setSyncStatus(SYNCED);
+                    if (response.body() != null && response.body().getMessage() != null) {
+                        response.body().getMessage().setSyncStatus(SYNCED);
+                        callback.onSuccess(response.body());
+                    } else {
+                        callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setSyncStatus(LOCAL_FAILED);
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    message.setSyncStatus(LOCAL_FAILED);
+                    if (t instanceof ErrorResponse) {
+                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                    } else {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -1187,33 +1192,38 @@ public class Client implements WSResponseHandler {
     public void updateMessage(@NonNull Message message,
                               MessageCallback callback) {
 
-        String str = GsonConverter.Gson().toJson(message);
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
-        apiService.updateMessage(message.getId(),
-                apiKey,
-                getUserId(),
-                clientID,
-                map).enqueue(new Callback<MessageResponse>() {
+        if ((message.getText() == null || message.getText().isEmpty())
+                && (message.getAttachments() == null || message.getAttachments().isEmpty())) {
+            callback.onError(StreamChat.getContext().getString(R.string.stream_message_empty), -1);
+        } else {
+            String str = GsonConverter.Gson().toJson(message);
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
+            apiService.updateMessage(message.getId(),
+                    apiKey,
+                    getUserId(),
+                    clientID,
+                    map).enqueue(new Callback<MessageResponse>() {
 
-            @Override
-            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                message.setSyncStatus(SYNCED);
-                if (response.body() != null && response.body().getMessage() != null)
-                    response.body().getMessage().setSyncStatus(SYNCED);
-                callback.onSuccess(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setSyncStatus(LOCAL_FAILED);
-                if (t instanceof ErrorResponse) {
-                    callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                } else {
-                    callback.onError(t.getLocalizedMessage(), -1);
+                @Override
+                public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                    message.setSyncStatus(SYNCED);
+                    if (response.body() != null && response.body().getMessage() != null)
+                        response.body().getMessage().setSyncStatus(SYNCED);
+                    callback.onSuccess(response.body());
                 }
-            }
-        });
+
+                @Override
+                public void onFailure(Call<MessageResponse> call, Throwable t) {
+                    message.setSyncStatus(LOCAL_FAILED);
+                    if (t instanceof ErrorResponse) {
+                        callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                    } else {
+                        callback.onError(t.getLocalizedMessage(), -1);
+                    }
+                }
+            });
+        }
     }
 
     public void getMessage(@NonNull String messageId,
