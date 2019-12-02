@@ -542,20 +542,20 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
-        client().getStorage().selectChannelStates(request.query().getId(), 100, new OnQueryListener<List<ChannelState>>() {
-            @Override
-            public void onSuccess(List<ChannelState> channelStates) {
-                if (channels != null && channelStates != null)
-                    addChannels(channelStates);
-                callback.onSuccess(channelStates);
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.w(TAG, String.format("Failed to read channel list from offline storage, error %s", e.toString()));
-                callback.onFailure(e);
-            }
-        });
+//        client().getStorage().selectChannelStates(request.query().getId(), 100, new OnQueryListener<List<ChannelState>>() {
+//            @Override
+//            public void onSuccess(List<ChannelState> channelStates) {
+//                if (channels != null && channelStates != null)
+//                    addChannels(channelStates);
+//                callback.onSuccess(channelStates);
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//                Log.w(TAG, String.format("Failed to read channel list from offline storage, error %s", e.toString()));
+//                callback.onFailure(e);
+//            }
+//        });
         queryChannelsInner(0);
     }
 

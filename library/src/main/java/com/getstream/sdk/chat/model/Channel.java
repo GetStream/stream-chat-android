@@ -766,12 +766,12 @@ public class Channel {
     public void handleChannelUpdated(Channel channel) {
         extraData = channel.extraData;
         updatedAt = channel.updatedAt;
-        getClient().getStorage().insertChannel(channel);
+        //getClient().getStorage().insertChannel(channel);
     }
 
     public void handleChannelDeleted(Channel channel) {
         deletedAt = channel.deletedAt;
-        getClient().getStorage().deleteChannel(channel);
+        //getClient().getStorage().deleteChannel(channel);
     }
 
     public void handleWatcherStart(Event event) {
@@ -793,7 +793,7 @@ public class Channel {
         if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
             setLastMessageDate(message.getCreatedAt());
         }
-        getClient().getStorage().insertMessageForChannel(this, message);
+        //getClient().getStorage().insertMessageForChannel(this, message);
     }
 
     public void handleMessageUpdatedOrDeleted(Event event) {
@@ -805,7 +805,7 @@ public class Channel {
                 if (i == channelState.getMessages().size() - 1)
                     channelState.setLastMessage(message);
 
-                getClient().getStorage().insertMessageForChannel(this, message);
+                //getClient().getStorage().insertMessageForChannel(this, message);
                 break;
             }
         }

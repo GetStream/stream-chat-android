@@ -3,18 +3,8 @@ package com.getstream.sdk.chat.rest.response;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-import androidx.room.RoomWarnings;
-import androidx.room.TypeConverters;
-
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -27,13 +17,11 @@ import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.*;
 
 @Entity(tableName = "stream_channel_state")
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
@@ -55,32 +43,32 @@ public class ChannelState {
     @Ignore
     @SerializedName("messages")
     @Expose
-    private List<Message> messages;
+    public List<Message> messages;
 
     @Embedded(prefix = "last_message_")
-    private Message lastMessage;
+    public Message lastMessage;
 
     @SerializedName("read")
     @Expose
     @TypeConverters({ChannelUserReadListConverter.class})
-    private List<ChannelUserRead> reads;
+    public List<ChannelUserRead> reads;
 
     @SerializedName("members")
     @Expose
     @TypeConverters({MemberListConverter.class})
-    private List<Member> members;
+    public List<Member> members;
 
     @Ignore
     @SerializedName("watchers")
     @Expose
-    private List<Watcher> watchers;
+    public List<Watcher> watchers;
 
     @Ignore
     @SerializedName("watcher_count")
-    private int watcherCount;
+    public int watcherCount;
 
     @Ignore
-    private Date lastKnownActiveWatcher;
+    public Date lastKnownActiveWatcher;
 
     public ChannelState() {
         this(null);
@@ -117,11 +105,11 @@ public class ChannelState {
         return watchers;
     }
 
-    public void preStorage() {
-
-        this.cid = this.channel.getCid();
-        this.lastMessage = this.computeLastMessage();
-    }
+//    public void preStorage() {
+//
+//        this.cid = this.channel.getCid();
+//        this.lastMessage = this.computeLastMessage();
+//    }
 
     public int getWatcherCount() {
         return watcherCount;
@@ -131,22 +119,22 @@ public class ChannelState {
         this.watcherCount = watcherCount;
     }
 
-    private Date getLastKnownActiveWatcher() {
+    public Date getLastKnownActiveWatcher() {
         if (lastKnownActiveWatcher == null) {
             lastKnownActiveWatcher = new Date(0);
         }
         return lastKnownActiveWatcher;
     }
 
-    public ChannelState copy() {
-        ChannelState clone = new ChannelState(channel);
-        clone.reads = new ArrayList<>();
-        for (ChannelUserRead read : getReads()) {
-            clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
-        }
-        clone.setLastMessage(getLastMessage());
-        return clone;
-    }
+//    public ChannelState copy() {
+//        ChannelState clone = new ChannelState(channel);
+//        clone.reads = new ArrayList<>();
+//        for (ChannelUserRead read : getReads()) {
+//            clone.reads.add(new ChannelUserRead(read.getUser(), read.getLastRead()));
+//        }
+//        clone.setLastMessage(getLastMessage());
+//        return clone;
+//    }
 
     public synchronized void addWatcher(Watcher watcher) {
         if (watchers == null) {
@@ -181,7 +169,7 @@ public class ChannelState {
     public void removeMemberById(@NotNull String userId) {
         if (members == null || members.isEmpty())
             return;
-        
+
         for (Iterator<Member> it = members.iterator(); it.hasNext(); ) {
             Member member = it.next();
             if (member.getUserId().equals(userId)) {
@@ -190,35 +178,35 @@ public class ChannelState {
         }
     }
 
-    public List<User> getOtherUsers() {
-
-        Log.d(TAG, "getOtherUsers");
-
-        List<User> users = new ArrayList<>();
-
-        if (members != null) {
-            for (Member m : members) {
-                if (!channel.getClient().fromCurrentUser(m)) {
-                    User user = channel.getClient().getState().getUser(m.getUser().getId());
-                    Log.d(TAG, "getOtherUsers: member: " + user);
-                    users.add(user);
-                }
-            }
-        }
-
-        if (watchers != null) {
-            for (Watcher w : watchers) {
-                if (!channel.getClient().fromCurrentUser(w)) {
-                    User user = channel.getClient().getState().getUser(w.getUser().getId());
-                    Log.d(TAG, "getOtherUsers: watcher: " + user);
-                    if (!users.contains(user))
-                        users.add(user);
-                }
-            }
-        }
-
-        return users;
-    }
+//    public List<User> getOtherUsers() {
+//
+//        Log.d(TAG, "getOtherUsers");
+//
+//        List<User> users = new ArrayList<>();
+//
+//        if (members != null) {
+//            for (Member m : members) {
+//                if (!channel.getClient().fromCurrentUser(m)) {
+//                    User user = channel.getClient().getState().getUser(m.getUser().getId());
+//                    Log.d(TAG, "getOtherUsers: member: " + user);
+//                    users.add(user);
+//                }
+//            }
+//        }
+//
+//        if (watchers != null) {
+//            for (Watcher w : watchers) {
+//                if (!channel.getClient().fromCurrentUser(w)) {
+//                    User user = channel.getClient().getState().getUser(w.getUser().getId());
+//                    Log.d(TAG, "getOtherUsers: watcher: " + user);
+//                    if (!users.contains(user))
+//                        users.add(user);
+//                }
+//            }
+//        }
+//
+//        return users;
+//    }
 
     public String getOldestMessageId() {
 
@@ -231,51 +219,51 @@ public class ChannelState {
     }
 
     // last time the channel had a message from another user or (when more recent) the time a watcher was last active
-    public Date getLastActive() {
-        Date lastActive = channel.getCreatedAt();
-        if (lastActive == null) lastActive = new Date();
-        if (getLastKnownActiveWatcher().after(lastActive)) {
-            lastActive = getLastKnownActiveWatcher();
-        }
-        Message message = getLastMessageFromOtherUser();
-        if (message != null) {
-            if (message.getCreatedAt().after(lastActive)) {
-                lastActive = message.getCreatedAt();
-            }
-        }
-        for (Watcher watcher : getWatchers()) {
-            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
-                continue;
-            if (lastActive.before(watcher.getUser().getLastActive())) {
-                if (channel.getClient().fromCurrentUser(watcher)) continue;
-                lastActive = watcher.getUser().getLastActive();
-            }
-        }
-        return lastActive;
-    }
+//    public Date getLastActive() {
+//        Date lastActive = channel.getCreatedAt();
+//        if (lastActive == null) lastActive = new Date();
+//        if (getLastKnownActiveWatcher().after(lastActive)) {
+//            lastActive = getLastKnownActiveWatcher();
+//        }
+//        Message message = getLastMessageFromOtherUser();
+//        if (message != null) {
+//            if (message.getCreatedAt().after(lastActive)) {
+//                lastActive = message.getCreatedAt();
+//            }
+//        }
+//        for (Watcher watcher : getWatchers()) {
+//            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
+//                continue;
+//            if (lastActive.before(watcher.getUser().getLastActive())) {
+//                if (channel.getClient().fromCurrentUser(watcher)) continue;
+//                lastActive = watcher.getUser().getLastActive();
+//            }
+//        }
+//        return lastActive;
+//    }
 
-    public String getChannelNameOrMembers() {
-        String channelName;
-
-        Log.i(TAG, "Channel name is" + channel.getName() + channel.getCid());
-        if (!TextUtils.isEmpty(channel.getName())) {
-            channelName = channel.getName();
-        } else {
-            List<User> users = this.getOtherUsers();
-            List<User> top3 = users.subList(0, Math.min(3, users.size()));
-            List<String> usernames = new ArrayList<>();
-            for (User u : top3) {
-                if (u == null) continue;
-                usernames.add(u.getName());
-            }
-
-            channelName = TextUtils.join(", ", usernames);
-            if (users.size() > 3) {
-                channelName += "...";
-            }
-        }
-        return channelName;
-    }
+//    public String getChannelNameOrMembers() {
+//        String channelName;
+//
+//        Log.i(TAG, "Channel name is" + channel.getName() + channel.getCid());
+//        if (!TextUtils.isEmpty(channel.getName())) {
+//            channelName = channel.getName();
+//        } else {
+//            List<User> users = this.getOtherUsers();
+//            List<User> top3 = users.subList(0, Math.min(3, users.size()));
+//            List<String> usernames = new ArrayList<>();
+//            for (User u : top3) {
+//                if (u == null) continue;
+//                usernames.add(u.getName());
+//            }
+//
+//            channelName = TextUtils.join(", ", usernames);
+//            if (users.size() > 3) {
+//                channelName += "...";
+//            }
+//        }
+//        return channelName;
+//    }
 
     public Channel getChannel() {
         return channel;
@@ -330,24 +318,24 @@ public class ChannelState {
         return readsByUser;
     }
 
-    public synchronized List<ChannelUserRead> getLastMessageReads() {
-        Message lastMessage = this.getLastMessage();
-        List<ChannelUserRead> readLastMessage = new ArrayList<>();
-        if (reads == null || lastMessage == null) return readLastMessage;
-        Client client = this.getChannel().getClient();
-        String userID = client.getUserId();
-        for (ChannelUserRead r : reads) {
-            if (r.getUserId().equals(userID))
-                continue;
-            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
-                readLastMessage.add(r);
-            }
-        }
-
-        // sort the reads
-        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-        return readLastMessage;
-    }
+//    public synchronized List<ChannelUserRead> getLastMessageReads() {
+//        Message lastMessage = this.getLastMessage();
+//        List<ChannelUserRead> readLastMessage = new ArrayList<>();
+//        if (reads == null || lastMessage == null) return readLastMessage;
+//        Client client = this.getChannel().getClient();
+//        String userID = client.getUserId();
+//        for (ChannelUserRead r : reads) {
+//            if (r.getUserId().equals(userID))
+//                continue;
+//            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
+//                readLastMessage.add(r);
+//            }
+//        }
+//
+//        // sort the reads
+//        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
+//        return readLastMessage;
+//    }
 
     public List<Member> getMembers() {
         if (members == null) {
@@ -360,41 +348,25 @@ public class ChannelState {
         this.members = members;
     }
 
-    @Nullable
-    public Message getLastMessage() {
-        if (lastMessage == null) {
-            lastMessage = computeLastMessage();
-        }
-        return lastMessage;
-    }
+//    @Nullable
+//    public Message getLastMessage() {
+//        if (lastMessage == null) {
+//            lastMessage = computeLastMessage();
+//        }
+//        return lastMessage;
+//    }
 
-    public void setLastMessage(@Nullable Message lastMessage) {
-        if (lastMessage == null) return;
+//    public void setLastMessage(@Nullable Message lastMessage) {
+//        if (lastMessage == null) return;
+//
+//        if (lastMessage.getDeletedAt() != null) {
+//            this.lastMessage = computeLastMessage();
+//            return;
+//        }
+//        this.lastMessage = lastMessage;
+//    }
 
-        if (lastMessage.getDeletedAt() != null) {
-            this.lastMessage = computeLastMessage();
-            return;
-        }
-        this.lastMessage = lastMessage;
-    }
-
-    @Nullable
-    public Message computeLastMessage() {
-        Message lastMessage = null;
-        List<Message> messages = getMessages();
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            Message message = messages.get(i);
-            if (message.getDeletedAt() == null && message.getType().equals(ModelType.message_regular)) {
-                lastMessage = message;
-                break;
-            }
-        }
-        Message.setStartDay(Collections.singletonList(lastMessage), null);
-
-        return lastMessage;
-    }
-
-    private Message getLastMessageFromOtherUser() {
+    public Message getLastMessageFromOtherUser() {
         Message lastMessage = null;
         try {
             List<Message> messages = getMessages();
@@ -425,22 +397,22 @@ public class ChannelState {
         return lastReadUser;
     }
 
-    private void addOrUpdateMessage(Message newMessage) {
-        if (messages.size() > 0) {
-            for (int i = messages.size() - 1; i >= 0; i--) {
-                if (messages.get(i).getId().equals(newMessage.getId())) {
-                    messages.set(i, newMessage);
-                    return;
-                }
-                if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
-                    messages.add(newMessage);
-                    return;
-                }
-            }
-        } else {
-            messages.add(newMessage);
-        }
-    }
+//    private void addOrUpdateMessage(Message newMessage) {
+//        if (messages.size() > 0) {
+//            for (int i = messages.size() - 1; i >= 0; i--) {
+//                if (messages.get(i).getId().equals(newMessage.getId())) {
+//                    messages.set(i, newMessage);
+//                    return;
+//                }
+//                if (messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
+//                    messages.add(newMessage);
+//                    return;
+//                }
+//            }
+//        } else {
+//            messages.add(newMessage);
+//        }
+//    }
 
     public void addMessageSorted(Message message) {
         List<Message> diff = new ArrayList<>();
@@ -455,31 +427,6 @@ public class ChannelState {
                 addOrUpdateMessage(m);
             }
         }
-    }
-
-    public void init(ChannelState incoming) {
-        reads = incoming.reads;
-        watcherCount = incoming.watcherCount;
-
-        if (watcherCount > 1) {
-            lastKnownActiveWatcher = new Date();
-        }
-
-        if (incoming.messages != null) {
-            addMessagesSorted(incoming.messages);
-            lastMessage = computeLastMessage();
-        }
-
-        if (incoming.watchers != null) {
-            for (Watcher watcher : incoming.watchers) {
-                addWatcher(watcher);
-            }
-        }
-
-        if (incoming.members != null) {
-            members = new ArrayList<>(incoming.members);
-        }
-        // TODO: merge with incoming.reads
     }
 
     public int getCurrentUserUnreadMessageCount() {

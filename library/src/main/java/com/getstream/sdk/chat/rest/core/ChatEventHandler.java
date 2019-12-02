@@ -110,11 +110,11 @@ public abstract class ChatEventHandler {
 
     public void onAnyEvent(Event event) {
     }
-
-    final Channel getChannel(Client client, Event event) {
-        if (event.getCid() == null) return null;
-        return client.getChannelByCid(event.getCid());
-    }
+//
+//    final Channel getChannel(Client client, Event event) {
+//        if (event.getCid() == null) return null;
+//        return client.getChannelByCid(event.getCid());
+//    }
 
     public void handleEventFromUnregisteredChannel(Client client, Event event) {
     }
@@ -124,12 +124,12 @@ public abstract class ChatEventHandler {
     }
 
     final void dispatchChannelEvent(Client client, Event event, ChannelEvent channelEventLambda) {
-        Channel channel = getChannel(client, event);
-        if (channel == null) {
-            handleEventFromUnregisteredChannel(client, event);
-        } else {
-            channelEventLambda.dispatch(channel, event);
-        }
+//        Channel channel = getChannel(client, event);
+//        if (channel == null) {
+//            handleEventFromUnregisteredChannel(client, event);
+//        } else {
+//            channelEventLambda.dispatch(channel, event);
+//        }
     }
 
     final void dispatchEvent(Client client, Event event) {
@@ -214,38 +214,40 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onNotificationInviteRejected);
                 break;
             case NOTIFICATION_MESSAGE_NEW:
-                Channel channel = client.channel(event.getChannel().getCid());
-                if (!channel.isInitialized()) {
-                    channel.query(new ChannelQueryRequest(), new QueryChannelCallback() {
-                        @Override
-                        public void onSuccess(ChannelState response) {
-                            onNotificationMessageNew(channel, event);
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            //ignore
-                        }
-                    });
-                } else {
-                    event.getMessage().setSyncStatus(Sync.SYNCED);
-                    dispatchChannelEvent(client, event, this::onMessageNew);
-                }
-                break;
+                dispatchChannelEvent(client, event, this::onNotificationMessageNew);
+//                Channel channel = client.channel(event.getChannel().getCid());
+//                if (!channel.isInitialized()) {
+//                    channel.query(new ChannelQueryRequest(), new QueryChannelCallback() {
+//                        @Override
+//                        public void onSuccess(ChannelState response) {
+//                            onNotificationMessageNew(channel, event);
+//                        }
+//
+//                        @Override
+//                        public void onError(String errMsg, int errCode) {
+//                            //ignore
+//                        }
+//                    });
+//                } else {
+//                    event.getMessage().setSyncStatus(Sync.SYNCED);
+//                    dispatchChannelEvent(client, event, this::onMessageNew);
+//                }
+//                break;
             case NOTIFICATION_ADDED_TO_CHANNEL:
-                Channel newChannel = client.channel(event.getChannel().getCid());
-                newChannel.watch(new ChannelWatchRequest().withPresence(),
-                        new QueryWatchCallback() {
-                            @Override
-                            public void onSuccess(ChannelState response) {
-                                onNotificationAddedToChannel(newChannel, event);
-                            }
-
-                            @Override
-                            public void onError(String errMsg, int errCode) {
-                                //ignore
-                            }
-                        });
+                dispatchChannelEvent(client, event, this::onNotificationAddedToChannel);
+//                Channel newChannel = client.channel(event.getChannel().getCid());
+//                newChannel.watch(new ChannelWatchRequest().withPresence(),
+//                        new QueryWatchCallback() {
+//                            @Override
+//                            public void onSuccess(ChannelState response) {
+//                                onNotificationAddedToChannel(newChannel, event);
+//                            }
+//
+//                            @Override
+//                            public void onError(String errMsg, int errCode) {
+//                                //ignore
+//                            }
+//                        });
                 break;
             case NOTIFICATION_REMOVED_FROM_CHANNEL:
                 dispatchChannelEvent(client, event, this::onNotificationRemovedFromChannel);

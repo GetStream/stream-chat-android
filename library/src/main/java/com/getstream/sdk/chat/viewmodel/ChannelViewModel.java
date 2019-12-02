@@ -73,20 +73,20 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.channel = channel;
 
         // fetch offline messages
-        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
-            @Override
-            public void onSuccess(ChannelState channelState) {
-                Log.i(TAG, "Read messages from local cache...");
-                if (channelState != null) {
-                    messages.setValue(channelState.getMessages());
-                }
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
-            }
-        });
+//        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
+//            @Override
+//            public void onSuccess(ChannelState channelState) {
+//                Log.i(TAG, "Read messages from local cache...");
+//                if (channelState != null) {
+//                    messages.setValue(channelState.getMessages());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
+//            }
+//        });
 
         reads.setValue(channel.getChannelState().getReadsByUser());
         messages.setValue(channel.getChannelState().getMessages());
@@ -980,7 +980,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         if (message.getSyncStatus() == Sync.IN_MEMORY) {
             // insert the message into local storage
-            client().getStorage().insertMessageForChannel(channel, message);
+            //client().getStorage().insertMessageForChannel(channel, message);
 
             // add the message here
             addMessage(message);
@@ -1016,7 +1016,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         });
     }
-
 
     /**
      * Edit message

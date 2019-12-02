@@ -50,17 +50,20 @@ public class ClientState {
 
     private static final String TAG = ClientState.class.getSimpleName();
 
-    @NotNull
-    private ConcurrentHashMap<String, User> users;
+    public boolean connected;
+    public User user;
 
-    private User currentUser;
+//    @NotNull
+//    private ConcurrentHashMap<String, User> users;
 
-    private Integer totalUnreadCount;
+//    private User currentUser;
 
-    private Integer unreadChannels;
+//    private Integer totalUnreadCount;
 
-    @NotNull
-    private ConcurrentHashMap<String, List<String>> userIDToChannelsMap;
+//    private Integer unreadChannels;
+
+//    @NotNull
+//    private ConcurrentHashMap<String, List<String>> userIDToChannelsMap;
 
     @NotNull
     private Client client;
@@ -72,8 +75,12 @@ public class ClientState {
      */
     public ClientState(Client client) {
         this.client = client;
-        userIDToChannelsMap = new ConcurrentHashMap<>();
-        users = new ConcurrentHashMap<>();
+//        userIDToChannelsMap = new ConcurrentHashMap<>();
+//        users = new ConcurrentHashMap<>();
+    }
+
+    public String getUserId(){
+        return user == null ? null : user.getUserId();
     }
 
     /**
@@ -81,137 +88,139 @@ public class ClientState {
      *
      * @return
      */
-    public Integer getTotalUnreadCount() {
-        return totalUnreadCount;
-    }
+//    public Integer getTotalUnreadCount() {
+//        return totalUnreadCount;
+//    }
 
-    void setTotalUnreadCount(Integer totalUnreadCount) {
-        this.totalUnreadCount = totalUnreadCount;
-    }
+//    void setTotalUnreadCount(Integer totalUnreadCount) {
+//        this.totalUnreadCount = totalUnreadCount;
+//    }
 
     /**
      * Returns the current user
      *
      * @return
      */
-    public User getCurrentUser() {
-        return currentUser;
-    }
+//    public User getCurrentUser() {
+//        return currentUser;
+//    }
 
-    void setCurrentUser(User currentUser) {
-        Log.d(TAG, "setCurrentUser: " + currentUser);
-        this.currentUser = currentUser;
-        this.totalUnreadCount = currentUser.getTotalUnreadCount();
-        this.unreadChannels = currentUser.getUnreadChannels();
-    }
+//    void setCurrentUser(User currentUser) {
+//        Log.d(TAG, "setCurrentUser: " + currentUser);
+//        this.currentUser = currentUser;
+//        this.totalUnreadCount = currentUser.getTotalUnreadCount();
+//        this.unreadChannels = currentUser.getUnreadChannels();
+//    }
 
     void reset() {
         Log.d(TAG, "reset");
-        currentUser = null;
-        totalUnreadCount = 0;
-        unreadChannels = 0;
-        userIDToChannelsMap.clear();
-        users.clear();
+        connected = false;
+        user = null;
+//        currentUser = null;
+//        totalUnreadCount = 0;
+//        unreadChannels = 0;
+//        userIDToChannelsMap.clear();
+//        users.clear();
     }
 
-    /**
-     * Get a user by ID
-     *
-     * @param userID a string based ID for the user
-     * @return
-     */
-    public User getUser(String userID) {
-        User result = users.get(userID);
-        Log.d(TAG, "getUser: " + userID + " with result: " + result);
-        return result;
-    }
+//    /**
+//     * Get a user by ID
+//     *
+//     * @param userID a string based ID for the user
+//     * @return
+//     */
+//    public User getUser(String userID) {
+//        User result = users.get(userID);
+//        Log.d(TAG, "getUser: " + userID + " with result: " + result);
+//        return result;
+//    }
 
 
-    void updateUser(User newUser) {
-        List<User> newUsers = new ArrayList<>();
-        newUsers.add(newUser);
-        updateUsers(newUsers);
-    }
+//    void updateUser(User newUser) {
+//        List<User> newUsers = new ArrayList<>();
+//        newUsers.add(newUser);
+//        //updateUsers(newUsers);
+//    }
 
-    public void updateUsers(List<User> newUsers) {
-        Log.d(TAG, "updateUsers");
-        Map<String, Channel> channelMap = client.getActiveChannelMap();
+//    public void updateUsers(List<User> newUsers) {
+//        Log.d(TAG, "updateUsers");
+//        Map<String, Channel> channelMap = client.getActiveChannelMap();
+//
+//        for (User newUser : newUsers) {
+//            User oldUser = users.get(newUser.getId());
+//            if (oldUser != null) {
+//                oldUser.shallowUpdate(newUser);
+//            } else {
+//                users.put(newUser.getId(), newUser.shallowCopy());
+//            }
+//
+//            // if there are existing references, update them
+//            List<String> cids = userIDToChannelsMap.get(newUser.getId());
+//            if (cids != null) {
+//                for (String cid : cids) {
+//                    Channel channel = channelMap.get(cid);
+//                    if (channel != null) {
+//                        // update the members
+//                        for (Member m : channel.getChannelState().getMembers()) {
+//                            if (m.getUserId().equals(newUser.getId())) {
+//                                m.getUser().shallowUpdate(newUser);
+//                            }
+//                        }
+//                        // update the watchers
+//                        // TODO: inefficient if you have many at the same time
+//                        for (Watcher w : channel.getChannelState().getWatchers()) {
+//                            if (w.getUserId().equals(newUser.getId())) {
+//                                w.getUser().shallowUpdate(newUser);
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//    }
 
-        for (User newUser : newUsers) {
-            User oldUser = users.get(newUser.getId());
-            if (oldUser != null) {
-                oldUser.shallowUpdate(newUser);
-            } else {
-                users.put(newUser.getId(), newUser.shallowCopy());
-            }
+//    void updateUserWithReference(User newUser, String cid) {
+//        List<User> newUsers = new ArrayList<>();
+//        newUsers.add(newUser);
+//        updateUsersWithReference(newUsers, cid);
+//    }
 
-            // if there are existing references, update them
-            List<String> cids = userIDToChannelsMap.get(newUser.getId());
-            if (cids != null) {
-                for (String cid : cids) {
-                    Channel channel = channelMap.get(cid);
-                    if (channel != null) {
-                        // update the members
-                        for (Member m : channel.getChannelState().getMembers()) {
-                            if (m.getUserId().equals(newUser.getId())) {
-                                m.getUser().shallowUpdate(newUser);
-                            }
-                        }
-                        // update the watchers
-                        // TODO: inefficient if you have many at the same time
-                        for (Watcher w : channel.getChannelState().getWatchers()) {
-                            if (w.getUserId().equals(newUser.getId())) {
-                                w.getUser().shallowUpdate(newUser);
-                            }
-                        }
-                    }
+//    public void updateUsersForChannel(ChannelState channelState) {
+//        List<User> users = new ArrayList<>();
+//        for (Member m : channelState.getMembers()) {
+//            users.add(m.getUser());
+//        }
+//        for (Watcher w : channelState.getWatchers()) {
+//            users.add(w.getUser());
+//        }
+//        updateUsersWithReference(users, channelState.getChannel().getCid());
+//    }
 
-                }
-            }
-        }
-    }
+//    void updateUsersWithReference(List<User> newUsers, String cid) {
+//        // update the users first
+//        updateUsers(newUsers);
+//
+//        // set the references
+//        for (User newUser : newUsers) {
+//            List<String> channelRefs = userIDToChannelsMap.get(newUser.getId());
+//            if (channelRefs == null) {
+//                channelRefs = new ArrayList<>();
+//            }
+//            channelRefs.add(cid);
+//        }
+//    }
 
-    void updateUserWithReference(User newUser, String cid) {
-        List<User> newUsers = new ArrayList<>();
-        newUsers.add(newUser);
-        updateUsersWithReference(newUsers, cid);
-    }
-
-    public void updateUsersForChannel(ChannelState channelState) {
-        List<User> users = new ArrayList<>();
-        for (Member m : channelState.getMembers()) {
-            users.add(m.getUser());
-        }
-        for (Watcher w : channelState.getWatchers()) {
-            users.add(w.getUser());
-        }
-        updateUsersWithReference(users, channelState.getChannel().getCid());
-    }
-
-    void updateUsersWithReference(List<User> newUsers, String cid) {
-        // update the users first
-        updateUsers(newUsers);
-
-        // set the references
-        for (User newUser : newUsers) {
-            List<String> channelRefs = userIDToChannelsMap.get(newUser.getId());
-            if (channelRefs == null) {
-                channelRefs = new ArrayList<>();
-            }
-            channelRefs.add(cid);
-        }
-    }
-
-    /**
-     * Returns the number of unread channels
-     *
-     * @return
-     */
-    public Integer getUnreadChannels() {
-        return unreadChannels;
-    }
-
-    void setUnreadChannels(Integer unreadChannels) {
-        this.unreadChannels = unreadChannels;
-    }
+//    /**
+//     * Returns the number of unread channels
+//     *
+//     * @return
+//     */
+//    public Integer getUnreadChannels() {
+//        return unreadChannels;
+//    }
+//
+//    void setUnreadChannels(Integer unreadChannels) {
+//        this.unreadChannels = unreadChannels;
+//    }
 }
