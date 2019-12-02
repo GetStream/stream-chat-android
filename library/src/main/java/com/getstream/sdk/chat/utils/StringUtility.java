@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
+    private static final String MARKDOWN_PATTERN = "[*@_~#{\\[\\]\"'|>]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
@@ -45,10 +46,8 @@ public class StringUtility {
                 "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
     }
 
-    public static boolean isHasMarkdown(String message) {
-        String pattenr = "[*@_~#{\\[\\]\"'|>]";
-        boolean isHasMarkdown = Pattern.compile(pattenr).matcher(message).find();
-        return isHasMarkdown;
+    public static boolean containsMarkdown(String message) {
+        return Pattern.compile(MARKDOWN_PATTERN).matcher(message).find();
     }
 
     public static String getDeletedOrMentionedText(Message message) {

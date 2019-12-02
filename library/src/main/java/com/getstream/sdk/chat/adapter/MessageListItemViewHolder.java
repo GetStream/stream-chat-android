@@ -366,7 +366,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (StringUtility.isHasMarkdown(message.getText())) {
+        if (StringUtility.containsMarkdown(message.getText())) {
             if (markdownListener != null)
                 markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
             else
