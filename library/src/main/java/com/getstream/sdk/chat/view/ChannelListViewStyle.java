@@ -42,8 +42,10 @@ public class ChannelListViewStyle extends BaseStyle {
                 .build();
 
         channelTitleUnreadText = new TextStyle.Builder(a)
-                .style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
+                .size(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title))
                 .color(R.styleable.ChannelListView_streamChannelTitleUnreadTextColor, getColor(R.color.stream_black))
+                .font(R.styleable.ChannelListView_streamChannelTitleTextFontAssets, R.styleable.ChannelListView_streamChannelTitleTextFont)
+                .style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
                 .build();
 
         channelWithoutNameText = a.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText);
@@ -56,8 +58,10 @@ public class ChannelListViewStyle extends BaseStyle {
                 .build();
 
         lastMessageUnread = new TextStyle.Builder(a)
-                .style(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD)
+                .size(R.styleable.ChannelListView_streamLastMessageTextSize, getDimension(R.dimen.stream_channel_item_message))
                 .color(R.styleable.ChannelListView_streamLastMessageUnreadTextColor, getColor(R.color.stream_black))
+                .font(R.styleable.ChannelListView_streamLastMessageTextFontAssets, R.styleable.ChannelListView_streamLastMessageTextFont)
+                .style(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD)
                 .build();
 
         lastMessageDateText = new TextStyle.Builder(a)
@@ -68,8 +72,10 @@ public class ChannelListViewStyle extends BaseStyle {
                 .build();
 
         lastMessageDateUnreadText = new TextStyle.Builder(a)
-                .style(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD)
+                .size(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date))
                 .color(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_black))
+                .font(R.styleable.ChannelListView_streamLastMessageDateTextFontAssets, R.styleable.ChannelListView_streamLastMessageDateTextFont)
+                .style(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD)
                 .build();
 
         channelPreviewLayout = a.getResourceId(R.styleable.ChannelListView_streamChannelPreviewLayout, R.layout.stream_item_channel);
