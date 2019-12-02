@@ -2,7 +2,6 @@ package com.getstream.sdk.chat;
 
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.util.ArrayList;
@@ -48,6 +47,21 @@ public class GetDeletedOrMentionedTextTest {
     }
 
     @org.junit.jupiter.api.Test
+    void convertFileSizeTest() {
+        long fileSize = 999;
+        assertEquals("999 B", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = 110592;
+        assertEquals("110.59 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = 452984832;
+        assertEquals("452.98 MB", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = 900000;
+        assertEquals("900 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = 0;
+        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
+        fileSize = -100;
+        assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
+    }
+
     void convertMentionTextTest() {
         String text;
         String userName = "Adrian";

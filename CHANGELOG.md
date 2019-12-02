@@ -1,10 +1,14 @@
 ## Upcoming
 
+- Fix set typeFace without custom font
+- Improve rendering performance for messages without Markdown markup
+
 ## November 28th, 2019 - 3.4.1
 
 - Fix Giphy buttons alignments
 - Add Giphy error cases handling
 - Update http related issues documentation
+
 
 ## November 28th, 2019 - 3.4.0
 
@@ -37,8 +41,10 @@
 - Catch error body parsing errors
 - Do not show commands list UI when all commands are disabled
 - Renamed `MessageInputClient` to `MessageInputController`
+- Added Large file(20MB) check for uploading file
 - Added streamUserNameShow and streamMessageDateShow in `MessageListViewStyle`
 - Fixed channel header title position issue when Last Active is hidden
+
 
 ## October 25th, 2019 - 3.2.0
 

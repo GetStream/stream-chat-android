@@ -10,9 +10,15 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import java.text.DecimalFormat;
+
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
+    private static final String MARKDOWN_PATTERN = "[*@_~#{\\[\\]\"'|>]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
@@ -38,6 +44,10 @@ public class StringUtility {
                 "[\u203C\u2049]\uFE0F?|[\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE]\uFE0F?|" +
                 "[\u00A9\u00AE]\uFE0F?|[\u2122\u2139]\uFE0F?|\uD83C\uDC04\uFE0F?|\uD83C\uDCCF\uFE0F?|" +
                 "[\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA]\uFE0F?)+");
+    }
+
+    public static boolean containsMarkdown(String message) {
+        return Pattern.compile(MARKDOWN_PATTERN).matcher(message).find();
     }
 
     public static String getDeletedOrMentionedText(Message message) {
@@ -68,12 +78,23 @@ public class StringUtility {
     }
 
     @SuppressLint("DefaultLocale")
+    public static String convertFileSizeByteCount(long bytes) {
+        int unit = 1000;
+        if (bytes <= 0) return 0 + " B";
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = String.valueOf(("KMGTPE").charAt(exp - 1));
+        DecimalFormat df = new DecimalFormat("###.##");
+        return df.format(bytes / Math.pow(unit, exp)) + " " + pre + "B";
+    }
+
     public static String convertMentionedText(String text, String userName) {
-        if (text.substring(text.length() -1).equals("@"))
+        if (text.substring(text.length() - 1).equals("@"))
             return text + userName;
 
         String[] names = text.split("@");
         String last = names[names.length - 1];
         return text.substring(0, text.length() - last.length()) + userName;
+
     }
 }

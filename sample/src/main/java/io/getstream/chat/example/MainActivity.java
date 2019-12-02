@@ -9,6 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -27,10 +32,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
@@ -205,7 +206,9 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("members", members);
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
         viewModel.setLoading();
