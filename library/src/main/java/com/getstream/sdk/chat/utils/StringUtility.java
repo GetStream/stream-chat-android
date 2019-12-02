@@ -78,6 +78,7 @@ public class StringUtility {
         return text.substring(0, text.length() - last.length()) + userName;
     }
 
+    @Nullable
     public static String getChannelIdFromCid(@NonNull String cid) {
         String[] array = cid.split(":");
         if (array.length > 1) {
@@ -86,6 +87,7 @@ public class StringUtility {
         return null;
     }
 
+    @Nullable
     public static String getChannelTypeFromCid(@NonNull String cid) {
         String[] array = cid.split(":");
         if (array.length > 1) {

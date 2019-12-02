@@ -28,7 +28,7 @@ public class StreamNotificationOptions implements NotificationOptions {
     private NotificationChannel notificationChannel;
     private NotificationCompat.Builder notificationBuilder;
     private Intent defaultLauncherIntent;
-    private ContentIntentProvider contentIntentProvider;
+    private NotificationIntentProvider notificationIntentProvider;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -91,11 +91,11 @@ public class StreamNotificationOptions implements NotificationOptions {
     }
 
     @Override
-    public ContentIntentProvider getContentIntentProvider() {
-        if (contentIntentProvider != null) {
-            return contentIntentProvider;
+    public NotificationIntentProvider getNotificationIntentProvider() {
+        if (notificationIntentProvider != null) {
+            return notificationIntentProvider;
         } else {
-            return new ContentIntentProvider() {
+            return new NotificationIntentProvider() {
                 @Override
                 public PendingIntent getIntentForFirebaseMessage(@NonNull Context context,
                                                                  @NonNull RemoteMessage remoteMessage) {
@@ -137,8 +137,8 @@ public class StreamNotificationOptions implements NotificationOptions {
     }
 
     @Override
-    public void setContentIntentProvider(ContentIntentProvider contentIntentProvider) {
-        this.contentIntentProvider = contentIntentProvider;
+    public void setNotificationIntentProvider(NotificationIntentProvider notificationIntentProvider) {
+        this.notificationIntentProvider = notificationIntentProvider;
     }
 
     private PendingIntent getDefaultContentIntent(Context context) {

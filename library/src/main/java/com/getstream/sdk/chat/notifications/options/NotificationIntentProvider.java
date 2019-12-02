@@ -11,7 +11,7 @@ import com.google.firebase.messaging.RemoteMessage;
 /*
  * Created by Anton Bevza on 2019-11-18.
  */
-public interface ContentIntentProvider {
+public interface NotificationIntentProvider {
     PendingIntent getIntentForFirebaseMessage(@NonNull Context context, @NonNull RemoteMessage remoteMessage);
 
     PendingIntent getIntentForWebSocketEvent(@NonNull Context context, @NonNull Event event);

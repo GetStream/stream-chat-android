@@ -2,8 +2,8 @@
     <string name="app_name">GetStreamChatSDK</string>
 
     <!--Notifacation-->
-    <string name="default_notification_channel_id">GetStreamChat</string>
-    <string name="default_notification_channel_name">GetStreamChat</string>
+    <string name="default_notification_channel_id">stream_GetStreamChat</string>
+    <string name="default_notification_channel_name">stream_GetStreamChat</string>
 
     <!--Message Date-->
     <string name="stream_just_now">Just Now</string>

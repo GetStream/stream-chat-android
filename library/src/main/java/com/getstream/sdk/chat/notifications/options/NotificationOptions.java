@@ -52,7 +52,7 @@ public interface NotificationOptions {
      * Interface witch pass event from firebase or WebSocket
      * @return
      */
-    ContentIntentProvider getContentIntentProvider();
+    NotificationIntentProvider getNotificationIntentProvider();
 
     /**
      * Set custom id for notification channel
@@ -86,8 +86,8 @@ public interface NotificationOptions {
 
     /**
      * Set object of
-     * @param contentIntentProvider
+     * @param notificationIntentProvider
      */
-    void setContentIntentProvider(ContentIntentProvider contentIntentProvider);
+    void setNotificationIntentProvider(NotificationIntentProvider notificationIntentProvider);
 
 }

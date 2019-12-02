@@ -26,7 +26,8 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
-import com.getstream.sdk.chat.notifications.options.ContentIntentProvider;
+import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
+import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
@@ -42,15 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
-import static java.util.UUID.randomUUID;
 
 
 /**
@@ -92,9 +88,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Configure and adding notification options for notifications
+        StreamNotificationOptions notificationOptions = new StreamNotificationOptions();
+
         // Set custom intent provider for receiving message and events from firebase and WS
-        StreamChat.getNotificationsManager().getNotificationsOptions().setContentIntentProvider(
-                new ContentIntentProvider() {
+        notificationOptions.setNotificationIntentProvider(
+                new NotificationIntentProvider() {
                     @Override
                     public PendingIntent getIntentForFirebaseMessage(@NonNull Context context, @NonNull RemoteMessage remoteMessage) {
                         Map<String, String> payload = remoteMessage.getData();
@@ -116,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions));
         return client;
     }
 

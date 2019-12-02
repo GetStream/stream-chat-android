@@ -1,10 +1,8 @@
 package com.getstream.sdk.chat.notifications;
 
-import android.app.Notification;
 import android.content.Context;
 
 import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.notifications.options.NotificationOptions;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +17,4 @@ public interface NotificationsManager {
     void onReceiveFirebaseMessage(@NotNull RemoteMessage remoteMessage, @NotNull Context context);
 
     void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context);
-
-    void showNotification(@NotNull Notification notification, @NotNull Context context);
-
-    NotificationOptions getNotificationsOptions();
 }

@@ -1,12 +1,13 @@
 package com.getstream.sdk.chat.notifications;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Event;
@@ -20,9 +21,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
-import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_VISIBLE;
-
 /*
  * Created by Anton Bevza on 2019-11-14.
  */
@@ -30,14 +28,12 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     public static final String CHANNEL_ID_KEY = "channel_id";
     public static final String CHANNEL_TYPE_KEY = "channel_type";
-    public static final String MESSAGE_ID_KEY = "message_id";
     private static final String CHANNEL_NAME_KEY = "channel_name";
     private static final String MESSAGE_TEXT_KEY = "message_text";
 
     private static final String TAG = StreamNotificationsManager.class.getSimpleName();
 
     private NotificationOptions notificationOptions;
-    private NotificationCompat.Builder notificationBuilder;
 
     public StreamNotificationsManager(NotificationOptions notificationOptions) {
         this.notificationOptions = notificationOptions;
@@ -57,7 +53,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                // something went wrong registering this device, ouch!
+                Log.e(TAG, errMsg);
             }
         });
     }
@@ -69,11 +65,11 @@ public class StreamNotificationsManager implements NotificationsManager {
 
         String channelName = remoteMessage.getData().get(CHANNEL_NAME_KEY);
         String massage = remoteMessage.getData().get(MESSAGE_TEXT_KEY);
-        notificationBuilder = notificationOptions.getNotificationBuilder(context);
+        NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
         notificationBuilder.setContentTitle(channelName)
                 .setContentText(massage)
                 .setContentIntent(
-                        notificationOptions.getContentIntentProvider()
+                        notificationOptions.getNotificationIntentProvider()
                                 .getIntentForFirebaseMessage(context, remoteMessage)
                 );
         showNotification(notificationBuilder.build(), context);
@@ -87,15 +83,14 @@ public class StreamNotificationsManager implements NotificationsManager {
             builder.setContentTitle(event.getMessage().getUser().getName())
                     .setContentText(event.getMessage().getText())
                     .setContentIntent(
-                            notificationOptions.getContentIntentProvider()
+                            notificationOptions.getNotificationIntentProvider()
                                     .getIntentForWebSocketEvent(context, event)
                     );
             showNotification(builder.build(), context);
         }
     }
 
-    @Override
-    public void showNotification(@NotNull Notification notification, @NotNull Context context) {
+    private void showNotification(@NotNull Notification notification, @NotNull Context context) {
         NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -109,15 +104,7 @@ public class StreamNotificationsManager implements NotificationsManager {
         }
     }
 
-    @Override
-    public NotificationOptions getNotificationsOptions() {
-        return notificationOptions;
-    }
-
     private boolean isForeground() {
-        ActivityManager.RunningAppProcessInfo appProcessInfo = new ActivityManager.RunningAppProcessInfo();
-        ActivityManager.getMyMemoryState(appProcessInfo);
-        return (appProcessInfo.importance == IMPORTANCE_FOREGROUND || appProcessInfo.importance == IMPORTANCE_VISIBLE);
+        return ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
     }
-
 }

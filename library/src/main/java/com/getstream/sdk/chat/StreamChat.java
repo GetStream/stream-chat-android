@@ -167,6 +167,10 @@ public class StreamChat {
         chatStyle = style;
     }
 
+    public static void setNotificationsManager(NotificationsManager notificationsManager) {
+        StreamChat.notificationsManager = notificationsManager;
+    }
+
     @NotNull
     public static StreamChatStyle getChatStyle() {
         return chatStyle;
