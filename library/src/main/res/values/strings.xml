@@ -9,7 +9,7 @@
     <string name="stream_just_now">Just Now</string>
     <string name="stream_today">Today</string>
     <string name="stream_yesterday">Yesterday</string>
-    <string name="stream_message_date">%s ,%s</string>
+    <string name="stream_message_date">%1$s %2$s</string>
     <!--Chat-->
     <string name="stream_you">(you)</string>
     <!--MessageInput-->
@@ -50,6 +50,7 @@
     <string name="stream_channel_header_active_now">just now</string>
     <!--Error-->
     <string name="stream_no_media_error">There is no photo or video.</string>
+    <string name="stream_large_size_file_error">This file is too large to upload. The file size limit is 20MB.</string>
     <string name="stream_no_file_error">There is no file.</string>
     <string name="stream_take_photo_failed">Failed due to an unknown error.</string>
     <!--Last Message Type-->
