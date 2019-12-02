@@ -1,7 +1,5 @@
 ## Upcoming
 
-## November 29th, 2019 - 3.4.1
-
 - Fix set typeFace without custom font
 
 ## November 28th, 2019 - 3.4.1
