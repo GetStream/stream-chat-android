@@ -13,6 +13,8 @@ import com.getstream.sdk.chat.rest.User;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.text.DecimalFormat;
+
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
@@ -77,6 +79,16 @@ public class StringUtility {
     }
 
     @SuppressLint("DefaultLocale")
+    public static String convertFileSizeByteCount(long bytes) {
+        int unit = 1000;
+        if (bytes <= 0) return 0 + " B";
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = String.valueOf(("KMGTPE").charAt(exp - 1));
+        DecimalFormat df = new DecimalFormat("###.##");
+        return df.format(bytes / Math.pow(unit, exp)) + " " + pre + "B";
+    }
+
     public static String convertMentionedText(String text, String userName) {
         if (text.substring(text.length() - 1).equals("@"))
             return text + userName;
@@ -84,5 +96,6 @@ public class StringUtility {
         String[] names = text.split("@");
         String last = names[names.length - 1];
         return text.substring(0, text.length() - last.length()) + userName;
+
     }
 }

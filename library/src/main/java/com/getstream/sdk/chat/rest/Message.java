@@ -163,13 +163,6 @@ public class Message implements UserEntity {
 
         Calendar now = Calendar.getInstance();
 
-        final String timeFormatString = "h:mm aa";
-        final String dateTimeFormatString = "EEEE";
-
-        DateFormat timeFormat = new SimpleDateFormat(timeFormatString, Utils.locale);
-        DateFormat dateFormat1 = new SimpleDateFormat(dateTimeFormatString, Utils.locale);
-        DateFormat dateFormat2 = new SimpleDateFormat("MMMM dd yyyy", Utils.locale);
-
         if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
             message.setToday(true);
             message.setDate(TODAY.getLabel());
@@ -177,10 +170,13 @@ public class Message implements UserEntity {
             message.setYesterday(true);
             message.setDate(YESTERDAY.getLabel());
         } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
-            message.setDate(dateFormat1.format(message.getCreatedAt()));
+            DateFormat dayName = new SimpleDateFormat("EEEE");
+            message.setDate(dayName.format(message.getCreatedAt()));
         } else {
-            message.setDate(dateFormat2.format(message.getCreatedAt()));
+            DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG);
+            message.setDate(dateFormat.format(message.getCreatedAt()));
         }
+        DateFormat timeFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
         message.setTime(timeFormat.format(message.getCreatedAt()));
     }
 
