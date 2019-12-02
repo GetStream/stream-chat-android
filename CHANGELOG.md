@@ -1,6 +1,7 @@
 ## Upcoming
 
 - Fix set typeFace without custom font
+- Improve rendering performance for messages without Markdown markup
 
 ## November 28th, 2019 - 3.4.1
 
