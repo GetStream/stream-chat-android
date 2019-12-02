@@ -18,6 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -257,7 +262,9 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("members", members);
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
         viewModel.setLoading();

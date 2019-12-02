@@ -106,6 +106,8 @@ public class FontsManagerImpl implements FontsManager {
 
         if (chatStyle.hasDefaultFont()) {
             textView.setTypeface(getFont(chatStyle.getDefaultTextStyle()), textStyle);
+        }else{
+            textView.setTypeface(Typeface.DEFAULT, textStyle);
         }
     }
 
