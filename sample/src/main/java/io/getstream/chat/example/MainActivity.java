@@ -66,11 +66,16 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("name", BuildConfig.USER_NAME);
         extraData.put("image", BuildConfig.USER_IMAGE);
 
-        User user = new User(BuildConfig.USER_ID, extraData);
-        //client.setGuestUser(new User(null, extraData));
+        // set guest user
+        /*String uuid = randomUUID().toString();
+        client.setGuestUser(new User(uuid, extraData));*/
+
+        // set anonymous user
         client.setAnonymousUser();
 
-        /*client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
+        // set sample of user
+        /*User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
@@ -200,8 +205,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void createNewChannel(String channelName) {
-        //Client client = configureStreamClient();
-
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
 

@@ -55,6 +55,7 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.GuestUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -132,11 +133,13 @@ public class Client implements WSResponseHandler {
     private String apiKey;
 
     private Boolean offlineStorage;
+    private Boolean anonymousConnection = false;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
     private Context context;
+
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
@@ -151,6 +154,7 @@ public class Client implements WSResponseHandler {
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistry;
 
     private Map<String, Config> channelTypeConfigs;
+
     // endregion
     private ChatEventHandler builtinHandler =
 
@@ -425,6 +429,7 @@ public class Client implements WSResponseHandler {
      * @param provider the Token Provider used to obtain the auth token for the user
      */
     public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
+        anonymousConnection = false;
         if (user == null) {
             Log.w(TAG, "user can't be null. If you want to reset current user you need to call client.disconnect()");
             return;
@@ -592,6 +597,7 @@ public class Client implements WSResponseHandler {
 
     private synchronized void anonymousConnect() {
         Log.i(TAG, "client.anonymousConnect was called");
+
         try {
             webSocketService = webSocketServiceProvider.provideAnonymousWebSocketService(getUser(), this);
             apiService = apiServiceProvider.provideAnonymousApiService();
@@ -685,7 +691,12 @@ public class Client implements WSResponseHandler {
             return;
         }
         connectionRecovered();
-        connect();
+
+        if (anonymousConnection) {
+            anonymousConnect();
+        } else {
+            connect();
+        }
     }
 
     @Override
@@ -942,71 +953,75 @@ public class Client implements WSResponseHandler {
      * @param callback the result callback
      */
     public void queryChannel(Channel channel, ChannelQueryRequest request, QueryChannelCallback callback) {
-        onSetUserCompleted(new ClientConnectionCallback() {
-            @Override
-            public void onSuccess(User user) {
-                final ChannelQueryRequest queryRequest = request.withData(channel.getExtraData());
-                Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
-                    @Override
-                    public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                        Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                        channel.mergeWithState(response.body());
+        if (anonymousConnection == false) {
+            onSetUserCompleted(new ClientConnectionCallback() {
+                @Override
+                public void onSuccess(User user) {
+                    final ChannelQueryRequest queryRequest = request.withData(channel.getExtraData());
+                    Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
+                        @Override
+                        public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                            Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                            channel.mergeWithState(response.body());
+                            // channels created without ID will get it populated by the API
+                            if (channel.getId() == null) {
+                                channel.setId(response.body().getChannel().getCid().split(":")[1]);
+                                channel.setCid(response.body().getChannel().getCid());
+                            }
+                            if (channel.getConfig() == null) {
+                                channel.setConfig(response.body().getChannel().getConfig());
+                            }
+                            if (channel.getChannelState() == null) {
+                                channel.setChannelState(response.body());
+                            }
+                            if (channel.getCreatedByUser() == null) {
+                                channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
+                            }
+
+                            addChannelConfig(channel.getType(), channel.getConfig());
+
+                            if (queryRequest.isWatch()) {
+                                addToActiveChannels(channel);
+                                channel.setInitialized(true);
+                            }
+
+                            // update the user references
+                            getState().updateUsersForChannel(channel.getChannelState());
+
+                            Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                            // offline storage
+
+                            getStorage().insertMessagesForChannel(channel, response.body().getMessages());
+                            callback.onSuccess(response.body());
+                        }
+
+                        @Override
+                        public void onFailure(Call<ChannelState> call, Throwable t) {
+                            if (t instanceof ErrorResponse) {
+                                callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                            } else {
+                                callback.onError(t.getLocalizedMessage(), -1);
+                            }
+                        }
+                    };
+                    if (channel.getId() == null) {
                         // channels created without ID will get it populated by the API
-                        if (channel.getId() == null) {
-                            channel.setId(response.body().getChannel().getCid().split(":")[1]);
-                            channel.setCid(response.body().getChannel().getCid());
-                        }
-                        if (channel.getConfig() == null) {
-                            channel.setConfig(response.body().getChannel().getConfig());
-                        }
-                        if (channel.getChannelState() == null) {
-                            channel.setChannelState(response.body());
-                        }
-                        if (channel.getCreatedByUser() == null) {
-                            channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
-                        }
-
-                        addChannelConfig(channel.getType(), channel.getConfig());
-
-                        if (queryRequest.isWatch()) {
-                            addToActiveChannels(channel);
-                            channel.setInitialized(true);
-                        }
-
-                        // update the user references
-                        getState().updateUsersForChannel(channel.getChannelState());
-
-                        Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                        // offline storage
-
-                        getStorage().insertMessagesForChannel(channel, response.body().getMessages());
-                        callback.onSuccess(response.body());
+                        apiService.queryChannel(channel.getType(), apiKey, getUserId(), clientID,
+                                queryRequest).enqueue(requestCallback);
+                    } else {
+                        apiService.queryChannel(channel.getType(), channel.getId(), apiKey, getUserId(),
+                                clientID, queryRequest).enqueue(requestCallback);
                     }
-
-                    @Override
-                    public void onFailure(Call<ChannelState> call, Throwable t) {
-                        if (t instanceof ErrorResponse) {
-                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                        } else {
-                            callback.onError(t.getLocalizedMessage(), -1);
-                        }
-                    }
-                };
-                if (channel.getId() == null) {
-                    // channels created without ID will get it populated by the API
-                    apiService.queryChannel(channel.getType(), apiKey, getUserId(), clientID,
-                            queryRequest).enqueue(requestCallback);
-                } else {
-                    apiService.queryChannel(channel.getType(), channel.getId(), apiKey, getUserId(),
-                            clientID, queryRequest).enqueue(requestCallback);
                 }
-            }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
+                @Override
+                public void onError(String errMsg, int errCode) {
+                    callback.onError(errMsg, errCode);
+                }
+            });
+        } else {
+            callback.onError(StreamChat.getContext().getString(R.string.channel_anonymous_error), -1);
+        }
     }
 
     /**
@@ -1690,16 +1705,13 @@ public class Client implements WSResponseHandler {
      * Setup an anonymous session
      */
     public void setAnonymousUser() {
+        anonymousConnection = true;
         apiService = apiServiceProvider.provideAnonymousApiService();
 
         String uuid = randomUUID().toString();
         this.clientID = uuid + "--" + uuid;
 
-        HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("anon", "true");
-
-        User user = new User(uuid, extraData);
-        state.setCurrentUser(user);
+        state.setCurrentUser(new User(uuid));
 
         anonymousConnect();
     }
@@ -1710,52 +1722,22 @@ public class Client implements WSResponseHandler {
      * @param user Data about this user. IE {name: "john"}
      */
     public void setGuestUser(User user) {
-        Map<String, String> body = new HashMap<>();
-        body.put("name", user.getName());
+        GuestUserRequest body = new GuestUserRequest(user.getId(), user.getName());
 
-        CachedTokenProvider guestTokenProvider = new CachedTokenProvider() {
-            @Override
-            public void getToken(TokenProvider.TokenProviderListener listener) {
-                // use the cached token if possible
-                String guestToken = "guest";
-                listener.onSuccess(guestToken());
-                //listener.onSuccess(Base64.encodeToString(guestToken.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP));
-            }
-
-            @Override
-            public void tokenExpired() {
-                Log.d(TAG, "Guest token is wrong: guest");
-            }
-        };
-
-        apiService = apiServiceProvider.provideApiService(guestTokenProvider);
+        apiService = apiServiceProvider.provideAnonymousApiService();
         apiService.setGuestUser(apiKey, body).enqueue(new Callback<TokenResponse>() {
             @Override
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                System.out.println(response);
+                if (response.body() != null) {
+                    setUser(user, response.body().getToken());
+                }
             }
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-                System.out.println(t);
+                Log.e(TAG, "Problem with setting guest user: " + t.getMessage());
             }
         });
-    }
-
-    public String guestToken() {
-
-        String header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"; //  {"alg": "HS256", "typ": "JWT"}
-
-        String guestToken = "guest";
-        String payloadBase64 = Base64.encodeToString(guestToken.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
-        String guestSignature = "guesttoken";
-
-        String[] a = new String[3];
-        a[0] = header;
-        a[1] = payloadBase64;
-        a[2] = guestSignature;
-
-        return TextUtils.join(".", a);
     }
 
     /**
