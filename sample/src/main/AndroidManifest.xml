@@ -26,10 +26,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".HomeActivity"></activity>
         <activity
             android:name=".ChannelActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".HomeActivity"></activity>
 
         <service
             android:name=".CCFirebaseMessagingService"

@@ -1,6 +1,5 @@
 package io.getstream.chat.example.view.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -19,17 +18,9 @@ import io.getstream.chat.example.utils.UserStorage;
 
 public class ProfileFragment extends Fragment {
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
         Client client = StreamChat.getInstance(getContext());
         binding.setUser(client.getUser());
@@ -46,17 +37,5 @@ public class ProfileFragment extends Fragment {
         Intent intent = new Intent(getContext(), LoginActivity.class);
         startActivity(intent);
         getActivity().finish();
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
     }
 }

@@ -10,21 +10,21 @@ import androidx.databinding.DataBindingUtil;
 import androidx.viewpager2.widget.ViewPager2;
 
 import io.getstream.chat.example.adapter.ViewPagerAdapter;
-import io.getstream.chat.example.databinding.ActivityMainBinding;
+import io.getstream.chat.example.databinding.ActivityHomeBinding;
 
 /**
  * This activity shows a list of channels
  */
-public class MainActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = HomeActivity.class.getSimpleName();
     MenuItem prevMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("MainActivity", "onCreate");
+        Log.i("HomeActivity", "onCreate");
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityHomeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         binding.viewPager.setAdapter(createCardAdapter());
         binding.tabs.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         return adapter;
     }
 
-    private void initToolbar(ActivityMainBinding binding) {
+    private void initToolbar(ActivityHomeBinding binding) {
         binding.toolbar.setTitle("Stream Chat");
         binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }

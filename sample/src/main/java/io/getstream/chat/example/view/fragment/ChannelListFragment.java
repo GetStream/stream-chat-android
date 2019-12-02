@@ -219,10 +219,6 @@ public class ChannelListFragment extends Fragment {
     }
     // endregion
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
 
     @Override
     public void onResume(){

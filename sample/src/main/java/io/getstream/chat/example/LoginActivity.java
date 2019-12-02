@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         UserStorage.init(this);
 
         if (UserStorage.getCurrentUser() != null){
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
             return;
@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         lv_users.setAdapter(adapter);
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l)-> {
             UserStorage.setCurrentUser(UserStorage.getUsers().get(position).getId());
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         });

@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="io.getstream.chat.example.MainActivity">
+        tools:context="io.getstream.chat.example.HomeActivity">
 
 
         <androidx.viewpager2.widget.ViewPager2

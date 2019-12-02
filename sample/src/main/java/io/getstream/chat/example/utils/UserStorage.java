@@ -19,7 +19,7 @@ public class UserStorage {
     private static SharedPreferences preferences;
     private static List<UserConfig>users;
 
-    private static final String USER_DATA_FILENAME = "users-config.json";
+    private static final String USER_DATA_FILENAME = "app-data.json";
     private static final String CURRENT_USER_ID = "current-user-id";
     private static final String APP_PREFERENCE = "AppPreferences";
 
