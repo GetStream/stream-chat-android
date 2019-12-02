@@ -1,10 +1,13 @@
 ## Upcoming
 
+- Fix set typeFace without custom font
+
 ## November 28th, 2019 - 3.4.1
 
 - Fix Giphy buttons alignments
 - Add Giphy error cases handling
 - Update http related issues documentation
+
 
 ## November 28th, 2019 - 3.4.0
 
