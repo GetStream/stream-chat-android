@@ -2022,7 +2022,7 @@ public class Client implements WSResponseHandler {
         );
     }
 
-    public void cancelDelayedWebSocketDisconnect() {
+    public void cancelScheduleWebSocketDisconnect() {
         delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
     }
 

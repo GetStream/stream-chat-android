@@ -21,11 +21,11 @@ import com.getstream.sdk.chat.rest.core.ClientState;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
-
-import org.jetbrains.annotations.NotNull;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -86,14 +86,14 @@ public class StreamChat {
         return context;
     }
 
-    public static StringsProvider getStrings(){
+    public static StringsProvider getStrings() {
         return stringsProvider;
     }
 
     /**
      * For unit tests purposes only
      */
-    public static void setStringsProvider(StringsProvider stringsProvider){
+    public static void setStringsProvider(StringsProvider stringsProvider) {
         StreamChat.stringsProvider = stringsProvider;
     }
 
@@ -163,11 +163,11 @@ public class StreamChat {
         });
     }
 
-    public static void initStyle(StreamChatStyle style){
+    public static void initStyle(StreamChatStyle style) {
         chatStyle = style;
     }
 
-    public static void setNotificationsManager(NotificationsManager notificationsManager) {
+    public static void setNotificationsManager(@NotNull NotificationsManager notificationsManager) {
         StreamChat.notificationsManager = notificationsManager;
     }
 
@@ -177,7 +177,7 @@ public class StreamChat {
     }
 
     @NotNull
-    public static FontsManager getFontsManager(){
+    public static FontsManager getFontsManager() {
         return fontsManager;
     }
 
@@ -194,7 +194,7 @@ public class StreamChat {
     public static synchronized boolean init(String apiKey,
                                             ApiClientOptions apiClientOptions,
                                             @NonNull Context context,
-                                            NotificationsManager notificationsManager) {
+                                            @NonNull NotificationsManager notificationsManager) {
         StreamChat.context = context;
         if (INSTANCE != null) {
             return true;
@@ -232,7 +232,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
-                                    INSTANCE.cancelDelayedWebSocketDisconnect();
+                                    INSTANCE.cancelScheduleWebSocketDisconnect();
                                     if (!INSTANCE.isConnected()) {
                                         INSTANCE.reconnectWebSocket();
                                     }
@@ -260,8 +260,11 @@ public class StreamChat {
     }
 
     private static void registerFirebaseToken(Context context) {
+        Log.i(TAG, "Start registering device");
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
+                            Log.i(TAG, "Device instance received");
                             if (task.isSuccessful() && task.getResult() != null) {
                                 StreamChat.getNotificationsManager().setFirebaseToken(
                                         task.getResult().getToken(), context);

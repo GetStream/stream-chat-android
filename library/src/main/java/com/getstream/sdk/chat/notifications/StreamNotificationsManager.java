@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.options.NotificationOptions;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
@@ -64,22 +65,28 @@ public class StreamNotificationsManager implements NotificationsManager {
         Log.d(TAG, "onReceiveFirebaseMessage: " + remoteMessage.toString() + " data: " + payload);
 
         String channelName = remoteMessage.getData().get(CHANNEL_NAME_KEY);
-        String massage = remoteMessage.getData().get(MESSAGE_TEXT_KEY);
-        NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
-        notificationBuilder.setContentTitle(channelName)
-                .setContentText(massage)
-                .setContentIntent(
-                        notificationOptions.getNotificationIntentProvider()
-                                .getIntentForFirebaseMessage(context, remoteMessage)
-                );
-        showNotification(notificationBuilder.build(), context);
+        String message = remoteMessage.getData().get(MESSAGE_TEXT_KEY);
+
+        if (channelName != null && !channelName.isEmpty()
+                && message != null && !message.isEmpty()) {
+            NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
+            notificationBuilder.setContentTitle(channelName)
+                    .setContentText(message)
+                    .setContentIntent(
+                            notificationOptions.getNotificationIntentProvider()
+                                    .getIntentForFirebaseMessage(context, remoteMessage)
+                    );
+            showNotification(notificationBuilder.build(), context);
+        } else {
+            Log.w(TAG, "Firebase message has empty fields");
+        }
     }
 
     @Override
     public void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context) {
         NotificationCompat.Builder builder = notificationOptions.getNotificationBuilder(context);
 
-        if (event.getMessage() != null) {
+        if (event.getType() != EventType.MESSAGE_NEW) {
             builder.setContentTitle(event.getMessage().getUser().getName())
                     .setContentText(event.getMessage().getText())
                     .setContentIntent(
