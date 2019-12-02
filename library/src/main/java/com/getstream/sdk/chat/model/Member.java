@@ -113,4 +113,11 @@ public class Member implements UserEntity {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "user=" + user +
+                '}';
+    }
 }

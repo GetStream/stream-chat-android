@@ -192,16 +192,14 @@ public class Utils {
                         attachment.setMime_type(ModelType.attach_mime_mp3);
                     }
 
-                    if (!file.exists()) continue;
+                    if (!file.exists() || attachment.getMime_type() == null) continue;
 
-                    if (attachment.getMime_type() != null) {
-                        attachment.setType(ModelType.attach_file);
-                        attachment.setTitle(file.getName());
-                        attachment.config.setFilePath(file.getPath());
-                        long size = file.length();
-                        attachment.setFile_size((int) size);
-                        attachments.add(attachment);
-                    }
+                    attachment.setType(ModelType.attach_file);
+                    attachment.setTitle(file.getName());
+                    attachment.config.setFilePath(file.getPath());
+                    long size = file.length();
+                    attachment.setFile_size((int) size);
+                    attachments.add(attachment);
                 }
             }
         }
@@ -252,7 +250,6 @@ public class Utils {
             File file = new File(imagecursor.getString(dataColumnIndex));
             if (!file.exists()) continue;
             attachment.config.setFilePath(imagecursor.getString(dataColumnIndex));
-
             if (t == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.setType(ModelType.attach_image);
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {

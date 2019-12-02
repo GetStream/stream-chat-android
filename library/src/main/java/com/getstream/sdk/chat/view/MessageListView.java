@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
@@ -62,7 +63,6 @@ public class MessageListView extends RecyclerView {
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
     private AttachmentClickListener attachmentClickListener;
-    private GiphySendListener giphySendListener;
     private ReactionViewClickListener reactionViewClickListener;
     private UserClickListener userClickListener;
     private ReadStateClickListener readStateClickListener;
@@ -111,7 +111,6 @@ public class MessageListView extends RecyclerView {
             Fresco.initialize(getContext());
         } catch (Exception e) {
         }
-        giphySendListener = viewModel::sendGiphy;
     }
 
     // set the adapter and apply the style.
@@ -123,7 +122,7 @@ public class MessageListView extends RecyclerView {
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
 
         adapter.setStyle(style);
-        adapter.setGiphySendListener(giphySendListener);
+        adapter.setGiphySendListener(viewModel::sendGiphy);
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
@@ -535,7 +534,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface GiphySendListener {
-        void onGiphySend(Message message, GiphyAction action);
+        void onGiphySend(Message message, GiphyAction action, MessageCallback callback);
     }
 
     public interface UserClickListener {

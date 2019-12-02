@@ -327,7 +327,20 @@ Not setting the lifecycle owner on a data binding can cause the channel list loa
 mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
 mBinding.setLifecycleOwner(this);
 ```
-
+### Images are not loaded
+In most cases you can try to see the reason in logcat with tag `Glide`. One of the reasons is that app tries to load image from http url, but not https. To fix it you need to define [network security config](https://developer.android.com/training/articles/security-config).
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Keep in mind this example allows to make any http request, to define proper security config read Android documentation-->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
+```
+And update your `Manifest`:
+```xml
+<application
+	android:networkSecurityConfig="@xml/network_security_config"/>
+```
 ## Getting started
 
 TODO: https://getstream.io/chat/docs/#introduction but with Android code examples

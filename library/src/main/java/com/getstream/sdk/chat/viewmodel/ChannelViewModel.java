@@ -1065,7 +1065,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public void sendGiphy(Message message,
                           GiphyAction action,
-                          MessageCallback callback) {
+                          @NonNull MessageCallback callback) {
         Map<String, String> map = new HashMap<>();
         switch (action) {
             case SEND:
