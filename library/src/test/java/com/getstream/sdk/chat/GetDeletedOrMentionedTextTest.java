@@ -4,14 +4,18 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.utils.StringUtility;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GetDeletedOrMentionedTextTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getMentionedMarkDownTextTest() {
         String text = "@Steep moon @Broken waterfall hi, there?";
         Message message = new Message();
@@ -32,7 +36,7 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void newLineTest() {
         String text = "\n\n\n .a. \n\n\n";
         Message message = new Message();
@@ -40,13 +44,13 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals(" .a. ", StringUtility.getDeletedOrMentionedText(message));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void convertVideoLengthTest() {
         long videoLength = 216844;
         assertEquals("60:14:04", StringUtility.convertVideoLength(videoLength));
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void convertFileSizeTest() {
         long fileSize = 999;
         assertEquals("999 B", StringUtility.convertFileSizeByteCount(fileSize));
@@ -62,6 +66,7 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals("0 B", StringUtility.convertFileSizeByteCount(fileSize));
     }
 
+    @Test
     void convertMentionTextTest() {
         String text;
         String userName = "Adrian";
@@ -80,5 +85,76 @@ public class GetDeletedOrMentionedTextTest {
         assertEquals("@@@This a @@@@Adrian", StringUtility.convertMentionedText(text, userName));
         text = "@@@Adrian a @@This is @A";
         assertEquals("@@@Adrian a @@This is @Adrian", StringUtility.convertMentionedText(text, userName));
+    }
+
+    @Test
+    void containMarkdownTextText() {
+        String text = "TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "*TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "**TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "#TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "##TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        // Emphasis
+        text = "*TestMarkDown*";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "_TestMarkDown_";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Strong emphasis
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "**TestMarkDown**";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "__TestMarkDown__";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Strike-through
+        text = "~~TestMarkDown~~";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Headers
+        text = "# TestMarkDown";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "## TestMarkDown";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "### TestMarkDown";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Links
+        text = "[GetStream](https://getstream.io/)";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Images
+        text = "![Minion](https://octodex.github.com/images/minion.png)";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Thematic break
+        text = "___  ";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "---  ";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "***  ";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Code
+        text = "`code`";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "// Some comments\n" +
+                "line 1 of code\n" +
+                "line 2 of code\n" +
+                "line 3 of code";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "```\n" +
+                "Sample text here...\n" +
+                "```";
+        assertTrue(StringUtility.containsMarkdown(text));
+        text = "``` js\n" +
+                "var foo = function (bar) {\n" +
+                "  return bar++;\n" +
+                "};\n" +
+                "\n" +
+                "console.log(foo(5));\n" +
+                "```";
+        assertTrue(StringUtility.containsMarkdown(text));
+        // Blockquotes
+
     }
 }
