@@ -34,6 +34,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -73,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -876,9 +878,9 @@ public class ClientTest {
     void queryChannelWithIdSuccessTest() {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
@@ -916,9 +918,9 @@ public class ClientTest {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
 
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
@@ -947,6 +949,95 @@ public class ClientTest {
                         argument.isWatch()
                                 && argument.isPresence()
                                 && argument.getData().get("name").equals(testChannelName)));
+        verify(callback).onSuccess(response);
+        verify(storage).insertMessagesForChannel(channel, response.getMessages());
+    }
+
+    @Test
+    void watchChannelWithIdSuccessTest() {
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", "Test Channel");
+
+        List<String> members = new ArrayList<>();
+        members.add("test-user");
+        extraData.put("members", members);
+
+        ArrayList<Message> messages = new ArrayList<>();
+        Message message = new Message();
+
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
+
+        messages.add(message);
+
+        Channel channel = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID, extraData);
+        channel.setChannelState(new ChannelState(channel));
+
+        ChannelWatchRequest request = new ChannelWatchRequest();
+
+        QueryChannelCallback callback = mock(QueryChannelCallback.class);
+        ChannelState response = new ChannelState();
+        response.setMessages(messages);
+        response.setChannel(channel);
+
+        when(apiService.queryChannel(any(), any(), any(), any(), any(), any()))
+                .thenReturn(CallFake.buildSuccess(response));
+
+        client.queryChannel(channel, request, callback);
+
+        verify(apiService).queryChannel(eq(TEST_CHANNEL_TYPE),
+                eq(TEST_CHANNEL_ID),
+                eq(TEST_API_KEY),
+                eq(TEST_USER_ID),
+                eq(TEST_CLIENT_ID),
+                argThat(argument ->
+                        argument.getData().get("name").equals(channel.getName()) &&
+                                argument.getData().get("members").equals(members)));
+        verify(callback).onSuccess(response);
+        verify(storage).insertMessagesForChannel(channel, response.getMessages());
+    }
+
+    @Test
+    void watchChannelWithoutIdSuccessTest() {
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", "Test Channel");
+
+        List<String> members = new ArrayList<>();
+        members.add("test-user");
+        extraData.put("members", members);
+
+        ArrayList<Message> messages = new ArrayList<>();
+        Message message = new Message();
+
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
+
+        messages.add(message);
+
+        Channel channel = new Channel(client, TEST_CHANNEL_TYPE, null, extraData);
+        channel.setChannelState(new ChannelState(channel));
+
+        ChannelWatchRequest request = new ChannelWatchRequest();
+
+        QueryChannelCallback callback = mock(QueryChannelCallback.class);
+        ChannelState response = new ChannelState();
+        response.setMessages(messages);
+        response.setChannel(channel);
+
+        when(apiService.queryChannel(any(), any(), any(), any(), any()))
+                .thenReturn(CallFake.buildSuccess(response));
+
+        client.queryChannel(channel, request, callback);
+
+        verify(apiService).queryChannel(eq(TEST_CHANNEL_TYPE),
+                eq(TEST_API_KEY),
+                eq(TEST_USER_ID),
+                eq(TEST_CLIENT_ID),
+                argThat(argument ->
+                        argument.getData().get("name").equals(channel.getName()) &&
+                                argument.getData().get("members").equals(members)));
         verify(callback).onSuccess(response);
         verify(storage).insertMessagesForChannel(channel, response.getMessages());
     }

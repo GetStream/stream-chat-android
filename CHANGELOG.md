@@ -2,6 +2,8 @@
 
 - Fix set typeFace without custom font
 - Improve rendering performance for messages without Markdown markup
+- Fix ChannelQueryRequest/ChannelWatchRequest
+- Add ChannelWatchRequest Test case
 
 ## November 28th, 2019 - 3.4.1
 

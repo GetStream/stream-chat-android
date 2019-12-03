@@ -23,7 +23,7 @@ public class ChannelQueryRequest extends BaseQueryChannelRequest<ChannelQueryReq
 
     @SerializedName("data")
     @Expose
-    private Map<String, Object> data;
+    protected Map<String, Object> data;
 
     public ChannelQueryRequest() {
         this.watch = false;
