@@ -270,6 +270,8 @@
         <attr name="streamMessageBorderColorTheirs" format="color"/>
         <attr name="streamMessageBorderWidthMine" format="dimension|reference"/>
         <attr name="streamMessageBorderWidthTheirs" format="dimension|reference"/>
+        <attr name="streamMessageLinkTextColorMine" format="color"/>
+        <attr name="streamMessageLinkTextColorTheirs" format="color"/>
         <!-- Attachment-->
         <attr name="streamAttachmentTitleTextSizeMine" format="dimension|reference"/>
         <attr name="streamAttachmentTitleTextColorMine" format="color"/>

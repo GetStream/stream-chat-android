@@ -33,6 +33,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderColorTheirs;
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
+    private int messageLinkTextColorMine;
+    private int messageLinkTextColorTheirs;
 
     public TextStyle messageUserNameText;
     public TextStyle messageDateTextMine;
@@ -115,6 +117,9 @@ public class MessageListViewStyle extends BaseStyle {
 
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
+
+        messageLinkTextColorMine = a.getColor(R.styleable.MessageListView_streamMessageLinkTextColorMine, 0);
+        messageLinkTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageLinkTextColorTheirs, 0);
 
         messageUserNameText = new TextStyle.Builder(a)
                 .size(R.styleable.MessageListView_streamMessageUserNameTextSize, getDimension(R.dimen.stream_attach_description_text))
@@ -274,6 +279,10 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getMessageBorderWidth(boolean isMine) {
         return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
+    }
+
+    public int getMessageLinkTextColor(boolean isMine) {
+        return isMine ? messageLinkTextColorMine : messageLinkTextColorTheirs;
     }
 
     // Attachment
