@@ -264,7 +264,7 @@ public class StreamChat {
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
-                            Log.i(TAG, "Device instance received");
+                            Log.i(TAG, "Device FCM instanceID received");
                             if (task.isSuccessful() && task.getResult() != null) {
                                 StreamChat.getNotificationsManager().setFirebaseToken(
                                         task.getResult().getToken(), context);

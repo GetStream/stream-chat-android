@@ -153,6 +153,9 @@ public class Client implements WSResponseHandler {
     // registry for callbacks on the setUser connection
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistry;
 
+    private static int defaultWebSocketDelay = 1000 * 10; // milliseconds * seconds
+    private int webSocketDisconnectDelay;
+
     private Map<String, Config> channelTypeConfigs;
     // endregion
     private ChatEventHandler builtinHandler =
@@ -291,6 +294,7 @@ public class Client implements WSResponseHandler {
         this.uploadStorageProvider = uploadStorageProvider;
         this.storageProvider = storageProvider;
         this.state = new ClientState(this);
+        this.webSocketDisconnectDelay = defaultWebSocketDelay;
 
         Log.d(TAG, "instance created: " + apiKey);
 
@@ -356,6 +360,18 @@ public class Client implements WSResponseHandler {
 
     public String getClientID() {
         return clientID;
+    }
+
+    /**
+     * Set custom disconnection delay for websocket
+     * @param delayInMilliseconds - time in milliseconds
+     */
+    public void setWebSocketDisconnectDelay(int delayInMilliseconds) {
+        if (delayInMilliseconds < 0) {
+            Log.e(TAG, "Value should be greater than 0");
+            return;
+        }
+        this.webSocketDisconnectDelay = delayInMilliseconds;
     }
 
     public Map<String, Channel> getActiveChannelMap() {
@@ -2028,8 +2044,7 @@ public class Client implements WSResponseHandler {
 
     public void disconnectWebSocketWithDelay() {
         delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
-        delayedDisconnectWebSocketHandler.postDelayed(this::disconnectWebSocket,
-                apiClientOptions.getWebSocketDisconnectDelay());
+        delayedDisconnectWebSocketHandler.postDelayed(this::disconnectWebSocket, webSocketDisconnectDelay);
     }
 
     /**

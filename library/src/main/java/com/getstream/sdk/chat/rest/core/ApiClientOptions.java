@@ -5,25 +5,22 @@ public class ApiClientOptions {
     private static String defaultURL = "chat-us-east-1.stream-io-api.com";
     private static int defaultTimeout = 6000;
     private static int defaultCDNTimeout = 1000 * 30;
-    private static int defaultWebSocketDelay = 1000 * 10;
 
     private String baseURL;
     private int timeout;
-    private int webSocketDisconnectDelay;
 
     private String cdnURL;
     private int cdntimeout;
 
-    public ApiClientOptions(String baseURL, int timeout, int cdntimeout, int webSocketDisconnectDelay) {
+    public ApiClientOptions(String baseURL, int timeout, int cdntimeout) {
         this.baseURL = baseURL;
         this.timeout = timeout;
         this.cdnURL = baseURL;
         this.cdntimeout = cdntimeout;
-        this.webSocketDisconnectDelay = webSocketDisconnectDelay;
     }
 
     public ApiClientOptions() {
-        this(defaultURL, defaultTimeout, defaultCDNTimeout, defaultWebSocketDelay);
+        this(defaultURL, defaultTimeout, defaultCDNTimeout);
     }
 
     public String getHttpURL() {
@@ -44,10 +41,6 @@ public class ApiClientOptions {
 
     public int getCdntimeout() {
         return cdntimeout;
-    }
-
-    public int getWebSocketDisconnectDelay() {
-        return webSocketDisconnectDelay;
     }
 
     public static class Builder {

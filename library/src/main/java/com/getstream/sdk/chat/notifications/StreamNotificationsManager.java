@@ -58,6 +58,7 @@ public class StreamNotificationsManager implements NotificationsManager {
                 if (registerListener != null) {
                     registerListener.onDeviceRegisteredSuccess();
                 }
+                Log.i(TAG, "DeviceRegisteredSuccess");
             }
 
             @Override
