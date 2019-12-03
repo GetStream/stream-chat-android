@@ -47,7 +47,8 @@ public class MessageListViewStyle extends BaseStyle {
     public TextStyle attachmentFileSizeTextTheirs;
     private int attachmentBackgroundColorMine;
     private int attachmentBackgroundColorTheirs;
-
+    private int attachmentBorderColorMine;
+    private int attachmentBorderColorTheirs;
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -154,6 +155,9 @@ public class MessageListViewStyle extends BaseStyle {
         attachmentBackgroundColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorMine, messageBackgroundColorMine);
         attachmentBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorTheirs, messageBackgroundColorTheirs);
 
+        attachmentBorderColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBorderColorMine, messageBorderColorMine);
+        attachmentBorderColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBorderColorTheirs, messageBorderColorTheirs);
+
         attachmentDescriptionTextMine = new TextStyle.Builder(a)
                 .size(R.styleable.MessageListView_streamAttachmentDescriptionTextSizeMine, getDimension(R.dimen.stream_attach_description_text))
                 .color(R.styleable.MessageListView_streamAttachmentDescriptionTextColorMine, getColor(R.color.stream_gray_dark))
@@ -255,11 +259,6 @@ public class MessageListViewStyle extends BaseStyle {
     public int getMessageBottomRightCornerRadius(boolean isMine) {
         return isMine ? messageBottomRightCornerRadiusMine : messageBottomRightCornerRadiusTheirs;
     }
-    // Attachment
-
-    public int getAttachmentBackgroundColor(boolean isMine) {
-        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
-    }
 
     public int getMessageBottomLeftCornerRadius(boolean isMine) {
         return isMine ? messageBottomLeftCornerRadiusMine : messageBottomLeftCornerRadiusTheirs;
@@ -275,6 +274,15 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getMessageBorderWidth(boolean isMine) {
         return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
+    }
+
+    // Attachment
+    public int getAttachmentBackgroundColor(boolean isMine) {
+        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
+    }
+
+    public int getAttachmentBorderColor(boolean isMine) {
+        return isMine ? attachmentBorderColorMine : attachmentBorderColorTheirs;
     }
 
     // Reaction Dialog

@@ -293,6 +293,8 @@
 
         <attr name="streamAttachmentBackgroundColorMine" format="color" />
         <attr name="streamAttachmentBackgroundColorTheirs" format="color" />
+        <attr name="streamAttachmentBorderColorMine" format="color"/>
+        <attr name="streamAttachmentBorderColorTheirs" format="color"/>
 
         <attr name="streamAttachmentDescriptionTextSizeMine" format="dimension|reference" />
         <attr name="streamAttachmentDescriptionTextColorMine" format="color" />
