@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
@@ -368,6 +367,10 @@ public class Client implements WSResponseHandler {
         return apiService;
     }
 
+    public boolean isAnonymousConnection() {
+        return anonymousConnection;
+    }
+
     public boolean isConnected() {
         return connected;
     }
@@ -583,29 +586,28 @@ public class Client implements WSResponseHandler {
 
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
-        tokenProvider.getToken(userToken -> {
+
+        if (!anonymousConnection) {
+            tokenProvider.getToken(userToken -> {
+                try {
+                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
+                    apiService = apiServiceProvider.provideApiService(tokenProvider);
+                    uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
             try {
-                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
-                apiService = apiServiceProvider.provideApiService(tokenProvider);
-                uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
-                webSocketService.connect();
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this);
+                apiService = apiServiceProvider.provideApiService(null);
+                uploadStorage = uploadStorageProvider.provideUploadStorage(null, this);
             } catch (UnsupportedEncodingException e) {
-                onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+                e.printStackTrace();
             }
-        });
-    }
-
-    private synchronized void anonymousConnect() {
-        Log.i(TAG, "client.anonymousConnect was called");
-
-        try {
-            webSocketService = webSocketServiceProvider.provideAnonymousWebSocketService(getUser(), this);
-            apiService = apiServiceProvider.provideAnonymousApiService();
-            uploadStorage = uploadStorageProvider.provideAnonymousUploadStorage(this);
-            webSocketService.connect();
-        } catch (UnsupportedEncodingException e) {
-            onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
         }
+
+        webSocketService.connect();
     }
 
     public Channel channel(String cid) {
@@ -692,11 +694,7 @@ public class Client implements WSResponseHandler {
         }
         connectionRecovered();
 
-        if (anonymousConnection) {
-            anonymousConnect();
-        } else {
-            connect();
-        }
+        connect();
     }
 
     @Override
@@ -1705,15 +1703,19 @@ public class Client implements WSResponseHandler {
      * Setup an anonymous session
      */
     public void setAnonymousUser() {
+        if (getUser() != null) {
+            Log.w(TAG, "setAnonymousUser was called but a user is already set;");
+            return;
+        }
+
         anonymousConnection = true;
-        apiService = apiServiceProvider.provideAnonymousApiService();
+        apiService = apiServiceProvider.provideApiService(null);
 
         String uuid = randomUUID().toString();
-        this.clientID = uuid + "--" + uuid;
 
         state.setCurrentUser(new User(uuid));
 
-        anonymousConnect();
+        connect();
     }
 
     /**
@@ -1722,9 +1724,14 @@ public class Client implements WSResponseHandler {
      * @param user Data about this user. IE {name: "john"}
      */
     public void setGuestUser(User user) {
+        if (getUser() != null) {
+            Log.w(TAG, "setGuestUser was called but a user is already set;");
+            return;
+        }
+
         GuestUserRequest body = new GuestUserRequest(user.getId(), user.getName());
 
-        apiService = apiServiceProvider.provideAnonymousApiService();
+        apiService = apiServiceProvider.provideApiService(null);
         apiService.setGuestUser(apiKey, body).enqueue(new Callback<TokenResponse>() {
             @Override
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {

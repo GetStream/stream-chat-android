@@ -9,5 +9,4 @@ import com.getstream.sdk.chat.rest.storage.BaseStorage;
  */
 public interface UploadStorageProvider {
     BaseStorage provideUploadStorage(CachedTokenProvider tokenProvider, Client client);
-    BaseStorage provideAnonymousUploadStorage(Client client);
 }

@@ -8,5 +8,4 @@ import com.getstream.sdk.chat.rest.controller.APIService;
  */
 public interface ApiServiceProvider {
     APIService provideApiService(CachedTokenProvider tokenProvider);
-    APIService provideAnonymousApiService();
 }

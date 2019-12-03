@@ -18,12 +18,6 @@ public class StreamApiServiceProvider implements ApiServiceProvider {
 
     @Override
     public APIService provideApiService(CachedTokenProvider tokenProvider) {
-        return RetrofitClient.getAuthorizedClient(tokenProvider, apiClientOptions).create(APIService.class);
+        return RetrofitClient.getClient(apiClientOptions, tokenProvider).create(APIService.class);
     }
-
-    @Override
-    public APIService provideAnonymousApiService() {
-        return RetrofitClient.getAnonymousClient(apiClientOptions).create(APIService.class);
-    }
-
 }

@@ -65,11 +65,6 @@ public class StreamPublicStorage extends BaseStorage {
         mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
     }
 
-    public StreamPublicStorage(Client client, ApiClientOptions options) {
-        super(client);
-        mCDNService = RetrofitClient.getAnonymousClient(options).create(APIService.class);
-    }
-
     public void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback) {
         ProgressRequestBody fileReqBody = new ProgressRequestBody(file, mimeType, callback);
         MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), fileReqBody);
