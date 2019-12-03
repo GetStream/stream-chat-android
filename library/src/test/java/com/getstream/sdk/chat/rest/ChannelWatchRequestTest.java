@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChannelWatchRequestTest {
     @Test
-    void ChannelWatchReuestTest() {
+    void channelWatchReuestTest() {
         HashMap<String, Object> extraData = new HashMap<>();
         ArrayList<String> members = new ArrayList<>();
         members.add("thierry");
