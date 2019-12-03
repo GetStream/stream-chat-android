@@ -19,6 +19,7 @@ import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -35,25 +36,35 @@ public class StreamNotificationsManager implements NotificationsManager {
     private static final String TAG = StreamNotificationsManager.class.getSimpleName();
 
     private NotificationOptions notificationOptions;
+    private DeviceRegisteredListener registerListener;
 
-    public StreamNotificationsManager(NotificationOptions notificationOptions) {
+    public StreamNotificationsManager(NotificationOptions notificationOptions, @Nullable DeviceRegisteredListener listener) {
         this.notificationOptions = notificationOptions;
+        this.registerListener = listener;
     }
 
     public StreamNotificationsManager() {
-        this(new StreamNotificationOptions());
+        this(new StreamNotificationOptions(), null);
     }
 
     @Override
     public void setFirebaseToken(@NotNull String firebaseToken, @NotNull Context context) {
+        Log.d(TAG, "setFirebaseToken: " + firebaseToken);
+
         StreamChat.getInstance(context).addDevice(firebaseToken, new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
                 // device is now registered!
+                if (registerListener != null) {
+                    registerListener.onDeviceRegisteredSuccess();
+                }
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
+                if (registerListener != null) {
+                    registerListener.onDeviceRegisteredError(errMsg, errCode);
+                }
                 Log.e(TAG, errMsg);
             }
         });

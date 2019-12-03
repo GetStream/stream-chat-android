@@ -18,11 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -30,6 +25,7 @@ import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
@@ -121,7 +117,22 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions));
+        // Device register listener
+        DeviceRegisteredListener onDeviceRegistered = new DeviceRegisteredListener() {
+            @Override
+            public void onDeviceRegisteredSuccess() {
+                // Device successfully registered on server
+                Log.i(TAG, "Device registered successfully");
+            }
+
+            @Override
+            public void onDeviceRegisteredError(String errorMessage, Integer errorCode) {
+                // Some problem with registration
+                Log.e(TAG, "onDeviceRegisteredError: " + errorMessage + " Code: " + errorCode);
+            }
+        };
+
+        StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions, onDeviceRegistered));
         return client;
     }
 
