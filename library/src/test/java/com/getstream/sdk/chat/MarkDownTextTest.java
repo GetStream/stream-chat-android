@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MarkDownTextTest {
 
     @Test
-    void containMarkdownTextText() {
+    void notcontainMarkdownTextTest() {
         String text = "TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
     }
