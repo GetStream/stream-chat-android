@@ -90,7 +90,7 @@ public class StreamNotificationsManager implements NotificationsManager {
                     );
             showNotification(notificationBuilder.build(), context);
         } else {
-            Log.w(TAG, "Firebase message has empty fields");
+            Log.e(TAG, "Firebase message has empty fields");
         }
     }
 
