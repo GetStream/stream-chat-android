@@ -13,6 +13,7 @@ public class MarkDownTextTest {
     void containEmphasisTextTest(){
         String text = "*TestMarkDown*";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "_TestMarkDown_";
         assertTrue(StringUtility.containsMarkdown(text));
     }
@@ -21,6 +22,7 @@ public class MarkDownTextTest {
     void containStrongEmphasisTextTest(){
         String text = "**TestMarkDown**";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "__TestMarkDown__";
         assertTrue(StringUtility.containsMarkdown(text));
     }
@@ -35,8 +37,10 @@ public class MarkDownTextTest {
     void containHeaderTextTest(){
         String text = "# TestMarkDown";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "## TestMarkDown";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "### TestMarkDown";
         assertTrue(StringUtility.containsMarkdown(text));
     }
@@ -57,8 +61,10 @@ public class MarkDownTextTest {
     void containThematicBreakTextTest() {
         String text = "___  ";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "---  ";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "***  ";
         assertTrue(StringUtility.containsMarkdown(text));
     }
@@ -67,6 +73,7 @@ public class MarkDownTextTest {
     void containCodeTextTest(){
         String text = "`code`";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "// Some comments\n" +
                 "line 1 of code\n" +
                 "line 2 of code\n" +
@@ -77,6 +84,7 @@ public class MarkDownTextTest {
                 "Sample text here...\n" +
                 "```";
         assertTrue(StringUtility.containsMarkdown(text));
+
         text = "``` js\n" +
                 "var foo = function (bar) {\n" +
                 "  return bar++;\n" +
@@ -94,11 +102,13 @@ public class MarkDownTextTest {
 
         text = "*TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
+
         text = "**TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
 
         text = "#TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
+        
         text = "##TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
     }
