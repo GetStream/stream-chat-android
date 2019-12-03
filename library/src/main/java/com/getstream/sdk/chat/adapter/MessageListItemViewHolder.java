@@ -388,6 +388,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             style.messageTextTheirs.apply(tv_text);
         }
+
+        if (style.getMessageLinkTextColor(messageListItem.isMine()) != 0)
+            tv_text.setLinkTextColor(style.getMessageLinkTextColor(messageListItem.isMine()));
     }
 
     private void configMessageTextBackground() {
