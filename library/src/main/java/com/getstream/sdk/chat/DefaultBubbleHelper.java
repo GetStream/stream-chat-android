@@ -75,7 +75,7 @@ public class DefaultBubbleHelper {
 
     private static void configParams(MessageListViewStyle style, boolean isMine, boolean isAttachment){
         bgColor = isAttachment ? style.getAttachmentBackgroundColor(isMine) : style.getMessageBackgroundColor(isMine);
-        strokeColor = style.getMessageBorderColor(isMine);
+        strokeColor = isAttachment ? style.getAttachmentBorderColor(isMine) : style.getMessageBorderColor(isMine);
         strokeWidth = style.getMessageBorderWidth(isMine);
         topLeftRadius = style.getMessageTopLeftCornerRadius(isMine);
         topRightRadius = style.getMessageTopRightCornerRadius(isMine);
