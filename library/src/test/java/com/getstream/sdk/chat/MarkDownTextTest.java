@@ -10,22 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MarkDownTextTest {
 
     @Test
-    void notcontainMarkdownTextTest() {
-        String text = "TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-    }
-
-    @Test
     void containEmphasisTextTest(){
         String text = "*TestMarkDown*";
         assertTrue(StringUtility.containsMarkdown(text));
         text = "_TestMarkDown_";
         assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "*TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-        text = "**TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
     }
 
     @Test
@@ -50,11 +39,6 @@ public class MarkDownTextTest {
         assertTrue(StringUtility.containsMarkdown(text));
         text = "### TestMarkDown";
         assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "#TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-        text = "##TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
     }
 
     @Test
@@ -103,4 +87,19 @@ public class MarkDownTextTest {
         assertTrue(StringUtility.containsMarkdown(text));
     }
 
+    @Test
+    void notContainMarkdownTextTest() {
+        String text = "TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "*TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "**TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "#TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+        text = "##TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+    }
 }
