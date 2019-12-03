@@ -43,7 +43,7 @@ class RetrofitClientTest {
         mockWebServer.start();
         TestApiClientOptions testApiClientOptions =
                 new TestApiClientOptions(mockWebServer.url("/").toString());
-        service = RetrofitClient.getAuthorizedClient(testTokenProvider, testApiClientOptions)
+        service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider)
                 .create(APIService.class);
     }
 
