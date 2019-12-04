@@ -76,10 +76,7 @@ public class StringUtility {
     }
 
     private static boolean checkSymbolBrackets(String message, String targetSymbol) {
-        if (message.startsWith(targetSymbol) && message.endsWith(targetSymbol)) {
-            return true;
-        }
-        return false;
+        return message.startsWith(targetSymbol) && message.endsWith(targetSymbol);
     }
 
     public static String getDeletedOrMentionedText(Message message) {
