@@ -10,6 +10,8 @@
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
 * [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
 * [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin)
+* [Java API Docs](https://getstream.io/chat/docs/java/#introduction)
+* [Kotlin API Docs](https://getstream.io/chat/docs/kotlin/#introduction)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 
 ## Java/Kotlin Chat Tutorial
@@ -342,6 +344,3 @@ And update your `Manifest`:
 <application
 	android:networkSecurityConfig="@xml/network_security_config"/>
 ```
-## Getting started
-
-TODO: https://getstream.io/chat/docs/#introduction but with Android code examples
