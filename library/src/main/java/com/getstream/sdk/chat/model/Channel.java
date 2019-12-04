@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A channel
@@ -392,14 +393,16 @@ public class Channel {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof Channel))
-            return false;
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Channel channel = (Channel) obj;
         // we compare based on the CID
-        Channel otherChannel = (Channel) obj;
-        return TextUtils.equals(this.getCid(), otherChannel.getCid());
+        return Objects.equals(cid, channel.cid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cid);
     }
 
     @NotNull
