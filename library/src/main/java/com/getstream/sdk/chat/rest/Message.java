@@ -201,9 +201,12 @@ public class Message implements UserEntity {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null)
             return false;
-        }
+
+        if (!(obj instanceof Message))
+            return false;
+
         Message otherMessage = (Message) obj;
         if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
             return false;
