@@ -71,7 +71,7 @@ public class StringUtility {
     }
 
     public static boolean isMessageDeleted(Message message) {
-        return message.getType().equals("deleted");
+        return message.getDeletedAt() != null;
     }
 
     private static boolean checkSymbolBrackets(String message, String targetSymbol) {
