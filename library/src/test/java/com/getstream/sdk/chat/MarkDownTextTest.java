@@ -35,13 +35,22 @@ public class MarkDownTextTest {
 
     @Test
     void containHeaderTextTest(){
-        String text = "# TestMarkDown";
+        String text = "# h1";
         assertTrue(StringUtility.containsMarkdown(text));
 
-        text = "## TestMarkDown";
+        text = "## h2";
         assertTrue(StringUtility.containsMarkdown(text));
 
-        text = "### TestMarkDown";
+        text = "### h3";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "#### h4";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "##### h5";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "###### h6";
         assertTrue(StringUtility.containsMarkdown(text));
     }
 
