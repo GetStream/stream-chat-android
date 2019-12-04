@@ -10,15 +10,12 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import java.text.DecimalFormat;
 
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
-    private static final String MARKDOWN_PATTERN = "[*@_~#{\\[\\]\"'|>]";
+    private static final String MARKDOWN_PATTERN = "[*@_~#{\\[\\]\"'`|>]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
@@ -47,7 +44,42 @@ public class StringUtility {
     }
 
     public static boolean containsMarkdown(String message) {
-        return Pattern.compile(MARKDOWN_PATTERN).matcher(message).find();
+        if (checkSymbolBrackets(message, "*") || checkSymbolBrackets(message, "_")
+                || checkSymbolBrackets(message, "#")
+                || checkSymbolBrackets(message, "**") || checkSymbolBrackets(message, "__")
+                || message.contains("~~") || message.contains("#{")
+                || message.contains("---") || message.contains("***") || message.contains("___")
+                || message.contains(">{")
+                || checkSymbolBrackets(message,"`") || checkSymbolBrackets(message, "```") || message.contains("//")
+                || message.contains("<i>") || message.contains("<em>") || message.contains("<cite>") || message.contains("<dfn>")
+                || message.contains("<b>") || message.contains("<strong>")
+                || message.contains("<sup>") || message.contains("<sub>")
+                || message.contains("<u>") || message.contains("<ins>")
+                || message.contains("<a>") || message.contains("<ul>") || message.contains("<ol>")
+                || message.contains("<img>") || message.contains("<blockquote>")
+                || message.contains("<h1>") || message.contains("<h2>") || message.contains("<h3>")
+                || message.contains("<h4>") || message.contains("<h5>") || message.contains("<h6>")
+                || message.startsWith("# ") || message.startsWith("## ") || message.startsWith("### ")
+                || message.startsWith("#### ") || message.startsWith("##### ")
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean containsMention(String message) {
+        return message.contains("@");
+    }
+
+    public static boolean isMessageDeleted(Message message) {
+        return message.getType().equals("deleted");
+    }
+
+    private static boolean checkSymbolBrackets(String message, String targetSymbol) {
+        if (message.startsWith(targetSymbol) && message.endsWith(targetSymbol)) {
+            return true;
+        }
+        return false;
     }
 
     public static String getDeletedOrMentionedText(Message message) {
