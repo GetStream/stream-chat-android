@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set sample of user
         User user = new User(BuildConfig.USER_ID, extraData);
-        /*client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
@@ -78,8 +78,7 @@ public class MainActivity extends AppCompatActivity {
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
             }
-        });*/
-        client.setAnonymousUser();
+        });
         return client;
     }
 
