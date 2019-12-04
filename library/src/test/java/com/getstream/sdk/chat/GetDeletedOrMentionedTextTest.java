@@ -53,9 +53,9 @@ public class GetDeletedOrMentionedTextTest {
         long fileSize = 999;
         assertEquals("999 B", StringUtility.convertFileSizeByteCount(fileSize));
         fileSize = 110592;
-        assertEquals("110,59 KB", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("110.59 KB", StringUtility.convertFileSizeByteCount(fileSize));
         fileSize = 452984832;
-        assertEquals("452,98 MB", StringUtility.convertFileSizeByteCount(fileSize));
+        assertEquals("452.98 MB", StringUtility.convertFileSizeByteCount(fileSize));
         fileSize = 900000;
         assertEquals("900 KB", StringUtility.convertFileSizeByteCount(fileSize));
         fileSize = 0;
