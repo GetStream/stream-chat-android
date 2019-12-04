@@ -392,7 +392,7 @@ public class Channel {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         // we compare based on the CID
