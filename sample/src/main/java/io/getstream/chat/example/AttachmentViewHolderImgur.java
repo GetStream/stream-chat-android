@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class AttachmentViewHolderImgur extends BaseAttachmentViewHolder {
     private PorterShapeImageView iv_media_thumb;

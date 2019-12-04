@@ -19,7 +19,6 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;

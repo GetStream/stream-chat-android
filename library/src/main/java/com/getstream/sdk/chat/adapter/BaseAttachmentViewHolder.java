@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+
     protected Context context;
     protected Message message;
     protected Attachment attachment;

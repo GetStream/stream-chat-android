@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
