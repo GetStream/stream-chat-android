@@ -40,7 +40,8 @@ public class RetrofitClient {
         }
 
         if (tokenProvider == null && !anonymousAuth) {
-            throw new IllegalArgumentException("tokenProvider must be non-null in not anonymous mode");
+            Log.e(TAG, "tokenProvider must be non-null in not anonymous mode");
+            return null;
         }
 
         TokenAuthInterceptor authInterceptor = null;

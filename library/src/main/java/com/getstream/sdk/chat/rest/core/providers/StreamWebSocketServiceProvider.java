@@ -43,7 +43,8 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
             Log.e(TAG, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
         }
         if (!anonymousAuth && userToken == null) {
-            throw new IllegalArgumentException("userToken must be non-null in not anonymous mode");
+            Log.e(TAG, "userToken must be non-null in non anonymous mode");
+            return null;
         }
 
         String json = buildUserDetailJSON(user);

@@ -43,7 +43,7 @@ class RetrofitClientTest {
         mockWebServer.start();
         TestApiClientOptions testApiClientOptions =
                 new TestApiClientOptions(mockWebServer.url("/").toString());
-        service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider)
+        service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider, false)
                 .create(APIService.class);
     }
 
@@ -67,6 +67,25 @@ class RetrofitClientTest {
         assertEquals("application/gzip", request.getHeader("Accept-Encoding"));
         //check user token
         assertEquals(TestTokenProvider.TEST_TOKEN, request.getHeader("Authorization"));
+    }
+
+    @Test
+    void validAnonymousHeadersTest() throws IOException, InterruptedException {
+        TestApiClientOptions testApiClientOptions =
+                new TestApiClientOptions(mockWebServer.url("/").toString());
+        service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider, true)
+                .create(APIService.class);
+
+        mockWebServer.enqueue(new MockResponse().setResponseCode(200).setBody("{}"));
+        //any request
+        service.queryUsers(null, null, null).execute();
+        RecordedRequest request = mockWebServer.takeRequest();
+        assertTrue(request.getHeaders().names().contains("Content-Type"));
+        assertTrue(request.getHeaders().names().contains("stream-auth-type"));
+        assertTrue(request.getHeaders().names().contains("Accept-Encoding"));
+        assertEquals("application/json", request.getHeader("Content-Type"));
+        assertEquals("anonymous", request.getHeader("stream-auth-type"));
+        assertEquals("application/gzip", request.getHeader("Accept-Encoding"));
     }
 
     @Test
