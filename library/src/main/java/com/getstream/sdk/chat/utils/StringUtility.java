@@ -15,7 +15,6 @@ import java.text.DecimalFormat;
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
-    private static final String MARKDOWN_PATTERN = "[*@_~#{\\[\\]\"'`|>]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
