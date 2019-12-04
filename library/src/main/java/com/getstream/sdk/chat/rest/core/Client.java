@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
@@ -162,7 +163,7 @@ public class Client implements WSResponseHandler {
                 public void onAnyEvent(Event event) {
                     // if an event contains the current user update it
                     // this also captures notification.mutes_updated
-                    if (event.getMe() != null) {
+                    if (event.getMe() != null && !event.isAnonymous()) {
                         state.setCurrentUser(event.getMe());
                     }
                     if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
@@ -433,10 +434,7 @@ public class Client implements WSResponseHandler {
      */
     public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
         anonymousConnection = false;
-        if (user == null) {
-            Log.w(TAG, "user can't be null. If you want to reset current user you need to call client.disconnect()");
-            return;
-        }
+
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
@@ -587,24 +585,24 @@ public class Client implements WSResponseHandler {
     private synchronized void connect() {
         Log.i(TAG, "client.connect was called");
 
-        if (!anonymousConnection) {
-            tokenProvider.getToken(userToken -> {
-                try {
-                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
-                    apiService = apiServiceProvider.provideApiService(tokenProvider);
-                    uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
+        if (anonymousConnection) {
             try {
-                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this);
-                apiService = apiServiceProvider.provideApiService(null);
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, true);
+                apiService = apiServiceProvider.provideApiService(null, true);
                 uploadStorage = uploadStorageProvider.provideUploadStorage(null, this);
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
             }
+        } else {
+            tokenProvider.getToken(userToken -> {
+                try {
+                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, true);
+                    apiService = apiServiceProvider.provideApiService(tokenProvider, false);
+                    uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+                } catch (UnsupportedEncodingException e) {
+                    onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+                }
+            });
         }
 
         webSocketService.connect();
@@ -634,7 +632,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
-        if (event.getMe() != null)
+        if (event.getMe() != null && !event.isAnonymous())
             state.setCurrentUser(event.getMe());
 
         // mark as connect, any new callbacks will automatically be executed
@@ -951,75 +949,71 @@ public class Client implements WSResponseHandler {
      * @param callback the result callback
      */
     public void queryChannel(Channel channel, ChannelQueryRequest request, QueryChannelCallback callback) {
-        if (anonymousConnection == false) {
-            onSetUserCompleted(new ClientConnectionCallback() {
-                @Override
-                public void onSuccess(User user) {
-                    final ChannelQueryRequest queryRequest = request.withData(channel.getExtraData());
-                    Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
-                        @Override
-                        public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                            Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
-                            channel.mergeWithState(response.body());
-                            // channels created without ID will get it populated by the API
-                            if (channel.getId() == null) {
-                                channel.setId(response.body().getChannel().getCid().split(":")[1]);
-                                channel.setCid(response.body().getChannel().getCid());
-                            }
-                            if (channel.getConfig() == null) {
-                                channel.setConfig(response.body().getChannel().getConfig());
-                            }
-                            if (channel.getChannelState() == null) {
-                                channel.setChannelState(response.body());
-                            }
-                            if (channel.getCreatedByUser() == null) {
-                                channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
-                            }
-
-                            addChannelConfig(channel.getType(), channel.getConfig());
-
-                            if (queryRequest.isWatch()) {
-                                addToActiveChannels(channel);
-                                channel.setInitialized(true);
-                            }
-
-                            // update the user references
-                            getState().updateUsersForChannel(channel.getChannelState());
-
-                            Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
-                            // offline storage
-
-                            getStorage().insertMessagesForChannel(channel, response.body().getMessages());
-                            callback.onSuccess(response.body());
-                        }
-
-                        @Override
-                        public void onFailure(Call<ChannelState> call, Throwable t) {
-                            if (t instanceof ErrorResponse) {
-                                callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
-                            } else {
-                                callback.onError(t.getLocalizedMessage(), -1);
-                            }
-                        }
-                    };
-                    if (channel.getId() == null) {
+        onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                final ChannelQueryRequest queryRequest = request.withData(channel.getExtraData());
+                Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
+                    @Override
+                    public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
+                        Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                        channel.mergeWithState(response.body());
                         // channels created without ID will get it populated by the API
-                        apiService.queryChannel(channel.getType(), apiKey, getUserId(), clientID,
-                                queryRequest).enqueue(requestCallback);
-                    } else {
-                        apiService.queryChannel(channel.getType(), channel.getId(), apiKey, getUserId(),
-                                clientID, queryRequest).enqueue(requestCallback);
-                    }
-                }
+                        if (channel.getId() == null) {
+                            channel.setId(response.body().getChannel().getCid().split(":")[1]);
+                            channel.setCid(response.body().getChannel().getCid());
+                        }
+                        if (channel.getConfig() == null) {
+                            channel.setConfig(response.body().getChannel().getConfig());
+                        }
+                        if (channel.getChannelState() == null) {
+                            channel.setChannelState(response.body());
+                        }
+                        if (channel.getCreatedByUser() == null) {
+                            channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
+                        }
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    callback.onError(errMsg, errCode);
+                        addChannelConfig(channel.getType(), channel.getConfig());
+
+                        if (queryRequest.isWatch()) {
+                            addToActiveChannels(channel);
+                            channel.setInitialized(true);
+                        }
+
+                        // update the user references
+                        getState().updateUsersForChannel(channel.getChannelState());
+
+                        Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                        // offline storage
+
+                        getStorage().insertMessagesForChannel(channel, response.body().getMessages());
+                        callback.onSuccess(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ChannelState> call, Throwable t) {
+                        if (t instanceof ErrorResponse) {
+                            callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
+                        } else {
+                            callback.onError(t.getLocalizedMessage(), -1);
+                        }
+                    }
+                };
+                if (channel.getId() == null) {
+                    // channels created without ID will get it populated by the API
+                    apiService.queryChannel(channel.getType(), apiKey, getUserId(), clientID,
+                            queryRequest).enqueue(requestCallback);
+                } else {
+                    apiService.queryChannel(channel.getType(), channel.getId(), apiKey, getUserId(),
+                            clientID, queryRequest).enqueue(requestCallback);
                 }
-            });
-        } else {
-            callback.onError(StreamChat.getContext().getString(R.string.channel_anonymous_error), -1);
-        }
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                callback.onError(errMsg, errCode);
+            }
+        });
     }
 
     /**
@@ -1709,7 +1703,7 @@ public class Client implements WSResponseHandler {
         }
 
         anonymousConnection = true;
-        apiService = apiServiceProvider.provideApiService(null);
+        apiService = apiServiceProvider.provideApiService(null, true);
 
         String uuid = randomUUID().toString();
 
@@ -1731,7 +1725,7 @@ public class Client implements WSResponseHandler {
 
         GuestUserRequest body = new GuestUserRequest(user.getId(), user.getName());
 
-        apiService = apiServiceProvider.provideApiService(null);
+        apiService = apiServiceProvider.provideApiService(null, true);
         apiService.setGuestUser(apiKey, body).enqueue(new Callback<TokenResponse>() {
             @Override
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {

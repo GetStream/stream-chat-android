@@ -32,56 +32,36 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     }
 
     @Override
-    public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener) throws UnsupportedEncodingException {
-        String wsUrl = getWsUrl(userToken, user);
+    public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener, boolean anonymousAuth) throws UnsupportedEncodingException {
+        String wsUrl = getWsUrl(userToken, user, anonymousAuth);
         Log.d(TAG, "WebSocket URL : " + wsUrl);
         return new StreamWebSocketService(wsUrl, listener);
     }
 
-    public String getWsUrl(@Nullable String userToken, User user) throws UnsupportedEncodingException {
+    public String getWsUrl(String userToken, User user, boolean anonymousAuth) throws UnsupportedEncodingException {
+        if (anonymousAuth && userToken != null) {
+            Log.e(TAG, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
+        }
+        if (!anonymousAuth && userToken == null) {
+            throw new IllegalArgumentException("userToken must be non-null in not anonymous mode");
+        }
+
         String json = buildUserDetailJSON(user);
 
         try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
-            String baseWsUrl = apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key=" + apiKey;
-            if (userToken != null) {
-                return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
-            } else {
-                return baseWsUrl + "&stream-auth-type=" + "anonymous";
-            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
+        }
+
+        String baseWsUrl = apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key=" + apiKey;
+        if (anonymousAuth) {
+            return baseWsUrl + "&stream-auth-type=" + "anonymous";
+        } else {
+            return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         }
     }
-
-    /*@NotNull
-    public String getWsUrl(String userToken, User user) throws UnsupportedEncodingException {
-        String json = buildUserDetailJSON(user);
-
-        try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
-            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
-                    + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
-        }
-    }
-
-    @NotNull
-    public String getAnonymusWsUrl(User user) throws UnsupportedEncodingException {
-        String json = buildUserDetailJSON(user);
-
-        try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
-            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
-                    + apiKey + "&stream-auth-type=" + "anonymous";
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
-        }
-    }*/
 
     public String buildUserDetailJSON(User user) {
         HashMap<String, Object> data = new HashMap<>();

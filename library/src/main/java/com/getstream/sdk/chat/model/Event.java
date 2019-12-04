@@ -124,6 +124,10 @@ public class Event implements UserEntity {
         return me;
     }
 
+    public boolean isAnonymous() {
+        return me.getId().equals("!anon");
+    }
+
     public Member getMember() {
         return member;
     }

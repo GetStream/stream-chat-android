@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.rest.controller;
 
+import android.util.Log;
+
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,10 +19,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
+    private static final String TAG = RetrofitClient.class.getSimpleName();
     private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
 
-    private static Request prepareRequest(Interceptor.Chain chain, boolean isAuthorizedClient) {
-        String authType = isAuthorizedClient ? "jwt" : "anonymous";
+    private static Request prepareRequest(Interceptor.Chain chain, boolean isAnonymousClient) {
+        String authType = isAnonymousClient ? "anonymous" : "jwt";
 
         return chain.request()
                 .newBuilder()
@@ -32,16 +33,20 @@ public class RetrofitClient {
                 .build();
     }
 
-    public static Retrofit getClient(ApiClientOptions options, @Nullable CachedTokenProvider tokenProvider) {
+    public static Retrofit getClient(ApiClientOptions options, CachedTokenProvider tokenProvider, boolean anonymousAuth) {
+
+        if (tokenProvider != null && anonymousAuth) {
+            Log.e(TAG, "Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
+        }
+
+        if (tokenProvider == null && !anonymousAuth) {
+            throw new IllegalArgumentException("tokenProvider must be non-null in not anonymous mode");
+        }
 
         TokenAuthInterceptor authInterceptor = null;
-        boolean isAuthorizedClient;
 
-        if (tokenProvider != null) {
-            isAuthorizedClient = true;
+        if (!anonymousAuth) {
             authInterceptor = new TokenAuthInterceptor(tokenProvider);
-        } else {
-            isAuthorizedClient = false;
         }
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
@@ -57,10 +62,10 @@ public class RetrofitClient {
                     return response;
                 })
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(chain -> chain.proceed(prepareRequest(chain, isAuthorizedClient)))
+                .addInterceptor(chain -> chain.proceed(prepareRequest(chain, anonymousAuth)))
                 .followRedirects(false);
 
-        if (authInterceptor != null) {
+        if (!anonymousAuth) {
             clientBuilder.addInterceptor(authInterceptor);
         }
 
