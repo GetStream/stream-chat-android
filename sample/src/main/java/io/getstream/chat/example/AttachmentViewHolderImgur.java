@@ -26,10 +26,9 @@ public class AttachmentViewHolderImgur extends BaseAttachmentViewHolder {
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
-                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment,clickListener, longClickListener);
 
         Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);

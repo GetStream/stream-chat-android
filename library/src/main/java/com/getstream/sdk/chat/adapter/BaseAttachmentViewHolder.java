@@ -33,7 +33,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
-                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
         this.context = context;
@@ -42,7 +41,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.attachment = attachment;
-        this.style = style;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {
