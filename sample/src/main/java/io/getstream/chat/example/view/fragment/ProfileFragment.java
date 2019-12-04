@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 
 import io.getstream.chat.example.LoginActivity;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
-import io.getstream.chat.example.utils.UserStorage;
+import io.getstream.chat.example.utils.UserConfig;
 
 public class ProfileFragment extends Fragment {
 
@@ -30,7 +30,7 @@ public class ProfileFragment extends Fragment {
     }
 
     public void logOut(){
-        UserStorage.logout();
+        UserConfig.logout();
         Client client = StreamChat.getInstance(getContext());
         client.disconnect();
 

@@ -35,10 +35,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import io.getstream.chat.example.BuildConfig;
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
-import io.getstream.chat.example.utils.UserStorage;
+import io.getstream.chat.example.utils.AppDataStorage;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -58,10 +57,10 @@ public class ChannelListFragment extends Fragment {
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getContext());
 
-        String USER_ID = UserStorage.getCurrentUser().getId();
-        String USER_TOKEN = UserStorage.getCurrentUser().getToken();
-        String USER_NAME = UserStorage.getCurrentUser().getName();
-        String USER_IMAGE = UserStorage.getCurrentUser().getImage();
+        String USER_ID = AppDataStorage.getCurrentUser().getId();
+        String USER_TOKEN = AppDataStorage.getCurrentUser().getToken();
+        String USER_NAME = AppDataStorage.getCurrentUser().getName();
+        String USER_IMAGE = AppDataStorage.getCurrentUser().getImage();
 
         Crashlytics.setUserIdentifier(USER_ID);
         if (offlineEnabled) {

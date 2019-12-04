@@ -3,6 +3,7 @@ package io.getstream.chat.example.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -13,11 +14,14 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-public class UserStorage {
+import io.getstream.chat.example.BuildConfig;
+
+public class AppDataStorage {
 
     private static Context context;
     private static SharedPreferences preferences;
-    private static List<UserConfig>users;
+    private static List<AppData>appDataList;
+    private static String currentApiKey = BuildConfig.API_KEY;
 
     private static final String USER_DATA_FILENAME = "app-data.json";
     private static final String CURRENT_USER_ID = "current-user-id";
@@ -29,13 +33,17 @@ public class UserStorage {
         parseJson();
     }
 
+
     @Nullable
     public static UserConfig getCurrentUser() {
         String currentUserId = preferences.getString(CURRENT_USER_ID, null);
-        if (currentUserId == null || users == null)
+
+        List<UserConfig> userConfigs = getUsers();
+
+        if (currentUserId == null || userConfigs == null)
             return null;
 
-        for (UserConfig config : users){
+        for (UserConfig config : userConfigs){
             if (config.getId().equals(currentUserId))
                 return config;
         }
@@ -47,20 +55,26 @@ public class UserStorage {
         preferences.edit().putString(CURRENT_USER_ID, userId).apply();
     }
 
+
+
     @Nullable
     public static List<UserConfig> getUsers() {
-        return users;
+        for (AppData appData : appDataList){
+            if (appData.getApi_key().equals(currentApiKey))
+                return appData.getUserConfigs();
+        }
+        return null;
     }
 
-    public static void logout() {
-        setCurrentUser(null);
-    }
+
 
     private static void parseJson(){
         try {
             String json = loadJSONFromAsset();
+            Log.d("AppDataStorage", json);
             Gson gson = new Gson();
-            users = gson.fromJson(json, new TypeToken<List<UserConfig>>(){}.getType());
+            appDataList = gson.fromJson(json, new TypeToken<List<AppData>>(){}.getType());
+            currentApiKey = appDataList.get(0).getApi_key();
         }catch (FileNotFoundException e){
             e.printStackTrace();
         }

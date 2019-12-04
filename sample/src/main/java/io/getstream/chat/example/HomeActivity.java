@@ -22,7 +22,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i("HomeActivity", "onCreate");
+        Log.i(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         ActivityHomeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_home);
         binding.viewPager.setAdapter(createCardAdapter());
