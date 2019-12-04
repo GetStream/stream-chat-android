@@ -8,6 +8,4 @@ public interface UsersRepository {
     User getCurrent();
 
     User getUser(String userId);
-
-    boolean fromCurrentUser(UserEntity entity);
 }

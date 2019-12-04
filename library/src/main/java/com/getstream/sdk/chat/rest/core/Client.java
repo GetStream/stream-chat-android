@@ -319,11 +319,10 @@ public class Client{
 //    /**
 //     * Returns the current user set in client's state
 //     */
-//    public String getUserId() {
-//        User currentUser = state.getCurrentUser();
-//        if (currentUser == null) return null;
-//        return currentUser.getId();
-//    }
+    public String getUserId() {
+        if(state.user != null) return state.user.getUserId();
+        else return null;
+    }
 
     public String getClientID() {
         return clientID;
@@ -465,12 +464,12 @@ public class Client{
         setUser(user, listener -> listener.onSuccess(token));
     }
 
-//    public boolean fromCurrentUser(UserEntity entity) {
-//        String otherUserId = entity.getUserId();
-//        if (otherUserId == null) return false;
-//        if (getUser() == null) return false;
-//        return TextUtils.equals(getUserId(), otherUserId);
-//    }
+    public boolean fromCurrentUser(UserEntity entity) {
+        String otherUserId = entity.getUserId();
+        if (otherUserId == null) return false;
+        if (state.user == null) return false;
+        return TextUtils.equals(getUserId(), otherUserId);
+    }
 
     /**
      * Creates an authorization token for development purposes.

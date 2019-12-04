@@ -28,7 +28,7 @@ public class InitChannelState {
         }
 
         if (incoming.messages != null) {
-            addMessagesSorted(currentState, incoming.messages);
+            currentState.addMessagesSorted(incoming.messages);
             currentState.lastMessage = computeLastMessage.computeLastMessage(channel);
         }
 
@@ -42,30 +42,5 @@ public class InitChannelState {
             currentState.members = new ArrayList<>(incoming.members);
         }
         // TODO: merge with incoming.reads
-    }
-
-    private void addMessagesSorted(ChannelState currentState, List<Message> messages) {
-        for (Message m : messages) {
-            if (m.getParentId() == null) {
-                addOrUpdateMessage(currentState, m);
-            }
-        }
-    }
-
-    private void addOrUpdateMessage(ChannelState currentState, Message newMessage) {
-        if (currentState.messages.size() > 0) {
-            for (int i = currentState.messages.size() - 1; i >= 0; i--) {
-                if (currentState.messages.get(i).getId().equals(newMessage.getId())) {
-                    currentState.messages.set(i, newMessage);
-                    return;
-                }
-                if (currentState.messages.get(i).getCreatedAt().before(newMessage.getCreatedAt())) {
-                    currentState.messages.add(newMessage);
-                    return;
-                }
-            }
-        } else {
-            currentState.messages.add(newMessage);
-        }
     }
 }
