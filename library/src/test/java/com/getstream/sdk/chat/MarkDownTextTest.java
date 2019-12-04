@@ -114,8 +114,5 @@ public class MarkDownTextTest {
 
         text = "`TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "@TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
     }
 }

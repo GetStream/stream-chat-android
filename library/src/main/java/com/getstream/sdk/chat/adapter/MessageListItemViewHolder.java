@@ -21,6 +21,14 @@ import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
+import androidx.annotation.IdRes;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
@@ -31,18 +39,15 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.view.*;
+import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.AvatarGroupView;
+import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
+import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.DimenRes;
-import androidx.annotation.IdRes;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
@@ -268,7 +273,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         style.messageUserNameText.apply(tv_username);
 
-        if(messageListItem.isMine()) {
+        if (messageListItem.isMine()) {
             style.messageDateTextMine.apply(tv_messagedate);
         } else {
             style.messageDateTextTheirs.apply(tv_messagedate);
@@ -366,7 +371,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (StringUtility.containsMarkdown(message.getText()) || StringUtility.isMessageDeleted(message)) {
+        if (StringUtility.containsMarkdown(message.getText()) || isDeletedMessage() || StringUtility.isContainsMention(message)) {
             if (markdownListener != null)
                 markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
             else
@@ -383,7 +388,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if(messageListItem.isMine()) {
+        if (messageListItem.isMine()) {
             style.messageTextMine.apply(tv_text);
         } else {
             style.messageTextTheirs.apply(tv_text);

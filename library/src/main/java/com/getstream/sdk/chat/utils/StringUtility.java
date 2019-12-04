@@ -43,13 +43,6 @@ public class StringUtility {
     }
 
     public static boolean containsMarkdown(String message) {
-        String[] messageParts = message.split(" ");
-        for (String part : messageParts) {
-            if (part.startsWith("@")) {
-                return true;
-            }
-        }
-
         return checkSymbolBrackets(message, "*") || checkSymbolBrackets(message, "_")
                 || checkSymbolBrackets(message, "#")
                 || checkSymbolBrackets(message, "**") || checkSymbolBrackets(message, "__")
@@ -69,12 +62,8 @@ public class StringUtility {
                 || message.startsWith("#### ") || message.startsWith("##### ");
     }
 
-    public static boolean isMessageDeleted(Message message) {
-        return message.getDeletedAt() != null;
-    }
-
-    private static boolean checkSymbolBrackets(String message, String targetSymbol) {
-        return message.startsWith(targetSymbol) && message.endsWith(targetSymbol);
+    public static boolean isContainsMention(Message message) {
+        return message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty();
     }
 
     public static String getDeletedOrMentionedText(Message message) {
@@ -86,7 +75,7 @@ public class StringUtility {
             text = "_" + StreamChat.getStrings().get(R.string.stream_delete_message) + "_";
             return text;
         }
-        if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
+        if (isContainsMention(message)) {
             for (User mentionedUser : message.getMentionedUsers()) {
                 String userName = mentionedUser.getName();
                 text = text.replace("@" + userName, "**" + "@" + userName + "**");
@@ -124,4 +113,9 @@ public class StringUtility {
         return text.substring(0, text.length() - last.length()) + userName;
 
     }
+
+    private static boolean checkSymbolBrackets(String message, String targetSymbol) {
+        return message.startsWith(targetSymbol) && message.endsWith(targetSymbol);
+    }
+
 }
