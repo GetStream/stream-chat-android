@@ -43,13 +43,20 @@ public class StringUtility {
     }
 
     public static boolean containsMarkdown(String message) {
-        if (checkSymbolBrackets(message, "*") || checkSymbolBrackets(message, "_")
+        String[] messageParts = message.split(" ");
+        for (String part : messageParts) {
+            if (part.startsWith("@")) {
+                return true;
+            }
+        }
+
+        return checkSymbolBrackets(message, "*") || checkSymbolBrackets(message, "_")
                 || checkSymbolBrackets(message, "#")
                 || checkSymbolBrackets(message, "**") || checkSymbolBrackets(message, "__")
                 || message.contains("~~") || message.contains("#{")
                 || message.contains("---") || message.contains("***") || message.contains("___")
                 || message.contains(">{")
-                || checkSymbolBrackets(message,"`") || checkSymbolBrackets(message, "```") || message.contains("//")
+                || checkSymbolBrackets(message, "`") || checkSymbolBrackets(message, "```") || message.contains("//")
                 || message.contains("<i>") || message.contains("<em>") || message.contains("<cite>") || message.contains("<dfn>")
                 || message.contains("<b>") || message.contains("<strong>")
                 || message.contains("<sup>") || message.contains("<sub>")
@@ -59,15 +66,7 @@ public class StringUtility {
                 || message.contains("<h1>") || message.contains("<h2>") || message.contains("<h3>")
                 || message.contains("<h4>") || message.contains("<h5>") || message.contains("<h6>")
                 || message.startsWith("# ") || message.startsWith("## ") || message.startsWith("### ")
-                || message.startsWith("#### ") || message.startsWith("##### ")
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean containsMention(String message) {
-        return message.contains("@");
+                || message.startsWith("#### ") || message.startsWith("##### ");
     }
 
     public static boolean isMessageDeleted(Message message) {
