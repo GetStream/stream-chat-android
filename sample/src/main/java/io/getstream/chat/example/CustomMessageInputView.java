@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.getstream.sdk.chat.interfaces.MessageInputManager;
+import com.getstream.sdk.chat.interfaces.MessageSendManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -21,7 +21,7 @@ import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView extends MessageInputView implements MessageInputManager {
+public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
 
     final static String TAG = CustomMessageInputView.class.getSimpleName();
 
@@ -32,7 +32,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageI
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
-        setMessageInputManager(this);
+        setMessageSendManager(this);
     }
 
     private void initBinding(Context context) {

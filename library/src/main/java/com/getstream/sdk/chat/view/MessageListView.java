@@ -160,7 +160,11 @@ public class MessageListView extends RecyclerView {
             }
         });
 
-        // Lock for 500 milliseconds setMessageListScrollUp when the keyboard is displayed.
+        /*
+        * Lock for 500 milliseconds setMessageListScrollUp in here.
+        * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
+        */
+
         this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
                                         int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
             if (bottom < oldBottom) {

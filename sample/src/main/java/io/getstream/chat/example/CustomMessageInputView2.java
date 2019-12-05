@@ -4,19 +4,19 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.getstream.sdk.chat.interfaces.MessageInputManager;
+import com.getstream.sdk.chat.interfaces.MessageSendManager;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageInputView;
 import java.util.HashMap;
 
 
-public class CustomMessageInputView2 extends MessageInputView implements MessageInputManager {
+public class CustomMessageInputView2 extends MessageInputView implements MessageSendManager {
 
     final static String TAG = CustomMessageInputView2.class.getSimpleName();
 
     public CustomMessageInputView2(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setMessageInputManager(this);
+        setMessageSendManager(this);
     }
 
     @Override
