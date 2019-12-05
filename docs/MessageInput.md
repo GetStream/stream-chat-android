@@ -238,14 +238,14 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 #### Step 2: Create CustomMessageInputView
 
-As a next step we need to create CustomMessageInputView with _extends_ `MessageInputView` and _implements_ `MessageSendManager`.
+As a next step we need to create `CustomMessageInputView` with _extends_ `MessageInputView` and _implements_ `MessageSendManager`.
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
 ```java
 ...
 
-public class CustomMessageInputView  extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
 
     private final static String TAG = CustomMessageInputView.class.getSimpleName();
     private ViewCustomMessageInputBinding binding;
@@ -292,17 +292,19 @@ public class CustomMessageInputView  extends MessageInputView implements Message
             onSendMessage(message);
         });
     }
+
     public String getMessageText() {
         return binding.etMessage.getText().toString();
     }
+
     // note that you typically want to use custom fields on attachments instead of messages
-    private void setExtraData(Message message){
+    private void setExtraData(Message message) {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
         message.setExtraData(extraData);
     }
 
-    private void keyStroke(Editable editable){
+    private void keyStroke(Editable editable) {
         if (editable.toString().length() > 0)
             viewModel.keystroke();
     }

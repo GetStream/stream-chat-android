@@ -24,7 +24,7 @@ import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView  extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
 
     private final static String TAG = CustomMessageInputView.class.getSimpleName();
     private ViewCustomMessageInputBinding binding;
@@ -71,17 +71,19 @@ public class CustomMessageInputView  extends MessageInputView implements Message
             onSendMessage(message);
         });
     }
+
     public String getMessageText() {
         return binding.etMessage.getText().toString();
     }
+
     // note that you typically want to use custom fields on attachments instead of messages
-    private void setExtraData(Message message){
+    private void setExtraData(Message message) {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
         message.setExtraData(extraData);
     }
 
-    private void keyStroke(Editable editable){
+    private void keyStroke(Editable editable) {
         if (editable.toString().length() > 0)
             viewModel.keystroke();
     }
