@@ -289,7 +289,6 @@ Currently SDK doesn't support all `Markwon` features and limited to this plugins
 - [LinkifyPlugin](https://noties.io/Markwon/docs/v4/linkify/)
 - [ImagesPlugin](https://noties.io/Markwon/docs/v4/image/)
 - [StrikethroughPlugin](https://noties.io/Markwon/docs/v4/ext-strikethrough/)
-- [TablePlugin](https://noties.io/Markwon/docs/v4/ext-tables/)
 
 If you want to use another library for `Markdown` or extend the `Markwon` plugins you can use the code below
 ```java

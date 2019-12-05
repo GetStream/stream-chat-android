@@ -60,7 +60,6 @@ dependencies {
     implementation "io.noties.markwon:linkify:$markdown_version"
     implementation "io.noties.markwon:ext-strikethrough:$markdown_version"
     implementation "io.noties.markwon:image:$markdown_version"
-    implementation "io.noties.markwon:ext-tables:$markdown_version"
 
     implementation 'com.facebook.fresco:fresco:1.2.0'
     implementation 'me.relex:photodraweeview:1.1.0'
