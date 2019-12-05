@@ -148,25 +148,4 @@ public class MarkDownTextTest {
                 "```";
         assertTrue(StringUtility.containsMarkdown(text));
     }
-
-    @Test
-    void notContainMarkdownTextTest() {
-        String text = "TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "*TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "**TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "#TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "##TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "`TestMarkDown";
-        assertFalse(StringUtility.containsMarkdown(text));
-    }
 }
