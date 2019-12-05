@@ -3,6 +3,8 @@
 - Fix set typeFace without custom font
 - Improve rendering performance for messages without Markdown markup
 - Add MessageSendManager
+- Update CustomMessageInputView
+- Update CustomMessageInputView2
 
 ## November 28th, 2019 - 3.4.1
 
@@ -29,8 +31,6 @@
 - Fix attachment duplicated issue when message edit
 - Add File Upload 2.0
 - Add editMessage function in Channel View Model
-- Update CustomMessageInputView
-- Update CustomMessageInputView2
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
 - Add Message Username and Date attrs
