@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -213,7 +214,7 @@ public class Channel {
     public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
-        this.cid = String.format("%s:%s", type, id);
+        this.cid = String.format("%1$s:%2$s", type, id);
         this.client = client;
         this.setSyncStatus(Sync.SYNCED);
         this.createdAt = new Date();
@@ -271,6 +272,7 @@ public class Channel {
 
     public void setId(String id) {
         this.id = id;
+        this.cid = String.format("%1$s:%2$s", type, id);
     }
 
     public String getCid() {
