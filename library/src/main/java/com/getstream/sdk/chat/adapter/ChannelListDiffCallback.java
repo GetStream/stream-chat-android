@@ -3,9 +3,9 @@ package com.getstream.sdk.chat.adapter;
 import androidx.recyclerview.widget.DiffUtil;
 
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ChannelListDiffCallback extends DiffUtil.Callback {
     private List<Channel> oldList, newList;
@@ -27,48 +27,11 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+        return Objects.equals(oldList.get(oldItemPosition).getCid(), newList.get(newItemPosition).getCid());
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        Channel oldChannel = oldList.get(oldItemPosition);
-        Channel newChannel = newList.get(newItemPosition);
-
-        if (oldChannel.getUpdatedAt() == null && newChannel.getUpdatedAt() != null) {
-            return false;
-        }
-
-        if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
-            return false;
-        }
-
-        if (oldChannel.getLastMessageDate() == null && newChannel.getLastMessageDate() != null) {
-            return false;
-        }
-
-        if (newChannel.getLastMessageDate() != null && oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
-            return false;
-        }
-
-        if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
-            return false;
-        }
-        // Check Message Update
-        Message oldLastMessage = oldChannel.getChannelState().getLastMessage();
-        Message newLastMessage = newChannel.getChannelState().getLastMessage();
-        if (oldLastMessage != null &&
-                newLastMessage != null &&
-                newLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
-            return false;
-        }
-        // Check Message Delete
-        if (oldLastMessage != null && !oldLastMessage.equals(newLastMessage)) {
-            return false;
-        }
-
-        return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 }

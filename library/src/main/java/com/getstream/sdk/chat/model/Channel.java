@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A channel
@@ -392,12 +393,51 @@ public class Channel {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Channel other = (Channel) obj;
+
+        if (getUpdatedAt() == null && other.getUpdatedAt() != null) {
             return false;
         }
-        // we compare based on the CID
-        Channel otherChannel = (Channel) obj;
-        return TextUtils.equals(this.getCid(), otherChannel.getCid());
+
+        if (other.getUpdatedAt() != null && getUpdatedAt().getTime() < other.getUpdatedAt().getTime()) {
+            return false;
+        }
+
+        if (getLastMessageDate() == null && other.getLastMessageDate() != null) {
+            return false;
+        }
+
+        if (other.getLastMessageDate() != null && getLastMessageDate().getTime() < other.getLastMessageDate().getTime()) {
+            return false;
+        }
+
+        if (!getExtraData().equals(other.getExtraData())) {
+            return false;
+        }
+        // Check Message Update
+        Message oldLastMessage = getChannelState().getLastMessage();
+        Message newLastMessage = other.getChannelState().getLastMessage();
+        if (oldLastMessage != null &&
+                newLastMessage != null &&
+                newLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
+            return false;
+        }
+        // Check Message Delete
+        if (oldLastMessage != null && !oldLastMessage.equals(newLastMessage)) {
+            return false;
+        }
+
+        return getChannelState().getLastReader() == other.getChannelState().getLastReader();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cid);
     }
 
     @NotNull
