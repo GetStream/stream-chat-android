@@ -238,18 +238,17 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 #### Step 2: Create CustomMessageInputView
 
-As a next step we need to extend `MessageInputView` and implement `MessageSendManager`.
-
-What should not be missed is that you must connect your message input `EditText` to connect **super** class.
+As a next step we need to create CustomMessageInputView with _extends_ `MessageInputView` and _implements_ `MessageSendManager`.
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
 ```java
 ...
 
-public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView  extends MessageInputView implements MessageSendManager {
 
-    final static String TAG = CustomMessageInputView.class.getSimpleName();
+    private final static String TAG = CustomMessageInputView.class.getSimpleName();
+    private ViewCustomMessageInputBinding binding;
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -263,9 +262,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Don't miss this line to set editText!
-        editText = binding.etMessage;
+        binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
+        // Set Keystroke
+        TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = isEdit() ? getEditMessage() : new Message();
@@ -293,7 +292,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
             onSendMessage(message);
         });
     }
-
+    public String getMessageText() {
+        return binding.etMessage.getText().toString();
+    }
     // note that you typically want to use custom fields on attachments instead of messages
     private void setExtraData(Message message){
         HashMap<String, Object> extraData = new HashMap<>();
@@ -301,21 +302,32 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
         message.setExtraData(extraData);
     }
 
+    private void keyStroke(Editable editable){
+        if (editable.toString().length() > 0)
+            viewModel.keystroke();
+    }
+
     @Override
     public void onSendMessageSuccess(Message message) {
+        binding.etMessage.setText("");
         Log.d(TAG, "Sent message! :" + message.getText());
     }
 
     @Override
     public void onSendMessageError(String errMsg) {
+        binding.etMessage.setText("");
         Log.d(TAG, "Failed send message! :" + errMsg);
     }
 
-    // If you want to customize editing message behavior you can override the function below
-//    @Override
-//    public void editMessage(Message message) {
-//        // TODO: Customize Editing Message behavior.
-//    }
+    @Override
+    public void editMessage(Message message) {
+        if (message == null
+                || TextUtils.isEmpty(message.getText())) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+    }
 
     private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();

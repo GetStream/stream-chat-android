@@ -14,7 +14,6 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -41,7 +40,6 @@ import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
-import com.getstream.sdk.chat.utils.GifEditText;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
 import com.getstream.sdk.chat.utils.PermissionChecker;
@@ -91,7 +89,6 @@ public class MessageInputView extends RelativeLayout {
      * The viewModel for handling typing etc.
      */
     protected ChannelViewModel viewModel;
-    protected EditText editText;
 
     private MessageInputController messageInputController;
 
@@ -100,7 +97,6 @@ public class MessageInputView extends RelativeLayout {
         super(context, attrs);
         parseAttr(context, attrs);
         binding = initBinding(context);
-        editText = binding.etMessage;
         applyStyle();
     }
     // endregion
@@ -144,7 +140,7 @@ public class MessageInputView extends RelativeLayout {
         // Input Background
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
-        style.inputText.apply(editText);
+        style.inputText.apply(binding.etMessage);
         style.inputBackgroundText.apply(binding.tvTitle);
         style.inputBackgroundText.apply(binding.tvCommand);
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo);
@@ -165,7 +161,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void configInputEditText(){
-        editText.setOnFocusChangeListener((View view, boolean hasFocus)-> {
+        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
                 Utils.showSoftKeyboard((Activity) getContext());
@@ -173,16 +169,13 @@ public class MessageInputView extends RelativeLayout {
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
 
-        TextViewUtils.afterTextChanged(editText, this::keyStroke);
-        if (editText instanceof GifEditText)
-            ((GifEditText)editText).setCallback(this::sendGiphyFromKeyboard);
+        TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
+        binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
     private void keyStroke(Editable editable){
         if (editable.toString().length() > 0)
             viewModel.keystroke();
-
-        if (!editText.equals(binding.etMessage)) return;
 
         String messageText = getMessageText();
         // detect commands
@@ -195,7 +188,6 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void configMessageInputBackground(LifecycleOwner lifecycleOwner){
-        if (!editText.equals(binding.etMessage)) return;
 
         viewModel.getInputType().observe(lifecycleOwner, inputType -> {
             switch (inputType) {
@@ -301,26 +293,30 @@ public class MessageInputView extends RelativeLayout {
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
                     if (!isOpen) {
-                        editText.clearFocus();
+                        binding.etMessage.clearFocus();
                         onBackPressed();
                     }
                 });
     }
 
     public void setEnabled(boolean enabled) {
-        editText.setEnabled(true);
+        binding.etMessage.setEnabled(true);
     }
 
     public void clearFocus() {
-        editText.clearFocus();
+        binding.etMessage.clearFocus();
     }
 
     public String getMessageText() {
-        return editText.getText().toString();
+        return binding.etMessage.getText().toString();
     }
 
-    public void setMessageText(String t) {
-        editText.setText(t);
+    public void setMessageText(String text) {
+        if (TextUtils.isEmpty(text)) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(text);
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
     }
     // endregion
 
@@ -383,7 +379,7 @@ public class MessageInputView extends RelativeLayout {
     private void initSendMessage() {
         messageInputController.initSendMessage();
         viewModel.setEditMessage(null);
-        editText.setText("");
+        binding.etMessage.setText("");
         binding.ivSend.setEnabled(true);
     }
 
@@ -446,7 +442,7 @@ public class MessageInputView extends RelativeLayout {
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
         messageInputController.setSelectedAttachments(Arrays.asList(attachment));
-        editText.setText("");
+        binding.etMessage.setText("");
         onSendMessage();
         return true;
     }
@@ -460,13 +456,7 @@ public class MessageInputView extends RelativeLayout {
         if (message == null) return;
 
         // Set Text to Inputbox
-        editText.requestFocus();
-        if (!TextUtils.isEmpty(message.getText())) {
-            editText.setText(message.getText());
-            editText.setSelection(editText.getText().length());
-        }
-
-        if (!editText.equals(binding.etMessage)) return;
+        setMessageText(message.getText());
 
         // Set Attachments to Inputbox
         if (message.getAttachments() == null
@@ -491,6 +481,7 @@ public class MessageInputView extends RelativeLayout {
             messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
         }
     }
+
     // endregion
 
     // region permission check

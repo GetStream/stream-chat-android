@@ -1,6 +1,8 @@
 package io.getstream.chat.example;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import com.getstream.sdk.chat.interfaces.MessageSendManager;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -21,9 +24,10 @@ import java.util.List;
 
 import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
 
-public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView  extends MessageInputView implements MessageSendManager {
 
-    final static String TAG = CustomMessageInputView.class.getSimpleName();
+    private final static String TAG = CustomMessageInputView.class.getSimpleName();
+    private ViewCustomMessageInputBinding binding;
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -37,9 +41,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        ViewCustomMessageInputBinding binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
-        // Don't miss this line to set editText!
-        editText = binding.etMessage;
+        binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
+        // Set Keystroke
+        TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
             Message message = isEdit() ? getEditMessage() : new Message();
@@ -67,7 +71,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
             onSendMessage(message);
         });
     }
-
+    public String getMessageText() {
+        return binding.etMessage.getText().toString();
+    }
     // note that you typically want to use custom fields on attachments instead of messages
     private void setExtraData(Message message){
         HashMap<String, Object> extraData = new HashMap<>();
@@ -75,21 +81,32 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
         message.setExtraData(extraData);
     }
 
+    private void keyStroke(Editable editable){
+        if (editable.toString().length() > 0)
+            viewModel.keystroke();
+    }
+
     @Override
     public void onSendMessageSuccess(Message message) {
+        binding.etMessage.setText("");
         Log.d(TAG, "Sent message! :" + message.getText());
     }
 
     @Override
     public void onSendMessageError(String errMsg) {
+        binding.etMessage.setText("");
         Log.d(TAG, "Failed send message! :" + errMsg);
     }
 
-    // If you want to customize editing message behavior you can override the function below
-//    @Override
-//    public void editMessage(Message message) {
-//        // TODO: Customize Editing Message behavior.
-//    }
+    @Override
+    public void editMessage(Message message) {
+        if (message == null
+                || TextUtils.isEmpty(message.getText())) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+    }
 
     private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();
