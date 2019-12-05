@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MarkDownTextTest {
 
     @Test
-    void containEmphasisTextTest(){
+    void containEmphasisTextTest() {
         String text = "*TestMarkDown*";
         assertTrue(StringUtility.containsMarkdown(text));
 
@@ -19,22 +19,28 @@ public class MarkDownTextTest {
     }
 
     @Test
-    void containStrongEmphasisTextTest(){
+    void containStrongEmphasisTextTest() {
         String text = "**TestMarkDown**";
         assertTrue(StringUtility.containsMarkdown(text));
 
         text = "__TestMarkDown__";
         assertTrue(StringUtility.containsMarkdown(text));
-    }
 
-    @Test
-    void containStrikeThroughTextTest(){
-        String text = "~~TestMarkDown~~";
+        text = "==TestMarkDown==";
         assertTrue(StringUtility.containsMarkdown(text));
     }
 
     @Test
-    void containHeaderTextTest(){
+    void containStrikeThroughTextTest() {
+        String text = "~~TestMarkDown~~";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "~ TestMarkDown";
+        assertTrue(StringUtility.containsMarkdown(text));
+    }
+
+    @Test
+    void containHeaderTextTest() {
         String text = "# h1";
         assertTrue(StringUtility.containsMarkdown(text));
 
@@ -58,11 +64,44 @@ public class MarkDownTextTest {
     void containLinkTextTest() {
         String text = "[GetStream](https://getstream.io/)";
         assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "Autoconverted link https://github.com/nodeca/pica (enable linkify to see)";
+        assertTrue(StringUtility.containsMarkdown(text));
+    }
+
+    @Test
+    void containTypographicTextTest() {
+        String text = "test..";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "test...";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "test.....";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "test?.....";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "test!....";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "!!!!!!";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "????";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = ",,";
+        assertTrue(StringUtility.containsMarkdown(text));
     }
 
     @Test
     void containImageTextTest() {
         String text = "![Minion](https://octodex.github.com/images/minion.png)";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "![Stormtroopocat](https://octodex.github.com/images/stormtroopocat.jpg \"The Stormtroopocat\")";
         assertTrue(StringUtility.containsMarkdown(text));
     }
 
@@ -76,10 +115,16 @@ public class MarkDownTextTest {
 
         text = "***  ";
         assertTrue(StringUtility.containsMarkdown(text));
+
+        text = "+++  ";
+        assertTrue(StringUtility.containsMarkdown(text));
+
+        text = ":::  ";
+        assertTrue(StringUtility.containsMarkdown(text));
     }
 
     @Test
-    void containCodeTextTest(){
+    void containCodeTextTest() {
         String text = "`code`";
         assertTrue(StringUtility.containsMarkdown(text));
 
@@ -117,11 +162,14 @@ public class MarkDownTextTest {
 
         text = "#TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
-        
+
         text = "##TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
 
         text = "`TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "::  ";
         assertFalse(StringUtility.containsMarkdown(text));
     }
 }

@@ -47,7 +47,7 @@ public class StringUtility {
                 || checkSymbolBrackets(message, "#")
                 || checkSymbolBrackets(message, "**") || checkSymbolBrackets(message, "__")
                 || message.contains("~~") || message.contains("#{")
-                || message.contains("---") || message.contains("***") || message.contains("___")
+                || message.contains("---") || message.contains("***") || message.contains("___") || message.contains("+++ ")
                 || message.contains(">{")
                 || checkSymbolBrackets(message, "`") || checkSymbolBrackets(message, "```") || message.contains("//")
                 || message.contains("<i>") || message.contains("<em>") || message.contains("<cite>") || message.contains("<dfn>")
@@ -59,7 +59,13 @@ public class StringUtility {
                 || message.contains("<h1>") || message.contains("<h2>") || message.contains("<h3>")
                 || message.contains("<h4>") || message.contains("<h5>") || message.contains("<h6>")
                 || message.startsWith("# ") || message.startsWith("## ") || message.startsWith("### ")
-                || message.startsWith("#### ") || message.startsWith("##### ");
+                || message.startsWith("#### ") || message.startsWith("##### ") || message.startsWith("###### ")
+                || message.contains("...") || message.contains(".....") || message.contains("?.....")
+                || message.contains("!!!!!!") || message.contains("????") || message.contains(",,")
+                || message.contains(",,") || message.contains("..") || message.contains("^") || message.contains("~ ")
+                || message.contains("[\\<") || checkSymbolBrackets(message,"++")
+                || checkSymbolBrackets(message, "==") || checkSymbolBrackets(message, ":::")
+                || message.contains("::: ");
     }
 
     public static boolean isContainsMention(Message message) {
