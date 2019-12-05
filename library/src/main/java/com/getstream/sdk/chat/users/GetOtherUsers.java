@@ -28,10 +28,12 @@ public class GetOtherUsers {
         //Log.d(TAG, "getOtherUsers");
 
         List<User> users = new ArrayList<>();
+        String currentUserId = usersRepository.getCurrentId();
 
         if (members != null) {
             for (Member m : members) {
-                if (!usersRepository.fromCurrentUser(m)) {
+                String userId = m.getUserId();
+                if (!userId.equals(currentUserId)) {
                     User user = usersRepository.getUser(m.getUser().getId());
                     //Log.d(TAG, "getOtherUsers: member: " + user);
                     users.add(user);
@@ -41,7 +43,8 @@ public class GetOtherUsers {
 
         if (watchers != null) {
             for (Watcher w : watchers) {
-                if (!usersRepository.fromCurrentUser(w)) {
+                String userId = w.getUserId();
+                if (!userId.equals(currentUserId)) {
                     User user = usersRepository.getUser(w.getUser().getId());
                     //Log.d(TAG, "getOtherUsers: watcher: " + user);
                     if (!users.contains(user))

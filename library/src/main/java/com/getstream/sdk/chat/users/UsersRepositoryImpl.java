@@ -9,6 +9,11 @@ public class UsersRepositoryImpl implements UsersRepository {
     }
 
     @Override
+    public String getCurrentId() {
+        return null;
+    }
+
+    @Override
     public User getUser(String userId) {
         return null;
     }

@@ -7,5 +7,7 @@ public interface UsersRepository {
 
     User getCurrent();
 
+    String getCurrentId();
+
     User getUser(String userId);
 }

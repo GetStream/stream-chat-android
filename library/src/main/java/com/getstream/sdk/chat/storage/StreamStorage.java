@@ -30,8 +30,11 @@ import java.util.Map;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
 public class StreamStorage implements Storage {
+
     private static volatile StreamStorage INSTANCE;
+
     final String TAG = StreamStorage.class.getSimpleName();
+
     private Boolean enabled;
     private Client client;
     private Context context;

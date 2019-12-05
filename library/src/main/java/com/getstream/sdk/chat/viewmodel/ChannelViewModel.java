@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
+import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
@@ -956,16 +957,22 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
+    public void sendMessage(String message, List<Attachment> attachments, boolean isUploadingFile, MessageCallback callback){
+        String parentThreadId = isThread() ? getThreadParentMessage().getValue().getId() : null;
+    }
+
     /**
      * sends message
      *
      * @param message  the Message sent
      * @param callback the result callback
      */
-    public void sendMessage(Message message, MessageCallback callback) {
+    public void sendMessage(String message, MessageCallback callback) {
+
         if (message.getSyncStatus() == LOCAL_ONLY) {
             return;
         }
+
         // Check Error or Pending Messages
         checkErrorOrPendingMessage();
         // Check Failed Message
@@ -986,7 +993,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             addMessage(message);
         }
 
-        // afterwards send the request
+
         channel.sendMessage(message,
                 new MessageCallback() {
                     @Override

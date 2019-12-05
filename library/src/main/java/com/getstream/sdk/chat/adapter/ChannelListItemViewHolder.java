@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.channels.GetChannelNameOrMembers;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -23,6 +24,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.users.GetOtherUsers;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
@@ -115,14 +117,14 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     // set the channel name
-    private void configChannelName(ChannelState channelState){
-        String channelName = channelState.getChannelNameOrMembers();
+    private void configChannelName(ChannelState channelState) {
+        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersRepository())).getChannelNameOrMembers(channelState.getChannel());
         tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
     }
 
     private void configAvatarView(ChannelState channelState){
         Channel channel = channelState.getChannel();
-        List<User> otherUsers = channelState.getOtherUsers();
+        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersRepository()).getOtherUsers(channel);
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
         // click listeners
         avatarGroupView.setOnClickListener(view -> {
@@ -231,8 +233,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
 
         Message lastMessage = channelState.getLastMessage();
-        Channel channel = channelState.getChannel();
-        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(channel.getClient().getUserId()));
+
+        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(StreamChat.getUsersRepository().getCurrentId()));
         if (channelState.readLastMessage() || outgoing)
             applyReadStyle();
         else

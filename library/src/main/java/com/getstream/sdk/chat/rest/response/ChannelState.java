@@ -70,6 +70,8 @@ public class ChannelState {
     @Ignore
     public Date lastKnownActiveWatcher;
 
+    public String currentUserId;
+
     public ChannelState() {
         this(null);
     }
@@ -186,6 +188,24 @@ public class ChannelState {
         }
     }
 
+    public User getLastReader() {
+
+        ChannelState channelState = this;
+
+        if (channelState.reads == null || channelState.reads.isEmpty()) return null;
+        User lastReadUser = null;
+        for (int i = channelState.reads.size() - 1; i >= 0; i--) {
+            ChannelUserRead channelUserRead = channelState.reads.get(i);
+            String userId = channelUserRead.getUserId();
+
+            if(!userId.equals(currentUserId)){
+                lastReadUser = channelUserRead.getUser();
+                break;
+            }
+        }
+        return lastReadUser;
+    }
+
 //    public List<User> getOtherUsers() {
 //
 //        Log.d(TAG, "getOtherUsers");
@@ -194,7 +214,10 @@ public class ChannelState {
 //
 //        if (members != null) {
 //            for (Member m : members) {
-//                if (!channel.getClient().fromCurrentUser(m)) {
+//
+//                String userId = m.getUserId();
+//
+//                if (!userId.equals(currentUserId)) {
 //                    User user = channel.getClient().getState().getUser(m.getUser().getId());
 //                    Log.d(TAG, "getOtherUsers: member: " + user);
 //                    users.add(user);
@@ -326,24 +349,22 @@ public class ChannelState {
         return readsByUser;
     }
 
-//    public synchronized List<ChannelUserRead> getLastMessageReads() {
-//        Message lastMessage = this.getLastMessage();
-//        List<ChannelUserRead> readLastMessage = new ArrayList<>();
-//        if (reads == null || lastMessage == null) return readLastMessage;
-//        Client client = this.getChannel().getClient();
-//        String userID = client.getUserId();
-//        for (ChannelUserRead r : reads) {
-//            if (r.getUserId().equals(userID))
-//                continue;
-//            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
-//                readLastMessage.add(r);
-//            }
-//        }
-//
-//        // sort the reads
-//        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
-//        return readLastMessage;
-//    }
+    public synchronized List<ChannelUserRead> getLastMessageReads() {
+        Message lastMessage = this.getLastMessage();
+        List<ChannelUserRead> readLastMessage = new ArrayList<>();
+        if (reads == null || lastMessage == null) return readLastMessage;
+        for (ChannelUserRead r : reads) {
+            if (r.getUserId().equals(currentUserId))
+                continue;
+            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
+                readLastMessage.add(r);
+            }
+        }
+
+        // sort the reads
+        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
+        return readLastMessage;
+    }
 
     public List<Member> getMembers() {
         if (members == null) {
@@ -425,11 +446,8 @@ public class ChannelState {
         }
     }
 
-    public int getCurrentUserUnreadMessageCount() {
-        channel.getCreatedByUserID()
-        Client client = this.getChannel().getClient();
-        String userID = client.getUserId();
-        return this.getUnreadMessageCount(userID);
+    public int getCurrentUserUnreadMessageCount(String currentUserId) {
+        return this.getUnreadMessageCount(currentUserId);
     }
 
     private int getUnreadMessageCount(String userId) {
@@ -482,9 +500,7 @@ public class ChannelState {
 
     // if user read the last message returns true, else false.
     public boolean readLastMessage() {
-        Client client = this.getChannel().getClient();
-        String userID = client.getUserId();
-        Date myReadDate = getReadDateOfChannelLastMessage(userID);
+        Date myReadDate = getReadDateOfChannelLastMessage(currentUserId);
         if (myReadDate == null) {
             return false;
         } else if (getLastMessage() == null) {

@@ -21,6 +21,8 @@ import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 
 import org.jetbrains.annotations.NotNull;
+
+import com.getstream.sdk.chat.users.UsersRepository;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
@@ -44,6 +46,7 @@ public class StreamChat {
     private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
+    private static UsersRepository usersRepository;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -169,6 +172,11 @@ public class StreamChat {
         return fontsManager;
     }
 
+    @NotNull
+    public static UsersRepository getUsersRepository(){
+        return usersRepository;
+    }
+
     public static synchronized boolean init(String apiKey, Context context) {
         return init(apiKey, new ApiClientOptions(), context);
     }
@@ -209,7 +217,7 @@ public class StreamChat {
                                 Log.i(TAG, "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
-                                    INSTANCE.reconnectWebSocket();
+                                    INSTANCE.reconnectWebSocket(user);
                                 }
                             }
 
