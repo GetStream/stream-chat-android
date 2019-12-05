@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
-    private static final String MARKDOWN_REGEX = "(?m)[.{2}!{3}?{2},{2}>*$_}/:`=^~#+\\-@\\]]";
+    private static final String MARKDOWN_REGEX = "(?m)[.{2}!{3}?{2},{2}>*_}/:`=^~#+\\-@\\]]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
