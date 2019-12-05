@@ -5,6 +5,8 @@
 - Add MessageSendManager
 - Update CustomMessageInputView
 - Update CustomMessageInputView2
+- Add Attachment Border Color attrs
+- Add Message Link Text Color attrs
 
 ## November 28th, 2019 - 3.4.1
 

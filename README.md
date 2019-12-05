@@ -1,6 +1,7 @@
 # stream-chat-android
-
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
+
+![](https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png) 
 
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low level chat SDK and a set of reusable UI components. Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
@@ -9,6 +10,8 @@
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
 * [Java Chat Tutorial](https://getstream.io/tutorials/android-chat/#java)
 * [Kotlin Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin)
+* [Java API Docs](https://getstream.io/chat/docs/java/#introduction)
+* [Kotlin API Docs](https://getstream.io/chat/docs/kotlin/#introduction)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 
 ## Java/Kotlin Chat Tutorial
@@ -341,6 +344,3 @@ And update your `Manifest`:
 <application
 	android:networkSecurityConfig="@xml/network_security_config"/>
 ```
-## Getting started
-
-TODO: https://getstream.io/chat/docs/#introduction but with Android code examples
