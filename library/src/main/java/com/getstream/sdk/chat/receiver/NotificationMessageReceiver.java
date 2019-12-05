@@ -1,23 +1,35 @@
 package com.getstream.sdk.chat.receiver;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
+
+import androidx.core.app.RemoteInput;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
+import com.getstream.sdk.chat.model.Config;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.EventCallback;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.EventResponse;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class NotificationMessageReceiver extends BroadcastReceiver {
 
     public static final String ACTION_READ = "com.getstream.sdk.chat.READ";
     public static final String ACTION_REPLY = "com.getstream.sdk.chat.REPLY";
+    public static final String KEY_NOTIFICATION_ID = "notification_id";
     public static final String KEY_CHANNEL_ID = "id";
     public static final String KEY_CHANNEL_TYPE = "type";
+    public static final String KEY_TEXT_REPLY = "text_reply";
 
     private final static String TAG = NotificationMessageReceiver.class.getCanonicalName();
 
@@ -30,31 +42,80 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
                     markAsRead(context, intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE));
                     break;
                 case ACTION_REPLY:
-                    //replyText = results.getCharSequence(EXTRA_TEXT_REPLY);
+                    Bundle results = RemoteInput.getResultsFromIntent(intent);
+                    if (results != null) {
+                        replyText(context, intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE), results.getCharSequence(KEY_TEXT_REPLY));
+                    }
                     break;
                 default:
                     break;
             }
         }
+        cancelNotification(context, intent.getIntExtra(KEY_NOTIFICATION_ID, 0));
     }
 
-    private void markAsRead(Context context, String id, String type) {
+    private void replyText(@NotNull Context context, String id, String type, CharSequence messageChars) {
+        if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
+            Log.e(TAG, "Can\'t markAsRead. ID and Type are null.");
+            return;
+        }
+
+        if (messageChars == null || messageChars.toString().isEmpty()) {
+            Log.e(TAG, "messageChars Can\'t be empty.");
+            return;
+        }
+
         Channel channel = new Channel(StreamChat.getInstance(context), type, id);
+        Config config = new Config();
+        config.setReadEvents(true);
+        channel.setConfig(config);
 
-        //if (channel != null) {
-            channel.markRead(new EventCallback() {
-                @Override
-                public void onSuccess(EventResponse response) {
-                    Log.i(TAG, "Channel marked as read");
-                }
+        Message msg = new Message();
+        msg.setText(messageChars.toString());
 
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.e(TAG, "Cant mark as read. Error: " + errMsg + " Code: " + errCode);
-                }
-            });
-        /*} else {
-            Log.w(TAG, "Can't find channel with cid:" + cid);
-        }*/
+        channel.sendMessage(msg, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                Log.i(TAG, "Reply message sent success.");
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, "Cant send reply. Error: " + errMsg + " Code: " + errCode);
+            }
+        });
+    }
+
+    private void markAsRead(@NotNull Context context, String id, String type) {
+        if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
+            Log.e(TAG, "Can\'t markAsRead. ID and Type are null.");
+            return;
+        }
+
+        Channel channel = new Channel(StreamChat.getInstance(context), type, id);
+        Config config = new Config();
+        config.setReadEvents(true);
+        channel.setConfig(config);
+
+        channel.markRead(new EventCallback() {
+            @Override
+            public void onSuccess(EventResponse response) {
+                Log.i(TAG, "Channel marked as read");
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, "Cant mark as read. Error: " + errMsg + " Code: " + errCode);
+            }
+        });
+    }
+
+    private void cancelNotification(@NotNull Context context, int notificationId) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancel(notificationId);
+        } else {
+            Log.w(TAG, "Can\'t get Notification Manager. notificationManager is null");
+        }
     }
 }

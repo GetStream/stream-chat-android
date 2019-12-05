@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ProcessLifecycleOwner;
 
@@ -26,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /*
  * Created by Anton Bevza on 2019-11-14.
@@ -87,14 +90,19 @@ public class StreamNotificationsManager implements NotificationsManager {
         String messageId = remoteMessage.getData().get(MESSAGE_ID_KEY);
         String type = remoteMessage.getData().get(CHANNEL_TYPE_KEY);
         String id = remoteMessage.getData().get(CHANNEL_ID_KEY);
-
+        int notificationId = (int) System.currentTimeMillis();
 
         if (hasRequireFields(remoteMessage)) {
+            PendingIntent intentAction = preparePendingIntent(context, id, type, notificationId);
+
             NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
             notificationBuilder.setContentTitle(channelName)
                     .setContentText(message)
-                    .setCategory(Notification.CATEGORY_MESSAGE)
-                    .addAction(android.R.drawable.ic_menu_agenda, context.getString(R.string.default_notification_read), getReadPendingIntent(context, id, type))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .addAction(getReadAction(context, intentAction))
+                    .addAction(getReplyAction(context, intentAction))
+                    .setShowWhen(true)
                     .setContentIntent(
                             notificationOptions.getNotificationIntentProvider()
                                     .getIntentForFirebaseMessage(context, remoteMessage)
@@ -102,7 +110,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
                 lastNotificationId = messageId;
-                showNotification(notificationBuilder.build(), context);
+                showNotification(notificationId, notificationBuilder.build(), context);
             } else {
                 Log.i(TAG, "Notification with id:" + messageId + " already showed");
             }
@@ -116,10 +124,14 @@ public class StreamNotificationsManager implements NotificationsManager {
         NotificationCompat.Builder builder = notificationOptions.getNotificationBuilder(context);
         Log.d(TAG, "onReceiveWebSocketEvent: " + event);
 
+        int notificationId = (int) System.currentTimeMillis();
+
         if (event.getType() == EventType.MESSAGE_NEW) {
             builder.setContentTitle(event.getMessage().getUser().getName())
                     .setContentText(event.getMessage().getText())
-                    .setCategory(Notification.CATEGORY_MESSAGE)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .setShowWhen(true)
                     .setContentIntent(
                             notificationOptions.getNotificationIntentProvider()
                                     .getIntentForWebSocketEvent(context, event)
@@ -129,7 +141,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
                 lastNotificationId = messageId;
-                showNotification(builder.build(), context);
+                showNotification(notificationId, builder.build(), context);
             } else {
                 Log.i(TAG, "Notification with id:" + messageId + " already showed");
             }
@@ -148,9 +160,26 @@ public class StreamNotificationsManager implements NotificationsManager {
         return true;
     }
 
-    private PendingIntent getReadPendingIntent(Context context, String id, String type) {
+    private NotificationCompat.Action getReadAction(Context context, PendingIntent pendingIntent) {
+        return new NotificationCompat.Action.Builder(android.R.drawable.ic_menu_view,
+                context.getString(R.string.default_notification_read), pendingIntent).build();
+    }
+
+    private NotificationCompat.Action getReplyAction(Context context, PendingIntent replyPendingIntent) {
+        RemoteInput remoteInput = new RemoteInput.Builder(NotificationMessageReceiver.KEY_TEXT_REPLY)
+                .setLabel(context.getString(R.string.default_notification_type))
+                .build();
+
+        return new NotificationCompat.Action.Builder(android.R.drawable.ic_menu_send, context.getString(R.string.default_notification_reply), replyPendingIntent)
+                .addRemoteInput(remoteInput)
+                .setAllowGeneratedReplies(true)
+                .build();
+    }
+
+    private PendingIntent preparePendingIntent(Context context, String id, String type, int notificationId) {
         Intent notifyIntent = new Intent(context, NotificationMessageReceiver.class);
-        notifyIntent.setAction(NotificationMessageReceiver.ACTION_READ);
+        notifyIntent.setAction(NotificationMessageReceiver.ACTION_REPLY);
+        notifyIntent.putExtra(NotificationMessageReceiver.KEY_NOTIFICATION_ID, notificationId);
         notifyIntent.putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, id);
         notifyIntent.putExtra(NotificationMessageReceiver.KEY_CHANNEL_TYPE, type);
 
@@ -162,9 +191,9 @@ public class StreamNotificationsManager implements NotificationsManager {
         );
     }
 
-    private void showNotification(@NotNull Notification notification, @NotNull Context context) {
+    private void showNotification(@NotNull Integer notificationId, @NotNull Notification notification, @NotNull Context context) {
         NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
         if (notificationManager != null && !isForeground()) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -172,7 +201,7 @@ public class StreamNotificationsManager implements NotificationsManager {
                         notificationOptions.getNotificationChannel(context));
             }
 
-            notificationManager.notify((int) System.currentTimeMillis(), notification);
+            notificationManager.notify(notificationId, notification);
         }
     }
 
