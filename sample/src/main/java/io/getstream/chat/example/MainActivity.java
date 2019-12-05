@@ -133,6 +133,9 @@ public class MainActivity extends AppCompatActivity {
         };
 
         StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions, onDeviceRegistered));
+
+        // Set custom delay in 5 min
+        client.setWebSocketDisconnectDelay(1000 * 60 * 5);
         return client;
     }
 

@@ -17,4 +17,8 @@ public interface NotificationsManager {
     void onReceiveFirebaseMessage(@NotNull RemoteMessage remoteMessage, @NotNull Context context);
 
     void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context);
+
+    boolean hasRequireFields(@NotNull RemoteMessage remoteMessage);
+
+    boolean hasRequireFields(@NotNull Event event);
 }
