@@ -168,8 +168,5 @@ public class MarkDownTextTest {
 
         text = "`TestMarkDown";
         assertFalse(StringUtility.containsMarkdown(text));
-
-        text = "::  ";
-        assertFalse(StringUtility.containsMarkdown(text));
     }
 }

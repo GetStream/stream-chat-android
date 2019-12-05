@@ -11,10 +11,12 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
+    private static final String MARKDOWN_REGEX = "[.{2}!{3}?{2},{2}>*_}/:`=^~#+\\-@\\]]";
 
     public static String stringFromNumbers(int... numbers) {
         StringBuilder sNumbers = new StringBuilder();
@@ -43,29 +45,8 @@ public class StringUtility {
     }
 
     public static boolean containsMarkdown(String message) {
-        return checkSymbolBrackets(message, "*") || checkSymbolBrackets(message, "_")
-                || checkSymbolBrackets(message, "#")
-                || checkSymbolBrackets(message, "**") || checkSymbolBrackets(message, "__")
-                || message.contains("~~") || message.contains("#{")
-                || message.contains("---") || message.contains("***") || message.contains("___") || message.contains("+++ ")
-                || message.contains(">{")
-                || checkSymbolBrackets(message, "`") || checkSymbolBrackets(message, "```") || message.contains("//")
-                || message.contains("<i>") || message.contains("<em>") || message.contains("<cite>") || message.contains("<dfn>")
-                || message.contains("<b>") || message.contains("<strong>")
-                || message.contains("<sup>") || message.contains("<sub>")
-                || message.contains("<u>") || message.contains("<ins>")
-                || message.contains("<a>") || message.contains("<ul>") || message.contains("<ol>")
-                || message.contains("<img>") || message.contains("<blockquote>")
-                || message.contains("<h1>") || message.contains("<h2>") || message.contains("<h3>")
-                || message.contains("<h4>") || message.contains("<h5>") || message.contains("<h6>")
-                || message.startsWith("# ") || message.startsWith("## ") || message.startsWith("### ")
-                || message.startsWith("#### ") || message.startsWith("##### ") || message.startsWith("###### ")
-                || message.contains("...") || message.contains(".....") || message.contains("?.....")
-                || message.contains("!!!!!!") || message.contains("????") || message.contains(",,")
-                || message.contains(",,") || message.contains("..") || message.contains("^") || message.contains("~ ")
-                || message.contains("[\\<") || checkSymbolBrackets(message,"++")
-                || checkSymbolBrackets(message, "==") || checkSymbolBrackets(message, ":::")
-                || message.contains("::: ");
+        Pattern pattern = Pattern.compile(MARKDOWN_REGEX, Pattern.DOTALL);
+        return pattern.matcher(message).find();
     }
 
     public static boolean isContainsMention(Message message) {
