@@ -29,7 +29,7 @@ public class MessageViewHolderFactory {
     public static final int VIDEO_ATTACHMENT = 3;
     public static final int FILE_ATTACHMENT = 4;
 
-    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+    public int getMessageViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
