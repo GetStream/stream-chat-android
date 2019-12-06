@@ -50,7 +50,9 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
         String json = buildUserDetailJSON(user);
 
         try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name());
+            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
+                    + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
