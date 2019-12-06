@@ -90,32 +90,34 @@ public class StreamNotificationsManager implements NotificationsManager {
         String messageId = remoteMessage.getData().get(MESSAGE_ID_KEY);
         String type = remoteMessage.getData().get(CHANNEL_TYPE_KEY);
         String id = remoteMessage.getData().get(CHANNEL_ID_KEY);
-        int notificationId = (int) System.currentTimeMillis();
 
-        if (hasRequireFields(remoteMessage)) {
-            PendingIntent intentAction = preparePendingIntent(context, id, type, notificationId);
+        if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
 
-            NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
-            notificationBuilder.setContentTitle(channelName)
-                    .setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                    .addAction(getReadAction(context, intentAction))
-                    .addAction(getReplyAction(context, intentAction))
-                    .setShowWhen(true)
-                    .setContentIntent(
-                            notificationOptions.getNotificationIntentProvider()
-                                    .getIntentForFirebaseMessage(context, remoteMessage)
-                    );
+            int notificationId = (int) System.currentTimeMillis();
 
-            if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
+            if (hasRequireFields(remoteMessage)) {
+                PendingIntent intentAction = preparePendingIntent(context, id, type, notificationId);
+
+                NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
+                notificationBuilder.setContentTitle(channelName)
+                        .setContentText(message)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                        .addAction(getReadAction(context, intentAction))
+                        .addAction(getReplyAction(context, intentAction))
+                        .setShowWhen(true)
+                        .setContentIntent(
+                                notificationOptions.getNotificationIntentProvider()
+                                        .getIntentForFirebaseMessage(context, remoteMessage)
+                        );
+
                 lastNotificationId = messageId;
                 showNotification(notificationId, notificationBuilder.build(), context);
             } else {
-                Log.i(TAG, "Notification with id:" + messageId + " already showed");
+                Log.e(TAG, "Firebase message has empty fields");
             }
         } else {
-            Log.e(TAG, "Firebase message has empty fields");
+            Log.i(TAG, "Notification with id:" + messageId + " already showed");
         }
     }
 
@@ -129,7 +131,6 @@ public class StreamNotificationsManager implements NotificationsManager {
         if (event.getType() == EventType.MESSAGE_NEW) {
             builder.setContentTitle(event.getMessage().getUser().getName())
                     .setContentText(event.getMessage().getText())
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setShowWhen(true)
                     .setContentIntent(

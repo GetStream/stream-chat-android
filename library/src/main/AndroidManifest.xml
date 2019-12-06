@@ -17,6 +17,7 @@
 
         <receiver
             android:name=".receiver.NotificationMessageReceiver"
+            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.getstream.sdk.chat.READ" />
