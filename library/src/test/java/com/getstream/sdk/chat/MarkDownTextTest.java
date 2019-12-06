@@ -70,33 +70,6 @@ public class MarkDownTextTest {
     }
 
     @Test
-    void containTypographicTextTest() {
-        String text = "test..";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "test...";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "test.....";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "test?.....";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "test!....";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "!!!!!!";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = "????";
-        assertTrue(StringUtility.containsMarkdown(text));
-
-        text = ",,";
-        assertTrue(StringUtility.containsMarkdown(text));
-    }
-
-    @Test
     void containImageTextTest() {
         String text = "![Minion](https://octodex.github.com/images/minion.png)";
         assertTrue(StringUtility.containsMarkdown(text));
@@ -134,7 +107,7 @@ public class MarkDownTextTest {
                 "line 3 of code";
         assertTrue(StringUtility.containsMarkdown(text));
 
-        text = "```\n" +
+        text = "```c" +
                 "Sample text here...\n" +
                 "```";
         assertTrue(StringUtility.containsMarkdown(text));
@@ -147,5 +120,26 @@ public class MarkDownTextTest {
                 "console.log(foo(5));\n" +
                 "```";
         assertTrue(StringUtility.containsMarkdown(text));
+    }
+
+    @Test
+    void notContainMarkdownTextTest() {
+        String text = "TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "*TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "**TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "#TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "##TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
+
+        text = "`TestMarkDown";
+        assertFalse(StringUtility.containsMarkdown(text));
     }
 }
