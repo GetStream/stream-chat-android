@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.rest.Message;
 /**
  * Interface for Send Message
  */
-public interface MessageSendManager {
+public interface MessageSendListener {
 
     void onSendMessageSuccess(Message message);
 

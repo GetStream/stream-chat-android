@@ -93,7 +93,7 @@ You must use the following properties in your XML to change your MessageInputVie
 
 The following listeners can be set
 
-* setMessageSendManager
+* setMessageSendListener
 * setOpenCameraViewListener
 * setPermissionRequestListener
 
@@ -238,14 +238,14 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 #### Step 2: Create CustomMessageInputView
 
-As a next step we need to create `CustomMessageInputView` with _extends_ `MessageInputView` and _implements_ `MessageSendManager`.
+As a next step we need to create `CustomMessageInputView` with _extends_ `MessageInputView` and _implements_ `MessageSendListener`.
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
 ```java
 ...
 
-public class CustomMessageInputView extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView extends MessageInputView implements MessageSendListener {
 
     private final static String TAG = CustomMessageInputView.class.getSimpleName();
     private ViewCustomMessageInputBinding binding;
@@ -257,7 +257,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
 
     public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         super.setViewModel(viewModel, lifecycleOwner);
-        setMessageSendManager(this);
+        setMessageSendListener(this);
     }
 
     private void initBinding(Context context) {

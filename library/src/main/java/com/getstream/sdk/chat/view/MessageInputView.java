@@ -30,7 +30,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.interfaces.MessageSendManager;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -80,7 +80,7 @@ public class MessageInputView extends RelativeLayout {
      */
     private MessageInputStyle style;
     /** Fired when a message is sent */
-    private MessageSendManager messageSendManager;
+    private MessageSendListener messageSendListener;
     /** Permission Request listener */
     private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
@@ -359,16 +359,16 @@ public class MessageInputView extends RelativeLayout {
         onSendMessage(message, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
-                if (messageSendManager != null)
-                    messageSendManager.onSendMessageSuccess(response.getMessage());
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageSuccess(response.getMessage());
                 initSendMessage();
                 if (isEdit()) clearFocus();
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                if (messageSendManager != null)
-                    messageSendManager.onSendMessageError(errMsg);
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageError(errMsg);
                 Utils.showMessage(getContext(), errMsg);
                 initSendMessage();
                 if (isEdit()) clearFocus();
@@ -549,8 +549,8 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-    protected void setMessageSendManager(MessageSendManager manager) {
-        this.messageSendManager = manager;
+    protected void setMessageSendListener(MessageSendListener manager) {
+        this.messageSendListener = manager;
     }
 
     public void setPermissionRequestListener(PermissionRequestListener l) {

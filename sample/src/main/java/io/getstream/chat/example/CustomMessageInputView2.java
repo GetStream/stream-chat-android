@@ -4,29 +4,29 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 
-import com.getstream.sdk.chat.interfaces.MessageSendManager;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageInputView;
 import java.util.HashMap;
 
 
-public class CustomMessageInputView2 extends MessageInputView implements MessageSendManager {
+public class CustomMessageInputView2 extends MessageInputView implements MessageSendListener {
 
     final static String TAG = CustomMessageInputView2.class.getSimpleName();
 
     public CustomMessageInputView2(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setMessageSendManager(this);
+        setMessageSendListener(this);
     }
 
     @Override
-    public Message prepareNewMessage(Message mMessage){
-        Message message = super.prepareNewMessage(mMessage);
+    public Message prepareNewMessage(Message message){
+        Message preparedMessage = super.prepareNewMessage(message);
         // note that you typically want to use custom fields on attachments instead of messages
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
-        message.setExtraData(extraData);
-        return message;
+        preparedMessage.setExtraData(extraData);
+        return preparedMessage;
     }
 
     @Override
