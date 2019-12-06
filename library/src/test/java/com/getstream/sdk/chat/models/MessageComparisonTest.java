@@ -25,16 +25,20 @@ public class MessageComparisonTest {
     @BeforeEach
     void initTest() {
         MockitoAnnotations.initMocks(this);
-        x = new Message(); x.setId(TEST_MESSAGE_ID_1);
+        x = new Message();
+        x.setId(TEST_MESSAGE_ID_1);
 
-        x_clone = new Message(); x_clone.setId(TEST_MESSAGE_ID_1);
+        x_clone = new Message();
+        x_clone.setId(TEST_MESSAGE_ID_1);
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("group", "group chat");
         x_clone.setExtraData(extraData);
 
-        y = new Message(); y.setId(TEST_MESSAGE_ID_2);
+        y = new Message();
+        y.setId(TEST_MESSAGE_ID_2);
 
-        z = new Message(); z.setId(TEST_MESSAGE_ID_3);
+        z = new Message();
+        z.setId(TEST_MESSAGE_ID_3);
     }
 
 
@@ -50,7 +54,8 @@ public class MessageComparisonTest {
         assertFalse(x.equals(y));
         assertTrue(x.equals(y) == y.equals(x));
 
-        y.setId(x.getId()); z.setId(y.getId());
+        y.setId(x.getId());
+        z.setId(y.getId());
 
         if ((x.equals(y) && y.equals(z)))
             assertTrue(x.equals(z));
@@ -61,7 +66,7 @@ public class MessageComparisonTest {
         assertEquals(x.hashCode(), x_clone.hashCode());
 
         Map<Message, String> myMap = new HashMap<>();
-        myMap.put(x,"x");
+        myMap.put(x, "x");
         myMap.put(x_clone, "x_clone");
         assertTrue(myMap.size() == 1
                 && myMap.get(x).equals("x_clone")
@@ -69,7 +74,7 @@ public class MessageComparisonTest {
 
         assertNotEquals(x.hashCode(), y.hashCode());
         myMap.clear();
-        myMap.put(x,"x");
+        myMap.put(x, "x");
         myMap.put(y, "y");
         assertTrue(myMap.size() == 2
                 && myMap.get(x).equals("x")

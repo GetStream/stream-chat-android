@@ -46,7 +46,8 @@ public class UserComparisonTest {
         assertFalse(x.equals(y));
         assertTrue(x.equals(y) == y.equals(x));
 
-        y.setId(x.getId()); z.setId(y.getId());
+        y.setId(x.getId());
+        z.setId(y.getId());
 
         if ((x.equals(y) && y.equals(z)))
             assertTrue(x.equals(z));
@@ -57,7 +58,7 @@ public class UserComparisonTest {
         assertEquals(x.hashCode(), x_clone.hashCode());
 
         Map<User, String> myMap = new HashMap<>();
-        myMap.put(x,"x");
+        myMap.put(x, "x");
         myMap.put(x_clone, "x_clone");
         assertTrue(myMap.size() == 1
                 && myMap.get(x).equals("x_clone")
@@ -65,7 +66,7 @@ public class UserComparisonTest {
 
         assertNotEquals(x.hashCode(), y.hashCode());
         myMap.clear();
-        myMap.put(x,"x");
+        myMap.put(x, "x");
         myMap.put(y, "y");
         assertTrue(myMap.size() == 2
                 && myMap.get(x).equals("x")
