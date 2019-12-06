@@ -479,6 +479,15 @@ public class Channel {
     }
 
     /**
+     * Only for Test
+     * Query the API, get messages, members or other channel fields
+     *
+     * @param callback the result callback
+     */
+    public void query(@NonNull QueryChannelCallback callback) {
+        client.queryChannel(this, new ChannelQueryRequest().withData(this.extraData).withWatch(), callback);
+    }
+    /**
      * getReplies - List the message replies for a parent message
      *
      * @return {object} Returns a getReplies response

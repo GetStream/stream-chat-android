@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+
     protected Context context;
     protected Message message;
     protected Attachment attachment;
@@ -33,7 +34,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
-                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
         this.context = context;
@@ -42,7 +42,6 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.attachment = attachment;
-        this.style = style;
     }
 
     public MessageListView.BubbleHelper getBubbleHelper() {

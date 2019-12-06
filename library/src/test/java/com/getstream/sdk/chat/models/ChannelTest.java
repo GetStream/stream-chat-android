@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
@@ -30,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -120,12 +123,31 @@ public class ChannelTest {
 
     @Test
     void queryTest() {
-        ChannelWatchRequest request = new ChannelWatchRequest();
+        ChannelQueryRequest request = new ChannelQueryRequest();
         QueryChannelCallback callback = mock(QueryChannelCallback.class);
 
         channel.query(request, callback);
 
         verify(client).queryChannel(channel, request, callback);
+    }
+
+    @Test
+    void createTest() {
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("name", "test channel name");
+
+        List<String> members = new ArrayList<>();
+        members.add("test_user_Id");
+        extraData.put("members", members);
+
+        channel.setExtraData(extraData);
+        QueryChannelCallback callback = mock(QueryChannelCallback.class);
+        channel.query(callback);
+
+        verify(client).queryChannel(eq(channel), argThat(argument ->
+                argument.isWatch() &&
+                        argument.getData().get("name").equals(channel.getName()) &&
+                        argument.getData().get("members").equals(members)), eq(callback));
     }
 
     @Test

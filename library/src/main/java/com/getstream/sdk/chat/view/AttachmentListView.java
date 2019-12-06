@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
+
     private MessageViewHolderFactory viewHolderFactory;
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private MessageListViewStyle style;

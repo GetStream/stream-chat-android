@@ -81,7 +81,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private Context context;
     private Message message;
     private MessageListItem messageListItem;
-    private MessageListViewStyle style;
     private MarkdownImpl.MarkdownListener markdownListener;
     private MessageListView.GiphySendListener giphySendListener;
     private List<MessageViewHolderFactory.Position> positions;
@@ -135,6 +134,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
+        this.avatarWidth = style.getAvatarWidth();
         init();
     }
 
@@ -162,12 +162,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadIndicator();
-    }
-
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-        avatarWidth = style.getAvatarWidth();
     }
 
     public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
@@ -366,14 +360,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (StringUtility.containsMarkdown(message.getText())) {
-            if (markdownListener != null)
-                markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
-            else
-                MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        } else {
-            tv_text.setText(StringUtility.getDeletedOrMentionedText(message));
-        }
+        if (markdownListener != null)
+            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        else
+            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
     }
 
     private void configMessageTextStyle() {
@@ -396,14 +386,14 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMessageTextBackground() {
         Drawable background;
         if (isFailedMessage()) {
-            background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         } else if (isDeletedMessage() || StringUtility.isEmoji(message.getText())) {
             background = null;
         } else {
             if (message.getAttachments() != null && !message.getAttachments().isEmpty())
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
+                background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
             else
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+                background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         }
         if (background != null)
             tv_text.setBackground(background);
@@ -457,7 +447,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         attachmentview.setStyle(style);
         attachmentview.setGiphySendListener(giphySendListener);
         attachmentview.setEntity(this.messageListItem);
-        attachmentview.setBubbleHelper(this.getBubbleHelper());
+        attachmentview.setBubbleHelper(bubbleHelper);
         attachmentview.setAttachmentClickListener(attachmentClickListener);
         attachmentview.setLongClickListener(messageLongClickListener);
     }
@@ -753,6 +743,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
+    @Override
     public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
     }
