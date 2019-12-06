@@ -1,6 +1,7 @@
 ## Upcoming
 
 - Fix set typeFace without custom font
+- Fix channel.watch (data payload was not sent)
 - Fix API 23 compatiblity
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
