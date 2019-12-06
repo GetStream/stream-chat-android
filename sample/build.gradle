@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -80,6 +82,9 @@ android {
             buildConfigField "String", "USER_TOKEN", '"' + (customUserToken ? customUserToken : defaultUserToken) + '"'
             buildConfigField "String", "USER_NAME", '"' + (customUserName ? customUserName : defaultUserName) + '"'
             buildConfigField "String", "USER_IMAGE", '"' + (customUserImage ? customUserImage : defaultUserImage) + '"'
+
+            def usersConfig = loadJson()
+            buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
         }
 
         applicationVariants.all { variant ->
@@ -151,6 +156,12 @@ def checkSigningEnvVars() {
     return storagePath != null && password != null && keyAlias != null && keyPassword != null
 }
 
+def loadJson(){
+    def path = projectDir.getAbsolutePath() + "/src/main/assets/app-data.json"
+    def inputFile = new File(path)
+    def json = new JsonSlurper().parseText(inputFile.text)
+    return json
+}
 gradle.taskGraph.useFilter { task ->
     /**
      * Ignores release unit tests.

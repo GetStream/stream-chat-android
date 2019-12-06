@@ -10,6 +10,10 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
@@ -20,7 +24,7 @@ public class AppDataStorage {
 
     private static Context context;
     private static SharedPreferences preferences;
-    private static List<AppData>appDataList;
+    private static AppData appData;
     private static String currentApiKey = BuildConfig.API_KEY;
 
     private static final String USER_DATA_FILENAME = "app-data.json";
@@ -59,23 +63,22 @@ public class AppDataStorage {
 
     @Nullable
     public static List<UserConfig> getUsers() {
-        for (AppData appData : appDataList){
-            if (appData.getApi_key().equals(currentApiKey))
-                return appData.getUserConfigs();
-        }
-        return null;
+        return appData.getUserConfigs();
     }
 
 
 
-    private static void parseJson(){
+    public static void parseJson(){
+
+        String json = BuildConfig.USERS_CONFIG;
+        Log.d("AppDataStorage", json);
+
+        Gson gson = new Gson();
         try {
-            String json = loadJSONFromAsset();
-            Log.d("AppDataStorage", json);
-            Gson gson = new Gson();
-            appDataList = gson.fromJson(json, new TypeToken<List<AppData>>(){}.getType());
-            currentApiKey = appDataList.get(0).getApi_key();
-        }catch (FileNotFoundException e){
+            JSONArray array = new JSONArray(json);
+            appData = gson.fromJson(json, new TypeToken<AppData>(){}.getType());
+            currentApiKey = appData.getApi_key();
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
