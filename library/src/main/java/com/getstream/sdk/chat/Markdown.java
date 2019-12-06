@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
-import io.noties.markwon.ext.tables.TablePlugin;
 import io.noties.markwon.image.ImagesPlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
@@ -26,7 +25,6 @@ public class Markdown {
                 .usePlugin(CorePlugin.create())
                 .usePlugin(LinkifyPlugin.create())
                 .usePlugin(ImagesPlugin.create())
-                .usePlugin(TablePlugin.create(context))
                 .usePlugin(StrikethroughPlugin.create())
                 .build();
     }
