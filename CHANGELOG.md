@@ -1,7 +1,7 @@
 ## Upcoming
 
 - Fix set typeFace without custom font
-- Improve rendering performance for messages without Markdown markup
+- Fix API 23 compatiblity
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
 
