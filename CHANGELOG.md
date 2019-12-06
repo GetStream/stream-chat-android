@@ -1,9 +1,8 @@
 ## Upcoming
 
 - Fix set typeFace without custom font
-- Improve rendering performance for messages without Markdown markup
-- Fix ChannelQueryRequest/ChannelWatchRequest
-- Add ChannelWatchRequest Test case
+- Fix channel.watch (data payload was not sent)
+- Fix API 23 compatiblity
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
 
