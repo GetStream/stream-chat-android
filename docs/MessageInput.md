@@ -238,9 +238,16 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 #### Step 2: Create CustomMessageInputView
 
-As a next step we need to create `CustomMessageInputView` with _extends_ `MessageInputView` and _implements_ `MessageSendListener`.
+As a next step we need to connect your message input to the rest of the UI.
+There a few things to think about:
+
+* Typing events
+* Sending messages (optionally with attachments)
+* Editing a message
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
+
+_Note:_ Do not forget to extend `MessageInputView` and implement `MessageSendListener`.
 
 ```java
 ...

@@ -6,7 +6,7 @@
 - Fix API 23 compatiblity
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
-- Add MessageSendManager
+- Add MessageSendListener
 - Update CustomMessageInputView
 - Update CustomMessageInputView2
 
