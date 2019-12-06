@@ -1,9 +1,11 @@
 package com.getstream.sdk.chat;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,6 +26,7 @@ import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +34,12 @@ import java.util.List;
 
 public class StreamChat {
     private static final String TAG = StreamChat.class.getSimpleName();
+
+    public static final String CHANNEL_ID_KEY = "channel_id";
+    public static final String CHANNEL_TYPE_KEY = "channel_type";
+    private static final String CHANNEL_NAME_KEY = "channel_name";
+    private static final String MESSAGE_TEXT_KEY = "message_text";
+    private static final String MESSAGE_ID_KEY = "message_id";
 
     private static Client INSTANCE;
 
@@ -257,6 +266,16 @@ public class StreamChat {
             }
             return true;
         }
+    }
+
+    /**
+     * Handle Firebase message, check and show notifications
+     *
+     * @param context       - Context
+     * @param remoteMessage - msg from Firebase
+     */
+    public void handleRemoteMessage(Context context, RemoteMessage remoteMessage) {
+        StreamChat.notificationsManager.handleRemoteMessage(context, remoteMessage);
     }
 
     private static void registerFirebaseToken(Context context) {

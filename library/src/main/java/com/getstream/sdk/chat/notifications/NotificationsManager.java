@@ -18,7 +18,5 @@ public interface NotificationsManager {
 
     void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context);
 
-    boolean hasRequireFields(@NotNull RemoteMessage remoteMessage);
-
-    boolean hasRequireFields(@NotNull Event event);
+    void handleRemoteMessage(Context context, RemoteMessage remoteMessage);
 }

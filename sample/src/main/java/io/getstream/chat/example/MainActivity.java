@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
+import com.getstream.sdk.chat.notifications.NotificationsManager;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
