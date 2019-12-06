@@ -51,18 +51,15 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
 
         try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name());
-            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
-                    + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
+            String baseWsUrl = apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key=" + apiKey;
+            if (anonymousAuth) {
+                return baseWsUrl + "&stream-auth-type=" + "anonymous";
+            } else {
+                return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
+            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
-        }
-
-        String baseWsUrl = apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key=" + apiKey;
-        if (anonymousAuth) {
-            return baseWsUrl + "&stream-auth-type=" + "anonymous";
-        } else {
-            return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
         }
     }
 
