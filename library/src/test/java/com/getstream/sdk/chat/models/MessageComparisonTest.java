@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -58,7 +59,21 @@ public class MessageComparisonTest {
     @Test
     void hashCodeTest() {
         assertEquals(x.hashCode(), x_clone.hashCode());
+
+        Map<Message, String> myMap = new HashMap<>();
+        myMap.put(x,"x");
+        myMap.put(x_clone, "x_clone");
+        assertTrue(myMap.size() == 1
+                && myMap.get(x).equals("x_clone")
+                && myMap.get(x_clone).equals("x_clone"));
+
         assertNotEquals(x.hashCode(), y.hashCode());
+        myMap.clear();
+        myMap.put(x,"x");
+        myMap.put(y, "y");
+        assertTrue(myMap.size() == 2
+                && myMap.get(x).equals("x")
+                && myMap.get(y).equals("y"));
 
         y.setId(x.getId());
         assertEquals(x.hashCode(), y.hashCode());
