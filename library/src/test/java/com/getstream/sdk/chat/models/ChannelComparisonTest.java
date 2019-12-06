@@ -27,63 +27,74 @@ public class ChannelComparisonTest {
     @Mock
     Client client;
 
-    private Channel x, y, z, x_clone;
+    private Channel a, b, c, aClone;
 
     @BeforeEach
     void initTest() {
         MockitoAnnotations.initMocks(this);
 
-        x = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_1);
-        x_clone = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_1);
-        y = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_2);
-        z = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_3);
+        a = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_1);
+        aClone = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_1);
+        b = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_2);
+        c = new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID_3);
+    }
+
+    @Test
+    void equalsIsReflexive() {
+        assertTrue(a.equals(a));
+    }
+
+    @Test
+    void equalsIsClone() {
+        assertTrue(a.equals(aClone) && aClone.equals(a));
+    }
+
+    @Test
+    void notEqualsIsOther() {
+        assertFalse(a.equals(b) && b.equals(a));
+    }
+
+    @Test
+    void equalsIsTransitive() {
+        b.setId(a.getId());
+        c.setId(b.getId());
+        assertTrue(a.equals(b) && b.equals(c) && a.equals(c));
+    }
+
+    @Test
+    void equalsIsChangedProperty() {
+        aClone.setName("Test Channel 1");
+        // I'm wandering that after changing some parameters a and aClone should be the same.
+        assertTrue(a.equals(aClone) && aClone.equals(a));
     }
 
 
     @Test
-    void equalsTest() {
-
-        assertTrue(x.equals(x));
-        assertTrue(x.equals(x_clone));
-        assertTrue(x_clone.equals(x));
-        assertTrue(x.equals(x_clone) == x_clone.equals(x));
-
-        x_clone.setName("Test Channel 1");
-        assertTrue(x_clone.equals(x_clone));
-
-        // TODO: I'm wandering that after changing some parameters x and x_clone should be the same.
-        assertTrue(x.equals(x_clone));
-        assertTrue(x_clone.equals(x));
-
-        assertFalse(x.equals(y));
-        assertTrue(x.equals(y) == y.equals(x));
-
-        y.setId(x.getId());
-        z.setId(y.getId());
-        if ((x.equals(y) && y.equals(z)))
-            assertTrue(x.equals(z));
+    void hashCodeEqualIsClone() {
+        assertEquals(a.hashCode(), aClone.hashCode());
     }
 
     @Test
-    void hashCodeTest() {
-        assertEquals(x.hashCode(), x_clone.hashCode());
+    void hashCodeNotEqualsIsOther() {
+        assertNotEquals(a.hashCode(), b.hashCode());
+    }
 
-        Map<Channel, String> myMap = new HashMap<>();
-        myMap.put(x, "x");
-        myMap.put(x_clone, "x_clone");
-        assertTrue(myMap.size() == 1
-                && myMap.get(x).equals("x_clone")
-                && myMap.get(x_clone).equals("x_clone"));
+    @Test
+    void hashCodeBucketLocation() {
+        Map<Channel, String> map1 = new HashMap<>();
+        Map<Channel, String> map2 = new HashMap<>();
 
-        assertNotEquals(x.hashCode(), y.hashCode());
-        myMap.clear();
-        myMap.put(x, "x");
-        myMap.put(y, "y");
-        assertTrue(myMap.size() == 2
-                && myMap.get(x).equals("x")
-                && myMap.get(y).equals("y"));
+        map1.put(a, "a");
+        map1.put(aClone, "aClone");
 
-        y.setId(x.getId());
-        assertEquals(x.hashCode(), y.hashCode());
+        map2.put(a, "a");
+        map2.put(b, "b");
+
+        assertTrue(map1.size() == 1
+                && map1.get(a).equals("aClone")
+                && map1.get(aClone).equals("aClone")
+                && map2.size() == 2
+                && map2.get(a).equals("a")
+                && map2.get(b).equals("b"));
     }
 }
