@@ -348,4 +348,5 @@ You can translate all [verbals](https://github.com/GetStream/stream-chat-android
 Example app has this feature.
 - [German](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-de/strings.xml)
 - [Spanish](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-es/strings.xml)
+
 ...
