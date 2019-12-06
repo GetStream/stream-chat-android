@@ -366,14 +366,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (StringUtility.containsMarkdown(message.getText())) {
-            if (markdownListener != null)
-                markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
-            else
-                MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        } else {
-            tv_text.setText(StringUtility.getDeletedOrMentionedText(message));
-        }
+        if (markdownListener != null)
+            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        else
+            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
     }
 
     private void configMessageTextStyle() {
