@@ -44,7 +44,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
     private void applyStyle() {
 
-        if(getMessageListItem().isMine()) {
+        if(messageListItem.isMine()) {
             style.attachmentTitleTextMine.apply(tv_file_title);
             style.attachmentFileSizeTextMine.apply(tv_file_size);
         } else {
@@ -59,9 +59,9 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         iv_file_thumb.setImageResource(attachment.getIcon());
         tv_file_title.setText(attachment.getTitle());
 
-        Drawable background = getBubbleHelper().getDrawableForAttachment(getMessageListItem().getMessage(),
-                getMessageListItem().isMine(),
-                getMessageListItem().getPositions(),
+        Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(),
+                messageListItem.isMine(),
+                messageListItem.getPositions(),
                 attachment);
         cl_attachment.setBackground(background);
 

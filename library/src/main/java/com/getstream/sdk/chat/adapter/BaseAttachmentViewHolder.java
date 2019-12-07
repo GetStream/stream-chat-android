@@ -17,13 +17,13 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
     protected Context context;
     protected Message message;
     protected Attachment attachment;
+    protected MessageListItem messageListItem;
+
     protected MessageListViewStyle style;
+    protected MessageListView.BubbleHelper bubbleHelper;
     // Action
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListItem messageListItem;
-
-    private MessageListView.BubbleHelper bubbleHelper;
 
     public BaseAttachmentViewHolder(int resId, ViewGroup parent) {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
@@ -44,21 +44,11 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         this.attachment = attachment;
     }
 
-    public MessageListView.BubbleHelper getBubbleHelper() {
-        return bubbleHelper;
-    }
-
     public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
         this.bubbleHelper = bubbleHelper;
     }
-
-
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
-    }
-
-    public MessageListItem getMessageListItem() {
-        return messageListItem;
     }
 
     public void setMessageListItem(MessageListItem messageListItem) {

@@ -87,9 +87,9 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
 
     private void configImageThumbBackground() {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(message,
-                getMessageListItem().isMine(),
-                getMessageListItem().getPositions(),
+        Drawable background = bubbleHelper.getDrawableForAttachment(message,
+                messageListItem.isMine(),
+                messageListItem.getPositions(),
                 attachment);
         iv_media_thumb.setShape(context, background);
     }
@@ -168,14 +168,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
         if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
-            Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
+            Drawable background = bubbleHelper.getDrawableForAttachmentDescription(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             cl_des.setBackground(background);
         }
     }
 
     private void applyStyle() {
 
-        if (getMessageListItem().isMine()) {
+        if (messageListItem.isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
             style.attachmentDescriptionTextMine.apply(tv_media_des);
         } else {

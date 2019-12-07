@@ -31,7 +31,7 @@ public class AttachmentViewHolderCustom extends BaseAttachmentViewHolder {
                      MessageListView.MessageLongClickListener longClickListener) {
         super.bind(context, messageListItem, attachment,clickListener, longClickListener);
 
-        Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
         iv_media_thumb.setOnClickListener(this);
         iv_media_thumb.setOnLongClickListener(this);
