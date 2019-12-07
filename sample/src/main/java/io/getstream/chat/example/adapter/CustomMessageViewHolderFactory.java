@@ -37,7 +37,6 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == CUSTOM_TYPE) {
             CustomMessageViewHolder holder = new CustomMessageViewHolder(R.layout.list_custom_item_message, parent);
-            holder.setViewHolderFactory(this);
             return holder;
         }
         return super.createMessageViewHolder(adapter, parent, viewType);

@@ -73,7 +73,6 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == MESSAGEITEM_MESSAGE) {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
-            holder.setViewHolderFactory(this);
             holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());

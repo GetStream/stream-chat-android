@@ -59,16 +59,8 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder i
         return longClickListener;
     }
 
-    public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
-        this.longClickListener = longClickListener;
-    }
-
     public MessageListView.AttachmentClickListener getClickListener() {
         return clickListener;
-    }
-
-    public void setClickListener(MessageListView.AttachmentClickListener clickListener) {
-        this.clickListener = clickListener;
     }
 
     public void setAttachment(Attachment attachment) {

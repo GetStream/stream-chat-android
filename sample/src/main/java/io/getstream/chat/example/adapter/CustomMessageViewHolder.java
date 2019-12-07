@@ -4,12 +4,15 @@ import android.content.Context;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.adapter.BaseMessageListItemViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
 
@@ -22,14 +25,15 @@ public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, ChannelState channelState, @NonNull MessageListItem messageListItem, int position) {
-        attachmentListView.setViewHolderFactory(viewHolderFactory);
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @Nullable MessageViewHolderFactory factory,
+                     int position){
+        attachmentListView.setViewHolderFactory(factory);
         attachmentListView.setBubbleHelper(bubbleHelper);
         attachmentListView.setEntity(messageListItem);
-    }
-
-    @Override
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
     }
 }

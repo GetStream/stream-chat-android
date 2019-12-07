@@ -4,14 +4,16 @@ import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
 
     private TextView tv_text;
-    private MessageViewHolderFactory viewHolderFactory;
     public ThreadSeparatorViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
         tv_text = itemView.findViewById(R.id.tv_text);
@@ -21,13 +23,10 @@ public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
     public void bind(Context context,
                      ChannelState channelState,
                      MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     MessageViewHolderFactory factory,
                      int position) {
 //        tv_text.setText();
     }
-
-    @Override
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-    }
-
 }
