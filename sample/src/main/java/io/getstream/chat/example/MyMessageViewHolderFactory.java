@@ -1,4 +1,5 @@
 package io.getstream.chat.example;
+
 import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.adapter.BaseAttachmentViewHolder;
@@ -8,7 +9,6 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 
 import java.util.List;
-
 
 public class MyMessageViewHolderFactory extends MessageViewHolderFactory {
     private static int IMGUR_TYPE = 0;
@@ -29,7 +29,6 @@ public class MyMessageViewHolderFactory extends MessageViewHolderFactory {
         } else {
             holder = super.createAttachmentViewHolder(adapter, parent, viewType);
         }
-
 
         return holder;
     }

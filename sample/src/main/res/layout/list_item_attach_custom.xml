@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
+        android:id="@+id/iv_media_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stream_attach_image_height"
+        android:layout_marginStart="1px"
+        android:layout_marginTop="1px"
+        android:layout_marginEnd="1px"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_logo"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:background="@drawable/imgur_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
+        app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
+        app:layout_constraintTop_toTopOf="@+id/iv_media_thumb" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
