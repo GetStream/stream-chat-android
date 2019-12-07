@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -20,12 +21,12 @@ public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     ChannelState channelState,
-                     MessageListItem messageListItem,
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     MessageViewHolderFactory factory,
+                     @Nullable MessageViewHolderFactory factory,
                      int position) {
 //        tv_text.setText();
     }
