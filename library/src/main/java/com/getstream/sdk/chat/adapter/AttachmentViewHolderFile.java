@@ -7,11 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
@@ -21,6 +25,14 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     private ImageView iv_file_thumb;
     private TextView tv_file_size, tv_file_title;
 
+    private Context context;
+    private MessageListItem messageListItem;
+    private Message message;
+    private Attachment attachment;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
 
     public AttachmentViewHolderFile(int resId, ViewGroup parent) {
         super(resId, parent);
@@ -32,14 +44,27 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     MessageListItem messageListItem,
-                     Attachment attachment,
-                     MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
-        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
+    public void bind(@NonNull Context context,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull Message message,
+                     @NonNull Attachment attachment,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @Nullable MessageListView.AttachmentClickListener clickListener,
+                     @Nullable MessageListView.MessageLongClickListener longClickListener) {
+
+        this.context = context;
+        this.messageListItem = messageListItem;
+        this.message = message;
+        this.attachment = attachment;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+
         applyStyle();
         configAttachment();
+        configClickListeners();
     }
 
     private void applyStyle() {
@@ -65,8 +90,19 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
                 attachment);
         cl_attachment.setBackground(background);
 
-        cl_attachment.setOnClickListener(this);
-        cl_attachment.setOnLongClickListener(this);
+    }
+
+    private void configClickListeners(){
+        cl_attachment.setOnClickListener(view -> {
+            if (clickListener != null)
+                clickListener.onAttachmentClick(message, attachment);
+        });
+
+        cl_attachment.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
     }
 }
 

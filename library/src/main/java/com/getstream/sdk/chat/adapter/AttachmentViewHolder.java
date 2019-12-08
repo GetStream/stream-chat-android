@@ -10,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
@@ -17,8 +19,10 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,15 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
 
+    private Context context;
+    private MessageListItem messageListItem;
+    private Message message;
+    private Attachment attachment;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
+
     public AttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
         // Attach
@@ -44,13 +57,24 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     MessageListItem messageListItem,
-                     Attachment attachment,
-                     MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
+    public void bind(@NonNull Context context,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull Message message,
+                     @NonNull Attachment attachment,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @Nullable MessageListView.AttachmentClickListener clickListener,
+                     @Nullable MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
+        this.context = context;
+        this.messageListItem = messageListItem;
+        this.message = message;
+        this.attachment = attachment;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+
         applyStyle();
         configAttachment();
     }
@@ -126,12 +150,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
             Log.d(TAG, "Attach onMessageClick: " + position);
-            triggerClick();
-
-
+            if (clickListener != null)
+                clickListener.onAttachmentClick(message, attachment);
         });
+
         lv_attachment_file.setOnItemLongClickListener((AdapterView<?> parent, View view, int position_, long id) -> {
-            triggerLongClick();
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
             return true;
         });
 
@@ -169,15 +194,8 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         cl_attachment_media.setVisibility(View.VISIBLE);
         configAttachViewBackground(cl_attachment_media);
         configImageThumbBackground();
+        configClickListeners();
 
-        // Set Click Listener
-        cl_attachment_media.setOnClickListener(this);
-
-
-        cl_attachment_media.setOnLongClickListener((View v) -> {
-            this.triggerLongClick();
-            return true;
-        });
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
@@ -203,18 +221,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             tv_media_play.setVisibility(View.GONE);
     }
 
-    private void triggerLongClick() {
-        if (this.getLongClickListener() != null) {
-            this.getLongClickListener().onMessageLongClick(message);
-        }
-    }
-
-    private void triggerClick() {
-        if (this.getClickListener() != null) {
-            this.getClickListener().onAttachmentClick(message, attachment);
-        }
-    }
-
     private void applyStyle() {
 
         if(messageListItem.isMine()) {
@@ -224,6 +230,18 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             style.attachmentTitleTextTheirs.apply(tv_media_title);
             style.attachmentDescriptionTextTheirs.apply(tv_media_des);
         }
+    }
 
+    private void configClickListeners(){
+        cl_attachment_media.setOnClickListener(view -> {
+            if (clickListener != null)
+                clickListener.onAttachmentClick(message, attachment);
+        });
+
+        cl_attachment_media.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
     }
 }
