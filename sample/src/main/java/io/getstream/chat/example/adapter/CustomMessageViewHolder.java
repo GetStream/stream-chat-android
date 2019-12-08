@@ -35,5 +35,7 @@ public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
         attachmentListView.setViewHolderFactory(factory);
         attachmentListView.setBubbleHelper(bubbleHelper);
         attachmentListView.setEntity(messageListItem);
+        attachmentListView.setStyle(style);
+        attachmentListView.setBubbleHelper(bubbleHelper);
     }
 }

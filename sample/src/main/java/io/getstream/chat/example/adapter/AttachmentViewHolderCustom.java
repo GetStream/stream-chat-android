@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import io.getstream.chat.example.R;
 
 public class AttachmentViewHolderCustom extends BaseAttachmentViewHolder {
+
     private PorterShapeImageView iv_media_thumb;
 
     private Context context;
@@ -55,9 +56,13 @@ public class AttachmentViewHolderCustom extends BaseAttachmentViewHolder {
         this.clickListener = clickListener;
         this.longClickListener = longClickListener;
 
+        configAttachment();
+        configClickListeners();
+    }
+
+    private void configAttachment(){
         Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
-        configClickListeners();
 
         Glide.with(context)
                 .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
