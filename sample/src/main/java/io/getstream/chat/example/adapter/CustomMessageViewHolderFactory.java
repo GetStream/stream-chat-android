@@ -28,7 +28,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
 
     @Override
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
-        if (attachment.getType().equals("i18n"))
+        if (isCUSTOM_TYPE(attachment))
             return CUSTOM_TYPE;
 
         return super.getAttachmentViewType(message, mine, position, attachments, attachment);
@@ -36,7 +36,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
 
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == CUSTOM_TYPE) {
-            CustomMessageViewHolder holder = new CustomMessageViewHolder(R.layout.list_custom_item_message, parent);
+            CustomMessageViewHolder holder = new CustomMessageViewHolder(R.layout.list_item_message_custom, parent);
             return holder;
         }
         return super.createMessageViewHolder(adapter, parent, viewType);
@@ -53,8 +53,13 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
         return holder;
     }
 
+    private boolean isCUSTOM_TYPE(Attachment attachment){
+        // TODO: check if the attachment is CUSTOM_TYPE type.
+        return (attachment.getImageURL() != null && attachment.getImageURL().indexOf("imgur") != -1) ;
+    }
+
     private boolean isCUSTOM_TYPE(MessageListItem messageListItem){
         // TODO: check if messageListItem has attachamt of CUSTOM_TYPE type.
-        return true;
+        return false;
     }
 }
