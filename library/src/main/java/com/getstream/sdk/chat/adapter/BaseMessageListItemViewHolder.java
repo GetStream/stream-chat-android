@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -23,6 +22,6 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
                               @NonNull MessageListItem messageListItem,
                               @NonNull MessageListViewStyle style,
                               @NonNull MessageListView.BubbleHelper bubbleHelper,
-                              @Nullable MessageViewHolderFactory factory,
+                              @NonNull MessageViewHolderFactory factory,
                               int position);
 }

@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -38,7 +37,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
                      @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @Nullable MessageViewHolderFactory factory,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
         ll_typingusers.setVisibility(View.VISIBLE);
         iv_typing_indicator.setVisibility(View.VISIBLE);

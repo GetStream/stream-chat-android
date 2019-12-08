@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
@@ -41,7 +40,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
                      @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @Nullable MessageViewHolderFactory factory,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
         this.context = context;
         this.messageListItem = messageListItem;

@@ -39,7 +39,6 @@ import java.util.List;
 import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -133,7 +132,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                      @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @Nullable MessageViewHolderFactory factory,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
 
         // set binding
