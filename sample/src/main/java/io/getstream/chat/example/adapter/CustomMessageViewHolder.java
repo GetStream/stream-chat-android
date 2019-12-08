@@ -1,7 +1,6 @@
 package io.getstream.chat.example.adapter;
 
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -36,7 +35,6 @@ public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
                      @NonNull MessageViewHolderFactory factory,
                      int position){
 
-        attachmentview.setVisibility(View.VISIBLE);
         attachmentview.setStyle(style);
         attachmentview.setViewHolderFactory(factory);
         attachmentview.setEntity(messageListItem);

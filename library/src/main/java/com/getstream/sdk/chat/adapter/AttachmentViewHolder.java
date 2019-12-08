@@ -31,7 +31,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
-    private ConstraintLayout cl_attachment_media;
+    private ConstraintLayout cl_attachment_media, cl_des;
     private PorterShapeImageView iv_media_thumb;
     private ListView lv_attachment_file;
     private TextView tv_media_title, tv_media_play, tv_media_des;
@@ -49,6 +49,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         super(resId, parent);
         // Attach
         cl_attachment_media = itemView.findViewById(R.id.cl_attachment_media);
+        cl_des = itemView.findViewById(R.id.cl_des);
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         lv_attachment_file = itemView.findViewById(R.id.lv_attachment_file);
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
@@ -127,6 +128,10 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private void configImageThumbBackground() {
         Drawable background = bubbleHelper.getDrawableForAttachment(message, messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
+        if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
+            background = bubbleHelper.getDrawableForAttachmentDescription(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            cl_des.setBackground(background);
+        }
     }
 
     private void configAttachViewBackground(View view) {
@@ -222,7 +227,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-
         if(messageListItem.isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
             style.attachmentDescriptionTextMine.apply(tv_media_des);
