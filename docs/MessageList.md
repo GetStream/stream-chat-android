@@ -14,7 +14,6 @@ The message list renders a list of messages. You can use it like this:
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/channelHeader"/>
 ```
-
 And here's a full example of an activity that renders a message list, channel header and message input
 
 ```java
@@ -346,115 +345,307 @@ messageList.setBubbleHelper(new BubbleHelper() {
 });
 ```
 
-#### Customizing the message list - ViewHolderFactory
+#### Customizing the message list with layout.
 
+You might want to define your own type(s) of `Message`(or `Attachment`) or custom message(or attachment) view about special `Message`(or `Attachment`).
+In this case you can use your custom MessageListViewHolder(or custom AttachmentViewHolder) with your own layout.
+Let's see how to create your own message item view below.
+
+##### 1. create your own message item layout and attachment item layout
+- `list_item_message_custom`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.getstream.sdk.chat.view.AttachmentListView
+        android:id="@+id/attachmentview"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+- `list_item_attachment_custom`
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
+        android:id="@+id/iv_media_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stream_attach_image_height"
+        android:layout_marginStart="1px"
+        android:layout_marginTop="1px"
+        android:layout_marginEnd="1px"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_logo"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:background="@drawable/imgur_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_media_thumb"
+        app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
+        app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
+        app:layout_constraintTop_toTopOf="@+id/iv_media_thumb" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+##### 2. Create your own view holders
+When you create own view holders, do not forget extend _BaseViewHolder_.
+
+###### Base ViewHolders
+
+Let's see `BaseMessageListItemViewHolder` and `BaseAttachmentViewHolder` before creating your own viewholders.
+
+- `BaseMessageListItemViewHolder`
+```java
+public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
+
+    public BaseMessageListItemViewHolder(int resId, ViewGroup parent) {
+        super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
+    }
+
+    public abstract void bind(@NonNull Context context,
+                              @NonNull ChannelState channelState,
+                              @NonNull MessageListItem messageListItem,
+                              @NonNull MessageListViewStyle style,
+                              @NonNull MessageListView.BubbleHelper bubbleHelper,
+                              @NonNull MessageViewHolderFactory factory,
+                              int position);
+}
+```
+- `BaseAttachmentViewHolder`
+```java
+public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder{
+
+    public BaseAttachmentViewHolder(int resId, ViewGroup parent) {
+        super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
+    }
+
+    public abstract void bind(@NonNull Context context,
+                              @NonNull MessageListItem messageListItem,
+                              @NonNull Message message,
+                              @NonNull Attachment attachment,
+                              @NonNull MessageListViewStyle style,
+                              @NonNull MessageListView.BubbleHelper bubbleHelper,
+                              @Nullable MessageListView.AttachmentClickListener clickListener,
+                              @Nullable MessageListView.MessageLongClickListener longClickListener);
+}
+```
+###### Create your own view holders
+- `CustomMessageViewHolder`
+```java
+public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
+
+    private AttachmentListView attachmentview;
+
+    private MessageListView.MessageClickListener messageClickListener;
+    private MessageListView.MessageLongClickListener messageLongClickListener;
+    private MessageListView.AttachmentClickListener attachmentClickListener;
+
+    public CustomMessageViewHolder(int resId, ViewGroup parent) {
+        super(resId, parent);
+        attachmentview = itemView.findViewById(com.getstream.sdk.chat.R.id.attachmentview);
+    }
+
+    @Override
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @NonNull MessageViewHolderFactory factory,
+                     int position){
+
+        attachmentview.setStyle(style);
+        attachmentview.setViewHolderFactory(factory);
+        attachmentview.setEntity(messageListItem);
+        attachmentview.setBubbleHelper(bubbleHelper);
+        attachmentview.setAttachmentClickListener(attachmentClickListener);
+        attachmentview.setLongClickListener(messageLongClickListener);
+    }
+
+    public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
+        this.messageClickListener = messageClickListener;
+    }
+
+    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
+        this.messageLongClickListener = messageLongClickListener;
+    }
+
+    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
+        this.attachmentClickListener = attachmentClickListener;
+    }
+}
+```
+- `CustomAttachmentViewHolder`
+```java
+public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
+
+    private PorterShapeImageView iv_media_thumb;
+
+    private Context context;
+    private MessageListItem messageListItem;
+    private Message message;
+    private Attachment attachment;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
+
+    public CustomAttachmentViewHolder(int resId, ViewGroup parent) {
+        super(resId, parent);
+        iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
+    }
+
+    @Override
+    public void bind(@NonNull Context context,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull Message message,
+                     @NonNull Attachment attachment,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @Nullable MessageListView.AttachmentClickListener clickListener,
+                     @Nullable MessageListView.MessageLongClickListener longClickListener) {
+
+        this.context = context;
+        this.messageListItem = messageListItem;
+        this.message = message;
+        this.attachment = attachment;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
+
+        configAttachment();
+        configClickListeners();
+    }
+
+    private void configAttachment(){
+        Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
+        iv_media_thumb.setShape(context, background);
+
+        Glide.with(context)
+                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
+                .into(iv_media_thumb);
+    }
+
+    private void configClickListeners(){
+        iv_media_thumb.setOnClickListener(view -> {
+            if (clickListener != null)
+                clickListener.onAttachmentClick(message, attachment);
+        });
+
+        iv_media_thumb.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
+    }
+}
+```
+
+##### 3.ViewHolderFactory
 You can configure your own viewholder factory like this:
 
 ```java
-MyMessageViewHolderFactory factory = new MyMessageViewHolderFactory();
+CustomMessageViewHolderFactory factory = new CustomMessageViewHolderFactory();
 binding.messageList.setViewHolderFactory(factory);
 ```
 
-This allows you to swap the layout file that's used for the typing indicator, the date seperator or the message. You can also implement your own view holder. It's common to implement your own message or attachment type and render it in a custom way.
+This allows you to swap the layout file that's used for defaults view holders and your own view holder. It's common to implement your own message or attachment type and render it in a custom way.
 
+When you define your _own messageViewHolderFactory_ you should avoid to use default viewholder types of `Message` and `Attachment` of **Super class**
+
+**defailt `Message` type**
+- MESSAGEITEM_DATE_SEPARATOR = 1
+- MESSAGEITEM_MESSAGE = 2
+- MESSAGEITEM_TYPING = 3
+- MESSAGEITEM_THREAD_SEPARATOR = 4
+- MESSAGEITEM_NOT_FOUND = 5
+
+**defailt `Attachment` type**
+- GENERIC_ATTACHMENT = 1
+- IMAGE_ATTACHMENT = 2
+- VIDEO_ATTACHMENT = 3
+- FILE_ATTACHMENT = 4
+
+Let's see how to define your own viewholder factory below
 ```java
-public class MessageViewHolderFactory {
+public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
+    private int CUSTOM_MEASSAGE_TYPE = 0;
+    private int CUSTOM_ATTACHMENT_TYPE = 0;
 
-    private static String TAG = MessageViewHolderFactory.class.getName();
+    @Override
+    public int getMessageViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+        if (isCUSTOM_MESSAGE_TYPE(messageListItem))
+            return CUSTOM_MEASSAGE_TYPE;
 
-    private static int GENERIC_ATTACHMENT = 1;
-    private static int IMAGE_ATTACHMENT = 2;
-    private static int VIDEO_ATTACHMENT = 3;
-    private static int FILE_ATTACHMENT = 4;
-
-    public MessageListItemType getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
-        // typing
-        // date
-        // various message types
-        MessageListItemType messageListItemType = messageListItem.getType();
-        if (messageListItemType == MessageListItemType.DATE_SEPARATOR) {
-            return MessageListItemType.DATE_SEPARATOR;
-        } else if (messageListItemType == MessageListItemType.MESSAGE) {
-            return MessageListItemType.MESSAGE;
-        } else if (messageListItemType == MessageListItemType.TYPING) {
-            return MessageListItemType.TYPING;
-        } else if (messageListItemType == MessageListItemType.THREAD_SEPARATOR) {
-            return MessageListItemType.THREAD_SEPARATOR;
-        }else if (messageListItemType == MessageListItemType.NO_CONNECTION) {
-            return MessageListItemType.NO_CONNECTION;
-        }
-        return MessageListItemType.NOT_FOUND;
+        return super.getMessageViewType(messageListItem, mine, positions);
     }
 
+    @Override
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
-        // video
-        // image
-        // link/card layout
-        // custom attachment types
-        String t = attachment.getType();
-        if (t == null) {
-            return GENERIC_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_video)) {
-            return VIDEO_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_image) ||
-                t.equals(ModelType.attach_giphy)) {
-            return IMAGE_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_file)) {
-            return FILE_ATTACHMENT;
-        } else {
-            return GENERIC_ATTACHMENT;
-        }
+        if (isCUSTOM_ATTACHMENT_TYPE(attachment))
+            return CUSTOM_ATTACHMENT_TYPE;
 
+        return super.getAttachmentViewType(message, mine, position, attachments, attachment);
     }
 
-    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, MessageListItemType viewType) {
-        if (viewType == MessageListItemType.DATE_SEPARATOR) {
-            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
-            holder.setStyle(adapter.getStyle());
-            return holder;
-        } else if (viewType == MessageListItemType.MESSAGE) {
-            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
-            holder.setViewHolderFactory(this);
-            holder.setStyle(adapter.getStyle());
-            holder.setGiphySendListener(adapter.getGiphySendListener());
-            return holder;
+    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
+        if (viewType == CUSTOM_MEASSAGE_TYPE){
+            CustomMessageViewHolder holder = new CustomMessageViewHolder(R.layout.list_item_message_custom, parent);
+            holder.setMessageClickListener(adapter.getMessageClickListener());
+            holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
+            holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
 
-        } else if (viewType == MessageListItemType.TYPING) {
-            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
-            holder.setStyle(adapter.getStyle());
+//            you can set more variables you need in you CustomViewHolder.
+//            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
+//            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
+//            holder.setUserClickListener(adapter.getUserClickListener());
+//            holder.setReadStateClickListener(adapter.getReadStateClickListener());
+//            holder.setGiphySendListener(adapter.getGiphySendListener());
+
             return holder;
-        } else if (viewType == MessageListItemType.THREAD_SEPARATOR) {
-            ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
-            holder.setStyle(adapter.getStyle());
-            return holder;
-        }else if (viewType == MessageListItemType.NO_CONNECTION) {
-            NoConnectionViewHolder holder = new NoConnectionViewHolder(R.layout.stream_item_no_connection, parent);
-            holder.setStyle(adapter.getStyle());
-            return holder;
-        } else {
-            return null;
         }
+
+        return super.createMessageViewHolder(adapter, parent, viewType);
     }
 
+    @Override
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
-        if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
-            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
-            holder.setStyle(adapter.getStyle());
-            holder.setGiphySendListener(adapter.getGiphySendListener());
-            return holder;
-        } else if (viewType == FILE_ATTACHMENT) {
-            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);
-            holder.setStyle(adapter.getStyle());
-            return holder;
-        } else {
-            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.stream_item_attachment, parent);
-            holder.setStyle(adapter.getStyle());
+        if (viewType == CUSTOM_ATTACHMENT_TYPE){
+            CustomAttachmentViewHolder holder = new CustomAttachmentViewHolder(R.layout.list_item_attach_custom, parent);
+//            you can set more variables you need in you CustomViewHolder.
+//            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         }
+        else
+            return super.createAttachmentViewHolder(adapter, parent, viewType);
     }
 
-    public enum Position {
-        TOP, MIDDLE, BOTTOM
+    private boolean isCUSTOM_MESSAGE_TYPE(MessageListItem messageListItem){
+        // TODO: check if messageListItem has attachamt of CUSTOM_TYPE type.
+        return false;
+    }
+
+    private boolean isCUSTOM_ATTACHMENT_TYPE(Attachment attachment){
+        // TODO: check if the attachment is CUSTOM_TYPE type.
+        return false;
     }
 }
 ```

@@ -19,7 +19,7 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import io.getstream.chat.example.R;
 
-public class AttachmentViewHolderCustom extends BaseAttachmentViewHolder {
+public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
 
     private PorterShapeImageView iv_media_thumb;
 
@@ -32,7 +32,7 @@ public class AttachmentViewHolderCustom extends BaseAttachmentViewHolder {
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
 
-    public AttachmentViewHolderCustom(int resId, ViewGroup parent) {
+    public CustomAttachmentViewHolder(int resId, ViewGroup parent) {
         super(resId, parent);
 
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);

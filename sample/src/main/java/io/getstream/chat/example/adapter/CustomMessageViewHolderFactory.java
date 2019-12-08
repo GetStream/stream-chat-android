@@ -1,9 +1,7 @@
 package io.getstream.chat.example.adapter;
 
-import android.text.TextUtils;
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter;
 import com.getstream.sdk.chat.adapter.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.adapter.BaseMessageListItemViewHolder;
@@ -43,7 +41,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
             holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
-
+//            you can set more variables you need in you CustomViewHolder.
 //            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
 //            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
 //            holder.setUserClickListener(adapter.getUserClickListener());
@@ -59,7 +57,8 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
     @Override
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == CUSTOM_ATTACHMENT_TYPE){
-            AttachmentViewHolderCustom holder = new AttachmentViewHolderCustom(R.layout.list_item_attach_custom, parent);
+            CustomAttachmentViewHolder holder = new CustomAttachmentViewHolder(R.layout.list_item_attach_custom, parent);
+//            you can set more variables you need in you CustomViewHolder.
 //            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         }
