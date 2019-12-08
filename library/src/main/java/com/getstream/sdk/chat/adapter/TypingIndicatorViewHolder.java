@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
-    private MessageListViewStyle style;
+    private MessageViewHolderFactory viewHolderFactory;
     // Tying
     private ImageView iv_typing_indicator;
     private LinearLayout ll_typingusers;
@@ -62,8 +62,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
     }
-
 }

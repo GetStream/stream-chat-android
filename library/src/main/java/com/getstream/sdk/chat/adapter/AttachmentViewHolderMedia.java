@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -77,11 +76,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
-                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
 
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
         applyStyle();
         configMediaAttach();
         configAction();
