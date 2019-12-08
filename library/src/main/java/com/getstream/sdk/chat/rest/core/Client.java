@@ -596,7 +596,7 @@ public class Client implements WSResponseHandler {
         } else {
             tokenProvider.getToken(userToken -> {
                 try {
-                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, true);
+                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, false);
                     apiService = apiServiceProvider.provideApiService(tokenProvider, false);
                     uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
                 } catch (UnsupportedEncodingException e) {
