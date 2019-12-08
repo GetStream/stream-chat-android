@@ -12,7 +12,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
@@ -36,10 +35,9 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     public void bind(Context context,
                      MessageListItem messageListItem,
                      Attachment attachment,
-                     MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
         applyStyle();
         configAttachment();
     }
