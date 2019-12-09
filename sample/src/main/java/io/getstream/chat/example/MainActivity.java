@@ -1,7 +1,5 @@
 package io.getstream.chat.example;
 
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -12,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -23,27 +20,18 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
-import com.getstream.sdk.chat.notifications.NotificationsManager;
-import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
-import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
-import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
@@ -89,51 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
             }
         });
-
-        // Configure and adding notification options for notifications
-        StreamNotificationOptions notificationOptions = new StreamNotificationOptions();
-
-        // Set custom intent provider for receiving message and events from firebase and WS
-        notificationOptions.setNotificationIntentProvider(
-                new NotificationIntentProvider() {
-                    @Override
-                    public PendingIntent getIntentForFirebaseMessage(@NonNull Context context, @NonNull RemoteMessage remoteMessage) {
-                        Map<String, String> payload = remoteMessage.getData();
-                        Intent intent = new Intent(context, ChannelActivity.class);
-                        intent.putExtra(EXTRA_CHANNEL_TYPE, payload.get(StreamNotificationsManager.CHANNEL_TYPE_KEY));
-                        intent.putExtra(EXTRA_CHANNEL_ID, payload.get(StreamNotificationsManager.CHANNEL_ID_KEY));
-                        return PendingIntent.getActivity(context, 999,
-                                intent, PendingIntent.FLAG_UPDATE_CURRENT
-                        );
-                    }
-
-                    @Override
-                    public PendingIntent getIntentForWebSocketEvent(@NonNull Context context, @NonNull Event event) {
-                        Intent intent = new Intent(context, ChannelActivity.class);
-                        intent.putExtra(EXTRA_CHANNEL_TYPE, StringUtility.getChannelTypeFromCid(event.getCid()));
-                        intent.putExtra(EXTRA_CHANNEL_ID, StringUtility.getChannelIdFromCid(event.getCid()));
-                        return PendingIntent.getActivity(context, 999,
-                                intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    }
-                }
-        );
-
-        // Device register listener
-        DeviceRegisteredListener onDeviceRegistered = new DeviceRegisteredListener() {
-            @Override
-            public void onDeviceRegisteredSuccess() {
-                // Device successfully registered on server
-                Log.i(TAG, "Device registered successfully");
-            }
-
-            @Override
-            public void onDeviceRegisteredError(String errorMessage, Integer errorCode) {
-                // Some problem with registration
-                Log.e(TAG, "onDeviceRegisteredError: " + errorMessage + " Code: " + errorCode);
-            }
-        };
-
-        StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions, onDeviceRegistered));
 
         // Set custom delay in 5 min
         client.setWebSocketDisconnectDelay(1000 * 60 * 5);

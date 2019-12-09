@@ -56,12 +56,12 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
 
     private void replyText(@NotNull Context context, String id, String type, CharSequence messageChars) {
         if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
-            Log.e(TAG, "Can\'t markAsRead. ID and Type are null.");
+            Log.e(TAG, "Invalid replyText  parameters: id: " +  id + " type: " + type);
             return;
         }
 
         if (messageChars == null || messageChars.toString().isEmpty()) {
-            Log.e(TAG, "messageChars Can\'t be empty.");
+            Log.e(TAG, "replyText: messageChars is empty or null: " + messageChars);
             return;
         }
 
@@ -88,7 +88,7 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
 
     private void markAsRead(@NotNull Context context, String id, String type) {
         if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
-            Log.e(TAG, "Can\'t markAsRead. ID and Type are null.");
+            Log.e(TAG, "Invalid replyText  parameters: id:" + id + " type:" + type);
             return;
         }
 

@@ -52,8 +52,6 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     private String channelName;
     private String message;
-    private String type;
-    private String id;
     private PendingIntent pendingIntent;
     private RemoteMessage remoteMessage;
     private Integer notificationId;
@@ -62,7 +60,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     private NotificationOptions notificationOptions;
     private DeviceRegisteredListener registerListener;
-    private String lastNotificationId = null;
+    private String lastNotificationId;
 
     public StreamNotificationsManager(NotificationOptions notificationOptions, @Nullable DeviceRegisteredListener listener) {
         this.notificationOptions = notificationOptions;
@@ -143,8 +141,8 @@ public class StreamNotificationsManager implements NotificationsManager {
         String messageId = remoteMessage.getData().get(MESSAGE_ID_KEY);
         channelName = remoteMessage.getData().get(CHANNEL_NAME_KEY);
         message = remoteMessage.getData().get(MESSAGE_TEXT_KEY);
-        type = remoteMessage.getData().get(CHANNEL_TYPE_KEY);
-        id = remoteMessage.getData().get(CHANNEL_ID_KEY);
+        String type = remoteMessage.getData().get(CHANNEL_TYPE_KEY);
+        String id = remoteMessage.getData().get(CHANNEL_ID_KEY);
         this.remoteMessage = remoteMessage;
 
         if (checkSentNotificationWithId(messageId)) {
@@ -208,15 +206,15 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     private NotificationCompat.Action getReadAction(Context context, PendingIntent pendingIntent) {
         return new NotificationCompat.Action.Builder(android.R.drawable.ic_menu_view,
-                context.getString(R.string.default_notification_read), pendingIntent).build();
+                context.getString(R.string.stream_default_notification_read), pendingIntent).build();
     }
 
     private NotificationCompat.Action getReplyAction(Context context, PendingIntent replyPendingIntent) {
         RemoteInput remoteInput = new RemoteInput.Builder(NotificationMessageReceiver.KEY_TEXT_REPLY)
-                .setLabel(context.getString(R.string.default_notification_type))
+                .setLabel(context.getString(R.string.stream_default_notification_type))
                 .build();
 
-        return new NotificationCompat.Action.Builder(android.R.drawable.ic_menu_send, context.getString(R.string.default_notification_reply), replyPendingIntent)
+        return new NotificationCompat.Action.Builder(android.R.drawable.ic_menu_send, context.getString(R.string.stream_default_notification_reply), replyPendingIntent)
                 .addRemoteInput(remoteInput)
                 .setAllowGeneratedReplies(true)
                 .build();

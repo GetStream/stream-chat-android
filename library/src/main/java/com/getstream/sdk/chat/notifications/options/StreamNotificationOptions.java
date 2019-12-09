@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -21,6 +22,7 @@ import com.google.firebase.messaging.RemoteMessage;
  */
 public class StreamNotificationOptions implements NotificationOptions {
 
+    private static final String TAG = StreamNotificationOptions.class.getSimpleName();
     private static final int DEFAULT_REQUEST_CODE = 999;
 
     private String notificationChannelId;
@@ -29,6 +31,10 @@ public class StreamNotificationOptions implements NotificationOptions {
     private NotificationCompat.Builder notificationBuilder;
     private Intent defaultLauncherIntent;
     private NotificationIntentProvider notificationIntentProvider;
+    private int smallIcon = R.drawable.stream_ic_notification;
+    private int largeIcon = R.drawable.stream_ic_notification;
+    private boolean usedDefaultSmallIcon = true;
+    private boolean usedDefaultLargeIcon = true;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -49,7 +55,7 @@ public class StreamNotificationOptions implements NotificationOptions {
     @Override
     public String getNotificationChannelId(Context context) {
         if (notificationChannelId == null) {
-            return context.getString(R.string.default_notification_channel_id);
+            return context.getString(R.string.stream_default_notification_channel_id);
         } else {
             return notificationChannelId;
         }
@@ -58,7 +64,7 @@ public class StreamNotificationOptions implements NotificationOptions {
     @Override
     public String getNotificationChannelName(Context context) {
         if (notificationChannelName == null) {
-            return context.getString(R.string.default_notification_channel_name);
+            return context.getString(R.string.stream_default_notification_channel_name);
         } else {
             return notificationChannelName;
         }
@@ -67,13 +73,13 @@ public class StreamNotificationOptions implements NotificationOptions {
     @Override
     public NotificationCompat.Builder getNotificationBuilder(Context context) {
         if (notificationBuilder == null) {
+            checkForDefaultIcons();
+
             return new NotificationCompat.Builder(context,
                     getNotificationChannelId(context))
                     .setAutoCancel(true)
-                    //TODO need default icons for notifications
-                    .setSmallIcon(R.mipmap.icon)
-                    //TODO need default icons for notifications
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon))
+                    .setSmallIcon(smallIcon)
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon))
                     .setDefaults(NotificationCompat.DEFAULT_ALL);
         } else {
             return notificationBuilder;
@@ -112,6 +118,18 @@ public class StreamNotificationOptions implements NotificationOptions {
     }
 
     @Override
+    public void setSmallIcon(int iconRes) {
+        this.usedDefaultSmallIcon = false;
+        this.smallIcon = iconRes;
+    }
+
+    @Override
+    public void setLargeIcon(int iconRes) {
+        this.usedDefaultLargeIcon = false;
+        this.largeIcon = iconRes;
+    }
+
+    @Override
     public void setNotificationChannelId(String notificationChannelId) {
         this.notificationChannelId = notificationChannelId;
     }
@@ -146,5 +164,14 @@ public class StreamNotificationOptions implements NotificationOptions {
                 DEFAULT_REQUEST_CODE,
                 getDefaultLauncherIntent(context),
                 PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private void checkForDefaultIcons() {
+        if (usedDefaultSmallIcon) {
+            Log.w(TAG, "Stream notification small icon is not defined, default one is used!");
+        }
+        if (usedDefaultLargeIcon) {
+            Log.w(TAG, "Stream notification large icon is not defined, default one is used!");
+        }
     }
 }
