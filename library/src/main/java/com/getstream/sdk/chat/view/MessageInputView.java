@@ -370,8 +370,6 @@ public class MessageInputView extends RelativeLayout {
                 for (Attachment attachment : newAttachments){
                     if (attachments == null)
                         attachments = new ArrayList<>();
-                    if (attachments.contains(attachment))
-                        continue;
                     attachments.add(attachment);
                 }
                 message.setAttachments(attachments);
@@ -477,14 +475,14 @@ public class MessageInputView extends RelativeLayout {
         if (attachment.getType().equals(ModelType.attach_file)) {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
-                    fileType.equals(ModelType.attach_mime_mp4)) {
+                    fileType.equals(ModelType.attach_mime_mp4))
                 messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
-            } else {
+            else
                 messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
-            }
         } else {
             messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
         }
+        message.setAttachments(null);
     }
     // endregion
 
