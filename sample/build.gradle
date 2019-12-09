@@ -60,9 +60,9 @@ android {
             buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
 
             buildConfigField "String", "API_ENDPOINT", "\"${defaultApiEndpoint}\""
-            buildConfigField "String", "API_TIMEOUT", "\"${defaultApiTimeout}\""
+            buildConfigField "int", "API_TIMEOUT", "${defaultApiTimeout}"
             buildConfigField "String", "API_KEY", "\"${defaultApiKey}\""
-            buildConfigField "String", "CDN_TIMEOUT", "\"${defaultCdnTimeout}\""
+            buildConfigField "int", "CDN_TIMEOUT", "${defaultCdnTimeout}"
             buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
             buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
             buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
