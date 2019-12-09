@@ -41,7 +41,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
             holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
-//            you can set more variables you need in you CustomViewHolder.
+            /*you can set more variables you need in you CustomViewHolder.*/
 //            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
 //            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
 //            holder.setUserClickListener(adapter.getUserClickListener());
@@ -58,7 +58,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == CUSTOM_ATTACHMENT_TYPE){
             CustomAttachmentViewHolder holder = new CustomAttachmentViewHolder(R.layout.list_item_attach_custom, parent);
-//            you can set more variables you need in you CustomViewHolder.
+            /*you can set more variables you need in you CustomViewHolder.*/
 //            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         }

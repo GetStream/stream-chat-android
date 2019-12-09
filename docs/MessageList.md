@@ -345,13 +345,18 @@ messageList.setBubbleHelper(new BubbleHelper() {
 });
 ```
 
-#### Customizing the message list with layout.
+#### Customizing the message item view with your own layout file.
 
-You might want to define your own type(s) of `Message`(or `Attachment`) or custom message(or attachment) view about special `Message`(or `Attachment`).
-In this case you can use your custom MessageListViewHolder(or custom AttachmentViewHolder) with your own layout.
-Let's see how to create your own message item view below.
+You might want to create your own type(s) of `Message`(`Attachment`) or use the custom message(attachment) item view about the specific `Message`(`Attachment`).<br/>
+In this case you can define your _own MessageListViewHolder(AttachmentViewHolder)_ with your own layout.<br/>
+We need to 3 steps for customizing Custom Message List.
+- Create your own Message/Attachment item layout
+- Create your own view holders
+- Create your own ViewHolderFactory
 
-##### 1. create your own message item layout and attachment item layout
+Let's see how to create your _own message item view_ step by step below.
+
+##### 1. Create your own Message/Attachment item layout
 - `list_item_message_custom`
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -405,11 +410,11 @@ Let's see how to create your own message item view below.
 ```
 
 ##### 2. Create your own view holders
-When you create own view holders, do not forget extend _BaseViewHolder_.
+Create own view holders with _extends_ _BaseViewHolder_.
 
 ###### Base ViewHolders
 
-Let's see `BaseMessageListItemViewHolder` and `BaseAttachmentViewHolder` before creating your own viewholders.
+Let's see _BaseViewHolders_:`BaseMessageListItemViewHolder` and `BaseAttachmentViewHolder` before creating your own view holders.
 
 - `BaseMessageListItemViewHolder`
 ```java
@@ -446,7 +451,13 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder{
                               @Nullable MessageListView.MessageLongClickListener longClickListener);
 }
 ```
+
 ###### Create your own view holders
+As you can see above, `BaseViewHolders` are _abstract classes_ so you must override the functions of `BaseViewHolder` in your own view holders.<br/>
+Your own type of `Message` might has `Attachment` or not.<br/>
+Therefore, depending on the case, you may or may not define 'CustomAttachmentViewHolder'.<br/>
+Even though the own type of `Message` has an own type of `Attachment`, you may or may not define 'CustomAttachmentViewHolder'.<br/>
+In our example, will take the case that has 'CustomAttachmentViewHolder'.
 - `CustomMessageViewHolder`
 ```java
 public class CustomMessageViewHolder extends BaseMessageListItemViewHolder {
@@ -559,32 +570,26 @@ public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
 }
 ```
 
-##### 3.ViewHolderFactory
-You can configure your own viewholder factory like this:
+##### 3. Create your own ViewHolderFactory
 
-```java
-CustomMessageViewHolderFactory factory = new CustomMessageViewHolderFactory();
-binding.messageList.setViewHolderFactory(factory);
-```
+`CustomViewHolderFactory` allows you to swap the layout file that's used for default view holders and your own view holder.<br/>
+It's common to implement your own message or attachment type and render it in a custom way.<br/>
+When you define your _own MessageViewHolderFactory_ need to extent `MessageViewHolderFactory` and avoid to use default view holder types of **Super class**
 
-This allows you to swap the layout file that's used for defaults view holders and your own view holder. It's common to implement your own message or attachment type and render it in a custom way.
-
-When you define your _own messageViewHolderFactory_ you should avoid to use default viewholder types of `Message` and `Attachment` of **Super class**
-
-**defailt `Message` type**
+**defailt `Message` view holder type**
 - MESSAGEITEM_DATE_SEPARATOR = 1
 - MESSAGEITEM_MESSAGE = 2
 - MESSAGEITEM_TYPING = 3
 - MESSAGEITEM_THREAD_SEPARATOR = 4
 - MESSAGEITEM_NOT_FOUND = 5
 
-**defailt `Attachment` type**
+**defailt `Attachment` view holder type**
 - GENERIC_ATTACHMENT = 1
 - IMAGE_ATTACHMENT = 2
 - VIDEO_ATTACHMENT = 3
 - FILE_ATTACHMENT = 4
 
-Let's see how to define your own viewholder factory below
+Let's see how to create your own ViewHolderFactory below.
 ```java
 public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
     private int CUSTOM_MEASSAGE_TYPE = 0;
@@ -613,7 +618,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
             holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
 
-//            you can set more variables you need in you CustomViewHolder.
+              /*you can set more variables you need in you CustomViewHolder.*/
 //            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
 //            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
 //            holder.setUserClickListener(adapter.getUserClickListener());
@@ -630,7 +635,7 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == CUSTOM_ATTACHMENT_TYPE){
             CustomAttachmentViewHolder holder = new CustomAttachmentViewHolder(R.layout.list_item_attach_custom, parent);
-//            you can set more variables you need in you CustomViewHolder.
+              /*you can set more variables you need in you CustomViewHolder.*/
 //            holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         }
@@ -648,4 +653,10 @@ public class CustomMessageViewHolderFactory extends MessageViewHolderFactory {
         return false;
     }
 }
+```
+
+Finally you can configure your own viewholder factory like this:
+```java
+CustomMessageViewHolderFactory factory = new CustomMessageViewHolderFactory();
+binding.messageList.setViewHolderFactory(factory);
 ```
