@@ -35,7 +35,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private MutableLiveData<List<User>> typing;
     private MutableLiveData<Map<String, ChannelUserRead>> reads;
 
-    private User currentUser;
+    private String currentUserId;
     private List<MessageListItem> messageEntities;
     private List<MessageListItem> typingEntities;
     private Map<String, ChannelUserRead> readsByUser;
@@ -44,14 +44,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private String lastMessageID;
 
 
-    public MessageListItemLiveData(User currentUser,
+    public MessageListItemLiveData(String currentUserId,
                                    MutableLiveData<List<Message>> messages,
                                    MutableLiveData<List<Message>> threadMessages,
                                    MutableLiveData<List<User>> typing,
                                    MutableLiveData<Map<String, ChannelUserRead>> reads) {
         this.messages = messages;
         this.threadMessages = threadMessages;
-        this.currentUser = currentUser;
+        this.currentUserId = currentUserId;
         this.typing = typing;
         this.reads = reads;
         this.messageEntities = new ArrayList<>();
@@ -87,7 +87,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // this wil become slow with many users and many messages
         for (Map.Entry<String, ChannelUserRead> entry : readsByUser.entrySet()) {
             // we don't show read state for the current user
-            if (entry.getValue().getUser().getId().equals(currentUser.getId())) {
+            if (entry.getValue().getUser().getId().equals(currentUserId)) {
                 continue;
             }
             for (int i = merged.size(); i-- > 0; ) {
@@ -199,7 +199,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 nextMessage = null;
 
             // determine if the message is written by the current user
-            Boolean mine = message.getUser().equals(currentUser);
+            Boolean mine = currentUserId.equals(message.getUser().getId());
             // determine the position (top, middle, bottom)
             User user = message.getUser();
             List<MessageViewHolderFactory.Position> positions = new ArrayList<>();

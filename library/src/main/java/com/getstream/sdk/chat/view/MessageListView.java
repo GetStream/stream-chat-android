@@ -10,6 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
@@ -128,7 +130,7 @@ public class MessageListView extends RecyclerView {
         setUserClickListener(userClickListener);
         setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
-        adapter.setChannelState(getChannel().getChannelState());
+        //adapter.setChannelState(getChannel().getChannelState());
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -174,7 +176,18 @@ public class MessageListView extends RecyclerView {
             adapter.setBubbleHelper(bubbleHelper);
         }
 
+        viewModel.getChannelState().observe(lifecycleOwner, new Observer<ChannelState>() {
+            @Override
+            public void onChanged(ChannelState channelState) {
+                adapter.setChannelState(channelState);
+                loadMessages(viewModel, lifecycleOwner);
+            }
+        });
 
+        this.setAdapterWithStyle(adapter);
+    }
+
+    private void loadMessages(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
@@ -264,11 +277,6 @@ public class MessageListView extends RecyclerView {
                 viewModel.markLastMessageRead();
             }
         });
-
-        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {
-        });
-
-        this.setAdapterWithStyle(adapter);
     }
 
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
@@ -278,11 +286,11 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public Channel getChannel() {
-        if (viewModel != null)
-            return viewModel.getChannel();
-        return null;
-    }
+//    public Channel getChannel() {
+//        if (viewModel != null)
+//            return viewModel.getChannel();
+//        return null;
+//    }
 
     public MessageListViewStyle getStyle() {
         return style;

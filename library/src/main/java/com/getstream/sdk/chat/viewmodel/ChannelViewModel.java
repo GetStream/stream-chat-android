@@ -4,19 +4,14 @@ import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
+import com.getstream.sdk.chat.channels.GetChannel;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.Pagination;
+import com.getstream.sdk.chat.messages.GetMessages;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
@@ -25,38 +20,27 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
+import com.getstream.sdk.chat.rest.interfaces.*;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.OnQueryListener;
+import com.getstream.sdk.chat.rest.response.*;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.MessageListItemLiveData;
-import com.getstream.sdk.chat.utils.ResultCallback;
+import com.getstream.sdk.chat.utils.*;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 import static java.util.UUID.randomUUID;
@@ -70,38 +54,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private static final String TAG = ChannelViewModel.class.getSimpleName();
 
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-
-        // fetch offline messages
-//        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
-//            @Override
-//            public void onSuccess(ChannelState channelState) {
-//                Log.i(TAG, "Read messages from local cache...");
-//                if (channelState != null) {
-//                    messages.setValue(channelState.getMessages());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
-//            }
-//        });
-
-        reads.setValue(channel.getChannelState().getReadsByUser());
-        messages.setValue(channel.getChannelState().getMessages());
-        reads.setValue(channel.getChannelState().getReadsByUser());
-        channelState = new MutableLiveData<>(channel.getChannelState());
-        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
-        lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
-        currentUserUnreadMessageCount = new MutableLiveData<>(lastCurrentUserUnreadMessageCount);
-
-        initEventHandlers();
-    }
-
-    private Channel channel;
+    //private Channel channel;
+    private String channelId;
     private Looper looper;
     private Map<String, Event> typingState;
 
@@ -113,10 +67,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private boolean reachedEndOfPagination;
     private boolean reachedEndOfPaginationThread;
     private Date lastMarkRead;
-
-    public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
-        return currentUserUnreadMessageCount;
-    }
 
     private MutableLiveData<Number> currentUserUnreadMessageCount;
     private Integer lastCurrentUserUnreadMessageCount;
@@ -138,9 +88,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private MessageListItemLiveData entities;
     private boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
-    public ChannelViewModel(@NonNull Application application) {
-        super(application);
+//    public ChannelViewModel(@NonNull Application application) {
+//        super(application);
+//        init();
+//    }
 
+    public ChannelViewModel(Application application, String channelId) {
+        super(application);
+        this.channelId = channelId;
+        init();
+    }
+
+    private void init() {
         Log.d(TAG, "instance created");
 
         initialized = new AtomicBoolean(false);
@@ -171,7 +130,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         reads = new LazyQueryChannelLiveData<>();
         reads.viewModel = this;
 
-        entities = new MessageListItemLiveData(client().getUser(), messages, threadMessages, typingUsers, reads);
+        entities = new MessageListItemLiveData(StreamChat.getUsersRepository().getCurrentId(), messages, threadMessages, typingUsers, reads);
 
         typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
@@ -198,21 +157,70 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         new StreamLifecycleObserver(this);
 
         setupConnectionRecovery();
+
+        new GetChannel(StreamChat.getChannelsRepository()).get(channelId).subscribe(new SuccessCallback<Channel>() {
+            @Override
+            public void onSuccess(Channel data) {
+                setChannel(data);
+            }
+        }, new ErrorCallback() {
+            @Override
+            public void error(Throwable throwable) {
+
+            }
+        });
     }
 
-    public ChannelViewModel(Application application, Channel channel) {
-        this(application);
-        setChannel(channel);
+    private void setChannel(Channel channel) {
 
+        // fetch offline messages
+//        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
+//            @Override
+//            public void onSuccess(ChannelState channelState) {
+//                Log.i(TAG, "Read messages from local cache...");
+//                if (channelState != null) {
+//                    messages.setValue(channelState.getMessages());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//                Log.w(TAG, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
+//            }
+//        });
+
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        messages.setValue(channel.getChannelState().getMessages());
+        reads.setValue(channel.getChannelState().getReadsByUser());
+        channelState = new MutableLiveData<>(channel.getChannelState());
+        watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
+        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
+        lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount(StreamChat.getUsersRepository().getCurrentId());
+        currentUserUnreadMessageCount = new MutableLiveData<>(lastCurrentUserUnreadMessageCount);
+
+        initEventHandlers();
+
+        new GetMessages(StreamChat.getMessagesRepository())
+                .getMessages(0, 10, channelId).subscribe(new SuccessCallback<List<Message>>() {
+            @Override
+            public void onSuccess(List<Message> data) {
+
+            }
+        }, new ErrorCallback() {
+            @Override
+            public void error(Throwable throwable) {
+
+            }
+        });
     }
 
-    public Channel getChannel() {
-        return channel;
+    public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
+        return currentUserUnreadMessageCount;
     }
 
-    public Client client() {
-        return StreamChat.getInstance(getApplication());
-    }
+//    public Channel getChannel() {
+//        return channel;
+//    }
 
     // region Getter
 
@@ -220,7 +228,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return channelState;
     }
 
-    public LiveData<List<Message>> getMessages() {
+    private LiveData<List<Message>> getMessages() {
         return isThread() ? threadMessages : messages;
     }
 
@@ -452,9 +460,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageNew(Event event) {
                 upsertMessage(event.getMessage());
                 channelState.postValue(channel.getChannelState());
-                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
-                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
-                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                int currentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount(StreamChat.getUsersRepository().getCurrentId());
+                if (currentUserUnreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                    lastCurrentUserUnreadMessageCount = currentUserUnreadMessageCount;
+                    ChannelViewModel.this.currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
                 }
 
             }
@@ -488,9 +497,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             public void onMessageRead(Event event) {
                 Log.i(TAG, "Message read by " + event.getUser().getId());
                 reads.postValue(channel.getChannelState().getReadsByUser());
-                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
-                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
-                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                String currentUserId = StreamChat.getUsersRepository().getCurrentId();
+                int currentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount(currentUserId);
+                if (currentUserUnreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                    lastCurrentUserUnreadMessageCount = currentUserUnreadMessageCount;
+                    ChannelViewModel.this.currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
                 }
             }
 
@@ -558,7 +569,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     private void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        
+
         if (message.getType().equals(ModelType.message_reply)
                 || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
@@ -671,7 +682,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void checkErrorOrPendingMessage(){
+    private void checkErrorOrPendingMessage() {
         boolean hasErrorOrPendingMessage = false;
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
@@ -679,10 +690,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             if (message.getType().equals(ModelType.message_error)
                     || message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
                 messagesCopy.remove(i);
-                hasErrorOrPendingMessage  = true;
+                hasErrorOrPendingMessage = true;
             }
         }
-        if (!hasErrorOrPendingMessage ) return;
+        if (!hasErrorOrPendingMessage) return;
 
         if (isThread()) {
             threadMessages.postValue(messagesCopy);
@@ -690,7 +701,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
     }
 
-    private void checkFailedMessage(Message message){
+    private void checkFailedMessage(Message message) {
         if (message.getSyncStatus() != Sync.LOCAL_FAILED)
             return;
 
@@ -957,7 +968,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
-    public void sendMessage(String message, List<Attachment> attachments, boolean isUploadingFile, MessageCallback callback){
+    public void sendMessage(String message, List<Attachment> attachments, boolean isUploadingFile, MessageCallback callback) {
         String parentThreadId = isThread() ? getThreadParentMessage().getValue().getId() : null;
     }
 
@@ -980,7 +991,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // stop typing
         stopTyping();
         // Check uploading file
-        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
             addMessage(message);
             return;
         }
@@ -992,7 +1003,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             // add the message here
             addMessage(message);
         }
-
 
         channel.sendMessage(message,
                 new MessageCallback() {
@@ -1031,7 +1041,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void editMessage(Message message, @NonNull MessageCallback callback) {
-        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
+        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
             replaceMessage(message, message);
             return;
         }

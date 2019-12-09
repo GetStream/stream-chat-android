@@ -56,17 +56,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private int subscriptionId = 0;
     private int recoverySubscriptionId = 0;
     private Handler retryLooper;
-
     private QueryChannelListCallback queryChannelListCallback;
-
-    public RetryPolicy getRetryPolicy() {
-        return retryPolicy;
-    }
-
-    public void setRetryPolicy(RetryPolicy retryPolicy) {
-        this.retryPolicy = retryPolicy;
-    }
-
     private RetryPolicy retryPolicy;
 
     public ChannelListViewModel(@NonNull Application application) {
@@ -106,6 +96,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 return Math.min(500 * (attempt * attempt + 1), 30000);
             }
         };
+    }
+
+    public RetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
+
+    public void setRetryPolicy(RetryPolicy retryPolicy) {
+        this.retryPolicy = retryPolicy;
     }
 
     public LiveData<List<Channel>> getChannels() {
@@ -249,10 +247,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      */
     public void setChannelSort(QuerySort sort) {
         this.sort = sort;
-    }
-
-    public Client client() {
-        return StreamChat.getInstance(getApplication());
     }
 
     @Override

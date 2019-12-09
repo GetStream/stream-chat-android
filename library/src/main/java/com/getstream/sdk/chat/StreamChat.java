@@ -7,8 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.getstream.sdk.chat.channels.ChannelsRepository;
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
+import com.getstream.sdk.chat.messages.MessagesRepository;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
@@ -47,6 +49,8 @@ public class StreamChat {
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
     private static UsersRepository usersRepository;
+    private static MessagesRepository messagesRepository;
+    private static ChannelsRepository channelsRepository;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -175,6 +179,16 @@ public class StreamChat {
     @NotNull
     public static UsersRepository getUsersRepository(){
         return usersRepository;
+    }
+
+    @NotNull
+    public static MessagesRepository getMessagesRepository(){
+        return messagesRepository;
+    }
+
+    @NotNull
+    public static ChannelsRepository getChannelsRepository(){
+        return channelsRepository;
     }
 
     public static synchronized boolean init(String apiKey, Context context) {

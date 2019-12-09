@@ -10,17 +10,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
@@ -50,7 +49,6 @@ public class ChannelActivity extends AppCompatActivity
         Intent intent = getIntent();
         String channelType = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_TYPE);
         String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
-        Client client = StreamChat.getInstance(getApplication());
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
@@ -61,14 +59,13 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageInput.setMessageText(messageText);
         }
 
-        Channel channel = client.channel(channelType, channelID);
-
         // setup the viewmodel, remember to also set the channel
-        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        viewModel.setChannel(channel);
+
+        viewModel = ViewModelProviders.of(this,new ChannelViewModelFactory(getApplication(), channelID)).get(ChannelViewModel.class);
         viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
           Log.i(TAG, String.format("The current user unread count is now %d", count));
         });
+
 
         // set listeners
         binding.messageList.setMessageLongClickListener(this);
