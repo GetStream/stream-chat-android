@@ -586,26 +586,34 @@ public class Client implements WSResponseHandler {
         Log.i(TAG, "client.connect was called");
 
         if (anonymousConnection) {
-            try {
-                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, true);
-                apiService = apiServiceProvider.provideApiService(null, true);
-                uploadStorage = uploadStorageProvider.provideUploadStorage(null, this);
-            } catch (UnsupportedEncodingException e) {
-                onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
-            }
+            anonymousConnect();
         } else {
-            tokenProvider.getToken(userToken -> {
-                try {
-                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, false);
-                    apiService = apiServiceProvider.provideApiService(tokenProvider, false);
-                    uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
-                } catch (UnsupportedEncodingException e) {
-                    onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
-                }
-            });
+            authConnect();
         }
 
         webSocketService.connect();
+    }
+
+    private void anonymousConnect() {
+        try {
+            webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, true);
+            apiService = apiServiceProvider.provideApiService(null, true);
+            uploadStorage = uploadStorageProvider.provideUploadStorage(null, this);
+        } catch (UnsupportedEncodingException e) {
+            onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+        }
+    }
+
+    private void authConnect() {
+        tokenProvider.getToken(userToken -> {
+            try {
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, false);
+                apiService = apiServiceProvider.provideApiService(tokenProvider, false);
+                uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+            } catch (UnsupportedEncodingException e) {
+                onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+            }
+        });
     }
 
     public Channel channel(String cid) {
