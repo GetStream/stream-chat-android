@@ -56,6 +56,7 @@ public class AttachmentListView extends RecyclerView {
         this.setLayoutManager(mLayoutManager);
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
+
         if (this.giphySendListener != null)
             this.adapter.setGiphySendListener(giphySendListener);
 
@@ -83,10 +84,6 @@ public class AttachmentListView extends RecyclerView {
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
         this.giphySendListener = giphySendListener;
-    }
-
-    public MessageListView.BubbleHelper getBubbleHelper() {
-        return bubbleHelper;
     }
 
     public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {

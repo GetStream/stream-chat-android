@@ -116,11 +116,12 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
         MessageListItem messageListItem = messageListItemList.get(position);
-        ((BaseMessageListItemViewHolder) holder).setBubbleHelper(bubbleHelper);
-        ((BaseMessageListItemViewHolder) holder).setStyle(style);
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
                 messageListItem,
+                style,
+                bubbleHelper,
+                viewHolderFactory,
                 position);
     }
 

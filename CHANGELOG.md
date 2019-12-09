@@ -1,10 +1,13 @@
 ## Upcoming
 
+## December 9th, 2019 - 3.5.0
+
 - Fix set typeFace without custom font
 - Fix channel.watch (data payload was not sent)
 - Fix API 23 compatiblity
 - Add Attachment Border Color attrs
 - Add Message Link Text Color attrs
+- Add custom api endpoint config to sample app and SDK
 
 ## November 28th, 2019 - 3.4.1
 
