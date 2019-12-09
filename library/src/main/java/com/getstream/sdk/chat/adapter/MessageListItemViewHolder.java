@@ -38,6 +38,7 @@ import java.util.List;
 
 import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -67,23 +68,29 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // Replay
     private ImageView iv_reply;
     private TextView tv_reply;
+
     private RecyclerView.LayoutManager mLayoutManager;
-    private MessageViewHolderFactory viewHolderFactory;
+
     private ChannelState channelState;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageViewHolderFactory viewHolderFactory;
+    private int position;
+    private Context context;
+    private Message message;
+    private MessageListItem messageListItem;
+
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.ReactionViewClickListener reactionViewClickListener;
     private MessageListView.UserClickListener userClickListener;
     private MessageListView.ReadStateClickListener readStateClickListener;
-
-    private int position;
-    private Context context;
-    private Message message;
-    private MessageListItem messageListItem;
     private MarkdownImpl.MarkdownListener markdownListener;
     private MessageListView.GiphySendListener giphySendListener;
+
     private List<MessageViewHolderFactory.Position> positions;
+
     private ConstraintSet set;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -120,17 +127,23 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     ChannelState channelState,
-                     MessageListItem messageListItem,
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
 
         // set binding
         this.context = context;
         this.channelState = channelState;
+        this.messageListItem = messageListItem;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.viewHolderFactory = factory;
         this.position = position;
 
-        this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
@@ -743,10 +756,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    @Override
-    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
-        this.viewHolderFactory = viewHolderFactory;
-    }
 
     private boolean isDeletedMessage() {
         return message.getDeletedAt() != null;
