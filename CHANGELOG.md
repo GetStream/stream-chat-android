@@ -1,5 +1,7 @@
 ## Upcoming
 
+## December 9th, 2019 - 3.5.0
+
 - Fix set typeFace without custom font
 - Fix channel.watch (data payload was not sent)
 - Fix API 23 compatiblity
