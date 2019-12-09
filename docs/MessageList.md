@@ -321,23 +321,31 @@ binding.messageList.setBubbleHelper(new MessageListView.BubbleHelper() {
     public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
         if (style.getMessageBubbleDrawable(mine) != -1)
             return context.getDrawable(style.getMessageBubbleDrawable(mine));
-        return getBubbleDrawable();
+
+        return getBubbleDrawable(message, null, mine, positions);
     }
 
     @Override
     public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
         if (style.getMessageBubbleDrawable(mine) != -1)
             return context.getDrawable(style.getMessageBubbleDrawable(mine));
-        return getBubbleDrawable();
+
+        return getBubbleDrawable(message, attachment, mine, positions);
     }
 
     @Override
     public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
         if (style.getMessageBubbleDrawable(mine) != -1)
             return context.getDrawable(style.getMessageBubbleDrawable(mine));
-        return getBubbleDrawable();
+
+        return getBubbleDrawable(message, null, mine, positions);
     }
 });
+
+private void getBubbleDrawable(Message message, Attachment attachment, boolean isMine, List<MessageViewHolderFactory.Position> positions){
+    // TODO: Create your bubble drawable based on `message`, `attachment`, `isMine` and `positions`
+    return drawable;
+}
 ```
 
 #### Customizing the message list - ViewHolderFactory
