@@ -343,3 +343,9 @@ And update your `Manifest`:
 <application
 	android:networkSecurityConfig="@xml/network_security_config"/>
 ```
+### Localize the UI with Translations
+You can translate all [strings](https://github.com/GetStream/stream-chat-android/blob/master/library/src/main/res/values/strings.xml) of SDK by overriding string keys.<br/>
+Example app has this feature.
+- [German](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-de/strings.xml)
+- [Spanish](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-es/strings.xml)
+- ...
