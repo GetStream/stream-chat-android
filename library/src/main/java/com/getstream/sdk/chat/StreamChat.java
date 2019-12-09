@@ -278,6 +278,16 @@ public class StreamChat {
         StreamChat.notificationsManager.handleRemoteMessage(context, remoteMessage);
     }
 
+    /**
+     * Handle Firebase message, check and show notifications
+     *
+     * @param context       - Context
+     * @param event         - event with msg from websocket
+     */
+    public void handleNewMessageEvent(Context context, Event event) {
+        StreamChat.notificationsManager.handleEvent(context, event);
+    }
+
     private static void registerFirebaseToken(Context context) {
         Log.i(TAG, "Start registering device");
 

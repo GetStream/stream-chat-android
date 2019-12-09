@@ -19,4 +19,6 @@ public interface NotificationsManager {
     void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context);
 
     void handleRemoteMessage(Context context, RemoteMessage remoteMessage);
+
+    void handleEvent(Context context, Event event);
 }

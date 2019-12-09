@@ -12,6 +12,7 @@ import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
+import com.getstream.sdk.chat.notifications.NotificationsManager;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
@@ -47,10 +48,10 @@ public class BaseApplication extends Application {
 
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
 
-        registerDevice();
+        configNotifications();
     }
 
-    private void registerDevice() {
+    private void configNotifications() {
         // Configure and adding notification options for notifications
         StreamNotificationOptions notificationOptions = new StreamNotificationOptions();
 
