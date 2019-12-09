@@ -877,9 +877,9 @@ public class ClientTest {
     void queryChannelWithIdSuccessTest() {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
@@ -917,9 +917,9 @@ public class ClientTest {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
 
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();

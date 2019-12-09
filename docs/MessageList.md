@@ -230,6 +230,8 @@ You must use the following properties in your XML to change your MessageListView
 | `app:streamMessageBorderColorTheirs`            | color                | #14000000 |
 | `app:streamMessageBorderWidthMine`              | dimension            | 1dp       |
 | `app:streamMessageBorderWidthTheirs`            | dimension            | 1dp       |
+| `app:streamMessageLinkTextColorMine`            | color                | -         |
+| `app:streamMessageLinkTextColorTheirs`          | color                | -         |
 
 - **AttachmentView**
 
@@ -237,6 +239,8 @@ You must use the following properties in your XML to change your MessageListView
 | ----------------------------------------------------- | -------------------- | ---------------------------------- |
 | `app:streamAttachmentBackgroundColorMine`             | color                | streamMessageBackgroundColorMine   |
 | `app:streamAttachmentBackgroundColorTheirs`           | color                | streamMessageBackgroundColorTheirs |
+| `app:streamAttachmentBorderColorMine`                 | color                | streamMessageBorderColorMine       |
+| `app:streamAttachmentBorderColorTheirs`               | color                | streamMessageBorderColorTheirs     |
 | `app:streamAttachmentTitleTextSizeMine`               | dimension            | 13sp                               |
 | `app:streamAttachmentTitleTextSizeTheirs`             | dimension            | 13sp                               |
 | `app:streamAttachmentTitleTextColorMine`              | color                | #026DFE                            |

@@ -9,9 +9,9 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
-    private MessageListViewStyle style;
-    private TextView tv_text;
 
+    private TextView tv_text;
+    private MessageViewHolderFactory viewHolderFactory;
     public ThreadSeparatorViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
         tv_text = itemView.findViewById(R.id.tv_text);
@@ -26,7 +26,8 @@ public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
     }
+
 }

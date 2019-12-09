@@ -1,8 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,18 +12,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.Dates;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.TextViewUtils;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Date;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
-    private MessageListViewStyle style;
+
     private Context context;
     private MessageListItem messageListItem;
-
+    private MessageViewHolderFactory viewHolderFactory;
     private TextView tv_date;
     private ImageView iv_line_right, iv_line_left;
 
@@ -45,6 +41,11 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
         this.messageListItem = messageListItem;
         configDate();
         applyStyle();
+    }
+
+    @Override
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        this.viewHolderFactory = factory;
     }
 
     private void configDate(){
@@ -80,8 +81,4 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
         view.setLayoutParams(params);
     }
 
-    @Override
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
 }

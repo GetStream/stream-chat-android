@@ -99,7 +99,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
-            return viewHolderFactory.getEntityViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
+            return viewHolderFactory.getMessageViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }
@@ -117,6 +117,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
         MessageListItem messageListItem = messageListItemList.get(position);
         ((BaseMessageListItemViewHolder) holder).setBubbleHelper(bubbleHelper);
+        ((BaseMessageListItemViewHolder) holder).setStyle(style);
         ((BaseMessageListItemViewHolder) holder).bind(this.context,
                 this.channelState,
                 messageListItem,
