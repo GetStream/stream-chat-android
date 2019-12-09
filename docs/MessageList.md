@@ -576,14 +576,14 @@ public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
 It's common to implement your own message or attachment type and render it in a custom way.<br/>
 When you define your _own MessageViewHolderFactory_ need to extent `MessageViewHolderFactory` and avoid to use default view holder types of **Super class**
 
-**defailt `Message` view holder type**
+**default `Message` view holder type**
 - MESSAGEITEM_DATE_SEPARATOR = 1
 - MESSAGEITEM_MESSAGE = 2
 - MESSAGEITEM_TYPING = 3
 - MESSAGEITEM_THREAD_SEPARATOR = 4
 - MESSAGEITEM_NOT_FOUND = 5
 
-**defailt `Attachment` view holder type**
+**default `Attachment` view holder type**
 - GENERIC_ATTACHMENT = 1
 - IMAGE_ATTACHMENT = 2
 - VIDEO_ATTACHMENT = 3
