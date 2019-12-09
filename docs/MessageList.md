@@ -316,32 +316,26 @@ You must use the following properties in your XML to change your MessageListView
 Many messaging apps will have rather complex message bubbles. The layout typically changes based on the position of the message, if it's your or written by someone else, and if it has attachments. Here's an example of the default bubble list helper.
 
 ```java
-messageList.setBubbleHelper(new BubbleHelper() {
+binding.messageList.setBubbleHelper(new MessageListView.BubbleHelper() {
     @Override
     public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
-	if (mine) {
-	    // if the size is 0 the attachment has the corner change
-	    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
-		return getResources().getDrawable(R.drawable.message_bubble_mine_top);
-	    }
-	    return style.getMessageBubbleDrawableMine();
-	} else {
-	    if (positions.contains(MessageViewHolderFactory.Position.TOP) && message.getAttachments().size() == 0) {
-		return getResources().getDrawable(R.drawable.message_bubble_theirs_top);
-	    }
-	    return style.getMessageBubbleDrawableTheirs();
-	}
+        if (style.getMessageBubbleDrawable(mine) != -1)
+            return context.getDrawable(style.getMessageBubbleDrawable(mine));
+        return getBubbleDrawable();
     }
 
     @Override
     public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-	if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
-	    int attachmentPosition = message.getAttachments().indexOf(attachment);
-	    if (attachmentPosition == 0) {
-		return getResources().getDrawable(R.drawable.round_attach_media_incoming1);
-	    }
-	}
-	return getResources().getDrawable(R.drawable.round_attach_media_incoming2);
+        if (style.getMessageBubbleDrawable(mine) != -1)
+            return context.getDrawable(style.getMessageBubbleDrawable(mine));
+        return getBubbleDrawable();
+    }
+
+    @Override
+    public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
+        if (style.getMessageBubbleDrawable(mine) != -1)
+            return context.getDrawable(style.getMessageBubbleDrawable(mine));
+        return getBubbleDrawable();
     }
 });
 ```
