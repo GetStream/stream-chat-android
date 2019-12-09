@@ -14,7 +14,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def appVersion = "17.0"
+def appVersion = "18.0"
 
 android {
     compileSdkVersion 28
@@ -22,7 +22,7 @@ android {
         applicationId "io.getstream.chat.sdk"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 17
+        versionCode 18
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,9 +60,9 @@ android {
             buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
 
             buildConfigField "String", "API_ENDPOINT", "\"${defaultApiEndpoint}\""
-            buildConfigField "String", "API_TIMEOUT", "\"${defaultApiTimeout}\""
+            buildConfigField "int", "API_TIMEOUT", "${defaultApiTimeout}"
             buildConfigField "String", "API_KEY", "\"${defaultApiKey}\""
-            buildConfigField "String", "CDN_TIMEOUT", "\"${defaultCdnTimeout}\""
+            buildConfigField "int", "CDN_TIMEOUT", "${defaultCdnTimeout}"
             buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
             buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
             buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
