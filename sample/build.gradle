@@ -42,6 +42,9 @@ android {
 
     buildTypes {
 
+        def defaultApiEndpoint = 'chat-us-east-1.stream-io-api.com'
+        def defaultApiTimeout = 6000
+        def defaultCdnTimeout = 30000
         def defaultApiKey = 'qk4nn7rpcn75'
         def defaultUserId = 'bender'
         def defaultUserToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ'
@@ -56,7 +59,10 @@ android {
 
             buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
 
+            buildConfigField "String", "API_ENDPOINT", "\"${defaultApiEndpoint}\""
+            buildConfigField "String", "API_TIMEOUT", "\"${defaultApiTimeout}\""
             buildConfigField "String", "API_KEY", "\"${defaultApiKey}\""
+            buildConfigField "String", "CDN_TIMEOUT", "\"${defaultCdnTimeout}\""
             buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
             buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
             buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
@@ -67,7 +73,10 @@ android {
             minifyEnabled false
             shrinkResources false
 
+            def customApiEndpoint = System.getenv('STREAM_CHAT_API_ENDPOINT')
+            def customApiTimeout = System.getenv('STREAM_CHAT_API_TIMEOUT')
             def customApiKey = System.getenv('STREAM_CHAT_API_KEY')
+            def customCdnTimeout = System.getenv('STREAM_CHAT_CDN_TIMEOUT')
             def customUserId = System.getenv('STREAM_CHAT_USER_ID')
             def customUserToken = System.getenv('STREAM_CHAT_USER_TOKEN')
             def customUserName = System.getenv('STREAM_CHAT_USER_NAME')
@@ -75,7 +84,10 @@ android {
 
             buildConfigField "String", "SDK_VERSION", '"master"'
 
+            buildConfigField "String", "API_ENDPOINT", '"' + (customApiEndpoint ? customApiEndpoint : defaultApiEndpoint) + '"'
             buildConfigField "String", "API_KEY", '"' + (customApiKey ? customApiKey : defaultApiKey) + '"'
+            buildConfigField "int", "API_TIMEOUT", String.valueOf(customApiTimeout ? customApiTimeout : defaultApiTimeout)
+            buildConfigField "int", "CDN_TIMEOUT", String.valueOf(customCdnTimeout ? customCdnTimeout : defaultCdnTimeout)
             buildConfigField "String", "USER_ID", '"' + (customUserId ? customUserId : defaultUserId) + '"'
             buildConfigField "String", "USER_TOKEN", '"' + (customUserToken ? customUserToken : defaultUserToken) + '"'
             buildConfigField "String", "USER_NAME", '"' + (customUserName ? customUserName : defaultUserName) + '"'
