@@ -343,7 +343,7 @@ binding.messageList.setBubbleHelper(new MessageListView.BubbleHelper() {
 });
 
 private void getBubbleDrawable(Message message, Attachment attachment, boolean isMine, List<MessageViewHolderFactory.Position> positions){
-    // TODO: Create your bubble drawable based on `message`, `attachment`, `isMine` and `positions`
+    // TODO: Create your bubble drawable based on message, attachment, isMine and positions
     return drawable;
 }
 ```
