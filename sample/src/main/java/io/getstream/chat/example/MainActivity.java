@@ -37,7 +37,6 @@ import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
-import static java.util.UUID.randomUUID;
 
 
 /**

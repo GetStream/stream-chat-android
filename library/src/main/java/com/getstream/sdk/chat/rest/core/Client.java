@@ -133,6 +133,7 @@ public class Client implements WSResponseHandler {
     private String apiKey;
 
     private Boolean offlineStorage;
+    @NotNull
     private Boolean anonymousConnection = false;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
@@ -482,7 +483,7 @@ public class Client implements WSResponseHandler {
                 cacheUserToken = null;
             }
         };
-        connect();
+        connect(anonymousConnection);
     }
 
     /**
@@ -582,38 +583,28 @@ public class Client implements WSResponseHandler {
         }
     }
 
-    private synchronized void connect() {
+    private synchronized void connect(boolean anonymousConnection) {
         Log.i(TAG, "client.connect was called");
 
         if (anonymousConnection) {
-            anonymousConnect();
-        } else {
-            authConnect();
-        }
-
-        webSocketService.connect();
-    }
-
-    private void anonymousConnect() {
-        try {
-            webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, true);
-            apiService = apiServiceProvider.provideApiService(null, true);
-            uploadStorage = uploadStorageProvider.provideUploadStorage(null, this);
-        } catch (UnsupportedEncodingException e) {
-            onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
-        }
-    }
-
-    private void authConnect() {
-        tokenProvider.getToken(userToken -> {
             try {
-                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this, false);
-                apiService = apiServiceProvider.provideApiService(tokenProvider, false);
-                uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, anonymousConnection);
             } catch (UnsupportedEncodingException e) {
                 onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
             }
-        });
+        } else {
+            tokenProvider.getToken(token -> {
+                try {
+                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), token, this, anonymousConnection);
+                } catch (UnsupportedEncodingException e) {
+                    onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+                }
+            });
+        }
+
+        apiService = apiServiceProvider.provideApiService(tokenProvider, anonymousConnection);
+        uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+        webSocketService.connect();
     }
 
     public Channel channel(String cid) {
@@ -700,7 +691,7 @@ public class Client implements WSResponseHandler {
         }
         connectionRecovered();
 
-        connect();
+        connect(anonymousConnection);
     }
 
     @Override
@@ -1717,7 +1708,7 @@ public class Client implements WSResponseHandler {
 
         state.setCurrentUser(new User(uuid));
 
-        connect();
+        connect(anonymousConnection);
     }
 
     /**
