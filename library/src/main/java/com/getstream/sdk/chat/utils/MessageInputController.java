@@ -301,6 +301,7 @@ public class MessageInputController {
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
+            binding.setActiveMessageSend(false);
         }
     }
 
@@ -382,6 +383,7 @@ public class MessageInputController {
             viewModel.setInputType(InputType.SELECT);
         } else if (binding.etMessage.getText().toString().length() == 0) {
             viewModel.setInputType(InputType.DEFAULT);
+            binding.setActiveMessageSend(false);
         }
     }
 
@@ -432,9 +434,10 @@ public class MessageInputController {
             Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
             return;
         }
-        convertAttachment(file, isImage);
+        convertMediaAttachment(file, isImage);
     }
-    private void convertAttachment(File file, boolean isImage) {
+
+    private void convertMediaAttachment(File file, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
         attachment.config.setSelected(true);

@@ -193,16 +193,18 @@ public class MessageInputView extends RelativeLayout {
             }
             // detect commands
             messageInputController.checkCommand(messageText);
-            String s_ = messageText.replaceAll("\\s+","");
-            if (TextUtils.isEmpty(s_))
-                binding.setActiveMessageSend(false);
-            else
-                binding.setActiveMessageSend(messageText.length() != 0);
+            configSendBtn();
         });
 
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
+    private void configSendBtn() {
+        String s_ = getMessageText().replaceAll("\\s+", "");
+        List<Attachment> attachments = messageInputController.getSelectedAttachments();
+        boolean hasAttachment = attachments != null && !attachments.isEmpty();
+        binding.setActiveMessageSend(s_.length() != 0 || hasAttachment);
+    }
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
