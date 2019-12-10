@@ -19,10 +19,10 @@ import com.getstream.sdk.chat.rest.core.ClientState;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
-
-import org.jetbrains.annotations.NotNull;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -78,18 +78,18 @@ public class StreamChat {
         }
     }
 
-    public static Context getContext(){
+    public static Context getContext() {
         return context;
     }
 
-    public static StringsProvider getStrings(){
+    public static StringsProvider getStrings() {
         return stringsProvider;
     }
 
     /**
      * For unit tests purposes only
      */
-    public static void setStringsProvider(StringsProvider stringsProvider){
+    public static void setStringsProvider(StringsProvider stringsProvider) {
         StreamChat.stringsProvider = stringsProvider;
     }
 
@@ -104,6 +104,24 @@ public class StreamChat {
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.d(TAG, "handleConnectedUser: error: " + errMsg + ":" + errCode);
+            }
+        });
+    }
+
+    private static void observeSetUserCompleted() {
+        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.i(TAG, "set user worked out well");
+                setupEventListeners();
+                currentUser.postValue(user);
+
+                setupLifecycleObserver();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                onlineStatus.postValue(OnlineStatus.FAILED);
             }
         });
     }
@@ -155,7 +173,29 @@ public class StreamChat {
         });
     }
 
-    public static void initStyle(StreamChatStyle style){
+    private static void setupLifecycleObserver() {
+        new StreamLifecycleObserver(new LifecycleHandler() {
+            @Override
+            public void resume() {
+                Log.i(TAG, "detected resume");
+                if (lifecycleStopped && userWasInitialized) {
+                    lifecycleStopped = false;
+                    INSTANCE.reconnectWebSocket();
+                }
+            }
+
+            @Override
+            public void stopped() {
+                Log.i(TAG, "detected stop");
+                lifecycleStopped = true;
+                if (INSTANCE != null) {
+                    INSTANCE.disconnectWebSocket();
+                }
+            }
+        });
+    }
+
+    public static void initStyle(StreamChatStyle style) {
         chatStyle = style;
     }
 
@@ -165,72 +205,48 @@ public class StreamChat {
     }
 
     @NotNull
-    public static FontsManager getFontsManager(){
+    public static FontsManager getFontsManager() {
         return fontsManager;
     }
 
-    public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context);
-    }
+    public static class Builder {
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context) {
-        if (INSTANCE != null) {
-            return true;
+        private String apiKey;
+        private ApiClientOptions apiClientOptions;
+
+        public Builder(Context context) {
+            StreamChat.context = context;
         }
-        Log.i(TAG, "calling init");
-        synchronized (Client.class) {
-            if (INSTANCE == null) {
 
-                StreamChat.context = context;
-                stringsProvider = new StringsProviderImpl(context);
+        public Builder setApiKey(@NonNull String apiKey) {
+            this.apiKey = apiKey;
+            return this;
+        }
 
+        public Builder setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
+            this.apiClientOptions = apiClientOptions;
+            return this;
+        }
 
-                fontsManager = new FontsManagerImpl(context);
+        public void build() {
+            Log.i(TAG, "calling build");
+            synchronized (Client.class) {
+                if (INSTANCE == null) {
+                    stringsProvider = new StringsProviderImpl(context);
+                    fontsManager = new FontsManagerImpl(context);
+                    INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
 
-                Log.i(TAG, "calling init for the first time");
-                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
-                INSTANCE.setContext(StreamChat.context);
-                onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
-                currentUser = new MutableLiveData<>();
-                totalUnreadMessages = new MutableLiveData<>();
-                unreadChannels = new MutableLiveData<>();
-                handleConnectedUser();
+                    onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
+                    currentUser = new MutableLiveData<>();
+                    totalUnreadMessages = new MutableLiveData<>();
+                    unreadChannels = new MutableLiveData<>();
 
-                INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        Log.i(TAG, "set user worked out well");
-                        setupEventListeners();
-                        currentUser.postValue(user);
+                    INSTANCE.setContext(StreamChat.context);
 
-                        new StreamLifecycleObserver(new LifecycleHandler() {
-                            @Override
-                            public void resume() {
-                                Log.i(TAG, "detected resume");
-                                if (lifecycleStopped && userWasInitialized) {
-                                    lifecycleStopped = false;
-                                    INSTANCE.reconnectWebSocket();
-                                }
-                            }
-
-                            @Override
-                            public void stopped() {
-                                Log.i(TAG, "detected stop");
-                                lifecycleStopped = true;
-                                if (INSTANCE != null) {
-                                    INSTANCE.disconnectWebSocket();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        onlineStatus.postValue(OnlineStatus.FAILED);
-                    }
-                });
+                    handleConnectedUser();
+                    observeSetUserCompleted();
+                }
             }
-            return true;
         }
     }
 
