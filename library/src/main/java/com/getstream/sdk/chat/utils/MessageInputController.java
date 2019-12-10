@@ -179,7 +179,7 @@ public class MessageInputController {
                         Attachment attachment = getAttachment(attachments, position);
                         if (attachment == null) return;
                         mediaAttachmentAdapter.notifyItemChanged(position);
-                        updateInputView(attachments, attachment, true);
+                        updateInputView(attachments, attachment, isMedia);
                     });
                     binding.rvMedia.setAdapter(mediaAttachmentAdapter);
                 }else {
@@ -190,7 +190,7 @@ public class MessageInputController {
                         Attachment attachment = getAttachment(attachments, position);
                         if (attachment == null) return;
                         fileAttachmentAdapter.notifyDataSetChanged();
-                        updateInputView(attachments, attachment, false);
+                        updateInputView(attachments, attachment, isMedia);
                     });
                 }
             }else{
@@ -222,7 +222,7 @@ public class MessageInputController {
         return attachment;
     }
 
-    public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectMediaView(List<Attachment> editAttachments) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
@@ -236,7 +236,9 @@ public class MessageInputController {
 
     // region File
 
-    private void updateInputView(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
+    private void updateInputView(List<Attachment> attachments,
+                                 Attachment attachment,
+                                 boolean isMedia) {
         if (isMedia)
             binding.rvComposer.setVisibility(View.VISIBLE);
         else
@@ -261,7 +263,9 @@ public class MessageInputController {
         }
     }
 
-    private void uploadFile(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
+    private void uploadFile(List<Attachment> attachments,
+                            Attachment attachment,
+                            boolean isMedia) {
         uploadingFile = true;
         UploadFileCallback callback = getUploadFileCallBack(attachments, attachment, isMedia);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
@@ -270,7 +274,9 @@ public class MessageInputController {
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
     }
 
-    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
+    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments,
+                                                     Attachment attachment,
+                                                     boolean isMedia) {
         return new UploadFileCallback<UploadFileResponse, Integer>() {
             @Override
             public void onSuccess(UploadFileResponse response) {
@@ -289,7 +295,9 @@ public class MessageInputController {
         };
     }
 
-    private void fileUploadSuccess(Attachment attachment, UploadFileResponse response, boolean isMedia) {
+    private void fileUploadSuccess(Attachment attachment,
+                                   UploadFileResponse response,
+                                   boolean isMedia) {
         uploadingFile = false;
         binding.setActiveMessageSend(true);
         attachmentListener.onAddAttachments();
@@ -303,29 +311,38 @@ public class MessageInputController {
         }
 
         attachment.config.setUploaded(true);
-        if (isMedia)
-            selectedMediaAttachmentAdapter.notifyDataSetChanged();
-        else
-            selectedFileAttachmentAdapter.notifyDataSetChanged();
+        selectedAttachmentAdapderChanged(isMedia);
     }
 
-    private void fileUploadFailed(List<Attachment> attachments, Attachment attachment, String errMsg, boolean isMedia) {
+    private void fileUploadFailed(List<Attachment> attachments,
+                                  Attachment attachment,
+                                  String errMsg,
+                                  boolean isMedia) {
         uploadingFile = false;
         binding.setActiveMessageSend(true);
         attachment.config.setSelected(false);
         Utils.showMessage(context, errMsg);
         updateInputView(attachments, attachment, isMedia);
+        if (isMedia)
+            mediaAttachmentAdapter.notifyDataSetChanged();
+        else
+            fileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void fileUploading(Attachment attachment, Integer percentage, boolean isMedia) {
+    private void fileUploading(Attachment attachment,
+                               Integer percentage,
+                               boolean isMedia) {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
+        selectedAttachmentAdapderChanged(isMedia);
+    }
+
+    private void selectedAttachmentAdapderChanged(boolean isMedia){
         if (isMedia)
             selectedMediaAttachmentAdapter.notifyDataSetChanged();
         else
             selectedFileAttachmentAdapter.notifyDataSetChanged();
     }
-
 
     private void setSelectedAttachmentAdapter(List<Attachment> attachments, boolean isMedia) {
         if (isMedia) {
@@ -343,19 +360,16 @@ public class MessageInputController {
     }
 
     private void updateAdapter(List<Attachment> attachments, int position, boolean isMedia) {
-        Attachment attachment1 = selectedAttachments.get(position);
-        attachment1.config.setSelected(false);
-        selectedAttachments.remove(attachment1);
-        if (isMedia)
-            selectedMediaAttachmentAdapter.notifyDataSetChanged();
-        else
-            selectedFileAttachmentAdapter.notifyDataSetChanged();
+        Attachment attachment = selectedAttachments.get(position);
+        attachment.config.setSelected(false);
+        selectedAttachments.remove(attachment);
+        selectedAttachmentAdapderChanged(isMedia);
 
         if (attachments != null) {
             int position_ = -1;
             for (int i = 0; i < attachments.size(); i++) {
                 Attachment attachment2 = attachments.get(i);
-                if (attachment2.config.getFilePath().equals(attachment1.config.getFilePath())) {
+                if (attachment2.config.getFilePath().equals(attachment.config.getFilePath())) {
                     position_ = i;
                     break;
                 }
@@ -374,7 +388,7 @@ public class MessageInputController {
         }
     }
 
-    public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectFileView(List<Attachment> editAttachments) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;

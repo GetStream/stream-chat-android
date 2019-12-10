@@ -231,7 +231,7 @@ public class MessageInputView extends RelativeLayout {
             }
         });
 
-        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
+        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(null));
 
         binding.llCamera.setOnClickListener(v -> {
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
@@ -249,7 +249,7 @@ public class MessageInputView extends RelativeLayout {
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(v, null));
+        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(null));
     }
 
     private void onBackPressed() {
@@ -478,12 +478,12 @@ public class MessageInputView extends RelativeLayout {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectMediaView(message.getAttachments());
             } else {
-                messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectFileView(message.getAttachments());
             }
         } else {
-            messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+            messageInputController.onClickOpenSelectMediaView(message.getAttachments());
         }
     }
     // endregion
