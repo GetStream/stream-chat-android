@@ -147,7 +147,7 @@ public class Utils {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static List<Attachment> Search_Dir(File dir) {
+    public static List<Attachment> getFileAttachments(File dir) {
         String pdfPattern = ".pdf";
         String pptPattern = ".ppt";
         String csvPattern = ".csv";
@@ -164,7 +164,7 @@ public class Utils {
         if (FileList != null) {
             for (File file : FileList) {
                 if (file.isDirectory()) {
-                    Search_Dir(file);
+                    getFileAttachments(file);
                 } else {
                     Attachment attachment = new Attachment();
 
@@ -206,7 +206,7 @@ public class Utils {
         return attachments;
     }
 
-    public static ArrayList<Attachment> getAllShownImagesPath(Context context) {
+    public static ArrayList<Attachment> getMediaAttachments(Context context) {
         String[] columns = {MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,

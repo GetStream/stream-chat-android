@@ -162,37 +162,14 @@ public class MessageInputController {
     // region Media
 
     private void configSelectAttachView(List<Attachment> editAttachments, boolean isMedia) {
-        selectedAttachments = (editAttachments != null) ? editAttachments : new ArrayList<>();
         binding.setIsAttachFile(!isMedia);
-        List<Attachment> attachments ;
-        if (isMedia){
-            attachments = Utils.getAllShownImagesPath(context);
-        }else {
-            Utils.attachments = new ArrayList<>();
-            attachments = Utils.Search_Dir(Environment.getExternalStorageDirectory());
-        }
-
+        
+        selectedAttachments = (editAttachments != null) ? editAttachments : new ArrayList<>();        
+        List<Attachment> localAttachments = getAttachmentsFromLocal(isMedia);
+        
         ((Activity) context).runOnUiThread(() -> {
-            if (!attachments.isEmpty()){
-                if (isMedia){
-                    mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                        Attachment attachment = getAttachment(attachments, position);
-                        if (attachment == null) return;
-                        mediaAttachmentAdapter.notifyItemChanged(position);
-                        updateInputView(attachments, attachment, isMedia);
-                    });
-                    binding.rvMedia.setAdapter(mediaAttachmentAdapter);
-                }else {
-                    fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
-                    binding.lvFile.setAdapter(fileAttachmentAdapter);
-                    binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                           int position, long id) -> {
-                        Attachment attachment = getAttachment(attachments, position);
-                        if (attachment == null) return;
-                        fileAttachmentAdapter.notifyDataSetChanged();
-                        updateInputView(attachments, attachment, isMedia);
-                    });
-                }
+            if (!localAttachments.isEmpty()){
+                configGalleryView(localAttachments, isMedia);
             }else{
                 Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                 onClickCloseBackGroundView();
@@ -205,9 +182,43 @@ public class MessageInputController {
                     binding.rvComposer.setVisibility(View.VISIBLE);
                 else
                     binding.lvComposer.setVisibility(View.VISIBLE);
-                setSelectedAttachmentAdapter(attachments, isMedia);
+                setSelectedAttachmentAdapter(localAttachments, isMedia);
             }
         });
+    }
+
+    private List<Attachment> getAttachmentsFromLocal(boolean isMedia) {
+        if (isMedia)
+            return Utils.getMediaAttachments(context);
+
+        Utils.attachments = new ArrayList<>();
+        return Utils.getFileAttachments(Environment.getExternalStorageDirectory());
+    }
+    
+    private void configGalleryView(List<Attachment> attachments, boolean isMedia){
+        if (isMedia){
+            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
+                selectAttachment(attachments, position, isMedia);
+            });
+            binding.rvMedia.setAdapter(mediaAttachmentAdapter);
+        }else {
+            fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
+            binding.lvFile.setAdapter(fileAttachmentAdapter);
+            binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
+                                                   int position, long id) -> {
+                selectAttachment(attachments, position, isMedia);
+            });
+        }
+    }
+
+    private void selectAttachment(List<Attachment> attachments, int position, boolean isMedia){
+        Attachment attachment = getAttachment(attachments, position);
+        if (attachment == null) return;
+        if (isMedia)
+            mediaAttachmentAdapter.notifyItemChanged(position);
+        else
+            fileAttachmentAdapter.notifyDataSetChanged();
+        updateInputView(attachments, attachment, isMedia);
     }
 
     @Nullable
