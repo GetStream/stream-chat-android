@@ -72,7 +72,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
-                    .load(StreamChat.getInstance(getContext()).getUploadStorage().signGlideUrl(image))
+                    .load(StreamChat.getMediaLoader().signGlideUrl(image))
                     .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(

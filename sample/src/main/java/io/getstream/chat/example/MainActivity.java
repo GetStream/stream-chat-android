@@ -10,11 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -26,6 +21,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.State;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -33,6 +29,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
         if (offlineEnabled) {
-            client.enableOfflineStorage();
+            //client.enableOfflineStorage();
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
+                viewModel.reload();
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
             }
 
@@ -88,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
         // setup the client
         Client client = configureStreamClient();
         // example for how to observe the unread counts
-        StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
-            Log.i(TAG, String.format("Total unread message count is now %d", count));
-        });
-        StreamChat.getUnreadChannels().observe(this, (Number count) -> {
-            Log.i(TAG, String.format("There are %d channels with unread messages", count));
-        });
+        //StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
+        //    Log.i(TAG, String.format("Total unread message count is now %d", count));
+        //});
+        //StreamChat.getUnreadChannels().observe(this, (Number count) -> {
+        //    Log.i(TAG, String.format("There are %d channels with unread messages", count));
+        //});
 
         // we're using data binding in this example
         ActivityMainBinding binding =
@@ -182,51 +184,30 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
 
-        client.onSetUserCompleted(new ClientConnectionCallback() {
-            @Override
-            public void onSuccess(User user) {
-                viewModel.reload();
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
+//        client.onSetUserCompleted(new ClientConnectionCallback() {
+//            @Override
+//            public void onSuccess(User user) {
+//                viewModel.reload();
+//            }
+//
+//            @Override
+//            public void onError(String errMsg, int errCode) {
+//
+//            }
+//        });
     }
 
-    void createNewChannel(String channelName) {
-        Client client = configureStreamClient();
+    private void createNewChannel(String channelName) {
 
-        HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", channelName);
-
-        List<String> members = new ArrayList<>();
-        members.add(client.getUser().getId());
-        extraData.put("members", members);
-
-        String channelId = channelName.replaceAll(" ", "-").toLowerCase();
-
-        Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
-
-        ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
-
-        viewModel.setLoading();
-        channel.query(request, new QueryChannelCallback() {
-            @Override
-            public void onSuccess(ChannelState response) {
+        viewModel.createChannel(channelName).observe(this, state -> {
+            if (state.success()) {
+                Channel channel = state.data;
                 Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
                 intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
                 intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
                 startActivity(intent);
-                viewModel.addChannels(Arrays.asList(channel.getChannelState()));
-                viewModel.setLoadingDone();
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                viewModel.setLoadingDone();
-                Toast.makeText(MainActivity.this, errMsg, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, state.error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

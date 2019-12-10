@@ -393,7 +393,10 @@ public class MessageInputView extends RelativeLayout {
             });
         } else {
 
-            viewModel.sendMessage(input, messageInputController.getSelectedAttachments(), messageInputController.isUploadingFile(), new MessageCallback() {
+            Message message = new Message();
+            message.setAttachments(messageInputController.getSelectedAttachments());
+
+            viewModel.sendMessage(message, new MessageCallback() {
                 @Override
                 public void onSuccess(MessageResponse response) {
                     binding.ivSend.setEnabled(true);
@@ -551,17 +554,17 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-//    /**
-//     Prepare message takes the message input string and returns a message object
-//     You can overwrite this method in case you want to attach more custom properties to the message
-//     */
-//    public Message prepareMessage(String input) {
-//        Message m = new Message();
-//        m.setText(input);
-//        m.setAttachments(messageInputController.getSelectedAttachments());
-//        // set the thread id if we are viewing a thread
-//        if (viewModel.isThread())
-//            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    public Message prepareMessage(String input) {
+        Message m = new Message();
+        m.setText(input);
+        m.setAttachments(messageInputController.getSelectedAttachments());
+        // set the thread id if we are viewing a thread
+        if (viewModel.isThread())
+            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
 //        // set the current user
 //        m.setUser(viewModel.client().getUser());
 //        // Check file uploading
@@ -572,8 +575,8 @@ public class MessageInputView extends RelativeLayout {
 //            m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
 //            m.setAttachments(null);
 //        }
-//        return m;
-//    }
+        return m;
+    }
 
     public void setOnSendMessageListener(SendMessageListener l) {
         this.sendMessageListener = l;

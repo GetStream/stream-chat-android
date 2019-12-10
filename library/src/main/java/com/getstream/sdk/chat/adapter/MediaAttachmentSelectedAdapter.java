@@ -85,9 +85,10 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                             .into(binding.ivMedia);
                 }
             } else if (!TextUtils.isEmpty(attachment.getImageURL())) {
-                Glide.with(context)
-                        .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getImageURL()))
-                        .into(binding.ivMedia);
+                StreamChat.getMediaLoader().loadImageInto(attachment.getImageURL(), binding.ivMedia);
+//                Glide.with(context)
+//                        .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getImageURL()))
+//                        .into(binding.ivMedia);
             } else {
                 try {
                     if (attachment.getMime_type().equals(ModelType.attach_mime_mov) ||

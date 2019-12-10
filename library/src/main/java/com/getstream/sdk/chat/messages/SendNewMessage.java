@@ -2,21 +2,31 @@ package com.getstream.sdk.chat.messages;
 
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.users.UsersRepository;
+import com.getstream.sdk.chat.utils.UseCase;
 
 import java.util.Date;
 import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
-public class SendMessage {
+public class SendNewMessage extends UseCase {
 
     private final UsersRepository usersRepository;
+    private final MessagesRepository messagesRepository;
+    private final Client client;
 
-    public SendMessage(UsersRepository usersRepository) {
+    public SendNewMessage(
+            UsersRepository usersRepository,
+            MessagesRepository messagesRepository,
+            Client client
+    ) {
 
         this.usersRepository = usersRepository;
+        this.messagesRepository = messagesRepository;
+        this.client = client;
     }
 
     public void send(String message, List<Attachment> attachments, boolean isUploadingFile, String parentThreadId) {
@@ -31,6 +41,7 @@ public class SendMessage {
         Message m = new Message();
         m.setText(message);
         m.setAttachments(attachments);
+        m.setUser(client.getState().user);
         // set the thread id if we are viewing a thread
         if (parentThreadId != null)
             m.setParentId(parentThreadId);
@@ -48,7 +59,7 @@ public class SendMessage {
         return m;
     }
 
-    public String generateMessageID() {
+    private String generateMessageID() {
         return usersRepository.getCurrentId() + "-" + randomUUID().toString();
     }
 }

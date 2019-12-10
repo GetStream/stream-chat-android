@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.load.model.GlideUrl;
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.R;
@@ -37,19 +38,7 @@ import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
-import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
+import com.getstream.sdk.chat.rest.interfaces.*;
 import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
 import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
@@ -88,6 +77,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -140,7 +130,7 @@ public class Client{
     private BaseStorage uploadStorage;
     private APIService apiService;
     private WebSocketService webSocketService;
-    private Storage storage;
+    //private Storage storage;
 
     private EventSubscriberRegistry<ChatEventHandler> subRegistry;
     // registry for callbacks on the setUser connection
@@ -257,9 +247,7 @@ public class Client{
 
                 @Override
                 public void onConnectionChanged(Event event) {
-                    if (!event.getOnline()) {
-                        state.connected = false;
-                    }
+                    state.connected = event.getOnline();
                 }
             };
 
@@ -464,12 +452,12 @@ public class Client{
         setUser(user, listener -> listener.onSuccess(token));
     }
 
-    public boolean fromCurrentUser(UserEntity entity) {
-        String otherUserId = entity.getUserId();
-        if (otherUserId == null) return false;
-        if (state.user == null) return false;
-        return TextUtils.equals(getUserId(), otherUserId);
-    }
+    //public boolean fromCurrentUser(UserEntity entity) {
+    //    String otherUserId = entity.getUserId();
+    //    if (otherUserId == null) return false;
+    //    if (state.user == null) return false;
+    //    return TextUtils.equals(getUserId(), otherUserId);
+    //}
 
     /**
      * Creates an authorization token for development purposes.
@@ -1744,15 +1732,35 @@ public class Client{
         });
     }
 
-    public Context getContext() {
-        return context;
+    public void sendFile(Channel channel, File file, String mimeType, UploadFileCallback callback) {
+        uploadStorage.sendFile(channel, file, mimeType, callback);
+    }
+
+    public void deleteFile(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback){
+        uploadStorage.deleteFile(channel, url, callback);
+    }
+
+    public void deleteImage(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback){
+        uploadStorage.deleteImage(channel, url, callback);
+    }
+
+    public String signFileUrl(String url){
+        return uploadStorage.signFileUrl(url);
+    }
+
+    public GlideUrl signGlideUrl(String url){
+        return uploadStorage.signGlideUrl(url);
     }
 
     public void setContext(Context context) {
         this.context = context;
     }
 
-    public BaseStorage getUploadStorage() {
-        return uploadStorage;
-    }
+//    public Context getContext() {
+//        return context;
+//    }
+
+//    public BaseStorage getUploadStorage() {
+//        return uploadStorage;
+//    }
 }

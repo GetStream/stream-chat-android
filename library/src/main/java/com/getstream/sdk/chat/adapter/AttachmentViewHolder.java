@@ -183,7 +183,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
-                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachUrl))
+                .load(StreamChat.getMediaLoader().signGlideUrl(attachUrl))
                 .into(iv_media_thumb);
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());

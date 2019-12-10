@@ -8,11 +8,8 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 public class CustomChannelViewModel extends ChannelViewModel {
-    public CustomChannelViewModel(Application application, Channel channel) {
-        super(application, channel);
-    }
 
-    public CustomChannelViewModel(@NonNull Application application) {
-        super(application);
+    public CustomChannelViewModel(Application application, String channelId) {
+        super(application, channelId);
     }
 }

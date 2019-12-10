@@ -71,7 +71,7 @@ public class Utils {
     public static void circleImageLoad(ImageView view, String url) {
         Glide.with(view.getContext())
                 .asBitmap()
-                .load(StreamChat.getInstance(view.getContext()).getUploadStorage().signGlideUrl(url))
+                .load(StreamChat.getMediaLoader().signGlideUrl(url))
                 .centerCrop()
                 .into(new BitmapImageViewTarget(view) {
                     @Override

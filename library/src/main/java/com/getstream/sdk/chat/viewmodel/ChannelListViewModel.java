@@ -4,36 +4,37 @@ import android.app.Application;
 import android.os.Handler;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
+import com.getstream.sdk.chat.channels.CreateNewChannel;
+import com.getstream.sdk.chat.channels.GetChannels;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.storage.OnQueryListener;
+import com.getstream.sdk.chat.utils.ErrorCallback;
 import com.getstream.sdk.chat.utils.ResultCallback;
-import com.getstream.sdk.chat.utils.RetryPolicy;
+import com.getstream.sdk.chat.utils.State;
+import com.getstream.sdk.chat.utils.SuccessCallback;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
@@ -53,11 +54,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     private AtomicBoolean isLoadingMore;
     private boolean queryChannelDone;
     private int pageSize;
-    private int subscriptionId = 0;
-    private int recoverySubscriptionId = 0;
+    //    private int subscriptionId = 0;
+//    private int recoverySubscriptionId = 0;
     private Handler retryLooper;
-    private QueryChannelListCallback queryChannelListCallback;
-    private RetryPolicy retryPolicy;
+    //private QueryChannelListCallback queryChannelListCallback;
+    //private RetryPolicy retryPolicy;
 
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
@@ -85,39 +86,34 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         retryLooper = new Handler();
 
         // default retry policy is to retry the request 100 times
-        retryPolicy = new RetryPolicy() {
-            @Override
-            public boolean shouldRetry(Client client, Integer attempt, String errMsg, int errCode) {
-                return attempt < 100;
-            }
+//        retryPolicy = new RetryPolicy() {
+//            @Override
+//            public boolean shouldRetry(Client client, Integer attempt, String errMsg, int errCode) {
+//                return attempt < 100;
+//            }
+//
+//            @Override
+//            public Integer retryTimeout(Client client, Integer attempt, String errMsg, int errCode) {
+//                return Math.min(500 * (attempt * attempt + 1), 30000);
+//            }
+//        };
 
-            @Override
-            public Integer retryTimeout(Client client, Integer attempt, String errMsg, int errCode) {
-                return Math.min(500 * (attempt * attempt + 1), 30000);
-            }
-        };
+        //TODO: Refactoring: add retry policy to client level
     }
 
-    public RetryPolicy getRetryPolicy() {
-        return retryPolicy;
-    }
-
-    public void setRetryPolicy(RetryPolicy retryPolicy) {
-        this.retryPolicy = retryPolicy;
-    }
+//    public RetryPolicy getRetryPolicy() {
+//        return retryPolicy;
+//    }
+//
+//    public void setRetryPolicy(RetryPolicy retryPolicy) {
+//        this.retryPolicy = retryPolicy;
+//    }
 
     public LiveData<List<Channel>> getChannels() {
         return channels;
     }
 
-    private void setChannels(List<ChannelState> newChannelsState) {
-        // - offline loads first
-        // - after that we query the API and load more channels
-        // - it's possible that the offline results no longer match the query (so we should remove them)
-        List<Channel> newChannels = new ArrayList<>();
-        for (ChannelState chan : newChannelsState) {
-            newChannels.add(chan.getChannel());
-        }
+    private void setChannels(List<Channel> newChannels) {
         channels.postValue(newChannels);
     }
 
@@ -133,18 +129,36 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         this.pageSize = pageSize;
     }
 
+    public LiveData<State<Channel>> createChannel(String name) {
+
+        MutableLiveData<State<Channel>> result = new MutableLiveData<>();
+
+        setLoading();
+
+        new CreateNewChannel(StreamChat.getChannelsRepository(), StreamChat.client()).create(name).subscribe(data -> {
+            setLoadingDone();
+            addChannels(Arrays.asList(data.getChannelState()));
+            result.postValue(new State<>(data));
+        }, throwable -> {
+            setLoadingDone();
+            result.postValue(new State<>(throwable));
+        });
+
+        return result;
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
 
         Log.d(TAG, "onCleared");
 
-        if (subscriptionId != 0) {
-            client().removeEventHandler(subscriptionId);
-        }
-        if (recoverySubscriptionId != 0) {
-            client().removeEventHandler(recoverySubscriptionId);
-        }
+//        if (subscriptionId != 0) {
+//            client().removeEventHandler(subscriptionId);
+//        }
+//        if (recoverySubscriptionId != 0) {
+//            client().removeEventHandler(recoverySubscriptionId);
+//        }
     }
 
     public boolean setLoading() {
@@ -262,30 +276,31 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     private void setupConnectionRecovery() {
-        recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onConnectionRecovered(Event event) {
-                Log.i(TAG, "onConnectionRecovered");
-                if (!queryChannelDone) {
-                    queryChannelsInner(0);
-                    return;
-                }
-                setLoadingDone();
-                boolean changed = false;
-                List<Channel> channelCopy = channels.getValue();
-                for (Channel channel : client().getActiveChannels()) {
-                    int idx = -1;
-                    if (channelCopy != null) {
-                        idx = channelCopy.lastIndexOf(channel);
-                    }
-                    if (idx != -1) {
-                        channelCopy.set(idx, channel);
-                        changed = true;
-                    }
-                }
-                if (changed) channels.postValue(channelCopy);
-            }
-        });
+        //TODO: Refactoring: handle broadcast connectivity event
+//        recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
+//            @Override
+//            public void onConnectionRecovered(Event event) {
+//                Log.i(TAG, "onConnectionRecovered");
+//                if (!queryChannelDone) {
+//                    queryChannelsInner(0);
+//                    return;
+//                }
+//                setLoadingDone();
+//                boolean changed = false;
+//                List<Channel> channelCopy = channels.getValue();
+//                for (Channel channel : client().getActiveChannels()) {
+//                    int idx = -1;
+//                    if (channelCopy != null) {
+//                        idx = channelCopy.lastIndexOf(channel);
+//                    }
+//                    if (idx != -1) {
+//                        channelCopy.set(idx, channel);
+//                        changed = true;
+//                    }
+//                }
+//                if (changed) channels.postValue(channelCopy);
+//            }
+//        });
     }
 
     private EventHandler eventHandler;
@@ -411,10 +426,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     synchronized private void initEventHandlers() {
-        if (subscriptionId != 0) {
-            client().removeEventHandler(subscriptionId);
-        }
-        subscriptionId = client().addEventHandler(eventHandler);
+//        if (subscriptionId != 0) {
+//            client().removeEventHandler(subscriptionId);
+//        }
+//        subscriptionId = client().addEventHandler(eventHandler);
     }
 
     private boolean updateChannel(Channel channel, boolean moveToTop) {
@@ -471,63 +486,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         channels.postValue(channelCopy);
     }
 
-    private void queryChannelsInner(int attempt) {
-
-        QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
-                .withLimit(pageSize)
-                .withMessageLimit(20);
-
-        QueryChannelListCallback queryCallback = new QueryChannelListCallback() {
-            @Override
-            public void onSuccess(QueryChannelsResponse response) {
-                queryChannelDone = true;
-                setLoadingDone();
-
-                Log.i(TAG, "onSendMessageSuccess for loading the channels");
-                // remove the offline channels before adding the new ones
-                setChannels(response.getChannelStates());
-
-                if (response.getChannelStates().size() < pageSize) {
-                    Log.i(TAG, "reached end of pagination");
-                    reachedEndOfPagination = true;
-                }
-
-                if (queryChannelListCallback != null) {
-                    queryChannelListCallback.onSuccess(response);
-                }
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, "onError for loading the channels " + errMsg);
-                Boolean shouldRetry = retryPolicy.shouldRetry(client(), attempt, errMsg, errCode);
-                if (!shouldRetry) {
-                    Log.e(TAG, "tried more than 100 times, give up now");
-                    return;
-                }
-                if (!client().isConnected()) {
-                    return;
-                }
-                int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
-                Log.d(TAG, "retrying in " + sleep);
-                retryLooper.postDelayed(() -> {
-                    queryChannelsInner(attempt + 1);
-                }, sleep);
-
-                if (queryChannelListCallback != null) {
-                    queryChannelListCallback.onError(errMsg, errCode);
-                }
-            }
-        };
-        client().queryChannels(request, queryCallback);
+    public void loadMore() {
+        queryChannels();
     }
 
-    /**
-     * query channels
-     *
-     * @param callback the result callback
-     */
-    public void queryChannels(OnQueryListener<List<ChannelState>> callback) {
+    private void queryChannels() {
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) {
             Log.i(TAG, "already loading, skip queryChannels");
@@ -536,100 +499,102 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
                 .withMessageLimit(20);
-//        client().getStorage().selectChannelStates(request.query().getId(), 100, new OnQueryListener<List<ChannelState>>() {
-//            @Override
-//            public void onSuccess(List<ChannelState> channelStates) {
-//                if (channels != null && channelStates != null)
-//                    addChannels(channelStates);
-//                callback.onSuccess(channelStates);
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                Log.w(TAG, String.format("Failed to read channel list from offline storage, error %s", e.toString()));
-//                callback.onFailure(e);
-//            }
-//        });
-        queryChannelsInner(0);
-    }
-
-    public void queryChannels() {
-        queryChannels(new OnQueryListener<List<ChannelState>>() {
-            @Override
-            public void onSuccess(List<ChannelState> channelStates) {
-                Log.i(TAG, "Read from local cache...");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                Log.e(TAG, e.getLocalizedMessage());
-            }
-        });
-    }
-
-    /**
-     * loads more channels, use this to load a previous page
-     *
-     * @param callback the result callback
-     */
-    public void loadMore(QueryChannelListCallback callback) {
-        if (!client().isConnected()) return;
-
-        if (isLoading.get()) {
-            Log.i(TAG, "already loading, skip loading more");
-            return;
-        }
-        if (reachedEndOfPagination) {
-            Log.i(TAG, "already reached end of pagination, skip loading more");
-            return;
-        }
-        if (!setLoadingMore()) {
-            Log.i(TAG, "already loading next page, skip loading more");
-            return;
-        }
-
-        QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
-                .withLimit(pageSize)
-                .withMessageLimit(20);
 
         if (channels.getValue() != null)
             request = request.withOffset(channels.getValue().size());
 
-        client().queryChannels(request, new QueryChannelListCallback() {
+        new GetChannels(StreamChat.getChannelsRepository()).get(request).subscribe(new SuccessCallback<List<Channel>>() {
             @Override
-            public void onSuccess(QueryChannelsResponse response) {
-                Log.i(TAG, "onSendMessageSuccess for loading more channels");
-                setLoadingMoreDone();
-                addChannels(response.getChannelStates());
-                reachedEndOfPagination = response.getChannelStates().size() < pageSize;
+            public void onSuccess(List<Channel> data) {
+                queryChannelDone = true;
+                setLoadingDone();
 
-                if (reachedEndOfPagination)
+                Log.i(TAG, "onSendMessageSuccess for loading the channels");
+                // remove the offline channels before adding the new ones
+
+                setChannels(data);
+
+                if (data.size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
-                callback.onSuccess(response);
-            }
+                    reachedEndOfPagination = true;
+                }
 
+//                if (queryChannelListCallback != null) {
+//                    queryChannelListCallback.onSuccess(response);
+//                }
+            }
+        }, new ErrorCallback() {
             @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, "onError for loading the channels" + errMsg);
-                setLoadingMoreDone();
-                callback.onError(errMsg, errCode);
+            public void error(Throwable throwable) {
+
+                //TODO: Refactoring: show error
+
+//                Log.e(TAG, "onError for loading the channels " + errMsg);
+//                Boolean shouldRetry = retryPolicy.shouldRetry(client(), attempt, errMsg, errCode);
+//                if (!shouldRetry) {
+//                    Log.e(TAG, "tried more than 100 times, give up now");
+//                    return;
+//                }
+//                if (!client().isConnected()) {
+//                    return;
+//                }
+//                int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
+//                Log.d(TAG, "retrying in " + sleep);
+//                retryLooper.postDelayed(() -> {
+//                    queryChannelsInner(attempt + 1);
+//                }, sleep);
+//
+//                if (queryChannelListCallback != null) {
+//                    queryChannelListCallback.onError(errMsg, errCode);
+//                }
             }
         });
     }
 
-    public void loadMore() {
-        loadMore(new QueryChannelListCallback() {
-            @Override
-            public void onSuccess(QueryChannelsResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-
-            }
-        });
-    }
+//    public void loadMore() {
+//        if (!client().isConnected()) return;
+//
+//        if (isLoading.get()) {
+//            Log.i(TAG, "already loading, skip loading more");
+//            return;
+//        }
+//        if (reachedEndOfPagination) {
+//            Log.i(TAG, "already reached end of pagination, skip loading more");
+//            return;
+//        }
+//        if (!setLoadingMore()) {
+//            Log.i(TAG, "already loading next page, skip loading more");
+//            return;
+//        }
+//
+//        QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
+//                .withLimit(pageSize)
+//                .withMessageLimit(20);
+//
+//        if (channels.getValue() != null)
+//            request = request.withOffset(channels.getValue().size());
+//
+//        client().queryChannels(request, new QueryChannelListCallback() {
+//            @Override
+//            public void onSuccess(QueryChannelsResponse response) {
+//                Log.i(TAG, "onSendMessageSuccess for loading more channels");
+//                setLoadingMoreDone();
+//                addChannels(response.getChannelStates());
+//                reachedEndOfPagination = response.getChannelStates().size() < pageSize;
+//
+//                if (reachedEndOfPagination)
+//                    Log.i(TAG, "reached end of pagination");
+//                callback.onSuccess(response);
+//            }
+//
+//            @Override
+//            public void onError(String errMsg, int errCode) {
+//                Log.e(TAG, "onError for loading the channels" + errMsg);
+//                setLoadingMoreDone();
+//                callback.onError(errMsg, errCode);
+//            }
+//        });
+//    }
 
     private void clean() {
         retryLooper.removeCallbacksAndMessages(null);
@@ -646,16 +611,15 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public void reload() {
         clean();
         queryChannels();
-
     }
 
-    public QueryChannelListCallback getQueryChannelListCallback() {
-        return queryChannelListCallback;
-    }
-
-    public void setQueryChannelListCallback(QueryChannelListCallback queryChannelListCallback) {
-        this.queryChannelListCallback = queryChannelListCallback;
-    }
+//    public QueryChannelListCallback getQueryChannelListCallback() {
+//        return queryChannelListCallback;
+//    }
+//
+//    public void setQueryChannelListCallback(QueryChannelListCallback queryChannelListCallback) {
+//        this.queryChannelListCallback = queryChannelListCallback;
+//    }
 
     class LazyQueryChannelLiveData<T> extends MutableLiveData<T> {
         protected ChannelListViewModel viewModel;

@@ -2,25 +2,27 @@ package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.channels.GetChannelNameOrMembers;
+import com.getstream.sdk.chat.channels.GetLastActive;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
+import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.TextViewUtils;
+import com.getstream.sdk.chat.users.GetOtherUsers;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
+import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static com.getstream.sdk.chat.enums.OnlineStatus.CONNECTED;
@@ -73,8 +75,11 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
 
-        StreamChat.getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
-        binding.setOnlineStatus(StreamChat.getOnlineStatus().getValue() == CONNECTED);
+        viewModel.getOnlineState().observe(lifecycleOwner, this::onlineStatus);
+        binding.setOnlineStatus(viewModel.getOnlineState().getValue() == CONNECTED);
+
+        //StreamChat.getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
+        //binding.setOnlineStatus(StreamChat.getOnlineStatus().getValue() == CONNECTED);
     }
 
     protected void onlineStatus(OnlineStatus status) {
@@ -82,12 +87,12 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void setHeaderTitle(ChannelState channelState) {
-        String channelName = channelState.getChannelNameOrMembers();
-        binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText());
+        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersRepository())).getChannelNameOrMembers(channelState.getChannel());
+        binding.setChannelName(!TextUtils.isEmpty(channelName) ? channelName : style.getChannelWithoutNameText());
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {
-        Date lastActive = channelState.getLastActive();
+        Date lastActive = new GetLastActive(StreamChat.getUsersRepository()).getLastActive(channelState.getChannel());
         Date now = new Date();
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
 
@@ -99,16 +104,17 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void configHeaderAvatar(ChannelState channelState) {
+        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersRepository()).getOtherUsers(channelState.getChannel());
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
-        avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), channelState.getOtherUsers(), style);
+        avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
     }
 
     private StreamViewChannelHeaderBinding initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = StreamViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(view ->{
-            if(viewModel.isThread())
+        binding.tvBack.setOnClickListener(view -> {
+            if (viewModel.isThread())
                 viewModel.initThread();
             else
                 ((Activity) getContext()).finish();

@@ -29,15 +29,16 @@ public class AttachmentViewHolderImgur extends BaseAttachmentViewHolder {
                      MessageListViewStyle style,
                      MessageListView.AttachmentClickListener clickListener,
                      MessageListView.MessageLongClickListener longClickListener) {
-        super.bind(context, messageListItem, attachment,style, clickListener, longClickListener);
+        super.bind(context, messageListItem, attachment, style, clickListener, longClickListener);
 
         Drawable background = getBubbleHelper().getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
         iv_media_thumb.setOnClickListener(this);
         iv_media_thumb.setOnLongClickListener(this);
 
-        Glide.with(context)
-                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
-                .into(iv_media_thumb);
+        StreamChat.getMediaLoader().loadImageInto(
+                attachment.getThumbURL(),
+                iv_media_thumb
+        );
     }
 }

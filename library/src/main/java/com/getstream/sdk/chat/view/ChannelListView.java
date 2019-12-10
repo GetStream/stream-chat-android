@@ -137,7 +137,7 @@ public class ChannelListView extends RecyclerView {
     }
 
     @Override
-    public void onVisibilityChanged(View view, int visibility){
+    public void onVisibilityChanged(View view, int visibility) {
         super.onVisibilityChanged(view, visibility);
         if (visibility == 0 && adapter != null)
             adapter.notifyDataSetChanged();

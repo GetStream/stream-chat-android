@@ -17,4 +17,9 @@ public class UsersRepositoryImpl implements UsersRepository {
     public User getUser(String userId) {
         return null;
     }
+
+    @Override
+    public boolean isCurrentUser(String userId) {
+        return false;
+    }
 }

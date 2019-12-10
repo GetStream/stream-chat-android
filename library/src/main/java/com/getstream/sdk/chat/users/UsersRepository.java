@@ -10,4 +10,6 @@ public interface UsersRepository {
     String getCurrentId();
 
     User getUser(String userId);
+
+    boolean isCurrentUser(String userId);
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.room.Transaction;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.channels.ComputeLastMessage;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
@@ -17,6 +18,7 @@ import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.users.UsersRepository;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+import static java.util.UUID.randomUUID;
 
 public class StreamStorage implements Storage {
 
@@ -36,7 +39,7 @@ public class StreamStorage implements Storage {
     final String TAG = StreamStorage.class.getSimpleName();
 
     private Boolean enabled;
-    private Client client;
+    private final UsersRepository usersRepository;
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
@@ -45,8 +48,8 @@ public class StreamStorage implements Storage {
     private ChannelsDao channelsDao;
     private QueryChannelsQDao queryChannelsQDao;
 
-    public StreamStorage(Client client, Context context, Boolean enabled) {
-        this.client = client;
+    public StreamStorage(UsersRepository usersRepository, Context context, Boolean enabled) {
+        this.usersRepository = usersRepository;
         this.context = context;
         this.enabled = enabled;
         if (enabled) {
@@ -58,11 +61,11 @@ public class StreamStorage implements Storage {
         }
     }
 
-    public static StreamStorage getStorage(Client client, final Context context, final boolean enabled) {
+    public static StreamStorage getStorage(UsersRepository usersRepository, final Context context, final boolean enabled) {
         if (INSTANCE == null) {
             synchronized (StreamStorage.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new StreamStorage(client, context, enabled);
+                    INSTANCE = new StreamStorage(usersRepository, context, enabled);
                 }
             }
         }
@@ -105,7 +108,7 @@ public class StreamStorage implements Storage {
 
         for (Channel c : channels) {
             c.preStorage();
-            c.getLastState().preStorage();
+            preStorage(c.getLastState());;
         }
 
         new AsyncTask<Void, Void, Void>() {
@@ -116,6 +119,11 @@ public class StreamStorage implements Storage {
                 return null;
             }
         }.execute();
+    }
+
+    public void preStorage(ChannelState state) {
+        state.setCid(state.getChannel().getCid());
+        state.lastMessage = new ComputeLastMessage().computeLastMessage(state.getChannel());
     }
 
     @Override
@@ -134,7 +142,7 @@ public class StreamStorage implements Storage {
 
         for (Channel c : channels) {
             c.preStorage();
-            c.getLastState().preStorage();
+            preStorage(c.getLastState());
             // gather the users from members, read, last message and created by
             users.add(c.getCreatedByUser());
             for (Member m : c.getLastState().getMembers()) {
@@ -144,7 +152,7 @@ public class StreamStorage implements Storage {
             for (ChannelUserRead r : c.getLastState().getReads()) {
                 users.add(r.getUser());
             }
-            Message lastMessage = c.getLastState().computeLastMessage();
+            Message lastMessage = new ComputeLastMessage().computeLastMessage(c);
             if (lastMessage != null) {
                 users.add(lastMessage.getUser());
             }
@@ -223,7 +231,7 @@ public class StreamStorage implements Storage {
     public void insertMessageForChannel(Channel channel, Message message) {
         // set the ids etc
         if (message.getId() == null) {
-            String clientSideID = getClient().generateMessageID();
+            String clientSideID = generateMessageID();
             message.setId(clientSideID);
         }
         if (message.getCreatedAt() == null) {
@@ -369,14 +377,6 @@ public class StreamStorage implements Storage {
         }
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     @Transaction
     private void insertChannelStateInTransaction(List<User> users, QueryChannelsQ query, List<Channel> channels, List<Message> messages) {
         insertUsersUnique(users);
@@ -415,7 +415,8 @@ public class StreamStorage implements Storage {
             for (ChannelUserRead r : c.getLastState().getReads()) {
                 userIDs.add(r.getUserId());
             }
-            Message lastMessage = c.getLastState().computeLastMessage();
+
+            Message lastMessage = new ComputeLastMessage().computeLastMessage(c);
             if (lastMessage != null) {
                 userIDs.add(lastMessage.getUser().getId());
             }
@@ -441,7 +442,7 @@ public class StreamStorage implements Storage {
                 if (u == null) continue;
                 r.setUser(u);
             }
-            Message lastMessage = c.getLastState().computeLastMessage();
+            Message lastMessage = new ComputeLastMessage().computeLastMessage(c);
             if (lastMessage != null) {
                 lastMessage.setUser(userMap.get(lastMessage.getUserID()));
             }
@@ -563,6 +564,10 @@ public class StreamStorage implements Storage {
             }
             return null;
         }
+    }
+
+    public String generateMessageID() {
+        return usersRepository.getCurrentId() + "-" + randomUUID().toString();
     }
 
 }

@@ -62,14 +62,15 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
      */
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
-        webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+        StreamChat.getMediaLoader().loadFileInto(url, webView);
+        //webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
     }
-
 
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
+            StreamChat.getMediaLoader().loadFileInto(url, view);
+            //view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
             return true;
         }
 

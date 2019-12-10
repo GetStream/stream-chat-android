@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MessagesRepository {
     Subscription<List<Message>> getMessages(int offset, int limit, String channelId);
+
+    Subscription<Void> sendMessage(Message message);
 }

@@ -157,7 +157,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
-                    .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
+                    .load(StreamChat.getMediaLoader().signGlideUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 

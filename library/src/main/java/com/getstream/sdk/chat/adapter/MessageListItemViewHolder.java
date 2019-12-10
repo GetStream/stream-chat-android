@@ -35,6 +35,7 @@ import com.getstream.sdk.chat.view.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
@@ -115,7 +116,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
         iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
-        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
         rv_reaction.setHasFixedSize(true);
     }
@@ -268,7 +269,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
         style.messageUserNameText.apply(tv_username);
 
-        if(messageListItem.isMine()) {
+        if (messageListItem.isMine()) {
             style.messageDateTextMine.apply(tv_messagedate);
         } else {
             style.messageDateTextTheirs.apply(tv_messagedate);
@@ -383,7 +384,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if(messageListItem.isMine()) {
+        if (messageListItem.isMine()) {
             style.messageTextMine.apply(tv_text);
         } else {
             style.messageTextTheirs.apply(tv_text);
@@ -413,7 +414,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     private void configMessageTextClickListener() {
         tv_text.setOnClickListener(view -> {
             Log.i(TAG, "onMessageClick: " + position);
-            if (isFailedMessage() && !StreamChat.getInstance(context).isConnected()) return;
+            // if (isFailedMessage() && !StreamChat.getInstance(context).isConnected()) return;
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
         });
@@ -434,7 +435,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     isLongClick = false;
                     return;
                 }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(StreamChat.getInstance(context).getUploadStorage().signFileUrl(url)));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(StreamChat.getMediaLoader().signFileUrl(url)));
                 context.startActivity(browserIntent);
             }
         });

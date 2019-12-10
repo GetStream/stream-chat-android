@@ -572,7 +572,7 @@ public class Channel {
                           @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
 
-        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
+        client.sendFile(this, file, mimeType, fileCallback);
     }
 
     public void sendFile(@NotNull String filePath,
@@ -580,7 +580,7 @@ public class Channel {
                          @NotNull UploadFileCallback fileCallback) {
         File file = new File(filePath);
 
-        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
+        client.sendFile(this, file, mimeType, fileCallback);
     }
 
     /**
@@ -590,7 +590,7 @@ public class Channel {
      * @param callback the result callback
      */
     public void deleteFile(@NotNull String url, @NotNull CompletableCallback callback) {
-        client.getUploadStorage().deleteFile(this, url, callback);
+        client.deleteFile(this, url, callback);
     }
 
     /**
@@ -600,7 +600,7 @@ public class Channel {
      * @param callback the result callback
      */
     public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
-        client.getUploadStorage().deleteImage(this, url, callback);
+        client.deleteImage(this, url, callback);
     }
 
     // endregion

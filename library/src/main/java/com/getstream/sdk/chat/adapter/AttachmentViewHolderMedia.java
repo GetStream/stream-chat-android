@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.GiphyAction;
@@ -155,10 +154,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         final String type = attachment.getType();
         configImageThumbBackground();
 
-        Glide.with(context)
-                .load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
-                .placeholder(R.drawable.stream_placeholder)
-                .into(iv_media_thumb);
+        StreamChat.getMediaLoader().loadImageInto(ModelType.getAssetUrl(attachment), iv_media_thumb, R.drawable.stream_placeholder);
 
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachment.getTitle());
