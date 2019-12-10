@@ -17,7 +17,6 @@ import java.util.List;
 public class MessageViewHolderFactory {
     private static String TAG = MessageViewHolderFactory.class.getName();
 
-
     public static final int MESSAGEITEM_DATE_SEPARATOR = 1;
     public static final int MESSAGEITEM_MESSAGE = 2;
     public static final int MESSAGEITEM_TYPING = 3;
@@ -73,7 +72,6 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == MESSAGEITEM_MESSAGE) {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
-            holder.setViewHolderFactory(this);
             holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());

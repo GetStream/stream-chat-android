@@ -16,13 +16,17 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -38,7 +42,16 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private TextView tv_action_send, tv_action_shuffle, tv_action_cancel;
     private ProgressBar progressBar;
 
+    private Context context;
+    private Message message;
+    private Attachment attachment;
+    private MessageListItem messageListItem;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageListView.AttachmentClickListener clickListener;
+    private MessageListView.MessageLongClickListener longClickListener;
     private MessageListView.GiphySendListener giphySendListener;
+
     private Client client;
     private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
         @Override
@@ -73,23 +86,33 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     MessageListItem messageListItem,
-                     Attachment attachment,
-                     MessageListView.AttachmentClickListener clickListener,
-                     MessageListView.MessageLongClickListener longClickListener) {
-
-        super.bind(context, messageListItem, attachment, clickListener, longClickListener);
+    public void bind(@NonNull Context context,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull Message message,
+                     @NonNull Attachment attachment,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @Nullable MessageListView.AttachmentClickListener clickListener,
+                     @Nullable MessageListView.MessageLongClickListener longClickListener) {
+        this.context = context;
+        this.messageListItem = messageListItem;
+        this.message = message;
+        this.attachment = attachment;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
         applyStyle();
         configMediaAttach();
         configAction();
+        configClickListeners();
     }
 
 
     private void configImageThumbBackground() {
-        Drawable background = getBubbleHelper().getDrawableForAttachment(message,
-                getMessageListItem().isMine(),
-                getMessageListItem().getPositions(),
+        Drawable background = bubbleHelper.getDrawableForAttachment(message,
+                messageListItem.isMine(),
+                messageListItem.getPositions(),
                 attachment);
         iv_media_thumb.setShape(context, background);
     }
@@ -168,14 +191,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         iv_command_logo.setVisibility(type.equals(ModelType.attach_giphy) ? View.VISIBLE : View.GONE);
 
         if (tv_media_des.getVisibility() == View.VISIBLE || tv_media_title.getVisibility() == View.VISIBLE) {
-            Drawable background = getBubbleHelper().getDrawableForAttachmentDescription(getMessageListItem().getMessage(), getMessageListItem().isMine(), getMessageListItem().getPositions());
+            Drawable background = bubbleHelper.getDrawableForAttachmentDescription(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
             cl_des.setBackground(background);
         }
     }
 
     private void applyStyle() {
 
-        if (getMessageListItem().isMine()) {
+        if (messageListItem.isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
             style.attachmentDescriptionTextMine.apply(tv_media_des);
         } else {
@@ -193,5 +216,18 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
         this.giphySendListener = giphySendListener;
+    }
+
+    private void configClickListeners(){
+        iv_media_thumb.setOnClickListener(view -> {
+            if (clickListener != null)
+                clickListener.onAttachmentClick(message, attachment);
+        });
+
+        iv_media_thumb.setOnLongClickListener(view -> {
+            if (longClickListener != null)
+                longClickListener.onMessageLongClick(message);
+            return true;
+        });
     }
 }

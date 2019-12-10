@@ -13,25 +13,15 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
 
-    protected MessageListView.BubbleHelper bubbleHelper;
-    protected MessageListViewStyle style;
-
     public BaseMessageListItemViewHolder(int resId, ViewGroup parent) {
         super(LayoutInflater.from(parent.getContext()).inflate(resId, parent, false));
     }
 
-    public abstract void bind(Context context,
-                              ChannelState channelState,
+    public abstract void bind(@NonNull Context context,
+                              @NonNull ChannelState channelState,
                               @NonNull MessageListItem messageListItem,
+                              @NonNull MessageListViewStyle style,
+                              @NonNull MessageListView.BubbleHelper bubbleHelper,
+                              @NonNull MessageViewHolderFactory factory,
                               int position);
-
-    public abstract void setViewHolderFactory(MessageViewHolderFactory factory);
-
-    public void setStyle(MessageListViewStyle style){
-        this.style = style;
-    }
-
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-    }
 }
