@@ -176,7 +176,7 @@ public class MessageInputController {
                         Attachment attachment = getAttachment(attachments, position);
                         if (attachment == null) return;
                         mediaAttachmentAdapter.notifyItemChanged(position);
-                        updateComposerViewBySelectedMedia(attachments, attachment);
+                        updateComposerView(attachments, attachment, true);
                     });
                     binding.rvMedia.setAdapter(mediaAttachmentAdapter);
                 }else{
@@ -188,7 +188,7 @@ public class MessageInputController {
                 // edit
                 if (editAttachments != null) {
                     binding.rvComposer.setVisibility(View.VISIBLE);
-                    setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
+                    setSelectedAttachmentAdapter(attachments, true);
                 }
             });
         } else {
@@ -203,7 +203,7 @@ public class MessageInputController {
                         Attachment attachment = getAttachment(attachments, position);
                         if (attachment == null) return;
                         fileAttachmentAdapter.notifyDataSetChanged();
-                        updateComposerViewBySelectedFile(attachments, attachment);
+                        updateComposerView(attachments, attachment, false);
                     });
                 } else {
                     Utils.showMessage(context, context.getResources().getString(R.string.stream_no_file_error));
@@ -213,7 +213,7 @@ public class MessageInputController {
                 // edit
                 if (editAttachments != null) {
                     binding.lvComposer.setVisibility(View.VISIBLE);
-                    setSelectedFileAttachmentListAdapter(attachments);
+                    setSelectedAttachmentAdapter(attachments, false);
                 }
             });
         }
@@ -245,49 +245,61 @@ public class MessageInputController {
 
     // region File
 
-    private void updateComposerViewBySelectedMedia(List<Attachment> attachments, Attachment attachment) {
-        binding.rvComposer.setVisibility(View.VISIBLE);
+    private void updateComposerView(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
+        if (isMedia)
+            binding.rvComposer.setVisibility(View.VISIBLE);
+        else
+            binding.lvComposer.setVisibility(View.VISIBLE);
+
         if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
+
         if (attachment.config.isSelected()) {
             selectedAttachments.add(attachment);
             uploadingFile = true;
             UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
                 @Override
                 public void onSuccess(UploadFileResponse response) {
-                    binding.setActiveMessageSend(true);
                     uploadingFile = false;
-                    File file = new File(attachment.config.getFilePath());
-                    if (attachment.getType().equals(ModelType.attach_image)) {
+                    binding.setActiveMessageSend(true);
+                    attachmentListener.onAddAttachments();
+
+                    if (isMedia && attachment.getType().equals(ModelType.attach_image)){
+                        File file = new File(attachment.config.getFilePath());
                         attachment.setImageURL(response.getFileUrl());
                         attachment.setFallback(file.getName());
-                    } else {
-                        attachment.setTitle(file.getName());
-                        long size = file.length();
-                        attachment.setFile_size((int) size);
+                    }else{
                         attachment.setAssetURL(response.getFileUrl());
                     }
+
                     attachment.config.setUploaded(true);
-                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
-                    attachmentListener.onAddAttachments();
+                    if (isMedia)
+                        selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                    else
+                        selectedFileAttachmentAdapter.notifyDataSetChanged();
+
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    binding.setActiveMessageSend(true);
                     uploadingFile = false;
+                    binding.setActiveMessageSend(true);
                     attachment.config.setSelected(false);
                     Utils.showMessage(context, errMsg);
-                    updateComposerViewBySelectedMedia(attachments, attachment);
+                    updateComposerView(attachments, attachment, true);
                 }
 
                 @Override
                 public void onProgress(Integer percentage) {
-                    attachment.config.setProgress(percentage);
-                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
                     uploadingFile = true;
+                    attachment.config.setProgress(percentage);
+                    if (isMedia)
+                        selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                    else
+                        selectedFileAttachmentAdapter.notifyDataSetChanged();
                 }
             };
-            if (attachment.getType().equals(ModelType.attach_image)) {
+
+            if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
                 channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
             } else {
                 channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
@@ -295,7 +307,7 @@ public class MessageInputController {
         } else
             selectedAttachments.remove(attachment);
 
-        setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
+        setSelectedAttachmentAdapter(attachments, isMedia);
 
         if (selectedAttachments.size() > 0) {
             viewModel.setInputType(InputType.SELECT);
@@ -305,13 +317,40 @@ public class MessageInputController {
         }
     }
 
-    private void setSelectedMediaAttachmentRecyclerViewAdapter(final List<Attachment> attachments) {
-        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
-            Attachment attachment1 = selectedAttachments.get(position);
-            attachment1.config.setSelected(false);
-            selectedAttachments.remove(attachment1);
-            selectedMediaAttachmentAdapter.notifyDataSetChanged();
-            if (attachments != null) {
+    private void setSelectedAttachmentAdapter(final List<Attachment> attachments, boolean isMedia) {
+        if (isMedia){
+            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
+                Attachment attachment1 = selectedAttachments.get(position);
+                attachment1.config.setSelected(false);
+                selectedAttachments.remove(attachment1);
+                selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                if (attachments != null) {
+                    int position_ = -1;
+                    for (int i = 0; i < attachments.size(); i++) {
+                        Attachment attachment2 = attachments.get(i);
+                        if (attachment2.config.getFilePath().equals(attachment1.config.getFilePath())) {
+                            position_ = i;
+                            break;
+                        }
+                    }
+                    if (position_ != -1)
+                        mediaAttachmentAdapter.notifyItemChanged(position_);
+                }
+
+                if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
+                    viewModel.setInputType(InputType.DEFAULT);
+                    binding.setActiveMessageSend(false);
+                }
+            });
+            binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
+        }else{
+            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
+            binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
+            binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
+                Attachment attachment1 = selectedAttachments.get(position);
+                attachment1.config.setSelected(false);
+                selectedAttachments.remove(attachment1);
+                selectedFileAttachmentAdapter.notifyDataSetChanged();
                 int position_ = -1;
                 for (int i = 0; i < attachments.size(); i++) {
                     Attachment attachment2 = attachments.get(i);
@@ -321,15 +360,13 @@ public class MessageInputController {
                     }
                 }
                 if (position_ != -1)
-                    mediaAttachmentAdapter.notifyItemChanged(position_);
-            }
-
-            if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                viewModel.setInputType(InputType.DEFAULT);
-                binding.setActiveMessageSend(false);
-            }
-        });
-        binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
+                    fileAttachmentAdapter.notifyDataSetChanged();
+                if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
+                    viewModel.setInputType(InputType.DEFAULT);
+                    binding.setActiveMessageSend(false);
+                }
+            });
+        }
     }
 
     public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
@@ -340,76 +377,6 @@ public class MessageInputController {
         initLoadAttachemtView();
         AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
-    }
-
-    private void updateComposerViewBySelectedFile(List<Attachment> attachments, Attachment attachment) {
-        binding.lvComposer.setVisibility(View.VISIBLE);
-        if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
-        if (attachment.config.isSelected()) {
-            selectedAttachments.add(attachment);
-            uploadingFile = true;
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
-                @Override
-                public void onSuccess(UploadFileResponse response) {
-                    binding.setActiveMessageSend(true);
-                    uploadingFile = false;
-                    attachment.setAssetURL(response.getFileUrl());
-                    attachment.config.setUploaded(true);
-                    selectedFileAttachmentAdapter.notifyDataSetChanged();
-                    attachmentListener.onAddAttachments();
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    attachment.config.setSelected(false);
-                    uploadingFile = false;
-                    Utils.showMessage(context, errMsg);
-                    updateComposerViewBySelectedFile(attachments, attachment);
-                }
-
-                @Override
-                public void onProgress(Integer percentage) {
-                    uploadingFile = true;
-                    attachment.config.setProgress(percentage);
-                    selectedFileAttachmentAdapter.notifyDataSetChanged();
-                }
-            });
-        } else
-            selectedAttachments.remove(attachment);
-
-        setSelectedFileAttachmentListAdapter(attachments);
-
-        if (selectedAttachments.size() > 0) {
-            viewModel.setInputType(InputType.SELECT);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
-        }
-    }
-
-    private void setSelectedFileAttachmentListAdapter(final List<Attachment> attachments) {
-        selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
-        binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
-        binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
-            Attachment attachment1 = selectedAttachments.get(position);
-            attachment1.config.setSelected(false);
-            selectedAttachments.remove(attachment1);
-            selectedFileAttachmentAdapter.notifyDataSetChanged();
-            int position_ = -1;
-            for (int i = 0; i < attachments.size(); i++) {
-                Attachment attachment2 = attachments.get(i);
-                if (attachment2.config.getFilePath().equals(attachment1.config.getFilePath())) {
-                    position_ = i;
-                    break;
-                }
-            }
-            if (position_ != -1)
-                fileAttachmentAdapter.notifyDataSetChanged();
-            if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                viewModel.setInputType(InputType.DEFAULT);
-                binding.setActiveMessageSend(false);
-            }
-        });
     }
 
     public void initSendMessage() {
@@ -453,7 +420,7 @@ public class MessageInputController {
             attachment.setType(ModelType.attach_file);
             attachment.setMime_type(ModelType.attach_mime_mp4);
         }
-        updateComposerViewBySelectedMedia(null, attachment);
+        updateComposerView(null, attachment, true);
     }
     // endregion
 

@@ -257,6 +257,9 @@ public class Utils {
                 attachment.setType(ModelType.attach_file);
                 attachment.setMime_type(ModelType.attach_mime_mp4);
                 attachment.config.setVideoLengh((int) (videolengh / 1000));
+                long size = file.length();
+                attachment.setFile_size((int) size);
+                attachment.setTitle(file.getName());
             }
             attachments.add(attachment);
         }
