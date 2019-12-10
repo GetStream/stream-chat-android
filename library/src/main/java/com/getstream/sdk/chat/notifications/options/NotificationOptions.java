@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.notifications.options;
 import android.app.NotificationChannel;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 
 import androidx.annotation.DrawableRes;
@@ -70,9 +71,9 @@ public interface NotificationOptions {
     /**
      * Set large icon for notification
      *
-     * @param iconRes - large icon res
+     * @param icon - large icon
      */
-    void setLargeIcon(@DrawableRes int iconRes);
+    void setLargeIcon(Bitmap icon);
 
     /**
      * Set custom id for notification channel

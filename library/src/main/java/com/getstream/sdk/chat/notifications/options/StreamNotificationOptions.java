@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class StreamNotificationOptions implements NotificationOptions {
     private Intent defaultLauncherIntent;
     private NotificationIntentProvider notificationIntentProvider;
     private int smallIcon = R.drawable.stream_ic_notification;
-    private int largeIcon = R.drawable.stream_ic_notification;
+    private Bitmap largeIcon;
     private boolean usedDefaultSmallIcon = true;
     private boolean usedDefaultLargeIcon = true;
 
@@ -73,13 +74,13 @@ public class StreamNotificationOptions implements NotificationOptions {
     @Override
     public NotificationCompat.Builder getNotificationBuilder(Context context) {
         if (notificationBuilder == null) {
-            checkForDefaultIcons();
+            checkForDefaultIcons(context);
 
             return new NotificationCompat.Builder(context,
                     getNotificationChannelId(context))
                     .setAutoCancel(true)
                     .setSmallIcon(smallIcon)
-                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), largeIcon))
+                    .setLargeIcon(largeIcon)
                     .setDefaults(NotificationCompat.DEFAULT_ALL);
         } else {
             return notificationBuilder;
@@ -124,9 +125,9 @@ public class StreamNotificationOptions implements NotificationOptions {
     }
 
     @Override
-    public void setLargeIcon(int iconRes) {
+    public void setLargeIcon(Bitmap icon) {
         this.usedDefaultLargeIcon = false;
-        this.largeIcon = iconRes;
+        this.largeIcon = icon;
     }
 
     @Override
@@ -166,11 +167,12 @@ public class StreamNotificationOptions implements NotificationOptions {
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
-    private void checkForDefaultIcons() {
+    private void checkForDefaultIcons(Context context) {
         if (usedDefaultSmallIcon) {
             Log.w(TAG, "Stream notification small icon is not defined, default one is used!");
         }
         if (usedDefaultLargeIcon) {
+            largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.stream_ic_notification);
             Log.w(TAG, "Stream notification large icon is not defined, default one is used!");
         }
     }

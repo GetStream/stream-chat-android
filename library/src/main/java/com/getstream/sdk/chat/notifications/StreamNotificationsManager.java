@@ -46,15 +46,9 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class StreamNotificationsManager implements NotificationsManager {
 
-    /*public static final String CHANNEL_ID_KEY = "channel_id";
-    public static final String CHANNEL_TYPE_KEY = "channel_type";
-    private static final String CHANNEL_NAME_KEY = "channel_name";
-    private static final String MESSAGE_TEXT_KEY = "message_text";
-    private static final String MESSAGE_ID_KEY = "message_id";*/
-
-    public static final String CHANNEL_KEY = "channel";
     public static final String CHANNEL_ID_KEY = "id";
     public static final String CHANNEL_TYPE_KEY = "type";
+    private static final String CHANNEL_KEY = "channel";
     private static final String CHANNEL_NAME_KEY = "name";
     private static final String FIREBASE_MESSAGE_ID_KEY = "message_id";
 
