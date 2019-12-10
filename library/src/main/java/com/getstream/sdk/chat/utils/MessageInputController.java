@@ -261,7 +261,7 @@ public class MessageInputController {
         }
     }
 
-    private void uploadFile(List<Attachment> attachments, Attachment attachment, boolean isMedia){
+    private void uploadFile(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
         uploadingFile = true;
         UploadFileCallback callback = getUploadFileCallBack(attachments, attachment, isMedia);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
@@ -270,7 +270,7 @@ public class MessageInputController {
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
     }
 
-    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments, Attachment attachment, boolean isMedia){
+    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
         return new UploadFileCallback<UploadFileResponse, Integer>() {
             @Override
             public void onSuccess(UploadFileResponse response) {
@@ -289,16 +289,16 @@ public class MessageInputController {
         };
     }
 
-    private void fileUploadSuccess(Attachment attachment, UploadFileResponse response, boolean isMedia){
+    private void fileUploadSuccess(Attachment attachment, UploadFileResponse response, boolean isMedia) {
         uploadingFile = false;
         binding.setActiveMessageSend(true);
         attachmentListener.onAddAttachments();
 
-        if (isMedia && attachment.getType().equals(ModelType.attach_image)){
+        if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
             File file = new File(attachment.config.getFilePath());
             attachment.setImageURL(response.getFileUrl());
             attachment.setFallback(file.getName());
-        }else{
+        } else {
             attachment.setAssetURL(response.getFileUrl());
         }
 
@@ -309,7 +309,7 @@ public class MessageInputController {
             selectedFileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void fileUploadFailed(List<Attachment> attachments, Attachment attachment, String errMsg, boolean isMedia){
+    private void fileUploadFailed(List<Attachment> attachments, Attachment attachment, String errMsg, boolean isMedia) {
         uploadingFile = false;
         binding.setActiveMessageSend(true);
         attachment.config.setSelected(false);
@@ -317,7 +317,7 @@ public class MessageInputController {
         updateInputView(attachments, attachment, isMedia);
     }
 
-    private void fileUploading(Attachment attachment, Integer percentage, boolean isMedia){
+    private void fileUploading(Attachment attachment, Integer percentage, boolean isMedia) {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
         if (isMedia)
@@ -328,12 +328,12 @@ public class MessageInputController {
 
 
     private void setSelectedAttachmentAdapter(List<Attachment> attachments, boolean isMedia) {
-        if (isMedia){
+        if (isMedia) {
             selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
                 updateAdapter(attachments, position, isMedia);
             });
             binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
-        }else{
+        } else {
             selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
             binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
             binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
@@ -342,7 +342,7 @@ public class MessageInputController {
         }
     }
 
-    private void updateAdapter(List<Attachment> attachments, int position, boolean isMedia){
+    private void updateAdapter(List<Attachment> attachments, int position, boolean isMedia) {
         Attachment attachment1 = selectedAttachments.get(position);
         attachment1.config.setSelected(false);
         selectedAttachments.remove(attachment1);
@@ -360,7 +360,7 @@ public class MessageInputController {
                     break;
                 }
             }
-            if (position_ != -1){
+            if (position_ != -1) {
                 if (isMedia)
                     mediaAttachmentAdapter.notifyItemChanged(position_);
                 else
