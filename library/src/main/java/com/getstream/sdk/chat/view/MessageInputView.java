@@ -11,7 +11,6 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -38,7 +36,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
@@ -208,10 +205,10 @@ public class MessageInputView extends RelativeLayout {
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  ()-> {
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  attachment-> {
             if (binding.ivSend.isEnabled()) return;
-            for (Attachment attachment : messageInputController.getSelectedAttachments())
-                if (!attachment.config.isUploaded())
+            for (Attachment attachment_ : messageInputController.getSelectedAttachments())
+                if (!attachment_.config.isUploaded())
                     return;
 
             onSendMessage();
@@ -601,7 +598,7 @@ public class MessageInputView extends RelativeLayout {
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachments();
+        void onAddAttachment(Attachment attachment);
     }
     /**
      * Interface for Permission request

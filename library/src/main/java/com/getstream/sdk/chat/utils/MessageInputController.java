@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
@@ -61,11 +62,11 @@ public class MessageInputController {
 
     // region Attachment
 
-    public MessageInputController(Context context,
-                                  StreamViewMessageInputBinding binding,
-                                  ChannelViewModel viewModel,
-                                  MessageInputStyle style,
-                                  MessageInputView.AttachmentListener attachmentListener) {
+    public MessageInputController(@NonNull Context context,
+                                  @NonNull StreamViewMessageInputBinding binding,
+                                  @NonNull ChannelViewModel viewModel,
+                                  @NonNull MessageInputStyle style,
+                                  @Nullable MessageInputView.AttachmentListener attachmentListener) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
@@ -159,7 +160,7 @@ public class MessageInputController {
 
     // endregion
 
-    // region Media
+    // region Upload Attachment File
 
     private void configSelectAttachView(List<Attachment> editAttachments, boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
@@ -197,21 +198,23 @@ public class MessageInputController {
     
     private void configGalleryView(List<Attachment> attachments, boolean isMedia){
         if (isMedia){
-            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                selectAttachment(attachments, position, isMedia);
-            });
+            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position ->
+                selectFileFromGallery(attachments, position, isMedia)
+            );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
         }else {
             fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                   int position, long id) -> {
-                selectAttachment(attachments, position, isMedia);
-            });
+                                                   int position, long id) ->
+                selectFileFromGallery(attachments, position, isMedia)
+            );
         }
     }
 
-    private void selectAttachment(List<Attachment> attachments, int position, boolean isMedia){
+    private void selectFileFromGallery(List<Attachment> attachments,
+                                       int position,
+                                       boolean isMedia){
         Attachment attachment = getAttachment(attachments, position);
         if (attachment == null) return;
         if (isMedia)
@@ -242,10 +245,6 @@ public class MessageInputController {
         AsyncTask.execute(() -> configSelectAttachView(editAttachments, true));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
-
-    // endregion
-
-    // region File
 
     private void updateInputView(List<Attachment> attachments,
                                  Attachment attachment,
@@ -311,7 +310,6 @@ public class MessageInputController {
                                    boolean isMedia) {
         uploadingFile = false;
         binding.setActiveMessageSend(true);
-        attachmentListener.onAddAttachments();
 
         if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
             File file = new File(attachment.config.getFilePath());
@@ -323,6 +321,9 @@ public class MessageInputController {
 
         attachment.config.setUploaded(true);
         selectedAttachmentAdapderChanged(isMedia);
+
+        if (attachmentListener != null)
+            attachmentListener.onAddAttachment(attachment);
     }
 
     private void fileUploadFailed(List<Attachment> attachments,
