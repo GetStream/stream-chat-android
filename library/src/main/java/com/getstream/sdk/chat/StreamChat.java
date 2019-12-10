@@ -214,7 +214,7 @@ public class StreamChat {
         private String apiKey;
         private ApiClientOptions apiClientOptions;
 
-        public Builder(Context context) {
+        public Builder(@NonNull Context context) {
             StreamChat.context = context;
         }
 
@@ -230,6 +230,16 @@ public class StreamChat {
 
         public void build() {
             Log.i(TAG, "calling build");
+            if (apiKey == null) {
+                Log.e(TAG, "First you need setup API_KEY.");
+                return;
+            }
+
+            if (apiClientOptions == null) {
+                Log.e(TAG, "First you need setup ApiClientOptions.");
+                return;
+            }
+
             synchronized (Client.class) {
                 if (INSTANCE == null) {
                     stringsProvider = new StringsProviderImpl(context);
