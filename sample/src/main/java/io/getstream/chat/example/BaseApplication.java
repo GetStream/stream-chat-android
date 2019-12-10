@@ -27,17 +27,18 @@ public class BaseApplication extends Application {
                 .CDNTimeout(BuildConfig.CDN_TIMEOUT)
                 .build();
 
+        StreamChatStyle style = new StreamChatStyle.Builder()
+                //.setDefaultFont(R.font.lilyofthe_valley)
+                //.setDefaultFont("fonts/odibeesans_regular.ttf")
+                .build();
+
         new StreamChat.Builder(this)
                 .setApiKey(BuildConfig.API_KEY)
                 .setApiClientOptions(apiClientOptions)
+                .setStyle(style)
                 .build();
 
-        StreamChat.initStyle(
-                new StreamChatStyle.Builder()
-                        //.setDefaultFont(R.font.lilyofthe_valley)
-                        //.setDefaultFont("fonts/odibeesans_regular.ttf")
-                        .build()
-        );
+
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {

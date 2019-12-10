@@ -195,10 +195,6 @@ public class StreamChat {
         });
     }
 
-    public static void initStyle(StreamChatStyle style) {
-        chatStyle = style;
-    }
-
     @NotNull
     public static StreamChatStyle getChatStyle() {
         return chatStyle;
@@ -225,6 +221,11 @@ public class StreamChat {
 
         public Builder setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
             this.apiClientOptions = apiClientOptions;
+            return this;
+        }
+
+        public Builder setStyle(@NonNull StreamChatStyle style) {
+            StreamChat.chatStyle = style;
             return this;
         }
 
