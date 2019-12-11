@@ -7,5 +7,5 @@ import com.getstream.sdk.chat.rest.controller.APIService;
  * Created by Anton Bevza on 2019-10-28.
  */
 public interface ApiServiceProvider {
-    APIService provideApiService(CachedTokenProvider tokenProvider);
+    APIService provideApiService(CachedTokenProvider tokenProvider, boolean anonymousAuth);
 }
