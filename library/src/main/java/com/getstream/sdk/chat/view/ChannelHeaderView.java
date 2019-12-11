@@ -140,7 +140,10 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.btnOption.setWidth(style.getOptionsButtonWidth());
         binding.btnOption.setHeight(style.getOptionsButtonHeight());
         // Active Badge
-        binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : GONE);
+        if (!style.isAvatarGroupShow())
+            binding.ivActiveBadge.setVisibility(GONE);
+        else
+            binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : GONE);
         binding.setOfflineText(style.getOfflineText());
     }
 
