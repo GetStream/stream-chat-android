@@ -28,6 +28,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.AudioPlayerApi;
@@ -88,7 +89,7 @@ public class NativeAudioPlayer implements AudioPlayerApi {
             requestedSeek = 0;
             mediaPlayer.setDataSource(context, uri);
         } catch (Exception e) {
-            Log.d(TAG, "MediaPlayer: error setting data source", e);
+            StreamChat.logD(this.getClass(),"MediaPlayer: error setting data source. Error+" + e);
         }
     }
 

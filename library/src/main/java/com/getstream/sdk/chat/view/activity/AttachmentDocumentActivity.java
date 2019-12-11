@@ -92,11 +92,11 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
             if (error == null){
-                Log.e(TAG, "The load failed due to an unknown error.");
+                StreamChat.logE(this.getClass(),"The load failed due to an unknown error.");
                 return;
             }
 
-            Log.e(TAG, error.toString());
+            StreamChat.logE(this.getClass(), error.toString());
             Utils.showMessage(AttachmentDocumentActivity.this, error.toString());
         }
     }

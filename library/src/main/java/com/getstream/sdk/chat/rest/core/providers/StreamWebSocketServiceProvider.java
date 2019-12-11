@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.core.providers;
 
 import android.util.Log;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.rest.StreamWebSocketService;
 import com.getstream.sdk.chat.rest.User;
@@ -34,16 +35,16 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     @Override
     public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener, boolean anonymousAuth) throws UnsupportedEncodingException {
         String wsUrl = getWsUrl(userToken, user, anonymousAuth);
-        Log.d(TAG, "WebSocket URL : " + wsUrl);
+        StreamChat.logD(this.getClass(),"WebSocket URL : " + wsUrl);
         return new StreamWebSocketService(wsUrl, listener);
     }
 
     public String getWsUrl(String userToken, User user, boolean anonymousAuth) throws UnsupportedEncodingException {
         if (anonymousAuth && userToken != null) {
-            Log.e(TAG, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
+            StreamChat.logE(this.getClass(), "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
         }
         if (!anonymousAuth && userToken == null) {
-            Log.e(TAG, "userToken must be non-null in non anonymous mode");
+            StreamChat.logE(this.getClass(),"userToken must be non-null in non anonymous mode");
             return null;
         }
 

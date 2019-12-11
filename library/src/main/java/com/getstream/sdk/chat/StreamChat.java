@@ -106,17 +106,19 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                Log.d(TAG, "handleConnectedUser: error: " + errMsg + ":" + errCode);
+                StreamChat.logD(this.getClass(),"handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
 
     private static synchronized void setupEventListeners() {
-        Log.i(TAG, "setupEventListeners");
+        StreamChat.logI(StreamChat.class, "setupEventListeners");
+
         INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
-                Log.w(TAG, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+                StreamChat.logW(this.getClass(), "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
                 } else {
@@ -127,12 +129,12 @@ public class StreamChat {
 
             @Override
             public void onConnectionRecovered(Event event) {
-                Log.w(TAG, "connection recovered!");
+                StreamChat.logW(this.getClass(), "connection recovered!");
                 List<Channel> channels = INSTANCE.getActiveChannels();
                 if (channels == null) {
-                    Log.w(TAG, "nothing to recover");
+                    StreamChat.logW(this.getClass(), "nothing to recover");
                 } else {
-                    Log.w(TAG, channels.size() + " channels to recover!");
+                    StreamChat.logW(this.getClass(), channels.size() + " channels to recover!");
                 }
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
             }
@@ -196,17 +198,17 @@ public class StreamChat {
         if (INSTANCE != null) {
             return true;
         }
-        Log.i(TAG, "calling init");
+        StreamChat.logger = logger;
+        StreamChat.logI(StreamChat.class,"calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
 
-                StreamChat.logger = logger;
                 StreamChat.context = context;
                 stringsProvider = new StringsProviderImpl(context);
 
                 fontsManager = new FontsManagerImpl(context);
 
-                Log.i(TAG, "calling init for the first time");
+                StreamChat.logI(StreamChat.class,"calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
                 INSTANCE.setContext(StreamChat.context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
@@ -218,14 +220,14 @@ public class StreamChat {
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        Log.i(TAG, "set user worked out well");
+                        StreamChat.logI(this.getClass(),"set user worked out well");
                         setupEventListeners();
                         currentUser.postValue(user);
 
                         new StreamLifecycleObserver(new LifecycleHandler() {
                             @Override
                             public void resume() {
-                                Log.i(TAG, "detected resume");
+                                StreamChat.logI(this.getClass(),"detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
                                     INSTANCE.reconnectWebSocket();
@@ -234,7 +236,7 @@ public class StreamChat {
 
                             @Override
                             public void stopped() {
-                                Log.i(TAG, "detected stop");
+                                StreamChat.logI(this.getClass(),"detected stop");
                                 lifecycleStopped = true;
                                 if (INSTANCE != null) {
                                     INSTANCE.disconnectWebSocket();

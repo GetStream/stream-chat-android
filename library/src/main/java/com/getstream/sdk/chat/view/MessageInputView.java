@@ -187,7 +187,7 @@ public class MessageInputView extends RelativeLayout {
 
         TextViewUtils.afterTextChanged(binding.etMessage, editable -> {
             String messageText = getMessageText();
-            Log.i(TAG, "Length is " + editable.length());
+            StreamChat.logI(this.getClass(),"Length is " + editable.length());
             if (messageText.length() > 0) {
                 viewModel.keystroke();
             }

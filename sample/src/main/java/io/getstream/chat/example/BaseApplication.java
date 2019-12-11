@@ -5,8 +5,8 @@ import android.app.Application;
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.logger.StreamChatLogger;
-import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
+import com.getstream.sdk.chat.logger.StreamLoggerLevel;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -25,14 +25,9 @@ public class BaseApplication extends Application {
         FirebaseApp.initializeApp(getApplicationContext());
 
         StreamLogger logger = new StreamChatLogger.Builder()
-                .enabled(BuildConfig.DEBUG)
-                .loggingLevel(StreamChatLogger.Level.WARN)
+                .enabled(!BuildConfig.DEBUG)
+                .loggingLevel(StreamLoggerLevel.INFO)
                 .build();
-
-        logger.logI(this.getClass(), "Info msg");
-        logger.logD(this.getClass(), "Debug msg");
-        logger.logW(this.getClass(), "Warning msg");
-        logger.logE(this.getClass(), "Error msg");
 
         StreamChat.init(BuildConfig.API_KEY,
                 new ApiClientOptions.Builder()

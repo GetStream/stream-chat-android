@@ -115,7 +115,7 @@ public class FontsManagerImpl implements FontsManager {
         try {
             return ResourcesCompat.getFont(appContext, fontRes);
         } catch (Throwable t) {
-            Log.e(TAG, t.getMessage());
+            StreamChat.logE(this.getClass(),t.getMessage());
             t.printStackTrace();
             return null;
         }
@@ -125,7 +125,7 @@ public class FontsManagerImpl implements FontsManager {
         try {
             return Typeface.createFromAsset(appContext.getAssets(), fontPath);
         } catch (Throwable t) {
-            Log.e(TAG, t.getMessage());
+            StreamChat.logE(this.getClass(), t.getMessage());
             t.printStackTrace();
             return null;
         }

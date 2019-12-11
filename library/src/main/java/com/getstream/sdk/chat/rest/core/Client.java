@@ -167,7 +167,7 @@ public class Client implements WSResponseHandler {
                         state.setCurrentUser(event.getMe());
                     }
                     if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
-                        Log.i(TAG, "Mutes updated");
+                        StreamChat.logI(this.getClass(), "Mutes updated");
                     }
 
                     // if an event contains a user update that user
@@ -291,15 +291,15 @@ public class Client implements WSResponseHandler {
         this.storageProvider = storageProvider;
         this.state = new ClientState(this);
 
-        Log.d(TAG, "instance created: " + apiKey);
+        StreamChat.logD(this.getClass(),"instance created: " + apiKey);
 
         if (connectionLiveData != null) {
             connectionLiveData.observeForever(connectionModel -> {
                 if (connectionModel.getIsConnected() && !connected) {
-                    Log.i(TAG, "fast track connection discovery: UP");
+                    StreamChat.logI(this.getClass(),"fast track connection discovery: UP");
                     reconnectWebSocket();
                 } else if (!connectionModel.getIsConnected() && connected) {
-                    Log.i(TAG, "fast track connection discovery: DOWN");
+                    StreamChat.logI(this.getClass(),"fast track connection discovery: DOWN");
                     disconnectWebSocket();
                 }
             });
@@ -386,9 +386,9 @@ public class Client implements WSResponseHandler {
      */
     public synchronized void disconnect() {
         if (state.getCurrentUser() == null) {
-            Log.w(TAG, "disconnect was called but setUser was not called yet");
+            StreamChat.logW(this.getClass(), "disconnect was called but setUser was not called yet");
         } else {
-            Log.d(TAG, "disconnecting");
+            StreamChat.logD(this.getClass(), "disconnecting");
         }
 
         disconnectWebSocket();
@@ -436,10 +436,10 @@ public class Client implements WSResponseHandler {
         anonymousConnection = false;
 
         if (getUser() != null) {
-            Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
+            StreamChat.logW(this.getClass(), "setUser was called but a user is already set; this is probably an integration mistake");
             return;
         }
-        Log.d(TAG, "setting user: " + user.getId());
+        StreamChat.logD(this.getClass(),"setting user: " + user.getId());
 
         state.setCurrentUser(user);
         List<TokenProvider.TokenProviderListener> listeners = new ArrayList<>();
@@ -459,14 +459,14 @@ public class Client implements WSResponseHandler {
                     return;
                 } else {
                     // token is not in cache and there are no in-flight requests, go fetch it
-                    Log.d(TAG, "Go get a new token");
+                    StreamChat.logD(this.getClass(),"Go get a new token");
                     fetchingToken = true;
                 }
 
                 provider.getToken(token -> {
                     cacheUserToken = token;
                     fetchingToken = false;
-                    Log.d(TAG, "We got another token " + token);
+                    StreamChat.logD(this.getClass(),"We got another token " + token);
                     listener.onSuccess(token);
                     for (TokenProvider.TokenProviderListener l :
                             listeners) {
@@ -478,7 +478,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void tokenExpired() {
-                Log.d(TAG, "Current token is expired: " + cacheUserToken);
+                StreamChat.logD(this.getClass(),"Current token is expired: " + cacheUserToken);
                 cacheUserToken = null;
             }
         };
@@ -583,7 +583,7 @@ public class Client implements WSResponseHandler {
     }
 
     private synchronized void connect(boolean anonymousConnection) {
-        Log.i(TAG, "client.connect was called");
+        StreamChat.logI(this.getClass(),"client.connect was called");
 
         if (anonymousConnection) {
             try {
@@ -681,11 +681,11 @@ public class Client implements WSResponseHandler {
      */
     public void reconnectWebSocket() {
         if (getUser() == null) {
-            Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
+            StreamChat.logW(this.getClass(), "calling reconnectWebSocket before setUser is a no-op");
             return;
         }
         if (webSocketService != null) {
-            Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
+            StreamChat.logW(this.getClass(), "tried to reconnectWebSocket by a connection is still set");
             return;
         }
         connectionRecovered();
@@ -954,7 +954,7 @@ public class Client implements WSResponseHandler {
                 Callback<ChannelState> requestCallback = new Callback<ChannelState>() {
                     @Override
                     public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
-                        Log.i(TAG, "channel query: incoming watchers " + response.body().getWatchers().size());
+                        StreamChat.logI(this.getClass(),"channel query: incoming watchers " + response.body().getWatchers().size());
                         channel.mergeWithState(response.body());
                         // channels created without ID will get it populated by the API
                         if (channel.getId() == null) {
@@ -981,7 +981,7 @@ public class Client implements WSResponseHandler {
                         // update the user references
                         getState().updateUsersForChannel(channel.getChannelState());
 
-                        Log.i(TAG, "channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                        StreamChat.logI(this.getClass(),"channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                         // offline storage
 
                         getStorage().insertMessagesForChannel(channel, response.body().getMessages());
@@ -1696,7 +1696,7 @@ public class Client implements WSResponseHandler {
      */
     public void setAnonymousUser() {
         if (getUser() != null) {
-            Log.w(TAG, "setAnonymousUser was called but a user is already set;");
+            StreamChat.logW(this.getClass(), "setAnonymousUser was called but a user is already set;");
             return;
         }
 
@@ -1717,7 +1717,7 @@ public class Client implements WSResponseHandler {
      */
     public void setGuestUser(User user) {
         if (getUser() != null) {
-            Log.w(TAG, "setGuestUser was called but a user is already set;");
+            StreamChat.logW(this.getClass(), "setGuestUser was called but a user is already set;");
             return;
         }
 
@@ -1734,7 +1734,7 @@ public class Client implements WSResponseHandler {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-                Log.e(TAG, "Problem with setting guest user: " + t.getMessage());
+                StreamChat.logE(this.getClass(), "Problem with setting guest user: " + t.getMessage());
             }
         });
     }
@@ -2070,7 +2070,7 @@ public class Client implements WSResponseHandler {
      * closes the WebSocket connection and sends a connection.change event to all listeners
      */
     public synchronized void disconnectWebSocket() {
-        Log.i(TAG, "disconnecting websocket");
+        StreamChat.logI(this.getClass(),"disconnecting websocket");
         if (webSocketService != null) {
             webSocketService.disconnect();
             webSocketService = null;

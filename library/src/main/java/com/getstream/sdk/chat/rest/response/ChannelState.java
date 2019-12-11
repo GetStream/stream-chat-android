@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey;
 import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
@@ -192,7 +193,7 @@ public class ChannelState {
 
     public List<User> getOtherUsers() {
 
-        Log.d(TAG, "getOtherUsers");
+        StreamChat.logD(this.getClass(),"getOtherUsers");
 
         List<User> users = new ArrayList<>();
 
@@ -200,7 +201,7 @@ public class ChannelState {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
                     User user = channel.getClient().getState().getUser(m.getUser().getId());
-                    Log.d(TAG, "getOtherUsers: member: " + user);
+                    StreamChat.logD(this.getClass(),"getOtherUsers: member: " + user);
                     users.add(user);
                 }
             }
@@ -210,7 +211,7 @@ public class ChannelState {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
                     User user = channel.getClient().getState().getUser(w.getUser().getId());
-                    Log.d(TAG, "getOtherUsers: watcher: " + user);
+                    StreamChat.logD(this.getClass(),"getOtherUsers: watcher: " + user);
                     if (!users.contains(user))
                         users.add(user);
                 }
@@ -257,7 +258,7 @@ public class ChannelState {
     public String getChannelNameOrMembers() {
         String channelName;
 
-        Log.i(TAG, "Channel name is" + channel.getName() + channel.getCid());
+        StreamChat.logI(this.getClass(),"Channel name is" + channel.getName() + channel.getCid());
         if (!TextUtils.isEmpty(channel.getName())) {
             channelName = channel.getName();
         } else {

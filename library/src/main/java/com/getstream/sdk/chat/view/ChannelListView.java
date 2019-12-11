@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import com.getstream.sdk.chat.model.Channel;
@@ -85,7 +86,7 @@ public class ChannelListView extends RecyclerView {
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
-            Log.i(TAG, "Observe found this many channels: " + channels.size());
+            StreamChat.logI(this.getClass(),"Observe found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
             if (canScrollUpForChannelEvent())
                 layoutManager.scrollToPosition(0);

@@ -33,6 +33,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.MatrixManager;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
 
@@ -237,7 +238,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
 
             gl10.eglTerminate(display);
         } catch (Exception e) {
-            Log.e(TAG, "Error clearing surface", e);
+            StreamChat.logE(this.getClass(),"Error clearing surface. Error:" + e);
         }
     }
 

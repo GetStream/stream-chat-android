@@ -17,6 +17,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.getstream.sdk.chat.StreamChat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +50,7 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
         if (!builder.dataSet.data.isEmpty()) {
             dialog.show();
         } else {
-            Log.w(TAG, "Images list cannot be empty! Viewer ignored.");
+            StreamChat.logW(this.getClass(),"Images list cannot be empty! Viewer ignored.");
         }
     }
 

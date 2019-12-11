@@ -14,6 +14,8 @@ import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
+import com.getstream.sdk.chat.StreamChat;
+
 
 @SuppressWarnings("WeakerAccess")
 public abstract class PorterImageView extends AppCompatImageView {
@@ -127,8 +129,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     canvas.drawBitmap(drawableBitmap, 0.0f, 0.0f, drawablePaint);
                 }
             } catch (Exception e) {
-                String log = "Exception occured while drawing " + getId();
-                Log.e(TAG, log, e);
+                StreamChat.logE(this.getClass(), "Exception occured while drawing " + getId() + ", Error:" + e);
             } finally {
                 canvas.restoreToCount(saveCount);
             }

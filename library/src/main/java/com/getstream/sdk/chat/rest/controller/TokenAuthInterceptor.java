@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.controller;
 
 import android.util.Log;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
 
@@ -51,7 +52,7 @@ public class TokenAuthInterceptor implements Interceptor {
         if (!response.isSuccessful()) {
             ErrorResponse err = ErrorResponse.parseError(response);
             if (err.getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                Log.d(TAG, "Retrying new request");
+                StreamChat.logD(this.getClass(),"Retrying new request");
                 token = null; // invalidate local cache
                 tokenProvider.tokenExpired();
                 response.close();
