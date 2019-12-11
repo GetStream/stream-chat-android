@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -96,6 +95,10 @@ public class StreamChat {
         StreamChat.stringsProvider = stringsProvider;
     }
 
+    public static void setLogger(StreamLogger logger) {
+        StreamChat.logger = logger;
+    }
+
     private static void handleConnectedUser() {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
@@ -106,7 +109,7 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logD(this.getClass(),"handleConnectedUser: error: " + errMsg + ":" + errCode);
+                StreamChat.logD(this.getClass(), "handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
@@ -199,7 +202,7 @@ public class StreamChat {
             return true;
         }
         StreamChat.logger = logger;
-        StreamChat.logI(StreamChat.class,"calling init");
+        StreamChat.logI(StreamChat.class, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
 
@@ -208,7 +211,7 @@ public class StreamChat {
 
                 fontsManager = new FontsManagerImpl(context);
 
-                StreamChat.logI(StreamChat.class,"calling init for the first time");
+                StreamChat.logI(StreamChat.class, "calling init for the first time");
                 INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
                 INSTANCE.setContext(StreamChat.context);
                 onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
@@ -220,14 +223,14 @@ public class StreamChat {
                 INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
                     @Override
                     public void onSuccess(User user) {
-                        StreamChat.logI(this.getClass(),"set user worked out well");
+                        StreamChat.logI(this.getClass(), "set user worked out well");
                         setupEventListeners();
                         currentUser.postValue(user);
 
                         new StreamLifecycleObserver(new LifecycleHandler() {
                             @Override
                             public void resume() {
-                                StreamChat.logI(this.getClass(),"detected resume");
+                                StreamChat.logI(this.getClass(), "detected resume");
                                 if (lifecycleStopped && userWasInitialized) {
                                     lifecycleStopped = false;
                                     INSTANCE.reconnectWebSocket();
@@ -236,7 +239,7 @@ public class StreamChat {
 
                             @Override
                             public void stopped() {
-                                StreamChat.logI(this.getClass(),"detected stop");
+                                StreamChat.logI(this.getClass(), "detected stop");
                                 lifecycleStopped = true;
                                 if (INSTANCE != null) {
                                     INSTANCE.disconnectWebSocket();
