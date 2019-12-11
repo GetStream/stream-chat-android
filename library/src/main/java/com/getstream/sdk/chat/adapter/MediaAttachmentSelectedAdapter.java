@@ -110,10 +110,13 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             });
 
             if (attachment.config.isUploaded()) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.ivMask.setVisibility(View.GONE);
-            }else
+                binding.ivMask.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            }else{
+                binding.ivMask.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setProgress(attachment.config.getProgress());
+            }
 
             binding.executePendingBindings();
         }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -311,8 +312,12 @@ public class MessageInputController {
         uploadingFile = false;
         if (!attachment.config.isSelected())
             return;
+        // disable Send button if uploading attachment files and invalid text.
+        new Handler().postDelayed(()->{
+            if (!uploadingFile)
+                binding.setActiveMessageSend(true);
+        },100);
 
-        binding.setActiveMessageSend(true);
 
         if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
             File file = new File(attachment.config.getFilePath());
@@ -350,6 +355,8 @@ public class MessageInputController {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
         selectedAttachmentAdapderChanged(attachment, isMedia);
+        if (!StringUtility.isValidTextMessage(binding.etMessage.getText().toString()))
+            binding.setActiveMessageSend(false);
     }
 
     private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment, boolean isMedia){
