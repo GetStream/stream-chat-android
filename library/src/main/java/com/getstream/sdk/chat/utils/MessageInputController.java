@@ -335,7 +335,9 @@ public class MessageInputController {
         configCannotSendMessageButton();
         attachment.config.setSelected(false);
         Utils.showMessage(context, errMsg);
-        updateInputView(attachments, attachment, isMedia);
+//        selectedAttachments.remove(attachment);
+        selectedAttachmentAdapderChanged(attachment, isMedia);
+//        updateInputView(attachments, attachment, isMedia);
         if (isMedia)
             mediaAttachmentAdapter.notifyDataSetChanged();
         else
@@ -347,7 +349,7 @@ public class MessageInputController {
                                boolean isMedia) {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
-        selectedAttachmentAdapderChanged(attachment, isMedia);
+        selectedAttachmentAdapderChanged(null, isMedia);
         if (StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString()))
             setSendButtonState(false);
     }
