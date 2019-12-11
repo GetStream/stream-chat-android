@@ -348,7 +348,8 @@ public class MessageInputController {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
         selectedAttachmentAdapderChanged(attachment, isMedia);
-        setSendButtonState(StringUtility.isValidTextMessage(binding.etMessage.getText().toString()));
+        if (!StringUtility.isValidTextMessage(binding.etMessage.getText().toString()))
+            setSendButtonState(false);
     }
 
     private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment, boolean isMedia){
