@@ -399,8 +399,9 @@ public class MessageInputController {
                     fileAttachmentAdapter.notifyDataSetChanged();
             }
         }
-
-        if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
+        // disable Send button if empty attachment and invalid text.
+        if (selectedAttachments.size() == 0
+                && !StringUtility.isValidTextMessage(binding.etMessage.getText().toString())) {
             viewModel.setInputType(InputType.DEFAULT);
             binding.setActiveMessageSend(false);
         }

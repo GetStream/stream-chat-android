@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -197,10 +198,9 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void configSendBtn() {
-        String s_ = getMessageText().replaceAll("\\s+", "");
         List<Attachment> attachments = messageInputController.getSelectedAttachments();
         boolean hasAttachment = attachments != null && !attachments.isEmpty();
-        binding.setActiveMessageSend(s_.length() != 0 || hasAttachment);
+        binding.setActiveMessageSend(StringUtility.isValidTextMessage(getMessageText()) || hasAttachment);
     }
 
     private void configAttachmentUI() {
