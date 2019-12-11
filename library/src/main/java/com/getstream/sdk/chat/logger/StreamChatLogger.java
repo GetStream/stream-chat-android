@@ -95,6 +95,11 @@ public class StreamChatLogger implements StreamLogger {
             return this;
         }
 
+        /**
+         * Set logging level
+         * @param level - Logging {@link Level}
+         * @return
+         */
         public Builder loggingLevel(Level level) {
             this.loggingLevel = level;
 
