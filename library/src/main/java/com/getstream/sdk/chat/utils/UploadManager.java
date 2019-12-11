@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -87,5 +88,14 @@ public class UploadManager {
         attachment.config.setSelected(false);
         if (queue.contains(attachment))
             queue.remove(attachment);
+    }
+
+    public static boolean isOverMaxUploadFileSize(File file, boolean showErrorToast){
+        if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
+            if (showErrorToast)
+                Utils.showMessage(StreamChat.getContext(), StreamChat.getStrings().get(R.string.stream_large_size_file_error));
+            return true;
+        }
+        return false;
     }
 }
