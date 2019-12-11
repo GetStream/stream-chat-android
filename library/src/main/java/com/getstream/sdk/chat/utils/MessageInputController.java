@@ -265,13 +265,6 @@ public class MessageInputController {
             selectedAttachments.remove(attachment);
 
         setSelectedAttachmentAdapter(attachments, isMedia);
-
-        if (selectedAttachments.size() > 0) {
-            viewModel.setInputType(InputType.SELECT);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
-        }
     }
 
     private void uploadFile(List<Attachment> attachments,
@@ -315,7 +308,7 @@ public class MessageInputController {
         // disable Send button if uploading attachment files and invalid text.
         new Handler().postDelayed(()->{
             if (!uploadingFile)
-                binding.setActiveMessageSend(true);
+                setSendButtonState(true);
         },100);
 
 
@@ -339,7 +332,7 @@ public class MessageInputController {
                                   String errMsg,
                                   boolean isMedia) {
         uploadingFile = false;
-        binding.setActiveMessageSend(true);
+        configCannotSendMessageButton();
         attachment.config.setSelected(false);
         Utils.showMessage(context, errMsg);
         updateInputView(attachments, attachment, isMedia);
@@ -355,8 +348,7 @@ public class MessageInputController {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
         selectedAttachmentAdapderChanged(attachment, isMedia);
-        if (!StringUtility.isValidTextMessage(binding.etMessage.getText().toString()))
-            binding.setActiveMessageSend(false);
+        setSendButtonState(StringUtility.isValidTextMessage(binding.etMessage.getText().toString()));
     }
 
     private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment, boolean isMedia){
@@ -391,27 +383,35 @@ public class MessageInputController {
         selectedAttachmentAdapderChanged(null, isMedia);
 
         if (attachments != null) {
-            int position_ = -1;
+            int position = -1;
             for (int i = 0; i < attachments.size(); i++) {
                 Attachment attachment2 = attachments.get(i);
                 if (attachment2.config.getFilePath().equals(attachment.config.getFilePath())) {
-                    position_ = i;
+                    position = i;
                     break;
                 }
             }
-            if (position_ != -1) {
+            if (position != -1) {
                 if (isMedia)
-                    mediaAttachmentAdapter.notifyItemChanged(position_);
+                    mediaAttachmentAdapter.notifyItemChanged(position);
                 else
                     fileAttachmentAdapter.notifyDataSetChanged();
             }
         }
         // disable Send button if empty attachment and invalid text.
+        configCannotSendMessageButton();
+    }
+
+    private void configCannotSendMessageButton(){
         if (selectedAttachments.size() == 0
                 && !StringUtility.isValidTextMessage(binding.etMessage.getText().toString())) {
             viewModel.setInputType(InputType.DEFAULT);
-            binding.setActiveMessageSend(false);
+            setSendButtonState(false);
         }
+    }
+
+    private void setSendButtonState(boolean enable){
+        binding.setActiveMessageSend(enable);
     }
 
     public void onClickOpenSelectFileView(List<Attachment> editAttachments) {
