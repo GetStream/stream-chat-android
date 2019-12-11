@@ -25,7 +25,7 @@ public class BaseApplication extends Application {
         FirebaseApp.initializeApp(getApplicationContext());
 
         StreamLogger logger = new StreamChatLogger.Builder()
-                .enabled(!BuildConfig.DEBUG)
+                .enabled(BuildConfig.DEBUG)
                 .loggingLevel(StreamLoggerLevel.INFO)
                 .build();
 
