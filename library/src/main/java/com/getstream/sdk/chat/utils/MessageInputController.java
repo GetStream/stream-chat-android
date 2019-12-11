@@ -156,6 +156,9 @@ public class MessageInputController {
     private void initLoadAttachemtView() {
         binding.rvComposer.setVisibility(View.GONE);
         binding.lvComposer.setVisibility(View.GONE);
+        selectedMediaAttachmentAdapter = null;
+        selectedFileAttachmentAdapter = null;
+        selectedAttachments = null;
         binding.progressBarFileLoader.setVisibility(View.VISIBLE);
     }
 
@@ -176,14 +179,9 @@ public class MessageInputController {
                 Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                 onClickCloseBackGroundView();
             }
-
             binding.progressBarFileLoader.setVisibility(View.GONE);
-            // edit
             if (editAttachments != null) {
-                if (isMedia)
-                    binding.rvComposer.setVisibility(View.VISIBLE);
-                else
-                    binding.lvComposer.setVisibility(View.VISIBLE);
+                showHideComposerAttachmentGalleryView(true, isMedia);
                 setSelectedAttachmentAdapter(isMedia);
             }
         });
@@ -225,20 +223,25 @@ public class MessageInputController {
                 selectedAttachments = new ArrayList<>();
             selectedAttachments.add(attachment);
             uploadFile(attachment, fromGallery, isMedia);
-            if (fromGallery){
-                if (isMedia)
-                    binding.rvComposer.setVisibility(View.VISIBLE);
-                else
-                    binding.lvComposer.setVisibility(View.VISIBLE);
-            }
-            totalAttachmentAdaterChanged(attachment, isMedia);
+            if (fromGallery)
+                totalAttachmentAdaterChanged(attachment, isMedia);
+
+            showHideComposerAttachmentGalleryView(true, isMedia);
             selectedAttachmentAdapderChanged(attachment, isMedia);
         } else{
             selectedAttachments.remove(attachment);
-            totalAttachmentAdaterChanged(null, isMedia);
+            if (fromGallery)
+                totalAttachmentAdaterChanged(null, isMedia);
             selectedAttachmentAdapderChanged(null, isMedia);
         }
         configCannotSendMessageButton();
+    }
+
+    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){
+        if (isMedia)
+            binding.rvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
+        else
+            binding.lvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void onClickOpenSelectMediaView(List<Attachment> editAttachments) {
@@ -330,8 +333,6 @@ public class MessageInputController {
             setSendButtonState(false);
     }
 
-
-
     private void setSelectedAttachmentAdapter(boolean isMedia) {
         if (isMedia) {
             selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
@@ -349,17 +350,9 @@ public class MessageInputController {
             if (attachment == null)
                 mediaAttachmentAdapter.notifyDataSetChanged();
             else{
-                int position = -1;
-                for (int i = 0; i < localAttachments.size(); i++) {
-                    Attachment attachment2 = localAttachments.get(i);
-                    if (attachment2.config.getFilePath().equals(attachment.config.getFilePath())) {
-                        position = i;
-                        break;
-                    }
-                }
-                if (position != -1) {
-                    mediaAttachmentAdapter.notifyItemChanged(position);
-                }
+                int index = localAttachments.indexOf(attachment);
+                if (index != -1)
+                    mediaAttachmentAdapter.notifyItemChanged(index);
             }
         }
         else
@@ -373,7 +366,7 @@ public class MessageInputController {
                 setSelectedAttachmentAdapter(isMedia);
             if (attachment != null){
                 int index = selectedAttachments.indexOf(attachment);
-                if (selectedAttachments.indexOf(attachment) != -1)
+                if (index != -1)
                     selectedMediaAttachmentAdapter.notifyItemChanged(index);
 
             }else
@@ -426,23 +419,19 @@ public class MessageInputController {
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
-        convertMediaAttachment(file, isImage);
-    }
-
-    private void convertMediaAttachment(File file, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
+        attachment.setFile_size((int) file.length());
         if (isImage) {
             attachment.setType(ModelType.attach_image);
         } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(context, Uri.fromFile(file));
             String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long videolengh = Long.parseLong(time );
-            retriever.release();
+            long videolengh = Long.parseLong(time);
             attachment.config.setVideoLengh((int) (videolengh / 1000));
-            attachment.setType(ModelType.attach_file);
-            attachment.setMime_type(ModelType.attach_mime_mp4);
+            Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
+            retriever.release();
         }
         uploadOrCancelAttachment(attachment,false, true);
     }

@@ -167,38 +167,33 @@ public class Utils {
                     getFileAttachments(file);
                 } else {
                     Attachment attachment = new Attachment();
-
+                    String mimeType = "";
                     if (file.getName().endsWith(pdfPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_pdf);
+                        mimeType = ModelType.attach_mime_pdf;
                     } else if (file.getName().endsWith(pptPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_ppt);
+                        mimeType = ModelType.attach_mime_ppt;
                     } else if (file.getName().endsWith(csvPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_csv);
+                        mimeType = ModelType.attach_mime_csv;
                     } else if (file.getName().endsWith(xlsxPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_xlsx);
+                        mimeType = ModelType.attach_mime_xlsx;
                     } else if (file.getName().endsWith(docPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_doc);
+                        mimeType = ModelType.attach_mime_doc;
                     } else if (file.getName().endsWith(docxPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_docx);
+                        mimeType = ModelType.attach_mime_docx;
                     } else if (file.getName().endsWith(txtPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_txt);
+                        mimeType = ModelType.attach_mime_txt;
                     } else if (file.getName().endsWith(zipPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_zip);
+                        mimeType = ModelType.attach_mime_zip;
                     } else if (file.getName().endsWith(tarPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_tar);
+                        mimeType = ModelType.attach_mime_tar;
                     } else if (file.getName().endsWith(movPattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_mov);
+                        mimeType = ModelType.attach_mime_mov;
                     } else if (file.getName().endsWith(mp3Pattern)) {
-                        attachment.setMime_type(ModelType.attach_mime_mp3);
+                        mimeType = ModelType.attach_mime_mp3;
                     }
 
-                    if (!file.exists() || attachment.getMime_type() == null) continue;
-
-                    attachment.setType(ModelType.attach_file);
-                    attachment.setTitle(file.getName());
-                    attachment.config.setFilePath(file.getPath());
-                    long size = file.length();
-                    attachment.setFile_size((int) size);
+                    if (!file.exists() || TextUtils.isEmpty(mimeType)) continue;
+                    configFileAttachment(attachment, file, ModelType.attach_file, mimeType);
                     attachments.add(attachment);
                 }
             }
@@ -254,17 +249,24 @@ public class Utils {
                 attachment.setType(ModelType.attach_image);
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {
                 float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
-                attachment.setType(ModelType.attach_file);
-                attachment.setMime_type(ModelType.attach_mime_mp4);
                 attachment.config.setVideoLengh((int) (videolengh / 1000));
-                long size = file.length();
-                attachment.setFile_size((int) size);
-                attachment.setTitle(file.getName());
+                configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
             }
             attachments.add(attachment);
         }
-
         return attachments;
+    }
+
+    public static void configFileAttachment(Attachment attachment,
+                                            File file,
+                                            String type,
+                                            String mimeType){
+        attachment.setType(type);
+        attachment.setMime_type(mimeType);
+        attachment.setTitle(file.getName());
+        attachment.config.setFilePath(file.getPath());
+        long size = file.length();
+        attachment.setFile_size((int) size);
     }
 
     public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {
