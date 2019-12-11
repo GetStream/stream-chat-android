@@ -15,10 +15,9 @@ import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.users.UsersRepository;
+import com.getstream.sdk.chat.users.UsersCache;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +38,7 @@ public class StreamStorage implements Storage {
     final String TAG = StreamStorage.class.getSimpleName();
 
     private Boolean enabled;
-    private final UsersRepository usersRepository;
+    private final UsersCache usersCache;
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
@@ -48,8 +47,8 @@ public class StreamStorage implements Storage {
     private ChannelsDao channelsDao;
     private QueryChannelsQDao queryChannelsQDao;
 
-    public StreamStorage(UsersRepository usersRepository, Context context, Boolean enabled) {
-        this.usersRepository = usersRepository;
+    public StreamStorage(UsersCache usersCache, Context context, Boolean enabled) {
+        this.usersCache = usersCache;
         this.context = context;
         this.enabled = enabled;
         if (enabled) {
@@ -61,11 +60,11 @@ public class StreamStorage implements Storage {
         }
     }
 
-    public static StreamStorage getStorage(UsersRepository usersRepository, final Context context, final boolean enabled) {
+    public static StreamStorage getStorage(UsersCache usersCache, final Context context, final boolean enabled) {
         if (INSTANCE == null) {
             synchronized (StreamStorage.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new StreamStorage(usersRepository, context, enabled);
+                    INSTANCE = new StreamStorage(usersCache, context, enabled);
                 }
             }
         }
@@ -567,7 +566,7 @@ public class StreamStorage implements Storage {
     }
 
     public String generateMessageID() {
-        return usersRepository.getCurrentId() + "-" + randomUUID().toString();
+        return usersCache.getCurrentId() + "-" + randomUUID().toString();
     }
 
 }

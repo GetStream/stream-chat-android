@@ -14,6 +14,6 @@ public class StreamStorageProvider implements StorageProvider {
 
     @Override
     public Storage provideStorage(Client client, final Context context, final boolean enabled) {
-        return StreamStorage.getStorage(StreamChat.getUsersRepository(), context, enabled);
+        return StreamStorage.getStorage(StreamChat.getUsersCache(), context, enabled);
     }
 }

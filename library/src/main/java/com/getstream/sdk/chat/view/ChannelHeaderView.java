@@ -87,12 +87,12 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void setHeaderTitle(ChannelState channelState) {
-        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersRepository())).getChannelNameOrMembers(channelState.getChannel());
+        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersCache())).getChannelNameOrMembers(channelState.getChannel());
         binding.setChannelName(!TextUtils.isEmpty(channelName) ? channelName : style.getChannelWithoutNameText());
     }
 
     protected void setHeaderLastActive(ChannelState channelState) {
-        Date lastActive = new GetLastActive(StreamChat.getUsersRepository()).getLastActive(channelState.getChannel());
+        Date lastActive = new GetLastActive(StreamChat.getUsersCache()).getLastActive(channelState.getChannel());
         Date now = new Date();
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
 
@@ -104,7 +104,7 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void configHeaderAvatar(ChannelState channelState) {
-        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersRepository()).getOtherUsers(channelState.getChannel());
+        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersCache()).getOtherUsers(channelState.getChannel());
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
     }

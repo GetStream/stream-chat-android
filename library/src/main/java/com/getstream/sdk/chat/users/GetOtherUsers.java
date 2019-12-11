@@ -1,23 +1,20 @@
 package com.getstream.sdk.chat.users;
 
-import android.util.Log;
-
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GetOtherUsers {
 
-    private final UsersRepository usersRepository;
+    private final UsersCache usersCache;
 
-    public GetOtherUsers(UsersRepository usersRepository) {
+    public GetOtherUsers(UsersCache usersCache) {
 
-        this.usersRepository = usersRepository;
+        this.usersCache = usersCache;
     }
 
     public List<User> getOtherUsers(Channel channel) {
@@ -28,13 +25,13 @@ public class GetOtherUsers {
         //Log.d(TAG, "getOtherUsers");
 
         List<User> users = new ArrayList<>();
-        String currentUserId = usersRepository.getCurrentId();
+        String currentUserId = usersCache.getCurrentId();
 
         if (members != null) {
             for (Member m : members) {
                 String userId = m.getUserId();
                 if (!userId.equals(currentUserId)) {
-                    User user = usersRepository.getUser(m.getUser().getId());
+                    User user = usersCache.getUser(m.getUser().getId());
                     //Log.d(TAG, "getOtherUsers: member: " + user);
                     users.add(user);
                 }
@@ -45,7 +42,7 @@ public class GetOtherUsers {
             for (Watcher w : watchers) {
                 String userId = w.getUserId();
                 if (!userId.equals(currentUserId)) {
-                    User user = usersRepository.getUser(w.getUser().getId());
+                    User user = usersCache.getUser(w.getUser().getId());
                     //Log.d(TAG, "getOtherUsers: watcher: " + user);
                     if (!users.contains(user))
                         users.add(user);

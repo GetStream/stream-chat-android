@@ -5,8 +5,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.load.model.GlideUrl;
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
@@ -14,63 +12,24 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
-import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.PaginationOptions;
-import com.getstream.sdk.chat.model.QueryChannelsQ;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
-import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.StorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamStorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
+import com.getstream.sdk.chat.rest.core.providers.*;
 import com.getstream.sdk.chat.rest.interfaces.*;
-import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
-import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.AddMembersRequest;
-import com.getstream.sdk.chat.rest.request.BanUserRequest;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
-import com.getstream.sdk.chat.rest.request.QueryUserRequest;
-import com.getstream.sdk.chat.rest.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
-import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
-import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.ErrorResponse;
-import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.FlagResponse;
-import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
-import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.rest.response.MuteUserResponse;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
-import com.getstream.sdk.chat.rest.response.WsErrorMessage;
+import com.getstream.sdk.chat.rest.request.*;
+import com.getstream.sdk.chat.rest.response.*;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
-import com.getstream.sdk.chat.storage.Storage;
+import com.getstream.sdk.chat.users.UsersCache;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,27 +39,21 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import androidx.annotation.NonNull;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
-import static com.getstream.sdk.chat.enums.Filters.in;
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
 import static com.getstream.sdk.chat.storage.Sync.SYNCED;
-import static java.util.UUID.randomUUID;
 
-public class Client{
+public class Client {
 
     private static final String TAG = Client.class.getSimpleName();
     private String clientID;
+    private UsersCache usersCache;
 
     @NotNull
     public ClientState getState() {
@@ -304,11 +257,11 @@ public class Client{
 //        return state.getCurrentUser();
 //    }
 
-//    /**
+    //    /**
 //     * Returns the current user set in client's state
 //     */
     public String getUserId() {
-        if(state.user != null) return state.user.getUserId();
+        if (state.user != null) return state.user.getUserId();
         else return null;
     }
 
@@ -515,6 +468,11 @@ public class Client{
         subRegistry.removeSubscription(handlerId);
     }
 
+    public void setUsersCache(UsersCache usersCache) {
+
+        this.usersCache = usersCache;
+    }
+
 //    /**
 //     * Makes sure the callback is called when the user is ready
 //     * <p>
@@ -531,7 +489,7 @@ public class Client{
 //        }
 //    }
 
-    private void onWSEvent(Event event){
+    private void onWSEvent(Event event) {
         builtinHandler.dispatchEvent(Client.this, event);
         for (ChatEventHandler handler : subRegistry.getSubscribers()) {
             handler.dispatchEvent(Client.this, event);
@@ -545,7 +503,7 @@ public class Client{
                 WSResponseHandler wsHandler = new WSResponseHandler() {
                     @Override
                     public void onWSEvent(Event event) {
-                        onWSEvent(event);
+                        Client.this.onWSEvent(event);
                     }
 
                     @Override
@@ -557,6 +515,7 @@ public class Client{
 
                         // mark as connect, any new callbacks will automatically be executed
                         state.connected = true;
+                        usersCache.setCurrentUser(user);
 
                         // call onSuccess for everyone that was waiting
                         List<ClientConnectionCallback> subs = connectSubRegistry.getSubscribers();
@@ -628,6 +587,7 @@ public class Client{
             public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
                 for (ChannelState channelState : response.body().getChannelStates()) {
+
                     if (channelState.getLastMessage() != null)
                         channelState.getLastMessage().setSyncStatus(SYNCED);
                     Channel channel = channelState.getChannel();
@@ -645,9 +605,8 @@ public class Client{
                 }
 
                 // store the results of the query
-                QueryChannelsQ query = request.query();
-
-                List<Channel> channels = response.body().getChannels();
+                //QueryChannelsQ query = request.query();
+                //List<Channel> channels = response.body().getChannels();
 
                 // callback
                 callback.onSuccess(response.body());
@@ -1736,19 +1695,19 @@ public class Client{
         uploadStorage.sendFile(channel, file, mimeType, callback);
     }
 
-    public void deleteFile(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback){
+    public void deleteFile(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback) {
         uploadStorage.deleteFile(channel, url, callback);
     }
 
-    public void deleteImage(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback){
+    public void deleteImage(@NotNull Channel channel, @NotNull String url, @NotNull CompletableCallback callback) {
         uploadStorage.deleteImage(channel, url, callback);
     }
 
-    public String signFileUrl(String url){
+    public String signFileUrl(String url) {
         return uploadStorage.signFileUrl(url);
     }
 
-    public GlideUrl signGlideUrl(String url){
+    public GlideUrl signGlideUrl(String url) {
         return uploadStorage.signGlideUrl(url);
     }
 

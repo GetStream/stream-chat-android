@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
         client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                viewModel.reload();
+
+                viewModel.loadCh();
+
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
             }
 

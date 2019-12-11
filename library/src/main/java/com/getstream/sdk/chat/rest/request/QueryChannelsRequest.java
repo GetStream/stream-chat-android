@@ -24,7 +24,7 @@ public class QueryChannelsRequest extends BaseQueryChannelRequest<QueryChannelsR
 
     @SerializedName("limit")
     @Expose
-    private Number limit;
+    public Number limit;
 
     @SerializedName("offset")
     @Expose

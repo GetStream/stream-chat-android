@@ -1,9 +1,10 @@
 package com.getstream.sdk.chat.users;
 
-import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.rest.User;
 
-public interface UsersRepository {
+public interface UsersCache {
+
+    void setCurrentUser(User user);
 
     User getCurrent();
 

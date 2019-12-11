@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.users.UsersRepository;
+import com.getstream.sdk.chat.users.UsersCache;
 import com.getstream.sdk.chat.utils.UseCase;
 
 import java.util.Collections;
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class GetLastActive extends UseCase {
 
-    private final UsersRepository usersRepository;
+    private final UsersCache usersCache;
 
-    public GetLastActive(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    public GetLastActive(UsersCache usersCache) {
+        this.usersCache = usersCache;
     }
 
     public Date getLastActive(Channel channel) {
@@ -39,7 +39,7 @@ public class GetLastActive extends UseCase {
                 continue;
             if (lastActive.before(watcher.getUser().getLastActive())) {
                 String userId = watcher.getUserId();
-                if (usersRepository.isCurrentUser(userId)) continue;
+                if (usersCache.isCurrentUser(userId)) continue;
                 lastActive = watcher.getUser().getLastActive();
             }
         }
@@ -54,7 +54,7 @@ public class GetLastActive extends UseCase {
             for (int i = messages.size() - 1; i >= 0; i--) {
                 Message message = messages.get(i);
                 String userId = message.getUserId();
-                if (message.getDeletedAt() == null && !usersRepository.isCurrentUser(userId)) {
+                if (message.getDeletedAt() == null && !usersCache.isCurrentUser(userId)) {
                     lastMessage = message;
                     break;
                 }

@@ -3,29 +3,23 @@ package com.getstream.sdk.chat;
 import android.content.Context;
 import android.util.Log;
 
+import com.getstream.sdk.chat.channels.ChannelsCacheImpl;
 import com.getstream.sdk.chat.channels.ChannelsRepository;
-import com.getstream.sdk.chat.enums.OnlineStatus;
-import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
+import com.getstream.sdk.chat.channels.ChannelsRepositoryImpl;
 import com.getstream.sdk.chat.media.MediaLoader;
 import com.getstream.sdk.chat.media.MediaLoaderImpl;
 import com.getstream.sdk.chat.messages.MessagesRepository;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
-import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.core.ClientState;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
-import com.getstream.sdk.chat.users.UsersRepository;
+import com.getstream.sdk.chat.users.UsersCache;
+import com.getstream.sdk.chat.users.UsersCacheImpl;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 import androidx.annotation.NonNull;
 
@@ -46,7 +40,7 @@ public class StreamChat {
     private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
-    private static UsersRepository usersRepository;
+    private static UsersCache usersCache;
     private static MessagesRepository messagesRepository;
     private static ChannelsRepository channelsRepository;
     private static MediaLoader mediaLoader;
@@ -175,8 +169,8 @@ public class StreamChat {
     }
 
     @NotNull
-    public static UsersRepository getUsersRepository() {
-        return usersRepository;
+    public static UsersCache getUsersCache() {
+        return usersCache;
     }
 
     @NotNull
@@ -223,6 +217,10 @@ public class StreamChat {
                 INSTANCE.setContext(StreamChat.context);
 
                 mediaLoader = new MediaLoaderImpl(context);
+                usersCache = new UsersCacheImpl();
+                channelsRepository = new ChannelsRepositoryImpl(INSTANCE, new ChannelsCacheImpl());
+
+                INSTANCE.setUsersCache(usersCache);
 
                 //onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
                 //currentUser = new MutableLiveData<>();

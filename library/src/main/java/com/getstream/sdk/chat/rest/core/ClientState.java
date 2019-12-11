@@ -2,18 +2,9 @@ package com.getstream.sdk.chat.rest.core;
 
 import android.util.Log;
 
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Member;
-import com.getstream.sdk.chat.model.Watcher;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Client state is responsible for storing:
@@ -79,7 +70,7 @@ public class ClientState {
 //        users = new ConcurrentHashMap<>();
     }
 
-    public String getUserId(){
+    public String getUserId() {
         return user == null ? null : user.getUserId();
     }
 
@@ -196,11 +187,11 @@ public class ClientState {
 //        }
 //        updateUsersWithReference(users, channelState.getChannel().getCid());
 //    }
-
+//
 //    void updateUsersWithReference(List<User> newUsers, String cid) {
 //        // update the users first
 //        updateUsers(newUsers);
-//
+////
 //        // set the references
 //        for (User newUser : newUsers) {
 //            List<String> channelRefs = userIDToChannelsMap.get(newUser.getId());

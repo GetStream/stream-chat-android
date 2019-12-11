@@ -23,7 +23,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.users.GetOtherUsers;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarGroupView;
@@ -118,13 +117,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     // set the channel name
     private void configChannelName(ChannelState channelState) {
-        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersRepository())).getChannelNameOrMembers(channelState.getChannel());
+        String channelName = new GetChannelNameOrMembers(new GetOtherUsers(StreamChat.getUsersCache())).getChannelNameOrMembers(channelState.getChannel());
         tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
     }
 
     private void configAvatarView(ChannelState channelState){
         Channel channel = channelState.getChannel();
-        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersRepository()).getOtherUsers(channel);
+        List<User> otherUsers = new GetOtherUsers(StreamChat.getUsersCache()).getOtherUsers(channel);
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
         // click listeners
         avatarGroupView.setOnClickListener(view -> {
@@ -234,7 +233,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         Message lastMessage = channelState.getLastMessage();
 
-        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(StreamChat.getUsersRepository().getCurrentId()));
+        boolean outgoing = (lastMessage != null && lastMessage.getUserId().equals(StreamChat.getUsersCache().getCurrentId()));
         if (channelState.readLastMessage() || outgoing)
             applyReadStyle();
         else

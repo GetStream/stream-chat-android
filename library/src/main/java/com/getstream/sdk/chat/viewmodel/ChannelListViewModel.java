@@ -113,6 +113,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return channels;
     }
 
+    public void loadCh() {
+        queryChannels();
+    }
+
     private void setChannels(List<Channel> newChannels) {
         channels.postValue(newChannels);
     }
@@ -491,6 +495,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     private void queryChannels() {
+
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) {
             Log.i(TAG, "already loading, skip queryChannels");
@@ -628,7 +633,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                viewModel.queryChannels();
+                //viewModel.queryChannels();
             }
         }
     }

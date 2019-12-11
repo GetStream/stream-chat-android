@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.users.UsersRepository;
+import com.getstream.sdk.chat.users.UsersCache;
 import com.getstream.sdk.chat.utils.UseCase;
 
 import java.util.Date;
@@ -14,17 +14,17 @@ import static java.util.UUID.randomUUID;
 
 public class SendNewMessage extends UseCase {
 
-    private final UsersRepository usersRepository;
+    private final UsersCache usersCache;
     private final MessagesRepository messagesRepository;
     private final Client client;
 
     public SendNewMessage(
-            UsersRepository usersRepository,
+            UsersCache usersCache,
             MessagesRepository messagesRepository,
             Client client
     ) {
 
-        this.usersRepository = usersRepository;
+        this.usersCache = usersCache;
         this.messagesRepository = messagesRepository;
         this.client = client;
     }
@@ -60,6 +60,6 @@ public class SendNewMessage extends UseCase {
     }
 
     private String generateMessageID() {
-        return usersRepository.getCurrentId() + "-" + randomUUID().toString();
+        return usersCache.getCurrentId() + "-" + randomUUID().toString();
     }
 }
