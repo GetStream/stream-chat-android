@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,8 +105,9 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
-            binding.btnClose.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
+            binding.btnClose.setOnClickListener(view -> {
+                listener.onItemClick(getAdapterPosition());
+            });
             if (attachment.config.isUploaded()) {
                 binding.progressBar.setVisibility(View.GONE);
                 binding.ivMask.setVisibility(View.GONE);

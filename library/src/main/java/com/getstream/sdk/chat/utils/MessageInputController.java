@@ -309,6 +309,9 @@ public class MessageInputController {
                                    UploadFileResponse response,
                                    boolean isMedia) {
         uploadingFile = false;
+        if (!attachment.config.isSelected())
+            return;
+
         binding.setActiveMessageSend(true);
 
         if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
@@ -320,7 +323,7 @@ public class MessageInputController {
         }
 
         attachment.config.setUploaded(true);
-        selectedAttachmentAdapderChanged(isMedia);
+        selectedAttachmentAdapderChanged(null, isMedia);
 
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
@@ -346,12 +349,19 @@ public class MessageInputController {
                                boolean isMedia) {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
-        selectedAttachmentAdapderChanged(isMedia);
+        selectedAttachmentAdapderChanged(attachment, isMedia);
     }
 
-    private void selectedAttachmentAdapderChanged(boolean isMedia){
-        if (isMedia)
-            selectedMediaAttachmentAdapter.notifyDataSetChanged();
+    private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment, boolean isMedia){
+        if (isMedia){
+            if (attachment != null){
+                int index = selectedAttachments.indexOf(attachment);
+                if (selectedAttachments.indexOf(attachment) != -1)
+                    selectedMediaAttachmentAdapter.notifyItemChanged(index);
+
+            }else
+                selectedMediaAttachmentAdapter.notifyDataSetChanged();
+        }
         else
             selectedFileAttachmentAdapter.notifyDataSetChanged();
     }
@@ -359,23 +369,26 @@ public class MessageInputController {
     private void setSelectedAttachmentAdapter(List<Attachment> attachments, boolean isMedia) {
         if (isMedia) {
             selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
-                updateAdapter(attachments, position, isMedia);
+                Attachment attachment = selectedAttachments.get(position);
+                cancelUploadingAttachment(attachments, attachment, isMedia);
             });
             binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
         } else {
             selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
             binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
             binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
-                updateAdapter(attachments, position, isMedia);
-            });
+                        Attachment attachment = selectedAttachments.get(position);
+                        cancelUploadingAttachment(attachments, attachment, isMedia);
+                    }
+
+            );
         }
     }
 
-    private void updateAdapter(List<Attachment> attachments, int position, boolean isMedia) {
-        Attachment attachment = selectedAttachments.get(position);
+    private void cancelUploadingAttachment(List<Attachment> attachments, Attachment attachment, boolean isMedia) {
         attachment.config.setSelected(false);
         selectedAttachments.remove(attachment);
-        selectedAttachmentAdapderChanged(isMedia);
+        selectedAttachmentAdapderChanged(null, isMedia);
 
         if (attachments != null) {
             int position_ = -1;
