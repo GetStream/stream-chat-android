@@ -32,12 +32,13 @@ public class AttachmentListAdapter extends BaseAdapter {
     public AttachmentListAdapter(Context context,
                                  List<Attachment> attachments,
                                  boolean localAttach,
-                                 boolean isTotalFileAdapter) {
+                                 boolean isTotalFileAdapter,
+                                 @Nullable OnAttachmentCancelListener cancelListener) {
         this.attachments = attachments;
         this.layoutInflater = LayoutInflater.from(context);
         this.localAttach = localAttach;
         this.isTotalFileAdapter = isTotalFileAdapter;
-
+        this.cancelListener = cancelListener;
     }
 
     @Override
@@ -118,8 +119,11 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.iv_large_file_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
-            if (cancelListener != null)
-                cancelListener.onAttachmentCancel(attachment);
+            holder.tv_close.setOnClickListener(view -> {
+                if (cancelListener != null)
+                    cancelListener.onAttachmentCancel(attachment);
+            });
+
             if (!attachment.config.isUploaded()) {
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.progressBar.setProgress(attachment.config.getProgress());

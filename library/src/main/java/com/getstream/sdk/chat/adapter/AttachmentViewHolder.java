@@ -149,7 +149,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                 attachments.add(attachment);
             }
         }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
+        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false, null);
 
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,

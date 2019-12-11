@@ -203,7 +203,7 @@ public class MessageInputController {
             );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
         }else {
-            fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
+            fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true, null);
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) ->
@@ -372,7 +372,8 @@ public class MessageInputController {
                 cancelUploadingAttachment(attachments, attachment, isMedia));
             binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
         } else {
-            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
+            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false, attachment ->
+                    cancelUploadingAttachment(attachments, attachment, isMedia));
             binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
         }
     }

@@ -26,13 +26,13 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-    private final OnAttachmentCancelListener listener;
+    private final OnAttachmentCancelListener cancelListener;
     private Context context;
     private List<Attachment> attachments;
     public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnAttachmentCancelListener listener) {
         this.context = context;
         this.attachments = attachments;
-        this.listener = listener;
+        this.cancelListener = listener;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        holder.bind(attachments.get(position), listener);
+        holder.bind(attachments.get(position), cancelListener);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             this.binding = binding;
         }
 
-        public void bind(Attachment attachment, final OnAttachmentCancelListener listener) {
+        public void bind(Attachment attachment, final OnAttachmentCancelListener cancelListener) {
             int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
                     .rectangle()
@@ -104,8 +104,11 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            binding.btnClose.setOnClickListener(view ->
-                listener.onAttachmentCancel(attachment));
+            binding.btnClose.setOnClickListener(view -> {
+                if (cancelListener != null)
+                    cancelListener.onAttachmentCancel(attachment);
+            });
+
             if (attachment.config.isUploaded()) {
                 binding.progressBar.setVisibility(View.GONE);
                 binding.ivMask.setVisibility(View.GONE);
