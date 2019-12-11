@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,8 +121,11 @@ public class AttachmentListAdapter extends BaseAdapter {
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
             holder.tv_close.setOnClickListener(view -> {
-                if (cancelListener != null)
+                if (cancelListener != null){
+                    Log.d(TAG, "Cancel File uploading");
                     cancelListener.onAttachmentCancel(attachment);
+                }
+
             });
 
             if (!attachment.config.isUploaded()) {
