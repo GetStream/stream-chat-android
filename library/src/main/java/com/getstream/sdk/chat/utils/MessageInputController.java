@@ -366,14 +366,14 @@ public class MessageInputController {
             selectedFileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void setSelectedAttachmentAdapter(List<Attachment> attachments, boolean isMedia) {
+    private void setSelectedAttachmentAdapter(List<Attachment> localAttachments, boolean isMedia) {
         if (isMedia) {
             selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
-                cancelUploadingAttachment(attachments, attachment, isMedia));
+                cancelUploadingAttachment(localAttachments, attachment, isMedia));
             binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
         } else {
             selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false, attachment ->
-                    cancelUploadingAttachment(attachments, attachment, isMedia));
+                    cancelUploadingAttachment(localAttachments, attachment, isMedia));
             binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
         }
     }
