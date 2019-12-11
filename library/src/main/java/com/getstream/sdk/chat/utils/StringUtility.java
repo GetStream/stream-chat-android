@@ -89,8 +89,8 @@ public class StringUtility {
         return text.substring(0, text.length() - last.length()) + userName;
     }
 
-    public static boolean isValidTextMessage(String text){
+    public static boolean isEmptyTextMessage(String text){
         String s = text.replaceAll("\\s+", "");
-        return s.length() != 0;
+        return TextUtils.isEmpty(s);
     }
 }

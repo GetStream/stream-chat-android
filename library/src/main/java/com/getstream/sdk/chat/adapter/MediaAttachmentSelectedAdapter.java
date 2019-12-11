@@ -26,12 +26,19 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-    private final OnAttachmentCancelListener cancelListener;
+    private OnAttachmentCancelListener cancelListener;
     private Context context;
     private List<Attachment> attachments;
-    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnAttachmentCancelListener listener) {
+
+    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments) {
         this.context = context;
         this.attachments = attachments;
+    }
+
+    public MediaAttachmentSelectedAdapter(Context context,
+                                          List<Attachment> attachments,
+                                          OnAttachmentCancelListener listener) {
+        this(context, attachments);
         this.cancelListener = listener;
     }
 
@@ -57,7 +64,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
     }
 
     public interface OnAttachmentCancelListener {
-        void onAttachmentCancel(Attachment attachment);
+        void onCancel(Attachment attachment);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -106,7 +113,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             }
             binding.btnClose.setOnClickListener(view -> {
                 if (cancelListener != null)
-                    cancelListener.onAttachmentCancel(attachment);
+                    cancelListener.onCancel(attachment);
             });
 
             if (attachment.config.isUploaded()) {

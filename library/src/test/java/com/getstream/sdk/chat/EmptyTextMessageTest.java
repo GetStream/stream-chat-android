@@ -7,29 +7,29 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValidMessageTextTest {
+public class EmptyTextMessageTest {
 
     @Test
     void validTextMessage(){
         String text = "Hi, Tommaso!";
-        assertTrue(StringUtility.isValidTextMessage(text));
+        assertFalse(StringUtility.isEmptyTextMessage(text));
     }
 
     @Test
     void emptyTextMessage(){
         String text = "";
-        assertFalse(StringUtility.isValidTextMessage(text));
+        assertTrue(StringUtility.isEmptyTextMessage(text));
     }
 
     @Test
     void allSpaceTextMessage(){
         String text = "  ";
-        assertFalse(StringUtility.isValidTextMessage(text));
+        assertTrue(StringUtility.isEmptyTextMessage(text));
     }
 
     @Test
     void allNewLineTextMessage(){
         String text = "\n \n  \n\n  ";
-        assertFalse(StringUtility.isValidTextMessage(text));
+        assertTrue(StringUtility.isEmptyTextMessage(text));
     }
 }

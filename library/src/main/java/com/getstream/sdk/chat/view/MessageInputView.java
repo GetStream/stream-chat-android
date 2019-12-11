@@ -200,7 +200,7 @@ public class MessageInputView extends RelativeLayout {
     private void configSendBtn() {
         List<Attachment> attachments = messageInputController.getSelectedAttachments();
         boolean hasAttachment = attachments != null && !attachments.isEmpty();
-        boolean notEmptyMessage = StringUtility.isValidTextMessage(getMessageText()) || (!messageInputController.isUploadingFile() && hasAttachment);
+        boolean notEmptyMessage = !StringUtility.isEmptyTextMessage(getMessageText()) || (!messageInputController.isUploadingFile() && hasAttachment);
         binding.setActiveMessageSend(notEmptyMessage);
     }
 

@@ -204,7 +204,7 @@ public class MessageInputController {
             );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
         }else {
-            fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true, null);
+            fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) ->
@@ -348,7 +348,7 @@ public class MessageInputController {
         uploadingFile = true;
         attachment.config.setProgress(percentage);
         selectedAttachmentAdapderChanged(attachment, isMedia);
-        if (!StringUtility.isValidTextMessage(binding.etMessage.getText().toString()))
+        if (StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString()))
             setSendButtonState(false);
     }
 
@@ -405,7 +405,7 @@ public class MessageInputController {
 
     private void configCannotSendMessageButton(){
         if (selectedAttachments.size() == 0
-                && !StringUtility.isValidTextMessage(binding.etMessage.getText().toString())) {
+                && StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())) {
             viewModel.setInputType(InputType.DEFAULT);
             setSendButtonState(false);
         }

@@ -9,8 +9,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.utils.Constant;
@@ -32,12 +30,19 @@ public class AttachmentListAdapter extends BaseAdapter {
     public AttachmentListAdapter(Context context,
                                  List<Attachment> attachments,
                                  boolean localAttach,
-                                 boolean isTotalFileAdapter,
-                                 @Nullable OnAttachmentCancelListener cancelListener) {
+                                 boolean isTotalFileAdapter) {
         this.attachments = attachments;
         this.layoutInflater = LayoutInflater.from(context);
         this.localAttach = localAttach;
         this.isTotalFileAdapter = isTotalFileAdapter;
+    }
+
+    public AttachmentListAdapter(Context context,
+                                 List<Attachment> attachments,
+                                 boolean localAttach,
+                                 boolean isTotalFileAdapter,
+                                 OnAttachmentCancelListener cancelListener) {
+        this(context, attachments, localAttach, isTotalFileAdapter);
         this.cancelListener = cancelListener;
     }
 
@@ -121,7 +126,7 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.tv_close.setVisibility(View.VISIBLE);
             holder.tv_close.setOnClickListener(view -> {
                 if (cancelListener != null)
-                    cancelListener.onAttachmentCancel(attachment);
+                    cancelListener.onCancel(attachment);
             });
 
             if (!attachment.config.isUploaded()) {
@@ -139,6 +144,6 @@ public class AttachmentListAdapter extends BaseAdapter {
     }
 
     public interface OnAttachmentCancelListener {
-        void onAttachmentCancel(Attachment attachment);
+        void onCancel(Attachment attachment);
     }
 }
