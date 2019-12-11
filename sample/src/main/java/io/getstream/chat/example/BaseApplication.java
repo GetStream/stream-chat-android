@@ -4,6 +4,9 @@ import android.app.Application;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.logger.StreamChatLogger;
+import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -20,13 +23,25 @@ public class BaseApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
+
+        StreamLogger logger = new StreamChatLogger.Builder()
+                .enabled(BuildConfig.DEBUG)
+                .loggingLevel(StreamChatLogger.Level.WARN)
+                .build();
+
+        logger.logI(this.getClass(), "Info msg");
+        logger.logD(this.getClass(), "Debug msg");
+        logger.logW(this.getClass(), "Warning msg");
+        logger.logE(this.getClass(), "Error msg");
+
         StreamChat.init(BuildConfig.API_KEY,
                 new ApiClientOptions.Builder()
                         .BaseURL(BuildConfig.API_ENDPOINT)
                         .Timeout(BuildConfig.API_TIMEOUT)
                         .CDNTimeout(BuildConfig.CDN_TIMEOUT)
                         .build(),
-                this
+                this,
+                logger
         );
         StreamChat.initStyle(
                 new StreamChatStyle.Builder()
@@ -34,6 +49,7 @@ public class BaseApplication extends Application {
                         //.setDefaultFont("fonts/odibeesans_regular.ttf")
                         .build()
         );
+
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {

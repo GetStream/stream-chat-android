@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
+import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
@@ -44,6 +46,7 @@ public class StreamChat {
     private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
+    private static StreamLogger logger;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -169,11 +172,27 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context);
+    public static void logI(@NonNull Class<?> classInstance, @NonNull String message) {
+        logger.logI(classInstance, message);
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context) {
+    public static void logD(@NonNull Class<?> classInstance, @NonNull String message) {
+        logger.logD(classInstance, message);
+    }
+
+    public static void logW(@NonNull Class<?> classInstance, @NonNull String message) {
+        logger.logW(classInstance, message);
+    }
+
+    public static void logE(@NonNull Class<?> classInstance, @NonNull String message) {
+        logger.logE(classInstance, message);
+    }
+
+    public static synchronized boolean init(String apiKey, Context context) {
+        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger());
+    }
+
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context, StreamLogger logger) {
         if (INSTANCE != null) {
             return true;
         }
@@ -181,6 +200,7 @@ public class StreamChat {
         synchronized (Client.class) {
             if (INSTANCE == null) {
 
+                StreamChat.logger = logger;
                 StreamChat.context = context;
                 stringsProvider = new StringsProviderImpl(context);
 
