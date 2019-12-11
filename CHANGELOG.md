@@ -1,5 +1,7 @@
 ## Upcoming
 
+- Client support for anonymous and guest users
+
 ## December 9th, 2019 - 3.5.0
 
 - Fix set typeFace without custom font

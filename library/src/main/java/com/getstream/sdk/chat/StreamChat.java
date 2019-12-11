@@ -30,6 +30,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class StreamChat {
@@ -214,7 +216,6 @@ public class StreamChat {
 
                 StreamChat.context = context;
                 stringsProvider = new StringsProviderImpl(context);
-
 
                 fontsManager = new FontsManagerImpl(context);
 
