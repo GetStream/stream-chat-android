@@ -133,8 +133,7 @@ public class Client implements WSResponseHandler {
     private String apiKey;
 
     private Boolean offlineStorage;
-    @NotNull
-    private Boolean anonymousConnection = false;
+    private boolean anonymousConnection;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
