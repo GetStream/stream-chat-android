@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +26,10 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-    private final OnItemClickListener listener;
+    private final OnAttachmentCancelListener listener;
     private Context context;
     private List<Attachment> attachments;
-    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnItemClickListener listener) {
+    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnAttachmentCancelListener listener) {
         this.context = context;
         this.attachments = attachments;
         this.listener = listener;
@@ -57,8 +56,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         return attachments.size();
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(int position);
+    public interface OnAttachmentCancelListener {
+        void onAttachmentCancel(Attachment attachment);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -69,7 +68,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             this.binding = binding;
         }
 
-        public void bind(Attachment attachment, final OnItemClickListener listener) {
+        public void bind(Attachment attachment, final OnAttachmentCancelListener listener) {
             int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
                     .rectangle()
@@ -105,9 +104,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            binding.btnClose.setOnClickListener(view -> {
-                listener.onItemClick(getAdapterPosition());
-            });
+            binding.btnClose.setOnClickListener(view ->
+                listener.onAttachmentCancel(attachment));
             if (attachment.config.isUploaded()) {
                 binding.progressBar.setVisibility(View.GONE);
                 binding.ivMask.setVisibility(View.GONE);

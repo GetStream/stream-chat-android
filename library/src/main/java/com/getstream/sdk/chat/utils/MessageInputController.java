@@ -368,20 +368,12 @@ public class MessageInputController {
 
     private void setSelectedAttachmentAdapter(List<Attachment> attachments, boolean isMedia) {
         if (isMedia) {
-            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
-                Attachment attachment = selectedAttachments.get(position);
-                cancelUploadingAttachment(attachments, attachment, isMedia);
-            });
+            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
+                cancelUploadingAttachment(attachments, attachment, isMedia));
             binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
         } else {
             selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
             binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
-            binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
-                        Attachment attachment = selectedAttachments.get(position);
-                        cancelUploadingAttachment(attachments, attachment, isMedia);
-                    }
-
-            );
         }
     }
 
