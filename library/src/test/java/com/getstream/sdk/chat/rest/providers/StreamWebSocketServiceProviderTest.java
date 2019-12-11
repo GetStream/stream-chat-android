@@ -32,8 +32,11 @@ public class StreamWebSocketServiceProviderTest {
         user.setId("123");
         user.setImage("image \" url");
 
-        String url = provider.getWsUrl("token", user);
+        String url = provider.getWsUrl("token", user, false);
         assertEquals("wss://chat-us-east-1.stream-io-api.com/connect?json=%7B%22user_id%22%3A%22123%22%2C%22user_details%22%3A%7B%22image%22%3A%22image+%5C%22+url%22%2C%22id%22%3A%22123%22%7D%2C%22server_determines_connection_id%22%3Atrue%7D&api_key=test-key&authorization=token&stream-auth-type=jwt", url);
+
+        url = provider.getWsUrl("token", user, true);
+        assertEquals("wss://chat-us-east-1.stream-io-api.com/connect?json=%7B%22user_id%22%3A%22123%22%2C%22user_details%22%3A%7B%22image%22%3A%22image+%5C%22+url%22%2C%22id%22%3A%22123%22%7D%2C%22server_determines_connection_id%22%3Atrue%7D&api_key=test-key&stream-auth-type=anonymous", url);
     }
 
     @Test
