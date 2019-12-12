@@ -203,11 +203,12 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel.createChannel(channelName).observe(this, state -> {
             if (state.success()) {
-                Channel channel = state.data;
-                Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
-                intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-                intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-                startActivity(intent);
+                Toast.makeText(this, "Open new channel: " + state.data.getCid(), Toast.LENGTH_SHORT).show();
+                //Channel channel = state.data;
+                //Intent intent = new Intent(MainActivity.this, ChannelActivity.class);
+                //intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
+                //intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
+                //startActivity(intent);
             } else {
                 Toast.makeText(MainActivity.this, state.error.getMessage(), Toast.LENGTH_SHORT).show();
             }

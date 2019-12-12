@@ -35,16 +35,16 @@ public class ChannelsRepositoryImpl implements ChannelsRepository {
 
         return (successCallback, errorCallback) -> new Observable<>(successCallback, errorCallback).async((Runnable) () -> {
 
-            List<Channel> cached = cache.getChannels(query);
+            //List<Channel> cached = cache.getChannels(query);
 
-            if (!cached.isEmpty()) {
-                successCallback.onSuccess(cached);
-            }
+            //if (!cached.isEmpty()) {
+                //successCallback.onSuccess(cached);
+            //}
 
             client.queryChannels(query, new QueryChannelListCallback() {
                 @Override
                 public void onSuccess(QueryChannelsResponse response) {
-                    cache.store(query, response.getChannels());
+                    //cache.store(query, response.getChannels());
                     successCallback.onSuccess(response.getChannels());
                 }
 

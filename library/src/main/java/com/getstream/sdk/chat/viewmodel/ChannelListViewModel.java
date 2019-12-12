@@ -77,6 +77,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         channels = new LazyQueryChannelLiveData<>();
         channels.viewModel = this;
+        channels.postValue(new ArrayList<>());
         sort = new QuerySort().desc("last_message_at");
 
         setupConnectionRecovery();
@@ -118,7 +119,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     private void setChannels(List<Channel> newChannels) {
-        channels.postValue(newChannels);
+        List<Channel> old = channels.getValue();
+        old.addAll(newChannels);
+        channels.postValue(old);
+        //channels.postValue();
     }
 
     public LiveData<Boolean> getLoading() {
@@ -496,6 +500,8 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private void queryChannels() {
 
+        if(reachedEndOfPagination) return;
+
         Log.i(TAG, "queryChannels for loading the channels");
         if (!setLoading()) {
             Log.i(TAG, "already loading, skip queryChannels");
@@ -512,17 +518,25 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onSuccess(List<Channel> data) {
                 queryChannelDone = true;
-                setLoadingDone();
-
-                Log.i(TAG, "onSendMessageSuccess for loading the channels");
-                // remove the offline channels before adding the new ones
-
-                setChannels(data);
 
                 if (data.size() < pageSize) {
                     Log.i(TAG, "reached end of pagination");
                     reachedEndOfPagination = true;
                 }
+
+                setLoadingDone();
+
+                Log.i(TAG, "onSendMessageSuccess for loading the channels");
+                // remove the offline channels before adding the new ones
+
+                //setChannels(data);
+
+                List<ChannelState> states = new ArrayList<>();
+                for (Channel d : data) {
+                    states.add(d.getChannelState());
+                }
+
+                addChannels(states);
 
 //                if (queryChannelListCallback != null) {
 //                    queryChannelListCallback.onSuccess(response);
