@@ -29,8 +29,6 @@ import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
-import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -163,15 +161,6 @@ public class MessageInputController {
         binding.getRoot().setBackgroundResource(0);
         messageInputType = null;
         commandMentionListItemAdapter = null;
-    }
-
-    private void initLoadAttachmentView() {
-        binding.rvComposer.setVisibility(View.GONE);
-        binding.lvComposer.setVisibility(View.GONE);
-        selectedMediaAttachmentAdapter = null;
-        selectedFileAttachmentAdapter = null;
-        selectedAttachments = null;
-        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
     }
 
     // endregion
@@ -307,7 +296,8 @@ public class MessageInputController {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachmentView();
+        initAdapter();
+        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(editAttachments, true));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
@@ -363,13 +353,19 @@ public class MessageInputController {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachmentView();
+        initAdapter();
+        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
         AsyncTask.execute(() -> configSelectAttachView(editAttachments, false));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
     }
 
     public void initSendMessage() {
         binding.etMessage.setText("");
+        initAdapter();
+        onClickCloseBackGroundView();
+    }
+
+    private void initAdapter(){
         selectedAttachments = null;
         uploadManager.setQueue(null);
 
@@ -383,8 +379,6 @@ public class MessageInputController {
         selectedMediaAttachmentAdapter = null;
         fileAttachmentAdapter = null;
         selectedFileAttachmentAdapter = null;
-
-        onClickCloseBackGroundView();
     }
     // endregion
 
