@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.controller;
 
+import android.util.Log;
+
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
@@ -7,6 +9,7 @@ import com.getstream.sdk.chat.rest.response.ErrorResponse;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -16,14 +19,38 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    public static Retrofit getAuthorizedClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
+    private static final String TAG = RetrofitClient.class.getSimpleName();
+    private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
 
-        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+    private static Request prepareRequest(Interceptor.Chain chain, boolean isAnonymousClient) {
+        String authType = isAnonymousClient ? "anonymous" : "jwt";
 
-        TokenAuthInterceptor authInterceptor = new TokenAuthInterceptor(tokenProvider);
+        return chain.request()
+                .newBuilder()
+                .addHeader("Content-Type", "application/json")
+                .addHeader("stream-auth-type", authType)
+                .addHeader("Accept-Encoding", "application/gzip")
+                .build();
+    }
 
-        OkHttpClient client = new OkHttpClient.Builder()
+    public static Retrofit getClient(ApiClientOptions options, CachedTokenProvider tokenProvider, boolean anonymousAuth) {
+
+        if (tokenProvider != null && anonymousAuth) {
+            Log.e(TAG, "Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
+        }
+
+        if (tokenProvider == null && !anonymousAuth) {
+            Log.e(TAG, "tokenProvider must be non-null in not anonymous mode");
+            return null;
+        }
+
+        TokenAuthInterceptor authInterceptor = null;
+
+        if (!anonymousAuth) {
+            authInterceptor = new TokenAuthInterceptor(tokenProvider);
+        }
+
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
@@ -36,24 +63,18 @@ public class RetrofitClient {
                     return response;
                 })
                 .addInterceptor(loggingInterceptor)
-                .addInterceptor(chain -> {
-                    Request request = chain.request()
-                            .newBuilder()
-                            .addHeader("Content-Type", "application/json")
-                            .addHeader("stream-auth-type", "jwt")
-                            .addHeader("Accept-Encoding", "application/gzip")
-                            .build();
-                    return chain.proceed(request);
-                })
-                .addInterceptor(authInterceptor)
-                .followRedirects(false)
-                .build();
+                .addInterceptor(chain -> chain.proceed(prepareRequest(chain, anonymousAuth)))
+                .followRedirects(false);
+
+        if (!anonymousAuth) {
+            clientBuilder.addInterceptor(authInterceptor);
+        }
 
         return new Retrofit.Builder()
-            .baseUrl(options.getHttpURL())
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
-            .build();
+                .baseUrl(options.getHttpURL())
+                .client(clientBuilder.build())
+                .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
+                .build();
     }
 
     public static Retrofit getAuthorizedCDNClient(CachedTokenProvider tokenProvider, ApiClientOptions options) {
