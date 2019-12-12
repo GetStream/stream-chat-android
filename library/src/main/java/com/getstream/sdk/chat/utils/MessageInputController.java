@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -49,12 +48,13 @@ public class MessageInputController {
     private MessageInputStyle style;
     private MediaAttachmentAdapter mediaAttachmentAdapter;
     private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter;
+    private AttachmentListAdapter fileAttachmentAdapter;
+    private AttachmentListAdapter selectedFileAttachmentAdapter;
     private CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
     private List<Object> commands = null;
     private Context context;
     private StreamViewMessageInputBinding binding;
-    private AttachmentListAdapter fileAttachmentAdapter;
-    private AttachmentListAdapter selectedFileAttachmentAdapter;
+
     private MessageInputType messageInputType;
     private List<Attachment> selectedAttachments;
     private MessageInputView.AttachmentListener attachmentListener;
@@ -215,23 +215,31 @@ public class MessageInputController {
                                           boolean fromGallery,
                                           boolean isMedia){
         attachment.config.setSelected(!attachment.config.isSelected());
+        updateQueue(attachment, attachment.config.isSelected());
         if (attachment.config.isSelected()) {
             if (UploadManager.isOverMaxUploadFileSize(new File(attachment.config.getFilePath()), true))
                 return;
             if (selectedAttachments == null)
                 selectedAttachments = new ArrayList<>();
             selectedAttachments.add(attachment);
-            uploadFile(attachment, fromGallery, isMedia);
-            if (fromGallery)
-                totalAttachmentAdaterChanged(attachment, isMedia);
+            if (attachment.config.isUploaded()){
+                updateQueue(attachment, false);
+                if (attachmentListener != null)
+                    attachmentListener.onAddAttachment(attachment);
+                if (!isUploadingFile())
+                    setSendButtonState(true);
+            }else
+                uploadFile(attachment, fromGallery, isMedia);
 
             showHideComposerAttachmentGalleryView(true, isMedia);
+            if (fromGallery)
+                totalAttachmentAdaterChanged(attachment, isMedia);
             selectedAttachmentAdapderChanged(attachment, fromGallery, isMedia);
         } else{
             selectedAttachments.remove(attachment);
             if (fromGallery)
-                totalAttachmentAdaterChanged(null, isMedia);
-            selectedAttachmentAdapderChanged(null, fromGallery, isMedia);
+                totalAttachmentAdaterChanged(isMedia);
+            selectedAttachmentAdapderChanged(fromGallery, isMedia);
         }
         configCannotSendMessageButton();
     }
@@ -256,14 +264,21 @@ public class MessageInputController {
     private void uploadFile(Attachment attachment,
                             boolean fromGallery,
                             boolean isMedia) {
-        if (queue == null)
-            queue = new ArrayList<>();
-        queue.add(attachment);
         UploadFileCallback callback = getUploadFileCallBack(attachment, fromGallery, isMedia);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
             channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
         else
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
+    }
+
+    private void updateQueue(Attachment attachment, boolean add){
+        if (add){
+            if (queue == null)
+                queue = new ArrayList<>();
+            queue.add(attachment);
+        }else {
+            queue.remove(attachment);
+        }
     }
 
     private UploadFileCallback getUploadFileCallBack(Attachment attachment,
@@ -291,7 +306,7 @@ public class MessageInputController {
                                    UploadFileResponse response,
                                    boolean fromGallery,
                                    boolean isMedia) {
-        queue.remove(attachment);
+        updateQueue(attachment,false);
         if (!attachment.config.isSelected())
             return;
 
@@ -307,7 +322,7 @@ public class MessageInputController {
         }
 
         attachment.config.setUploaded(true);
-        selectedAttachmentAdapderChanged(null, fromGallery, isMedia);
+        selectedAttachmentAdapderChanged(fromGallery, isMedia);
 
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
@@ -317,7 +332,6 @@ public class MessageInputController {
                                   String errMsg,
                                   boolean fromGallery,
                                   boolean isMedia) {
-        queue.remove(attachment);
         Utils.showMessage(context, errMsg);
         uploadOrCancelAttachment(attachment, fromGallery, isMedia);
     }
@@ -344,34 +358,44 @@ public class MessageInputController {
         }
     }
 
-    private void totalAttachmentAdaterChanged(@Nullable Attachment attachment, boolean isMedia){
-        if (isMedia){
-            if (attachment == null)
-                mediaAttachmentAdapter.notifyDataSetChanged();
-            else{
-                int index = localAttachments.indexOf(attachment);
-                if (index != -1)
-                    mediaAttachmentAdapter.notifyItemChanged(index);
-            }
-        }
+    private void totalAttachmentAdaterChanged(@NonNull Attachment attachment, boolean isMedia) {
+        if (isMedia) {
+            int index = localAttachments.indexOf(attachment);
+            if (index != -1)
+                mediaAttachmentAdapter.notifyItemChanged(index);
+        } else
+            totalAttachmentAdaterChanged(isMedia);
+    }
+
+    private void totalAttachmentAdaterChanged(boolean isMedia) {
+        if (isMedia)
+            mediaAttachmentAdapter.notifyDataSetChanged();
         else
             fileAttachmentAdapter.notifyDataSetChanged();
 
     }
 
-    private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment, boolean fromGallery, boolean isMedia){
-        if (isMedia){
+    private void selectedAttachmentAdapderChanged(@NonNull Attachment attachment,
+                                                  boolean fromGallery,
+                                                  boolean isMedia) {
+        if (isMedia) {
             if (selectedMediaAttachmentAdapter == null)
                 setSelectedAttachmentAdapter(fromGallery, isMedia);
-            if (attachment != null){
-                int index = selectedAttachments.indexOf(attachment);
-                if (index != -1)
-                    selectedMediaAttachmentAdapter.notifyItemChanged(index);
 
-            }else
-                selectedMediaAttachmentAdapter.notifyDataSetChanged();
+            int index = selectedAttachments.indexOf(attachment);
+            if (index != -1)
+                selectedMediaAttachmentAdapter.notifyItemChanged(index);
+        } else {
+            selectedAttachmentAdapderChanged(fromGallery, isMedia);
         }
-        else{
+    }
+
+    private void selectedAttachmentAdapderChanged(boolean fromGallery, boolean isMedia) {
+        if (isMedia) {
+            if (selectedMediaAttachmentAdapter == null)
+                setSelectedAttachmentAdapter(fromGallery, isMedia);
+            selectedMediaAttachmentAdapter.notifyDataSetChanged();
+        } else {
             if (selectedFileAttachmentAdapter == null)
                 setSelectedAttachmentAdapter(fromGallery, isMedia);
             selectedFileAttachmentAdapter.notifyDataSetChanged();

@@ -2,6 +2,9 @@ package com.getstream.sdk.chat.utils;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
+import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
+import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -13,26 +16,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UploadManager {
-
+    private Channel channel;
+    private MediaAttachmentAdapter mediaAttachmentAdapter;
+    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter;
+    private AttachmentListAdapter fileAttachmentAdapter;
+    private AttachmentListAdapter selectedFileAttachmentAdapter;
     private List<Attachment> queue;
 
-    public void uploadFile(Channel channel, List<Attachment> attachments,
-                                  Attachment attachment,
-                                  boolean isMedia) {
+    public UploadManager(Channel channel,
+                         MediaAttachmentAdapter mediaAttachmentAdapter,
+                         MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter,
+                         AttachmentListAdapter fileAttachmentAdapter,
+                         AttachmentListAdapter selectedFileAttachmentAdapter) {
+        this.channel = channel;
+        this.mediaAttachmentAdapter = mediaAttachmentAdapter;
+        this.selectedMediaAttachmentAdapter = selectedMediaAttachmentAdapter;
+        this.fileAttachmentAdapter = fileAttachmentAdapter;
+        this.selectedFileAttachmentAdapter = selectedFileAttachmentAdapter;
+    }
+
+    public void uploadFile(Attachment attachment,
+                           boolean isMedia) {
         if (queue == null)
             queue = new ArrayList<>();
 
         queue.add(attachment);
 
-        UploadFileCallback callback = getUploadFileCallBack(attachments, attachment, isMedia);
+        UploadFileCallback callback = getUploadFileCallBack(attachment, isMedia);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
             channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
         else
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
     }
 
-    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments,
-                                                           Attachment attachment,
+    private UploadFileCallback getUploadFileCallBack(Attachment attachment,
                                                            boolean isMedia) {
         return new UploadFileCallback<UploadFileResponse, Integer>() {
             @Override
@@ -78,7 +95,7 @@ public class UploadManager {
         Utils.showMessage(StreamChat.getContext(), errMsg);
     }
 
-    private static void fileUploading(Attachment attachment,
+    private void fileUploading(Attachment attachment,
                                      Integer percentage) {
         attachment.config.setProgress(percentage);
     }
