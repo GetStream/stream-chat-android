@@ -58,7 +58,7 @@ public class MessageInputController {
     private MessageInputType messageInputType;
     private List<Attachment> selectedAttachments;
     private MessageInputView.AttachmentListener attachmentListener;
-    private boolean uploadingFile = false;
+    private List<Attachment> queue;
     private List<Attachment> localAttachments;
 
     // region Attachment
@@ -81,7 +81,7 @@ public class MessageInputController {
     }
 
     public boolean isUploadingFile() {
-        return uploadingFile;
+        return queue != null && !queue.isEmpty();
     }
 
     public void setSelectedAttachments(List<Attachment> selectedAttachments) {
@@ -256,7 +256,9 @@ public class MessageInputController {
     private void uploadFile(Attachment attachment,
                             boolean fromGallery,
                             boolean isMedia) {
-        uploadingFile = true;
+        if (queue == null)
+            queue = new ArrayList<>();
+        queue.add(attachment);
         UploadFileCallback callback = getUploadFileCallBack(attachment, fromGallery, isMedia);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
             channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
@@ -289,15 +291,12 @@ public class MessageInputController {
                                    UploadFileResponse response,
                                    boolean fromGallery,
                                    boolean isMedia) {
-        uploadingFile = false;
+        queue.remove(attachment);
         if (!attachment.config.isSelected())
             return;
-        // disable Send button if uploading attachment files and invalid text.
-        new Handler().postDelayed(()->{
-            if (!uploadingFile)
-                setSendButtonState(true);
-        },100);
 
+        if (!isUploadingFile())
+            setSendButtonState(true);
 
         if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
             File file = new File(attachment.config.getFilePath());
@@ -318,7 +317,7 @@ public class MessageInputController {
                                   String errMsg,
                                   boolean fromGallery,
                                   boolean isMedia) {
-        uploadingFile = false;
+        queue.remove(attachment);
         Utils.showMessage(context, errMsg);
         uploadOrCancelAttachment(attachment, fromGallery, isMedia);
     }
@@ -327,7 +326,6 @@ public class MessageInputController {
                                Integer percentage,
                                boolean fromGallery,
                                boolean isMedia) {
-        uploadingFile = true;
         attachment.config.setProgress(percentage);
         selectedAttachmentAdapderChanged(attachment, fromGallery, isMedia);
         if (StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString()))
