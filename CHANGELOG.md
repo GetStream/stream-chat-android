@@ -1,15 +1,13 @@
 ## Upcoming
 
-- Add MessageSendListener
-- Update CustomMessageInputView
-- Update CustomMessageInputView2
+- Add `MessageSendListener` interface for sending Message
+- Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
 
 
 ## December 9th, 2019 - 3.5.0
 
 - Fix set typeFace without custom font
-- Improve rendering performance for messages without Markdown markup
 - Fix channel.watch (data payload was not sent)
 - Fix API 23 compatiblity
 - Add Attachment Border Color attrs

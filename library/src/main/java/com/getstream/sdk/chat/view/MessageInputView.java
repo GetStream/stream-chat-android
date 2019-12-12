@@ -38,6 +38,7 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -160,15 +161,14 @@ public class MessageInputView extends RelativeLayout {
         });
     }
 
-    private void configInputEditText(){
-        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
+    private void configInputEditText() {
+        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
                 Utils.showSoftKeyboard((Activity) getContext());
             } else
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
-
         TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
@@ -185,6 +185,7 @@ public class MessageInputView extends RelativeLayout {
             binding.setActiveMessageSend(false);
         else
             binding.setActiveMessageSend(messageText.length() != 0);
+        configSendButtonEnableState();
     }
 
     private void configMessageInputBackground(LifecycleOwner lifecycleOwner){
@@ -209,14 +210,22 @@ public class MessageInputView extends RelativeLayout {
                     break;
             }
         });
+
+    }
+
+    private void configSendButtonEnableState() {
+        List<Attachment> attachments = messageInputController.getSelectedAttachments();
+        boolean hasAttachment = attachments != null && !attachments.isEmpty();
+        boolean notEmptyMessage = !StringUtility.isEmptyTextMessage(getMessageText()) || (!messageInputController.isUploadingFile() && hasAttachment);
+        binding.setActiveMessageSend(notEmptyMessage);
     }
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  ()-> {
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  attachment-> {
             if (binding.ivSend.isEnabled()) return;
-            for (Attachment attachment : messageInputController.getSelectedAttachments())
-                if (!attachment.config.isUploaded())
+            for (Attachment attachment_ : messageInputController.getSelectedAttachments())
+                if (!attachment_.config.isUploaded())
                     return;
 
             onSendMessage();
@@ -236,7 +245,7 @@ public class MessageInputView extends RelativeLayout {
             }
         });
 
-        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
+        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(null));
 
         binding.llCamera.setOnClickListener(v -> {
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
@@ -254,7 +263,7 @@ public class MessageInputView extends RelativeLayout {
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(v, null));
+        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(null));
     }
 
     private void onBackPressed() {
@@ -473,12 +482,12 @@ public class MessageInputView extends RelativeLayout {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectMediaView(message.getAttachments());
             } else {
-                messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectFileView(message.getAttachments());
             }
         } else {
-            messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+            messageInputController.onClickOpenSelectMediaView(message.getAttachments());
         }
     }
 
@@ -565,7 +574,7 @@ public class MessageInputView extends RelativeLayout {
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachments();
+        void onAddAttachment(Attachment attachment);
     }
     /**
      * Interface for Permission request
