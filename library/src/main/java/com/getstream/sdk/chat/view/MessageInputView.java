@@ -398,14 +398,14 @@ public class MessageInputView extends RelativeLayout {
      */
     protected Message prepareNewMessage(Message message) {
         // Check file uploading
-        message.setAttachments(messageInputController.getSelectedAttachments());
         if (messageInputController.isUploadingFile()){
+            message.setUser(viewModel.client().getUser());
             String clientSideID = viewModel.getChannel().getClient().generateMessageID();
             message.setId(clientSideID);
             message.setCreatedAt(new Date());
             message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-            message.setAttachments(null);
-        }
+        }else
+            message.setAttachments(messageInputController.getSelectedAttachments());
         return message;
     }
 
