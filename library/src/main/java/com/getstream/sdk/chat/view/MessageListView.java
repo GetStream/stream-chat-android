@@ -210,9 +210,7 @@ public class MessageListView extends RecyclerView {
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
-                    handler.sendEmptyMessage(0);
+                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
 
                     Log.i(TAG, String.format("just update last message"));
                     return;
