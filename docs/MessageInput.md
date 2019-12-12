@@ -304,7 +304,7 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
         return binding.etMessage.getText().toString();
     }
 
-    // note that you typically want to use custom fields on attachments instead of messages
+    // note that you typically want to use custom fields on messages
     private void setExtraData(Message message) {
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
