@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">ChatSample</string>
+    <string name="custom_input_hint" translatable="false">Type your message...</string>
 </resources>

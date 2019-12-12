@@ -93,7 +93,7 @@ You must use the following properties in your XML to change your MessageInputVie
 
 The following listeners can be set
 
-* setOnSendMessageListener
+* setMessageSendListener
 * setOpenCameraViewListener
 * setPermissionRequestListener
 
@@ -165,18 +165,18 @@ Create your custom Message input layout named `view_custom_message_input` as sho
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1A1A32">
+        android:background="@color/custom_input_back">
 
         <EditText
             android:id="@+id/et_message"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_height="@dimen/custom_input_height"
+            android:layout_marginStart="@dimen/custom_input_margin"
+            android:layout_marginEnd="@dimen/custom_input_margin"
             android:background="@null"
-            android:hint="Type your message..."
-            android:textColor="#FFFFFF"
-            android:textColorHint="#8F8F8F"
+            android:hint="@string/custom_input_hint"
+            android:textColor="@color/custom_input_text"
+            android:textColorHint="@color/custom_input_hint"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -188,15 +188,15 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/custom_input_height"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <Button
                 android:id="@+id/btn_gif"
-                android:layout_width="30dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_gif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -204,9 +204,9 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
             <Button
                 android:id="@+id/btn_file"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_file"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btn_gif"
@@ -214,9 +214,9 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
             <Button
                 android:id="@+id/btn_image"
-                android:layout_width="30dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="20dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btn_file"
@@ -224,12 +224,10 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
             <Button
                 android:id="@+id/btn_send"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:text="Send"
-                android:textColor="#646464"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginEnd="@dimen/custom_input_margin"
+                android:background="@drawable/ic_send"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -238,7 +236,7 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 </layout>
 ```
 
-#### Step 2: Create `CustomMessageInputView`
+#### Step 2: Create CustomMessageInputView
 
 As a next step we need to connect your message input to the rest of the UI.
 There a few things to think about:
@@ -249,143 +247,98 @@ There a few things to think about:
 
 Have a look at the above example and add the following code to `CustomMessageInputView`:
 
+_Note:_ Do not forget to extend `MessageInputView` and implement `MessageSendListener`.
+
 ```java
-package io.getstream.chat.example;
+...
 
-import android.content.Context;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
+public class CustomMessageInputView extends MessageInputView implements MessageSendListener {
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-
-import java.util.Arrays;
-
-import io.getstream.chat.example.databinding.ViewCustomMessageInputBinding;
-
-public class CustomMessageInputView extends RelativeLayout {
-
-    final static String TAG = CustomMessageInputView.class.getSimpleName();
-
-    // binding for this view
+    private final static String TAG = CustomMessageInputView.class.getSimpleName();
     private ViewCustomMessageInputBinding binding;
-    // our connection to the channel scope
-    private ChannelViewModel viewModel;
-
-    public CustomMessageInputView(Context context) {
-        super(context);
-        initBinding(context);
-    }
 
     public CustomMessageInputView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initBinding(context);
     }
 
-    public void setViewModel(ChannelViewModel model, LifecycleOwner lifecycleOwner) {
-        this.viewModel = model;
-        binding.setLifecycleOwner(lifecycleOwner);
-        // Edit Message
-        viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
+    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
+        super.setViewModel(viewModel, lifecycleOwner);
+        setMessageSendListener(this);
     }
 
     private void initBinding(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = ViewCustomMessageInputBinding.inflate(inflater, this, true);
         // Set Keystroke
-        binding.etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String messageText = binding.etMessage.getText().toString();
-                Log.i(TAG, "Length is " + s.length());
-                if (messageText.length() > 0) {
-                    viewModel.keystroke();
-                }
-            }
-        });
-
+        TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         // Send Text Message
         binding.btnSend.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setText(binding.etMessage.getText().toString());
-            sendMessage(message);
+            Message message = isEdit() ? getEditMessage() : new Message();
+            message.setText(getMessageText());
+            // if you want to set custom data, uncomment the line below.
+            // setExtraData(message);
+            onSendMessage(message);
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
             Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_image)));
-            sendMessage(message);
+            message.setAttachments(getAttachments(ModelType.attach_image));
+            onSendMessage(message);
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
             Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_giphy)));
-            sendMessage(message);
+            message.setAttachments(getAttachments(ModelType.attach_giphy));
+            onSendMessage(message);
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
             Message message = new Message();
-            message.setAttachments(Arrays.asList(getAttachment(ModelType.attach_file)));
-            sendMessage(message);
+            message.setAttachments(getAttachments(ModelType.attach_file));
+            onSendMessage(message);
         });
     }
 
-    private void sendMessage(Message message) {
-        if (viewModel.isEditing()) {
-            viewModel.getEditMessage().getValue().setText(message.getText());
-            viewModel.getChannel().updateMessage(viewModel.getEditMessage().getValue(), new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    binding.etMessage.setText("");
-                    ;
-                    viewModel.setEditMessage(null);
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    binding.etMessage.setText("");
-                }
-            });
-        } else {
-            message.setStatus(null);
-            viewModel.sendMessage(message, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.i(TAG, "Sent message successfully!");
-                    binding.etMessage.setText("");
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.i(TAG, errMsg);
-                    binding.etMessage.setText("");
-                }
-            });
-        }
+    public String getMessageText() {
+        return binding.etMessage.getText().toString();
     }
 
-    // Get Attachment: Image, Giphy, File
-    private Attachment getAttachment(String modelType) {
+    // note that you typically want to use custom fields on attachments instead of messages
+    private void setExtraData(Message message) {
+        HashMap<String, Object> extraData = new HashMap<>();
+        extraData.put("mycustomfield", "123");
+        message.setExtraData(extraData);
+    }
+
+    private void keyStroke(Editable editable) {
+        if (editable.toString().length() > 0)
+            viewModel.keystroke();
+    }
+
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        binding.etMessage.setText("");
+        Log.d(TAG, "Sent message! :" + message.getText());
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+        binding.etMessage.setText("");
+        Log.d(TAG, "Failed send message! :" + errMsg);
+    }
+
+    @Override
+    public void editMessage(Message message) {
+        if (message == null
+                || TextUtils.isEmpty(message.getText())) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(message.getText());
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
+    }
+
+    private List<Attachment> getAttachments(String modelType) {
         Attachment attachment = new Attachment();
         String url;
         switch (modelType) {
@@ -411,26 +364,9 @@ public class CustomMessageInputView extends RelativeLayout {
                 attachment.setMime_type(ModelType.attach_mime_mp4);
                 break;
         }
-        return attachment;
-    }
-
-    // Edit Message
-    private void editMessage(Message message) {
-        if (message == null
-                || TextUtils.isEmpty(message.getText())) return;
-
-        binding.etMessage.requestFocus();
-        binding.etMessage.setText(message.getText());
-        binding.etMessage.setSelection(binding.etMessage.getText().length());
-    }
-
-
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
-    }
-
-    public String getMessageText() {
-        return binding.etMessage.getText().toString();
+        List<Attachment> attachments = new ArrayList<>();
+        attachments.add(attachment);
+        return attachments;
     }
 }
 
