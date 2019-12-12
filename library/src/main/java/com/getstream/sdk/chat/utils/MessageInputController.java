@@ -58,9 +58,9 @@ public class MessageInputController {
     private MessageInputType messageInputType;
     private List<Attachment> selectedAttachments;
     private MessageInputView.AttachmentListener attachmentListener;
-    private List<Attachment> queue;
-    private List<Attachment> localAttachments;
 
+    private List<Attachment> localAttachments;
+    private UploadManager uploadManager;
     // region Attachment
 
     public MessageInputController(@NonNull Context context,
@@ -74,6 +74,7 @@ public class MessageInputController {
         this.channel = viewModel.getChannel();
         this.style = style;
         this.attachmentListener = attachmentListener;
+        uploadManager = new UploadManager(channel, context);
     }
 
     public List<Attachment> getSelectedAttachments() {
@@ -90,18 +91,9 @@ public class MessageInputController {
         }
     }
 
-    private void updateQueue(Attachment attachment, boolean add){
-        if (add){
-            if (queue == null)
-                queue = new ArrayList<>();
-            queue.add(attachment);
-        }else {
-            queue.remove(attachment);
-        }
-    }
-
-    public boolean isUploadingFile() {
-        return queue != null && !queue.isEmpty();
+    public boolean isUploadingFile(){
+        if (uploadManager == null) return false;
+        return uploadManager.isUploadingFile();
     }
 
     public void setSelectedAttachments(List<Attachment> selectedAttachments) {
@@ -173,7 +165,7 @@ public class MessageInputController {
         commandMentionListItemAdapter = null;
     }
 
-    private void initLoadAttachemtView() {
+    private void initLoadAttachmentView() {
         binding.rvComposer.setVisibility(View.GONE);
         binding.lvComposer.setVisibility(View.GONE);
         selectedMediaAttachmentAdapter = null;
@@ -260,7 +252,25 @@ public class MessageInputController {
         if (attachment.config.isUploaded()){
             uploadedFileProgress(attachment);
         }else
-            uploadFile(attachment, fromGallery, isMedia);
+            uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
+                @Override
+                public void onSuccess(Attachment attachment) {
+                    selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
+                    uploadedFileProgress(attachment);
+                }
+
+                @Override
+                public void onFailed(Attachment attachment) {
+                    cancelAttachment(attachment, fromGallery, isMedia);
+                }
+
+                @Override
+                public void onProgress(Attachment attachment) {
+                    if (!attachment.config.isSelected()) return;
+                    selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
+                    configSendButtonEnableState();
+                }
+            });
 
         showHideComposerAttachmentGalleryView(true, isMedia);
         if (fromGallery)
@@ -278,7 +288,7 @@ public class MessageInputController {
     private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
         attachment.config.setSelected(false);
         updateSelectedAttachment(attachment, false);
-        updateQueue(attachment, false);
+        uploadManager.updateQueue(attachment, false);
         if (fromGallery)
             totalAttachmentAdapterChanged(null, isMedia);
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
@@ -297,79 +307,9 @@ public class MessageInputController {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachemtView();
+        initLoadAttachmentView();
         AsyncTask.execute(() -> configSelectAttachView(editAttachments, true));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
-    }
-
-    private void uploadFile(Attachment attachment,
-                            boolean fromGallery,
-                            boolean isMedia) {
-        updateQueue(attachment, true);
-        UploadFileCallback callback = getUploadFileCallBack(attachment, fromGallery, isMedia);
-        if (isMedia && attachment.getType().equals(ModelType.attach_image))
-            channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
-        else
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
-    }
-
-    private UploadFileCallback getUploadFileCallBack(Attachment attachment,
-                                                     boolean fromGallery,
-                                                     boolean isMedia) {
-        return new UploadFileCallback<UploadFileResponse, Integer>() {
-            @Override
-            public void onSuccess(UploadFileResponse response) {
-                fileUploadSuccess(attachment, response, fromGallery, isMedia);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                fileUploadFailed(attachment, errMsg, fromGallery, isMedia);
-            }
-
-            @Override
-            public void onProgress(Integer percentage) {
-                fileUploading(attachment, percentage, fromGallery, isMedia);
-            }
-        };
-    }
-
-    private void fileUploadSuccess(Attachment attachment,
-                                   UploadFileResponse response,
-                                   boolean fromGallery,
-                                   boolean isMedia) {
-        updateQueue(attachment,false);
-        if (!attachment.config.isSelected())
-            return;
-
-        if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
-            File file = new File(attachment.config.getFilePath());
-            attachment.setImageURL(response.getFileUrl());
-            attachment.setFallback(file.getName());
-        } else {
-            attachment.setAssetURL(response.getFileUrl());
-        }
-
-        attachment.config.setUploaded(true);
-        selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
-        uploadedFileProgress(attachment);
-    }
-
-    private void fileUploadFailed(Attachment attachment,
-                                  String errMsg,
-                                  boolean fromGallery,
-                                  boolean isMedia) {
-        Utils.showMessage(context, errMsg);
-        cancelAttachment(attachment, fromGallery, isMedia);
-    }
-
-    private void fileUploading(Attachment attachment,
-                               Integer percentage,
-                               boolean fromGallery,
-                               boolean isMedia) {
-        attachment.config.setProgress(percentage);
-        selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
-        configSendButtonEnableState();
     }
 
     private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
@@ -409,7 +349,7 @@ public class MessageInputController {
         if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())){
             binding.setActiveMessageSend(true);
         }else{
-            if (isUploadingFile() || selectedAttachments.isEmpty()){
+            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()){
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
             }else{
@@ -423,7 +363,7 @@ public class MessageInputController {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachemtView();
+        initLoadAttachmentView();
         AsyncTask.execute(() -> configSelectAttachView(editAttachments, false));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
     }
@@ -431,7 +371,7 @@ public class MessageInputController {
     public void initSendMessage() {
         binding.etMessage.setText("");
         selectedAttachments = null;
-        queue = null;
+        uploadManager.setQueue(null);
 
         binding.lvComposer.removeAllViewsInLayout();
         binding.rvComposer.removeAllViewsInLayout();

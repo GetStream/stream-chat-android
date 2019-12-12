@@ -1,10 +1,9 @@
 package com.getstream.sdk.chat.utils;
 
+import android.content.Context;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
-import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
-import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -17,32 +16,18 @@ import java.util.List;
 
 public class UploadManager {
     private Channel channel;
-    private MediaAttachmentAdapter mediaAttachmentAdapter;
-    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter;
-    private AttachmentListAdapter fileAttachmentAdapter;
-    private AttachmentListAdapter selectedFileAttachmentAdapter;
+    private Context context;
     private List<Attachment> queue;
 
-    public UploadManager(Channel channel,
-                         MediaAttachmentAdapter mediaAttachmentAdapter,
-                         MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter,
-                         AttachmentListAdapter fileAttachmentAdapter,
-                         AttachmentListAdapter selectedFileAttachmentAdapter) {
+    public UploadManager(Channel channel, Context context) {
         this.channel = channel;
-        this.mediaAttachmentAdapter = mediaAttachmentAdapter;
-        this.selectedMediaAttachmentAdapter = selectedMediaAttachmentAdapter;
-        this.fileAttachmentAdapter = fileAttachmentAdapter;
-        this.selectedFileAttachmentAdapter = selectedFileAttachmentAdapter;
+        this.context = context;
     }
 
     public void uploadFile(Attachment attachment,
-                           boolean isMedia) {
-        if (queue == null)
-            queue = new ArrayList<>();
-
-        queue.add(attachment);
-
-        UploadFileCallback callback = getUploadFileCallBack(attachment, isMedia);
+                            boolean isMedia, UploadFileListener fileListener) {
+        updateQueue(attachment, true);
+        UploadFileCallback callback = getUploadFileCallBack(attachment, isMedia, fileListener);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
             channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
         else
@@ -50,30 +35,31 @@ public class UploadManager {
     }
 
     private UploadFileCallback getUploadFileCallBack(Attachment attachment,
-                                                           boolean isMedia) {
+                                                     boolean isMedia,
+                                                     UploadFileListener fileListener) {
         return new UploadFileCallback<UploadFileResponse, Integer>() {
             @Override
             public void onSuccess(UploadFileResponse response) {
-                fileUploadSuccess(attachment, response, isMedia);
+                fileUploadSuccess(attachment, response, isMedia, fileListener);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                fileUploadFailed(attachment, errMsg);
+                fileUploadFailed(attachment, errMsg, fileListener);
             }
 
             @Override
             public void onProgress(Integer percentage) {
-                fileUploading(attachment, percentage);
+                fileUploading(attachment, percentage, fileListener);
             }
         };
     }
 
     private void fileUploadSuccess(Attachment attachment,
-                                         UploadFileResponse response,
-                                         boolean isMedia) {
-
-        queue.remove(attachment);
+                                   UploadFileResponse response,
+                                   boolean isMedia,
+                                   UploadFileListener fileListener) {
+        updateQueue(attachment,false);
         if (!attachment.config.isSelected())
             return;
 
@@ -86,25 +72,40 @@ public class UploadManager {
         }
 
         attachment.config.setUploaded(true);
+        fileListener.onSuccess(attachment);
+
     }
 
     private void fileUploadFailed(Attachment attachment,
-                                        String errMsg) {
-        queue.remove(attachment);
-        attachment.config.setSelected(false);
-        Utils.showMessage(StreamChat.getContext(), errMsg);
+                                  String errMsg,
+                                  UploadFileListener fileListener) {
+        Utils.showMessage(context, errMsg);
+        fileListener.onFailed(attachment);
     }
 
     private void fileUploading(Attachment attachment,
-                                     Integer percentage) {
+                               Integer percentage,
+                               UploadFileListener fileListener) {
         attachment.config.setProgress(percentage);
+        fileListener.onProgress(attachment);
     }
 
-
-    public void cancelUploadingAttachment(Attachment attachment) {
-        attachment.config.setSelected(false);
-        if (queue.contains(attachment))
+    public void updateQueue(Attachment attachment, boolean add){
+        if (queue == null)
+            queue = new ArrayList<>();
+        if (add){
+            queue.add(attachment);
+        }else {
             queue.remove(attachment);
+        }
+    }
+
+    public boolean isUploadingFile() {
+        return queue != null && !queue.isEmpty();
+    }
+
+    public void setQueue(List<Attachment> queue) {
+        this.queue = queue;
     }
 
     public static boolean isOverMaxUploadFileSize(File file, boolean showErrorToast){
@@ -114,5 +115,11 @@ public class UploadManager {
             return true;
         }
         return false;
+    }
+
+    interface UploadFileListener{
+        void onSuccess(Attachment attachment);
+        void onFailed(Attachment attachment);
+        void onProgress(Attachment attachment);
     }
 }
