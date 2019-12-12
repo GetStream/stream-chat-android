@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
-        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        FilterObject filter = eq("type", "messaging");
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
@@ -240,8 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-
-
     // endregion
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -253,10 +251,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int i = menuItem.getItemId();
         if (i == R.id.action_hidden_channel) {
-            Utils.showMessage(this, "Click Menu!");
+            showHiddenChannels();
             return true;
         }
         return false;
+    }
+
+    private void showHiddenChannels(){
+        Utils.showMessage(this, "Showing hidden channels...");
+        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        viewModel.setChannelFilter(filter);
+        viewModel.queryChannels();
     }
 
     private void initToolbar(ActivityMainBinding binding) {
