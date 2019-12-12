@@ -14,9 +14,9 @@ import java.util.List;
 
 public class UploadManager {
 
-    private static List<Attachment> queue;
+    private List<Attachment> queue;
 
-    public static void uploadFile(Channel channel, List<Attachment> attachments,
+    public void uploadFile(Channel channel, List<Attachment> attachments,
                                   Attachment attachment,
                                   boolean isMedia) {
         if (queue == null)
@@ -31,7 +31,7 @@ public class UploadManager {
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
     }
 
-    public static UploadFileCallback getUploadFileCallBack(List<Attachment> attachments,
+    private UploadFileCallback getUploadFileCallBack(List<Attachment> attachments,
                                                            Attachment attachment,
                                                            boolean isMedia) {
         return new UploadFileCallback<UploadFileResponse, Integer>() {
@@ -52,7 +52,7 @@ public class UploadManager {
         };
     }
 
-    public static void fileUploadSuccess(Attachment attachment,
+    private void fileUploadSuccess(Attachment attachment,
                                          UploadFileResponse response,
                                          boolean isMedia) {
 
@@ -71,20 +71,20 @@ public class UploadManager {
         attachment.config.setUploaded(true);
     }
 
-    public static void fileUploadFailed(Attachment attachment,
+    private void fileUploadFailed(Attachment attachment,
                                         String errMsg) {
         queue.remove(attachment);
         attachment.config.setSelected(false);
         Utils.showMessage(StreamChat.getContext(), errMsg);
     }
 
-    public static void fileUploading(Attachment attachment,
+    private static void fileUploading(Attachment attachment,
                                      Integer percentage) {
         attachment.config.setProgress(percentage);
     }
 
 
-    public static void cancelUploadingAttachment(Attachment attachment) {
+    public void cancelUploadingAttachment(Attachment attachment) {
         attachment.config.setSelected(false);
         if (queue.contains(attachment))
             queue.remove(attachment);
