@@ -54,7 +54,7 @@ public class MessageInputController {
     private StreamViewMessageInputBinding binding;
 
     private MessageInputType messageInputType;
-    private List<Attachment> selectedAttachments;
+    private List<Attachment> selectedAttachments = new ArrayList<>();
     private MessageInputView.AttachmentListener attachmentListener;
 
     private List<Attachment> localAttachments;
@@ -79,18 +79,7 @@ public class MessageInputController {
         return selectedAttachments;
     }
 
-    private void updateSelectedAttachment(Attachment attachment, boolean add){
-        if (add){
-            if (selectedAttachments == null)
-                selectedAttachments = new ArrayList<>();
-            selectedAttachments.add(attachment);
-        }else{
-            selectedAttachments.remove(attachment);
-        }
-    }
-
     public boolean isUploadingFile(){
-        if (uploadManager == null) return false;
         return uploadManager.isUploadingFile();
     }
 
@@ -237,7 +226,7 @@ public class MessageInputController {
         if (UploadManager.isOverMaxUploadFileSize(new File(attachment.config.getFilePath()), true))
             return;
         attachment.config.setSelected(true);
-        updateSelectedAttachment(attachment, true);
+        selectedAttachments.add(attachment);
 
         if (attachment.config.isUploaded())
             uploadedFileProgress(attachment);
@@ -281,7 +270,7 @@ public class MessageInputController {
 
     private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
         attachment.config.setSelected(false);
-        updateSelectedAttachment(attachment, false);
+        selectedAttachments.remove(attachment);
         uploadManager.updateQueue(attachment, false);
         if (fromGallery)
             totalAttachmentAdapterChanged(null, isMedia);
@@ -371,8 +360,8 @@ public class MessageInputController {
     }
 
     private void initAdapter(){
-        selectedAttachments = null;
-        uploadManager.setQueue(null);
+        selectedAttachments.clear();
+        uploadManager.resetQueue();
 
         binding.lvComposer.removeAllViewsInLayout();
         binding.rvComposer.removeAllViewsInLayout();

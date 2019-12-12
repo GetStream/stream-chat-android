@@ -17,7 +17,7 @@ import java.util.List;
 public class UploadManager {
     private Channel channel;
     private Context context;
-    private List<Attachment> queue;
+    private List<Attachment> queue = new ArrayList<>();
 
     public UploadManager(Channel channel, Context context) {
         this.channel = channel;
@@ -91,8 +91,6 @@ public class UploadManager {
     }
 
     public void updateQueue(Attachment attachment, boolean add){
-        if (queue == null)
-            queue = new ArrayList<>();
         if (add){
             queue.add(attachment);
         }else {
@@ -104,8 +102,8 @@ public class UploadManager {
         return queue != null && !queue.isEmpty();
     }
 
-    public void setQueue(List<Attachment> queue) {
-        this.queue = queue;
+    public void resetQueue() {
+        this.queue.clear();
     }
 
     public static boolean isOverMaxUploadFileSize(File file, boolean showErrorToast){

@@ -22,6 +22,12 @@ public class EmptyTextMessageTest {
     }
 
     @Test
+    void nullTextMessage(){
+        String text = null;
+        assertTrue(StringUtility.isEmptyTextMessage(text));
+    }
+
+    @Test
     void allSpaceTextMessage(){
         String text = "  ";
         assertTrue(StringUtility.isEmptyTextMessage(text));

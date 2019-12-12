@@ -90,6 +90,8 @@ public class StringUtility {
     }
 
     public static boolean isEmptyTextMessage(String text){
+        if (TextUtils.isEmpty(text))
+            return true;
         String s = text.replaceAll("\\s+", "");
         return TextUtils.isEmpty(s);
     }
