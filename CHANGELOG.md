@@ -3,6 +3,8 @@
 - Add MessageSendListener
 - Update CustomMessageInputView
 - Update CustomMessageInputView2
+- Client support for anonymous and guest users
+
 
 ## December 9th, 2019 - 3.5.0
 

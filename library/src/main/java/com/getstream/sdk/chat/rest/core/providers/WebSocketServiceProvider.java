@@ -10,5 +10,10 @@ import java.io.UnsupportedEncodingException;
  * Created by Anton Bevza on 2019-10-24.
  */
 public interface WebSocketServiceProvider {
-    WebSocketService provideWebSocketService(User user, String userToken, WSResponseHandler listener) throws UnsupportedEncodingException;
+    WebSocketService provideWebSocketService(
+            User user,
+            String userToken,
+            WSResponseHandler listener,
+            boolean anonymousAuth
+    ) throws UnsupportedEncodingException;
 }
