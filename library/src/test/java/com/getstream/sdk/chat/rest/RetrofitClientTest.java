@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest;
 
+import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.utils.TestApiClientOptions;
@@ -23,6 +25,7 @@ import okhttp3.mockwebserver.RecordedRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /*
  * Created by Anton Bevza on 2019-10-18.
@@ -43,6 +46,11 @@ class RetrofitClientTest {
         mockWebServer.start();
         TestApiClientOptions testApiClientOptions =
                 new TestApiClientOptions(mockWebServer.url("/").toString());
+
+        StreamLogger logger = mock(StreamLogger.class);
+
+        StreamChat.setLogger(logger);
+
         service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider, false)
                 .create(APIService.class);
     }
@@ -73,6 +81,7 @@ class RetrofitClientTest {
     void validAnonymousHeadersTest() throws IOException, InterruptedException {
         TestApiClientOptions testApiClientOptions =
                 new TestApiClientOptions(mockWebServer.url("/").toString());
+
         service = RetrofitClient.getClient(testApiClientOptions, testTokenProvider, true)
                 .create(APIService.class);
 
