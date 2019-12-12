@@ -238,34 +238,39 @@ public class MessageInputController {
             return;
         attachment.config.setSelected(true);
         updateSelectedAttachment(attachment, true);
-        if (attachment.config.isUploaded()){
+
+        if (attachment.config.isUploaded())
             uploadedFileProgress(attachment);
-        }else
-            uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
-                @Override
-                public void onSuccess(Attachment attachment) {
-                    selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
-                    uploadedFileProgress(attachment);
-                }
-
-                @Override
-                public void onFailed(Attachment attachment) {
-                    cancelAttachment(attachment, fromGallery, isMedia);
-                }
-
-                @Override
-                public void onProgress(Attachment attachment) {
-                    if (!attachment.config.isSelected()) return;
-                    selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
-                    configSendButtonEnableState();
-                }
-            });
+        else
+            uploadFile(attachment, fromGallery, isMedia);
 
         showHideComposerAttachmentGalleryView(true, isMedia);
         if (fromGallery)
             totalAttachmentAdapterChanged(attachment, isMedia);
         selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
         configSendButtonEnableState();
+    }
+
+    private void uploadFile(Attachment attachment, boolean fromGallery, boolean isMedia){
+        uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
+            @Override
+            public void onSuccess(Attachment attachment) {
+                selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
+                uploadedFileProgress(attachment);
+            }
+
+            @Override
+            public void onFailed(Attachment attachment) {
+                cancelAttachment(attachment, fromGallery, isMedia);
+            }
+
+            @Override
+            public void onProgress(Attachment attachment) {
+                if (!attachment.config.isSelected()) return;
+                selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
+                configSendButtonEnableState();
+            }
+        });
     }
 
     private void uploadedFileProgress(Attachment attachment){
