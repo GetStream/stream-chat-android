@@ -18,6 +18,6 @@ public class StreamUploadStorageProvider implements UploadStorageProvider{
     }
 
     public BaseStorage provideUploadStorage(CachedTokenProvider tokenProvider, Client client) {
-        return new StreamPublicStorage(client, null, apiClientOptions);
+        return new StreamPublicStorage(client, tokenProvider, apiClientOptions);
     }
 }

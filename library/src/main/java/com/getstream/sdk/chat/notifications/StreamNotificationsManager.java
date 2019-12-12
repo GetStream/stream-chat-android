@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.model.StreamNotification;
 import com.getstream.sdk.chat.notifications.options.NotificationOptions;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
 import com.getstream.sdk.chat.receiver.NotificationMessageReceiver;
@@ -37,6 +38,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -52,17 +54,12 @@ public class StreamNotificationsManager implements NotificationsManager {
     private static final String CHANNEL_NAME_KEY = "name";
     private static final String FIREBASE_MESSAGE_ID_KEY = "message_id";
 
-    private String channelName;
-    private String messageText;
-    private PendingIntent pendingIntent;
-    private RemoteMessage remoteMessage;
-    private Integer notificationId;
+    private HashMap<String, StreamNotification> notificationsMap = new HashMap<>();
 
     private static final String TAG = StreamNotificationsManager.class.getSimpleName();
 
     private NotificationOptions notificationOptions;
     private DeviceRegisteredListener registerListener;
-    private String lastNotificationId;
 
     public StreamNotificationsManager(NotificationOptions notificationOptions, @Nullable DeviceRegisteredListener listener) {
         this.notificationOptions = notificationOptions;
@@ -105,34 +102,6 @@ public class StreamNotificationsManager implements NotificationsManager {
         handleRemoteMessage(context, remoteMessage);
     }
 
-    /*@Override
-    public void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context) {
-        NotificationCompat.Builder builder = notificationOptions.getNotificationBuilder(context);
-        Log.d(TAG, "onReceiveWebSocketEvent: " + event);
-
-        int notificationId = (int) System.currentTimeMillis();
-
-        if (event.getType() == EventType.MESSAGE_NEW) {
-            builder.setContentTitle(event.getMessage().getUser().getName())
-                    .setContentText(event.getMessage().getText())
-                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                    .setShowWhen(true)
-                    .setContentIntent(
-                            notificationOptions.getNotificationIntentProvider()
-                                    .getIntentForWebSocketEvent(context, event)
-                    );
-
-            String messageId = event.getMessage().getId();
-
-            if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
-                lastNotificationId = messageId;
-                showNotification(notificationId, builder.build(), context);
-            } else {
-                Log.i(TAG, "Notification with id:" + messageId + " already showed");
-            }
-        }
-    }*/
-
     @Override
     public void onReceiveWebSocketEvent(@NotNull Event event, @NotNull Context context) {
         Log.d(TAG, "onReceiveWebSocketEvent: " + event);
@@ -141,7 +110,7 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     /**
-     * Handle WebSocket message, check and show notifications
+     * Handle WebSocket message, check and show notificationsMap
      *
      * @param context - Context
      * @param event   - event from websocket
@@ -151,8 +120,10 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             String messageId = event.getMessage().getId();
 
-            if (lastNotificationId == null || !lastNotificationId.equals(messageId)) {
-                lastNotificationId = messageId;
+            if (checkSentNotificationWithId(messageId)) {
+                StreamNotification notificationModel = new StreamNotification((int) System.currentTimeMillis(), null, event);
+                notificationsMap.put(messageId, notificationModel);
+
                 loadMessage(context, messageId);
             } else {
                 Log.i(TAG, "Notification with id:" + messageId + " already showed");
@@ -161,21 +132,20 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     /**
-     * Handle Firebase messageText, check and show notifications
+     * Handle Firebase messageText, check and show notificationsMap
      *
      * @param context       - Context
      * @param remoteMessage - msg from Firebase
      */
     public void handleRemoteMessage(Context context, RemoteMessage remoteMessage) {
         String messageId = remoteMessage.getData().get(FIREBASE_MESSAGE_ID_KEY);
-        this.remoteMessage = remoteMessage;
 
         if (checkSentNotificationWithId(messageId)) {
 
-            lastNotificationId = messageId;
-            notificationId = (int) System.currentTimeMillis();
-
             if (messageId != null && !messageId.isEmpty()) {
+                StreamNotification notificationModel = new StreamNotification((int) System.currentTimeMillis(), remoteMessage, null);
+                notificationsMap.put(messageId, notificationModel);
+
                 loadMessage(context, messageId);
             } else {
                 Log.e(TAG, "RemoteMessage: messageId =" + messageId);
@@ -192,25 +162,30 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                Log.e(TAG, "Can\'t load user image. Error: " + errMsg);
+                Log.e(TAG, "Can\'t load message. Error: " + errMsg);
             }
         });
     }
 
     private void onMessageLoaded(@NotNull Context context, @NotNull Message message) {
-        message.getExtraData().get(CHANNEL_ID_KEY);
-
         LinkedTreeMap<String, String> channelObj = (LinkedTreeMap<String, String>) message.getExtraData().get(CHANNEL_KEY);
 
         if (channelObj != null) {
-            this.channelName = channelObj.get(CHANNEL_NAME_KEY);
-            this.messageText = message.getText();
+            String messageId = message.getId();
+            String channelName = channelObj.get(CHANNEL_NAME_KEY);
+            String messageText = message.getText();
             String type = channelObj.get(CHANNEL_TYPE_KEY);
             String id = channelObj.get(CHANNEL_ID_KEY);
 
             if (checkRequireFields(channelName, messageText)) {
-                pendingIntent = preparePendingIntent(context, id, type, notificationId);
-                loadUserImage(context, message.getUser().getImage());
+                StreamNotification notificationItem = notificationsMap.get(messageId);
+
+                if (notificationItem != null) {
+                    notificationItem.setChannelName(channelObj.get(CHANNEL_NAME_KEY));
+                    notificationItem.setMessageText(message.getText());
+                    notificationItem.setPendingIntent(preparePendingIntent(context, id, type, notificationItem.getNotificationId()));
+                    loadUserImage(context, messageId, message.getUser().getImage());
+                }
             } else {
                 Log.e(TAG, "One of required fields is null: channelName = " + channelName +
                         ", messageText = " + messageText);
@@ -219,7 +194,7 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     private boolean checkSentNotificationWithId(@Nullable String messageId) {
-        return lastNotificationId == null || !lastNotificationId.equals(messageId);
+        return notificationsMap.get(messageId) == null;
     }
 
     private boolean checkRequireFields(@Nullable String channelName, @Nullable String message) {
@@ -227,23 +202,32 @@ public class StreamNotificationsManager implements NotificationsManager {
                 && message != null && !message.isEmpty();
     }
 
-    private Notification prepareNotification(Context context, String title, String message, PendingIntent pendingIntent,
-                                             RemoteMessage remoteMessage, @Nullable Bitmap image) {
+    private Notification prepareNotification(Context context, String messageId, @Nullable Bitmap image) {
+        StreamNotification notificationItem = notificationsMap.get(messageId);
         NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
-        notificationBuilder.setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .addAction(getReadAction(context, pendingIntent))
-                .addAction(getReplyAction(context, pendingIntent))
-                .setShowWhen(true)
-                .setContentIntent(
-                        notificationOptions.getNotificationIntentProvider()
-                                .getIntentForFirebaseMessage(context, remoteMessage)
-                );
 
-        if (image != null) {
-            notificationBuilder.setLargeIcon(image);
+        if (notificationItem != null) {
+            PendingIntent contentIntent;
+            if (notificationItem.getEvent() != null) {
+                contentIntent = notificationOptions.getNotificationIntentProvider()
+                        .getIntentForWebSocketEvent(context, notificationItem.getEvent());
+            } else {
+                contentIntent = notificationOptions.getNotificationIntentProvider()
+                        .getIntentForFirebaseMessage(context, notificationItem.getRemoteMessage());
+            }
+
+            notificationBuilder.setContentTitle(notificationItem.getChannelName())
+                    .setContentText(notificationItem.getMessageText())
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .addAction(getReadAction(context, notificationItem.getPendingIntent()))
+                    .addAction(getReplyAction(context, notificationItem.getPendingIntent()))
+                    .setShowWhen(true)
+                    .setContentIntent(contentIntent);
+
+            if (image != null) {
+                notificationBuilder.setLargeIcon(image);
+            }
         }
 
         return notificationBuilder.build();
@@ -280,35 +264,34 @@ public class StreamNotificationsManager implements NotificationsManager {
         );
     }
 
-    private void loadUserImage(Context context, String photoUrl) {
-        Glide.with(context)
-                .asBitmap()
-                .load(new RedirectGlideUrl(photoUrl, 10))
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        Notification notification = prepareNotification(context,
-                                channelName,
-                                messageText,
-                                pendingIntent,
-                                remoteMessage,
-                                resource
-                        );
-                        showNotification(notificationId, notification, context);
-                    }
+    private void loadUserImage(Context context, String messageId, String photoUrl) {
+        StreamNotification notificationItem = notificationsMap.get(messageId);
+        if (notificationItem != null) {
+            Glide.with(context)
+                    .asBitmap()
+                    .load(new RedirectGlideUrl(photoUrl, 10))
+                    .into(new CustomTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                            Notification notification = prepareNotification(context,
+                                    messageId,
+                                    resource
+                            );
+                            showNotification(notificationItem.getNotificationId(), notification, context);
+                            removeNotificationItem(notificationItem.getNotificationId());
+                        }
 
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-                        Notification notification = prepareNotification(context,
-                                channelName,
-                                messageText,
-                                pendingIntent,
-                                remoteMessage,
-                                null
-                        );
-                        showNotification(notificationId, notification, context);
-                    }
-                });
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            Notification notification = prepareNotification(context,
+                                    messageId,
+                                    null
+                            );
+                            showNotification(notificationItem.getNotificationId(), notification, context);
+                            removeNotificationItem(notificationItem.getNotificationId());
+                        }
+                    });
+        }
     }
 
     private void showNotification(@NotNull Integer notificationId, @NotNull Notification notification, @NotNull Context context) {
@@ -323,6 +306,10 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             notificationManager.notify(notificationId, notification);
         }
+    }
+
+    private synchronized void removeNotificationItem(int notificationId) {
+        notificationsMap.remove(notificationId);
     }
 
     private boolean isForeground() {
