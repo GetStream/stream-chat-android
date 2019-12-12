@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.GuestUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
@@ -16,7 +17,6 @@ import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.rest.response.FlagResponse;
 import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
 import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
@@ -25,6 +25,8 @@ import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
+import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 
 import java.util.Map;
@@ -74,6 +76,9 @@ public interface APIService {
     // endregion
 
     // region User
+    @POST("/guest")
+    Call<TokenResponse> setGuestUser(@Query("api_key") String apiKey, @Body GuestUserRequest body);
+
     @GET("/users")
     Call<QueryUserListResponse> queryUsers(@Query("api_key") String apiKey, @Query("client_id") String connectionId, @Query("payload") String payload);
 

@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -54,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A channel
@@ -212,7 +214,7 @@ public class Channel {
     public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
-        this.cid = String.format("%s:%s", type, id);
+        this.cid = String.format("%1$s:%2$s", type, id);
         this.client = client;
         this.setSyncStatus(Sync.SYNCED);
         this.createdAt = new Date();
@@ -270,6 +272,7 @@ public class Channel {
 
     public void setId(String id) {
         this.id = id;
+        this.cid = String.format("%1$s:%2$s", type, id);
     }
 
     public String getCid() {
@@ -392,12 +395,16 @@ public class Channel {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Channel channel = (Channel) obj;
         // we compare based on the CID
-        Channel otherChannel = (Channel) obj;
-        return TextUtils.equals(this.getCid(), otherChannel.getCid());
+        return Objects.equals(cid, channel.cid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cid);
     }
 
     @NotNull
@@ -478,6 +485,15 @@ public class Channel {
         client.queryChannel(this, request, callback);
     }
 
+    /**
+     * Only for Test
+     * Query the API, get messages, members or other channel fields
+     *
+     * @param callback the result callback
+     */
+    public void query(@NonNull QueryChannelCallback callback) {
+        client.queryChannel(this, new ChannelQueryRequest().withData(this.extraData).withWatch(), callback);
+    }
     /**
      * getReplies - List the message replies for a parent message
      *

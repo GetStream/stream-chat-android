@@ -38,6 +38,7 @@ import java.util.List;
 
 import androidx.annotation.DimenRes;
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -67,24 +68,29 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // Replay
     private ImageView iv_reply;
     private TextView tv_reply;
+
     private RecyclerView.LayoutManager mLayoutManager;
-    private MessageViewHolderFactory viewHolderFactory;
+
     private ChannelState channelState;
+    private MessageListViewStyle style;
+    private MessageListView.BubbleHelper bubbleHelper;
+    private MessageViewHolderFactory viewHolderFactory;
+    private int position;
+    private Context context;
+    private Message message;
+    private MessageListItem messageListItem;
+
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.ReactionViewClickListener reactionViewClickListener;
     private MessageListView.UserClickListener userClickListener;
     private MessageListView.ReadStateClickListener readStateClickListener;
-
-    private int position;
-    private Context context;
-    private Message message;
-    private MessageListItem messageListItem;
-    private MessageListViewStyle style;
     private MarkdownImpl.MarkdownListener markdownListener;
     private MessageListView.GiphySendListener giphySendListener;
+
     private List<MessageViewHolderFactory.Position> positions;
+
     private ConstraintSet set;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
@@ -121,20 +127,27 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     ChannelState channelState,
-                     MessageListItem messageListItem,
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
 
         // set binding
         this.context = context;
         this.channelState = channelState;
+        this.messageListItem = messageListItem;
+        this.style = style;
+        this.bubbleHelper = bubbleHelper;
+        this.viewHolderFactory = factory;
         this.position = position;
 
-        this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
+        this.avatarWidth = style.getAvatarWidth();
         init();
     }
 
@@ -162,12 +175,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadIndicator();
-    }
-
-
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-        avatarWidth = style.getAvatarWidth();
     }
 
     public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
@@ -366,14 +373,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (StringUtility.containsMarkdown(message.getText())) {
-            if (markdownListener != null)
-                markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
-            else
-                MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        } else {
-            tv_text.setText(StringUtility.getDeletedOrMentionedText(message));
-        }
+        if (markdownListener != null)
+            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        else
+            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
     }
 
     private void configMessageTextStyle() {
@@ -388,19 +391,22 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else {
             style.messageTextTheirs.apply(tv_text);
         }
+
+        if (style.getMessageLinkTextColor(messageListItem.isMine()) != 0)
+            tv_text.setLinkTextColor(style.getMessageLinkTextColor(messageListItem.isMine()));
     }
 
     private void configMessageTextBackground() {
         Drawable background;
         if (isFailedMessage()) {
-            background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+            background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         } else if (isDeletedMessage() || StringUtility.isEmoji(message.getText())) {
             background = null;
         } else {
             if (message.getAttachments() != null && !message.getAttachments().isEmpty())
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
+                background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
             else
-                background = getBubbleHelper().getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
+                background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
         }
         if (background != null)
             tv_text.setBackground(background);
@@ -454,7 +460,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         attachmentview.setStyle(style);
         attachmentview.setGiphySendListener(giphySendListener);
         attachmentview.setEntity(this.messageListItem);
-        attachmentview.setBubbleHelper(this.getBubbleHelper());
+        attachmentview.setBubbleHelper(bubbleHelper);
         attachmentview.setAttachmentClickListener(attachmentClickListener);
         attachmentview.setLongClickListener(messageLongClickListener);
     }
@@ -750,9 +756,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
-        this.viewHolderFactory = viewHolderFactory;
-    }
 
     private boolean isDeletedMessage() {
         return message.getDeletedAt() != null;

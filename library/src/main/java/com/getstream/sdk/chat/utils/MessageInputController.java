@@ -12,10 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
@@ -29,8 +29,6 @@ import com.getstream.sdk.chat.model.Command;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
-import com.getstream.sdk.chat.rest.response.UploadFileResponse;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -46,40 +44,43 @@ public class MessageInputController {
     private ChannelViewModel viewModel;
     private Channel channel;
     private MessageInputStyle style;
-    private MediaAttachmentAdapter mediaAttachmentAdapter = null;
-    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter = null;
+    private MediaAttachmentAdapter mediaAttachmentAdapter;
+    private MediaAttachmentSelectedAdapter selectedMediaAttachmentAdapter;
+    private AttachmentListAdapter fileAttachmentAdapter;
+    private AttachmentListAdapter selectedFileAttachmentAdapter;
     private CommandMentionListItemAdapter<MessageInputStyle> commandMentionListItemAdapter;
     private List<Object> commands = null;
     private Context context;
     private StreamViewMessageInputBinding binding;
-    private AttachmentListAdapter fileAttachmentAdapter = null;
-    private AttachmentListAdapter selectedFileAttachmentAdapter = null;
-    private MessageInputType messageInputType;
-    private List<Attachment> selectedAttachments = null;
-    private MessageInputView.AttachmentListener attachmentListener;
-    private boolean uploadingFile = false;
 
+    private MessageInputType messageInputType;
+    private List<Attachment> selectedAttachments = new ArrayList<>();
+    private MessageInputView.AttachmentListener attachmentListener;
+
+    private List<Attachment> localAttachments;
+    private UploadManager uploadManager;
     // region Attachment
 
-    public MessageInputController(Context context,
-                                  StreamViewMessageInputBinding binding,
-                                  ChannelViewModel viewModel,
-                                  MessageInputStyle style,
-                                  MessageInputView.AttachmentListener attachmentListener) {
+    public MessageInputController(@NonNull Context context,
+                                  @NonNull StreamViewMessageInputBinding binding,
+                                  @NonNull ChannelViewModel viewModel,
+                                  @NonNull MessageInputStyle style,
+                                  @Nullable MessageInputView.AttachmentListener attachmentListener) {
         this.context = context;
         this.binding = binding;
         this.viewModel = viewModel;
         this.channel = viewModel.getChannel();
         this.style = style;
         this.attachmentListener = attachmentListener;
+        uploadManager = new UploadManager(channel, context);
     }
 
     public List<Attachment> getSelectedAttachments() {
         return selectedAttachments;
     }
 
-    public boolean isUploadingFile() {
-        return uploadingFile;
+    public boolean isUploadingFile(){
+        return uploadManager.isUploadingFile();
     }
 
     public void setSelectedAttachments(List<Attachment> selectedAttachments) {
@@ -151,268 +152,216 @@ public class MessageInputController {
         commandMentionListItemAdapter = null;
     }
 
-    private void initLoadAttachemtView() {
-        binding.rvComposer.setVisibility(View.GONE);
-        binding.lvComposer.setVisibility(View.GONE);
-        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-    }
-
     // endregion
 
-    // region Media
+    // region Upload Attachment File
 
-    private void configSelectAttachView(boolean isMedia, List<Attachment> editAttachments) {
-        if (editAttachments != null) {
-            selectedAttachments = editAttachments;
-        } else {
-            selectedAttachments = new ArrayList<>();
-        }
+    private void configSelectAttachView(List<Attachment> editAttachments, boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
+        
+        selectedAttachments = (editAttachments != null) ? editAttachments : new ArrayList<>();        
+        localAttachments = getAttachmentsFromLocal(isMedia);
+        
+        ((Activity) context).runOnUiThread(() -> {
+            if (!localAttachments.isEmpty()){
+                setAttachmentAdapters(isMedia);
+            }else{
+                Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
+                onClickCloseBackGroundView();
+            }
+            binding.progressBarFileLoader.setVisibility(View.GONE);
+            if (editAttachments != null) {
+                showHideComposerAttachmentGalleryView(true, isMedia);
+                setSelectedAttachmentAdapter(false, isMedia);
+            }
+        });
+    }
+
+    private List<Attachment> getAttachmentsFromLocal(boolean isMedia) {
+        if (isMedia)
+            return Utils.getMediaAttachments(context);
+
+        Utils.attachments = new ArrayList<>();
+        return Utils.getFileAttachments(Environment.getExternalStorageDirectory());
+    }
+    
+    private void setAttachmentAdapters(boolean isMedia){
+        if (isMedia){
+            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, localAttachments, position ->
+                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+            );
+            binding.rvMedia.setAdapter(mediaAttachmentAdapter);
+        }else {
+            fileAttachmentAdapter = new AttachmentListAdapter(context, localAttachments, true, true);
+            binding.lvFile.setAdapter(fileAttachmentAdapter);
+            binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
+                                                   int position, long id) ->
+                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+            );
+        }
+    }
+
+    private void setSelectedAttachmentAdapter(boolean fromGallery, boolean isMedia) {
         if (isMedia) {
-            List<Attachment> attachments = Utils.getAllShownImagesPath(context);
-            ((Activity) context).runOnUiThread(() -> {
-                if (!attachments.isEmpty()){
-                    mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachments, position -> {
-                        Attachment attachment = getAttachment(attachments, position);
-                        if (attachment == null) return;
-                        mediaAttachmentAdapter.notifyItemChanged(position);
-                        updateComposerViewBySelectedMedia(attachments, attachment);
-                    });
-                    binding.rvMedia.setAdapter(mediaAttachmentAdapter);
-                }else{
-                    Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
-                    onClickCloseBackGroundView();
-                }
-
-                binding.progressBarFileLoader.setVisibility(View.GONE);
-                // edit
-                if (editAttachments != null) {
-                    binding.rvComposer.setVisibility(View.VISIBLE);
-                    setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
-                }
-            });
+            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
+                    cancelAttachment(attachment, fromGallery, isMedia));
+            binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
         } else {
-            Utils.attachments = new ArrayList<>();
-            List<Attachment> attachments = Utils.Search_Dir(Environment.getExternalStorageDirectory());
-            ((Activity) context).runOnUiThread(() -> {
-                if (attachments.size() > 0) {
-                    fileAttachmentAdapter = new AttachmentListAdapter(context, attachments, true, true);
-                    binding.lvFile.setAdapter(fileAttachmentAdapter);
-                    binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
-                                                           int position, long id) -> {
-                        Attachment attachment = getAttachment(attachments, position);
-                        if (attachment == null) return;
-                        fileAttachmentAdapter.notifyDataSetChanged();
-                        updateComposerViewBySelectedFile(attachments, attachment);
-                    });
-                } else {
-                    Utils.showMessage(context, context.getResources().getString(R.string.stream_no_file_error));
-                    onClickCloseBackGroundView();
-                }
-                binding.progressBarFileLoader.setVisibility(View.GONE);
-                // edit
-                if (editAttachments != null) {
-                    binding.lvComposer.setVisibility(View.VISIBLE);
-                    setSelectedFileAttachmentListAdapter(attachments);
-                }
-            });
+            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false, attachment ->
+                    cancelAttachment(attachment, fromGallery, isMedia));
+            binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
         }
     }
 
-    @Nullable
-    private Attachment getAttachment(List<Attachment> attachments, int position) {
-        Attachment attachment = attachments.get(position);
-        File file = new File(attachment.config.getFilePath());
-        if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
-            Utils.showMessage(context, context.getResources().getString(R.string.stream_large_size_file_error));
-            return null;
+    private void uploadOrCancelAttachment(Attachment attachment,
+                                          boolean isMedia){
+        if (!attachment.config.isSelected()) {
+            uploadAttachment(attachment, true, isMedia);
+        } else{
+            cancelAttachment(attachment, true, isMedia);
         }
-        attachment.config.setSelected(!attachment.config.isSelected());
-        return attachment;
     }
 
-    public void onClickOpenSelectMediaView(View v, List<Attachment> editAttachments) {
+    private void uploadAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
+        if (UploadManager.isOverMaxUploadFileSize(new File(attachment.config.getFilePath()), true))
+            return;
+        attachment.config.setSelected(true);
+        selectedAttachments.add(attachment);
+
+        if (attachment.config.isUploaded())
+            uploadedFileProgress(attachment);
+        else
+            uploadFile(attachment, fromGallery, isMedia);
+
+        showHideComposerAttachmentGalleryView(true, isMedia);
+        if (fromGallery)
+            totalAttachmentAdapterChanged(attachment, isMedia);
+        selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
+        configSendButtonEnableState();
+    }
+
+    private void uploadFile(Attachment attachment, boolean fromGallery, boolean isMedia){
+        uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
+            @Override
+            public void onSuccess(Attachment attachment) {
+                selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
+                uploadedFileProgress(attachment);
+            }
+
+            @Override
+            public void onFailed(Attachment attachment) {
+                cancelAttachment(attachment, fromGallery, isMedia);
+            }
+
+            @Override
+            public void onProgress(Attachment attachment) {
+                if (!attachment.config.isSelected()) return;
+                selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
+                configSendButtonEnableState();
+            }
+        });
+    }
+
+    private void uploadedFileProgress(Attachment attachment){
+        if (attachmentListener != null)
+            attachmentListener.onAddAttachment(attachment);
+        configSendButtonEnableState();
+    }
+
+    private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
+        attachment.config.setSelected(false);
+        selectedAttachments.remove(attachment);
+        uploadManager.updateQueue(attachment, false);
+        if (fromGallery)
+            totalAttachmentAdapterChanged(null, isMedia);
+        selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
+        configSendButtonEnableState();
+    }
+
+    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){
+        if (isMedia)
+            binding.rvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
+        else
+            binding.lvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    public void onClickOpenSelectMediaView(List<Attachment> editAttachments) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachemtView();
-        AsyncTask.execute(() -> configSelectAttachView(true, editAttachments));
+        initAdapter();
+        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
+        AsyncTask.execute(() -> configSelectAttachView(editAttachments, true));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
     }
 
-    // endregion
-
-    // region File
-
-    private void updateComposerViewBySelectedMedia(List<Attachment> attachments, Attachment attachment) {
-        binding.rvComposer.setVisibility(View.VISIBLE);
-        if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
-        if (attachment.config.isSelected()) {
-            selectedAttachments.add(attachment);
-            uploadingFile = true;
-            UploadFileCallback callback = new UploadFileCallback<UploadFileResponse, Integer>() {
-                @Override
-                public void onSuccess(UploadFileResponse response) {
-                    binding.setActiveMessageSend(true);
-                    uploadingFile = false;
-                    File file = new File(attachment.config.getFilePath());
-                    if (attachment.getType().equals(ModelType.attach_image)) {
-                        attachment.setImageURL(response.getFileUrl());
-                        attachment.setFallback(file.getName());
-                    } else {
-                        attachment.setTitle(file.getName());
-                        long size = file.length();
-                        attachment.setFile_size((int) size);
-                        attachment.setAssetURL(response.getFileUrl());
-                    }
-                    attachment.config.setUploaded(true);
-                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
-                    attachmentListener.onAddAttachments();
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    binding.setActiveMessageSend(true);
-                    uploadingFile = false;
-                    attachment.config.setSelected(false);
-                    Utils.showMessage(context, errMsg);
-                    updateComposerViewBySelectedMedia(attachments, attachment);
-                }
-
-                @Override
-                public void onProgress(Integer percentage) {
-                    attachment.config.setProgress(percentage);
-                    selectedMediaAttachmentAdapter.notifyDataSetChanged();
-                    uploadingFile = true;
-                }
-            };
-            if (attachment.getType().equals(ModelType.attach_image)) {
-                channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
-            } else {
-                channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
+    private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
+        if (isMedia) {
+            if (attachment == null){
+                mediaAttachmentAdapter.notifyDataSetChanged();
+                return;
             }
+            int index = localAttachments.indexOf(attachment);
+            if (index != -1)
+                mediaAttachmentAdapter.notifyItemChanged(index);
         } else
-            selectedAttachments.remove(attachment);
+            fileAttachmentAdapter.notifyDataSetChanged();
+    }
 
-        setSelectedMediaAttachmentRecyclerViewAdapter(attachments);
-
-        if (selectedAttachments.size() > 0) {
-            viewModel.setInputType(InputType.SELECT);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            viewModel.setInputType(InputType.DEFAULT);
+    private void selectedAttachmentAdapterChanged(@Nullable Attachment attachment,
+                                                  boolean fromGallery,
+                                                  boolean isMedia) {
+        if (isMedia) {
+            if (selectedMediaAttachmentAdapter == null)
+                setSelectedAttachmentAdapter(fromGallery, isMedia);
+            if (attachment == null){
+                selectedMediaAttachmentAdapter.notifyDataSetChanged();
+                return;
+            }
+            int index = selectedAttachments.indexOf(attachment);
+            if (index != -1)
+                selectedMediaAttachmentAdapter.notifyItemChanged(index);
+        } else {
+            if (selectedFileAttachmentAdapter == null)
+                setSelectedAttachmentAdapter(fromGallery, isMedia);
+            selectedFileAttachmentAdapter.notifyDataSetChanged();
         }
     }
 
-    private void setSelectedMediaAttachmentRecyclerViewAdapter(final List<Attachment> attachments) {
-        selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, position -> {
-            Attachment attachment1 = selectedAttachments.get(position);
-            attachment1.config.setSelected(false);
-            selectedAttachments.remove(attachment1);
-            selectedMediaAttachmentAdapter.notifyDataSetChanged();
-            if (attachments != null) {
-                int position_ = -1;
-                for (int i = 0; i < attachments.size(); i++) {
-                    Attachment attachment2 = attachments.get(i);
-                    if (attachment2.config.getFilePath().equals(attachment1.config.getFilePath())) {
-                        position_ = i;
-                        break;
-                    }
-                }
-                if (position_ != -1)
-                    mediaAttachmentAdapter.notifyItemChanged(position_);
-            }
-
-            if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
+    private void configSendButtonEnableState(){
+        if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())){
+            binding.setActiveMessageSend(true);
+        }else{
+            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()){
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
+            }else{
+                binding.setActiveMessageSend(true);
             }
-        });
-        binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
+        }
     }
 
-    public void onClickOpenSelectFileView(View v, List<Attachment> editAttachments) {
+    public void onClickOpenSelectFileView(List<Attachment> editAttachments) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
-        initLoadAttachemtView();
-        AsyncTask.execute(() -> configSelectAttachView(false, editAttachments));
+        initAdapter();
+        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
+        AsyncTask.execute(() -> configSelectAttachView(editAttachments, false));
         onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
-    }
-
-    private void updateComposerViewBySelectedFile(List<Attachment> attachments, Attachment attachment) {
-        binding.lvComposer.setVisibility(View.VISIBLE);
-        if (selectedAttachments == null) selectedAttachments = new ArrayList<>();
-        if (attachment.config.isSelected()) {
-            selectedAttachments.add(attachment);
-            uploadingFile = true;
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), new UploadFileCallback<UploadFileResponse, Integer>() {
-                @Override
-                public void onSuccess(UploadFileResponse response) {
-                    binding.setActiveMessageSend(true);
-                    uploadingFile = false;
-                    attachment.setAssetURL(response.getFileUrl());
-                    attachment.config.setUploaded(true);
-                    selectedFileAttachmentAdapter.notifyDataSetChanged();
-                    attachmentListener.onAddAttachments();
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    attachment.config.setSelected(false);
-                    uploadingFile = false;
-                    Utils.showMessage(context, errMsg);
-                    updateComposerViewBySelectedFile(attachments, attachment);
-                }
-
-                @Override
-                public void onProgress(Integer percentage) {
-                    uploadingFile = true;
-                    attachment.config.setProgress(percentage);
-                    selectedFileAttachmentAdapter.notifyDataSetChanged();
-                }
-            });
-        } else
-            selectedAttachments.remove(attachment);
-
-        setSelectedFileAttachmentListAdapter(attachments);
-
-        if (selectedAttachments.size() > 0) {
-            viewModel.setInputType(InputType.SELECT);
-        } else if (binding.etMessage.getText().toString().length() == 0) {
-            viewModel.setInputType(InputType.DEFAULT);
-        }
-    }
-
-    private void setSelectedFileAttachmentListAdapter(final List<Attachment> attachments) {
-        selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false);
-        binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
-        binding.lvComposer.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
-            Attachment attachment1 = selectedAttachments.get(position);
-            attachment1.config.setSelected(false);
-            selectedAttachments.remove(attachment1);
-            selectedFileAttachmentAdapter.notifyDataSetChanged();
-            int position_ = -1;
-            for (int i = 0; i < attachments.size(); i++) {
-                Attachment attachment2 = attachments.get(i);
-                if (attachment2.config.getFilePath().equals(attachment1.config.getFilePath())) {
-                    position_ = i;
-                    break;
-                }
-            }
-            if (position_ != -1)
-                fileAttachmentAdapter.notifyDataSetChanged();
-            if (selectedAttachments.size() == 0 && binding.etMessage.getText().toString().length() == 0) {
-                viewModel.setInputType(InputType.DEFAULT);
-                binding.setActiveMessageSend(false);
-            }
-        });
     }
 
     public void initSendMessage() {
         binding.etMessage.setText("");
-        selectedAttachments = new ArrayList<>();
+        initAdapter();
+        onClickCloseBackGroundView();
+    }
+
+    private void initAdapter(){
+        selectedAttachments.clear();
+        uploadManager.resetQueue();
 
         binding.lvComposer.removeAllViewsInLayout();
         binding.rvComposer.removeAllViewsInLayout();
@@ -420,37 +369,31 @@ public class MessageInputController {
         binding.lvComposer.setVisibility(View.GONE);
         binding.rvComposer.setVisibility(View.GONE);
 
+        mediaAttachmentAdapter = null;
+        selectedMediaAttachmentAdapter = null;
+        fileAttachmentAdapter = null;
         selectedFileAttachmentAdapter = null;
-        onClickCloseBackGroundView();
     }
     // endregion
 
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
-        if (file.length()> Constant.MAX_UPLOAD_FILE_SIZE){
-            Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
-            return;
-        }
-        convertAttachment(file, isImage);
-    }
-    private void convertAttachment(File file, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
-        attachment.config.setSelected(true);
+        attachment.setFile_size((int) file.length());
         if (isImage) {
             attachment.setType(ModelType.attach_image);
         } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(context, Uri.fromFile(file));
             String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long videolengh = Long.parseLong(time );
-            retriever.release();
+            long videolengh = Long.parseLong(time);
             attachment.config.setVideoLengh((int) (videolengh / 1000));
-            attachment.setType(ModelType.attach_file);
-            attachment.setMime_type(ModelType.attach_mime_mp4);
+            Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
+            retriever.release();
         }
-        updateComposerViewBySelectedMedia(null, attachment);
+        uploadAttachment(attachment, false, true);
     }
     // endregion
 

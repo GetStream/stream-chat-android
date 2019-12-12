@@ -17,7 +17,6 @@ import java.util.List;
 public class MessageViewHolderFactory {
     private static String TAG = MessageViewHolderFactory.class.getName();
 
-
     public static final int MESSAGEITEM_DATE_SEPARATOR = 1;
     public static final int MESSAGEITEM_MESSAGE = 2;
     public static final int MESSAGEITEM_TYPING = 3;
@@ -29,7 +28,7 @@ public class MessageViewHolderFactory {
     public static final int VIDEO_ATTACHMENT = 3;
     public static final int FILE_ATTACHMENT = 4;
 
-    public int getEntityViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
+    public int getMessageViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
         // typing
         // date
         // various message types
@@ -70,12 +69,9 @@ public class MessageViewHolderFactory {
     public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == MESSAGEITEM_DATE_SEPARATOR) {
             DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
-            holder.setStyle(adapter.getStyle());
             return holder;
         } else if (viewType == MESSAGEITEM_MESSAGE) {
             MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
-            holder.setViewHolderFactory(this);
-            holder.setStyle(adapter.getStyle());
             holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setMessageClickListener(adapter.getMessageClickListener());
             holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
@@ -87,11 +83,9 @@ public class MessageViewHolderFactory {
             return holder;
         } else if (viewType == MESSAGEITEM_TYPING) {
             TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
-            holder.setStyle(adapter.getStyle());
             return holder;
         } else if (viewType == MESSAGEITEM_THREAD_SEPARATOR) {
             ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
-            holder.setStyle(adapter.getStyle());
             return holder;
         } else {
             return null;
@@ -101,16 +95,13 @@ public class MessageViewHolderFactory {
     public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
         if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
             AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
-            holder.setStyle(adapter.getStyle());
             holder.setGiphySendListener(adapter.getGiphySendListener());
             return holder;
         } else if (viewType == FILE_ATTACHMENT) {
             AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);
-            holder.setStyle(adapter.getStyle());
             return holder;
         } else {
             AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.stream_item_attachment, parent);
-            holder.setStyle(adapter.getStyle());
             return holder;
         }
     }

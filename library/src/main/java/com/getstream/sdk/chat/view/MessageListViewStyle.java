@@ -33,6 +33,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int messageBorderColorTheirs;
     private int messageBorderWidthMine;
     private int messageBorderWidthTheirs;
+    private int messageLinkTextColorMine;
+    private int messageLinkTextColorTheirs;
 
     public TextStyle messageUserNameText;
     public TextStyle messageDateTextMine;
@@ -47,7 +49,8 @@ public class MessageListViewStyle extends BaseStyle {
     public TextStyle attachmentFileSizeTextTheirs;
     private int attachmentBackgroundColorMine;
     private int attachmentBackgroundColorTheirs;
-
+    private int attachmentBorderColorMine;
+    private int attachmentBorderColorTheirs;
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -115,6 +118,9 @@ public class MessageListViewStyle extends BaseStyle {
         messageBorderWidthMine = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthMine, getDimension(R.dimen.stream_message_stroke));
         messageBorderWidthTheirs = a.getDimensionPixelSize(R.styleable.MessageListView_streamMessageBorderWidthTheirs, getDimension(R.dimen.stream_message_stroke));
 
+        messageLinkTextColorMine = a.getColor(R.styleable.MessageListView_streamMessageLinkTextColorMine, 0);
+        messageLinkTextColorTheirs = a.getColor(R.styleable.MessageListView_streamMessageLinkTextColorTheirs, 0);
+
         messageUserNameText = new TextStyle.Builder(a)
                 .size(R.styleable.MessageListView_streamMessageUserNameTextSize, getDimension(R.dimen.stream_attach_description_text))
                 .color(R.styleable.MessageListView_streamMessageUserNameTextColor, getColor(R.color.stream_gray_dark))
@@ -153,6 +159,9 @@ public class MessageListViewStyle extends BaseStyle {
 
         attachmentBackgroundColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorMine, messageBackgroundColorMine);
         attachmentBackgroundColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBackgroundColorTheirs, messageBackgroundColorTheirs);
+
+        attachmentBorderColorMine = a.getColor(R.styleable.MessageListView_streamAttachmentBorderColorMine, messageBorderColorMine);
+        attachmentBorderColorTheirs = a.getColor(R.styleable.MessageListView_streamAttachmentBorderColorTheirs, messageBorderColorTheirs);
 
         attachmentDescriptionTextMine = new TextStyle.Builder(a)
                 .size(R.styleable.MessageListView_streamAttachmentDescriptionTextSizeMine, getDimension(R.dimen.stream_attach_description_text))
@@ -255,11 +264,6 @@ public class MessageListViewStyle extends BaseStyle {
     public int getMessageBottomRightCornerRadius(boolean isMine) {
         return isMine ? messageBottomRightCornerRadiusMine : messageBottomRightCornerRadiusTheirs;
     }
-    // Attachment
-
-    public int getAttachmentBackgroundColor(boolean isMine) {
-        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
-    }
 
     public int getMessageBottomLeftCornerRadius(boolean isMine) {
         return isMine ? messageBottomLeftCornerRadiusMine : messageBottomLeftCornerRadiusTheirs;
@@ -275,6 +279,19 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getMessageBorderWidth(boolean isMine) {
         return isMine ? messageBorderWidthMine : messageBorderWidthTheirs;
+    }
+
+    public int getMessageLinkTextColor(boolean isMine) {
+        return isMine ? messageLinkTextColorMine : messageLinkTextColorTheirs;
+    }
+
+    // Attachment
+    public int getAttachmentBackgroundColor(boolean isMine) {
+        return isMine ? attachmentBackgroundColorMine : attachmentBackgroundColorTheirs;
+    }
+
+    public int getAttachmentBorderColor(boolean isMine) {
+        return isMine ? attachmentBorderColorMine : attachmentBorderColorTheirs;
     }
 
     // Reaction Dialog

@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
+
     private MessageViewHolderFactory viewHolderFactory;
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private MessageListViewStyle style;
@@ -55,6 +56,7 @@ public class AttachmentListView extends RecyclerView {
         this.setLayoutManager(mLayoutManager);
         this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
+
         if (this.giphySendListener != null)
             this.adapter.setGiphySendListener(giphySendListener);
 
@@ -82,10 +84,6 @@ public class AttachmentListView extends RecyclerView {
 
     public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
         this.giphySendListener = giphySendListener;
-    }
-
-    public MessageListView.BubbleHelper getBubbleHelper() {
-        return bubbleHelper;
     }
 
     public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {

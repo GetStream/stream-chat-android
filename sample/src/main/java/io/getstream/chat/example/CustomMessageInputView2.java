@@ -2,30 +2,40 @@ package io.getstream.chat.example;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.view.MessageInputView;
-
 import java.util.HashMap;
 
-public class CustomMessageInputView2 extends MessageInputView {
-    public CustomMessageInputView2(Context context) {
-        super(context);
-    }
+
+public class CustomMessageInputView2 extends MessageInputView implements MessageSendListener {
+
+    final static String TAG = CustomMessageInputView2.class.getSimpleName();
 
     public CustomMessageInputView2(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setMessageSendListener(this);
     }
 
     @Override
-    public Message prepareMessage(String input) {
-        Message m = super.prepareMessage(input);
+    public Message prepareNewMessage(Message message){
+        Message preparedMessage = super.prepareNewMessage(message);
         // note that you typically want to use custom fields on attachments instead of messages
-        // attachment UI is easier to customize than the message UI
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
-        m.setExtraData(extraData);
+        preparedMessage.setExtraData(extraData);
+        return preparedMessage;
+    }
 
-        return m;
+    @Override
+    public void onSendMessageSuccess(Message message) {
+        Log.d(TAG, "Sent message! :" + message.getText());
+    }
+
+    @Override
+    public void onSendMessageError(String errMsg) {
+        Log.d(TAG, "Failed send message! :" + errMsg);
     }
 }

@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
     final Boolean offlineEnabled = false;
+    private Client client;
 
     private ChannelListViewModel viewModel;
 
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         extraData.put("name", BuildConfig.USER_NAME);
         extraData.put("image", BuildConfig.USER_IMAGE);
 
+        // set sample of user
         User user = new User(BuildConfig.USER_ID, extraData);
         client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
@@ -87,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // setup the client
-        Client client = configureStreamClient();
+        client = configureStreamClient();
         // example for how to observe the unread counts
         StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
             Log.i(TAG, String.format("Total unread message count is now %d", count));
@@ -197,8 +199,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void createNewChannel(String channelName) {
-        Client client = configureStreamClient();
-
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
 

@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 
 /**
@@ -77,7 +78,7 @@ public class ChannelActivity extends AppCompatActivity
         // If you are using own MessageInputView please comment this line.
         binding.messageInput.setOpenCameraViewListener(this);
         binding.messageInput.setPermissionRequestListener(this);
-        binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
+        binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
         // connect the view model
         binding.setViewModel(viewModel);
