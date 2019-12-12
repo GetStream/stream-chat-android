@@ -80,6 +80,26 @@ public class MessageInputController {
         return selectedAttachments;
     }
 
+    private void updateSelectedAttachment(Attachment attachment, boolean add){
+        if (add){
+            if (selectedAttachments == null)
+                selectedAttachments = new ArrayList<>();
+            selectedAttachments.add(attachment);
+        }else{
+            selectedAttachments.remove(attachment);
+        }
+    }
+
+    private void updateQueue(Attachment attachment, boolean add){
+        if (add){
+            if (queue == null)
+                queue = new ArrayList<>();
+            queue.add(attachment);
+        }else {
+            queue.remove(attachment);
+        }
+    }
+
     public boolean isUploadingFile() {
         return queue != null && !queue.isEmpty();
     }
@@ -198,7 +218,7 @@ public class MessageInputController {
     private void setAttachmentAdapters(boolean isMedia){
         if (isMedia){
             mediaAttachmentAdapter = new MediaAttachmentAdapter(context, localAttachments, position ->
-                uploadOrCancelAttachment(localAttachments.get(position), true, isMedia)
+                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
             );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
         }else {
@@ -206,20 +226,30 @@ public class MessageInputController {
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) ->
-                uploadOrCancelAttachment(localAttachments.get(position),true, isMedia)
+                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
             );
         }
     }
 
+    private void setSelectedAttachmentAdapter(boolean fromGallery, boolean isMedia) {
+        if (isMedia) {
+            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
+                    cancelAttachment(attachment, fromGallery, isMedia));
+            binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
+        } else {
+            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false, attachment ->
+                    cancelAttachment(attachment, fromGallery, isMedia));
+            binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
+        }
+    }
+
     private void uploadOrCancelAttachment(Attachment attachment,
-                                          boolean fromGallery,
                                           boolean isMedia){
         if (!attachment.config.isSelected()) {
-            uploadAttachment(attachment, fromGallery, isMedia);
+            uploadAttachment(attachment, true, isMedia);
         } else{
-            cancelAttachment(attachment, fromGallery, isMedia);
+            cancelAttachment(attachment, true, isMedia);
         }
-        configSendButtonEnableState();
     }
 
     private void uploadAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
@@ -236,22 +266,13 @@ public class MessageInputController {
         if (fromGallery)
             totalAttachmentAdaterChanged(attachment, isMedia);
         selectedAttachmentAdapderChanged(attachment, fromGallery, isMedia);
+        configSendButtonEnableState();
     }
 
     private void uploadedFileProgress(Attachment attachment){
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
         configSendButtonEnableState();
-    }
-
-    private void updateSelectedAttachment(Attachment attachment, boolean add){
-        if (add){
-            if (selectedAttachments == null)
-                selectedAttachments = new ArrayList<>();
-            selectedAttachments.add(attachment);
-        }else{
-            selectedAttachments.remove(attachment);
-        }
     }
 
     private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
@@ -261,6 +282,7 @@ public class MessageInputController {
         if (fromGallery)
             totalAttachmentAdaterChanged(null, isMedia);
         selectedAttachmentAdapderChanged(null, fromGallery, isMedia);
+        configSendButtonEnableState();
     }
 
     private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){
@@ -289,16 +311,6 @@ public class MessageInputController {
             channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
         else
             channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
-    }
-
-    private void updateQueue(Attachment attachment, boolean add){
-        if (add){
-            if (queue == null)
-                queue = new ArrayList<>();
-            queue.add(attachment);
-        }else {
-            queue.remove(attachment);
-        }
     }
 
     private UploadFileCallback getUploadFileCallBack(Attachment attachment,
@@ -360,17 +372,7 @@ public class MessageInputController {
         configSendButtonEnableState();
     }
 
-    private void setSelectedAttachmentAdapter(boolean fromGallery, boolean isMedia) {
-        if (isMedia) {
-            selectedMediaAttachmentAdapter = new MediaAttachmentSelectedAdapter(context, selectedAttachments, attachment ->
-                uploadOrCancelAttachment(attachment, fromGallery, isMedia));
-            binding.rvComposer.setAdapter(selectedMediaAttachmentAdapter);
-        } else {
-            selectedFileAttachmentAdapter = new AttachmentListAdapter(context, selectedAttachments, true, false, attachment ->
-                    uploadOrCancelAttachment(attachment, fromGallery, isMedia));
-            binding.lvComposer.setAdapter(selectedFileAttachmentAdapter);
-        }
-    }
+
 
     private void totalAttachmentAdaterChanged(@Nullable Attachment attachment, boolean isMedia) {
         if (isMedia) {
@@ -430,7 +432,8 @@ public class MessageInputController {
 
     public void initSendMessage() {
         binding.etMessage.setText("");
-        selectedAttachments = new ArrayList<>();
+        selectedAttachments = null;
+        queue = null;
 
         binding.lvComposer.removeAllViewsInLayout();
         binding.rvComposer.removeAllViewsInLayout();
@@ -438,7 +441,11 @@ public class MessageInputController {
         binding.lvComposer.setVisibility(View.GONE);
         binding.rvComposer.setVisibility(View.GONE);
 
+        mediaAttachmentAdapter = null;
+        selectedMediaAttachmentAdapter = null;
+        fileAttachmentAdapter = null;
         selectedFileAttachmentAdapter = null;
+
         onClickCloseBackGroundView();
     }
     // endregion
@@ -460,7 +467,7 @@ public class MessageInputController {
             Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
             retriever.release();
         }
-        uploadOrCancelAttachment(attachment,false, true);
+        uploadAttachment(attachment, false, true);
     }
     // endregion
 
