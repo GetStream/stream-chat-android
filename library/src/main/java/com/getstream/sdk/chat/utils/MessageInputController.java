@@ -264,8 +264,8 @@ public class MessageInputController {
 
         showHideComposerAttachmentGalleryView(true, isMedia);
         if (fromGallery)
-            totalAttachmentAdaterChanged(attachment, isMedia);
-        selectedAttachmentAdapderChanged(attachment, fromGallery, isMedia);
+            totalAttachmentAdapterChanged(attachment, isMedia);
+        selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
         configSendButtonEnableState();
     }
 
@@ -280,8 +280,8 @@ public class MessageInputController {
         updateSelectedAttachment(attachment, false);
         updateQueue(attachment, false);
         if (fromGallery)
-            totalAttachmentAdaterChanged(null, isMedia);
-        selectedAttachmentAdapderChanged(null, fromGallery, isMedia);
+            totalAttachmentAdapterChanged(null, isMedia);
+        selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
         configSendButtonEnableState();
     }
 
@@ -351,7 +351,7 @@ public class MessageInputController {
         }
 
         attachment.config.setUploaded(true);
-        selectedAttachmentAdapderChanged(null, fromGallery, isMedia);
+        selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
         uploadedFileProgress(attachment);
     }
 
@@ -368,13 +368,11 @@ public class MessageInputController {
                                boolean fromGallery,
                                boolean isMedia) {
         attachment.config.setProgress(percentage);
-        selectedAttachmentAdapderChanged(attachment, fromGallery, isMedia);
+        selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
         configSendButtonEnableState();
     }
 
-
-
-    private void totalAttachmentAdaterChanged(@Nullable Attachment attachment, boolean isMedia) {
+    private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
         if (isMedia) {
             if (attachment == null){
                 mediaAttachmentAdapter.notifyDataSetChanged();
@@ -387,7 +385,7 @@ public class MessageInputController {
             fileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void selectedAttachmentAdapderChanged(@Nullable Attachment attachment,
+    private void selectedAttachmentAdapterChanged(@Nullable Attachment attachment,
                                                   boolean fromGallery,
                                                   boolean isMedia) {
         if (isMedia) {
