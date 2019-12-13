@@ -2,10 +2,13 @@ package io.getstream.chat.example;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.logger.StreamChatLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
+import com.getstream.sdk.chat.logger.StreamLoggerHandler;
 import com.getstream.sdk.chat.logger.StreamLoggerLevel;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -24,9 +27,31 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
+        StreamLoggerHandler loggerHandler = new StreamLoggerHandler() {
+            @Override
+            public void logI(@NonNull String className, @NonNull String message) {
+                // display info logs here
+            }
+
+            @Override
+            public void logD(@NonNull String className, @NonNull String message) {
+                // display debug logs here
+            }
+
+            @Override
+            public void logW(@NonNull String className, @NonNull String message) {
+                // display warning logs here
+            }
+
+            @Override
+            public void logE(@NonNull String className, @NonNull String message) {
+                // display error logs here
+            }
+        };
+
         StreamLogger logger = new StreamChatLogger.Builder()
-                .enabled(BuildConfig.DEBUG)
                 .loggingLevel(StreamLoggerLevel.INFO)
+                .setLoggingHandler(loggerHandler)
                 .build();
 
         StreamChat.init(BuildConfig.API_KEY,

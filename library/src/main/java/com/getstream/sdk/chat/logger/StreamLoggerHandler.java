@@ -1,0 +1,14 @@
+package com.getstream.sdk.chat.logger;
+
+import androidx.annotation.NonNull;
+
+public interface StreamLoggerHandler {
+
+    void logI(@NonNull String className, @NonNull String message);
+
+    void logD(@NonNull String className, @NonNull String message);
+
+    void logW(@NonNull String className, @NonNull String message);
+
+    void logE(@NonNull String className, @NonNull String message);
+}

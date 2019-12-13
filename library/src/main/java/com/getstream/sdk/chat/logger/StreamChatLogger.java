@@ -7,35 +7,44 @@ import androidx.annotation.Nullable;
 
 public class StreamChatLogger implements StreamLogger {
 
-    private boolean showLogs;
     private StreamLoggerLevel loggingLevel;
+    private StreamLoggerHandler loggingHandler;
 
-    private StreamChatLogger(boolean showLogs, @Nullable StreamLoggerLevel loggingLevel) {
-        this.showLogs = showLogs;
+    private StreamChatLogger(@Nullable StreamLoggerLevel loggingLevel) {
         this.loggingLevel = loggingLevel == null ? StreamLoggerLevel.INFO : loggingLevel;
     }
 
     public void logI(@NonNull Class<?> classInstance, @NonNull String message) {
-        if (showLogs && loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.INFO)) {
+        if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.INFO)) {
             Log.i(getTag(classInstance), message);
+        }
+        if (loggingHandler != null) {
+            loggingHandler.logI(getTag(classInstance), message);
         }
     }
 
     public void logD(@NonNull Class<?> classInstance, @NonNull String message) {
-        if (showLogs && loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.DEBUG)) {
+        if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.DEBUG)) {
             Log.d(getTag(classInstance), message);
+        }
+        if (loggingHandler != null) {
+            loggingHandler.logD(getTag(classInstance), message);
         }
     }
 
     public void logW(@NonNull Class<?> classInstance, @NonNull String message) {
-        if (showLogs && loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.WARN)) {
+        if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.WARN)) {
             Log.w(getTag(classInstance), message);
+        }
+        if (loggingHandler != null) {
+            loggingHandler.logW(getTag(classInstance), message);
         }
     }
 
     public void logE(@NonNull Class<?> classInstance, @NonNull String message) {
-        if (showLogs && loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.ERROR)) {
-            Log.e(getTag(classInstance), message);
+        Log.e(getTag(classInstance), message);
+        if (loggingHandler != null) {
+            loggingHandler.logE(getTag(classInstance), message);
         }
     }
 
@@ -45,26 +54,12 @@ public class StreamChatLogger implements StreamLogger {
 
     public static class Builder {
 
-        private boolean showLogs;
         private StreamLoggerLevel loggingLevel;
-
-        /**
-         * Enable logs for Build variant.
-         * enable(BuildConfig.DEBUG) allow to showing logs only in Debug mode
-         *
-         * @param variant - Build Variant predicate
-         * @return - builder
-         */
-        public Builder enabled(boolean variant) {
-            if (variant) {
-                this.showLogs = true;
-            }
-
-            return this;
-        }
+        private StreamLoggerHandler loggingHandler;
 
         /**
          * Set logging level
+         *
          * @param level - Logging {@link StreamLoggerLevel}
          * @return - builder
          */
@@ -74,8 +69,14 @@ public class StreamChatLogger implements StreamLogger {
             return this;
         }
 
+        public Builder setLoggingHandler(StreamLoggerHandler handler) {
+            this.loggingHandler = handler;
+
+            return this;
+        }
+
         public StreamChatLogger build() {
-            return new StreamChatLogger(showLogs, loggingLevel);
+            return new StreamChatLogger(loggingLevel);
         }
     }
 }
