@@ -169,7 +169,7 @@ public class StreamNotificationsManager implements NotificationsManager {
             @Override
             public void onSuccess(MessageResponse response) {
                 if (failMessageListener != null) {
-                    failMessageListener.onLoadMessageSuccess(messageId);
+                    failMessageListener.onLoadMessageSuccess(response.getMessage());
                 }
                 onMessageLoaded(context, response.getMessage());
             }
