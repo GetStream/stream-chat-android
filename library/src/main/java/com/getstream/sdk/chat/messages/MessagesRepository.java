@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.utils.Subscription;
 import java.util.List;
 
 public interface MessagesRepository {
-    Subscription<List<Message>> getMessages(int offset, int limit, String channelId);
+    Subscription<List<Message>> getMessages(int offset, int limit, String cid);
 
     Subscription<Void> sendMessage(Message message);
 }

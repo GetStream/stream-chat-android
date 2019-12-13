@@ -62,9 +62,9 @@ public class ChannelActivity extends AppCompatActivity
         // setup the viewmodel, remember to also set the channel
 
         viewModel = ViewModelProviders.of(this,new ChannelViewModelFactory(getApplication(), channelID)).get(ChannelViewModel.class);
-        viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
-          Log.i(TAG, String.format("The current user unread count is now %d", count));
-        });
+        //viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
+        //  Log.i(TAG, String.format("The current user unread count is now %d", count));
+        //});
 
 
         // set listeners

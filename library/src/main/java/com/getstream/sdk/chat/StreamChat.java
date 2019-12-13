@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.channels.ChannelsRepositoryImpl;
 import com.getstream.sdk.chat.media.MediaLoader;
 import com.getstream.sdk.chat.media.MediaLoaderImpl;
 import com.getstream.sdk.chat.messages.MessagesRepository;
+import com.getstream.sdk.chat.messages.MessagesRepositoryImpl;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.style.FontsManager;
@@ -219,6 +220,7 @@ public class StreamChat {
                 mediaLoader = new MediaLoaderImpl(context);
                 usersCache = new UsersCacheImpl();
                 channelsRepository = new ChannelsRepositoryImpl(INSTANCE, new ChannelsCacheImpl());
+                messagesRepository = new MessagesRepositoryImpl(INSTANCE);
 
                 INSTANCE.setUsersCache(usersCache);
 

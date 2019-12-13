@@ -172,3 +172,4 @@ public interface APIService {
     Call<CompletableResponse> deleteDevice(@Query("id") String deviceId, @Query("api_key") String apiKey, @Query("user_id") String userId, @Query("client_id") String connectionId);
     // endregion
 }
+

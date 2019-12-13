@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             // open the channel activity
             Intent intent = new Intent(parent, ChannelActivity.class);
             intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-            intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
+            intent.putExtra(EXTRA_CHANNEL_ID, channel.getCid());
             startActivity(intent);
         });
         binding.channelList.setOnUserClickListener(user -> {

@@ -71,12 +71,14 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
 
-        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
-        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
-        viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
+        //TODO: Refactoring: enable when state is available
+        //viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
+        //viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
+        //viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
 
-        viewModel.getOnlineState().observe(lifecycleOwner, this::onlineStatus);
-        binding.setOnlineStatus(viewModel.getOnlineState().getValue() == CONNECTED);
+        //TODO: Refactoring: enable when state is available
+        //viewModel.getOnlineState().observe(lifecycleOwner, this::onlineStatus);
+        //binding.setOnlineStatus(viewModel.getOnlineState().getValue() == CONNECTED);
 
         //StreamChat.getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
         //binding.setOnlineStatus(StreamChat.getOnlineStatus().getValue() == CONNECTED);

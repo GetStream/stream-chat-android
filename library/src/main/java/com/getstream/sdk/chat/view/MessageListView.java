@@ -176,13 +176,13 @@ public class MessageListView extends RecyclerView {
             adapter.setBubbleHelper(bubbleHelper);
         }
 
-        viewModel.getChannelState().observe(lifecycleOwner, new Observer<ChannelState>() {
-            @Override
-            public void onChanged(ChannelState channelState) {
-                adapter.setChannelState(channelState);
-                loadMessages(viewModel, lifecycleOwner);
-            }
-        });
+        //viewModel.getChannelState().observe(lifecycleOwner, new Observer<ChannelState>() {
+        //    @Override
+        //    public void onChanged(ChannelState channelState) {
+        //        adapter.setChannelState(channelState);
+        //        loadMessages(viewModel, lifecycleOwner);
+        //    }
+        //});
 
         this.setAdapterWithStyle(adapter);
     }

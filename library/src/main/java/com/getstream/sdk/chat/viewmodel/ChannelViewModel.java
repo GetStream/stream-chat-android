@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
@@ -207,7 +208,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 .getMessages(0, 10, channelId).subscribe(new SuccessCallback<List<Message>>() {
             @Override
             public void onSuccess(List<Message> data) {
-
+                messages.postValue(data);
             }
         }, new ErrorCallback() {
             @Override

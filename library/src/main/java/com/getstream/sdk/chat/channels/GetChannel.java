@@ -12,7 +12,7 @@ public class GetChannel {
         this.repository = repository;
     }
 
-    public Subscription<Channel> get(String channelId) {
-        return repository.getChannel(channelId);
+    public Subscription<Channel> get(String cid) {
+        return repository.getChannel(cid);
     }
 }
