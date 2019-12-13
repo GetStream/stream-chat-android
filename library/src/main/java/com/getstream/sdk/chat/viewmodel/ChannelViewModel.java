@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
@@ -76,7 +75,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private MutableLiveData<Boolean> failed;
     private MutableLiveData<Message> editMessage;
     private MutableLiveData<Message> threadParentMessage;
-    private MutableLiveData<ChannelState> channelState;
+    private MutableLiveData<ChannelState> channelState = new MutableLiveData<>();
     private MutableLiveData<OnlineStatus> onlineState;
     private LazyQueryChannelLiveData<List<Message>> messages;
     private LazyQueryChannelLiveData<List<Message>> threadMessages;
@@ -196,7 +195,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         reads.setValue(channel.getChannelState().getReadsByUser());
         messages.setValue(channel.getChannelState().getMessages());
         reads.setValue(channel.getChannelState().getReadsByUser());
-        channelState = new MutableLiveData<>(channel.getChannelState());
+        channelState.setValue(channel.getChannelState());
         watcherCount = Transformations.map(channelState, ChannelState::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
         lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount(StreamChat.getUsersCache().getCurrentId());
@@ -209,11 +208,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             @Override
             public void onSuccess(List<Message> data) {
                 messages.postValue(data);
+                entities.progressMessages(data);
             }
         }, new ErrorCallback() {
             @Override
             public void error(Throwable throwable) {
+                if (throwable != null) {
 
+                }
             }
         });
     }
@@ -232,7 +234,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return channelState;
     }
 
-    public LiveData<OnlineStatus> getOnlineState(){
+    public LiveData<OnlineStatus> getOnlineState() {
         return onlineState;
     }
 
@@ -526,7 +528,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             @Override
             public void onTypingStart(Event event) {
                 String userId = event.getUserId();
-                if(StreamChat.getUsersCache().isCurrentUser(userId)) return;
+                if (StreamChat.getUsersCache().isCurrentUser(userId)) return;
                 User user = event.getUser();
                 typingState.put(user.getId(), event);
                 typingUsers.postValue(getCleanedTypingUsers());
@@ -535,7 +537,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             @Override
             public void onTypingStop(Event event) {
                 String userId = event.getUserId();
-                if(StreamChat.getUsersCache().isCurrentUser(userId)) return;
+                if (StreamChat.getUsersCache().isCurrentUser(userId)) return;
                 User user = event.getUser();
                 typingState.remove(user.getId());
                 typingUsers.postValue(getCleanedTypingUsers());
@@ -1269,11 +1271,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                if (channel.isInitialized()) {
-                    channelLoadingDone();
-                } else {
-                    viewModel.watchChannel();
-                }
+                //if (channel.isInitialized()) {
+                //    channelLoadingDone();
+                //} else {
+                //    viewModel.watchChannel();
+                //}
             }
         }
     }
