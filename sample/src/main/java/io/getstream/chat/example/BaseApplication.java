@@ -38,7 +38,6 @@ public class BaseApplication extends Application {
                 .setStyle(style)
                 .build();
 
-
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {

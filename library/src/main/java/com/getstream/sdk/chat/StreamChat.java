@@ -93,6 +93,19 @@ public class StreamChat {
         StreamChat.stringsProvider = stringsProvider;
     }
 
+    private static void initComponents(String apiKey, ApiClientOptions apiClientOptions) {
+        stringsProvider = new StringsProviderImpl(context);
+        fontsManager = new FontsManagerImpl(context);
+        INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
+
+        onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
+        currentUser = new MutableLiveData<>();
+        totalUnreadMessages = new MutableLiveData<>();
+        unreadChannels = new MutableLiveData<>();
+
+        INSTANCE.setContext(StreamChat.context);
+    }
+
     private static void handleConnectedUser() {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
@@ -195,6 +208,10 @@ public class StreamChat {
         });
     }
 
+    public static void initStyle(StreamChatStyle style) {
+        chatStyle = style;
+    }
+
     @NotNull
     public static StreamChatStyle getChatStyle() {
         return chatStyle;
@@ -203,6 +220,27 @@ public class StreamChat {
     @NotNull
     public static FontsManager getFontsManager() {
         return fontsManager;
+    }
+
+    public static synchronized boolean init(String apiKey, Context context) {
+        return init(apiKey, new ApiClientOptions(), context);
+    }
+
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context) {
+        if (INSTANCE != null) {
+            return true;
+        }
+        synchronized (Client.class) {
+            if (INSTANCE == null) {
+                StreamChat.context = context;
+
+                initComponents(apiKey, apiClientOptions);
+
+                handleConnectedUser();
+                observeSetUserCompleted();
+            }
+            return true;
+        }
     }
 
     public static class Builder {
@@ -243,16 +281,7 @@ public class StreamChat {
 
             synchronized (Client.class) {
                 if (INSTANCE == null) {
-                    stringsProvider = new StringsProviderImpl(context);
-                    fontsManager = new FontsManagerImpl(context);
-                    INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
-
-                    onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
-                    currentUser = new MutableLiveData<>();
-                    totalUnreadMessages = new MutableLiveData<>();
-                    unreadChannels = new MutableLiveData<>();
-
-                    INSTANCE.setContext(StreamChat.context);
+                    initComponents(apiKey, apiClientOptions);
 
                     handleConnectedUser();
                     observeSetUserCompleted();
