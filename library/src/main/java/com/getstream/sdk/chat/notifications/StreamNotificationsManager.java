@@ -48,6 +48,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class StreamNotificationsManager implements NotificationsManager {
 
+    private static final int DEFAULT_REQUEST_CODE = 999;
     public static final String CHANNEL_ID_KEY = "id";
     public static final String CHANNEL_TYPE_KEY = "type";
     private static final String CHANNEL_KEY = "channel";
@@ -60,6 +61,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     private NotificationOptions notificationOptions;
     private DeviceRegisteredListener registerListener;
+    private NotificationMessageLoadListener failMessageListener;
 
     public StreamNotificationsManager(NotificationOptions notificationOptions, @Nullable DeviceRegisteredListener listener) {
         this.notificationOptions = notificationOptions;
@@ -97,7 +99,7 @@ public class StreamNotificationsManager implements NotificationsManager {
     @Override
     public void onReceiveFirebaseMessage(@NotNull RemoteMessage remoteMessage, @NotNull Context context) {
         Map<String, String> payload = remoteMessage.getData();
-        Log.d(TAG, "onReceiveFirebaseMessage: " + remoteMessage.toString() + " data: " + payload);
+        Log.d(TAG, "onLoadMessageFail: " + remoteMessage.toString() + " data: " + payload);
 
         handleRemoteMessage(context, remoteMessage);
     }
@@ -153,16 +155,33 @@ public class StreamNotificationsManager implements NotificationsManager {
         }
     }
 
+    /**
+     * Calls on message load fails
+     * @param failMessageListener - on Fail callback
+     */
+    @Override
+    public void setFailMessageListener(NotificationMessageLoadListener failMessageListener) {
+        this.failMessageListener = failMessageListener;
+    }
+
     private void loadMessage(Context context, @NonNull String messageId) {
         StreamChat.getInstance(context).getMessage(messageId, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
+                if (failMessageListener != null) {
+                    failMessageListener.onLoadMessageSuccess(messageId);
+                }
                 onMessageLoaded(context, response.getMessage());
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
                 Log.e(TAG, "Can\'t load message. Error: " + errMsg);
+                if (failMessageListener != null) {
+                    failMessageListener.onLoadMessageFail(messageId);
+                } else {
+                    showDefaultNotification(context, messageId);
+                }
             }
         });
     }
@@ -202,35 +221,62 @@ public class StreamNotificationsManager implements NotificationsManager {
                 && message != null && !message.isEmpty();
     }
 
-    private Notification prepareNotification(Context context, String messageId, @Nullable Bitmap image) {
+    private void showDefaultNotification(Context context, String messageId) {
+        StreamNotification notificationItem = notificationsMap.get(messageId);
+
+        if (notificationItem != null) {
+            notificationItem.setChannelName(context.getString(R.string.stream_default_notification_title));
+            notificationItem.setMessageText(context.getString(R.string.stream_default_notification_message));
+
+            Notification notification = prepareNotification(context, messageId, null, true);
+            showNotification(notificationItem.getNotificationId(), notification, context);
+            removeNotificationItem(notificationItem.getNotificationId());
+        }
+    }
+
+    private Notification prepareNotification(Context context, String messageId, @Nullable Bitmap image, boolean defaultNotification) {
         StreamNotification notificationItem = notificationsMap.get(messageId);
         NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
 
         if (notificationItem != null) {
-            PendingIntent contentIntent;
-            if (notificationItem.getEvent() != null) {
-                contentIntent = notificationOptions.getNotificationIntentProvider()
-                        .getIntentForWebSocketEvent(context, notificationItem.getEvent());
-            } else {
-                contentIntent = notificationOptions.getNotificationIntentProvider()
-                        .getIntentForFirebaseMessage(context, notificationItem.getRemoteMessage());
-            }
+            PendingIntent contentIntent = getContentIntent(context, notificationItem, defaultNotification);
 
             notificationBuilder.setContentTitle(notificationItem.getChannelName())
                     .setContentText(notificationItem.getMessageText())
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                    .addAction(getReadAction(context, notificationItem.getPendingIntent()))
-                    .addAction(getReplyAction(context, notificationItem.getPendingIntent()))
                     .setShowWhen(true)
                     .setContentIntent(contentIntent);
 
+            if (notificationItem.getPendingIntent() != null) {
+                notificationBuilder.addAction(getReadAction(context, notificationItem.getPendingIntent()))
+                        .addAction(getReplyAction(context, notificationItem.getPendingIntent()));
+            }
             if (image != null) {
                 notificationBuilder.setLargeIcon(image);
             }
         }
 
         return notificationBuilder.build();
+    }
+
+    private PendingIntent getContentIntent(Context context, StreamNotification item, boolean defaultNotification) {
+        if (defaultNotification) {
+            return PendingIntent.getActivity(context,
+                    DEFAULT_REQUEST_CODE,
+                    notificationOptions.getDefaultLauncherIntent(context),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        if (item.getEvent() != null) {
+            return notificationOptions.getNotificationIntentProvider()
+                    .getIntentForWebSocketEvent(context, item.getEvent());
+        }
+
+        if (item.getRemoteMessage() != null) {
+            return notificationOptions.getNotificationIntentProvider()
+                    .getIntentForFirebaseMessage(context, item.getRemoteMessage());
+        }
+        return null;
     }
 
     private NotificationCompat.Action getReadAction(Context context, PendingIntent pendingIntent) {
@@ -275,7 +321,8 @@ public class StreamNotificationsManager implements NotificationsManager {
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             Notification notification = prepareNotification(context,
                                     messageId,
-                                    resource
+                                    resource,
+                                    false
                             );
                             showNotification(notificationItem.getNotificationId(), notification, context);
                             removeNotificationItem(notificationItem.getNotificationId());
@@ -285,7 +332,8 @@ public class StreamNotificationsManager implements NotificationsManager {
                         public void onLoadCleared(@Nullable Drawable placeholder) {
                             Notification notification = prepareNotification(context,
                                     messageId,
-                                    null
+                                    null,
+                                    false
                             );
                             showNotification(notificationItem.getNotificationId(), notification, context);
                             removeNotificationItem(notificationItem.getNotificationId());

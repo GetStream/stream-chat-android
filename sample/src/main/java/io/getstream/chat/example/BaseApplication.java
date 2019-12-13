@@ -12,10 +12,11 @@ import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
-import com.getstream.sdk.chat.notifications.NotificationsManager;
+import com.getstream.sdk.chat.notifications.NotificationMessageLoadListener;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
+import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -101,6 +102,21 @@ public class BaseApplication extends Application {
             }
         };
 
-        StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions, onDeviceRegistered));
+        NotificationMessageLoadListener messageListener = new NotificationMessageLoadListener() {
+            @Override
+            public void onLoadMessageSuccess(@NonNull Message message) {
+                Log.d(TAG, "On message loaded. Message:" + message);
+            }
+
+            @Override
+            public void onLoadMessageFail(@NonNull String messageId) {
+                Log.d(TAG, "Message from notification load fails. MessageId:" + messageId);
+            }
+        };
+
+        StreamNotificationsManager notificationsManager = new StreamNotificationsManager(notificationOptions, onDeviceRegistered);
+        notificationsManager.setFailMessageListener(messageListener);
+
+        StreamChat.setNotificationsManager(notificationsManager);
     }
 }

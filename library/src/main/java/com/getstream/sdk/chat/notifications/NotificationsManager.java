@@ -21,4 +21,6 @@ public interface NotificationsManager {
     void handleRemoteMessage(Context context, RemoteMessage remoteMessage);
 
     void handleEvent(Context context, Event event);
+
+    void setFailMessageListener(NotificationMessageLoadListener failMessageListener);
 }
