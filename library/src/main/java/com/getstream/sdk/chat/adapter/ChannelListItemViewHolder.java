@@ -14,7 +14,6 @@ import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
@@ -22,8 +21,6 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
-import com.getstream.sdk.chat.style.FontsManager;
-import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
@@ -48,8 +45,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ChannelListView.ChannelClickListener channelLongClickListener;
     private ChannelListViewStyle style;
 
-    private MarkdownImpl.MarkdownListener markdownListener;
-
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
         findReferences();
@@ -71,6 +66,13 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private void findReferences() {
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_last_message = itemView.findViewById(R.id.tv_last_message);
+//        tv_last_message.setSingleLine(true);
+//        tv_last_message.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+//        tv_last_message.setFocusableInTouchMode(true);
+//        tv_last_message.setFreezesText(true);
+//        tv_last_message.setMarqueeRepeatLimit(-1);
+//        tv_last_message.setFocusable(true);
+//        tv_last_message.setSelected(true);
         iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
         tv_date = itemView.findViewById(R.id.tv_date);
 
@@ -82,11 +84,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public void setStyle(ChannelListViewStyle style) {
         this.style = style;
     }
-
-    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
-        this.markdownListener = markdownListener;
-    }
-
+    
     @Override
     public void bind(Context context, @NonNull ChannelState channelState, int position) {
 
@@ -145,11 +143,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            if (markdownListener != null)
-                markdownListener.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
-            else
-                MarkdownImpl.getInstance(context).setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
-
+            tv_last_message.setText(lastMessage.getText());
             return;
         }
 

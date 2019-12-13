@@ -26,7 +26,6 @@ public class ChannelViewHolderFactory {
             View v = LayoutInflater.from(parent.getContext()).inflate(style.channelPreviewLayout, parent, false);
             ChannelListItemViewHolder holder = new ChannelListItemViewHolder(v);
             holder.setStyle(style);
-            holder.setMarkdownListener(MarkdownImpl.getMarkdownListener());
             holder.setChannelClickListener(adapter.getChannelClickListener());
             holder.setChannelLongClickListener(adapter.getChannelLongClickListener());
             holder.setUserClickListener(adapter.getUserClickListener());
