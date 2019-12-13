@@ -12,7 +12,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -37,7 +36,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private ReadStateView<ChannelListViewStyle> read_state;
     private AvatarGroupView<ChannelListViewStyle> avatarGroupView;
     private ImageView iv_attachment_type;
-    private View click_area;
+
     private Context context;
 
     private ChannelListView.UserClickListener userClickListener;
@@ -66,17 +65,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     private void findReferences() {
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_last_message = itemView.findViewById(R.id.tv_last_message);
-//        tv_last_message.setSingleLine(true);
-//        tv_last_message.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-//        tv_last_message.setFocusableInTouchMode(true);
-//        tv_last_message.setFreezesText(true);
-//        tv_last_message.setMarqueeRepeatLimit(-1);
-//        tv_last_message.setFocusable(true);
-//        tv_last_message.setSelected(true);
         iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
         tv_date = itemView.findViewById(R.id.tv_date);
-
-        click_area = itemView.findViewById(R.id.click_area);
         avatarGroupView = itemView.findViewById(R.id.avatar_group);
         read_state = itemView.findViewById(R.id.read_state);
     }
@@ -84,7 +74,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     public void setStyle(ChannelListViewStyle style) {
         this.style = style;
     }
-    
+
     @Override
     public void bind(Context context, @NonNull ChannelState channelState, int position) {
 
@@ -206,12 +196,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     private void configClickListeners(ChannelState channelState){
         Channel channel = channelState.getChannel();
-        click_area.setOnClickListener(view -> {
+        itemView.setOnClickListener(view -> {
             if (this.channelClickListener != null)
                 this.channelClickListener.onClick(channel);
         });
 
-        click_area.setOnLongClickListener(view -> {
+        itemView.setOnLongClickListener(view -> {
             if (this.channelLongClickListener != null)
                 this.channelLongClickListener.onClick(channel);
 
