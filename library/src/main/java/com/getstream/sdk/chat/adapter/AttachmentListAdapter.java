@@ -25,13 +25,25 @@ public class AttachmentListAdapter extends BaseAdapter {
     private List<Attachment> attachments;
     private boolean localAttach;
     private boolean isTotalFileAdapter;
+    private OnAttachmentCancelListener cancelListener;
 
-
-    public AttachmentListAdapter(Context context, List<Attachment> attachments, boolean localAttach, boolean isTotalFileAdapter) {
+    public AttachmentListAdapter(Context context,
+                                 List<Attachment> attachments,
+                                 boolean localAttach,
+                                 boolean isTotalFileAdapter) {
         this.attachments = attachments;
         this.layoutInflater = LayoutInflater.from(context);
         this.localAttach = localAttach;
         this.isTotalFileAdapter = isTotalFileAdapter;
+    }
+
+    public AttachmentListAdapter(Context context,
+                                 List<Attachment> attachments,
+                                 boolean localAttach,
+                                 boolean isTotalFileAdapter,
+                                 OnAttachmentCancelListener cancelListener) {
+        this(context, attachments, localAttach, isTotalFileAdapter);
+        this.cancelListener = cancelListener;
     }
 
     @Override
@@ -112,6 +124,11 @@ public class AttachmentListAdapter extends BaseAdapter {
             holder.iv_large_file_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
+            holder.tv_close.setOnClickListener(view -> {
+                if (cancelListener != null)
+                    cancelListener.onCancel(attachment);
+            });
+
             if (!attachment.config.isUploaded()) {
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.progressBar.setProgress(attachment.config.getProgress());
@@ -124,5 +141,9 @@ public class AttachmentListAdapter extends BaseAdapter {
         ImageView iv_file_thumb, iv_select_mark, iv_large_file_mark;
         TextView tv_file_title, tv_file_size, tv_close;
         ProgressBar progressBar;
+    }
+
+    public interface OnAttachmentCancelListener {
+        void onCancel(Attachment attachment);
     }
 }

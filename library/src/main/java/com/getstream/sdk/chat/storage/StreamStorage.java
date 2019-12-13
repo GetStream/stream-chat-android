@@ -226,6 +226,9 @@ public class StreamStorage implements Storage {
         if (message.getCreatedAt() == null) {
             message.setCreatedAt(new Date());
         }
+        if (message.getUser() == null)
+            message.setUser(client.getUser());
+
         message.setSyncStatus(LOCAL_ONLY);
         message.preStorage();
 

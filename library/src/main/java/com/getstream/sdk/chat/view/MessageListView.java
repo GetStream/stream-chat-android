@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -68,7 +69,8 @@ public class MessageListView extends RecyclerView {
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-
+    /** If you are allowed to scroll up or not */
+    boolean lockScrollUp = true;
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -148,11 +150,27 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
+                    // delay of 100 milliseconds to prevent the effect when the keyboard is displayed.
+                    postDelayed(() -> {
+                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition);
+                        lVPosition = currentLastVisible;
+                    }, 100);
                     fVPosition = currentFirstVisible;
-                    lVPosition = currentLastVisible;
                     viewModel.setThreadParentPosition(lVPosition);
                 }
+            }
+        });
+
+        /*
+        * Lock for 500 milliseconds setMessageListScrollUp in here.
+        * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
+        */
+
+        this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
+                                        int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
+            if (bottom < oldBottom) {
+                lockScrollUp = true;
+                postDelayed(() -> lockScrollUp = false, 500);
             }
         });
         super.setAdapter(adapter);

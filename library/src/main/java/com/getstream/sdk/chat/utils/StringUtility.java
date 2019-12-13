@@ -87,6 +87,12 @@ public class StringUtility {
         String[] names = text.split("@");
         String last = names[names.length - 1];
         return text.substring(0, text.length() - last.length()) + userName;
+    }
 
+    public static boolean isEmptyTextMessage(String text){
+        if (TextUtils.isEmpty(text))
+            return true;
+        String s = text.replaceAll("\\s+", "");
+        return TextUtils.isEmpty(s);
     }
 }
