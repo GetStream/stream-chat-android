@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -224,10 +225,11 @@ public class MessageListView extends RecyclerView {
             if (!entities.isEmpty()) {
                 Message lastMessage = entities.get(entities.size() - 1).getMessage();
                 if (lastMessage != null
-                        && scrolledBottom()
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
-                    layoutManager.scrollToPosition(newPosition);
+
+                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
+
                     Log.i(TAG, String.format("just update last message"));
                     return;
                 }
@@ -316,7 +318,7 @@ public class MessageListView extends RecyclerView {
         Date now = new Date();
         long passedTime = now.getTime() - message.getUpdatedAt().getTime();
         return message.getUpdatedAt() != null
-                && passedTime < 2000;
+                && passedTime < 3000;
     }
     // endregion
 
@@ -352,11 +354,11 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                new MoreActionDialog(getContext())
-                        .setChannelViewModel(viewModel)
-                        .setMessage(message)
-                        .setStyle(style)
-                        .show()
+                    new MoreActionDialog(getContext())
+                            .setChannelViewModel(viewModel)
+                            .setMessage(message)
+                            .setStyle(style)
+                            .show()
             );
         }
     }
@@ -421,12 +423,12 @@ public class MessageListView extends RecyclerView {
     }
 
     /*Used for disable mark read Message*/
-    public void disableMarkRead(){
+    public void disableMarkRead() {
         viewModel.setEnableMarkRead(false);
     }
 
     /*Used for enable mark read Message*/
-    public void enableMarkRead(){
+    public void enableMarkRead() {
         viewModel.setEnableMarkRead(true);
     }
 
@@ -482,7 +484,7 @@ public class MessageListView extends RecyclerView {
                 url = attachment.getUrl();
                 break;
         }
-        if (TextUtils.isEmpty(url)){
+        if (TextUtils.isEmpty(url)) {
             Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_url));
             return;
         }
@@ -555,9 +557,10 @@ public class MessageListView extends RecyclerView {
 
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
     }
     // endregion
-
 }
