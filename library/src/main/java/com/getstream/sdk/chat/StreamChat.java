@@ -222,6 +222,11 @@ public class StreamChat {
         return fontsManager;
     }
 
+    public static synchronized boolean init(@NonNull Config config) {
+        ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
+        return init(config.getApiKey(), options, context);
+    }
+
     public static synchronized boolean init(String apiKey, Context context) {
         return init(apiKey, new ApiClientOptions(), context);
     }
@@ -243,51 +248,40 @@ public class StreamChat {
         }
     }
 
-    public static class Builder {
+    public static class Config {
 
         private String apiKey;
         private ApiClientOptions apiClientOptions;
 
-        public Builder(@NonNull Context context) {
+        public Config(@NonNull Context context, @NonNull String apiKey) {
             StreamChat.context = context;
-        }
-
-        public Builder setApiKey(@NonNull String apiKey) {
             this.apiKey = apiKey;
-            return this;
         }
 
-        public Builder setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
+        /**
+         * Set custom api client options.
+         *
+         * @param apiClientOptions - {@link ApiClientOptions}
+         */
+        public void setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
             this.apiClientOptions = apiClientOptions;
-            return this;
         }
 
-        public Builder setStyle(@NonNull StreamChatStyle style) {
+        /**
+         * Set custom chat style.
+         *
+         * @param style - {@link StreamChatStyle}
+         */
+        public void setStyle(@NonNull StreamChatStyle style) {
             StreamChat.chatStyle = style;
-            return this;
         }
 
-        public void build() {
-            Log.i(TAG, "calling build");
-            if (apiKey == null) {
-                Log.e(TAG, "First you need setup API_KEY.");
-                return;
-            }
+        private String getApiKey() {
+            return apiKey;
+        }
 
-            if (apiClientOptions == null) {
-                Log.e(TAG, "First you need setup ApiClientOptions.");
-                return;
-            }
-
-            synchronized (Client.class) {
-                if (INSTANCE == null) {
-                    initComponents(apiKey, apiClientOptions);
-
-                    handleConnectedUser();
-                    observeSetUserCompleted();
-                }
-            }
+        private ApiClientOptions getApiClientOptions() {
+            return apiClientOptions;
         }
     }
-
 }

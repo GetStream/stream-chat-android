@@ -32,11 +32,10 @@ public class BaseApplication extends Application {
                 //.setDefaultFont("fonts/odibeesans_regular.ttf")
                 .build();
 
-        new StreamChat.Builder(this)
-                .setApiKey(BuildConfig.API_KEY)
-                .setApiClientOptions(apiClientOptions)
-                .setStyle(style)
-                .build();
+        StreamChat.Config configuration = new StreamChat.Config(this, BuildConfig.API_KEY);
+        configuration.setApiClientOptions(apiClientOptions);
+        configuration.setStyle(style);
+        StreamChat.init(configuration);
 
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
