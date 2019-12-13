@@ -8,10 +8,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,18 +27,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
@@ -76,16 +75,13 @@ public class MessageInputView extends RelativeLayout {
      */
     final String TAG = MessageInputView.class.getSimpleName();
 
-    /** If you are allowed to scroll up or not */
-    boolean lockScrollUp = false;
-
     private StreamViewMessageInputBinding binding;
     /**
      * Styling class for the MessageInput
      */
     private MessageInputStyle style;
     /** Fired when a message is sent */
-    private SendMessageListener sendMessageListener;
+    private MessageSendListener messageSendListener;
     /** Permission Request listener */
     private PermissionRequestListener permissionRequestListener;
     /** Camera view listener */
@@ -93,19 +89,11 @@ public class MessageInputView extends RelativeLayout {
     /**
      * The viewModel for handling typing etc.
      */
-    private ChannelViewModel viewModel;
+    protected ChannelViewModel viewModel;
 
     private MessageInputController messageInputController;
 
-    /*The pendingMessage for uploading File*/
-    private Message pendingMessage;
-
     // region constructor
-    public MessageInputView(Context context) {
-        super(context);
-        binding = initBinding(context);
-    }
-
     public MessageInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
         parseAttr(context, attrs);
@@ -154,7 +142,6 @@ public class MessageInputView extends RelativeLayout {
         binding.llComposer.setBackground(style.getInputBackground());
         // Input Text
         style.inputText.apply(binding.etMessage);
-
         style.inputBackgroundText.apply(binding.tvTitle);
         style.inputBackgroundText.apply(binding.tvCommand);
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo);
@@ -174,42 +161,71 @@ public class MessageInputView extends RelativeLayout {
         });
     }
 
-    private void configInputEditText(){
-        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus)-> {
+    private void configInputEditText() {
+        binding.etMessage.setOnFocusChangeListener((View view, boolean hasFocus) -> {
             viewModel.setInputType(hasFocus ? InputType.SELECT : InputType.DEFAULT);
             if (hasFocus) {
-                lockScrollUp = true;
-                postDelayed(() -> lockScrollUp = false, 500);
                 Utils.showSoftKeyboard((Activity) getContext());
             } else
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
-
-        TextViewUtils.afterTextChanged(binding.etMessage, editable -> {
-            String messageText = getMessageText();
-            StreamChat.logI(this.getClass(),"Length is " + editable.length());
-            if (messageText.length() > 0) {
-                viewModel.keystroke();
-            }
-            // detect commands
-            messageInputController.checkCommand(messageText);
-            String s_ = messageText.replaceAll("\\s+","");
-            if (TextUtils.isEmpty(s_))
-                binding.setActiveMessageSend(false);
-            else
-                binding.setActiveMessageSend(messageText.length() != 0);
-        });
-
+        TextViewUtils.afterTextChanged(binding.etMessage, this::keyStroke);
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
+    private void keyStroke(Editable editable){
+        if (editable.toString().length() > 0)
+            viewModel.keystroke();
+
+        String messageText = getMessageText();
+        // detect commands
+        messageInputController.checkCommand(messageText);
+        String s_ = messageText.replaceAll("\\s+","");
+        if (TextUtils.isEmpty(s_))
+            binding.setActiveMessageSend(false);
+        else
+            binding.setActiveMessageSend(messageText.length() != 0);
+        configSendButtonEnableState();
+    }
+
+    private void configMessageInputBackground(LifecycleOwner lifecycleOwner){
+
+        viewModel.getInputType().observe(lifecycleOwner, inputType -> {
+            switch (inputType) {
+                case DEFAULT:
+                    binding.llComposer.setBackground(style.getInputBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing()));
+                    break;
+                case SELECT:
+                    binding.llComposer.setBackground(style.getInputSelectedBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
+                    break;
+                case EDIT:
+                    binding.llComposer.setBackground(style.getInputEditBackground());
+                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
+                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
+                    messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE);
+                    break;
+            }
+        });
+
+    }
+
+    private void configSendButtonEnableState() {
+        List<Attachment> attachments = messageInputController.getSelectedAttachments();
+        boolean hasAttachment = attachments != null && !attachments.isEmpty();
+        boolean notEmptyMessage = !StringUtility.isEmptyTextMessage(getMessageText()) || (!messageInputController.isUploadingFile() && hasAttachment);
+        binding.setActiveMessageSend(notEmptyMessage);
+    }
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  ()-> {
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  attachment-> {
             if (binding.ivSend.isEnabled()) return;
-            for (Attachment attachment : messageInputController.getSelectedAttachments())
-                if (!attachment.config.isUploaded())
+            for (Attachment attachment_ : messageInputController.getSelectedAttachments())
+                if (!attachment_.config.isUploaded())
                     return;
 
             onSendMessage();
@@ -229,7 +245,7 @@ public class MessageInputView extends RelativeLayout {
             }
         });
 
-        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(v, null));
+        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(null));
 
         binding.llCamera.setOnClickListener(v -> {
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
@@ -247,7 +263,7 @@ public class MessageInputView extends RelativeLayout {
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(v, null));
+        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(null));
     }
 
     private void onBackPressed() {
@@ -265,7 +281,7 @@ public class MessageInputView extends RelativeLayout {
                     initSendMessage();
                     return true;
                 }
-                if (!TextUtils.isEmpty(binding.etMessage.getText().toString())) {
+                if (!TextUtils.isEmpty(getMessageText())) {
                     initSendMessage();
                     return true;
                 }
@@ -292,10 +308,6 @@ public class MessageInputView extends RelativeLayout {
                 });
     }
 
-    public Message getEditMessage() {
-        return viewModel.getEditMessage().getValue();
-    }
-
     public void setEnabled(boolean enabled) {
         binding.etMessage.setEnabled(true);
     }
@@ -308,37 +320,21 @@ public class MessageInputView extends RelativeLayout {
         return binding.etMessage.getText().toString();
     }
 
-    public void setMessageText(String t) {
-        binding.etMessage.setText(t);
+    public void setMessageText(String text) {
+        if (TextUtils.isEmpty(text)) return;
+
+        binding.etMessage.requestFocus();
+        binding.etMessage.setText(text);
+        binding.etMessage.setSelection(binding.etMessage.getText().length());
     }
     // endregion
 
     // region observe
     private void observeUIs(LifecycleOwner lifecycleOwner) {
-        viewModel.getInputType().observe(lifecycleOwner, inputType -> {
-            switch (inputType) {
-                case DEFAULT:
-                    binding.llComposer.setBackground(style.getInputBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing()));
-                    break;
-                case SELECT:
-                    binding.llComposer.setBackground(style.getInputSelectedBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(false));
-                    break;
-                case EDIT:
-                    binding.llComposer.setBackground(style.getInputEditBackground());
-                    binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true));
-                    binding.ivSend.setImageDrawable(style.getInputButtonIcon(true));
-                    messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE);
-                    break;
-            }
-        });
-
+        configMessageInputBackground(lifecycleOwner);
         viewModel.getEditMessage().observe(lifecycleOwner, this::editMessage);
         viewModel.getMessageListScrollUp().observe(lifecycleOwner, messageListScrollup -> {
-            if (messageListScrollup && !lockScrollUp)
+            if (messageListScrollup)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
         viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage -> {
@@ -355,73 +351,84 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
+    private void onSendMessage(Message message, MessageCallback callback) {
+        if (isEdit())
+            viewModel.editMessage(message, callback);
+        else
+            viewModel.sendMessage(message, callback);
+    }
 
-    private void onSendMessage() {
-        String input = binding.etMessage.getText().toString();
-        boolean isEdit = viewModel.isEditing();
+    protected void onSendMessage(){
+        Message message = isEdit() ? getEditMessage(): new Message(getMessageText());
+        onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
+    }
+
+    protected void onSendMessage(Message message) {
         binding.ivSend.setEnabled(false);
-        if (isEdit) {
-            Message message = getEditMessage();
-            message.setText(input);
-            List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-            if (newAttachments != null
-                    && !newAttachments.isEmpty()){
-                List<Attachment>attachments = message.getAttachments();
-                for (Attachment attachment : newAttachments){
-                    if (attachments == null)
-                        attachments = new ArrayList<>();
-                    attachments.add(attachment);
-                }
-                message.setAttachments(attachments);
+        onSendMessage(message, new MessageCallback() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageSuccess(response.getMessage());
+                initSendMessage();
+                if (isEdit()) clearFocus();
             }
 
-            viewModel.editMessage(message, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    Utils.hideSoftKeyboard((Activity) getContext());
-                    clearFocus();
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    clearFocus();
-                }
-            });
-        } else {
-            Message m = prepareMessage(input);
-            viewModel.sendMessage(m, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    binding.ivSend.setEnabled(true);
-                    initSendMessage();
-                    if (sendMessageListener != null)
-                        sendMessageListener.onSendMessageSuccess(response.getMessage());
-                }
-
-                @Override
-                public void onError(String errMsg, int errCode) {
-                    initSendMessage();
-                    binding.ivSend.setEnabled(true);
-                    if (sendMessageListener != null) {
-                        sendMessageListener.onSendMessageError(errMsg);
-                    } else {
-                        Utils.showMessage(getContext(), errMsg);
-                    }
-                }
-            });
-        }
+            @Override
+            public void onError(String errMsg, int errCode) {
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageError(errMsg);
+                Utils.showMessage(getContext(), errMsg);
+                initSendMessage();
+                if (isEdit()) clearFocus();
+            }
+        });
     }
 
     private void initSendMessage() {
         messageInputController.initSendMessage();
         viewModel.setEditMessage(null);
         binding.etMessage.setText("");
+        binding.ivSend.setEnabled(true);
     }
 
+    /**
+     Prepare message takes the message input string and returns a message object
+     You can overwrite this method in case you want to attach more custom properties to the message
+     */
+    protected Message prepareNewMessage(Message message) {
+        // Check file uploading
+        if (messageInputController.isUploadingFile()){
+            message.setUser(viewModel.client().getUser());
+            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+            message.setId(clientSideID);
+            message.setCreatedAt(new Date());
+            message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
+        }else
+            message.setAttachments(messageInputController.getSelectedAttachments());
+        return message;
+    }
+
+    protected Message prepareEditMessage(Message message) {
+        message.setText(getMessageText());
+        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+        if (newAttachments != null
+                && !newAttachments.isEmpty()){
+            List<Attachment>attachments = message.getAttachments();
+            for (Attachment attachment : newAttachments){
+                if (attachments == null)
+                    attachments = new ArrayList<>();
+                if (attachments.contains(attachment)) continue;
+                attachments.add(attachment);
+            }
+            message.setAttachments(attachments);
+        }
+        return message;
+    }
+
+    protected Message getEditMessage(){
+        return viewModel.getEditMessage().getValue();
+    }
     // endregion
 
     // region send giphy from keyboard
@@ -450,18 +457,17 @@ public class MessageInputView extends RelativeLayout {
     }
     // endregion
 
+    protected boolean isEdit(){
+        return viewModel.isEditing();
+    }
     // region edit message
-    private void editMessage(Message message) {
+    protected void editMessage(Message message) {
         if (message == null) return;
+
         // Set Text to Inputbox
-        binding.etMessage.requestFocus();
-        if (!TextUtils.isEmpty(message.getText())) {
-            binding.etMessage.setText(message.getText());
-            binding.etMessage.setSelection(binding.etMessage.getText().length());
-        }
+        setMessageText(message.getText());
 
         // Set Attachments to Inputbox
-
         if (message.getAttachments() == null
                 || message.getAttachments().isEmpty()
                 || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
@@ -476,14 +482,15 @@ public class MessageInputView extends RelativeLayout {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectMediaView(message.getAttachments());
             } else {
-                messageInputController.onClickOpenSelectFileView(null, message.getAttachments());
+                messageInputController.onClickOpenSelectFileView(message.getAttachments());
             }
         } else {
-            messageInputController.onClickOpenSelectMediaView(null, message.getAttachments());
+            messageInputController.onClickOpenSelectMediaView(message.getAttachments());
         }
     }
+
     // endregion
 
     // region permission check
@@ -551,32 +558,8 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region listeners
-    /**
-     Prepare message takes the message input string and returns a message object
-     You can overwrite this method in case you want to attach more custom properties to the message
-     */
-    public Message prepareMessage(String input) {
-        Message m = new Message();
-        m.setText(input);
-        m.setAttachments(messageInputController.getSelectedAttachments());
-        // set the thread id if we are viewing a thread
-        if (viewModel.isThread())
-            m.setParentId(viewModel.getThreadParentMessage().getValue().getId());
-        // set the current user
-        m.setUser(viewModel.client().getUser());
-        // Check file uploading
-        if (messageInputController.isUploadingFile()){
-            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
-            m.setId(clientSideID);
-            m.setCreatedAt(new Date());
-            m.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-            m.setAttachments(null);
-        }
-        return m;
-    }
-
-    public void setOnSendMessageListener(SendMessageListener l) {
-        this.sendMessageListener = l;
+    protected void setMessageSendListener(MessageSendListener manager) {
+        this.messageSendListener = manager;
     }
 
     public void setPermissionRequestListener(PermissionRequestListener l) {
@@ -588,18 +571,10 @@ public class MessageInputView extends RelativeLayout {
     }
 
     /**
-     * Used for listening to the sendMessage event
-     */
-    public interface SendMessageListener {
-        void onSendMessageSuccess(Message message);
-        void onSendMessageError(String errMsg);
-    }
-
-    /**
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachments();
+        void onAddAttachment(Attachment attachment);
     }
     /**
      * Interface for Permission request

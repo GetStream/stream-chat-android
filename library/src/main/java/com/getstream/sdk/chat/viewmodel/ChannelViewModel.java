@@ -963,14 +963,16 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param callback the result callback
      */
     public void sendMessage(Message message, MessageCallback callback) {
-        if (message.getSyncStatus() == LOCAL_ONLY) {
-            return;
-        }
-        // Check Error or Pending Messages
+        // set the current user
+//        message.setUser(client().getUser());
+        // set the thread id if we are viewing a thread
+        if (isThread())
+            message.setParentId(getThreadParentMessage().getValue().getId());
+
+        if (message.getSyncStatus() == LOCAL_ONLY) return;
+
         checkErrorOrPendingMessage();
-        // Check Failed Message
         checkFailedMessage(message);
-        // stop typing
         stopTyping();
         // Check uploading file
         if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
