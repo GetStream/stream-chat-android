@@ -4,6 +4,7 @@
 - Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
 - Support auto capitalization for keyboard
+- renamed `MoreActionDialog` to `MessageMoreActionDialog`
 
 ## December 9th, 2019 - 3.5.0
 
@@ -86,9 +87,7 @@
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
-- Expose members and watchers pagination options for query channel 
-- added `ChannelMoreActionDialog` (Adrian)
-- renamed `MoreActionDialog` to `MessageMoreActionDialog` (Adrian)
+- Expose members and watchers pagination options for query channel
 
 #### Breaking changes
 
