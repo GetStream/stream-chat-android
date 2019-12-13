@@ -24,15 +24,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="61dp">
+        android:layout_height="?attr/actionBarSize">
 
-        <TextView
-            android:id="@+id/tv_back"
-            android:textSize="25sp"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="@dimen/stream_channel_header_back_width"
+            android:layout_height="@dimen/stream_channel_header_back_height"
+            android:layout_marginStart="@dimen/stream_channel_header_back_margin_start"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,18 +38,21 @@
 
         <TextView
             android:id="@+id/tv_channel_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stream_channel_header_name_margin_start"
+            android:layout_marginEnd="@dimen/stream_channel_header_name_margin_end"
+            android:ellipsize="end"
+            android:ems="3"
             android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:singleLine="true"
             android:text="@{channelName}"
-            app:layout_constraintVertical_chainStyle="packed"
-            android:textColor="#000"
-            android:textSize="20sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/tv_active"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/avatar_group"
+            app:layout_constraintStart_toEndOf="@+id/btn_back"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/tv_active"
@@ -62,23 +63,23 @@
             android:gravity="center_horizontal"
             android:text='@{onlineStatus ? channelLastActive : offlineText}'
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tv_channel_name"
+            app:layout_constraintStart_toStartOf="@+id/tv_channel_name"
             app:layout_constraintTop_toBottomOf="@+id/tv_channel_name" />
 
         <com.getstream.sdk.chat.view.AvatarGroupView
             android:id="@+id/avatar_group"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="18dp"
+            android:layout_width="@dimen/stream_channel_avatar_width"
+            android:layout_height="@dimen/stream_channel_avatar_height"
+            android:layout_marginEnd="@dimen/stream_channel_header_avatar_margin_end"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_option"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_active_badge"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="@dimen/stream_channel_header_avatar_active"
+            android:layout_height="@dimen/stream_channel_header_avatar_active"
             android:background="@{(safeUnbox(viewModel.anyOtherUsersOnline) &amp;&amp; onlineStatus) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
             app:layout_constraintEnd_toEndOf="@+id/avatar_group"
             app:layout_constraintStart_toEndOf="@+id/avatar_group"
@@ -87,16 +88,15 @@
         <ImageView
             android:id="@+id/iv_separator"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="@dimen/stream_channel_header_separator_height"
             android:background="@color/stream_gray"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_option"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginEnd="18dp"
-            android:textSize="30sp"
+        <Button
+            android:id="@+id/btn_option"
+            android:layout_width="@dimen/stream_channel_header_option_width"
+            android:layout_height="@dimen/stream_channel_header_option_height"
+            android:layout_marginEnd="@dimen/stream_channel_header_option_margin_end"
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toEndOf="parent"

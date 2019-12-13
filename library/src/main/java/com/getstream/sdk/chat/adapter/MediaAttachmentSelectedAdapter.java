@@ -26,13 +26,20 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
 
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-    private final OnItemClickListener listener;
+    private OnAttachmentCancelListener cancelListener;
     private Context context;
     private List<Attachment> attachments;
-    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments, OnItemClickListener listener) {
+
+    public MediaAttachmentSelectedAdapter(Context context, List<Attachment> attachments) {
         this.context = context;
         this.attachments = attachments;
-        this.listener = listener;
+    }
+
+    public MediaAttachmentSelectedAdapter(Context context,
+                                          List<Attachment> attachments,
+                                          OnAttachmentCancelListener listener) {
+        this(context, attachments);
+        this.cancelListener = listener;
     }
 
     @Override
@@ -48,7 +55,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        holder.bind(attachments.get(position), listener);
+        holder.bind(attachments.get(position), cancelListener);
     }
 
     @Override
@@ -56,8 +63,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
         return attachments.size();
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(int position);
+    public interface OnAttachmentCancelListener {
+        void onCancel(Attachment attachment);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -68,7 +75,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             this.binding = binding;
         }
 
-        public void bind(Attachment attachment, final OnItemClickListener listener) {
+        public void bind(Attachment attachment, final OnAttachmentCancelListener cancelListener) {
             int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
             binding.ivMedia.setShape(context, new DrawableBuilder()
                     .rectangle()
@@ -104,13 +111,19 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             } else {
                 binding.tvLength.setText("");
             }
-            itemView.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
-            binding.btnClose.setOnClickListener(view -> listener.onItemClick(getAdapterPosition()));
+            binding.btnClose.setOnClickListener(view -> {
+                if (cancelListener != null)
+                    cancelListener.onCancel(attachment);
+            });
+
             if (attachment.config.isUploaded()) {
-                binding.progressBar.setVisibility(View.GONE);
-                binding.ivMask.setVisibility(View.GONE);
-            }else
+                binding.ivMask.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            }else{
+                binding.ivMask.setVisibility(View.VISIBLE);
+                binding.progressBar.setVisibility(View.VISIBLE);
                 binding.progressBar.setProgress(attachment.config.getProgress());
+            }
 
             binding.executePendingBindings();
         }
