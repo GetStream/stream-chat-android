@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<dimen name="message_text_font_size">19sp</dimen>-->
+    <dimen name="custom_input_height">50dp</dimen>
+    <dimen name="custom_input_margin">10dp</dimen>
+    <dimen name="custom_input_send">30dp</dimen>
 </resources>

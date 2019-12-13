@@ -55,6 +55,13 @@ public class DefaultBubbleHelper {
                 // set corner radius if the attachment has title or description
                 if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                     bottomLeftRadius = bottomRightRadius = 0;
+                // set corner radius if the attachment is not first
+                if (message.getAttachments().indexOf(attachment) != 0){
+                    if (mine)
+                        topRightRadius = 0;
+                    else
+                        topLeftRadius = 0;
+                }
                 return getBubbleDrawable();
             }
 

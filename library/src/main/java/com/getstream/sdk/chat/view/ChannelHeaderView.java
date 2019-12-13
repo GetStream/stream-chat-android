@@ -2,10 +2,8 @@ package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
@@ -17,7 +15,6 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
@@ -107,7 +104,7 @@ public class ChannelHeaderView extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         binding = StreamViewChannelHeaderBinding.inflate(inflater, this, true);
         // setup the onMessageClick listener for the back button
-        binding.tvBack.setOnClickListener(view ->{
+        binding.btnBack.setOnClickListener(view ->{
             if(viewModel.isThread())
                 viewModel.initThread();
             else
@@ -117,7 +114,7 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     public void setHeaderOptionsClickListener(MessageListView.HeaderOptionsClickListener headerOptionsClickListener) {
-        binding.tvOption.setOnClickListener(view -> headerOptionsClickListener.onHeaderOptionsClick(viewModel.getChannel()));
+        binding.btnOption.setOnClickListener(view -> headerOptionsClickListener.onHeaderOptionsClick(viewModel.getChannel()));
     }
 
     public void setHeaderAvatarGroupClickListener(MessageListView.HeaderAvatarGroupClickListener headerOptionsClickListener) {
@@ -132,18 +129,21 @@ public class ChannelHeaderView extends RelativeLayout {
         style.lastActiveText.apply(binding.tvActive);
         binding.tvActive.setVisibility(style.isLastActiveShow() ? VISIBLE : GONE);
         // Back Button
-        binding.tvBack.setVisibility(style.isBackButtonShow() ? VISIBLE : INVISIBLE);
-        binding.tvBack.setBackground(style.getBackButtonBackground());
+        binding.btnBack.setVisibility(style.isBackButtonShow() ? VISIBLE : GONE);
+        binding.btnBack.setBackground(style.getBackButtonBackground());
         // Avatar Group
-        binding.avatarGroup.setVisibility(style.isAvatarGroupShow() ? VISIBLE : INVISIBLE);
+        binding.avatarGroup.setVisibility(style.isAvatarGroupShow() ? VISIBLE : GONE);
         // Options Button
-        binding.tvOption.setVisibility(style.isOptionsButtonShow() ? VISIBLE : INVISIBLE);
-        binding.tvOption.setBackground(style.getOptionsButtonBackground());
-        binding.tvOption.setTextSize(style.getOptionsButtonTextSize());
-        binding.tvOption.setWidth(style.getOptionsButtonWidth());
-        binding.tvOption.setHeight(style.getOptionsButtonHeight());
+        binding.btnOption.setVisibility(style.isOptionsButtonShow() ? VISIBLE : GONE);
+        binding.btnOption.setBackground(style.getOptionsButtonBackground());
+        binding.btnOption.setTextSize(style.getOptionsButtonTextSize());
+        binding.btnOption.setWidth(style.getOptionsButtonWidth());
+        binding.btnOption.setHeight(style.getOptionsButtonHeight());
         // Active Badge
-        binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : INVISIBLE);
+        if (!style.isAvatarGroupShow())
+            binding.ivActiveBadge.setVisibility(GONE);
+        else
+            binding.ivActiveBadge.setVisibility(style.isActiveBadgeShow() ? VISIBLE : GONE);
         binding.setOfflineText(style.getOfflineText());
     }
 

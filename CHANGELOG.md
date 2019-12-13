@@ -1,6 +1,9 @@
 ## Upcoming
 
+- Add `MessageSendListener` interface for sending Message
+- Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
+
 
 ## December 9th, 2019 - 3.5.0
 
@@ -39,6 +42,7 @@
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
 - Add Message Username and Date attrs
+
 
 ## November 5th, 2019 - 3.2.1
 

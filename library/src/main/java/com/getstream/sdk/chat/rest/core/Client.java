@@ -1194,7 +1194,7 @@ public class Client implements WSResponseHandler {
     public void sendMessage(Channel channel,
                             @NonNull Message message,
                             MessageCallback callback) {
-
+        message.setUser(getUser());
         String str = GsonConverter.Gson().toJson(message);
         Map<String, Object> map = new HashMap<>();
         map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
