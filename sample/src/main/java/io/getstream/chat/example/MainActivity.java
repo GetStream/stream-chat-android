@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showHiddenChannels(){
-        Utils.showMessage(this, "Showing hidden channels...");
+        Utils.showMessage(this, StreamChat.getStrings().get(R.string.show_hidden_channel));
         FilterObject filter = eq("type", "messaging").put("hidden",true);
         viewModel.setChannelFilter(filter);
         viewModel.queryChannels();

@@ -16,7 +16,7 @@
     <string name="channel_update_with_message">with system message</string>
     <string name="OK">OK</string>
     <string name="Cancel">Cancel</string>
-    <string name="menu_show_hidden_channels">Hidden Channels</string>
+    <string name="menu_show_hidden_channels">Show hidden channels</string>
     <string name="custom_input_hint" translatable="false">Type your message...</string>
-
+    <string name="show_hidden_channel" translatable="false">Showing hidden channels...</string>
 </resources>

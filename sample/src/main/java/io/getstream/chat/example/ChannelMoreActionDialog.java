@@ -132,7 +132,7 @@ public class ChannelMoreActionDialog extends Dialog {
         checkBox.setOnCheckedChangeListener((CompoundButton compoundButton, boolean b) ->
                 et_update_message.setVisibility(b ? View.VISIBLE : View.GONE)
         );
-        editChannelDialog = new BottomSheetDialog(context);
+        editChannelDialog = new BottomSheetDialog(context, R.style.BottomSheetDialogTheme);
         editChannelDialog.setContentView(eidtChannelLayout);
         editChannelDialog.show();
     }
