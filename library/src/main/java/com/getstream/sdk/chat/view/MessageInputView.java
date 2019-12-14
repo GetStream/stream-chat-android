@@ -466,28 +466,27 @@ public class MessageInputView extends RelativeLayout {
 
         // Set Text to Inputbox
         setMessageText(message.getText());
-
+        List<Attachment>attachments = new ArrayList<>(message.getAttachments());
         // Set Attachments to Inputbox
-        if (message.getAttachments() == null
-                || message.getAttachments().isEmpty()
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_unknown))
+        if (attachments.isEmpty()
+                || attachments.get(0).getType().equals(ModelType.attach_giphy)
+                || attachments.get(0).getType().equals(ModelType.attach_unknown))
             return;
 
-        for (Attachment attachment : message.getAttachments())
+        for (Attachment attachment : attachments)
             attachment.config.setUploaded(true);
 
-        Attachment attachment = message.getAttachments().get(0);
+        Attachment attachment = attachments.get(0);
         if (attachment.getType().equals(ModelType.attach_file)) {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(message.getAttachments());
+                messageInputController.onClickOpenSelectMediaView(attachments);
             } else {
-                messageInputController.onClickOpenSelectFileView(message.getAttachments());
+                messageInputController.onClickOpenSelectFileView(attachments);
             }
         } else {
-            messageInputController.onClickOpenSelectMediaView(message.getAttachments());
+            messageInputController.onClickOpenSelectMediaView(attachments);
         }
     }
 
