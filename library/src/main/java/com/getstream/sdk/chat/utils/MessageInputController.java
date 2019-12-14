@@ -107,6 +107,7 @@ public class MessageInputController {
             case UPLOAD_MEDIA:
             case UPLOAD_FILE:
                 binding.clSelectPhoto.setVisibility(View.VISIBLE);
+                configAttachmentButtonVisible(false);
                 break;
             case COMMAND:
             case MENTION:
@@ -150,6 +151,7 @@ public class MessageInputController {
         binding.getRoot().setBackgroundResource(0);
         messageInputType = null;
         commandMentionListItemAdapter = null;
+        configAttachmentButtonVisible(true);
     }
 
     // endregion
@@ -276,6 +278,11 @@ public class MessageInputController {
             totalAttachmentAdapterChanged(null, isMedia);
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
         configSendButtonEnableState();
+    }
+
+    private void configAttachmentButtonVisible(boolean visible) {
+        if (!style.isShowAttachmentButton()) return;
+        binding.ivOpenAttach.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){

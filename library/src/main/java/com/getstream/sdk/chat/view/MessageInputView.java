@@ -412,17 +412,18 @@ public class MessageInputView extends RelativeLayout {
     protected Message prepareEditMessage(Message message) {
         message.setText(getMessageText());
         List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-        if (newAttachments != null
-                && !newAttachments.isEmpty()){
-            List<Attachment>attachments = message.getAttachments();
-            for (Attachment attachment : newAttachments){
-                if (attachments == null)
-                    attachments = new ArrayList<>();
-                if (attachments.contains(attachment)) continue;
-                attachments.add(attachment);
-            }
-            message.setAttachments(attachments);
-        }
+        message.setAttachments(newAttachments);
+//        if (newAttachments != null
+//                && !newAttachments.isEmpty()){
+//            List<Attachment>attachments = message.getAttachments();
+//            for (Attachment attachment : newAttachments){
+//                if (attachments == null)
+//                    attachments = new ArrayList<>();
+//                if (attachments.contains(attachment)) continue;
+//                attachments.add(attachment);
+//            }
+//            message.setAttachments(attachments);
+//        }
         return message;
     }
 
@@ -461,7 +462,7 @@ public class MessageInputView extends RelativeLayout {
         return viewModel.isEditing();
     }
     // region edit message
-    protected void editMessage(Message message) {
+    protected void editMessage(@Nullable Message message) {
         if (message == null) return;
 
         // Set Text to Inputbox
