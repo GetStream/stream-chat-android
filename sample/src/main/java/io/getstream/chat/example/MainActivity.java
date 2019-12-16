@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -152,11 +153,10 @@ public class MainActivity extends AppCompatActivity {
             // open your user profile
         });
 
-        binding.ivAdd.setOnClickListener(v ->createNewChannelDialog());
+        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
         initToolbar(binding);
     }
 
-    void createNewChannelDialog() {
     // open the channel activity
     void openChannel(Channel channel) {
         MainActivity parent = this;
