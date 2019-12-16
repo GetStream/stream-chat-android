@@ -160,32 +160,32 @@ public class MessageInputController {
 
     private void configSelectAttachView(@Nullable List<Attachment> editAttachments, boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
-        
-        selectedAttachments = (editAttachments != null) ? editAttachments : new ArrayList<>();        
-        localAttachments = getAttachmentsFromLocal(isMedia);
+        getAttachmentsFromLocal(isMedia);
         
         ((Activity) context).runOnUiThread(() -> {
             if (editAttachments == null || editAttachments.isEmpty()){
-                if (!localAttachments.isEmpty()){
-                    setAttachmentAdapters(isMedia);
-                }else{
+                setAttachmentAdapters(isMedia);
+                if (localAttachments.isEmpty()){
                     Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                     onClickCloseBackGroundView();
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
             }else{
+                selectedAttachments =  editAttachments;
                 showHideComposerAttachmentGalleryView(true, isMedia);
                 setSelectedAttachmentAdapter(false, isMedia);
             }
         });
     }
 
-    private List<Attachment> getAttachmentsFromLocal(boolean isMedia) {
-        if (isMedia)
-            return Utils.getMediaAttachments(context);
+    private void getAttachmentsFromLocal(boolean isMedia) {
+        if (isMedia){
+            localAttachments = Utils.getMediaAttachments(context);
+            return;
+        }
 
         Utils.attachments = new ArrayList<>();
-        return Utils.getFileAttachments(Environment.getExternalStorageDirectory());
+        localAttachments = Utils.getFileAttachments(Environment.getExternalStorageDirectory());
     }
     
     private void setAttachmentAdapters(boolean isMedia){
