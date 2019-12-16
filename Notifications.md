@@ -95,5 +95,25 @@ DeviceRegisteredListener onDeviceRegistered = new DeviceRegisteredListener() {
 };
 ```
 
+For displaying additional information like user photo, library load all received messages by default.
+We can detect loading status via `NotificationMessageLoadListener`.
+For example:
+```
+NotificationMessageLoadListener messageListener = new NotificationMessageLoadListener() {
+    @Override
+    public void onLoadMessageSuccess(@NonNull Message message) {
+        Log.d(TAG, "On message loaded. Message:" + message);
+    }
+
+    @Override
+    public void onLoadMessageFail(@NonNull String messageId) {
+        Log.d(TAG, "Message from notification load fails. MessageId:" + messageId);
+    }
+};
+
+StreamNotificationsManager notificationsManager = new StreamNotificationsManager(notificationOptions, onDeviceRegistered);
+notificationsManager.setFailMessageListener(messageListener);
+```
+
 In the end of configuration we should use `setNotificationsManager`
-`StreamChat.setNotificationsManager(new StreamNotificationsManager(notificationOptions, onDeviceRegistered));`
+`StreamChat.setNotificationsManager(notificationsManager);`

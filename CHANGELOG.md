@@ -4,6 +4,7 @@
 - Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
 - Support auto capitalization for keyboard
+- Add `NotificationManager` with customization opportunity
 
 ## December 9th, 2019 - 3.5.0
 
