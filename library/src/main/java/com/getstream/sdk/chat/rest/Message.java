@@ -25,6 +25,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
@@ -46,15 +47,19 @@ import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
  * A message
  */
 
-@Entity(tableName = "stream_message", foreignKeys =
-        {@ForeignKey(entity = User.class,
-                parentColumns = "id",
-                childColumns = "user_id"),
+@Entity(tableName = "stream_message",
+        foreignKeys = {
+                @ForeignKey(entity = User.class,
+                        parentColumns = "id",
+                        childColumns = "user_id"),
                 @ForeignKey(entity = Channel.class,
                         parentColumns = "cid",
-                        childColumns = "cid")}
-        , indices = {
-        @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
+                        childColumns = "cid")},
+        indices = {
+                @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})
+        }
+)
+
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @JsonAdapter(MessageGsonAdapter.class)
 public class Message implements UserEntity {
@@ -77,6 +82,9 @@ public class Message implements UserEntity {
 
     @Ignore
     private User user;
+
+    @SerializedName("channel")
+    private Channel channel;
 
     @ColumnInfo(name = "user_id")
     private String userID;
@@ -111,9 +119,6 @@ public class Message implements UserEntity {
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
-    @SerializedName("channel")
-    private Channel channel;
-
     @Ignore
     private List<String> mentionedUsersId;
 
@@ -140,7 +145,6 @@ public class Message implements UserEntity {
         this.extraData = new HashMap<>();
         this.setSyncStatus(Sync.IN_MEMORY);
         this.setType("regular");
-
     }
 
     public Message(String text) {
@@ -460,14 +464,6 @@ public class Message implements UserEntity {
         this.commandInfo = commandInfo;
     }
 
-    public Channel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-    }
-
     @Override
     public String getUserId() {
         if (user == null) {
@@ -495,7 +491,8 @@ public class Message implements UserEntity {
         this.cid = cid;
     }
 
-    public @Sync.Status Integer getSyncStatus() {
+    public @Sync.Status
+    Integer getSyncStatus() {
         return syncStatus;
     }
 
@@ -503,7 +500,7 @@ public class Message implements UserEntity {
         this.syncStatus = syncStatus;
     }
 
-    public boolean hasAttachments(){
+    public boolean hasAttachments() {
         return getAttachments() != null && !getAttachments().isEmpty();
     }
 }

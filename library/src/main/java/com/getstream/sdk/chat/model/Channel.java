@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,10 +59,14 @@ import java.util.Objects;
 /**
  * A channel
  */
-@Entity(tableName = "stream_channel", foreignKeys = @ForeignKey(entity = User.class,
-        parentColumns = "id",
-        childColumns = "created_by_user_id"), indices = {
-        @Index(value = {"created_by_user_id"})})
+@Entity(tableName = "stream_channel",
+        foreignKeys = @ForeignKey(entity = User.class,
+                parentColumns = "id",
+                childColumns = "created_by_user_id"),
+        indices = {
+                @Index(value = {"created_by_user_id"})
+        }
+)
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @JsonAdapter(ChannelGsonAdapter.class)
 public class Channel {
@@ -494,6 +497,7 @@ public class Channel {
     public void query(@NonNull QueryChannelCallback callback) {
         client.queryChannel(this, new ChannelQueryRequest().withData(this.extraData).withWatch(), callback);
     }
+
     /**
      * getReplies - List the message replies for a parent message
      *
