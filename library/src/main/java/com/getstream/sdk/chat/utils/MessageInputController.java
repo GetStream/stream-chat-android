@@ -158,12 +158,12 @@ public class MessageInputController {
 
     // region Upload Attachment File
 
-    private void configSelectAttachView(@Nullable List<Attachment> editAttachments, boolean isMedia) {
+    private void configSelectAttachView(boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
         getAttachmentsFromLocal(isMedia);
         
         ((Activity) context).runOnUiThread(() -> {
-            if (editAttachments == null || editAttachments.isEmpty()){
+            if (selectedAttachments.isEmpty()){
                 setAttachmentAdapters(isMedia);
                 if (localAttachments.isEmpty()){
                     Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
@@ -171,7 +171,6 @@ public class MessageInputController {
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
             }else{
-                selectedAttachments =  editAttachments;
                 showHideComposerAttachmentGalleryView(true, isMedia);
                 setSelectedAttachmentAdapter(false, isMedia);
             }
@@ -296,16 +295,20 @@ public class MessageInputController {
             binding.lvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    public void onClickOpenSelectMediaView(@Nullable List<Attachment> editAttachments) {
+    public void onClickOpenSelectView(@Nullable List<Attachment> editAttachments, boolean isMedia) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
         }
         initAdapter();
+
+        if (editAttachments != null && !editAttachments.isEmpty())
+            setSelectedAttachments(editAttachments);
+
         binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-        AsyncTask.execute(() -> configSelectAttachView(editAttachments, true));
-        if (editAttachments == null || editAttachments.isEmpty())
-            onClickOpenBackGroundView(MessageInputType.UPLOAD_MEDIA);
+        AsyncTask.execute(() -> configSelectAttachView(isMedia));
+        if (selectedAttachments.isEmpty())
+            onClickOpenBackGroundView(isMedia ? MessageInputType.UPLOAD_MEDIA : MessageInputType.UPLOAD_FILE);
     }
 
     private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
@@ -352,17 +355,6 @@ public class MessageInputController {
                 binding.setActiveMessageSend(true);
             }
         }
-    }
-
-    public void onClickOpenSelectFileView(List<Attachment> editAttachments) {
-        if (!PermissionChecker.isGrantedStoragePermissions(context)) {
-            PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
-            return;
-        }
-        initAdapter();
-        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
-        AsyncTask.execute(() -> configSelectAttachView(editAttachments, false));
-        onClickOpenBackGroundView(MessageInputType.UPLOAD_FILE);
     }
 
     public void initSendMessage() {
