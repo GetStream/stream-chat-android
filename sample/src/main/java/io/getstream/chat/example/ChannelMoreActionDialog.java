@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.Utils;
@@ -77,7 +78,7 @@ public class ChannelMoreActionDialog extends Dialog {
 
     private void hideChannel() {
         dismiss();
-        viewModel.hideChannel(channel, new ResultCallback<Void, String>() {
+        viewModel.hideChannel(channel, new HideChannelRequest(true), new ResultCallback<Void, String>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Utils.showMessage(context, context.getString(R.string.channel_action_hide_alert));

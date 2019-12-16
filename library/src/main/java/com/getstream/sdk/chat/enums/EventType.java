@@ -24,7 +24,6 @@ public enum EventType {
     CHANNEL_UPDATED("channel.updated"),
     CHANNEL_HIDDEN("channel.hidden"),
     CHANNEL_DELETED("channel.deleted"),
-    CHANNEL_HIDDEN("channel.hidden"),
     CHANNEL_VISIBLE("channel.visible"),
     HEALTH_CHECK("health.check"),
     CONNECTION_CHANGED("connection.changed"),

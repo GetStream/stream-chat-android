@@ -66,9 +66,6 @@ public abstract class ChatEventHandler {
     public void onChannelUpdated(Channel channel, Event event) {
     }
 
-    public void onChannelHidden(Channel channel, Event event) {
-    }
-
     public void onChannelDeleted(Channel channel, Event event) {
     }
 
@@ -199,9 +196,6 @@ public abstract class ChatEventHandler {
                 break;
             case CHANNEL_UPDATED:
                 dispatchChannelEvent(client, event, this::onChannelUpdated);
-                break;
-            case CHANNEL_HIDDEN:
-                dispatchChannelEvent(client, event, this::onChannelHidden);
                 break;
             case CHANNEL_DELETED:
                 dispatchChannelEvent(client, event, this::onChannelDeleted);
