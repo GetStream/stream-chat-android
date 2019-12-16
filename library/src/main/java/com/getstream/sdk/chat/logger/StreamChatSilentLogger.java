@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.logger;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 public class StreamChatSilentLogger implements StreamLogger {
@@ -21,6 +23,6 @@ public class StreamChatSilentLogger implements StreamLogger {
 
     @Override
     public void logE(@NonNull Class<?> classInstance, @NonNull String message) {
-        // unused
+        Log.e(classInstance.getSimpleName(), message);
     }
 }
