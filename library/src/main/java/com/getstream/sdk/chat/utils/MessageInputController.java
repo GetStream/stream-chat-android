@@ -305,10 +305,12 @@ public class MessageInputController {
         if (editAttachments != null && !editAttachments.isEmpty())
             setSelectedAttachments(editAttachments);
 
-        binding.progressBarFileLoader.setVisibility(View.VISIBLE);
+
         AsyncTask.execute(() -> configSelectAttachView(isMedia));
-        if (selectedAttachments.isEmpty())
+        if (selectedAttachments.isEmpty()){
+            binding.progressBarFileLoader.setVisibility(View.VISIBLE);
             onClickOpenBackGroundView(isMedia ? MessageInputType.UPLOAD_MEDIA : MessageInputType.UPLOAD_FILE);
+        }            
     }
 
     private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
