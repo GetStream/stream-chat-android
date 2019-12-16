@@ -361,6 +361,8 @@ public class MessageInputView extends RelativeLayout {
     protected void onSendMessage(){
         Message message = isEdit() ? getEditMessage(): new Message(getMessageText());
         onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
+        if (isEdit())
+            Utils.hideSoftKeyboard((Activity) getContext());
     }
 
     protected void onSendMessage(Message message) {
