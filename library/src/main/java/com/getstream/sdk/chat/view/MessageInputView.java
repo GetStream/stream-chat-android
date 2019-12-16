@@ -468,8 +468,10 @@ public class MessageInputView extends RelativeLayout {
         // Set Text to Inputbox
         setMessageText(message.getText());
         binding.etMessage.requestFocus();
-        binding.ivOpenAttach.setVisibility(GONE);
+
         List<Attachment>attachments = new ArrayList<>(message.getAttachments());
+        if (!attachments.isEmpty())
+            binding.ivOpenAttach.setVisibility(GONE);
         // Set Attachments to Inputbox
         if (attachments.isEmpty()
                 || attachments.get(0).getType().equals(ModelType.attach_giphy)

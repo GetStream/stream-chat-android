@@ -279,7 +279,8 @@ public class MessageInputController {
             totalAttachmentAdapterChanged(null, isMedia);
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
         configSendButtonEnableState();
-        if (selectedAttachments == null || selectedAttachments.isEmpty())
+        if ((selectedAttachments == null || selectedAttachments.isEmpty())
+                && messageInputType == MessageInputType.EDIT_MESSAGE)
             configAttachmentButtonVisible(true);
     }
 
