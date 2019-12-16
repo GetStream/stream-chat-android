@@ -413,17 +413,6 @@ public class MessageInputView extends RelativeLayout {
         message.setText(getMessageText());
         List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
         message.setAttachments(newAttachments);
-//        if (newAttachments != null
-//                && !newAttachments.isEmpty()){
-//            List<Attachment>attachments = message.getAttachments();
-//            for (Attachment attachment : newAttachments){
-//                if (attachments == null)
-//                    attachments = new ArrayList<>();
-//                if (attachments.contains(attachment)) continue;
-//                attachments.add(attachment);
-//            }
-//            message.setAttachments(attachments);
-//        }
         return message;
     }
 
