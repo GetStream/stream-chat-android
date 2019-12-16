@@ -260,6 +260,7 @@ public class MessageInputView extends RelativeLayout {
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
+            Utils.hideSoftKeyboard((Activity) getContext());
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
