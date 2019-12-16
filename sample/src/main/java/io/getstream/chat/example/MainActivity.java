@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ import java.util.List;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
 
 
@@ -110,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
-        FilterObject filter = and(eq("type", "messaging"));
-
+        FilterObject filter = eq("type", "messaging");
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
         viewModel.setChannelFilter(filter);
@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
             intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
             startActivity(intent);
+        });
+        binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         });*/
 
         // setup an onclick listener to capture clicks to the user profile or channel
@@ -149,11 +151,12 @@ public class MainActivity extends AppCompatActivity {
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
 
+        binding.ivAdd.setOnClickListener(v ->createNewChannelDialog());
         initToolbar(binding);
     }
 
+    void createNewChannelDialog() {
     // open the channel activity
     void openChannel(Channel channel) {
         MainActivity parent = this;
@@ -165,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
     void createNewChannelDialog(View view) {
         final EditText inputName = new EditText(this);
-        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
         final AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .setTitle("Create a Channel")
@@ -244,9 +247,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    // region More action
+
+    void showMoreActionDialog(Channel channel){
+        new ChannelMoreActionDialog(this)
+                .setChannelListViewModel(viewModel)
+                .setChannel(channel)
+                .show();
+    }
+
+    // endregion
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.show_hidden_channel, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.action_hidden_channel) {
+            showHiddenChannels();
+            return true;
+        }
+        return false;
+    }
+
+    private void showHiddenChannels(){
+        Utils.showMessage(this, StreamChat.getStrings().get(R.string.show_hidden_channel));
+        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        viewModel.setChannelFilter(filter);
+        viewModel.queryChannels();
+    }
 
     private void initToolbar(ActivityMainBinding binding) {
+        setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle("Stream Chat");
         binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }
+
 }

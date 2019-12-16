@@ -85,6 +85,7 @@ import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -869,8 +870,8 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
+                UpdateChannelRequest request = new UpdateChannelRequest(channel.getExtraData(), updateMessage);
+                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {

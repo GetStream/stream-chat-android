@@ -5,6 +5,9 @@
 - Client support for anonymous and guest users
 - Support auto capitalization for keyboard
 - Add `NotificationManager` with customization opportunity
+- Update `UpdateChannelRequest` for reserved fields
+- renamed `MoreActionDialog` to `MessageMoreActionDialog`
+
 
 ## December 9th, 2019 - 3.5.0
 
@@ -87,7 +90,7 @@
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
-- Expose members and watchers pagination options for query channel 
+- Expose members and watchers pagination options for query channel
 
 #### Breaking changes
 
