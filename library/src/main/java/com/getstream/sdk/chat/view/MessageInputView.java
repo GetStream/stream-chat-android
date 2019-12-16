@@ -239,6 +239,7 @@ public class MessageInputView extends RelativeLayout {
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
         binding.btnClose.setOnClickListener(v -> {
             messageInputController.onClickCloseBackGroundView();
+            Utils.hideSoftKeyboard((Activity) getContext());
             if (viewModel.isEditing()) {
                 initSendMessage();
                 clearFocus();
