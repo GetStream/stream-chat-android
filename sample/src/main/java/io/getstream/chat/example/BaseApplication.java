@@ -22,7 +22,7 @@ public class BaseApplication extends Application {
         FirebaseApp.initializeApp(getApplicationContext());
         StreamChat.init(BuildConfig.API_KEY,
                 new ApiClientOptions.Builder()
-                        .BaseURL(BuildConfig.API_ENDPOINT)
+                        .BaseURL("chat-us-east-staging.stream-io-api.com")
                         .Timeout(BuildConfig.API_TIMEOUT)
                         .CDNTimeout(BuildConfig.CDN_TIMEOUT)
                         .build(),

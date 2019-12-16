@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 
+import java.util.ArrayList;
+
 public abstract class ChatEventHandler {
 
     public void onUserDisconnected() {
@@ -98,6 +100,12 @@ public abstract class ChatEventHandler {
     }
 
     public void onNotificationMutesUpdated(Channel channel, Event event) {
+    }
+
+    public void onChannelHidden(Channel channel, Event event) {
+    }
+
+    public void onChannelVisible(Channel channel, Event event) {
     }
 
     // onUserBanned is called when the current user is banned from all channels
@@ -258,6 +266,16 @@ public abstract class ChatEventHandler {
                 break;
             case USER_UNBANNED:
                 onUserUnbanned(event);
+                break;
+            case CHANNEL_HIDDEN:
+                Channel hiddenChannel = client.getChannelByCid(event.getCid());
+                if (hiddenChannel != null && hiddenChannel.isInitialized() && event.getClearHistory()) {
+                    hiddenChannel.getChannelState().setMessages(new ArrayList<>());
+                }
+                dispatchChannelEvent(client, event, this::onChannelHidden);
+                break;
+            case CHANNEL_VISIBLE:
+                dispatchChannelEvent(client, event, this::onChannelVisible);
                 break;
         }
     }
