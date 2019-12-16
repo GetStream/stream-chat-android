@@ -467,6 +467,8 @@ public class MessageInputView extends RelativeLayout {
 
         // Set Text to Inputbox
         setMessageText(message.getText());
+        binding.etMessage.requestFocus();
+        binding.ivOpenAttach.setVisibility(GONE);
         List<Attachment>attachments = new ArrayList<>(message.getAttachments());
         // Set Attachments to Inputbox
         if (attachments.isEmpty()
@@ -495,7 +497,8 @@ public class MessageInputView extends RelativeLayout {
 
     // region permission check
     public void captureMedia(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
             File imageFile = CaptureController.getCaptureFile(true);
             File vieoFile = CaptureController.getCaptureFile(false);
             if (imageFile == null && vieoFile == null) {
