@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -33,7 +32,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
@@ -355,12 +354,11 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                    new MoreActionDialog(getContext())
-                            .setChannelViewModel(viewModel)
-                            .setMessage(message)
-                            .setStyle(style)
-                            .show()
-            );
+                new MessageMoreActionDialog(getContext())
+                        .setChannelViewModel(viewModel)
+                        .setMessage(message)
+                        .setStyle(style)
+                        .show());
         }
     }
 
@@ -385,7 +383,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReactionViewClickListener(message -> {
                 Utils.hideSoftKeyboard((Activity) getContext());
-                new MoreActionDialog(getContext())
+                new MessageMoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
