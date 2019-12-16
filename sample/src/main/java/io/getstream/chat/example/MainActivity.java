@@ -18,14 +18,18 @@ import androidx.lifecycle.ViewModelProviders;
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
+import com.getstream.sdk.chat.enums.Filters;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
+import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -72,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
+
+                searchMessage();
             }
 
             @Override
@@ -147,6 +153,27 @@ public class MainActivity extends AppCompatActivity {
         binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
 
         initToolbar(binding);
+    }
+
+    private void searchMessage() {
+        ArrayList<String> searchUsersList = new ArrayList<>();
+        searchUsersList.add(BuildConfig.USER_ID);
+        FilterObject filter = Filters.in("members", searchUsersList);
+        SearchMessagesRequest searchRequest = new SearchMessagesRequest(filter, "hi")
+                .withLimit(10)
+                .withOffset(0);
+
+        client.searchMessages(searchRequest, new SearchMessagesCallback() {
+            @Override
+            public void onSuccess(SearchMessagesResponse response) {
+                Log.d(TAG, response.toString());
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                Log.e(TAG, errMsg);
+            }
+        });
     }
 
     void createNewChannelDialog(View view) {

@@ -155,7 +155,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
-
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
 

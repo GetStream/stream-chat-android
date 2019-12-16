@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -83,26 +84,35 @@ public class Message implements UserEntity {
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
 
+    @SerializedName("latest_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
 
+    @SerializedName("own_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
+    @SerializedName("reply_count")
     private int replyCount;
 
+    @SerializedName("created_at")
     @ColumnInfo(name = "created_at")
     @TypeConverters({DateConverter.class})
     private Date createdAt;
 
+    @SerializedName("updated_at")
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
 
     @TypeConverters({DateConverter.class})
     private Date deletedAt;
 
+    @SerializedName("mentioned_users")
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
+
+    @SerializedName("channel")
+    private Channel channel;
 
     @Ignore
     private List<String> mentionedUsersId;
@@ -448,6 +458,14 @@ public class Message implements UserEntity {
 
     public void setCommandInfo(Map<String, String> commandInfo) {
         this.commandInfo = commandInfo;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     @Override
