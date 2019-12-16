@@ -81,7 +81,7 @@ public class ChannelListView extends RecyclerView {
 
         // connect the viewHolder on click listener...
         adapter.setChannelClickListener(this.channelClickListener);
-        adapter.setChannelLongClickListener(this.channelLongClickListener);
+        setOnLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
@@ -126,7 +126,9 @@ public class ChannelListView extends RecyclerView {
 
     public void setOnLongClickListener(ChannelClickListener l) {
         this.channelLongClickListener = l;
-        if (adapter != null) {
+        if (adapter == null) return;
+
+        if (l != null) {
             adapter.setChannelLongClickListener(l);
         }
     }
