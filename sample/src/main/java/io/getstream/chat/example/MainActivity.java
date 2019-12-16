@@ -56,19 +56,19 @@ public class MainActivity extends AppCompatActivity {
     protected Client configureStreamClient() {
         Client client = StreamChat.getInstance(getApplication());
 
-        Crashlytics.setUserIdentifier("broken-waterfall-5");
+        Crashlytics.setUserIdentifier(BuildConfig.USER_ID);
         if (offlineEnabled) {
             client.enableOfflineStorage();
         }
         Crashlytics.setBool("offlineEnabled", offlineEnabled);
 
         HashMap<String, Object> extraData = new HashMap<>();
-//        extraData.put("name", BuildConfig.USER_NAME);
-//        extraData.put("image", BuildConfig.USER_IMAGE);
+        extraData.put("name", BuildConfig.USER_NAME);
+        extraData.put("image", BuildConfig.USER_IMAGE);
 
         // set sample of user
-        User user = new User("broken-waterfall-5", extraData);
-        client.setUser(user, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.FbfIZ6KOBiQ2YdhkdlQz4kcoyQTY_0_07hzPgGOZpOI", new ClientConnectionCallback() {
+        User user = new User(BuildConfig.USER_ID, extraData);
+        client.setUser(user, BuildConfig.USER_TOKEN, new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
