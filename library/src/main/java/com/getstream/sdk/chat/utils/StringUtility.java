@@ -81,12 +81,18 @@ public class StringUtility {
     }
 
     public static String convertMentionedText(String text, String userName) {
-        if (text.substring(text.length() -1).equals("@"))
+        if (text.substring(text.length() - 1).equals("@"))
             return text + userName;
 
         String[] names = text.split("@");
         String last = names[names.length - 1];
         return text.substring(0, text.length() - last.length()) + userName;
+    }
 
+    public static boolean isEmptyTextMessage(String text){
+        if (TextUtils.isEmpty(text))
+            return true;
+        String s = text.replaceAll("\\s+", "");
+        return TextUtils.isEmpty(s);
     }
 }

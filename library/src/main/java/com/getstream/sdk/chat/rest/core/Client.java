@@ -55,6 +55,7 @@ import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
 import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.GuestUserRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -79,9 +80,11 @@ import com.getstream.sdk.chat.rest.response.MuteUserResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
+import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -131,11 +134,13 @@ public class Client implements WSResponseHandler {
     private String apiKey;
 
     private Boolean offlineStorage;
+    private boolean anonymousConnection;
     private ApiServiceProvider apiServiceProvider;
     private WebSocketServiceProvider webSocketServiceProvider;
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
     private Context context;
+
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
@@ -150,6 +155,7 @@ public class Client implements WSResponseHandler {
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistry;
 
     private Map<String, Config> channelTypeConfigs;
+
     // endregion
     private ChatEventHandler builtinHandler =
 
@@ -158,7 +164,7 @@ public class Client implements WSResponseHandler {
                 public void onAnyEvent(Event event) {
                     // if an event contains the current user update it
                     // this also captures notification.mutes_updated
-                    if (event.getMe() != null) {
+                    if (event.getMe() != null && !event.isAnonymous()) {
                         state.setCurrentUser(event.getMe());
                     }
                     if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
@@ -363,6 +369,10 @@ public class Client implements WSResponseHandler {
         return apiService;
     }
 
+    public boolean isAnonymousConnection() {
+        return anonymousConnection;
+    }
+
     public boolean isConnected() {
         return connected;
     }
@@ -424,10 +434,8 @@ public class Client implements WSResponseHandler {
      * @param provider the Token Provider used to obtain the auth token for the user
      */
     public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
-        if (user == null) {
-            Log.w(TAG, "user can't be null. If you want to reset current user you need to call client.disconnect()");
-            return;
-        }
+        anonymousConnection = false;
+
         if (getUser() != null) {
             Log.w(TAG, "setUser was called but a user is already set; this is probably an integration mistake");
             return;
@@ -475,7 +483,7 @@ public class Client implements WSResponseHandler {
                 cacheUserToken = null;
             }
         };
-        connect();
+        connect(anonymousConnection);
     }
 
     /**
@@ -575,18 +583,28 @@ public class Client implements WSResponseHandler {
         }
     }
 
-    private synchronized void connect() {
+    private synchronized void connect(boolean anonymousConnection) {
         Log.i(TAG, "client.connect was called");
-        tokenProvider.getToken(userToken -> {
+
+        if (anonymousConnection) {
             try {
-                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), userToken, this);
-                apiService = apiServiceProvider.provideApiService(tokenProvider);
-                uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
-                webSocketService.connect();
+                webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), null, this, anonymousConnection);
             } catch (UnsupportedEncodingException e) {
                 onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
             }
-        });
+        } else {
+            tokenProvider.getToken(token -> {
+                try {
+                    webSocketService = webSocketServiceProvider.provideWebSocketService(getUser(), token, this, anonymousConnection);
+                } catch (UnsupportedEncodingException e) {
+                    onError(e.getMessage(), ClientErrorCode.JSON_ENCODING);
+                }
+            });
+        }
+
+        apiService = apiServiceProvider.provideApiService(tokenProvider, anonymousConnection);
+        uploadStorage = uploadStorageProvider.provideUploadStorage(tokenProvider, this);
+        webSocketService.connect();
     }
 
     public Channel channel(String cid) {
@@ -613,7 +631,7 @@ public class Client implements WSResponseHandler {
     @Override
     public void connectionResolved(Event event) {
         clientID = event.getConnectionId();
-        if (event.getMe() != null)
+        if (event.getMe() != null && !event.isAnonymous())
             state.setCurrentUser(event.getMe());
 
         // mark as connect, any new callbacks will automatically be executed
@@ -672,7 +690,8 @@ public class Client implements WSResponseHandler {
             return;
         }
         connectionRecovered();
-        connect();
+
+        connect(anonymousConnection);
     }
 
     @Override
@@ -825,8 +844,8 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
+                UpdateChannelRequest request = new UpdateChannelRequest(channel.getExtraData(), updateMessage);
+                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
@@ -952,7 +971,7 @@ public class Client implements WSResponseHandler {
                         if (channel.getCreatedByUser() == null) {
                             channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
                         }
-                        
+
                         addChannelConfig(channel.getType(), channel.getConfig());
 
                         if (queryRequest.isWatch()) {
@@ -1150,7 +1169,7 @@ public class Client implements WSResponseHandler {
     public void sendMessage(Channel channel,
                             @NonNull Message message,
                             MessageCallback callback) {
-
+        message.setUser(getUser());
         String str = GsonConverter.Gson().toJson(message);
         Map<String, Object> map = new HashMap<>();
         map.put("message", GsonConverter.Gson().fromJson(str, Map.class));
@@ -1677,12 +1696,48 @@ public class Client implements WSResponseHandler {
      * Setup an anonymous session
      */
     public void setAnonymousUser() {
+        if (getUser() != null) {
+            Log.w(TAG, "setAnonymousUser was called but a user is already set;");
+            return;
+        }
+
+        anonymousConnection = true;
+        apiService = apiServiceProvider.provideApiService(null, true);
+
+        String uuid = randomUUID().toString();
+
+        state.setCurrentUser(new User(uuid));
+
+        connect(anonymousConnection);
     }
 
     /**
      * Setup a temporary guest user
+     *
+     * @param user Data about this user. IE {name: "john"}
      */
     public void setGuestUser(User user) {
+        if (getUser() != null) {
+            Log.w(TAG, "setGuestUser was called but a user is already set;");
+            return;
+        }
+
+        GuestUserRequest body = new GuestUserRequest(user.getId(), user.getName());
+
+        apiService = apiServiceProvider.provideApiService(null, true);
+        apiService.setGuestUser(apiKey, body).enqueue(new Callback<TokenResponse>() {
+            @Override
+            public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                if (response.body() != null) {
+                    setUser(user, response.body().getToken());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TokenResponse> call, Throwable t) {
+                Log.e(TAG, "Problem with setting guest user: " + t.getMessage());
+            }
+        });
     }
 
     /**

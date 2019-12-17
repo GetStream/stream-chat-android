@@ -17,11 +17,12 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
@@ -78,7 +79,7 @@ public class ChannelActivity extends AppCompatActivity
         // If you are using own MessageInputView please comment this line.
         binding.messageInput.setOpenCameraViewListener(this);
         binding.messageInput.setPermissionRequestListener(this);
-        binding.messageList.setViewHolderFactory(new MyMessageViewHolderFactory());
+        binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
         // connect the view model
         binding.setViewModel(viewModel);
@@ -125,7 +126,7 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageLongClick(Message message) {
-        new MoreActionDialog(this)
+        new MessageMoreActionDialog(this)
                 .setChannelViewModel(viewModel)
                 .setMessage(message)
                 .setStyle(binding.messageList.getStyle())

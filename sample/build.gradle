@@ -17,7 +17,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def appVersion = "17.0"
+def appVersion = "18.0"
 
 android {
     compileSdkVersion 28
@@ -25,7 +25,7 @@ android {
         applicationId "io.getstream.chat.sdk"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 17
+        versionCode 18
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -65,6 +65,9 @@ android {
 
             def usersConfig = loadJson()
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
+
+
+            buildConfigField "String", "SDK_VERSION", '"master"'
         }
 
         applicationVariants.all { variant ->
@@ -104,6 +107,7 @@ dependencies {
 
     releaseImplementation "com.github.getstream:stream-chat-android:$releaseSdkVersion"
     debugImplementation project(':library')
+
 
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
     implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"

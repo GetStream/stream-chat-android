@@ -3,8 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#2196F3</color>
+
     <color name="tab_disable">#979797</color>
     <color name="tab_enable">#FFFFFF</color>
     <color name="tab_checked">#FFFFFF</color>
     <color name="tab_unchecked">#00574B</color>
+
+    <color name="custom_input_back">#1A1A32</color>
+    <color name="custom_input_text">#FFFFFF</color>
+    <color name="custom_input_hint">#8F8F8F</color>
+
 </resources>

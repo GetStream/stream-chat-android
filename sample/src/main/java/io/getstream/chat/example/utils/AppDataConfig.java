@@ -20,6 +20,9 @@ public class AppDataConfig {
     private static SharedPreferences preferences;
     private static AppData appData;
     private static String currentApiKey;
+    private static String apiEndpoint;
+    private static int apiTimeout;
+    private static int cdnTimeout;
 
     private static final String CURRENT_USER_ID = "current-user-id";
     private static final String APP_PREFERENCE = "AppPreferences";
@@ -29,9 +32,11 @@ public class AppDataConfig {
         preferences = context.getSharedPreferences(APP_PREFERENCE, Activity.MODE_PRIVATE);
         String json = BuildConfig.USERS_CONFIG;
         try {
-            appData = new Gson().fromJson(json, new TypeToken<AppData>() {
-            }.getType());
+            appData = new Gson().fromJson(json, new TypeToken<AppData>() {}.getType());
             currentApiKey = appData.getApi_key();
+            apiEndpoint = appData.getApi_endpoint();
+            apiTimeout = appData.getApi_timeout();
+            cdnTimeout = appData.getCdn_timeout();
         } catch (JsonSyntaxException e) {
             throw new Exception("Invalid Json data!.");
         }
@@ -68,5 +73,17 @@ public class AppDataConfig {
 
     public static String getCurrentApiKey() {
         return currentApiKey;
+    }
+
+    public static String getApiEndpoint() {
+        return apiEndpoint;
+    }
+
+    public static int getApiTimeout() {
+        return apiTimeout;
+    }
+
+    public static int getCdnTimeout() {
+        return cdnTimeout;
     }
 }

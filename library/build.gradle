@@ -12,9 +12,19 @@ def DEFAULT_COMPILE_SDK_VERSION = 28
 def DEFAULT_TARGET_SDK_VERSION = 28
 def DEFAULT_MIN_SDK_VERSION = 21
 
+def DEFAULT_API_ENDPOINT = 'chat-us-east-1.stream-io-api.com'
+def DEFAULT_API_TIMEOUT = 6000
+def DEFAULT_CDN_TIMEOUT = 1000 * 30
+
 android {
     compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
+
     defaultConfig {
+
+        buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
+        buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
+        buildConfigField "int", "DEFAULT_CDN_TIMEOUT", "$DEFAULT_CDN_TIMEOUT"
+
         minSdkVersion rootProject.hasProperty('minSdkVersion') ? rootProject.minSdkVersion : DEFAULT_MIN_SDK_VERSION
         targetSdkVersion rootProject.hasProperty('targetSdkVersion') ? rootProject.targetSdkVersion : DEFAULT_TARGET_SDK_VERSION
         vectorDrawables.useSupportLibrary = true
@@ -60,7 +70,6 @@ dependencies {
     implementation "io.noties.markwon:linkify:$markdown_version"
     implementation "io.noties.markwon:ext-strikethrough:$markdown_version"
     implementation "io.noties.markwon:image:$markdown_version"
-    implementation "io.noties.markwon:ext-tables:$markdown_version"
 
     implementation 'com.facebook.fresco:fresco:1.2.0'
     implementation 'me.relex:photodraweeview:1.1.0'

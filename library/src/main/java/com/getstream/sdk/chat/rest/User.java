@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A user
@@ -218,12 +219,16 @@ public class User implements UserEntity {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         // we compare based on the CID
         User otherUser = (User) obj;
-        return TextUtils.equals(this.getId(), otherUser.getId());
+        return Objects.equals(id, otherUser.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public HashMap<String, Object> getExtraData() {

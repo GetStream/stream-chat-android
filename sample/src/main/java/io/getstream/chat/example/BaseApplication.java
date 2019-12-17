@@ -28,7 +28,16 @@ public class BaseApplication extends Application {
             e.printStackTrace();
             return;
         }
-        StreamChat.init(AppDataConfig.getCurrentApiKey(), new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
+
+        StreamChat.init(AppDataConfig.getCurrentApiKey(),
+                new ApiClientOptions.Builder()
+                        .BaseURL(AppDataConfig.getApiEndpoint())
+                        .Timeout(AppDataConfig.getApiTimeout())
+                        .CDNTimeout(AppDataConfig.getCdnTimeout())
+                        .build(),
+                this
+        );
+
         StreamChat.initStyle(
                 new StreamChatStyle.Builder()
                         //.setDefaultFont(R.font.lilyofthe_valley)
@@ -54,7 +63,6 @@ public class BaseApplication extends Application {
                             });
                         }
                 );
-
 
     }
 }

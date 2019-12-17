@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest;
 
-import android.text.TextUtils;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
@@ -30,7 +28,6 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.JsonAdapter;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -133,6 +130,12 @@ public class Message implements UserEntity {
         this.extraData = new HashMap<>();
         this.setSyncStatus(Sync.IN_MEMORY);
         this.setType("regular");
+
+    }
+
+    public Message(String text) {
+        this();
+        setText(text);
     }
 
     // region Set Date and Time
@@ -201,11 +204,11 @@ public class Message implements UserEntity {
 
     @Override
     public boolean equals(@Nullable Object obj) {
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
         Message otherMessage = (Message) obj;
-        if (!TextUtils.equals(this.getId(), otherMessage.getId())) {
+        if (!Objects.equals(id, otherMessage.getId())) {
             return false;
         }
 
@@ -217,6 +220,11 @@ public class Message implements UserEntity {
             return false;
         }
         return replyCount == otherMessage.replyCount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public Message copy() {

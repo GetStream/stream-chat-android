@@ -55,6 +55,13 @@ public class DefaultBubbleHelper {
                 // set corner radius if the attachment has title or description
                 if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                     bottomLeftRadius = bottomRightRadius = 0;
+                // set corner radius if the attachment is not first
+                if (message.getAttachments().indexOf(attachment) != 0){
+                    if (mine)
+                        topRightRadius = 0;
+                    else
+                        topLeftRadius = 0;
+                }
                 return getBubbleDrawable();
             }
 
@@ -75,7 +82,7 @@ public class DefaultBubbleHelper {
 
     private static void configParams(MessageListViewStyle style, boolean isMine, boolean isAttachment){
         bgColor = isAttachment ? style.getAttachmentBackgroundColor(isMine) : style.getMessageBackgroundColor(isMine);
-        strokeColor = style.getMessageBorderColor(isMine);
+        strokeColor = isAttachment ? style.getAttachmentBorderColor(isMine) : style.getMessageBorderColor(isMine);
         strokeWidth = style.getMessageBorderWidth(isMine);
         topLeftRadius = style.getMessageTopLeftCornerRadius(isMine);
         topRightRadius = style.getMessageTopRightCornerRadius(isMine);

@@ -1,6 +1,21 @@
 ## Upcoming
 
+- Add `MessageSendListener` interface for sending Message
+- Update `README` about Customizing MessageInputView
+- Client support for anonymous and guest users
+- Support auto capitalization for keyboard
+- Update `UpdateChannelRequest` for reserved fields
+- renamed `MoreActionDialog` to `MessageMoreActionDialog`
+
+
+## December 9th, 2019 - 3.5.0
+
 - Fix set typeFace without custom font
+- Fix channel.watch (data payload was not sent)
+- Fix API 23 compatiblity
+- Add Attachment Border Color attrs
+- Add Message Link Text Color attrs
+- Add custom api endpoint config to sample app and SDK
 
 ## November 28th, 2019 - 3.4.1
 
@@ -30,6 +45,7 @@
 - Fix JSON encoding always omits null fields
 - Sample app: add version header, release version signing
 - Add Message Username and Date attrs
+
 
 ## November 5th, 2019 - 3.2.1
 
@@ -73,7 +89,7 @@
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
-- Expose members and watchers pagination options for query channel 
+- Expose members and watchers pagination options for query channel
 
 #### Breaking changes
 

@@ -11,6 +11,9 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,6 +31,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import java.util.ArrayList;
@@ -36,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.getstream.chat.example.ChannelActivity;
+import io.getstream.chat.example.ChannelMoreActionDialog;
+import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
 import io.getstream.chat.example.utils.AppDataConfig;
 
@@ -90,6 +96,7 @@ public class ChannelListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -130,7 +137,7 @@ public class ChannelListFragment extends Fragment {
         //        return false;
         //    });
 
-        // set the viewModel data for the activity_main.xml layout
+        // set the viewModel data for the fragment_channel_list.xml layout
         binding.setViewModel(viewModel);
 
         binding.channelList.setViewModel(viewModel, this);
@@ -149,18 +156,19 @@ public class ChannelListFragment extends Fragment {
             intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
             startActivity(intent);
         });
+        binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
-        binding.ivAdd.setOnClickListener(view -> showCreateNewChannelDialog());
+        binding.ivAdd.setOnClickListener(view -> createNewChannelDialog());
 
         return binding.getRoot();
     }
 
     // region create new channel
-    private void showCreateNewChannelDialog() {
+    private void createNewChannelDialog() {
         final EditText inputName = new EditText(getContext());
-        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         inputName.setHint("Type a channel name");
         final AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Create a Channel")
@@ -185,7 +193,6 @@ public class ChannelListFragment extends Fragment {
 
     private void createNewChannel(String channelName) {
         Client client = configureStreamClient();
-
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
 
@@ -194,7 +201,9 @@ public class ChannelListFragment extends Fragment {
         extraData.put("members", members);
 
         String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+
         Channel channel = new Channel(client, ModelType.channel_messaging, channelId, extraData);
+
         ChannelQueryRequest request = new ChannelQueryRequest().withMessages(10).withWatch();
 
         viewModel.setLoading();
@@ -216,8 +225,37 @@ public class ChannelListFragment extends Fragment {
             }
         });
     }
+
+    private void showMoreActionDialog(Channel channel){
+        new ChannelMoreActionDialog(getContext())
+                .setChannelListViewModel(viewModel)
+                .setChannel(channel)
+                .show();
+    }
     // endregion
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.action_hidden_channel) {
+            showHiddenChannels();
+            return true;
+        }
+        return false;
+    }
+
+    private void showHiddenChannels(){
+        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
+        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        viewModel.setChannelFilter(filter);
+        viewModel.queryChannels();
+    }
 
     @Override
     public void onResume(){

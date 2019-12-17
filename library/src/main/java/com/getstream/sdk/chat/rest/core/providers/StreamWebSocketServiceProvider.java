@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.Client;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -32,20 +32,31 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     }
 
     @Override
-    public WebSocketService provideWebSocketService(User user, String userToken, WSResponseHandler listener) throws UnsupportedEncodingException {
-        String wsUrl = getWsUrl(userToken, user);
+    public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener, boolean anonymousAuth) throws UnsupportedEncodingException {
+        String wsUrl = getWsUrl(userToken, user, anonymousAuth);
         Log.d(TAG, "WebSocket URL : " + wsUrl);
         return new StreamWebSocketService(wsUrl, listener);
     }
 
-    @NotNull
-    public String getWsUrl(String userToken, User user) throws UnsupportedEncodingException {
+    public String getWsUrl(String userToken, User user, boolean anonymousAuth) throws UnsupportedEncodingException {
+        if (anonymousAuth && userToken != null) {
+            Log.e(TAG, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
+        }
+        if (!anonymousAuth && userToken == null) {
+            Log.e(TAG, "userToken must be non-null in non anonymous mode");
+            return null;
+        }
+
         String json = buildUserDetailJSON(user);
 
         try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.toString());
-            return apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key="
-                    + apiKey + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name());
+            String baseWsUrl = apiClientOptions.getWssURL() + "connect?json=" + json + "&api_key=" + apiKey;
+            if (anonymousAuth) {
+                return baseWsUrl + "&stream-auth-type=" + "anonymous";
+            } else {
+                return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
+            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
@@ -55,8 +66,8 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     public String buildUserDetailJSON(User user) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("user_details", user);
-        data.put("user_id", user.getId());
         data.put("server_determines_connection_id", true);
+        data.put("user_id", user.getId());
         return GsonConverter.Gson().toJson(data);
     }
 }

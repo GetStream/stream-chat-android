@@ -50,7 +50,9 @@
     <!--Last Message Type-->
     <string name="stream_last_message_attachment_photo">photo</string>
     <string name="stream_last_message_attachment_video">video</string>
+
     <string name="stream_last_message_attachment_giphy" translatable="false">/giphy</string>
+
     <!--Attachment View-->
     <string name="stream_attachment_load_failed_unknown">The load failed due to an unknown error.</string>
     <string name="stream_attachment_invalid_url">The load failed due to the invalid url.</string>

@@ -1,17 +1,10 @@
 package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.enums.Pagination;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class ChannelWatchRequest extends ChannelQueryRequest {
-
-    @SerializedName("messages")
-    protected Map<String, Object> messages;
-    @SerializedName("data")
-    private Map<String, Object> data;
 
     public ChannelWatchRequest() {
         this.watch = true;

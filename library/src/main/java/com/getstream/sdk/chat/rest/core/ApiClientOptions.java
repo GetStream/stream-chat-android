@@ -1,10 +1,8 @@
 package com.getstream.sdk.chat.rest.core;
 
-public class ApiClientOptions {
+import com.getstream.sdk.chat.BuildConfig;
 
-    private static String defaultURL = "chat-us-east-1.stream-io-api.com";
-    private static int defaultTimeout = 6000;
-    private static int defaultCDNTimeout = 1000 * 30;
+public class ApiClientOptions {
 
     private String baseURL;
     private int timeout;
@@ -20,7 +18,11 @@ public class ApiClientOptions {
     }
 
     public ApiClientOptions() {
-        this(defaultURL, defaultTimeout, defaultCDNTimeout);
+        this(
+                BuildConfig.DEFAULT_API_ENDPOINT,
+                BuildConfig.DEFAULT_API_TIMEOUT,
+                BuildConfig.DEFAULT_CDN_TIMEOUT
+        );
     }
 
     public String getHttpURL() {

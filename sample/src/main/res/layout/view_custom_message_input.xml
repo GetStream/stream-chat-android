@@ -5,18 +5,18 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1A1A32">
+        android:background="@color/custom_input_back">
 
         <EditText
             android:id="@+id/et_message"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
+            android:layout_height="@dimen/custom_input_height"
+            android:layout_marginStart="@dimen/custom_input_margin"
+            android:layout_marginEnd="@dimen/custom_input_margin"
             android:background="@null"
-            android:hint="Type your message..."
-            android:textColor="#FFFFFF"
-            android:textColorHint="#8F8F8F"
+            android:hint="@string/custom_input_hint"
+            android:textColor="@color/custom_input_text"
+            android:textColorHint="@color/custom_input_hint"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -28,15 +28,15 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/custom_input_height"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/imageView">
 
             <Button
                 android:id="@+id/btn_gif"
-                android:layout_width="30dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_gif"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -44,9 +44,9 @@
 
             <Button
                 android:id="@+id/btn_file"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="10dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_file"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btn_gif"
@@ -54,9 +54,9 @@
 
             <Button
                 android:id="@+id/btn_image"
-                android:layout_width="30dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="20dp"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginStart="@dimen/custom_input_margin"
                 android:background="@drawable/ic_image"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/btn_file"
@@ -64,12 +64,10 @@
 
             <Button
                 android:id="@+id/btn_send"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_marginEnd="10dp"
-                android:background="@null"
-                android:text="Send"
-                android:textColor="#646464"
+                android:layout_width="@dimen/custom_input_send"
+                android:layout_height="@dimen/custom_input_send"
+                android:layout_marginEnd="@dimen/custom_input_margin"
+                android:background="@drawable/ic_send"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

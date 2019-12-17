@@ -6,22 +6,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AvatarGroupView;
+import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
-    private MessageListViewStyle style;
     // Tying
     private ImageView iv_typing_indicator;
     private LinearLayout ll_typingusers;
 
     public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
         this(resId, viewGroup);
-        style = s;
     }
 
     public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup) {
@@ -31,11 +32,13 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context,
-                     ChannelState channelState,
-                     MessageListItem messageListItem,
+    public void bind(@NonNull Context context,
+                     @NonNull ChannelState channelState,
+                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListViewStyle style,
+                     @NonNull MessageListView.BubbleHelper bubbleHelper,
+                     @NonNull MessageViewHolderFactory factory,
                      int position) {
-
         ll_typingusers.setVisibility(View.VISIBLE);
         iv_typing_indicator.setVisibility(View.VISIBLE);
         ll_typingusers.removeAllViews();
@@ -60,10 +63,4 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         }
         Glide.with(context).asGif().load(R.raw.stream_typing).into(iv_typing_indicator);
     }
-
-    @Override
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
-
 }

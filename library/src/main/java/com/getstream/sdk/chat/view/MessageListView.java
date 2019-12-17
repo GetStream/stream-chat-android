@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
@@ -30,7 +31,7 @@ import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
 import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
@@ -67,7 +68,8 @@ public class MessageListView extends RecyclerView {
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-
+    /** If you are allowed to scroll up or not */
+    boolean lockScrollUp = true;
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -147,11 +149,27 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         viewModel.setHasNewMessages(false);
                     }
-                    viewModel.setMessageListScrollUp(currentLastVisible + 1 < lVPosition);
+                    // delay of 100 milliseconds to prevent the effect when the keyboard is displayed.
+                    postDelayed(() -> {
+                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition);
+                        lVPosition = currentLastVisible;
+                    }, 100);
                     fVPosition = currentFirstVisible;
-                    lVPosition = currentLastVisible;
                     viewModel.setThreadParentPosition(lVPosition);
                 }
+            }
+        });
+
+        /*
+        * Lock for 500 milliseconds setMessageListScrollUp in here.
+        * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
+        */
+
+        this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
+                                        int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
+            if (bottom < oldBottom) {
+                lockScrollUp = true;
+                postDelayed(() -> lockScrollUp = false, 500);
             }
         });
         super.setAdapter(adapter);
@@ -206,10 +224,11 @@ public class MessageListView extends RecyclerView {
             if (!entities.isEmpty()) {
                 Message lastMessage = entities.get(entities.size() - 1).getMessage();
                 if (lastMessage != null
-                        && scrolledBottom()
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
-                    layoutManager.scrollToPosition(newPosition);
+
+                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
+
                     Log.i(TAG, String.format("just update last message"));
                     return;
                 }
@@ -298,7 +317,7 @@ public class MessageListView extends RecyclerView {
         Date now = new Date();
         long passedTime = now.getTime() - message.getUpdatedAt().getTime();
         return message.getUpdatedAt() != null
-                && passedTime < 2000;
+                && passedTime < 3000;
     }
     // endregion
 
@@ -334,12 +353,11 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                new MoreActionDialog(getContext())
+                new MessageMoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
-                        .show()
-            );
+                        .show());
         }
     }
 
@@ -364,7 +382,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReactionViewClickListener(message -> {
                 Utils.hideSoftKeyboard((Activity) getContext());
-                new MoreActionDialog(getContext())
+                new MessageMoreActionDialog(getContext())
                         .setChannelViewModel(viewModel)
                         .setMessage(message)
                         .setStyle(style)
@@ -403,12 +421,12 @@ public class MessageListView extends RecyclerView {
     }
 
     /*Used for disable mark read Message*/
-    public void disableMarkRead(){
+    public void disableMarkRead() {
         viewModel.setEnableMarkRead(false);
     }
 
     /*Used for enable mark read Message*/
-    public void enableMarkRead(){
+    public void enableMarkRead() {
         viewModel.setEnableMarkRead(true);
     }
 
@@ -464,7 +482,7 @@ public class MessageListView extends RecyclerView {
                 url = attachment.getUrl();
                 break;
         }
-        if (TextUtils.isEmpty(url)){
+        if (TextUtils.isEmpty(url)) {
             Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_url));
             return;
         }
@@ -537,9 +555,10 @@ public class MessageListView extends RecyclerView {
 
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
     }
     // endregion
-
 }

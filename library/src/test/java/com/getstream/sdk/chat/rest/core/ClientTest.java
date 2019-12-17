@@ -83,6 +83,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -110,6 +111,7 @@ public class ClientTest {
 
     private Client client;
 
+
     @BeforeEach
     void initTest() throws IOException {
 
@@ -119,11 +121,11 @@ public class ClientTest {
 
         WebSocketServiceProvider webSocketServiceProvider = mock(WebSocketServiceProvider.class);
         doReturn(webSocketService).when(webSocketServiceProvider).provideWebSocketService(
-                any(), any(), any()
+                any(), any(), any(), anyBoolean()
         );
 
         ApiServiceProvider apiServiceProvider = mock(ApiServiceProvider.class);
-        doReturn(apiService).when(apiServiceProvider).provideApiService(any());
+        doReturn(apiService).when(apiServiceProvider).provideApiService(any(), anyBoolean());
 
         UploadStorageProvider uploadStorageProvider = mock(UploadStorageProvider.class);
         doReturn(uploadStorage).when(uploadStorageProvider).provideUploadStorage(any(), any());
@@ -876,9 +878,9 @@ public class ClientTest {
     void queryChannelWithIdSuccessTest() {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
@@ -916,9 +918,9 @@ public class ClientTest {
         ArrayList<Message> messages = new ArrayList<>();
         Message message = new Message();
 
-        Date data = new Date();
-        message.setCreatedAt(data);
-        message.setUpdatedAt(data);
+        Date date = new Date();
+        message.setCreatedAt(date);
+        message.setUpdatedAt(date);
 
         messages.add(message);
         HashMap<String, Object> extra = new HashMap<>();
