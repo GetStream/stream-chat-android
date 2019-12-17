@@ -37,6 +37,6 @@ public class UserConfig {
     }
 
     public static void logout() {
-        AppDataStorage.setCurrentUser(null);
+        AppDataConfig.setCurrentUser(null);
     }
 }

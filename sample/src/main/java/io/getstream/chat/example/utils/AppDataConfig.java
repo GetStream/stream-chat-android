@@ -3,31 +3,22 @@ package io.getstream.chat.example.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import com.google.gson.Gson;
+import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.List;
 
 import io.getstream.chat.example.BuildConfig;
 
-public class AppDataStorage {
+public class AppDataConfig {
 
     private static Context context;
     private static SharedPreferences preferences;
     private static AppData appData;
-    private static String currentApiKey = BuildConfig.API_KEY;
+    private static String currentApiKey;
 
-    private static final String USER_DATA_FILENAME = "app-data.json";
     private static final String CURRENT_USER_ID = "current-user-id";
     private static final String APP_PREFERENCE = "AppPreferences";
 
@@ -55,47 +46,28 @@ public class AppDataStorage {
         return null;
     }
 
-    public static void setCurrentUser(String userId){
+    public static void setCurrentUser(@Nullable String userId){
         preferences.edit().putString(CURRENT_USER_ID, userId).apply();
     }
-
-
 
     @Nullable
     public static List<UserConfig> getUsers() {
         return appData.getUserConfigs();
     }
 
-
-
     public static void parseJson(){
 
         String json = BuildConfig.USERS_CONFIG;
-        Log.d("AppDataStorage", json);
 
-        Gson gson = new Gson();
         try {
-            JSONArray array = new JSONArray(json);
-            appData = gson.fromJson(json, new TypeToken<AppData>(){}.getType());
+            appData = GsonConverter.Gson().fromJson(json, new TypeToken<AppData>(){}.getType());
             currentApiKey = appData.getApi_key();
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private static String loadJSONFromAsset() throws FileNotFoundException {
-        String json;
-        try {
-            InputStream is = context.getAssets().open(USER_DATA_FILENAME);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            throw new FileNotFoundException("Unable to find user data json file.");
-        }
-        return json;
+    public static String getCurrentApiKey() {
+        return currentApiKey;
     }
 }

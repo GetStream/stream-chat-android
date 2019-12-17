@@ -12,6 +12,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
+import io.getstream.chat.example.utils.AppDataConfig;
 
 
 public class BaseApplication extends Application {
@@ -20,14 +21,15 @@ public class BaseApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
-        StreamChat.init(BuildConfig.API_KEY, new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
+        AppDataConfig.init(this);
+        StreamChat.init(AppDataConfig.getCurrentApiKey(), new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
         StreamChat.initStyle(
                 new StreamChatStyle.Builder()
                         //.setDefaultFont(R.font.lilyofthe_valley)
                         //.setDefaultFont("fonts/odibeesans_regular.ttf")
                         .build()
         );
-        Crashlytics.setString("apiKey", BuildConfig.API_KEY);
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                             if (!task.isSuccessful()) {

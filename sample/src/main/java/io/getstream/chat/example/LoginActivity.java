@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 
 import io.getstream.chat.example.adapter.UserListItemAdapter;
-import io.getstream.chat.example.utils.AppDataStorage;
+import io.getstream.chat.example.utils.AppDataConfig;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,23 +26,22 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         lv_users = findViewById(R.id.lv_users);
-        AppDataStorage.init(this);
 
-        if (AppDataStorage.getCurrentUser() != null){
+        if (AppDataConfig.getCurrentUser() != null){
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-        if (AppDataStorage.getUsers() == null){
+        if (AppDataConfig.getUsers() == null){
             Toast.makeText(this, R.string.failed_load_json, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        adapter = new UserListItemAdapter(this, AppDataStorage.getUsers());
+        adapter = new UserListItemAdapter(this, AppDataConfig.getUsers());
         lv_users.setAdapter(adapter);
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l)-> {
-            AppDataStorage.setCurrentUser(AppDataStorage.getUsers().get(position).getId());
+            AppDataConfig.setCurrentUser(AppDataConfig.getUsers().get(position).getId());
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
