@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import java.util.List;
 
 import io.getstream.chat.example.BuildConfig;
@@ -22,10 +24,17 @@ public class AppDataConfig {
     private static final String CURRENT_USER_ID = "current-user-id";
     private static final String APP_PREFERENCE = "AppPreferences";
 
-    public static void init(Context mContext) {
+    public static void init(Context mContext) throws Exception {
         context = mContext;
         preferences = context.getSharedPreferences(APP_PREFERENCE, Activity.MODE_PRIVATE);
-        parseJson();
+        String json = BuildConfig.USERS_CONFIG;
+        try {
+            appData = new Gson().fromJson(json, new TypeToken<AppData>() {
+            }.getType());
+            currentApiKey = appData.getApi_key();
+        } catch (JsonSyntaxException e) {
+            throw new Exception("Invalid Json data!.");
+        }
     }
 
 
@@ -38,7 +47,7 @@ public class AppDataConfig {
         if (currentUserId == null || userConfigs == null)
             return null;
 
-        for (UserConfig config : userConfigs){
+        for (UserConfig config : userConfigs) {
             if (config.getId().equals(currentUserId))
                 return config;
         }
@@ -46,23 +55,15 @@ public class AppDataConfig {
         return null;
     }
 
-    public static void setCurrentUser(@Nullable String userId){
+    public static void setCurrentUser(@Nullable String userId) {
         preferences.edit().putString(CURRENT_USER_ID, userId).apply();
     }
 
     @Nullable
     public static List<UserConfig> getUsers() {
+        if (appData == null)
+            return null;
         return appData.getUserConfigs();
-    }
-
-    public static void parseJson(){
-        String json = BuildConfig.USERS_CONFIG;
-        try {
-            appData = new Gson().fromJson(json, new TypeToken<AppData>(){}.getType());
-            currentApiKey = appData.getApi_key();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     public static String getCurrentApiKey() {

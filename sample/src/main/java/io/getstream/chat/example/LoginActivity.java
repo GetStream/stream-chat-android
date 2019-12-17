@@ -27,25 +27,24 @@ public class LoginActivity extends AppCompatActivity {
 
         lv_users = findViewById(R.id.lv_users);
 
-        if (AppDataConfig.getCurrentUser() != null){
+        if (AppDataConfig.getCurrentUser() != null) {
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-        if (AppDataConfig.getUsers() == null){
+        if (AppDataConfig.getUsers() == null) {
             Toast.makeText(this, R.string.failed_load_json, Toast.LENGTH_SHORT).show();
             return;
         }
 
         adapter = new UserListItemAdapter(this, AppDataConfig.getUsers());
         lv_users.setAdapter(adapter);
-        lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l)-> {
+        lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
             AppDataConfig.setCurrentUser(AppDataConfig.getUsers().get(position).getId());
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);
             finish();
         });
     }
-
 }

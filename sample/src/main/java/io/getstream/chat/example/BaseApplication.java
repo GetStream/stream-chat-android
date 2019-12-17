@@ -21,7 +21,13 @@ public class BaseApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
-        AppDataConfig.init(this);
+
+        try {
+            AppDataConfig.init(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
         StreamChat.init(AppDataConfig.getCurrentApiKey(), new ApiClientOptions.Builder().Timeout(6666).build(), getApplicationContext());
         StreamChat.initStyle(
                 new StreamChatStyle.Builder()
@@ -48,5 +54,7 @@ public class BaseApplication extends Application {
                             });
                         }
                 );
+
+
     }
 }
