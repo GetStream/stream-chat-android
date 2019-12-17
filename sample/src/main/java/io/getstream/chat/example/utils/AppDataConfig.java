@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
 
-import com.getstream.sdk.chat.rest.codecs.GsonConverter;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.List;
 
@@ -56,11 +56,9 @@ public class AppDataConfig {
     }
 
     public static void parseJson(){
-
         String json = BuildConfig.USERS_CONFIG;
-
         try {
-            appData = GsonConverter.Gson().fromJson(json, new TypeToken<AppData>(){}.getType());
+            appData = new Gson().fromJson(json, new TypeToken<AppData>(){}.getType());
             currentApiKey = appData.getApi_key();
         }catch (Exception e){
             e.printStackTrace();
