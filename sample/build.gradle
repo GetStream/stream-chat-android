@@ -1,3 +1,4 @@
+import com.google.gson.Gson
 import groovy.json.JsonSlurper
 
 buildscript {
@@ -160,8 +161,20 @@ def loadJson(){
     def path = projectDir.getAbsolutePath() + "/src/main/assets/app-data.json"
     def inputFile = new File(path)
     def json = new JsonSlurper().parseText(inputFile.text)
-    return json
+    def temp = new Gson().toJson(json)
+    return ecapse(temp)
 }
+
+def ecapse(jsString) {
+    return jsString.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\b", "\\b")
+            .replace("\f", "\\f")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+}
+
 gradle.taskGraph.useFilter { task ->
     /**
      * Ignores release unit tests.
