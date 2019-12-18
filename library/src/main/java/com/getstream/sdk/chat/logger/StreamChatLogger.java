@@ -10,46 +10,66 @@ public class StreamChatLogger implements StreamLogger {
     private StreamLoggerLevel loggingLevel;
     private StreamLoggerHandler loggingHandler;
 
-    private StreamChatLogger(@Nullable StreamLoggerLevel loggingLevel) {
+    private StreamChatLogger(@Nullable StreamLoggerLevel loggingLevel, @Nullable StreamLoggerHandler loggingHandler) {
         this.loggingLevel = loggingLevel == null ? StreamLoggerLevel.INFO : loggingLevel;
+        this.loggingHandler = loggingHandler;
     }
 
-    public void logI(@NonNull Class<?> classInstance, @NonNull String message) {
+    public void logT(@NonNull Throwable throwable) {
+        throwable.printStackTrace();
+        if (loggingHandler != null) {
+            loggingHandler.logT(throwable);
+        }
+    }
+
+    public void logT(@NonNull Object classObj, @NonNull Throwable throwable) {
+        throwable.printStackTrace();
+        if (loggingHandler != null) {
+            loggingHandler.logT(getTag(classObj), throwable);
+        }
+    }
+
+    public void logI(@NonNull Object classObj, @NonNull String message) {
         if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.INFO)) {
-            Log.i(getTag(classInstance), message);
+            Log.i(getTag(classObj), message);
         }
         if (loggingHandler != null) {
-            loggingHandler.logI(getTag(classInstance), message);
+            loggingHandler.logI(getTag(classObj), message);
         }
     }
 
-    public void logD(@NonNull Class<?> classInstance, @NonNull String message) {
+    public void logD(@NonNull Object classObj, @NonNull String message) {
         if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.DEBUG)) {
-            Log.d(getTag(classInstance), message);
+            Log.d(getTag(classObj), message);
         }
         if (loggingHandler != null) {
-            loggingHandler.logD(getTag(classInstance), message);
+            loggingHandler.logD(getTag(classObj), message);
         }
     }
 
-    public void logW(@NonNull Class<?> classInstance, @NonNull String message) {
+    public void logW(@NonNull Object classObj, @NonNull String message) {
         if (loggingLevel.isMoreOrEqualsThan(StreamLoggerLevel.WARN)) {
-            Log.w(getTag(classInstance), message);
+            Log.w(getTag(classObj), message);
         }
         if (loggingHandler != null) {
-            loggingHandler.logW(getTag(classInstance), message);
+            loggingHandler.logW(getTag(classObj), message);
         }
     }
 
-    public void logE(@NonNull Class<?> classInstance, @NonNull String message) {
-        Log.e(getTag(classInstance), message);
+    public void logE(@NonNull Object classObj, @NonNull String message) {
+        Log.e(getTag(classObj), message);
         if (loggingHandler != null) {
-            loggingHandler.logE(getTag(classInstance), message);
+            loggingHandler.logE(getTag(classObj), message);
         }
     }
 
-    private String getTag(@NonNull Class<?> classInstance) {
-        return classInstance.getSimpleName();
+    private String getTag(Object tag) {
+        if (tag == null) return "null";
+        if (tag instanceof String) {
+            return (String) tag;
+        } else {
+            return tag.getClass().getSimpleName();
+        }
     }
 
     public static class Builder {
@@ -76,7 +96,7 @@ public class StreamChatLogger implements StreamLogger {
         }
 
         public StreamChatLogger build() {
-            return new StreamChatLogger(loggingLevel);
+            return new StreamChatLogger(loggingLevel, loggingHandler);
         }
     }
 }

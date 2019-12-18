@@ -29,6 +29,16 @@ public class BaseApplication extends Application {
 
         StreamLoggerHandler loggerHandler = new StreamLoggerHandler() {
             @Override
+            public void logT(@NonNull Throwable throwable) {
+                // display throwable logs here
+            }
+
+            @Override
+            public void logT(@NonNull String className, @NonNull Throwable throwable) {
+                // display throwable logs here
+            }
+
+            @Override
             public void logI(@NonNull String className, @NonNull String message) {
                 // display info logs here
             }

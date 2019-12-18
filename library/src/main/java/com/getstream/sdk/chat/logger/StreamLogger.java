@@ -4,11 +4,15 @@ import androidx.annotation.NonNull;
 
 public interface StreamLogger {
 
-    void logI(@NonNull Class<?> classInstance, @NonNull String message);
+    void logT(@NonNull Throwable throwable);
 
-    void logD(@NonNull Class<?> classInstance, @NonNull String message);
+    void logT(@NonNull Object classObj, @NonNull Throwable throwable);
 
-    void logW(@NonNull Class<?> classInstance, @NonNull String message);
+    void logI(@NonNull Object classObj, @NonNull String message);
 
-    void logE(@NonNull Class<?> classInstance, @NonNull String message);
+    void logD(@NonNull Object classObj, @NonNull String message);
+
+    void logW(@NonNull Object classObj, @NonNull String message);
+
+    void logE(@NonNull Object classObj, @NonNull String message);
 }
