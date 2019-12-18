@@ -122,7 +122,7 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logD(this.getClass(), "handleConnectedUser: error: " + errMsg + ":" + errCode);
+                StreamChat.logD(this, "handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
@@ -131,7 +131,7 @@ public class StreamChat {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                StreamChat.logI(StreamChat.class, "set user worked out well");
+                StreamChat.logI(this, "set user worked out well");
                 setupEventListeners();
                 currentUser.postValue(user);
 
@@ -151,7 +151,7 @@ public class StreamChat {
         INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
-                StreamChat.logW(this.getClass(), "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+                StreamChat.logW(this, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
 
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
@@ -163,12 +163,12 @@ public class StreamChat {
 
             @Override
             public void onConnectionRecovered(Event event) {
-                StreamChat.logW(this.getClass(), "connection recovered!");
+                StreamChat.logW(this, "connection recovered!");
                 List<Channel> channels = INSTANCE.getActiveChannels();
                 if (channels == null) {
-                    StreamChat.logW(this.getClass(), "nothing to recover");
+                    StreamChat.logW(this, "nothing to recover");
                 } else {
-                    StreamChat.logW(this.getClass(), channels.size() + " channels to recover!");
+                    StreamChat.logW(this, channels.size() + " channels to recover!");
                 }
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
             }
@@ -198,7 +198,7 @@ public class StreamChat {
         new StreamLifecycleObserver(new LifecycleHandler() {
             @Override
             public void resume() {
-                StreamChat.logI(this.getClass(), "detected resume");
+                StreamChat.logI(this, "detected resume");
                 if (lifecycleStopped && userWasInitialized) {
                     lifecycleStopped = false;
                     INSTANCE.reconnectWebSocket();
@@ -207,7 +207,7 @@ public class StreamChat {
 
             @Override
             public void stopped() {
-                StreamChat.logI(this.getClass(), "detected stop");
+                StreamChat.logI(this, "detected stop");
                 lifecycleStopped = true;
                 if (INSTANCE != null) {
                     INSTANCE.disconnectWebSocket();
@@ -230,20 +230,28 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static void logI(@NonNull Class<?> classInstance, @NonNull String message) {
-        logger.logI(classInstance, message);
+    public static void logT(@NonNull Throwable throwable) {
+        logger.logT(throwable);
     }
 
-    public static void logD(@NonNull Class<?> classInstance, @NonNull String message) {
-        logger.logD(classInstance, message);
+    public static void logT(@NonNull Object classObj, @NonNull Throwable throwable) {
+        logger.logT(classObj, throwable);
     }
 
-    public static void logW(@NonNull Class<?> classInstance, @NonNull String message) {
-        logger.logW(classInstance, message);
+    public static void logI(@NonNull Object classObj, @NonNull String message) {
+        logger.logI(classObj, message);
     }
 
-    public static void logE(@NonNull Class<?> classInstance, @NonNull String message) {
-        logger.logE(classInstance, message);
+    public static void logD(@NonNull Object classObj, @NonNull String message) {
+        logger.logD(classObj, message);
+    }
+
+    public static void logW(@NonNull Object classObj, @NonNull String message) {
+        logger.logW(classObj, message);
+    }
+
+    public static void logE(@NonNull Object classObj, @NonNull String message) {
+        logger.logE(classObj, message);
     }
 
     public static synchronized boolean init(@NonNull Config config) {

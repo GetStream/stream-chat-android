@@ -193,7 +193,7 @@ public class ChannelState {
 
     public List<User> getOtherUsers() {
 
-        StreamChat.logD(this.getClass(),"getOtherUsers");
+        StreamChat.logD(this,"getOtherUsers");
 
         List<User> users = new ArrayList<>();
 
@@ -201,7 +201,7 @@ public class ChannelState {
             for (Member m : members) {
                 if (!channel.getClient().fromCurrentUser(m)) {
                     User user = channel.getClient().getState().getUser(m.getUser().getId());
-                    StreamChat.logD(this.getClass(),"getOtherUsers: member: " + user);
+                    StreamChat.logD(this,"getOtherUsers: member: " + user);
                     users.add(user);
                 }
             }
@@ -211,7 +211,7 @@ public class ChannelState {
             for (Watcher w : watchers) {
                 if (!channel.getClient().fromCurrentUser(w)) {
                     User user = channel.getClient().getState().getUser(w.getUser().getId());
-                    StreamChat.logD(this.getClass(),"getOtherUsers: watcher: " + user);
+                    StreamChat.logD(this,"getOtherUsers: watcher: " + user);
                     if (!users.contains(user))
                         users.add(user);
                 }
@@ -258,7 +258,7 @@ public class ChannelState {
     public String getChannelNameOrMembers() {
         String channelName;
 
-        StreamChat.logI(this.getClass(),"Channel name is" + channel.getName() + channel.getCid());
+        StreamChat.logI(this,"Channel name is" + channel.getName() + channel.getCid());
         if (!TextUtils.isEmpty(channel.getName())) {
             channelName = channel.getName();
         } else {
@@ -408,7 +408,7 @@ public class ChannelState {
             }
             Message.setStartDay(Collections.singletonList(lastMessage), null);
         } catch (Exception e) {
-            e.printStackTrace();
+            StreamChat.logT(this, e);
         }
         return lastMessage;
     }
@@ -517,7 +517,7 @@ public class ChannelState {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            StreamChat.logT(this, e);
         }
 
         return lastReadDate;

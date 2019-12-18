@@ -114,7 +114,7 @@ public class MatrixManager {
         }
 
         if (view.getHeight() == 0 || view.getWidth() == 0) {
-            StreamChat.logD(this.getClass(),"Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
+            StreamChat.logD(this,"Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
             return false;
         }
 

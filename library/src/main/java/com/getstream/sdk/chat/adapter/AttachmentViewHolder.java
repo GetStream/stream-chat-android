@@ -154,7 +154,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
-            StreamChat.logD(this.getClass(),"Attach onMessageClick: " + position);
+            StreamChat.logD(this,"Attach onMessageClick: " + position);
             if (clickListener != null)
                 clickListener.onAttachmentClick(message, attachment);
         });

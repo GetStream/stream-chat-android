@@ -50,7 +50,7 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
         if (!builder.dataSet.data.isEmpty()) {
             dialog.show();
         } else {
-            StreamChat.logW(this.getClass(),"Images list cannot be empty! Viewer ignored.");
+            StreamChat.logW(this,"Images list cannot be empty! Viewer ignored.");
         }
     }
 

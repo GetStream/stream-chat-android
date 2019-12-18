@@ -89,7 +89,7 @@ public class NativeAudioPlayer implements AudioPlayerApi {
             requestedSeek = 0;
             mediaPlayer.setDataSource(context, uri);
         } catch (Exception e) {
-            StreamChat.logD(this.getClass(),"MediaPlayer: error setting data source. Error+" + e);
+            StreamChat.logD(this,"MediaPlayer: error setting data source. Error+" + e);
         }
     }
 

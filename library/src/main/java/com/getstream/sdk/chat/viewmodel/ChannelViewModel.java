@@ -76,7 +76,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
             @Override
             public void onSuccess(ChannelState channelState) {
-                StreamChat.logI(this.getClass(),"Read messages from local cache...");
+                StreamChat.logI(this,"Read messages from local cache...");
                 if (channelState != null) {
                     messages.setValue(channelState.getMessages());
                 }
@@ -84,7 +84,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onFailure(Exception e) {
-                StreamChat.logW(this.getClass(), String.format("Failed to read channel state from offline storage, error %s", e.toString()));
+                StreamChat.logW(this, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
             }
         });
 
@@ -140,7 +140,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public ChannelViewModel(@NonNull Application application) {
         super(application);
 
-        StreamChat.logD(this.getClass(),"instance created");
+        StreamChat.logD(this,"instance created");
 
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
@@ -181,12 +181,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             channel.markRead(new EventCallback() {
                 @Override
                 public void onSuccess(EventResponse response) {
-                    StreamChat.logD(this.getClass(),"Marked read message");
+                    StreamChat.logD(this,"Marked read message");
                 }
 
                 @Override
                 public void onError(String errMsg, int errCode) {
-                    StreamChat.logE(this.getClass(), errMsg);
+                    StreamChat.logE(this, errMsg);
                 }
             });
             return null;
@@ -415,7 +415,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
                 if (callback != null)
                     callback.onError(errMsg);
             }
@@ -438,7 +438,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
                 if (callback != null)
                     callback.onError(errMsg);
             }
@@ -485,7 +485,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onMessageRead(Event event) {
-                StreamChat.logI(this.getClass(),"Message read by " + event.getUser().getId());
+                StreamChat.logI(this,"Message read by " + event.getUser().getId());
                 reads.postValue(channel.getChannelState().getReadsByUser());
                 if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
                     lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
@@ -620,7 +620,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 threadMessages.postValue(messagesCopy_);
                 updated = true;
             }
-            StreamChat.logD(this.getClass(),"updateMessage:" + updated);
+            StreamChat.logD(this,"updateMessage:" + updated);
         }
         return updated;
     }
@@ -770,21 +770,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
-        StreamChat.logD(this.getClass(), "resume");
+        StreamChat.logD(this, "resume");
 //        if (channel != null && channel.isInitialized())
 //            setLoading();
     }
 
     @Override
     public void stopped() {
-        StreamChat.logD(this.getClass(),"stopped");
+        StreamChat.logD(this,"stopped");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
 
-        StreamChat.logD(this.getClass(), "onCleared");
+        StreamChat.logD(this, "onCleared");
 
         if (looper != null) {
             looper.interrupt();
@@ -841,7 +841,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -853,31 +853,31 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public void loadMore(ResultCallback<Object, String> callback) {
         if (!client().isConnected()) {
-            StreamChat.logI(this.getClass(),"connection failed.");
+            StreamChat.logI(this,"connection failed.");
             return;
         }
 
         if (isLoading.get()) {
-            StreamChat.logI(this.getClass(),"already loading, skip loading more");
+            StreamChat.logI(this,"already loading, skip loading more");
             return;
         }
 
         if (!setLoadingMore()) {
-            StreamChat.logI(this.getClass(),"already loading next page, skip loading more");
+            StreamChat.logI(this,"already loading next page, skip loading more");
             return;
         }
 
-        StreamChat.logI(this.getClass(), String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
+        StreamChat.logI(this, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
         if (isThread()) {
             if (reachedEndOfPaginationThread) {
                 setLoadingMoreDone();
-                StreamChat.logI(this.getClass(),"already reached end of pagination, skip loading more");
+                StreamChat.logI(this,"already reached end of pagination, skip loading more");
                 return;
             }
 
             if (threadParentMessage.getValue() == null) {
                 setLoadingMoreDone();
-                StreamChat.logI(this.getClass(),"Can't find thread parent message.");
+                StreamChat.logI(this,"Can't find thread parent message.");
                 return;
             }
 
@@ -908,7 +908,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         } else {
             if (reachedEndOfPagination) {
                 setLoadingMoreDone();
-                StreamChat.logI(this.getClass(),"already reached end of pagination, skip loading more");
+                StreamChat.logI(this,"already reached end of pagination, skip loading more");
                 return;
             }
 
@@ -951,7 +951,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String s) {
-                StreamChat.logE(this.getClass(), s);
+                StreamChat.logE(this, s);
             }
         });
     }
@@ -1014,7 +1014,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -1047,7 +1047,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -1111,7 +1111,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -1136,7 +1136,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -1161,7 +1161,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
             }
         });
     }
@@ -1218,7 +1218,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             try {
                 markReadFn.call();
             } catch (Exception e) {
-                StreamChat.logE(this.getClass(), e.getLocalizedMessage());
+                StreamChat.logE(this, e.getLocalizedMessage());
             }
             pendingMarkReadRequests.compareAndSet(pendingCalls, 0);
         }

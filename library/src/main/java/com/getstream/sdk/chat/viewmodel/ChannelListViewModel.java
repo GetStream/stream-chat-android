@@ -74,7 +74,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
-        StreamChat.logD(this.getClass(),"instance created");
+        StreamChat.logD(this,"instance created");
 
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
@@ -141,7 +141,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected void onCleared() {
         super.onCleared();
 
-        StreamChat.logD(this.getClass(),"onCleared");
+        StreamChat.logD(this,"onCleared");
 
         if (subscriptionId != 0) {
             client().removeEventHandler(subscriptionId);
@@ -186,7 +186,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public void setChannelFilter(FilterObject filter) {
         this.filter = filter;
         if (initialized.get()) {
-            StreamChat.logE(this.getClass(),"setChannelFilter on an already initialized channel will reload the view model");
+            StreamChat.logE(this,"setChannelFilter on an already initialized channel will reload the view model");
             reload();
         }
     }
@@ -209,7 +209,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
                 if (callback != null) {
                     callback.onError(errMsg);
                 }
@@ -235,7 +235,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(), errMsg);
+                StreamChat.logE(this, errMsg);
                 if (callback != null) {
                     callback.onError(errMsg);
                 }
@@ -259,21 +259,21 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        StreamChat.logD(this.getClass(), "resume");
+        StreamChat.logD(this, "resume");
 //        if (!initialized.get() || !client().isConnected())
 //            setLoading();
     }
 
     @Override
     public void stopped() {
-        StreamChat.logD(this.getClass(),"stopped");
+        StreamChat.logD(this,"stopped");
     }
 
     private void setupConnectionRecovery() {
         recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
-                StreamChat.logI(this.getClass(),"onConnectionRecovered");
+                StreamChat.logI(this,"onConnectionRecovered");
                 if (!queryChannelDone) {
                     queryChannelsInner(0);
                     return;
@@ -492,12 +492,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 queryChannelDone = true;
                 setLoadingDone();
 
-                StreamChat.logI(this.getClass(), "onSendMessageSuccess for loading the channels");
+                StreamChat.logI(this, "onSendMessageSuccess for loading the channels");
                 // remove the offline channels before adding the new ones
                 setChannels(response.getChannelStates());
 
                 if (response.getChannelStates().size() < pageSize) {
-                    StreamChat.logI(this.getClass(),"reached end of pagination");
+                    StreamChat.logI(this,"reached end of pagination");
                     reachedEndOfPagination = true;
                 }
 
@@ -508,17 +508,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(),"onError for loading the channels " + errMsg);
+                StreamChat.logE(this,"onError for loading the channels " + errMsg);
                 Boolean shouldRetry = retryPolicy.shouldRetry(client(), attempt, errMsg, errCode);
                 if (!shouldRetry) {
-                    StreamChat.logE(this.getClass(),"tried more than 100 times, give up now");
+                    StreamChat.logE(this,"tried more than 100 times, give up now");
                     return;
                 }
                 if (!client().isConnected()) {
                     return;
                 }
                 int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
-                StreamChat.logD(this.getClass(),"retrying in " + sleep);
+                StreamChat.logD(this,"retrying in " + sleep);
                 retryLooper.postDelayed(() -> {
                     queryChannelsInner(attempt + 1);
                 }, sleep);
@@ -537,9 +537,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * @param callback the result callback
      */
     public void queryChannels(OnQueryListener<List<ChannelState>> callback) {
-        StreamChat.logI(this.getClass(),"queryChannels for loading the channels");
+        StreamChat.logI(this,"queryChannels for loading the channels");
         if (!setLoading()) {
-            StreamChat.logI(this.getClass(),"already loading, skip queryChannels");
+            StreamChat.logI(this,"already loading, skip queryChannels");
             return;
         }
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
@@ -555,7 +555,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             @Override
             public void onFailure(Exception e) {
-                StreamChat.logW(this.getClass(), String.format("Failed to read channel list from offline storage, error %s", e.toString()));
+                StreamChat.logW(this, String.format("Failed to read channel list from offline storage, error %s", e.toString()));
                 callback.onFailure(e);
             }
         });
@@ -566,12 +566,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         queryChannels(new OnQueryListener<List<ChannelState>>() {
             @Override
             public void onSuccess(List<ChannelState> channelStates) {
-                StreamChat.logI(this.getClass(),"Read from local cache...");
+                StreamChat.logI(this,"Read from local cache...");
             }
 
             @Override
             public void onFailure(Exception e) {
-                StreamChat.logE(this.getClass(), e.getLocalizedMessage());
+                StreamChat.logE(this, e.getLocalizedMessage());
             }
         });
     }
@@ -585,15 +585,15 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (!client().isConnected()) return;
 
         if (isLoading.get()) {
-            StreamChat.logI(this.getClass(),"already loading, skip loading more");
+            StreamChat.logI(this,"already loading, skip loading more");
             return;
         }
         if (reachedEndOfPagination) {
-            StreamChat.logI(this.getClass(),"already reached end of pagination, skip loading more");
+            StreamChat.logI(this,"already reached end of pagination, skip loading more");
             return;
         }
         if (!setLoadingMore()) {
-            StreamChat.logI(this.getClass(),"already loading next page, skip loading more");
+            StreamChat.logI(this,"already loading next page, skip loading more");
             return;
         }
 
@@ -607,19 +607,19 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         client().queryChannels(request, new QueryChannelListCallback() {
             @Override
             public void onSuccess(QueryChannelsResponse response) {
-                StreamChat.logI(this.getClass(),"onSendMessageSuccess for loading more channels");
+                StreamChat.logI(this,"onSendMessageSuccess for loading more channels");
                 setLoadingMoreDone();
                 addChannels(response.getChannelStates());
                 reachedEndOfPagination = response.getChannelStates().size() < pageSize;
 
                 if (reachedEndOfPagination)
-                    StreamChat.logI(this.getClass(),"reached end of pagination");
+                    StreamChat.logI(this,"reached end of pagination");
                 callback.onSuccess(response);
             }
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logE(this.getClass(),"onError for loading the channels" + errMsg);
+                StreamChat.logE(this,"onError for loading the channels" + errMsg);
                 setLoadingMoreDone();
                 callback.onError(errMsg, errCode);
             }

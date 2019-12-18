@@ -6,6 +6,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -81,7 +82,7 @@ public class QueryChannelsQ {
             this.id = hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            StreamChat.logT(this, e);
             this.id = "errorCreatingQueryID";
         }
 

@@ -498,7 +498,7 @@ public class MessageInputController {
     }
 
     private void setMentionUsers(String string) {
-        StreamChat.logD(this.getClass(),"Mention UserName: " + string);
+        StreamChat.logD(this,"Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         List<Member> members = channel.getChannelState().getMembers();

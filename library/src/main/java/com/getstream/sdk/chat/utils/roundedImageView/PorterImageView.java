@@ -129,7 +129,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     canvas.drawBitmap(drawableBitmap, 0.0f, 0.0f, drawablePaint);
                 }
             } catch (Exception e) {
-                StreamChat.logE(this.getClass(), "Exception occured while drawing " + getId() + ", Error:" + e);
+                StreamChat.logE(this, "Exception occured while drawing " + getId() + ", Error:" + e);
             } finally {
                 canvas.restoreToCount(saveCount);
             }

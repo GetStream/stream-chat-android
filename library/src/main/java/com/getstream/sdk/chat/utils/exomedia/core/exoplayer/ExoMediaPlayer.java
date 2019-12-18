@@ -567,7 +567,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             cumulativePositionMs += windowDurationMs;
         }
 
-        StreamChat.logE(this.getClass(), "Unable to seek across windows, falling back to in-window seeking");
+        StreamChat.logE(this, "Unable to seek across windows, falling back to in-window seeking");
         player.seekTo(positionMs);
         stateStore.setMostRecentState(stateStore.isLastReportedPlayWhenReady(), StateStore.STATE_SEEKING);
     }
@@ -726,10 +726,10 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
                 wakeLock = pm.newWakeLock(mode | PowerManager.ON_AFTER_RELEASE, ExoMediaPlayer.class.getName());
                 wakeLock.setReferenceCounted(false);
             } else {
-                StreamChat.logE(this.getClass(), "Unable to acquire WAKE_LOCK due to a null power manager");
+                StreamChat.logE(this, "Unable to acquire WAKE_LOCK due to a null power manager");
             }
         } else {
-            StreamChat.logW(this.getClass(),"Unable to acquire WAKE_LOCK due to missing manifest permission");
+            StreamChat.logW(this,"Unable to acquire WAKE_LOCK due to missing manifest permission");
         }
 
         stayAwake(wasHeld);
@@ -889,7 +889,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
             return sessionManager;
         } catch (Exception e) {
-            StreamChat.logD(this.getClass(),"Unable to create a DrmSessionManager due to an exception. Error: " + e);
+            StreamChat.logD(this,"Unable to create a DrmSessionManager due to an exception. Error: " + e);
             return null;
         }
     }

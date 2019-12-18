@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.adapter;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -139,7 +140,7 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
                         double fileSize = (Double) set.getValue();
                         attachment.setFile_size((int)fileSize);
                     }catch (Exception e){
-                        e.printStackTrace();
+                        StreamChat.logT(this, e);
                     }
                     continue;
             }
