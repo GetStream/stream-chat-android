@@ -77,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 Log.i(TAG, String.format("Connection established for user %s", user.getName()));
-
-                searchMessage();
             }
 
             @Override
@@ -154,27 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.ivAdd.setOnClickListener(v ->createNewChannelDialog());
         initToolbar(binding);
-    }
-
-    private void searchMessage() {
-        ArrayList<String> searchUsersList = new ArrayList<>();
-        searchUsersList.add(BuildConfig.USER_ID);
-        FilterObject filter = Filters.in("members", searchUsersList);
-        SearchMessagesRequest searchRequest = new SearchMessagesRequest(filter, "hi")
-                .withLimit(10)
-                .withOffset(0);
-
-        client.searchMessages(searchRequest, new SearchMessagesCallback() {
-            @Override
-            public void onSuccess(SearchMessagesResponse response) {
-                Log.d(TAG, response.toString());
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Log.e(TAG, errMsg);
-            }
-        });
     }
 
     void createNewChannelDialog() {

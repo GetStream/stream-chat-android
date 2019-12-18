@@ -25,7 +25,6 @@ import com.getstream.sdk.chat.storage.converter.ReactionCountConverter;
 import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
@@ -72,17 +71,22 @@ public class Message implements UserEntity {
     @NonNull
     private String cid;
 
+    @SerializedName("text")
     private String text;
 
+    @SerializedName("html")
     private String html;
 
+    @SerializedName("type")
     private String type;
 
     private Integer syncStatus;
 
     @Ignore
+    @SerializedName("user")
     private User user;
 
+    @Ignore
     @SerializedName("channel")
     private Channel channel;
 
@@ -353,6 +357,14 @@ public class Message implements UserEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
     }
 
     @TypeConverters(AttachmentListConverter.class)
