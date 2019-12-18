@@ -99,6 +99,19 @@ public class StreamChat {
         StreamChat.logger = logger;
     }
 
+    private static void initComponents(String apiKey, ApiClientOptions apiClientOptions) {
+        stringsProvider = new StringsProviderImpl(context);
+        fontsManager = new FontsManagerImpl(context);
+        INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
+
+        onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
+        currentUser = new MutableLiveData<>();
+        totalUnreadMessages = new MutableLiveData<>();
+        unreadChannels = new MutableLiveData<>();
+
+        INSTANCE.setContext(StreamChat.context);
+    }
+
     private static void handleConnectedUser() {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
@@ -110,6 +123,24 @@ public class StreamChat {
             @Override
             public void onError(String errMsg, int errCode) {
                 StreamChat.logD(this.getClass(), "handleConnectedUser: error: " + errMsg + ":" + errCode);
+            }
+        });
+    }
+
+    private static void observeSetUserCompleted() {
+        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
+            @Override
+            public void onSuccess(User user) {
+                Log.i(TAG, "set user worked out well");
+                setupEventListeners();
+                currentUser.postValue(user);
+
+                setupLifecycleObserver();
+            }
+
+            @Override
+            public void onError(String errMsg, int errCode) {
+                onlineStatus.postValue(OnlineStatus.FAILED);
             }
         });
     }
@@ -163,6 +194,28 @@ public class StreamChat {
         });
     }
 
+    private static void setupLifecycleObserver() {
+        new StreamLifecycleObserver(new LifecycleHandler() {
+            @Override
+            public void resume() {
+                Log.i(TAG, "detected resume");
+                if (lifecycleStopped && userWasInitialized) {
+                    lifecycleStopped = false;
+                    INSTANCE.reconnectWebSocket();
+                }
+            }
+
+            @Override
+            public void stopped() {
+                Log.i(TAG, "detected stop");
+                lifecycleStopped = true;
+                if (INSTANCE != null) {
+                    INSTANCE.disconnectWebSocket();
+                }
+            }
+        });
+    }
+
     public static void initStyle(StreamChatStyle style) {
         chatStyle = style;
     }
@@ -193,6 +246,11 @@ public class StreamChat {
         logger.logE(classInstance, message);
     }
 
+    public static synchronized boolean init(@NonNull Config config) {
+        ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
+        return init(config.getApiKey(), options, context);
+    }
+
     public static synchronized boolean init(String apiKey, Context context) {
         return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger());
     }
@@ -205,57 +263,51 @@ public class StreamChat {
         StreamChat.logI(StreamChat.class, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
-
                 StreamChat.context = context;
-                stringsProvider = new StringsProviderImpl(context);
 
-                fontsManager = new FontsManagerImpl(context);
+                initComponents(apiKey, apiClientOptions);
 
-                StreamChat.logI(StreamChat.class, "calling init for the first time");
-                INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
-                INSTANCE.setContext(StreamChat.context);
-                onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
-                currentUser = new MutableLiveData<>();
-                totalUnreadMessages = new MutableLiveData<>();
-                unreadChannels = new MutableLiveData<>();
                 handleConnectedUser();
-
-                INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
-                    @Override
-                    public void onSuccess(User user) {
-                        StreamChat.logI(this.getClass(), "set user worked out well");
-                        setupEventListeners();
-                        currentUser.postValue(user);
-
-                        new StreamLifecycleObserver(new LifecycleHandler() {
-                            @Override
-                            public void resume() {
-                                StreamChat.logI(this.getClass(), "detected resume");
-                                if (lifecycleStopped && userWasInitialized) {
-                                    lifecycleStopped = false;
-                                    INSTANCE.reconnectWebSocket();
-                                }
-                            }
-
-                            @Override
-                            public void stopped() {
-                                StreamChat.logI(this.getClass(), "detected stop");
-                                lifecycleStopped = true;
-                                if (INSTANCE != null) {
-                                    INSTANCE.disconnectWebSocket();
-                                }
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        onlineStatus.postValue(OnlineStatus.FAILED);
-                    }
-                });
+                observeSetUserCompleted();
             }
             return true;
         }
     }
 
+    public static class Config {
+
+        private String apiKey;
+        private ApiClientOptions apiClientOptions;
+
+        public Config(@NonNull Context context, @NonNull String apiKey) {
+            StreamChat.context = context;
+            this.apiKey = apiKey;
+        }
+
+        /**
+         * Set custom api client options.
+         *
+         * @param apiClientOptions - {@link ApiClientOptions}
+         */
+        public void setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
+            this.apiClientOptions = apiClientOptions;
+        }
+
+        /**
+         * Set custom chat style.
+         *
+         * @param style - {@link StreamChatStyle}
+         */
+        public void setStyle(@NonNull StreamChatStyle style) {
+            StreamChat.chatStyle = style;
+        }
+
+        private String getApiKey() {
+            return apiKey;
+        }
+
+        private ApiClientOptions getApiClientOptions() {
+            return apiClientOptions;
+        }
+    }
 }
