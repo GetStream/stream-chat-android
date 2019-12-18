@@ -3,6 +3,7 @@ package io.getstream.chat.example;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -61,7 +62,14 @@ public class HomeActivity extends AppCompatActivity {
         return adapter;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.show_hidden_channel, menu);
+        return true;
+    }
+
     private void initToolbar(ActivityHomeBinding binding) {
+        setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle("Stream Chat");
         binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
     }

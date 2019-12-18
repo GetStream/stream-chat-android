@@ -3,7 +3,9 @@ package io.getstream.chat.example.view.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -41,11 +43,11 @@ import java.util.List;
 
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.ChannelMoreActionDialog;
+import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
 import io.getstream.chat.example.utils.AppDataConfig;
 
-import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.eq;
 import static java.util.UUID.randomUUID;
 
@@ -122,7 +124,7 @@ public class ChannelListFragment extends Fragment {
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
-        FilterObject filter = and(eq("type", "messaging"));
+        FilterObject filter = eq("type", "messaging");
 
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
@@ -163,6 +165,14 @@ public class ChannelListFragment extends Fragment {
         binding.ivAdd.setOnClickListener(view -> createNewChannelDialog());
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        HomeActivity homeActivity = (HomeActivity) getActivity();
+        Toolbar toolbar = getView().findViewById(R.id.toolbar);
+        homeActivity.setSupportActionBar(toolbar);
     }
 
     // region create new channel
@@ -226,7 +236,7 @@ public class ChannelListFragment extends Fragment {
         });
     }
 
-    private void showMoreActionDialog(Channel channel){
+    private void showMoreActionDialog(Channel channel) {
         new ChannelMoreActionDialog(getContext())
                 .setChannelListViewModel(viewModel)
                 .setChannel(channel)
@@ -236,7 +246,6 @@ public class ChannelListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // TODO Add your menu entries here
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -250,18 +259,19 @@ public class ChannelListFragment extends Fragment {
         return false;
     }
 
-    private void showHiddenChannels(){
+
+    private void showHiddenChannels() {
         Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
-        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        FilterObject filter = eq("type", "messaging").put("hidden", true);
         viewModel.setChannelFilter(filter);
         viewModel.queryChannels();
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = and(eq("type", "messaging"));
+        FilterObject filter = eq("type", "messaging");
         viewModel.setChannelFilter(filter);
     }
 }
