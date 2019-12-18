@@ -7,7 +7,7 @@
 - Support auto capitalization for keyboard
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
-
+- fix markdown for mention if there is no space at prefix @
 
 ## December 9th, 2019 - 3.5.0
 
