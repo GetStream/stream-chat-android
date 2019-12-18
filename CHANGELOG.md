@@ -3,6 +3,7 @@
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
+- Client support initialization with Configurator
 
 
 ## December 9th, 2019 - 3.5.0
