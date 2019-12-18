@@ -7,6 +7,8 @@
 - Support auto capitalization for keyboard
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
+- Add `StreamLoggerHandler` interface for custom logging client data
+- Add logging customization ability
 
 
 ## December 9th, 2019 - 3.5.0
