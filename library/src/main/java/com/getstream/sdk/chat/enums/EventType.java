@@ -22,6 +22,7 @@ public enum EventType {
     MEMBER_REMOVED("member.removed"),
     MEMBER_UPDATED("member.updated"),
     CHANNEL_UPDATED("channel.updated"),
+    CHANNEL_HIDDEN("channel.hidden"),
     CHANNEL_DELETED("channel.deleted"),
     HEALTH_CHECK("health.check"),
     CONNECTION_CHANGED("connection.changed"),
