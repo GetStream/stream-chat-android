@@ -19,18 +19,14 @@ import androidx.lifecycle.ViewModelProviders;
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.Filters;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
@@ -150,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             // open your user profile
         });
 
-        binding.ivAdd.setOnClickListener(v ->createNewChannelDialog());
+        binding.ivAdd.setOnClickListener(v -> createNewChannelDialog());
         initToolbar(binding);
     }
 
@@ -238,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
     }
     // region More action
 
-    void showMoreActionDialog(Channel channel){
+    void showMoreActionDialog(Channel channel) {
         new ChannelMoreActionDialog(this)
                 .setChannelListViewModel(viewModel)
                 .setChannel(channel)
@@ -262,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void showHiddenChannels(){
+    private void showHiddenChannels() {
         Utils.showMessage(this, StreamChat.getStrings().get(R.string.show_hidden_channel));
-        FilterObject filter = eq("type", "messaging").put("hidden",true);
+        FilterObject filter = eq("type", "messaging").put("hidden", true);
         viewModel.setChannelFilter(filter);
         viewModel.queryChannels();
     }
