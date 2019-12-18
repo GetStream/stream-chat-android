@@ -20,20 +20,23 @@ public class BaseApplication extends Application {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
-        StreamChat.init(BuildConfig.API_KEY,
-                new ApiClientOptions.Builder()
-                        .BaseURL(BuildConfig.API_ENDPOINT)
-                        .Timeout(BuildConfig.API_TIMEOUT)
-                        .CDNTimeout(BuildConfig.CDN_TIMEOUT)
-                        .build(),
-                this
-        );
-        StreamChat.initStyle(
-                new StreamChatStyle.Builder()
-                        //.setDefaultFont(R.font.lilyofthe_valley)
-                        //.setDefaultFont("fonts/odibeesans_regular.ttf")
-                        .build()
-        );
+
+        ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
+                .BaseURL(BuildConfig.API_ENDPOINT)
+                .Timeout(BuildConfig.API_TIMEOUT)
+                .CDNTimeout(BuildConfig.CDN_TIMEOUT)
+                .build();
+
+        StreamChatStyle style = new StreamChatStyle.Builder()
+                //.setDefaultFont(R.font.lilyofthe_valley)
+                //.setDefaultFont("fonts/odibeesans_regular.ttf")
+                .build();
+
+        StreamChat.Config configuration = new StreamChat.Config(this, BuildConfig.API_KEY);
+        configuration.setApiClientOptions(apiClientOptions);
+        configuration.setStyle(style);
+        StreamChat.init(configuration);
+
         Crashlytics.setString("apiKey", BuildConfig.API_KEY);
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
