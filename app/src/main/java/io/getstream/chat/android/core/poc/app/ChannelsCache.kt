@@ -1,0 +1,67 @@
+package io.getstream.chat.android.core.poc.app
+
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.lifecycle.LiveData
+import io.getstream.chat.android.core.poc.app.cache.ChannelsDao
+import io.getstream.chat.android.core.poc.app.common.Channel
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
+
+class ChannelsCache(val dao: ChannelsDao) {
+
+    fun getAllRx(): Observable<List<Channel>> {
+        return dao.getAllRx()
+    }
+
+    fun getAllSync(): List<Channel> {
+        return dao.getAllSync()
+    }
+
+    fun getAllLive(): LiveData<List<Channel>> {
+        return dao.getAllLive()
+    }
+
+    fun getById(id: String): Channel? {
+        return dao.getById(id)
+    }
+
+    fun getByRemoteId(id: String): Channel? {
+        return dao.getByRemoteId(id)
+    }
+
+    @SuppressLint("CheckResult")
+    fun storeAsync(channels: List<Channel>) {
+        Completable.fromAction {
+            storeSync(channels)
+        }.subscribeOn(Schedulers.io()).subscribe {
+            Log.d(javaClass.simpleName, "channels stored")
+        }
+    }
+
+    fun storeSync(channels: List<Channel>) {
+
+        //TODO: add batch update
+
+        channels.forEach { storeSync(it) }
+    }
+
+    fun storeSync(channel: Channel) {
+
+        if (channel.remoteId.isEmpty()) {
+            channel.synched = false
+            dao.insert(channel)
+        } else {
+            val ch = dao.getByRemoteId(channel.remoteId)
+            channel.synched = true
+            if (ch == null) {
+                dao.insert(channel)
+            } else {
+                channel.id = ch.id
+                dao.update(channel)
+            }
+        }
+    }
+
+}
