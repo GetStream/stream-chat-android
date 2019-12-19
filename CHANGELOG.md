@@ -10,6 +10,7 @@
 - Add `StreamLoggerHandler` interface for custom logging client data
 - Add logging customization ability
 - fix markdown for mention if there is no space at prefix @
+- fix Edit Attachment behavior
 
 ## December 9th, 2019 - 3.5.0
 
