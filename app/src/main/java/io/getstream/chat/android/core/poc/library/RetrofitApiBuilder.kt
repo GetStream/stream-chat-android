@@ -88,7 +88,7 @@ class RetrofitApiBuilder {
         val count = 20
         val result = mutableListOf<Channel>()
         for (i in 1..count) {
-            result.add(Channel(i.toString(), "name of $i"))
+            result.add(Channel(i.toString(), "name-rm-id: $i", i))
         }
         return result
     }

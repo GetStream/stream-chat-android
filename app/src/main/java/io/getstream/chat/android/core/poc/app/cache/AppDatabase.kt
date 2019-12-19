@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.getstream.chat.android.core.poc.app.common.Channel
 
-@Database(entities = [Channel::class], version = 1)
+@Database(entities = [Channel::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun channels(): ChannelsDao
@@ -21,9 +21,12 @@ abstract class AppDatabase : RoomDatabase() {
                 INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
             }
 
-        private fun buildDatabase(context: Context) = Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java, "main.db"
-        ).build()
+        private fun buildDatabase(context: Context) =
+            Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java, "main.db"
+            )
+                .fallbackToDestructiveMigration()
+                .build()
     }
 }

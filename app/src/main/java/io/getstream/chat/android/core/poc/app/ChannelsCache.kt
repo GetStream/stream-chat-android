@@ -41,27 +41,8 @@ class ChannelsCache(val dao: ChannelsDao) {
     }
 
     fun storeSync(channels: List<Channel>) {
-
-        //TODO: add batch update
-
-        channels.forEach { storeSync(it) }
+        dao.upsert(channels)
     }
 
-    fun storeSync(channel: Channel) {
-
-        if (channel.remoteId.isEmpty()) {
-            channel.synched = false
-            dao.insert(channel)
-        } else {
-            val ch = dao.getByRemoteId(channel.remoteId)
-            channel.synched = true
-            if (ch == null) {
-                dao.insert(channel)
-            } else {
-                channel.id = ch.id
-                dao.update(channel)
-            }
-        }
-    }
 
 }

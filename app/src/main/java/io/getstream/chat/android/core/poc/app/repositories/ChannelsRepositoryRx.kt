@@ -31,7 +31,7 @@ class ChannelsRepositoryRx(
     }
 
     private fun getCached(): Observable<List<Channel>> {
-        return cache.getAllRx().flatMap {
+        return cache.getAllRx().distinct().flatMap {
             if (it.isEmpty()) {
                 Observable.empty()
             } else {

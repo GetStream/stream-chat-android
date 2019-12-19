@@ -18,6 +18,9 @@ public class Channel {
     @ColumnInfo(name = "name")
     var name: String = ""
 
+    @ColumnInfo(name = "updated_at")
+    var updatedAt: Int = -1
+
     @ColumnInfo(name = "synced")
     var synched: Boolean = false
 }

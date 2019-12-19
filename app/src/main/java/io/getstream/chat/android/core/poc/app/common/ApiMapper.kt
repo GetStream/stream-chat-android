@@ -6,6 +6,7 @@ object ApiMapper {
         return Channel().apply {
             remoteId = channel.id
             name = channel.name
+            updatedAt = channel.updatedAt
         }
     }
 

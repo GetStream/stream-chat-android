@@ -25,7 +25,7 @@ class ChannelsListActivity : AppCompatActivity() {
         val rxDataFragment =
             io.getstream.chat.android.core.poc.app.rx.ChannelsListFragment()
 
-        val fragment = coroutinesFragment
+        val fragment = rxDataFragment
 
         btnReloadView.setOnClickListener {
             fragment.reload()
