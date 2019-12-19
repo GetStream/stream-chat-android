@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.app
 
 import android.app.Application
 import io.getstream.chat.android.core.poc.app.cache.AppDatabase
+import io.getstream.chat.android.core.poc.app.common.KeyValue
 import io.getstream.chat.android.core.poc.app.repositories.ChannelsRepositoryLive
 import io.getstream.chat.android.core.poc.app.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.core.poc.app.repositories.ChannelsRepositorySync
@@ -14,6 +15,7 @@ class App : Application() {
         super.onCreate()
         db = AppDatabase.getInstance(this)
         client = Client()
+        keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
@@ -27,5 +29,6 @@ class App : Application() {
         lateinit var channelsRepositoryLive: ChannelsRepositoryLive
         lateinit var db: AppDatabase
         lateinit var cache: ChannelsCache
+        lateinit var keyValue: KeyValue
     }
 }

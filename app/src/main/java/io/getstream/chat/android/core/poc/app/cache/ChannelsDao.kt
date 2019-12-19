@@ -45,11 +45,11 @@ interface ChannelsDao {
 
     @Transaction
     fun upsert(channels: List<Channel>) {
-        channels.forEach { storeSync(it) }
+        channels.forEach { upsert(it) }
     }
 
     @Transaction
-    fun storeSync(channel: Channel) {
+    fun upsert(channel: Channel) {
 
         if (channel.remoteId.isEmpty()) {
             channel.synched = false
@@ -61,7 +61,7 @@ interface ChannelsDao {
                 insert(channel)
             } else {
 
-                if (channel.updatedAt != ch.updatedAt) {
+                if (isNew(channel, ch)) {
                     channel.id = ch.id
                     val updated = update(channel)
                     Log.d("channels-dao", updated.toString())
@@ -69,5 +69,10 @@ interface ChannelsDao {
             }
         }
     }
+
+    fun isNew(
+        new: Channel,
+        cached: Channel
+    ) = new.updatedAt != cached.updatedAt
 
 }
