@@ -22,6 +22,8 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
+        AppDataConfig.init(this);
+
         ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
                 .BaseURL(AppDataConfig.getApiEndpoint())
                 .Timeout(AppDataConfig.getApiTimeout())
