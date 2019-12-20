@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.utils.Utils;
 
 /**
@@ -62,7 +64,20 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
      */
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
-        webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+        Client client = null;
+        BaseStorage storage = null;
+        String fileUrl = null;
+
+        try {
+            client = StreamChat.getInstance(this);
+            storage = client.getUploadStorage();
+            fileUrl = storage.signFileUrl(url);
+            webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+        } catch (NullPointerException ex) {
+            Log.e(TAG, "values client: " + client + ", storage: " + storage + ", fileUrl:" + fileUrl);
+            ex.printStackTrace();
+            finish();
+        }
     }
 
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
@@ -65,6 +66,9 @@ public class ChannelHeaderView extends RelativeLayout {
         this.viewModel = model;
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
+
+        Log.d(TAG, "Header title:" + viewModel.getChannelState().getValue().getChannelNameOrMembers());
+        Log.d(TAG, "Header last active:" + viewModel.getChannelState().getValue().getLastActive());
 
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);

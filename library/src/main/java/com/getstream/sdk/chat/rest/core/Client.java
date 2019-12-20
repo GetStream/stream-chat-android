@@ -84,7 +84,6 @@ import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,6 +128,7 @@ public class Client implements WSResponseHandler {
     boolean fetchingToken;
 
     private ClientState state;
+    private User lastUser;
 
     // Main Params
     private String apiKey;
@@ -434,6 +434,7 @@ public class Client implements WSResponseHandler {
      * @param provider the Token Provider used to obtain the auth token for the user
      */
     public synchronized void setUser(@NotNull User user, @NotNull final TokenProvider provider) {
+        lastUser = user;
         anonymousConnection = false;
 
         if (getUser() != null) {
@@ -680,11 +681,15 @@ public class Client implements WSResponseHandler {
     /**
      * the opposite of {@link #disconnectWebSocket()}
      */
-    public void reconnectWebSocket() {
-        if (getUser() == null) {
+    public synchronized void reconnectWebSocket() {
+        User user = getUser() != null ? getUser() : lastUser;
+        if (user == null) {
             Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
             return;
+        } else {
+            state.setCurrentUser(user);
         }
+
         if (webSocketService != null) {
             Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
             return;
