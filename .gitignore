@@ -7,3 +7,4 @@ sample/release/*
 /build
 /captures
 .externalNativeBuild
+/sample/app-config-custom.json

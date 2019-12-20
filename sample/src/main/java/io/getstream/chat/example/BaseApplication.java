@@ -26,6 +26,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
+import io.getstream.chat.example.utils.AppDataConfig;
 
 
 public class BaseApplication extends Application {
@@ -55,10 +56,12 @@ public class BaseApplication extends Application {
         );
 
 
+        AppDataConfig.init(this);
+
         ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
-                .BaseURL(BuildConfig.API_ENDPOINT)
-                .Timeout(BuildConfig.API_TIMEOUT)
-                .CDNTimeout(BuildConfig.CDN_TIMEOUT)
+                .BaseURL(AppDataConfig.getApiEndpoint())
+                .Timeout(AppDataConfig.getApiTimeout())
+                .CDNTimeout(AppDataConfig.getCdnTimeout())
                 .build();
 
         StreamChatStyle style = new StreamChatStyle.Builder()
@@ -66,12 +69,12 @@ public class BaseApplication extends Application {
                 //.setDefaultFont("fonts/odibeesans_regular.ttf")
                 .build();
 
-        StreamChat.Config configuration = new StreamChat.Config(this, BuildConfig.API_KEY);
+        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
         StreamChat.init(configuration);
 
-        Crashlytics.setString("apiKey", BuildConfig.API_KEY);
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
 
         configNotifications();
     }

@@ -57,6 +57,7 @@ import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.GuestUserRequest;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -1047,11 +1048,11 @@ public class Client implements WSResponseHandler {
      * @param channel  the channel needs to hide
      * @param callback the result callback
      */
-    public void hideChannel(@NonNull Channel channel, @NotNull CompletableCallback callback) {
+    public void hideChannel(@NonNull Channel channel, HideChannelRequest request, @NotNull CompletableCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                apiService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
+                apiService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<CompletableResponse>() {
                             @Override
                             public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {

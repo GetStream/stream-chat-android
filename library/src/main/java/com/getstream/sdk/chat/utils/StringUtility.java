@@ -55,7 +55,11 @@ public class StringUtility {
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
             for (User mentionedUser : message.getMentionedUsers()) {
                 String userName = mentionedUser.getName();
-                text = text.replace("@" + userName, "**" + "@" + userName + "**");
+                int index = text.indexOf(userName);
+                if (index > 1 && text.charAt(index - 2) != ' ')
+                    text = text.replace("@" + userName, " **" + "@" + userName + "**");
+                else
+                    text = text.replace("@" + userName, "**" + "@" + userName + "**");
             }
         }
         // Markdown for newline

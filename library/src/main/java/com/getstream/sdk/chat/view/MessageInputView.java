@@ -239,13 +239,14 @@ public class MessageInputView extends RelativeLayout {
         binding.rvMedia.addItemDecoration(new GridSpacingItemDecoration(spanCount, spacing, includeEdge));
         binding.btnClose.setOnClickListener(v -> {
             messageInputController.onClickCloseBackGroundView();
+            Utils.hideSoftKeyboard((Activity) getContext());
             if (viewModel.isEditing()) {
                 initSendMessage();
                 clearFocus();
             }
         });
 
-        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectMediaView(null));
+        binding.llMedia.setOnClickListener(v -> messageInputController.onClickOpenSelectView(null, true));
 
         binding.llCamera.setOnClickListener(v -> {
             if (!PermissionChecker.isGrantedCameraPermissions(getContext())) {
@@ -260,10 +261,11 @@ public class MessageInputView extends RelativeLayout {
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
+            Utils.hideSoftKeyboard((Activity) getContext());
             if (this.openCameraViewListener != null)
                 openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
         });
-        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectFileView(null));
+        binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectView(null, false));
     }
 
     private void onBackPressed() {
@@ -361,6 +363,8 @@ public class MessageInputView extends RelativeLayout {
     protected void onSendMessage(){
         Message message = isEdit() ? getEditMessage(): new Message(getMessageText());
         onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
+        if (isEdit())
+            Utils.hideSoftKeyboard((Activity) getContext());
     }
 
     protected void onSendMessage(Message message) {
@@ -378,7 +382,6 @@ public class MessageInputView extends RelativeLayout {
             public void onError(String errMsg, int errCode) {
                 if (messageSendListener != null)
                     messageSendListener.onSendMessageError(errMsg);
-                Utils.showMessage(getContext(), errMsg);
                 initSendMessage();
                 if (isEdit()) clearFocus();
             }
@@ -412,17 +415,7 @@ public class MessageInputView extends RelativeLayout {
     protected Message prepareEditMessage(Message message) {
         message.setText(getMessageText());
         List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
-        if (newAttachments != null
-                && !newAttachments.isEmpty()){
-            List<Attachment>attachments = message.getAttachments();
-            for (Attachment attachment : newAttachments){
-                if (attachments == null)
-                    attachments = new ArrayList<>();
-                if (attachments.contains(attachment)) continue;
-                attachments.add(attachment);
-            }
-            message.setAttachments(attachments);
-        }
+        message.setAttachments(newAttachments);
         return message;
     }
 
@@ -461,33 +454,36 @@ public class MessageInputView extends RelativeLayout {
         return viewModel.isEditing();
     }
     // region edit message
-    protected void editMessage(Message message) {
+    protected void editMessage(@Nullable Message message) {
         if (message == null) return;
 
         // Set Text to Inputbox
         setMessageText(message.getText());
+        binding.etMessage.requestFocus();
 
+        List<Attachment>attachments = new ArrayList<>(message.getAttachments());
+        if (!attachments.isEmpty())
+            binding.ivOpenAttach.setVisibility(GONE);
         // Set Attachments to Inputbox
-        if (message.getAttachments() == null
-                || message.getAttachments().isEmpty()
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_giphy)
-                || message.getAttachments().get(0).getType().equals(ModelType.attach_unknown))
+        if (attachments.isEmpty()
+                || attachments.get(0).getType().equals(ModelType.attach_giphy)
+                || attachments.get(0).getType().equals(ModelType.attach_unknown))
             return;
 
-        for (Attachment attachment : message.getAttachments())
+        for (Attachment attachment : attachments)
             attachment.config.setUploaded(true);
 
-        Attachment attachment = message.getAttachments().get(0);
+        Attachment attachment = attachments.get(0);
         if (attachment.getType().equals(ModelType.attach_file)) {
             String fileType = attachment.getMime_type();
             if (fileType.equals(ModelType.attach_mime_mov) ||
                     fileType.equals(ModelType.attach_mime_mp4)) {
-                messageInputController.onClickOpenSelectMediaView(message.getAttachments());
+                messageInputController.onClickOpenSelectView(attachments, true);
             } else {
-                messageInputController.onClickOpenSelectFileView(message.getAttachments());
+                messageInputController.onClickOpenSelectView(attachments, false);
             }
         } else {
-            messageInputController.onClickOpenSelectMediaView(message.getAttachments());
+            messageInputController.onClickOpenSelectView(attachments, true);
         }
     }
 
@@ -495,7 +491,8 @@ public class MessageInputView extends RelativeLayout {
 
     // region permission check
     public void captureMedia(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE
+                && resultCode == Activity.RESULT_OK) {
             File imageFile = CaptureController.getCaptureFile(true);
             File vieoFile = CaptureController.getCaptureFile(false);
             if (imageFile == null && vieoFile == null) {
