@@ -22,12 +22,7 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
-        try {
-            AppDataConfig.init(this);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+        AppDataConfig.init(this);
 
         StreamChat.init(AppDataConfig.getCurrentApiKey(),
                 new ApiClientOptions.Builder()

@@ -4,14 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.annotation.Nullable;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import io.getstream.chat.example.BuildConfig;
 
 public class AppDataConfig {
@@ -27,18 +26,22 @@ public class AppDataConfig {
     private static final String CURRENT_USER_ID = "current-user-id";
     private static final String APP_PREFERENCE = "AppPreferences";
 
-    public static void init(Context mContext) throws Exception {
+    public static void init(Context mContext) {
         context = mContext;
         preferences = context.getSharedPreferences(APP_PREFERENCE, Activity.MODE_PRIVATE);
         String json = BuildConfig.USERS_CONFIG;
         try {
-            appData = new Gson().fromJson(json, new TypeToken<AppData>() {}.getType());
+            appData = new Gson().fromJson(
+                    json,
+                    new TypeToken<AppData>() {
+                    }.getType()
+            );
             currentApiKey = appData.getApi_key();
             apiEndpoint = appData.getApi_endpoint();
             apiTimeout = appData.getApi_timeout();
             cdnTimeout = appData.getCdn_timeout();
         } catch (JsonSyntaxException e) {
-            throw new Exception("Invalid Json data!.");
+            throw new RuntimeException("Invalid app-config.json: " + json, e);
         }
     }
 
