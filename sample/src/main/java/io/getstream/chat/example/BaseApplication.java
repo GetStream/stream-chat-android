@@ -81,9 +81,9 @@ public class BaseApplication extends Application {
 
     private void setupClientOptions() {
         apiClientOptions = new ApiClientOptions.Builder()
-                .BaseURL(BuildConfig.API_ENDPOINT)
-                .Timeout(BuildConfig.API_TIMEOUT)
-                .CDNTimeout(BuildConfig.CDN_TIMEOUT)
+                .BaseURL(AppDataConfig.getApiEndpoint())
+                .Timeout(AppDataConfig.getApiTimeout())
+                .CDNTimeout(AppDataConfig.getCdnTimeout())
                 .build();
     }
 
@@ -95,7 +95,7 @@ public class BaseApplication extends Application {
     }
 
     private void initChat() {
-        StreamChat.Config configuration = new StreamChat.Config(this, BuildConfig.API_KEY);
+        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
         configuration.setLogger(logger);
