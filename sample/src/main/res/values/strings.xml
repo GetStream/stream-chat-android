@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name" translatable="false">ChatSample</string>
 
+    <string name="login">Login</string>
+    <string name="tab_channel">Channels</string>
+    <string name="tab_profile">Profile</string>
+    <string name="user_id">(%s)</string>
+    <string name="logout">Logout</string>
+    <string name="failed_load_json">Failed to load User Data.</string>
+
     <!--ChannelMoreAction-->
     <string name="channel_action_hide_alert">Hidden successfully</string>
     <string name="channel_action_show_alert">Shown up successfully</string>
@@ -19,4 +26,11 @@
     <string name="menu_show_hidden_channels">Show hidden channels</string>
     <string name="custom_input_hint" translatable="false">Type your message...</string>
     <string name="show_hidden_channel" translatable="false">Showing hidden channels...</string>
+
+    <!--Profile -->
+    <string name="logging_out">Logging out…</string>
+    <string name="ok">OK</string>
+    <string name="error_getting_firebase_token">Error getting Firebase token</string>
+    <string name="error_removing_device">Error removing device. Msg: "%s" Code: %d</string>
+
 </resources>
