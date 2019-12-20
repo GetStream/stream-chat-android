@@ -33,7 +33,7 @@ buildscript {
 allprojects {
 
     ext {
-        releaseSdkVersion = '3.5.0-no-error-toast'
+        releaseSdkVersion = '3.5.1'
     }
 
     repositories {
