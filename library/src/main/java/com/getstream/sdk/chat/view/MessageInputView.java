@@ -11,7 +11,6 @@ import android.os.StrictMode;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -38,13 +36,12 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.style.FontsManager;
-import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.CaptureController;
+import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
 import com.getstream.sdk.chat.utils.MessageInputController;
 import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -408,8 +405,6 @@ public class MessageInputView extends RelativeLayout {
                     binding.ivSend.setEnabled(true);
                     if (sendMessageListener != null) {
                         sendMessageListener.onSendMessageError(errMsg);
-                    } else {
-                        Utils.showMessage(getContext(), errMsg);
                     }
                 }
             });
