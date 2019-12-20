@@ -35,6 +35,22 @@ public class GetDeletedOrMentionedTextTest {
     }
 
     @Test
+    void getMentionedMarkDownTextWithoutPrefixWhitespaceTest() {
+        String text = "HI@Steep moonThere";
+        Message message = new Message();
+        message.setText(text);
+        List<User>mentionedUsers = new ArrayList<>();
+
+        User user = new User("steep-moon-9");
+        user.setName("Steep moon");
+        mentionedUsers.add(user);
+        message.setMentionedUsers(mentionedUsers);
+
+        String expectedMessage = "HI **@Steep moon**There";
+        assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
+    }
+
+    @Test
     void newLineTest() {
         String text = "\n\n\n .a. \n\n\n";
         Message message = new Message();

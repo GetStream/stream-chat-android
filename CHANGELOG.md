@@ -3,10 +3,12 @@
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
+- Client support initialization with Configurator
 - Support auto capitalization for keyboard
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
-
+- fix markdown for mention if there is no space at prefix @
+- fix Edit Attachment behavior
 
 ## December 9th, 2019 - 3.5.0
 
@@ -89,7 +91,7 @@
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
-- Expose members and watchers pagination options for query channel
+- Expose members and watchers pagination options for query channel 
 
 #### Breaking changes
 
