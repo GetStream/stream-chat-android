@@ -11,11 +11,8 @@ import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.logger.StreamLoggerHandler;
 import com.getstream.sdk.chat.logger.StreamLoggerLevel;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
 import io.getstream.chat.example.utils.AppDataConfig;
@@ -34,7 +31,6 @@ public class BaseApplication extends Application {
 
         AppDataConfig.init(this);
 
-        ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
         setupLogger();
         setupClientOptions();
         setupChatStyle();
