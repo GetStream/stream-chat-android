@@ -18,6 +18,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
+import io.getstream.chat.example.utils.AppDataConfig;
 
 
 public class BaseApplication extends Application {
@@ -36,25 +37,7 @@ public class BaseApplication extends Application {
         setupChatStyle();
         initChat();
 
-        Crashlytics.setString("apiKey", BuildConfig.API_KEY);
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                            if (!task.isSuccessful()) {
-                                return;
-                            }
-                            StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
-                                @Override
-                                public void onSuccess(CompletableResponse response) {
-                                    // device is now registered!
-                                }
-
-                                @Override
-                                public void onError(String errMsg, int errCode) {
-                                    // something went wrong registering this device, ouch!
-                                }
-                            });
-                        }
-                );
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
     }
 
     private void setupLogger() {

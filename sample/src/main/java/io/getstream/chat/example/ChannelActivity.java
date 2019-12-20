@@ -24,6 +24,7 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
+import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
  * Show the messages for a channel
@@ -49,8 +50,8 @@ public class ChannelActivity extends AppCompatActivity
 
         // receive the intent and create a channel object
         Intent intent = getIntent();
-        String channelType = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_TYPE);
-        String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
+        String channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
+        String channelID = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
         // we're using data binding in this example

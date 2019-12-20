@@ -19,19 +19,16 @@ import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
 import com.getstream.sdk.chat.storage.OnQueryListener;
 import com.getstream.sdk.chat.utils.ResultCallback;
 import com.getstream.sdk.chat.utils.RetryPolicy;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
     private final String TAG = ChannelListViewModel.class.getSimpleName();
 
-    @NotNull
+    @NonNull
     private LazyQueryChannelLiveData<List<Channel>> channels;
     private MutableLiveData<Boolean> loading;
     private MutableLiveData<Boolean> loadingMore;
@@ -195,10 +192,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
      *
      * @param channel  the channel needs to hide
+     * @param request  the request options for the API call
      * @param callback the result callback
      */
-    public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
-        channel.hide(new CompletableCallback() {
+    public void hideChannel(@NonNull Channel channel, HideChannelRequest request, @Nullable ResultCallback<Void, String> callback) {
+        channel.hide(request, new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
                 deleteChannel(channel); // remove the channel from the list of not hidden channels
@@ -223,7 +221,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * @param channel  the channel needs to show
      * @param callback the result callback
      */
-    public void showChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
+    public void showChannel(@NonNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
         channel.show(new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
@@ -355,6 +353,20 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             if (!updateChannel(channel, true)) {
                 upsertChannel(channel);
             }
+        }
+
+        @Override
+        public void onChannelVisible(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
+        }
+
+        @Override
+        public void onChannelHidden(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            deleteChannel(channel);
         }
 
         @Override

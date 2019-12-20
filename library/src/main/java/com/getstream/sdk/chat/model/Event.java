@@ -71,6 +71,10 @@ public class Event implements UserEntity {
     @Expose
     private Date createdAt;
 
+    @SerializedName("clear_history")
+    @Expose
+    private Boolean clearHistory;
+
     @Ignore
     private Date receivedAt;
 
@@ -192,5 +196,13 @@ public class Event implements UserEntity {
 
     public void setReceivedAt(Date receivedAt) {
         this.receivedAt = receivedAt;
+    }
+
+    public Boolean getClearHistory() {
+        return clearHistory;
+    }
+
+    public void setClearHistory(Boolean clearHistory) {
+        this.clearHistory = clearHistory;
     }
 }
