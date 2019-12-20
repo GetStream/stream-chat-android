@@ -27,4 +27,10 @@
     <string name="custom_input_hint" translatable="false">Type your message...</string>
     <string name="show_hidden_channel" translatable="false">Showing hidden channels...</string>
 
+    <!--Profile -->
+    <string name="logging_out">Logging out…</string>
+    <string name="ok">OK</string>
+    <string name="error_getting_firebase_token">Error getting Firebase token</string>
+    <string name="error_removing_device">Error removing device. Msg: "%s" Code: %d</string>
+
 </resources>

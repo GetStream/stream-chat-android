@@ -45,24 +45,6 @@ public class BaseApplication extends Application {
                         .build()
         );
         Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                            if (!task.isSuccessful()) {
-                                return;
-                            }
-                            StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
-                                @Override
-                                public void onSuccess(CompletableResponse response) {
-                                    // device is now registered!
-                                }
-
-                                @Override
-                                public void onError(String errMsg, int errCode) {
-                                    // something went wrong registering this device, ouch!
-                                }
-                            });
-                        }
-                );
 
     }
 }
