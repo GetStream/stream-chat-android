@@ -391,10 +391,20 @@ public class ChannelTest {
     }
 
     @Test
-    void hideTest() {
+    void hideTestWithClearHistory() {
         CompletableCallback callback = mock(CompletableCallback.class);
 
         HideChannelRequest request = new HideChannelRequest(true);
+        channel.hide(request, callback);
+
+        verify(client).hideChannel(channel, request, callback);
+    }
+
+    @Test
+    void hideTest() {
+        CompletableCallback callback = mock(CompletableCallback.class);
+
+        HideChannelRequest request = new HideChannelRequest();
         channel.hide(request, callback);
 
         verify(client).hideChannel(channel, request, callback);
