@@ -22,24 +22,22 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
-        AppDataConfig.init(this);
+        ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
+                .BaseURL(AppDataConfig.getApiEndpoint())
+                .Timeout(AppDataConfig.getApiTimeout())
+                .CDNTimeout(AppDataConfig.getCdnTimeout())
+                .build();
 
-        StreamChat.init(AppDataConfig.getCurrentApiKey(),
-                new ApiClientOptions.Builder()
-                        .BaseURL(AppDataConfig.getApiEndpoint())
-                        .Timeout(AppDataConfig.getApiTimeout())
-                        .CDNTimeout(AppDataConfig.getCdnTimeout())
-                        .build(),
-                this
-        );
+        StreamChatStyle style = new StreamChatStyle.Builder()
+                //.setDefaultFont(R.font.lilyofthe_valley)
+                //.setDefaultFont("fonts/odibeesans_regular.ttf")
+                .build();
 
-        StreamChat.initStyle(
-                new StreamChatStyle.Builder()
-                        //.setDefaultFont(R.font.lilyofthe_valley)
-                        //.setDefaultFont("fonts/odibeesans_regular.ttf")
-                        .build()
-        );
+        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
+        configuration.setApiClientOptions(apiClientOptions);
+        configuration.setStyle(style);
+        StreamChat.init(configuration);
+
         Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
-
     }
 }

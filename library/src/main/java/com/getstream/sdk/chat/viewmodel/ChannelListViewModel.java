@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
@@ -195,10 +196,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * hides the channel from queryChannels for the user until a message is added and remove from the current list of channels
      *
      * @param channel  the channel needs to hide
+     * @param request  the request options for the API call
      * @param callback the result callback
      */
-    public void hideChannel(@NotNull Channel channel, @Nullable ResultCallback<Void, String> callback) {
-        channel.hide(new CompletableCallback() {
+    public void hideChannel(@NotNull Channel channel, HideChannelRequest request, @Nullable ResultCallback<Void, String> callback) {
+        channel.hide(request, new CompletableCallback() {
             @Override
             public void onSuccess(CompletableResponse response) {
                 deleteChannel(channel); // remove the channel from the list of not hidden channels
@@ -355,6 +357,20 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             if (!updateChannel(channel, true)) {
                 upsertChannel(channel);
             }
+        }
+
+        @Override
+        public void onChannelVisible(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            if (!updateChannel(channel, true)) {
+                upsertChannel(channel);
+            }
+        }
+
+        @Override
+        public void onChannelHidden(Channel channel, Event event) {
+            if (interceptor.shouldDiscard(event, channel)) return;
+            deleteChannel(channel);
         }
 
         @Override
