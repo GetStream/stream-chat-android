@@ -33,6 +33,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.ReactionRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
@@ -897,10 +898,11 @@ public class Channel {
     /**
      * hides the channel from queryChannels for the user until a message is added
      *
+     * @param request the request options for the hide channel request
      * @param callback the result callback
      */
-    public void hide(@NotNull CompletableCallback callback) {
-        client.hideChannel(this, callback);
+    public void hide(HideChannelRequest request, @NotNull CompletableCallback callback) {
+        client.hideChannel(this, request, callback);
     }
 
     /**

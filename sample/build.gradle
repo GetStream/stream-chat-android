@@ -1,3 +1,6 @@
+import com.google.gson.Gson
+import groovy.json.JsonSlurper
+
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
@@ -42,15 +45,6 @@ android {
 
     buildTypes {
 
-        def defaultApiEndpoint = 'chat-us-east-1.stream-io-api.com'
-        def defaultApiTimeout = 6000
-        def defaultCdnTimeout = 30000
-        def defaultApiKey = 'qk4nn7rpcn75'
-        def defaultUserId = 'bender'
-        def defaultUserToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ'
-        def defaultUserName = 'Bender'
-        def defaultUserImage = 'https://bit.ly/321RmWb'
-
         release {
             minifyEnabled true
             shrinkResources true
@@ -59,39 +53,21 @@ android {
 
             buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
 
-            buildConfigField "String", "API_ENDPOINT", "\"${defaultApiEndpoint}\""
-            buildConfigField "int", "API_TIMEOUT", "${defaultApiTimeout}"
-            buildConfigField "String", "API_KEY", "\"${defaultApiKey}\""
-            buildConfigField "int", "CDN_TIMEOUT", "${defaultCdnTimeout}"
-            buildConfigField "String", "USER_ID", "\"${defaultUserId}\""
-            buildConfigField "String", "USER_TOKEN", "\"${defaultUserToken}\""
-            buildConfigField "String", "USER_NAME", "\"${defaultUserName}\""
-            buildConfigField "String", "USER_IMAGE", "\"${defaultUserImage}\""
+            def usersConfig = loadJson()
+            buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
         }
 
         debug {
             minifyEnabled false
             shrinkResources false
 
-            def customApiEndpoint = System.getenv('STREAM_CHAT_API_ENDPOINT')
-            def customApiTimeout = System.getenv('STREAM_CHAT_API_TIMEOUT')
-            def customApiKey = System.getenv('STREAM_CHAT_API_KEY')
-            def customCdnTimeout = System.getenv('STREAM_CHAT_CDN_TIMEOUT')
-            def customUserId = System.getenv('STREAM_CHAT_USER_ID')
-            def customUserToken = System.getenv('STREAM_CHAT_USER_TOKEN')
-            def customUserName = System.getenv('STREAM_CHAT_USER_NAME')
-            def customUserImage = System.getenv('STREAM_CHAT_USER_IMAGE')
-
             buildConfigField "String", "SDK_VERSION", '"master"'
 
-            buildConfigField "String", "API_ENDPOINT", '"' + (customApiEndpoint ? customApiEndpoint : defaultApiEndpoint) + '"'
-            buildConfigField "String", "API_KEY", '"' + (customApiKey ? customApiKey : defaultApiKey) + '"'
-            buildConfigField "int", "API_TIMEOUT", String.valueOf(customApiTimeout ? customApiTimeout : defaultApiTimeout)
-            buildConfigField "int", "CDN_TIMEOUT", String.valueOf(customCdnTimeout ? customCdnTimeout : defaultCdnTimeout)
-            buildConfigField "String", "USER_ID", '"' + (customUserId ? customUserId : defaultUserId) + '"'
-            buildConfigField "String", "USER_TOKEN", '"' + (customUserToken ? customUserToken : defaultUserToken) + '"'
-            buildConfigField "String", "USER_NAME", '"' + (customUserName ? customUserName : defaultUserName) + '"'
-            buildConfigField "String", "USER_IMAGE", '"' + (customUserImage ? customUserImage : defaultUserImage) + '"'
+            def usersConfig = loadJson()
+            buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
+
+
+            buildConfigField "String", "SDK_VERSION", '"master"'
         }
 
         applicationVariants.all { variant ->
@@ -124,24 +100,33 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
+    implementation "androidx.legacy:legacy-support-v4:$rootProject.legacySupportVersion"
+    implementation project(':library')
 
     releaseImplementation "com.github.getstream:stream-chat-android:$releaseSdkVersion"
     debugImplementation project(':library')
 
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.10.1')
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
+    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
+    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
+
+    implementation "com.google.android.material:material:$rootProject.materialVersion"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+
+    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
+    implementation("com.crashlytics.sdk.android:crashlytics:$rootProject.crashlyticsVersion")
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycleVersion"
+
+    implementation "androidx.viewpager2:viewpager2:$rootProject.viewPagerVersion"
+    implementation "androidx.fragment:fragment-ktx:$rootProject.fragmentVersion"
+    // Testing dependencies
+    testImplementation "junit:junit:$rootProject.junitVersion"
+    androidTestImplementation "androidx.test:runner:$rootProject.runnerVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
 
 }
 apply plugin: 'com.google.gms.google-services'
@@ -153,6 +138,32 @@ def checkSigningEnvVars() {
     def keyPassword = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
 
     return storagePath != null && password != null && keyAlias != null && keyPassword != null
+}
+
+def loadJson() {
+    def defaultConfigPath = projectDir.getAbsolutePath() + "/app-config.json"
+    def customConfigPath = projectDir.getAbsolutePath() + "/app-config-custom.json"
+    def file = null
+
+    if (new File(customConfigPath).exists()) {
+        file = new File(customConfigPath)
+    } else {
+        file = new File(defaultConfigPath)
+    }
+
+    def json = new JsonSlurper().parseText(file.text)
+    println("App config: " + json)
+    return ecapse(new Gson().toJson(json))
+}
+
+def ecapse(jsString) {
+    return jsString.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\b", "\\b")
+            .replace("\f", "\\f")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
 }
 
 gradle.taskGraph.useFilter { task ->

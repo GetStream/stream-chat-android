@@ -12,6 +12,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.fabric.sdk.android.Fabric;
+import io.getstream.chat.example.utils.AppDataConfig;
 
 
 public class BaseApplication extends Application {
@@ -21,10 +22,12 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
+        AppDataConfig.init(this);
+
         ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
-                .BaseURL(BuildConfig.API_ENDPOINT)
-                .Timeout(BuildConfig.API_TIMEOUT)
-                .CDNTimeout(BuildConfig.CDN_TIMEOUT)
+                .BaseURL(AppDataConfig.getApiEndpoint())
+                .Timeout(AppDataConfig.getApiTimeout())
+                .CDNTimeout(AppDataConfig.getCdnTimeout())
                 .build();
 
         StreamChatStyle style = new StreamChatStyle.Builder()
@@ -32,29 +35,11 @@ public class BaseApplication extends Application {
                 //.setDefaultFont("fonts/odibeesans_regular.ttf")
                 .build();
 
-        StreamChat.Config configuration = new StreamChat.Config(this, BuildConfig.API_KEY);
+        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
         StreamChat.init(configuration);
 
-        Crashlytics.setString("apiKey", BuildConfig.API_KEY);
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                            if (!task.isSuccessful()) {
-                                return;
-                            }
-                            StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
-                                @Override
-                                public void onSuccess(CompletableResponse response) {
-                                    // device is now registered!
-                                }
-
-                                @Override
-                                public void onError(String errMsg, int errCode) {
-                                    // something went wrong registering this device, ouch!
-                                }
-                            });
-                        }
-                );
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
     }
 }

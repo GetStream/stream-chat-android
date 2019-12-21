@@ -382,7 +382,6 @@ public class MessageInputView extends RelativeLayout {
             public void onError(String errMsg, int errCode) {
                 if (messageSendListener != null)
                     messageSendListener.onSendMessageError(errMsg);
-                Utils.showMessage(getContext(), errMsg);
                 initSendMessage();
                 if (isEdit()) clearFocus();
             }
