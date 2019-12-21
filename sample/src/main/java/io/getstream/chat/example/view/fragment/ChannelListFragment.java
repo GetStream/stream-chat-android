@@ -2,13 +2,6 @@ package io.getstream.chat.example.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,11 +9,17 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
@@ -105,8 +104,38 @@ public class ChannelListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.action_hidden_channel) {
+            showHiddenChannels();
+            return true;
+        }
+        return false;
+    }
+
+
+    private void showHiddenChannels() {
+        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
+        FilterObject filter = eq("type", "messaging").put("hidden", true);
+        viewModel.setChannelFilter(filter);
+        viewModel.queryChannels();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = eq("type", "messaging");
+        viewModel.setChannelFilter(filter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // setup the client
         Client client = configureStreamClient();
@@ -154,26 +183,23 @@ public class ChannelListFragment extends Fragment {
 
         // setup an onclick listener to capture clicks to the user profile or channel
 
-        binding.channelList.setOnChannelClickListener(channel -> {
-        /*binding.channelList.setOnChannelClickListener(channel -> {
-            // open the channel activity
-            Intent intent = new Intent(getContext(), ChannelActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-            intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-            startActivity(intent);
-        });
-        binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
-        });*/
-
-        // setup an onclick listener to capture clicks to the user profile or channel
         binding.channelList.setOnChannelClickListener(this::openChannel);
 
+        binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
+
         binding.ivAdd.setOnClickListener(view -> createNewChannelDialog());
 
         return binding.getRoot();
+    }
+
+    private void showMoreActionDialog(Channel channel) {
+        new ChannelMoreActionDialog(getContext())
+                .setChannelListViewModel(viewModel)
+                .setChannel(channel)
+                .show();
     }
 
     @Override
@@ -182,22 +208,16 @@ public class ChannelListFragment extends Fragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
         homeActivity.setSupportActionBar(toolbar);
-        binding.ivAdd.setOnClickListener(this::createNewChannelDialog);
-        initToolbar(binding);
     }
 
     // open the channel activity
     void openChannel(Channel channel) {
-        MainActivity parent = this;
-        Intent intent = new Intent(parent, ChannelActivity.class);
+        Intent intent = new Intent(getContext(), ChannelActivity.class);
         intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
         intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
         startActivity(intent);
     }
 
-    void createNewChannelDialog(View view) {
-        final EditText inputName = new EditText(this);
-    // region create new channel
     private void createNewChannelDialog() {
         final EditText inputName = new EditText(getContext());
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
@@ -256,44 +276,5 @@ public class ChannelListFragment extends Fragment {
                 Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void showMoreActionDialog(Channel channel) {
-        new ChannelMoreActionDialog(getContext())
-                .setChannelListViewModel(viewModel)
-                .setChannel(channel)
-                .show();
-    }
-    // endregion
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        int i = menuItem.getItemId();
-        if (i == R.id.action_hidden_channel) {
-            showHiddenChannels();
-            return true;
-        }
-        return false;
-    }
-
-
-    private void showHiddenChannels() {
-        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
-        FilterObject filter = eq("type", "messaging").put("hidden", true);
-        viewModel.setChannelFilter(filter);
-        viewModel.queryChannels();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = eq("type", "messaging");
-        viewModel.setChannelFilter(filter);
     }
 }
