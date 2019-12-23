@@ -3,6 +3,14 @@
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android-core which comes with a collection of re-usable and customizable UI components.
 
+
+## Improvements
+
+- Use StreamChatClient instead of Client to avoid polluting the namespace and avoid auto-import to get confused
+- Let the developer choose between sync and async for API calls (atm sync is not possible)
+- Minimal list of external dependencies 
+- 
+
 ## Setup
 ```groovy
 dependencies {
