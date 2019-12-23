@@ -46,6 +46,7 @@ import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
+import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.utils.AppDataConfig;
 
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -167,12 +168,36 @@ public class ChannelListFragment extends Fragment {
         return binding.getRoot();
     }
 
-        binding.ivAdd.setOnClickListener(v ->
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = eq("type", "messaging");
+        viewModel.setChannelFilter(filter);
+    }
 
-    createNewChannelDialog());
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-    initToolbar(binding);
-}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int i = menuItem.getItemId();
+        if (i == R.id.action_hidden_channel) {
+            showHiddenChannels();
+            return true;
+        }
+        switch (menuItem.getItemId()) {
+            case R.id.action_hidden_channel:
+                showHiddenChannels();
+                return true;
+            case R.id.action_search_messages_channel:
+                openSearchActivity();
+                return true;
+        }
+        return false;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -252,25 +277,6 @@ public class ChannelListFragment extends Fragment {
     }
     // endregion
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        int i = menuItem.getItemId();
-        if (i == R.id.action_hidden_channel) {
-            showHiddenChannels();
-            return true;
-        }
-        return false;
-    }
-
-    private void showHiddenChannels() {
-        Utils.showMessage(this, StreamChat.getStrings().get(R.string.show_hidden_channel));
-        FilterObject filter = eq("type", "messaging").put("hidden", true);
-
     private void showHiddenChannels() {
         Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
         FilterObject filter = eq("type", "messaging").put("hidden", true);
@@ -278,11 +284,7 @@ public class ChannelListFragment extends Fragment {
         viewModel.queryChannels();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = eq("type", "messaging");
-        viewModel.setChannelFilter(filter);
+    private void openSearchActivity() {
+        startActivity(MessageSearchActivity.getActivityIntent(requireContext()));
     }
 }

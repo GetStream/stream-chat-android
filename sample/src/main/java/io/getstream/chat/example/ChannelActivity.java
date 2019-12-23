@@ -88,7 +88,6 @@ public class ChannelActivity extends AppCompatActivity
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
-        
     }
 
     @Override

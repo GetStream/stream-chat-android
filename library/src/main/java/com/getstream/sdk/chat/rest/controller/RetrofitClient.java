@@ -117,6 +117,8 @@ public class RetrofitClient {
 
     private static HttpLoggingInterceptor setupLoggingInterceptor() {
         loggingInterceptor = new HttpLoggingInterceptor();
+
+        // Uncomment if need show http logs
         loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
         return loggingInterceptor;
     }

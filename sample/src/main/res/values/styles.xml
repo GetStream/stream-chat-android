@@ -9,4 +9,26 @@
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize</item>
     </style>
+
+    <style name="Text14BlackBold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/stream_black</item>
+    </style>
+
+    <style name="Text12BlackRegular">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/stream_black</item>
+    </style>
+
+    <style name="EditTextBlack" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/stream_black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+    </style>
 </resources>
