@@ -13,7 +13,7 @@ class ChannelsRepository (
 
         call.enqueue { result ->
             if (result.isSuccess()) {
-                cache.storeAsync(ApiMapper.mapChannels(result.data()))
+                cache.storeAsync(result.data())
             }
         }
 
