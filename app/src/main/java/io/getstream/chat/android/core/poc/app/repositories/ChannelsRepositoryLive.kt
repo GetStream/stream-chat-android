@@ -15,9 +15,9 @@ class ChannelsRepositoryLive(
         val call = client.queryChannels()
         val live = cache.getAllLive()
 
-        call.enqueue {
-            if (it.isSuccess()) {
-                cache.storeAsync(ApiMapper.mapChannels(it.data()))
+        call.enqueue { result ->
+            if (result.isSuccess()) {
+                cache.storeAsync(ApiMapper.mapChannels(result.data()))
             }
         }
 
