@@ -76,6 +76,13 @@ val result = client.getChannels().execute()
 client.getChannels { result -> showChannels(result) }
 ```
 
+## More
+
+- Client life cycle
+- Push messages
+- Tokens
+- SDK architecture
+
 ## Examples
 
 - [Basic async](docs/example-basic-async.md)
