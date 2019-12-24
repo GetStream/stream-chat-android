@@ -30,8 +30,9 @@ public class MessageSearchVM extends AndroidViewModel {
     private static final int QUERY_LIMIT = 50;
 
     public MutableLiveData<Boolean> isLoading;
+    public MutableLiveData<Boolean> isEmpty;
     public MutableLiveData<String> searchQuery;
-    MutableLiveData<List<MessageResponse>> searchResult;
+    public MutableLiveData<List<MessageResponse>> searchResult;
     SingleLiveEvent<String> onError;
 
     private Client client;
@@ -69,6 +70,7 @@ public class MessageSearchVM extends AndroidViewModel {
 
     private void initLiveData() {
         isLoading = new MutableLiveData<>(false);
+        isEmpty = new MutableLiveData<>(false);
         searchQuery = new MutableLiveData<>();
         searchResult = new MutableLiveData<>();
         onError = new SingleLiveEvent<>();
@@ -117,5 +119,7 @@ public class MessageSearchVM extends AndroidViewModel {
         }
         searchResult.setValue(list);
         isLoading.setValue(false);
+
+        isEmpty.setValue(list != null && list.isEmpty());
     }
 }

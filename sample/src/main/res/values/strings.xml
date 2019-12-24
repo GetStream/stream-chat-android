@@ -10,6 +10,7 @@
 
     <!--Search-->
     <string name="search_hint">Search message…</string>
+    <string name="search_empty_result">Can\'t find any message…</string>
 
     <!--ChannelMoreAction-->
     <string name="channel_action_hide_alert">Hidden successfully</string>
