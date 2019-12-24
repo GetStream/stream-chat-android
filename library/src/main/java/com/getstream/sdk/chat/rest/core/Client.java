@@ -56,6 +56,7 @@ import com.getstream.sdk.chat.rest.request.AddMembersRequest;
 import com.getstream.sdk.chat.rest.request.BanUserRequest;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.GuestUserRequest;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.MarkReadRequest;
 import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
@@ -84,6 +85,7 @@ import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -843,8 +845,8 @@ public class Client implements WSResponseHandler {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID,
-                        new UpdateChannelRequest(channel.getExtraData(), updateMessage))
+                UpdateChannelRequest request = new UpdateChannelRequest(channel.getExtraData(), updateMessage);
+                apiService.updateChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<ChannelResponse>() {
                             @Override
                             public void onResponse(Call<ChannelResponse> call, Response<ChannelResponse> response) {
@@ -1020,11 +1022,11 @@ public class Client implements WSResponseHandler {
      * @param channel  the channel needs to hide
      * @param callback the result callback
      */
-    public void hideChannel(@NonNull Channel channel, @NotNull CompletableCallback callback) {
+    public void hideChannel(@NonNull Channel channel, HideChannelRequest request, @NotNull CompletableCallback callback) {
         onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                apiService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, Collections.EMPTY_MAP)
+                apiService.hideChannel(channel.getType(), channel.getId(), apiKey, clientID, request)
                         .enqueue(new Callback<CompletableResponse>() {
                             @Override
                             public void onResponse(Call<CompletableResponse> call, Response<CompletableResponse> response) {

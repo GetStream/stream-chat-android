@@ -1,9 +1,26 @@
-## Upcoming
+## Upcoming (3.6.0)
 
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
 - Client support for anonymous and guest users
+- Client support initialization with Configurator
+- Support auto capitalization for keyboard
+- Update `UpdateChannelRequest` for reserved fields
+- renamed `MoreActionDialog` to `MessageMoreActionDialog`
+- fix markdown for mention if there is no space at prefix @
+- fix Edit Attachment behavior
+- add support for channel.hide with clear history + events
 
+#### Breaking changes:
+
+##### Channel hide request
+- `Channel:hide` signature has changed: `HideChannelRequest` must be specified as first parameter
+- `Client:hideChannel` signature has changed: `HideChannelRequest` must be specified as second parameter
+- `ChannelListViewModel:hideChannel` signature has changed: `HideChannelRequest` must be specified as second parameter
+
+##### How to upgrade
+
+To keep the same behavior pass `new HideChannelRequest()` as request parameter to match with the new signature.
 
 ## December 9th, 2019 - 3.5.0
 

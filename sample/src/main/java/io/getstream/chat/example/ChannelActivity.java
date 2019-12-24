@@ -17,13 +17,14 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.view.Dialog.MoreActionDialog;
+import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
+import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
  * Show the messages for a channel
@@ -49,8 +50,8 @@ public class ChannelActivity extends AppCompatActivity
 
         // receive the intent and create a channel object
         Intent intent = getIntent();
-        String channelType = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_TYPE);
-        String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
+        String channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
+        String channelID = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
         // we're using data binding in this example
@@ -125,7 +126,7 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onMessageLongClick(Message message) {
-        new MoreActionDialog(this)
+        new MessageMoreActionDialog(this)
                 .setChannelViewModel(viewModel)
                 .setMessage(message)
                 .setStyle(binding.messageList.getStyle())

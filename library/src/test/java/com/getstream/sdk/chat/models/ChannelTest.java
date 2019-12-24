@@ -18,6 +18,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
 import com.getstream.sdk.chat.rest.request.SendActionRequest;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 
@@ -390,12 +391,23 @@ public class ChannelTest {
     }
 
     @Test
+    void hideTestWithClearHistory() {
+        CompletableCallback callback = mock(CompletableCallback.class);
+
+        HideChannelRequest request = new HideChannelRequest(true);
+        channel.hide(request, callback);
+
+        verify(client).hideChannel(channel, request, callback);
+    }
+
+    @Test
     void hideTest() {
         CompletableCallback callback = mock(CompletableCallback.class);
 
-        channel.hide(callback);
+        HideChannelRequest request = new HideChannelRequest();
+        channel.hide(request, callback);
 
-        verify(client).hideChannel(channel, callback);
+        verify(client).hideChannel(channel, request, callback);
     }
 
     @Test
