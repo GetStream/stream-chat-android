@@ -100,14 +100,14 @@ public class ClientState {
     }
 
     void setCurrentUser(User currentUser) {
-        StreamChat.logD(this,"setCurrentUser: " + currentUser);
+        StreamChat.getLogger().logD(this,"setCurrentUser: " + currentUser);
         this.currentUser = currentUser;
         this.totalUnreadCount = currentUser.getTotalUnreadCount();
         this.unreadChannels = currentUser.getUnreadChannels();
     }
 
     void reset() {
-        StreamChat.logD(this,"reset");
+        StreamChat.getLogger().logD(this,"reset");
         currentUser = null;
         totalUnreadCount = 0;
         unreadChannels = 0;
@@ -123,7 +123,7 @@ public class ClientState {
      */
     public User getUser(String userID) {
         User result = users.get(userID);
-        StreamChat.logD(this,"getUser: " + userID + " with result: " + result);
+        StreamChat.getLogger().logD(this,"getUser: " + userID + " with result: " + result);
         return result;
     }
 
@@ -135,7 +135,7 @@ public class ClientState {
     }
 
     public void updateUsers(List<User> newUsers) {
-        StreamChat.logD(this,"updateUsers");
+        StreamChat.getLogger().logD(this,"updateUsers");
         Map<String, Channel> channelMap = client.getActiveChannelMap();
 
         for (User newUser : newUsers) {

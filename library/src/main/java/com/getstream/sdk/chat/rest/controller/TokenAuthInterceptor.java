@@ -41,7 +41,7 @@ public class TokenAuthInterceptor implements Interceptor {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            StreamChat.logT(this, e);
+            StreamChat.getLogger().logT(this, e);
         }
 
         Request request = chain.request();
@@ -52,7 +52,7 @@ public class TokenAuthInterceptor implements Interceptor {
         if (!response.isSuccessful()) {
             ErrorResponse err = ErrorResponse.parseError(response);
             if (err.getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                StreamChat.logD(this,"Retrying new request");
+                StreamChat.getLogger().logD(this,"Retrying new request");
                 token = null; // invalidate local cache
                 tokenProvider.tokenExpired();
                 response.close();

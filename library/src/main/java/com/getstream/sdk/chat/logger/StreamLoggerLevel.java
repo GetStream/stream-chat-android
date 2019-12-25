@@ -1,10 +1,11 @@
 package com.getstream.sdk.chat.logger;
 
 public enum StreamLoggerLevel {
+
     /**
      * Show all Logs.
      */
-    INFO(0),
+    ALL(0),
 
     /**
      * Show DEBUG, WARNING, ERROR logs
@@ -19,7 +20,12 @@ public enum StreamLoggerLevel {
     /**
      * Show ERROR-s only
      */
-    ERROR(3);
+    ERROR(3),
+
+    /**
+     * Don't show any Logs.
+     */
+    NOTHING(4);
 
     private int severity;
 

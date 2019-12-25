@@ -82,7 +82,7 @@ public class QueryChannelsQ {
             this.id = hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            StreamChat.logT(this, e);
+            StreamChat.getLogger().logT(this, e);
             this.id = "errorCreatingQueryID";
         }
 

@@ -189,7 +189,7 @@ public class NativeVideoDelegate {
             try {
                 mediaPlayer.stop();
             } catch (Exception e) {
-                StreamChat.logD(this,"stopPlayback: error calling mediaPlayer.stop(), Error:" + e);
+                StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.stop(), Error:" + e);
             }
         }
 
@@ -210,7 +210,7 @@ public class NativeVideoDelegate {
             mediaPlayer.reset();
             mediaPlayer.release();
         } catch (Exception e) {
-            StreamChat.logD(this,"stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release(). Error:" + e);
+            StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release(). Error:" + e);
         }
 
         playRequested = false;
@@ -375,7 +375,7 @@ public class NativeVideoDelegate {
 
             currentState = State.PREPARING;
         } catch (IOException | IllegalArgumentException ex) {
-            StreamChat.logW(this, "Unable to open content: " + uri + ", " + ex);
+            StreamChat.getLogger().logW(this, "Unable to open content: " + uri + ", " + ex);
             currentState = State.ERROR;
 
             internalListeners.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
@@ -423,7 +423,7 @@ public class NativeVideoDelegate {
 
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            StreamChat.logD(this,"Error: " + what + "," + extra);
+            StreamChat.getLogger().logD(this,"Error: " + what + "," + extra);
             currentState = State.ERROR;
 
             return onErrorListener == null || onErrorListener.onError(mediaPlayer, what, extra);

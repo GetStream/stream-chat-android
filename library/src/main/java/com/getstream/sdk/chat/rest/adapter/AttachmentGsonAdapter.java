@@ -140,7 +140,7 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
                         double fileSize = (Double) set.getValue();
                         attachment.setFile_size((int)fileSize);
                     }catch (Exception e){
-                        StreamChat.logT(this, e);
+                        StreamChat.getLogger().logT(this, e);
                     }
                     continue;
             }

@@ -86,7 +86,7 @@ public class ChannelListView extends RecyclerView {
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
-            StreamChat.logI(this,"Observe found this many channels: " + channels.size());
+            StreamChat.getLogger().logI(this,"Observe found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
             if (canScrollUpForChannelEvent())
                 layoutManager.scrollToPosition(0);

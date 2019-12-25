@@ -122,7 +122,7 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                StreamChat.logD(this, "handleConnectedUser: error: " + errMsg + ":" + errCode);
+                StreamChat.getLogger().logD(this, "handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
@@ -131,7 +131,7 @@ public class StreamChat {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                StreamChat.logI(this, "set user worked out well");
+                logger.logI(this, "set user worked out well");
                 setupEventListeners();
                 currentUser.postValue(user);
 
@@ -146,12 +146,12 @@ public class StreamChat {
     }
 
     private static synchronized void setupEventListeners() {
-        StreamChat.logI(StreamChat.class, "setupEventListeners");
+        logger.logI(StreamChat.class, "setupEventListeners");
 
         INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
-                StreamChat.logW(this, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+                StreamChat.getLogger().logW(this, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
 
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
@@ -163,12 +163,12 @@ public class StreamChat {
 
             @Override
             public void onConnectionRecovered(Event event) {
-                StreamChat.logW(this, "connection recovered!");
+                StreamChat.getLogger().logW(this, "connection recovered!");
                 List<Channel> channels = INSTANCE.getActiveChannels();
                 if (channels == null) {
-                    StreamChat.logW(this, "nothing to recover");
+                    StreamChat.getLogger().logW(this, "nothing to recover");
                 } else {
-                    StreamChat.logW(this, channels.size() + " channels to recover!");
+                    StreamChat.getLogger().logW(this, channels.size() + " channels to recover!");
                 }
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
             }
@@ -198,7 +198,7 @@ public class StreamChat {
         new StreamLifecycleObserver(new LifecycleHandler() {
             @Override
             public void resume() {
-                StreamChat.logI(this, "detected resume");
+                logger.logI(this, "detected resume");
                 if (lifecycleStopped && userWasInitialized) {
                     lifecycleStopped = false;
                     INSTANCE.reconnectWebSocket();
@@ -207,7 +207,7 @@ public class StreamChat {
 
             @Override
             public void stopped() {
-                StreamChat.logI(this, "detected stop");
+                logger.logI(this, "detected stop");
                 lifecycleStopped = true;
                 if (INSTANCE != null) {
                     INSTANCE.disconnectWebSocket();
@@ -230,29 +230,7 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static void logT(@NonNull Throwable throwable) {
-        logger.logT(throwable);
-    }
-
-    public static void logT(@NonNull Object classObj, @NonNull Throwable throwable) {
-        logger.logT(classObj, throwable);
-    }
-
-    public static void logI(@NonNull Object classObj, @NonNull String message) {
-        logger.logI(classObj, message);
-    }
-
-    public static void logD(@NonNull Object classObj, @NonNull String message) {
-        logger.logD(classObj, message);
-    }
-
-    public static void logW(@NonNull Object classObj, @NonNull String message) {
-        logger.logW(classObj, message);
-    }
-
-    public static void logE(@NonNull Object classObj, @NonNull String message) {
-        logger.logE(classObj, message);
-    }
+    public static StreamLogger getLogger() { return  logger; }
 
     public static synchronized boolean init(@NonNull Config config) {
         ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
@@ -269,7 +247,7 @@ public class StreamChat {
             return true;
         }
         StreamChat.logger = logger;
-        StreamChat.logI(StreamChat.class, "calling init");
+        StreamChat.logger.logI(StreamChat.class, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
                 StreamChat.context = context;

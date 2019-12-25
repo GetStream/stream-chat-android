@@ -108,7 +108,7 @@ public class StreamStorage implements Storage {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                StreamChat.logI(this, String.format("Inserted %d channels into offline storage", channels.size()));
+                StreamChat.getLogger().logI(this, String.format("Inserted %d channels into offline storage", channels.size()));
                 channelsDao.insertChannels(channels);
                 return null;
             }
@@ -304,7 +304,7 @@ public class StreamStorage implements Storage {
                 channel.setChannelState(channel.getLastState());
                 channel.setClient(StreamChat.getInstance(context));
                 if (channel == null) {
-                    StreamChat.logW(this, "Missing channel for cid " + cid);
+                    StreamChat.getLogger().logW(this, "Missing channel for cid " + cid);
                 } else {
                     ChannelState state = channel.getLastState();
                     state.setChannel(channel);
@@ -329,7 +329,7 @@ public class StreamStorage implements Storage {
     private void insertMessagesAndUsers(List<User> users, List<Message> messages) {
         usersDao.insertUsers(users);
         messageDao.insertMessages(messages);
-        StreamChat.logI(this, String.format("Inserted %d messages and %d users into offline storage", messages.size(), users.size()));
+        StreamChat.getLogger().logI(this, String.format("Inserted %d messages and %d users into offline storage", messages.size(), users.size()));
     }
 
     private void enrichUsers(Channel channel) {
@@ -380,7 +380,7 @@ public class StreamStorage implements Storage {
     @Transaction
     private void insertChannelStateInTransaction(List<User> users, QueryChannelsQ query, List<Channel> channels, List<Message> messages) {
         insertUsersUnique(users);
-        StreamChat.logI(this, String.format("Inserted %d channels, %d messages into offline storage for query with id %s", channels.size(), messages.size(), query.getId()));
+        StreamChat.getLogger().logI(this, String.format("Inserted %d channels, %d messages into offline storage for query with id %s", channels.size(), messages.size(), query.getId()));
         channelsDao.insertChannels(channels);
         queryChannelsQDao.insertQuery(query);
         for (Message m : messages) {
@@ -396,7 +396,7 @@ public class StreamStorage implements Storage {
             userMap.put(u.getId(), u);
         }
 
-        StreamChat.logI(this, String.format("Inserted %d users into offline storage", userMap.values().size()));
+        StreamChat.getLogger().logI(this, String.format("Inserted %d users into offline storage", userMap.values().size()));
 
         usersDao.insertUsers(new ArrayList(userMap.values()));
     }
@@ -538,7 +538,7 @@ public class StreamStorage implements Storage {
 
         @Override
         protected void onPostExecute(List<ChannelState> result) {
-            StreamChat.logI(this, "QT Post");
+            StreamChat.getLogger().logI(this, "QT Post");
             if (mCallBack != null) {
                 if (mException == null) {
                     mCallBack.onSuccess(result);

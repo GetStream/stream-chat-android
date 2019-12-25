@@ -73,7 +73,7 @@ public class BaseApplication extends Application {
         };
 
         logger = new StreamChatLogger.Builder()
-                .loggingLevel(StreamLoggerLevel.INFO)
+                .loggingLevel(BuildConfig.DEBUG ? StreamLoggerLevel.ALL : StreamLoggerLevel.NOTHING)
                 .setLoggingHandler(loggerHandler)
                 .build();
     }

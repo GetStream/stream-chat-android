@@ -37,11 +37,11 @@ public class RetrofitClient {
     public static Retrofit getClient(ApiClientOptions options, CachedTokenProvider tokenProvider, boolean anonymousAuth) {
 
         if (tokenProvider != null && anonymousAuth) {
-            StreamChat.logE(RetrofitClient.class,"Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
+            StreamChat.getLogger().logE(RetrofitClient.class,"Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
         }
 
         if (tokenProvider == null && !anonymousAuth) {
-            StreamChat.logE(RetrofitClient.class,"tokenProvider must be non-null in not anonymous mode");
+            StreamChat.getLogger().logE(RetrofitClient.class,"tokenProvider must be non-null in not anonymous mode");
             return null;
         }
 

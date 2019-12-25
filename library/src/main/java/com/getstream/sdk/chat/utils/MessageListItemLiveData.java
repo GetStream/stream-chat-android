@@ -148,7 +148,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new HashMap<>();
             }
             readsByUser = reads;
-            StreamChat.logI(this,"broadcast because reads changed");
+            StreamChat.getLogger().logI(this,"broadcast because reads changed");
             broadcastValue();
         });
 
@@ -169,7 +169,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
-            StreamChat.logI(this,"broadcast because typing changed");
+            StreamChat.getLogger().logI(this,"broadcast because typing changed");
             broadcastValue();
         });
     }
@@ -235,7 +235,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
-        StreamChat.logI(this,"broadcast because messages changed");
+        StreamChat.getLogger().logI(this,"broadcast because messages changed");
         broadcastValue();
     }
 

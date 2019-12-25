@@ -235,7 +235,7 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
 
             gl10.eglTerminate(display);
         } catch (Exception e) {
-            StreamChat.logE(this,"Error clearing surface. Error:" + e);
+            StreamChat.getLogger().logE(this,"Error clearing surface. Error:" + e);
         }
     }
 

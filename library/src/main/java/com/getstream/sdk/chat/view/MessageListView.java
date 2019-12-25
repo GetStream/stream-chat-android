@@ -197,7 +197,7 @@ public class MessageListView extends RecyclerView {
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
-            StreamChat.logI(this,"Observe found this many entities: " + entities.size());
+            StreamChat.getLogger().logI(this,"Observe found this many entities: " + entities.size());
 
             // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
@@ -227,7 +227,7 @@ public class MessageListView extends RecyclerView {
                 if (lastMessage != null
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
-                    StreamChat.logI(this, String.format("just update last message"));
+                    StreamChat.getLogger().logI(this, String.format("just update last message"));
 
                     postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
 
@@ -244,14 +244,14 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
-                StreamChat.logI(this, String.format("no Scroll no new message"));
+                StreamChat.getLogger().logI(this, String.format("no Scroll no new message"));
                 return;
             }
 
             if (oldSize == 0 && newSize != 0) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
-                StreamChat.logI(this, String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+                StreamChat.getLogger().logI(this, String.format("Scroll: First load scrolling down to bottom %d", newPosition));
             } else if (messageListItemWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
@@ -266,7 +266,7 @@ public class MessageListView extends RecyclerView {
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
                 int newPosition = adapter.getItemCount() - 1;
                 int layoutSize = layoutManager.getItemCount();
-                StreamChat.logI(this, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
+                StreamChat.getLogger().logI(this, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
                 if (hasScrolledUp) {
                     // always scroll to bottom when current user posts a message

@@ -63,7 +63,7 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
             try {
                 emoji = reactionTypes.get(reaction);
             } catch (Exception e) {
-                StreamChat.logT(this, e);
+                StreamChat.getLogger().logT(this, e);
             }
         }
         holder.tv_emoji.setText(emoji);

@@ -35,16 +35,16 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     @Override
     public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener, boolean anonymousAuth) throws UnsupportedEncodingException {
         String wsUrl = getWsUrl(userToken, user, anonymousAuth);
-        StreamChat.logD(this,"WebSocket URL : " + wsUrl);
+        StreamChat.getLogger().logD(this,"WebSocket URL : " + wsUrl);
         return new StreamWebSocketService(wsUrl, listener);
     }
 
     public String getWsUrl(String userToken, User user, boolean anonymousAuth) throws UnsupportedEncodingException {
         if (anonymousAuth && userToken != null) {
-            StreamChat.logE(this, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
+            StreamChat.getLogger().logE(this, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
         }
         if (!anonymousAuth && userToken == null) {
-            StreamChat.logE(this,"userToken must be non-null in non anonymous mode");
+            StreamChat.getLogger().logE(this,"userToken must be non-null in non anonymous mode");
             return null;
         }
 
@@ -59,7 +59,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
                 return baseWsUrl + "&authorization=" + userToken + "&stream-auth-type=" + "jwt";
             }
         } catch (Throwable throwable) {
-            StreamChat.logT(this, throwable);
+            StreamChat.getLogger().logT(this, throwable);
             throw new UnsupportedEncodingException("Unable to encode user details json: " + json);
         }
     }
