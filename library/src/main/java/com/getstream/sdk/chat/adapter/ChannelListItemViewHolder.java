@@ -20,6 +20,7 @@ import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
@@ -103,12 +104,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     // set the channel name
-    private void configChannelName(ChannelState channelState){
+    private void configChannelName(ChannelState channelState) {
         String channelName = channelState.getChannelNameOrMembers();
-        tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
+        tv_name.setText((!TextUtils.isEmpty(channelName) ? channelName : style.getChannelWithoutNameText()));
     }
 
-    private void configAvatarView(ChannelState channelState){
+    private void configAvatarView(ChannelState channelState) {
         Channel channel = channelState.getChannel();
         List<User> otherUsers = channelState.getOtherUsers();
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
@@ -124,20 +125,26 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @SuppressLint("ResourceType")
-    private void configLastMessage(ChannelState channelState){
+    private void configLastMessage(ChannelState channelState) {
         Message lastMessage = channelState.getLastMessage();
         iv_attachment_type.setVisibility(View.GONE);
-        if (lastMessage == null){
+        if (lastMessage == null) {
             tv_last_message.setText("");
             return;
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            tv_last_message.setText(lastMessage.getText());
+            if (StringUtility.containsMarkdown(lastMessage.getText())) {
+                String text = lastMessage.getText();
+                String message = text.replaceAll(StringUtility.MARKDOWN_REGEX_CHARS, "");
+                tv_last_message.setText(message);
+            } else {
+                tv_last_message.setText(lastMessage.getText());
+            }
             return;
         }
 
-        if (lastMessage.getAttachments().isEmpty()){
+        if (lastMessage.getAttachments().isEmpty()) {
             tv_last_message.setText("");
             return;
         }
@@ -154,10 +161,10 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
                 attachmentType = R.drawable.stream_ic_image;
                 break;
             case ModelType.attach_file:
-                if (attachment.getMime_type() != null && attachment.getMime_type().contains("video")){
+                if (attachment.getMime_type() != null && attachment.getMime_type().contains("video")) {
                     lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_video);
                     attachmentType = R.drawable.stream_ic_video;
-                }else{
+                } else {
                     lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
                     attachmentType = R.drawable.stream_ic_file;
                 }
@@ -176,7 +183,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
     }
 
-    private void configLastMessageDate(ChannelState channelState){
+    private void configLastMessageDate(ChannelState channelState) {
         Message lastMessage = channelState.getLastMessage();
         if (lastMessage == null) {
             tv_date.setText("");
@@ -189,12 +196,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
     }
 
-    private void configReadState(ChannelState channelState){
+    private void configReadState(ChannelState channelState) {
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         read_state.setReads(lastMessageReads, true, style);
     }
 
-    private void configClickListeners(ChannelState channelState){
+    private void configClickListeners(ChannelState channelState) {
         Channel channel = channelState.getChannel();
         itemView.setOnClickListener(view -> {
             if (this.channelClickListener != null)
@@ -209,7 +216,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         });
     }
 
-    private void applyStyle(ChannelState channelState){
+    private void applyStyle(ChannelState channelState) {
         tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.size);
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
