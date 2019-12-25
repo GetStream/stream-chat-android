@@ -3,6 +3,8 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,6 +26,7 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
+import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
@@ -69,7 +72,7 @@ public class ChannelActivity extends AppCompatActivity
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.setChannel(channel);
         viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
-          Log.i(TAG, String.format("The current user unread count is now %d", count));
+            Log.i(TAG, String.format("The current user unread count is now %d", count));
         });
 
         // set listeners
@@ -110,7 +113,6 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageInput.permissionResult(requestCode, permissions, grantResults);
     }
 
-
     @Override
     public void openPermissionRequest() {
         PermissionChecker.permissionCheck(this, null);
@@ -140,12 +142,7 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onHeaderOptionsClick(Channel channel) {
-        new AlertDialog.Builder(this)
-                .setTitle("Options for channel " + channel.getName())
-                .setMessage("You pressed on the options, well done")
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.stream_ic_settings)
-                .show();
+        openSearchActivity();
     }
 
     @Override
@@ -161,5 +158,9 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onUserClick(User user) {
         // open your user profile
+    }
+
+    private void openSearchActivity() {
+        startActivity(MessageSearchActivity.getActivityIntent(this,viewModel.getChannel().getCid() ));
     }
 }

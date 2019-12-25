@@ -29,12 +29,18 @@ import static io.getstream.chat.example.view.fragment.ChannelListFragment.EXTRA_
 
 public class MessageSearchActivity extends AppCompatActivity implements SearchMessageRecyclerAdapter.OnSearchItemClickListener {
 
+    private static final String CID_KEY = "cid";
+
     private MessageSearchVM viewModel;
     private ActivityMessageSearchBinding binding;
     private SearchMessageRecyclerAdapter adapter;
 
-    public static Intent getActivityIntent(Context context) {
-        return new Intent(context, MessageSearchActivity.class);
+    public static Intent getActivityIntent(Context context, @Nullable String cid) {
+        Intent intent = new Intent(context, MessageSearchActivity.class);
+        if (cid != null) {
+            intent.putExtra(CID_KEY, cid);
+        }
+        return intent;
     }
 
     @Override
@@ -46,6 +52,7 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
 
+        extractData();
         initViews();
         observeData();
         observeErrors();
@@ -59,10 +66,21 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
 
     @Override
     public void onItemClicked(String channelType, String channelId, String messageId) {
-        Intent intent = new Intent(this, ChannelActivity.class);
-        intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
-        intent.putExtra(EXTRA_CHANNEL_ID, channelId);
-        startActivity(intent);
+        if (viewModel.fromChannelList()) {
+            Intent intent = new Intent(this, ChannelActivity.class);
+            intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
+            intent.putExtra(EXTRA_CHANNEL_ID, channelId);
+            startActivity(intent);
+        } else {
+            finish();
+        }
+    }
+
+    private void extractData() {
+        String cid = getIntent().getStringExtra(CID_KEY);
+        if (cid != null) {
+            viewModel.setCid(cid);
+        }
     }
 
     private void initViews() {
@@ -92,7 +110,7 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
 
     private void initRecyclerView() {
         adapter = new SearchMessageRecyclerAdapter();
-        adapter.setOnItemListener(this);
+        adapter.setOnItemClickListener(this);
         binding.searchMessagesMessagesRv.setAdapter(adapter);
         binding.searchMessagesMessagesRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
     }

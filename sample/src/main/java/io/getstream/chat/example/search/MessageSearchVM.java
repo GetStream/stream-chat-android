@@ -32,12 +32,13 @@ public class MessageSearchVM extends AndroidViewModel {
     public MutableLiveData<Boolean> isLoading;
     public MutableLiveData<Boolean> isEmpty;
     public MutableLiveData<String> searchQuery;
-    public MutableLiveData<List<MessageResponse>> searchResult;
+    MutableLiveData<List<MessageResponse>> searchResult;
     SingleLiveEvent<String> onError;
 
     private Client client;
 
     private Context context;
+    private String cid;
 
     public MessageSearchVM(@NonNull Application application) {
         super(application);
@@ -55,6 +56,14 @@ public class MessageSearchVM extends AndroidViewModel {
         } else {
             Log.e(TAG, "Require field is null. user = " + userConf + ", search = " + searchQuery.getValue());
         }
+    }
+
+    void setCid(String cid) {
+        this.cid = cid;
+    }
+
+    boolean fromChannelList() {
+        return this.cid == null;
     }
 
     //TODO Implement this
@@ -85,7 +94,13 @@ public class MessageSearchVM extends AndroidViewModel {
         if (query != null && !query.isEmpty()) {
             ArrayList<String> searchUsersList = new ArrayList<>();
             searchUsersList.add(userConf.getId());
-            FilterObject filter = Filters.in("members", searchUsersList);
+            FilterObject filter;
+            if (cid != null) {
+                filter = Filters.in("cid", cid);
+            } else {
+                filter = Filters.in("members", searchUsersList);
+            }
+
             SearchMessagesRequest searchRequest = new SearchMessagesRequest(filter, query)
                     .withLimit(limit)
                     .withOffset(offset);

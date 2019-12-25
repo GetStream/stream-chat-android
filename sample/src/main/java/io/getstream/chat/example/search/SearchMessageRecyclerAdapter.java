@@ -51,7 +51,7 @@ public class SearchMessageRecyclerAdapter extends RecyclerView.Adapter<SearchMes
         notifyDataSetChanged();
     }
 
-    void setOnItemListener(OnSearchItemClickListener onItemListener) {
+    void setOnItemClickListener(OnSearchItemClickListener onItemListener) {
         this.onItemListener = onItemListener;
     }
 

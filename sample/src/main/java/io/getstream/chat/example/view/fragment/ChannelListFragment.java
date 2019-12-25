@@ -183,11 +183,6 @@ public class ChannelListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        int i = menuItem.getItemId();
-        if (i == R.id.action_hidden_channel) {
-            showHiddenChannels();
-            return true;
-        }
         switch (menuItem.getItemId()) {
             case R.id.action_hidden_channel:
                 showHiddenChannels();
@@ -285,6 +280,6 @@ public class ChannelListFragment extends Fragment {
     }
 
     private void openSearchActivity() {
-        startActivity(MessageSearchActivity.getActivityIntent(requireContext()));
+        startActivity(MessageSearchActivity.getActivityIntent(requireContext(), null));
     }
 }
