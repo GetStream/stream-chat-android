@@ -7,16 +7,6 @@ import androidx.annotation.NonNull;
 public class StreamChatSilentLogger implements StreamLogger {
 
     @Override
-    public void logT(@NonNull Throwable throwable) {
-        throwable.printStackTrace();
-    }
-
-    @Override
-    public void logT(@NonNull Object tag, @NonNull Throwable throwable) {
-        // unused
-    }
-
-    @Override
     public void logI(@NonNull Object tag, @NonNull String message) {
         // unused
     }
@@ -34,5 +24,15 @@ public class StreamChatSilentLogger implements StreamLogger {
     @Override
     public void logE(@NonNull Object tag, @NonNull String message) {
         Log.e(tag.getClass().getSimpleName(), message);
+    }
+
+    @Override
+    public void logT(@NonNull Throwable throwable) {
+        throwable.printStackTrace();
+    }
+
+    @Override
+    public void logT(@NonNull Object tag, @NonNull Throwable throwable) {
+        throwable.printStackTrace();
     }
 }
