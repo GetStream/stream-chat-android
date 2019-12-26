@@ -53,6 +53,11 @@ public class ChannelActivity extends AppCompatActivity
         String channelID = intent.getStringExtra(MainActivity.EXTRA_CHANNEL_ID);
         Client client = StreamChat.getInstance(getApplication());
 
+        // We have bad client instance
+        if (client.getUser() == null) {
+            finish();
+        }
+
         Log.d(TAG, "Opened channel activity. channelType = " + channelType + ", channelID = " + channelID);
 
         // we're using data binding in this example
