@@ -33,14 +33,7 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
-import com.getstream.sdk.chat.rest.request.QueryUserRequest;
-import com.getstream.sdk.chat.rest.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.request.*;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -164,14 +157,16 @@ public class ClientTest {
         CompletableResponse response = new CompletableResponse();
         CompletableCallback callback = mock(CompletableCallback.class);
 
+        HideChannelRequest request = new HideChannelRequest(true);
+
         when(apiService.hideChannel(any(), any(), any(), any(), any()))
                 .thenReturn(CallFake.buildSuccess(response));
 
-        client.hideChannel(new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID), callback);
+        client.hideChannel(new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID), request, callback);
 
         verify(apiService).hideChannel(TEST_CHANNEL_TYPE, TEST_CHANNEL_ID,
                 TEST_API_KEY, TEST_CLIENT_ID,
-                Collections.emptyMap());
+                request);
         verify(callback).onSuccess(response);
     }
 
