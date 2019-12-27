@@ -1,16 +1,14 @@
-package io.getstream.chat.android.core.poc.app.rx
+package io.getstream.chat.android.core.poc.app.examples.coroutines
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.app.ViewState
 import io.getstream.chat.android.core.poc.app.common.BaseChannelsListFragment
-import io.reactivex.disposables.CompositeDisposable
+import io.getstream.chat.android.core.poc.app.common.Channel
 
 class ChannelsListFragment : BaseChannelsListFragment() {
-
-    val subs = CompositeDisposable()
-
     override fun reload() {
         load()
     }
@@ -20,25 +18,22 @@ class ChannelsListFragment : BaseChannelsListFragment() {
     }
 
     private fun load() {
-        val vm = ChannelsViewModelRx(App.channelsRepositoryRx)
+        val vm = ChannelsViewModel(App.channelsRepositorySync)
 
-        subs.add(vm.channels().subscribe {
-            when (it) {
+        vm.channels().observe(this, Observer<ViewState<List<Channel>>> { state ->
+            when (state) {
                 is ViewState.Loading -> {
                     drawLoading()
                 }
                 is ViewState.Error -> {
-                    drawError(it.error)
+                    drawError(state.error)
                 }
                 is ViewState.Success -> {
-                    drawSuccess(it.data)
+                    drawSuccess(state.data)
                 }
             }
         })
     }
 
-    override fun onDestroyView() {
-        subs.dispose()
-        super.onDestroyView()
-    }
+
 }

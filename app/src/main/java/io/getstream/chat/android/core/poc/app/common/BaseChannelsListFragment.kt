@@ -11,6 +11,12 @@ import kotlinx.android.synthetic.main.fragment_channels.*
 
 abstract class BaseChannelsListFragment : Fragment() {
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerChannels.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,23 +28,34 @@ abstract class BaseChannelsListFragment : Fragment() {
     protected fun drawLoading() {
         viewError.visibility = View.GONE
         viewLoading.visibility = View.VISIBLE
-        recyclerChannels.visibility = View.GONE
+        viewAllLoaded.visibility = View.GONE
+        recyclerChannels.visibility = View.VISIBLE
     }
 
     protected fun drawError(t: Throwable) {
         viewError.visibility = View.VISIBLE
         viewLoading.visibility = View.GONE
-        recyclerChannels.visibility = View.GONE
+        viewAllLoaded.visibility = View.GONE
+        recyclerChannels.visibility = View.VISIBLE
     }
 
     protected fun drawSuccess(channels: List<Channel>) {
-
         viewError.visibility = View.GONE
         viewLoading.visibility = View.GONE
+        viewAllLoaded.visibility = View.GONE
         recyclerChannels.visibility = View.VISIBLE
 
-        recyclerChannels.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        //updateAdapter(channels)
+    }
+
+    protected fun drawAllLoaded() {
+        viewError.visibility = View.GONE
+        viewLoading.visibility = View.GONE
+        viewAllLoaded.visibility = View.VISIBLE
+        recyclerChannels.visibility = View.VISIBLE
+    }
+
+    protected open fun updateAdapter(channels: List<Channel>) {
         recyclerChannels.adapter = ChannelsListAdapter(channels)
     }
 

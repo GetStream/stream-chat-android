@@ -11,6 +11,10 @@ import io.reactivex.schedulers.Schedulers
 
 class ChannelsCache(val dao: ChannelsDao) {
 
+    fun getPageRx(offset: Int, limit: Int): Observable<List<Channel>> {
+        return dao.getPageRx(offset, limit)
+    }
+
     fun getAllRx(): Observable<List<Channel>> {
         return dao.getAllRx()
     }

@@ -34,6 +34,9 @@ interface ChannelsDao {
     @Query("select * from channels order by updated_at")
     fun getAllRx(): Observable<List<Channel>>
 
+    @Query("select * from channels order by updated_at limit :limit offset :offset")
+    fun getPageRx(offset: Int, limit: Int): Observable<List<Channel>>
+
     @Query("select * from channels where id = :id limit 1")
     fun getById(id: String): Channel?
 
@@ -70,6 +73,7 @@ interface ChannelsDao {
         }
     }
 
+    @Transaction
     fun isNew(
         new: Channel,
         cached: Channel

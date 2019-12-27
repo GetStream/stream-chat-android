@@ -23,4 +23,8 @@ public class Channel {
 
     @ColumnInfo(name = "synced")
     var synched: Boolean = false
+
+    override fun toString(): String {
+        return "{$remoteId}"
+    }
 }

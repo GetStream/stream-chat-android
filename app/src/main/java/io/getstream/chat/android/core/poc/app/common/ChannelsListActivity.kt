@@ -17,13 +17,13 @@ class ChannelsListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val coroutinesFragment =
-            io.getstream.chat.android.core.poc.app.coroutines.ChannelsListFragment()
+            io.getstream.chat.android.core.poc.app.examples.coroutines.ChannelsListFragment()
 
         val liveDataFragment =
-            io.getstream.chat.android.core.poc.app.livedata.ChannelsListFragment()
+            io.getstream.chat.android.core.poc.app.examples.livedata.ChannelsListFragment()
 
         val rxDataFragment =
-            io.getstream.chat.android.core.poc.app.rx.ChannelsListFragment()
+            io.getstream.chat.android.core.poc.app.examples.rx.ChannelsListFragment()
 
         val fragment = rxDataFragment
 
