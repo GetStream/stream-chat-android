@@ -3,12 +3,22 @@
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android-core which comes with a collection of re-usable and customizable UI components.
 
+
+## Improvements
+
+- Use `StreamChatClient` instead of `Client` to avoid polluting the namespace and avoid auto-import to get confused
+- Let the developer choose between sync and async for API calls (right now sync is not even possible)
+- Minimal list of external dependencies
+- Async style API calls are simplified, only 1 function which receives `Result<T>`. Errors are now of type `ClientError` which is a throwable (more useful and common to work with)
+- 
+
 ## Setup
 ```groovy
 dependencies {
     implementation 'com.github.getstream:stream-chat-android-client:<latest-version>'
 }
 ```
+
 ## Usage
 1. Create instance of client
 
@@ -50,7 +60,7 @@ dependencies {
 	}
 	```
 	
-5. Handle events
+5. Handle events (Later)
 
 	```
 	val subscription = client.events().subscribe { event ->
