@@ -72,7 +72,7 @@ dependencies {
 
 
 ## Sync / Async
-All methods of the library return `Call` object which allows to either `execute` request immediatly in the same thread or `enqueue` listener and get result in UI thread:
+All methods of the library return `Call` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
 interface Call<T> {
