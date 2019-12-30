@@ -18,7 +18,7 @@
 
 The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make common changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
-## Example App
+## Clone the Github Example App
 
 This repo includes a fully functional example app. To run the example app:
 
