@@ -1,3 +1,3 @@
 # Client life cycle
 
-![life-cycle](docs/client-lifecycle.png)
+![life-cycle](client-lifecycle.png)
