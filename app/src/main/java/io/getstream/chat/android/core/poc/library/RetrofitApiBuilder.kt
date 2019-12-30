@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import android.os.Handler
 import android.os.Looper
+import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
 import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,15 +19,16 @@ import java.util.concurrent.Executors
 class RetrofitApiBuilder {
 
     private val executor = Executors.newSingleThreadExecutor()
+    val channels = listOfChannels()
 
     fun build(): RetrofitApiService {
 
         return object : RetrofitApiService {
-            override fun queryChannels(): Call<List<Channel>> {
+            override fun queryChannels(query: ChannelsQuery): Call<List<ChatChannel>> {
 
-                return object : Call<List<Channel>> {
+                return object : Call<List<ChatChannel>> {
 
-                    override fun enqueue(callback: Callback<List<Channel>>) {
+                    override fun enqueue(callback: Callback<List<ChatChannel>>) {
                         runOnBackground {
                             val result = execute()
                             runOnUiThread {
@@ -39,7 +41,7 @@ class RetrofitApiBuilder {
                         return true
                     }
 
-                    override fun clone(): Call<List<Channel>> {
+                    override fun clone(): Call<List<ChatChannel>> {
                         return null!!
                     }
 
@@ -51,9 +53,17 @@ class RetrofitApiBuilder {
 
                     }
 
-                    override fun execute(): Response<List<Channel>> {
+                    override fun execute(): Response<List<ChatChannel>> {
                         emulateNetworkCall()
-                        return Response.success(listOfChannels())
+
+                        if (query.offset > channels.size || query.offset + query.limit > channels.size) {
+                            return Response.success(emptyList())
+                        }
+
+                        val result = channels.subList(query.offset, query.offset + query.limit)
+                        return Response.success(
+                            result
+                        )
                     }
 
                     override fun request(): Request {
@@ -84,11 +94,11 @@ class RetrofitApiBuilder {
         Handler(Looper.getMainLooper()).post { task() }
     }
 
-    private fun listOfChannels(): List<Channel> {
-        val count = 20
-        val result = mutableListOf<Channel>()
+    private fun listOfChannels(): List<ChatChannel> {
+        val count = 50
+        val result = mutableListOf<ChatChannel>()
         for (i in 1..count) {
-            result.add(Channel(i.toString(), "name-rm-id: $i", i))
+            result.add(ChatChannel(i.toString(), "name-rm-id: $i", i))
         }
         return result
     }

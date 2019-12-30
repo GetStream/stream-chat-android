@@ -23,13 +23,15 @@ dependencies {
 1. Create instance of client
 
 	```kotlin
-	val client = StreamChatClient("api-key", "token")
+	val client = StreamChatClient.Builder()
+		.apiKey("api-key")
+		.build()
 	```
 
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("id), { result ->
+	client.setUser(ChatUser("id"), "token", { result ->
 	  if(result.isSuccess())
 	    getChannels()
 	  else
@@ -88,9 +90,10 @@ client.getChannels { result -> showChannels(result) }
 
 ## More
 
-- Client life cycle
-- Push messages
-- Tokens
+- [Client life cycle](docs/client-lifecycle.md)
+- [Push messages](docs/push-messages.md)
+- [Logging](docs/logging.md)
+- [Token Provider](docs/token-provider.md)
 - SDK architecture
 
 ## Examples
@@ -99,3 +102,5 @@ client.getChannels { result -> showChannels(result) }
 - [MVVM + RxJava](docs/example-mvvm-rxjava.md)
 - [MVVM + Coroutines](docs/example-mvvm-coroutines.md)
 - [MVVM + LiveData](docs/example-mvvm-livedata.md)
+- [Pagination: channels](docs/example-pagination-channels.md)
+- [Pagination: messages](docs/example-pagination-messages.md)

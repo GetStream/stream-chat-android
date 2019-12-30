@@ -2,7 +2,7 @@ package io.getstream.chat.android.core.poc.app.common
 
 object ApiMapper {
 
-    fun mapChannel(channel: io.getstream.chat.android.core.poc.library.Channel): Channel {
+    fun mapChannel(channel: io.getstream.chat.android.core.poc.library.ChatChannel): Channel {
         return Channel().apply {
             remoteId = channel.id
             name = channel.name
@@ -10,7 +10,7 @@ object ApiMapper {
         }
     }
 
-    fun mapChannels(channels: List<io.getstream.chat.android.core.poc.library.Channel>): List<Channel> {
+    fun mapChannels(channels: List<io.getstream.chat.android.core.poc.library.ChatChannel>): List<Channel> {
         return channels.map {
             mapChannel(it)
         }

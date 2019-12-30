@@ -6,6 +6,7 @@ import androidx.room.*
 import io.getstream.chat.android.core.poc.app.common.Channel
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface ChannelsDao {
@@ -34,6 +35,9 @@ interface ChannelsDao {
     @Query("select * from channels order by updated_at")
     fun getAllRx(): Observable<List<Channel>>
 
+    @Query("select * from channels order by updated_at limit :limit offset :offset")
+    fun getPageRx(offset: Int, limit: Int): Observable<List<Channel>>
+
     @Query("select * from channels where id = :id limit 1")
     fun getById(id: String): Channel?
 
@@ -42,6 +46,12 @@ interface ChannelsDao {
 
     @Query("delete from channels")
     fun deleteAll(): Completable
+
+    @Query("delete from channels where remote_id = :remoteId")
+    fun delete(remoteId: String): Single<Int>
+
+    @Query("delete from channels where remote_id between :fromRemoteId and :toRemoteId")
+    fun delete(fromRemoteId: String, toRemoteId: String): Single<Int>
 
     @Transaction
     fun upsert(channels: List<Channel>) {
@@ -70,6 +80,7 @@ interface ChannelsDao {
         }
     }
 
+    @Transaction
     fun isNew(
         new: Channel,
         cached: Channel

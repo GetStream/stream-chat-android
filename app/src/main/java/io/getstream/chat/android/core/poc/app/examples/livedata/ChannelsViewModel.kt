@@ -1,4 +1,4 @@
-package io.getstream.chat.android.core.poc.app.livedata
+package io.getstream.chat.android.core.poc.app.examples.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData

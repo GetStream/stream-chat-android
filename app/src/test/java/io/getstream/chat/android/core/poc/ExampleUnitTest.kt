@@ -1,8 +1,9 @@
 package io.getstream.chat.android.core.poc
 
+import com.google.gson.Gson
+import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
+import io.getstream.chat.android.core.poc.library.requests.Field
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +13,20 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val gson = Gson()
+
+        val query = ChannelsQuery().apply {
+            sort[Field.cid] = "111"
+            offset = 10
+            limit = 10
+            message_limit = 10
+            filter_conditions[Field.cid] = "666"
+            filter_conditions[Field.user_id] = "777"
+            filter_conditions[Field.user_id] = mutableMapOf<Field, String>().apply {
+                put(Field.user_id, "11")
+            }
+        }
+
+        println(gson.toJson(query))
     }
 }

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.core.poc.app.coroutines
+package io.getstream.chat.android.core.poc.app.examples.coroutines
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
