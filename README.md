@@ -30,7 +30,9 @@ Open the project in Android Studio. Setup your emulator (we're using Pixel 3, AP
 
 ## Docs
 
-### UI Components
+### UI Components / Chat Views
+
+We provide 4 reusable chat views:
 
 * [Channel List](./docs/ChannelList.md)
 * [Message List](./docs/MessageList.md)
