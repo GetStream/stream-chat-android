@@ -60,7 +60,7 @@ dependencies {
 	}
 	```
 	
-5. Handle events (Later)
+5. Handle events
 
 	```
 	client.addEventsListener(StreamChatEventsListener() {
