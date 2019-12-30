@@ -53,11 +53,11 @@ dependencies {
 5. Handle events
 
 	```
-	val subscription = client.events().subscribe { event ->
-		if(event.type is ChatEvent.NEW_MESSAGE)
-		  showNewMessage(event.message)
-	}
-	subscription.unsubscribe()
+	client.addEventsListener(StreamChatEventsListener() {
+	    override fun newChannel(event: ChatEvent) {
+	        
+	    }
+	})
 	```
 
 
