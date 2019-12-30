@@ -14,6 +14,10 @@ class StreamChatClient {
 
     }
 
+    fun queryChannel() {
+
+    }
+
     fun queryChannels(query: ChannelsQuery = ChannelsQuery()): Call<List<ChatChannel>> {
         return api.queryChannels(query)
     }

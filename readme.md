@@ -13,7 +13,10 @@ dependencies {
 1. Create instance of client
 
 	```kotlin
-	val client = StreamChatClient("api-key", "token")
+	val client = StreamChatClient.Builder()
+		.apiKey("api-key")
+		.token(TokenProvider())
+		.build()
 	```
 
 2. Set user
@@ -89,3 +92,5 @@ client.getChannels { result -> showChannels(result) }
 - [MVVM + RxJava](docs/example-mvvm-rxjava.md)
 - [MVVM + Coroutines](docs/example-mvvm-coroutines.md)
 - [MVVM + LiveData](docs/example-mvvm-livedata.md)
+- [Pagination: channels](docs/example-pagination-channels.md)
+- [Pagination: messages](docs/example-pagination-messages.md)
