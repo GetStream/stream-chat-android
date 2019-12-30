@@ -1,6 +1,5 @@
 package io.getstream.chat.android.core.poc.app.common
 
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,8 +44,7 @@ class ChannelsListAdapter(data: List<Channel>) :
     }
 
     fun setOrUpdate(
-        channels: List<Channel>,
-        recyclerChannels: RecyclerView
+        channels: List<Channel>
     ) {
         if (channels.isEmpty()) return
         if (data.isEmpty()) {
@@ -58,18 +56,12 @@ class ChannelsListAdapter(data: List<Channel>) :
                 return
             }
 
-            //val recyclerViewState: Parcelable = recyclerChannels.layoutManager!!.onSaveInstanceState()!!
-
-
             val sorted = mergeAndSort(data, channels)
             val diffResult = DiffUtil.calculateDiff(DiffCallback(data, sorted), true)
             data.clear()
             data.addAll(sorted)
             diffResult.dispatchUpdatesTo(this)
             validateDuplicates()
-
-
-            //recyclerChannels.layoutManager!!.onRestoreInstanceState(recyclerViewState)
 
         }
     }

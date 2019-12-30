@@ -50,7 +50,7 @@ class ChannelsRepositoryRx(
     }
 
     private fun getCached(offset: Int, limit: Int): Observable<List<Channel>> {
-        return cache.getPageRx(offset, limit).distinct().flatMap {
+        return cache.getPageRx(offset, limit).flatMap {
             Observable.just(it)
         }
     }

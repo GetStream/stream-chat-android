@@ -6,6 +6,7 @@ import androidx.room.*
 import io.getstream.chat.android.core.poc.app.common.Channel
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface ChannelsDao {
@@ -45,6 +46,12 @@ interface ChannelsDao {
 
     @Query("delete from channels")
     fun deleteAll(): Completable
+
+    @Query("delete from channels where remote_id = :remoteId")
+    fun delete(remoteId: String): Single<Int>
+
+    @Query("delete from channels where remote_id between :fromRemoteId and :toRemoteId")
+    fun delete(fromRemoteId: String, toRemoteId: String): Single<Int>
 
     @Transaction
     fun upsert(channels: List<Channel>) {

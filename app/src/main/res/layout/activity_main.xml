@@ -30,6 +30,22 @@
             android:layout_weight="1"
             android:text="Clear Database" />
 
+        <Button
+            android:id="@+id/btnAddChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Add channel" />
+
+        <Button
+            android:id="@+id/btnRemoveChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="Remove channel" />
+
     </LinearLayout>
 
 
