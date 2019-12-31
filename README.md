@@ -18,7 +18,7 @@
 
 The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make common changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
-## Example App
+## Clone the Github Example App
 
 This repo includes a fully functional example app. To run the example app:
 
@@ -30,7 +30,9 @@ Open the project in Android Studio. Setup your emulator (we're using Pixel 3, AP
 
 ## Docs
 
-### UI Components
+### UI Components / Chat Views
+
+We provide 4 reusable chat views:
 
 * [Channel List](./docs/ChannelList.md)
 * [Message List](./docs/MessageList.md)
