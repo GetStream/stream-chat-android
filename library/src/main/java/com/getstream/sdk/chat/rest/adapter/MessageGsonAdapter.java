@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.model.Attachment;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.Reaction;
 import com.getstream.sdk.chat.rest.Message;
@@ -110,6 +111,9 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
                     continue;
                 case "user":
                     message.setUser(gson.fromJson(json, User.class));
+                    continue;
+                case "channel":
+                    message.setChannel(gson.fromJson(json, Channel.class));
                     continue;
                 case "attachments":
                     message.setAttachments(gson.fromJson(json, new TypeToken<List<Attachment>>(){}.getType()));
