@@ -72,6 +72,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void setChannel(Channel channel) {
         this.channel = channel;
 
+        Log.d(TAG, "Setting channel. Client:" + client() + ", storage:" + client().getStorage());
         // fetch offline messages
         client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
             @Override
@@ -154,7 +155,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
-
 
         messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
@@ -771,8 +771,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     @Override
     public void resume() {
         StreamChat.getLogger().logD(this, "resume");
-//        if (channel != null && channel.isInitialized())
-//            setLoading();
     }
 
     @Override
@@ -836,7 +834,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         watchChannel(new QueryWatchCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-
+                Log.d(TAG, "watchChannel successful. Response:" + response);
             }
 
             @Override

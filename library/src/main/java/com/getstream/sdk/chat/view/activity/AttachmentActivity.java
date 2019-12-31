@@ -5,22 +5,18 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -83,7 +79,12 @@ public class AttachmentActivity extends AppCompatActivity {
         iv_image.setVisibility(View.GONE);
         webView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        webView.loadUrl(StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+
+        if (StreamChat.isConnected()) {
+            webView.loadUrl(StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+        } else {
+            finish();
+        }
     }
 
 
@@ -121,12 +122,12 @@ public class AttachmentActivity extends AppCompatActivity {
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
+          
+            StreamChat.getLogger().logE(this,"The load failed due to an unknown error: " + error);
+          
             if (error == null){
-                StreamChat.getLogger().logE(this,"The load failed due to an unknown error.");
                 return;
             }
-
-            StreamChat.getLogger().logE(this, error.toString());
             Utils.showMessage(AttachmentActivity.this, error.toString());
         }
     }
