@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
+import kotlin.text.Regex;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
@@ -16,10 +17,7 @@ import java.util.regex.Pattern;
 public class StringUtility {
 
     private static final String TAG = StringUtility.class.getSimpleName();
-    private static final String MARKDOWN_REGEX = "<([a-zA-Z0-9. ]+)>|\\*{1,3}([a-zA-Z0-9. ]+)\\*{1,3}|_(\\w+)_|=(\\w+)=" +
-            "|~(\\w+)~|~(\\w+)|~ (\\w+)|@(\\w+)|#{1,6} (\\w+)|---( +)|\\*\\*\\*( +)|\\+\\+\\+( +)" +
-            "|:::( +)|// ?|`{1,3} ?\\n? ?([a-zA-Z0-9. ]+)\\n?`{1,3}|`{1,3}(\\w+)\\n([a-zA-Z0-9. ]+)\\n?`{1,3}" +
-            "|`{1,3} ?\\w+?\\n? ?([a-zA-Z0-9. ]+)\\n?`{1,3}|`{3}([a-zA-Z0-9. ]+)";
+
     public static final String MARKDOWN_REGEX_CHARS = "\\*{1,3}|`{1,3}|~{1,3}|_{1,3}|={1,3}|#{1,6}|@|:::";
 
     public static String stringFromNumbers(int... numbers) {
@@ -49,8 +47,8 @@ public class StringUtility {
     }
 
     public static boolean containsMarkdown(String message) {
-        Pattern pattern = Pattern.compile(MARKDOWN_REGEX, Pattern.DOTALL);
-        return pattern.matcher(message).find();
+        if(message == null || message.isEmpty()) return false;
+        else return RegexUtils.getAllMarkdownPattern().matcher(message).find();
     }
 
     public static String getDeletedOrMentionedText(Message message) {
