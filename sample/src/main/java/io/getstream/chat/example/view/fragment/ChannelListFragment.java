@@ -280,6 +280,6 @@ public class ChannelListFragment extends Fragment {
     }
 
     private void openSearchActivity() {
-        startActivity(MessageSearchActivity.getActivityIntent(requireContext()));
+        startActivity(MessageSearchActivity.searchAndOpenChannel(requireContext()));
     }
 }

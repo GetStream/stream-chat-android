@@ -3,14 +3,6 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
@@ -24,6 +16,11 @@ import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 import io.getstream.chat.example.search.MessageSearchActivity;
@@ -161,6 +158,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     private void openSearchActivity() {
-        startActivity(MessageSearchActivity.getActivityIntent(this,viewModel.getChannel().getCid() ));
+        startActivity(MessageSearchActivity.search(this, viewModel.getChannel().getCid()));
     }
 }

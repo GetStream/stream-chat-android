@@ -28,22 +28,22 @@ import static io.getstream.chat.example.view.fragment.ChannelListFragment.EXTRA_
 
 public class MessageSearchActivity extends AppCompatActivity implements SearchMessageRecyclerAdapter.OnSearchItemClickListener {
 
-    private static final String CID_KEY = "cid";
-    private static final String SEARCH_WITH_CID_KEY = "search-with-cid";
+    private static final String CID = "cid";
+    private static final String OPEN_CHANNEL = "open-channel";
 
     private MessageSearchVM viewModel;
     private ActivityMessageSearchBinding binding;
     private SearchMessageRecyclerAdapter adapter;
 
-    public static Intent getActivityIntent(Context context) {
+    public static Intent searchAndOpenChannel(Context context) {
         Intent intent = new Intent(context, MessageSearchActivity.class);
+        intent.putExtra(OPEN_CHANNEL, true);
         return intent;
     }
 
-    public static Intent getActivityIntent(Context context, String cid) {
+    public static Intent search(Context context, @Nullable String cid) {
         Intent intent = new Intent(context, MessageSearchActivity.class);
-        intent.putExtra(CID_KEY, cid);
-        intent.putExtra(SEARCH_WITH_CID_KEY, true);
+        intent.putExtra(CID, cid);
         return intent;
     }
 
@@ -70,15 +70,18 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
 
     @Override
     public void onItemClicked(String channelType, String channelId, String messageId) {
-        Intent intent = new Intent(this, ChannelActivity.class);
-        intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
-        intent.putExtra(EXTRA_CHANNEL_ID, channelId);
-        startActivity(intent);
+
+        if (getIntent().getBooleanExtra(OPEN_CHANNEL, false)) {
+            Intent intent = new Intent(this, ChannelActivity.class);
+            intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
+            intent.putExtra(EXTRA_CHANNEL_ID, channelId);
+            startActivity(intent);
+        }
+
     }
 
     private void extractData() {
-        viewModel.setCid(getIntent().getStringExtra(CID_KEY));
-        viewModel.setSearchWithCid(getIntent().getBooleanExtra(SEARCH_WITH_CID_KEY, false));
+        viewModel.setCid(getIntent().getStringExtra(CID));
     }
 
     private void initViews() {

@@ -39,7 +39,6 @@ public class MessageSearchVM extends AndroidViewModel {
 
     private Context context;
     private String cid;
-    private boolean searchWithCid;
 
     public MessageSearchVM(@NonNull Application application) {
         super(application);
@@ -61,10 +60,6 @@ public class MessageSearchVM extends AndroidViewModel {
 
     void setCid(String cid) {
         this.cid = cid;
-    }
-
-    void setSearchWithCid(boolean searchWithCid) {
-        this.searchWithCid = searchWithCid;
     }
 
     //TODO Implement this
