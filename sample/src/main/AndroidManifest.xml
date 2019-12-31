@@ -27,6 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".search.MessageSearchActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ChannelActivity"
             android:parentActivityName=".HomeActivity"></activity>

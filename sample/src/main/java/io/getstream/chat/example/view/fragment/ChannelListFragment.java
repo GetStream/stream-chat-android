@@ -21,6 +21,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+
+
+
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.FilterObject;
@@ -45,6 +48,7 @@ import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
+import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.utils.AppDataConfig;
 
 import static com.getstream.sdk.chat.enums.Filters.eq;
@@ -203,6 +207,32 @@ public class ChannelListFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = eq("type", "messaging");
+        viewModel.setChannelFilter(filter);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.action_hidden_channel:
+                showHiddenChannels();
+                return true;
+            case R.id.action_search_messages_channel:
+                openSearchActivity();
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         HomeActivity homeActivity = (HomeActivity) getActivity();
@@ -227,6 +257,7 @@ public class ChannelListFragment extends Fragment {
                 .setPositiveButton(android.R.string.ok, null)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
+
         alertDialog.setView(inputName);
         alertDialog.setOnShowListener(dialog -> {
             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -276,5 +307,24 @@ public class ChannelListFragment extends Fragment {
                 Toast.makeText(getContext(), errMsg, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void showMoreActionDialog(Channel channel) {
+        new ChannelMoreActionDialog(getContext())
+                .setChannelListViewModel(viewModel)
+                .setChannel(channel)
+                .show();
+    }
+    // endregion
+
+    private void showHiddenChannels() {
+        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
+        FilterObject filter = eq("type", "messaging").put("hidden", true);
+        viewModel.setChannelFilter(filter);
+        viewModel.queryChannels();
+    }
+
+    private void openSearchActivity() {
+        startActivity(MessageSearchActivity.searchAndOpenChannel(requireContext()));
     }
 }

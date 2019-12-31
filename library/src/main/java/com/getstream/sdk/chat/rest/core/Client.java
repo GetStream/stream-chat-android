@@ -86,7 +86,6 @@ import com.getstream.sdk.chat.rest.response.TokenResponse;
 import com.getstream.sdk.chat.rest.response.WsErrorMessage;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
-import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -712,6 +711,7 @@ public class Client implements WSResponseHandler {
             Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
             return;
         }
+
         if (webSocketService != null) {
             Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
             return;

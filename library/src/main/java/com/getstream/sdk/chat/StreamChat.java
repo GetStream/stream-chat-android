@@ -83,6 +83,10 @@ public class StreamChat {
         }
     }
 
+    public static boolean isConnected(){
+        return INSTANCE != null && INSTANCE.isConnected();
+    }
+
     public static Context getContext() {
         return context;
     }

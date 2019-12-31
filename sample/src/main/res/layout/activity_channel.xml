@@ -19,6 +19,8 @@
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:streamChannelHeaderOptionsButtonShow="true"
+            app:streamChannelHeaderOptionsButtonBackground="@drawable/ic_search"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

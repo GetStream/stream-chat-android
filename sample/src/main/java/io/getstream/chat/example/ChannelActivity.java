@@ -4,12 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
@@ -22,8 +16,14 @@ import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
+import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
@@ -69,7 +69,7 @@ public class ChannelActivity extends AppCompatActivity
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.setChannel(channel);
         viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
-          Log.i(TAG, String.format("The current user unread count is now %d", count));
+            Log.i(TAG, String.format("The current user unread count is now %d", count));
         });
 
         // set listeners
@@ -82,13 +82,13 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
         // connect the view model
+        Log.d(TAG, "Set View Model = " + viewModel);
         binding.setViewModel(viewModel);
         binding.channelHeader.setViewModel(viewModel, this);
         binding.channelHeader.setHeaderOptionsClickListener(this);
         binding.channelHeader.setHeaderAvatarGroupClickListener(this);
         binding.messageList.setViewModel(viewModel, this);
         binding.messageInput.setViewModel(viewModel, this);
-        
     }
 
     @Override
@@ -110,7 +110,6 @@ public class ChannelActivity extends AppCompatActivity
         // If you are using own MessageInputView please comment this line.
         binding.messageInput.permissionResult(requestCode, permissions, grantResults);
     }
-
 
     @Override
     public void openPermissionRequest() {
@@ -141,12 +140,7 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onHeaderOptionsClick(Channel channel) {
-        new AlertDialog.Builder(this)
-                .setTitle("Options for channel " + channel.getName())
-                .setMessage("You pressed on the options, well done")
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.stream_ic_settings)
-                .show();
+        openSearchActivity();
     }
 
     @Override
@@ -162,5 +156,9 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onUserClick(User user) {
         // open your user profile
+    }
+
+    private void openSearchActivity() {
+        startActivity(MessageSearchActivity.search(this, viewModel.getChannel().getCid()));
     }
 }

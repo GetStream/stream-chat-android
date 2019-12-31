@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     private static final String TAG = RetrofitClient.class.getSimpleName();
-    private static HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+    private static HttpLoggingInterceptor loggingInterceptor;
 
     private static Request prepareRequest(Interceptor.Chain chain, boolean isAnonymousClient) {
         String authType = isAnonymousClient ? "anonymous" : "jwt";
@@ -49,6 +49,8 @@ public class RetrofitClient {
         if (!anonymousAuth) {
             authInterceptor = new TokenAuthInterceptor(tokenProvider);
         }
+
+        setupLoggingInterceptor();
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
@@ -111,5 +113,13 @@ public class RetrofitClient {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(GsonConverter.Gson()))
                 .build();
+    }
+
+    private static HttpLoggingInterceptor setupLoggingInterceptor() {
+        loggingInterceptor = new HttpLoggingInterceptor();
+
+        // Uncomment if need show http logs
+        //loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+        return loggingInterceptor;
     }
 }
