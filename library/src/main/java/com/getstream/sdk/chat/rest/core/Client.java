@@ -685,6 +685,7 @@ public class Client implements WSResponseHandler {
             Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
             return;
         }
+
         if (webSocketService != null) {
             Log.w(TAG, "tried to reconnectWebSocket by a connection is still set");
             return;

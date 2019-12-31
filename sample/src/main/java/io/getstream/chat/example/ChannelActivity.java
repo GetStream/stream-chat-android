@@ -82,6 +82,7 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
         // connect the view model
+        Log.d(TAG, "Set View Model = " + viewModel);
         binding.setViewModel(viewModel);
         binding.channelHeader.setViewModel(viewModel, this);
         binding.channelHeader.setHeaderOptionsClickListener(this);

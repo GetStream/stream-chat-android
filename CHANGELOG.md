@@ -10,6 +10,8 @@
 - fix markdown for mention if there is no space at prefix @
 - fix Edit Attachment behavior
 - add support for channel.hide with clear history + events
+- Fix crash in AttachmentActivity and AttachmentDocumentActivity crash when app is killed in background
+- Add utility method StreamChat.isConnected()
 
 #### Breaking changes:
 
