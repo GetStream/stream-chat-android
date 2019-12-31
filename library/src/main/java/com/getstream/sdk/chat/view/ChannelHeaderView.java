@@ -67,9 +67,6 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
 
-        Log.d(TAG, "Header title:" + viewModel.getChannelState().getValue().getChannelNameOrMembers());
-        Log.d(TAG, "Header last active:" + viewModel.getChannelState().getValue().getLastActive());
-
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);

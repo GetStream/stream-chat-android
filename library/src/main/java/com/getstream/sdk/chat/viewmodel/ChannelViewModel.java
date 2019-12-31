@@ -771,11 +771,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     @Override
     public void resume() {
         Log.d(TAG, "resume");
-        if (channel != null) {
-            Log.d(TAG, "resume channel = " + channel.getName());
-        }
-//        if (channel != null && channel.isInitialized())
-//            setLoading();
     }
 
     @Override
