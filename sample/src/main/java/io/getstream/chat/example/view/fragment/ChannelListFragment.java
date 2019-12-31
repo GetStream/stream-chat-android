@@ -5,24 +5,10 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-
-
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
@@ -43,6 +29,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
@@ -113,24 +104,6 @@ public class ChannelListFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        int i = menuItem.getItemId();
-        if (i == R.id.action_hidden_channel) {
-            showHiddenChannels();
-            return true;
-        }
-        return false;
-    }
-
-
-    private void showHiddenChannels() {
-        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
-        FilterObject filter = eq("type", "messaging").put("hidden", true);
-        viewModel.setChannelFilter(filter);
-        viewModel.queryChannels();
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
@@ -197,26 +170,6 @@ public class ChannelListFragment extends Fragment {
         binding.ivAdd.setOnClickListener(view -> createNewChannelDialog());
 
         return binding.getRoot();
-    }
-
-    private void showMoreActionDialog(Channel channel) {
-        new ChannelMoreActionDialog(getContext())
-                .setChannelListViewModel(viewModel)
-                .setChannel(channel)
-                .show();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = eq("type", "messaging");
-        viewModel.setChannelFilter(filter);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
