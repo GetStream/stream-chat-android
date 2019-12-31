@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.storage.converter.ReactionListConverter;
 import com.getstream.sdk.chat.storage.converter.UserListConverter;
 import com.getstream.sdk.chat.utils.Utils;
 import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -45,15 +46,19 @@ import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
  * A message
  */
 
-@Entity(tableName = "stream_message", foreignKeys =
-        {@ForeignKey(entity = User.class,
-                parentColumns = "id",
-                childColumns = "user_id"),
+@Entity(tableName = "stream_message",
+        foreignKeys = {
+                @ForeignKey(entity = User.class,
+                        parentColumns = "id",
+                        childColumns = "user_id"),
                 @ForeignKey(entity = Channel.class,
                         parentColumns = "cid",
-                        childColumns = "cid")}
-        , indices = {
-        @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})})
+                        childColumns = "cid")},
+        indices = {
+                @Index(value = {"user_id"}), @Index(value = {"cid", "created_at"})
+        }
+)
+
 @SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @JsonAdapter(MessageGsonAdapter.class)
 public class Message implements UserEntity {
@@ -66,16 +71,24 @@ public class Message implements UserEntity {
     @NonNull
     private String cid;
 
+    @SerializedName("text")
     private String text;
 
+    @SerializedName("html")
     private String html;
 
+    @SerializedName("type")
     private String type;
 
     private Integer syncStatus;
 
     @Ignore
+    @SerializedName("user")
     private User user;
+
+    @Ignore
+    @SerializedName("channel")
+    private Channel channel;
 
     @ColumnInfo(name = "user_id")
     private String userID;
@@ -83,24 +96,30 @@ public class Message implements UserEntity {
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
 
+    @SerializedName("latest_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
 
+    @SerializedName("own_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 
+    @SerializedName("reply_count")
     private int replyCount;
 
+    @SerializedName("created_at")
     @ColumnInfo(name = "created_at")
     @TypeConverters({DateConverter.class})
     private Date createdAt;
 
+    @SerializedName("updated_at")
     @TypeConverters({DateConverter.class})
     private Date updatedAt;
 
     @TypeConverters({DateConverter.class})
     private Date deletedAt;
 
+    @SerializedName("mentioned_users")
     @TypeConverters(UserListConverter.class)
     private List<User> mentionedUsers;
 
@@ -130,7 +149,6 @@ public class Message implements UserEntity {
         this.extraData = new HashMap<>();
         this.setSyncStatus(Sync.IN_MEMORY);
         this.setType("regular");
-
     }
 
     public Message(String text) {
@@ -341,6 +359,14 @@ public class Message implements UserEntity {
         this.user = user;
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
     @TypeConverters(AttachmentListConverter.class)
     public List<Attachment> getAttachments() {
         if (attachments == null) {
@@ -477,7 +503,8 @@ public class Message implements UserEntity {
         this.cid = cid;
     }
 
-    public @Sync.Status Integer getSyncStatus() {
+    public @Sync.Status
+    Integer getSyncStatus() {
         return syncStatus;
     }
 
@@ -485,7 +512,7 @@ public class Message implements UserEntity {
         this.syncStatus = syncStatus;
     }
 
-    public boolean hasAttachments(){
+    public boolean hasAttachments() {
         return getAttachments() != null && !getAttachments().isEmpty();
     }
 }

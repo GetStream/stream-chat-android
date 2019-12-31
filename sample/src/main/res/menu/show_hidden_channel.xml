@@ -3,4 +3,7 @@
     <item
         android:id="@+id/action_hidden_channel"
         android:title="@string/menu_show_hidden_channels" />
+    <item
+        android:id="@+id/action_search_messages_channel"
+        android:title="@string/menu_search_messages_channels" />
 </menu>
