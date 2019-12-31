@@ -6,6 +6,11 @@ import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.Utils;
+
+import java.util.List;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,12 +19,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.utils.Utils;
-
-import java.util.List;
-
 import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.ActivityMessageSearchBinding;
@@ -30,16 +29,21 @@ import static io.getstream.chat.example.view.fragment.ChannelListFragment.EXTRA_
 public class MessageSearchActivity extends AppCompatActivity implements SearchMessageRecyclerAdapter.OnSearchItemClickListener {
 
     private static final String CID_KEY = "cid";
+    private static final String SEARCH_WITH_CID_KEY = "search-with-cid";
 
     private MessageSearchVM viewModel;
     private ActivityMessageSearchBinding binding;
     private SearchMessageRecyclerAdapter adapter;
 
-    public static Intent getActivityIntent(Context context, @Nullable String cid) {
+    public static Intent getActivityIntent(Context context) {
         Intent intent = new Intent(context, MessageSearchActivity.class);
-        if (cid != null) {
-            intent.putExtra(CID_KEY, cid);
-        }
+        return intent;
+    }
+
+    public static Intent getActivityIntent(Context context, String cid) {
+        Intent intent = new Intent(context, MessageSearchActivity.class);
+        intent.putExtra(CID_KEY, cid);
+        intent.putExtra(SEARCH_WITH_CID_KEY, true);
         return intent;
     }
 
@@ -66,21 +70,15 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
 
     @Override
     public void onItemClicked(String channelType, String channelId, String messageId) {
-        if (viewModel.fromChannelList()) {
-            Intent intent = new Intent(this, ChannelActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
-            intent.putExtra(EXTRA_CHANNEL_ID, channelId);
-            startActivity(intent);
-        } else {
-            finish();
-        }
+        Intent intent = new Intent(this, ChannelActivity.class);
+        intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
+        intent.putExtra(EXTRA_CHANNEL_ID, channelId);
+        startActivity(intent);
     }
 
     private void extractData() {
-        String cid = getIntent().getStringExtra(CID_KEY);
-        if (cid != null) {
-            viewModel.setCid(cid);
-        }
+        viewModel.setCid(getIntent().getStringExtra(CID_KEY));
+        viewModel.setSearchWithCid(getIntent().getBooleanExtra(SEARCH_WITH_CID_KEY, false));
     }
 
     private void initViews() {
@@ -92,9 +90,7 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
     private void initToolbar() {
         setSupportActionBar(binding.searchMessagesToolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void addListeners() {

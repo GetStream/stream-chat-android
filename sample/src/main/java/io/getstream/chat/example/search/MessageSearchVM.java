@@ -39,6 +39,7 @@ public class MessageSearchVM extends AndroidViewModel {
 
     private Context context;
     private String cid;
+    private boolean searchWithCid;
 
     public MessageSearchVM(@NonNull Application application) {
         super(application);
@@ -62,8 +63,8 @@ public class MessageSearchVM extends AndroidViewModel {
         this.cid = cid;
     }
 
-    boolean fromChannelList() {
-        return this.cid == null;
+    void setSearchWithCid(boolean searchWithCid) {
+        this.searchWithCid = searchWithCid;
     }
 
     //TODO Implement this
@@ -126,15 +127,9 @@ public class MessageSearchVM extends AndroidViewModel {
     }
 
     private void onSearchMessagesLoaded(SearchMessagesResponse response) {
-        List<MessageResponse> list = searchResult.getValue();
-        if (list != null) {
-            list.addAll(response.getResults());
-        } else {
-            list = response.getResults();
-        }
-        searchResult.setValue(list);
+        List<MessageResponse> result = response.getResults();
+        searchResult.setValue(result);
         isLoading.setValue(false);
-
-        isEmpty.setValue(list != null && list.isEmpty());
+        isEmpty.setValue(result.isEmpty());
     }
 }
