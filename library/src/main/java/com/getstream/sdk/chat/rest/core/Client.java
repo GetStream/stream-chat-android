@@ -680,7 +680,7 @@ public class Client implements WSResponseHandler {
     /**
      * the opposite of {@link #disconnectWebSocket()}
      */
-    public synchronized void reconnectWebSocket() {
+    public void reconnectWebSocket() {
         if (getUser() == null) {
             Log.w(TAG, "calling reconnectWebSocket before setUser is a no-op");
             return;
