@@ -23,16 +23,16 @@ public class StreamChatSilentLogger implements StreamLogger {
 
     @Override
     public void logE(@NonNull Object tag, @NonNull String message) {
-        Log.e(tag.getClass().getSimpleName(), message);
+        // unused
     }
 
     @Override
     public void logT(@NonNull Throwable throwable) {
-        throwable.printStackTrace();
+        // unused
     }
 
     @Override
     public void logT(@NonNull Object tag, @NonNull Throwable throwable) {
-        throwable.printStackTrace();
+        // unused
     }
 }

@@ -11,7 +11,7 @@ public class StreamChatLogger implements StreamLogger {
     private StreamLoggerHandler loggingHandler;
 
     private StreamChatLogger(@Nullable StreamLoggerLevel loggingLevel, @Nullable StreamLoggerHandler loggingHandler) {
-        this.loggingLevel = loggingLevel == null ? StreamLoggerLevel.ALL : loggingLevel;
+        this.loggingLevel = loggingLevel == null ? StreamLoggerLevel.NOTHING : loggingLevel;
         this.loggingHandler = loggingHandler;
     }
 
