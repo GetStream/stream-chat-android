@@ -12,6 +12,7 @@
 - add support for channel.hide with clear history + events
 - Fix crash in AttachmentActivity and AttachmentDocumentActivity crash when app is killed in background
 - Add utility method StreamChat.isConnected()
+- Disable markdown rendering on channel last message view
 
 #### Breaking changes:
 
