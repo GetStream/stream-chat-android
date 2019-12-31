@@ -319,6 +319,28 @@ StreamChat.initStyle(
 You can set custom fonts for specific UI components with or without settings for the entire library.  
 See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
 
+## Debug and development
+
+### Logging
+By default logging is disabled. You enable logs and set log level when initialising `StreamChat`:
+```java
+StreamChatLogger logger = new StreamChatLogger.Builder()
+                .loggingLevel(BuildConfig.DEBUG ? StreamLoggerLevel.ALL : StreamLoggerLevel.NOTHING)
+                .build();
+
+StreamChat.Config configuration = new StreamChat.Config(this, "api-key");
+configuration.setLogger(logger);
+StreamChat.init(configuration);
+```
+
+If you need to intercept logs you can pass logger handler:
+
+```java
+StreamChatLogger logger = new StreamChatLogger.Builder()
+                .setLoggingHandler(loggerHandler)
+                .build();
+```
+
 ## FAQ
 
 ### Channel List loading icons spins forever
