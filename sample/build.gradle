@@ -17,7 +17,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def appVersion = "18.0"
+def appVersion = "19.0"
 
 android {
     compileSdkVersion 28

@@ -1,4 +1,6 @@
-## Upcoming (3.6.0)
+## Upcoming
+
+## January 6th, 2020 - 3.6.0
 
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
