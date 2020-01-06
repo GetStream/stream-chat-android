@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
@@ -503,7 +504,7 @@ public class MessageInputController {
     }
 
     private void setMentionUsers(String string) {
-        Log.d(TAG, "Mention UserName: " + string);
+        StreamChat.getLogger().logD(this,"Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         List<Member> members = channel.getChannelState().getMembers();
