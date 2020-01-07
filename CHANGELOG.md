@@ -2,6 +2,11 @@
 
 - Add navigation components with handler to override default behaviour
 
+## Bracking changes:
+
+###
+- `OpenCameraViewListener` is replaced with CameraDestination
+
 ## January 6th, 2020 - 3.6.0
 
 - Add `MessageSendListener` interface for sending Message

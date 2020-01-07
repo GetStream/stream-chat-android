@@ -12,7 +12,7 @@ abstract public class ChatDestination {
         this.context = context;
     }
 
-    protected abstract void navigate();
+    public abstract void navigate();
 
     protected void start(Intent intent) {
         context.startActivity(intent);

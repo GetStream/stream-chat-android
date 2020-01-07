@@ -12,7 +12,7 @@ public class AppSettingsDestination extends ChatDestination {
     }
 
     @Override
-    protected void navigate() {
+    public void navigate() {
         Intent intent = new Intent();
         intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", context.getPackageName(), null);

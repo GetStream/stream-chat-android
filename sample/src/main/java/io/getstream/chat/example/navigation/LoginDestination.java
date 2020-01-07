@@ -14,7 +14,7 @@ public class LoginDestination extends ChatDestination {
     }
 
     @Override
-    protected void navigate() {
+    public void navigate() {
         start(new Intent(context, LoginActivity.class));
     }
 }

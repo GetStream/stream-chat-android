@@ -17,7 +17,7 @@ public class SearchDestination extends ChatDestination {
     }
 
     @Override
-    protected void navigate() {
+    public void navigate() {
 
         if (cid == null) {
             start(MessageSearchActivity.searchAndOpenChannel(context));

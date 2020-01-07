@@ -14,7 +14,7 @@ public class HomeDestination extends ChatDestination {
     }
 
     @Override
-    protected void navigate() {
+    public void navigate() {
         start(new Intent(context, HomeActivity.class));
     }
 }
