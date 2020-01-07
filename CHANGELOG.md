@@ -1,4 +1,6 @@
-## Upcoming
+## January 7th, 2020 - 3.6.1
+
+- Add navigation components with handler to override default behaviour
 
 ## January 6th, 2020 - 3.6.0
 

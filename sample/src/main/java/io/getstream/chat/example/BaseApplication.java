@@ -1,8 +1,7 @@
 package io.getstream.chat.example;
 
 import android.app.Application;
-
-import androidx.annotation.NonNull;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
@@ -10,10 +9,13 @@ import com.getstream.sdk.chat.logger.StreamChatLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.logger.StreamLoggerHandler;
 import com.getstream.sdk.chat.logger.StreamLoggerLevel;
+import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
+import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.google.firebase.FirebaseApp;
 
+import androidx.annotation.NonNull;
 import io.fabric.sdk.android.Fabric;
 import io.getstream.chat.example.utils.AppDataConfig;
 
@@ -98,6 +100,28 @@ public class BaseApplication extends Application {
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
         configuration.setLogger(logger);
+        configuration.navigationHandler(destination -> {
+
+            String url = "";
+
+            if (destination instanceof WebLinkDestination) {
+                url = ((WebLinkDestination) destination).url;
+            } else if (destination instanceof AttachmentDestination) {
+                url = ((AttachmentDestination) destination).url;
+            }
+
+            if (url.startsWith("https://your.domain.com")) {
+                Toast.makeText(this, "Custom url handling: " + url, Toast.LENGTH_SHORT).show();
+                // handle/change/update url
+                // open your webview, system browser or your own activity
+                // and return true to override default behaviour
+                return true;
+            } else {
+                return false;
+            }
+
+
+        });
         StreamChat.init(configuration);
     }
 }

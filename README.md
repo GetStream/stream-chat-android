@@ -321,6 +321,58 @@ StreamChat.initStyle(
 You can set custom fonts for specific UI components with or without settings for the entire library.  
 See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
 
+## Navigation
+
+SDK has few builtin activties, webview and system browser Intents. Navigation between these components handled internally by `StreamChatNavigator`.
+
+For example if you need to open your custom webview when user clicks on a link you can override `WebLinkDestination` and `AttachmentDestination`.
+```java
+Config config = new Config(this, "key");
+
+config.navigationHandler(destination -> {
+
+    String url = "";
+
+    if (destination instanceof WebLinkDestination) {
+        url = ((WebLinkDestination) destination).url;
+    } else if (destination instanceof AttachmentDestination) {
+        url = ((AttachmentDestination) destination).url;
+    }
+
+    if (url.startsWith("https://your.domain.com")) {
+        // handle/change/update url
+        // open your webview, system browser or your own activity
+        // and return true to override default behaviour
+        return true;
+    } else {
+        return false;
+    }
+
+
+});
+StreamChat.init(config);
+
+```  
+
+Another example is opening custom camera:
+
+```java
+config.navigationHandler(destination -> {
+    if (destination instanceof CameraDestination) {
+        //open custom camera activity
+        return true;
+    } else {
+        return false;
+    }
+});
+```
+
+Full list of destinations:
+- `AppSettingsDestination` opens app setting when required  permissions are not granted
+- `AttachmentDestination` opens attachment activity when user click on attachment
+- `CameraDestination` opens camera when user makes photo or video to send it in channel
+- `WebLinkDestination` opens system web browser when user clicks on link
+
 ## Debug and development
 
 ### Logging
