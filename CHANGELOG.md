@@ -1,4 +1,11 @@
-## Upcoming
+## January 7th, 2020 - 3.6.1
+
+- Add navigation components with handler to override default behaviour
+
+## Breaking changes:
+
+###
+- `OpenCameraViewListener` is replaced with CameraDestination
 
 ## January 6th, 2020 - 3.6.0
 

@@ -2,11 +2,8 @@ package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -16,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
@@ -24,22 +20,17 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
-import com.getstream.sdk.chat.view.activity.AttachmentActivity;
-import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity;
-import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -374,6 +365,10 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void showAttachment(Message message, Attachment attachment) {
+        StreamChat.getNavigator().navigate(new AttachmentDestination(message, attachment, getContext()));
+    }
+
     public void setReactionViewClickListener(ReactionViewClickListener l) {
         this.reactionViewClickListener = l;
         if (adapter == null) return;
@@ -438,85 +433,7 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    // region View Attachment
-    public void showAttachment(Message message, Attachment attachment) {
-        String url = null;
-        String type = null;
-        if (attachment == null)
-            return;
 
-        switch (attachment.getType()) {
-            case ModelType.attach_file:
-                loadFile(attachment);
-                return;
-            case ModelType.attach_image:
-                if (attachment.getOgURL() != null) {
-                    url = attachment.getOgURL();
-                    type = ModelType.attach_link;
-                } else {
-                    List<String> imageUrls = new ArrayList<>();
-                    for (Attachment a : message.getAttachments()) {
-                        if (!a.getType().equals(ModelType.attach_image) || TextUtils.isEmpty(a.getImageURL()))
-                            continue;
-                        imageUrls.add(a.getImageURL());
-                    }
-                    if (imageUrls.isEmpty()) {
-                        Utils.showMessage(getContext(), "Invalid image(s)!");
-                        return;
-                    }
-
-                    int position = message.getAttachments().indexOf(attachment);
-                    if (position > imageUrls.size() - 1) position = 0;
-                    new ImageViewer.Builder<>(getContext(), imageUrls)
-                            .setStartPosition(position)
-                            .show();
-                    return;
-                }
-                break;
-            case ModelType.attach_video:
-                url = attachment.getAssetURL();
-                break;
-            case ModelType.attach_giphy:
-                url = attachment.getThumbURL();
-                break;
-            case ModelType.attach_product:
-                url = attachment.getUrl();
-                break;
-        }
-        if (TextUtils.isEmpty(url)) {
-            Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_url));
-            return;
-        }
-
-        if (type == null) type = attachment.getType();
-        Intent intent = new Intent(getContext(), AttachmentActivity.class);
-        intent.putExtra("type", type);
-        intent.putExtra("url", url);
-        getContext().startActivity(intent);
-    }
-
-    private void loadFile(Attachment attachment) {
-        // Media
-        if (attachment.getMime_type().contains("audio") ||
-                attachment.getMime_type().contains("video")) {
-            Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
-            intent.putExtra("type", attachment.getMime_type());
-            intent.putExtra("url", attachment.getAssetURL());
-            getContext().startActivity(intent);
-            return;
-        }
-
-        // Office
-        if (attachment.getMime_type().equals("application/msword") ||
-                attachment.getMime_type().equals(ModelType.attach_mime_txt) ||
-                attachment.getMime_type().equals(ModelType.attach_mime_pdf) ||
-                attachment.getMime_type().contains("application/vnd")) {
-
-            Intent intent = new Intent(getContext(), AttachmentDocumentActivity.class);
-            intent.putExtra("url", attachment.getAssetURL());
-            getContext().startActivity(intent);
-        }
-    }
 
     public interface HeaderAvatarGroupClickListener {
         void onHeaderAvatarGroupClick(Channel channel);

@@ -23,6 +23,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
+import io.getstream.chat.example.navigation.SearchDestination;
 import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
@@ -35,8 +36,7 @@ public class ChannelActivity extends AppCompatActivity
         MessageListView.HeaderOptionsClickListener,
         MessageListView.HeaderAvatarGroupClickListener,
         MessageListView.UserClickListener,
-        MessageInputView.PermissionRequestListener,
-        MessageInputView.OpenCameraViewListener {
+        MessageInputView.PermissionRequestListener {
 
     static final String TAG = ChannelActivity.class.getSimpleName();
     static final String STATE_TEXT = "messageText";
@@ -77,7 +77,6 @@ public class ChannelActivity extends AppCompatActivity
         binding.messageList.setUserClickListener(this);
         binding.messageList.setAttachmentClickListener(this);
         // If you are using own MessageInputView please comment this line.
-        binding.messageInput.setOpenCameraViewListener(this);
         binding.messageInput.setPermissionRequestListener(this);
         binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
@@ -119,11 +118,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     @Override
-    public void openCameraView(Intent intent, int REQUEST_CODE) {
-        startActivityForResult(intent, REQUEST_CODE);
-    }
-
-    @Override
     public void onMessageLongClick(Message message) {
         new MessageMoreActionDialog(this)
                 .setChannelViewModel(viewModel)
@@ -159,6 +153,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     private void openSearchActivity() {
-        startActivity(MessageSearchActivity.search(this, viewModel.getChannel().getCid()));
+        StreamChat.getNavigator().navigate(new SearchDestination(viewModel.getChannel().getCid(), this));
     }
 }
