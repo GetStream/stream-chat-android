@@ -24,6 +24,8 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
+
 import java.lang.ref.WeakReference;
 
 @SuppressWarnings("WeakerAccess")
@@ -112,7 +114,7 @@ public class MatrixManager {
         }
 
         if (view.getHeight() == 0 || view.getWidth() == 0) {
-            Log.d(TAG, "Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
+            StreamChat.getLogger().logD(this,"Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
             return false;
         }
 

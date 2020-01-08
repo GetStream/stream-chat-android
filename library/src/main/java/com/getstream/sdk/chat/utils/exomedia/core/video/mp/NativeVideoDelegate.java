@@ -29,6 +29,7 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.WindowInfo;
 import com.getstream.sdk.chat.utils.exomedia.core.video.ClearableSurface;
@@ -72,6 +73,7 @@ public class NativeVideoDelegate {
     protected MediaPlayer.OnErrorListener onErrorListener;
     @Nullable
     protected MediaPlayer.OnInfoListener onInfoListener;
+
     public NativeVideoDelegate(@NonNull Context context, @NonNull Callback callback, @NonNull ClearableSurface clearableSurface) {
         this.context = context;
         this.callback = callback;
@@ -187,7 +189,7 @@ public class NativeVideoDelegate {
             try {
                 mediaPlayer.stop();
             } catch (Exception e) {
-                Log.d(TAG, "stopPlayback: error calling mediaPlayer.stop()", e);
+                StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.stop(), Error:" + e);
             }
         }
 
@@ -208,7 +210,7 @@ public class NativeVideoDelegate {
             mediaPlayer.reset();
             mediaPlayer.release();
         } catch (Exception e) {
-            Log.d(TAG, "stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release()", e);
+            StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release(). Error:" + e);
         }
 
         playRequested = false;
@@ -373,7 +375,7 @@ public class NativeVideoDelegate {
 
             currentState = State.PREPARING;
         } catch (IOException | IllegalArgumentException ex) {
-            Log.w(TAG, "Unable to open content: " + uri, ex);
+            StreamChat.getLogger().logW(this, "Unable to open content: " + uri + ", " + ex);
             currentState = State.ERROR;
 
             internalListeners.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
@@ -421,7 +423,7 @@ public class NativeVideoDelegate {
 
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            Log.d(TAG, "Error: " + what + "," + extra);
+            StreamChat.getLogger().logD(this,"Error: " + what + "," + extra);
             currentState = State.ERROR;
 
             return onErrorListener == null || onErrorListener.onError(mediaPlayer, what, extra);

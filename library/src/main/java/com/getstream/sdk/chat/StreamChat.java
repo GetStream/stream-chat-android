@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -9,6 +8,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
+import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.User;
@@ -44,6 +45,7 @@ public class StreamChat {
     private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
+    private static StreamLogger logger;
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -97,6 +99,10 @@ public class StreamChat {
         StreamChat.stringsProvider = stringsProvider;
     }
 
+    public static void setLogger(StreamLogger logger) {
+        StreamChat.logger = logger;
+    }
+
     private static void initComponents(String apiKey, ApiClientOptions apiClientOptions) {
         stringsProvider = new StringsProviderImpl(context);
         fontsManager = new FontsManagerImpl(context);
@@ -120,7 +126,7 @@ public class StreamChat {
 
             @Override
             public void onError(String errMsg, int errCode) {
-                Log.d(TAG, "handleConnectedUser: error: " + errMsg + ":" + errCode);
+                StreamChat.getLogger().logD(this, "handleConnectedUser: error: " + errMsg + ":" + errCode);
             }
         });
     }
@@ -129,7 +135,7 @@ public class StreamChat {
         INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
             @Override
             public void onSuccess(User user) {
-                Log.i(TAG, "set user worked out well");
+                logger.logI(this, "set user worked out well");
                 setupEventListeners();
                 currentUser.postValue(user);
 
@@ -144,11 +150,13 @@ public class StreamChat {
     }
 
     private static synchronized void setupEventListeners() {
-        Log.i(TAG, "setupEventListeners");
+        logger.logI(StreamChat.class, "setupEventListeners");
+
         INSTANCE.addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionChanged(Event event) {
-                Log.w(TAG, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+                StreamChat.getLogger().logW(this, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
+
                 if (event.getOnline()) {
                     onlineStatus.postValue(OnlineStatus.CONNECTING);
                 } else {
@@ -159,12 +167,12 @@ public class StreamChat {
 
             @Override
             public void onConnectionRecovered(Event event) {
-                Log.w(TAG, "connection recovered!");
+                StreamChat.getLogger().logW(this, "connection recovered!");
                 List<Channel> channels = INSTANCE.getActiveChannels();
                 if (channels == null) {
-                    Log.w(TAG, "nothing to recover");
+                    StreamChat.getLogger().logW(this, "nothing to recover");
                 } else {
-                    Log.w(TAG, channels.size() + " channels to recover!");
+                    StreamChat.getLogger().logW(this, channels.size() + " channels to recover!");
                 }
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
             }
@@ -194,7 +202,7 @@ public class StreamChat {
         new StreamLifecycleObserver(new LifecycleHandler() {
             @Override
             public void resume() {
-                Log.i(TAG, "detected resume");
+                logger.logI(this, "detected resume");
                 if (lifecycleStopped && userWasInitialized) {
                     lifecycleStopped = false;
                     INSTANCE.reconnectWebSocket();
@@ -203,7 +211,7 @@ public class StreamChat {
 
             @Override
             public void stopped() {
-                Log.i(TAG, "detected stop");
+                logger.logI(this, "detected stop");
                 lifecycleStopped = true;
                 if (INSTANCE != null) {
                     INSTANCE.disconnectWebSocket();
@@ -226,19 +234,24 @@ public class StreamChat {
         return fontsManager;
     }
 
+    public static StreamLogger getLogger() { return  logger; }
+
     public static synchronized boolean init(@NonNull Config config) {
         ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
-        return init(config.getApiKey(), options, context);
+        StreamLogger logger = config.getLogger() != null ? config.getLogger() : new StreamChatSilentLogger();
+        return init(config.getApiKey(), options, context, logger);
     }
 
     public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context);
+        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger());
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context) {
+    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context, StreamLogger logger) {
         if (INSTANCE != null) {
             return true;
         }
+        StreamChat.logger = logger;
+        StreamChat.logger.logI(StreamChat.class, "calling init");
         synchronized (Client.class) {
             if (INSTANCE == null) {
                 StreamChat.context = context;
@@ -256,6 +269,7 @@ public class StreamChat {
 
         private String apiKey;
         private ApiClientOptions apiClientOptions;
+        private StreamLogger logger;
 
         public Config(@NonNull Context context, @NonNull String apiKey) {
             StreamChat.context = context;
@@ -280,12 +294,24 @@ public class StreamChat {
             StreamChat.chatStyle = style;
         }
 
+        /**
+         * Set custom logger.
+         * @param logger - {@link StreamLogger}
+         */
+        public void setLogger(StreamLogger logger) {
+            this.logger = logger;
+        }
+
         private String getApiKey() {
             return apiKey;
         }
 
         private ApiClientOptions getApiClientOptions() {
             return apiClientOptions;
+        }
+
+        private StreamLogger getLogger() {
+            return logger;
         }
     }
 }

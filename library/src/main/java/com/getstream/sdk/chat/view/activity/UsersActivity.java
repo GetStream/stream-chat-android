@@ -216,9 +216,9 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void getUsers() {
-        Log.d(TAG, "queryUsers");
-        Log.d(TAG, "isLastPage: " + isLastPage);
-        Log.d(TAG, "isCalling: " + isCalling);
+        StreamChat.getLogger().logD(this,"queryUsers");
+        StreamChat.getLogger().logD(this,"isLastPage: " + isLastPage);
+        StreamChat.getLogger().logD(this,"isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
@@ -247,7 +247,7 @@ public class UsersActivity extends AppCompatActivity {
                 binding.setShowMainProgressbar(false);
                 isCalling = false;
                 Utils.showMessage(UsersActivity.this, errMsg);
-                Log.d(TAG, "Failed Get Channels : " + errMsg);
+                StreamChat.getLogger().logD(this,"Failed Get Channels : " + errMsg);
             }
         });
     }
