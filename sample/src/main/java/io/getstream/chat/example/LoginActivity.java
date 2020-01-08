@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.getstream.chat.example.adapter.UserListItemAdapter;
+import io.getstream.chat.example.navigation.HomeDestination;
 import io.getstream.chat.example.utils.AppDataConfig;
 
 public class LoginActivity extends AppCompatActivity {
@@ -33,8 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         lv_users = findViewById(R.id.lv_users);
 
         if (AppDataConfig.getCurrentUser() != null) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            StreamChat.getNavigator().navigate(new HomeDestination(this));
             finish();
             return;
         }
@@ -48,8 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
             AppDataConfig.setCurrentUser(AppDataConfig.getUsers().get(position).getId());
             setPushToken();
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            StreamChat.getNavigator().navigate(new HomeDestination(this));
             finish();
         });
     }

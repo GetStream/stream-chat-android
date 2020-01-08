@@ -12,6 +12,9 @@ import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.navigation.StreamChatNavigator;
+import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
+import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
@@ -46,6 +49,11 @@ public class StreamChat {
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
     private static StreamLogger logger;
+    private static StreamChatNavigator navigator = new StreamChatNavigatorImpl();
+
+    public static StreamChatNavigator getNavigator() {
+        return navigator;
+    }
 
     public static LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
@@ -106,12 +114,14 @@ public class StreamChat {
     private static void initComponents(String apiKey, ApiClientOptions apiClientOptions) {
         stringsProvider = new StringsProviderImpl(context);
         fontsManager = new FontsManagerImpl(context);
+
         INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
 
         onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
         currentUser = new MutableLiveData<>();
         totalUnreadMessages = new MutableLiveData<>();
         unreadChannels = new MutableLiveData<>();
+
 
         INSTANCE.setContext(StreamChat.context);
     }
@@ -239,6 +249,7 @@ public class StreamChat {
     public static synchronized boolean init(@NonNull Config config) {
         ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
         StreamLogger logger = config.getLogger() != null ? config.getLogger() : new StreamChatSilentLogger();
+        navigator.setHandler(config.getNavigationHandler());
         return init(config.getApiKey(), options, context, logger);
     }
 
@@ -270,10 +281,15 @@ public class StreamChat {
         private String apiKey;
         private ApiClientOptions apiClientOptions;
         private StreamLogger logger;
+        private ChatNavigationHandler navigationHandler;
 
         public Config(@NonNull Context context, @NonNull String apiKey) {
             StreamChat.context = context;
             this.apiKey = apiKey;
+        }
+
+        public void navigationHandler(ChatNavigationHandler navigationHandler){
+            this.navigationHandler = navigationHandler;
         }
 
         /**
@@ -312,6 +328,10 @@ public class StreamChat {
 
         private StreamLogger getLogger() {
             return logger;
+        }
+
+        private ChatNavigationHandler getNavigationHandler(){
+            return navigationHandler;
         }
     }
 }

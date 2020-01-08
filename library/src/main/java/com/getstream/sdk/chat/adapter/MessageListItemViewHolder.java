@@ -2,16 +2,13 @@ package com.getstream.sdk.chat.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +22,7 @@ import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.ChannelUserRead;
@@ -121,7 +119,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
         iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
-        mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
         rv_reaction.setHasFixedSize(true);
     }
@@ -441,8 +439,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     isLongClick = false;
                     return;
                 }
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(StreamChat.getInstance(context).getUploadStorage().signFileUrl(url)));
-                context.startActivity(browserIntent);
+                StreamChat.getNavigator().navigate(new WebLinkDestination(url, context));
             }
         });
     }
