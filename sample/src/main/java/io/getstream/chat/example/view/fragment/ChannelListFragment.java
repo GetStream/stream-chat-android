@@ -46,6 +46,8 @@ import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
+import io.getstream.chat.example.navigation.ChannelDestination;
+import io.getstream.chat.example.navigation.SearchDestination;
 import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.utils.AppDataConfig;
 
@@ -154,10 +156,7 @@ public class ChannelListFragment extends Fragment {
 
         binding.channelList.setOnChannelClickListener(channel -> {
             // open the channel activity
-            Intent intent = new Intent(getContext(), ChannelActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-            intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-            startActivity(intent);
+            StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
         });
         binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
@@ -248,10 +247,7 @@ public class ChannelListFragment extends Fragment {
         channel.query(request, new QueryChannelCallback() {
             @Override
             public void onSuccess(ChannelState response) {
-                Intent intent = new Intent(getContext(), ChannelActivity.class);
-                intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-                intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-                startActivity(intent);
+                StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
                 viewModel.addChannels(Arrays.asList(channel.getChannelState()));
                 viewModel.setLoadingDone();
             }
@@ -280,6 +276,6 @@ public class ChannelListFragment extends Fragment {
     }
 
     private void openSearchActivity() {
-        startActivity(MessageSearchActivity.searchAndOpenChannel(requireContext()));
+        StreamChat.getNavigator().navigate(new SearchDestination(null, getContext()));
     }
 }

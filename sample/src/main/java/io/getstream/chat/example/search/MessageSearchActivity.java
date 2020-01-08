@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
+import com.getstream.sdk.chat.StreamChat;
+import io.getstream.chat.example.navigation.ChannelDestination;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 
@@ -19,12 +21,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.ActivityMessageSearchBinding;
-
-import static io.getstream.chat.example.view.fragment.ChannelListFragment.EXTRA_CHANNEL_ID;
-import static io.getstream.chat.example.view.fragment.ChannelListFragment.EXTRA_CHANNEL_TYPE;
 
 public class MessageSearchActivity extends AppCompatActivity implements SearchMessageRecyclerAdapter.OnSearchItemClickListener {
 
@@ -72,10 +70,7 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
     public void onItemClicked(String channelType, String channelId, String messageId) {
 
         if (getIntent().getBooleanExtra(OPEN_CHANNEL, false)) {
-            Intent intent = new Intent(this, ChannelActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
-            intent.putExtra(EXTRA_CHANNEL_ID, channelId);
-            startActivity(intent);
+            StreamChat.getNavigator().navigate(new ChannelDestination(channelType, channelId, this));
         }
 
     }

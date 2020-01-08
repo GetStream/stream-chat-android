@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import io.getstream.chat.example.LoginActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
+import io.getstream.chat.example.navigation.LoginDestination;
 import io.getstream.chat.example.utils.UserConfig;
 
 public class ProfileFragment extends Fragment {
@@ -89,8 +90,7 @@ public class ProfileFragment extends Fragment {
         hideProgress();
         Client client = StreamChat.getInstance(getContext());
         client.disconnect();
-        Intent intent = new Intent(getContext(), LoginActivity.class);
-        startActivity(intent);
+        StreamChat.getNavigator().navigate(new LoginDestination(getContext()));
         getActivity().finish();
         UserConfig.logout();
     }

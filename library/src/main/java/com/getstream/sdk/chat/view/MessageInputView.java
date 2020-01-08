@@ -27,12 +27,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
@@ -84,8 +86,6 @@ public class MessageInputView extends RelativeLayout {
     private MessageSendListener messageSendListener;
     /** Permission Request listener */
     private PermissionRequestListener permissionRequestListener;
-    /** Camera view listener */
-    private OpenCameraViewListener openCameraViewListener;
     /**
      * The viewModel for handling typing etc.
      */
@@ -255,15 +255,11 @@ public class MessageInputView extends RelativeLayout {
             }
             Utils.setButtonDelayEnable(v);
             messageInputController.onClickCloseBackGroundView();
-            Intent takePictureIntent = CaptureController.getTakePictureIntent(getContext());
-            Intent takeVideoIntent = CaptureController.getTakeVideoIntent(getContext());
-            Intent chooserIntent = Intent.createChooser(takePictureIntent, getContext().getString(R.string.stream_input_camera_title));
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{takeVideoIntent});
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
             Utils.hideSoftKeyboard((Activity) getContext());
-            if (this.openCameraViewListener != null)
-                openCameraViewListener.openCameraView(chooserIntent, Constant.CAPTURE_IMAGE_REQUEST_CODE);
+
+            StreamChat.getNavigator().navigate(new CameraDestination((Activity) getContext()));
         });
         binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectView(null, false));
     }
@@ -563,10 +559,6 @@ public class MessageInputView extends RelativeLayout {
         this.permissionRequestListener = l;
     }
 
-    public void setOpenCameraViewListener(OpenCameraViewListener l) {
-        this.openCameraViewListener = l;
-    }
-
     /**
      * This interface is called when you add an attachment
      */
@@ -578,12 +570,6 @@ public class MessageInputView extends RelativeLayout {
      */
     public interface PermissionRequestListener {
         void openPermissionRequest();
-    }
-    /**
-     * Interface for opening the camera view
-     */
-    public interface OpenCameraViewListener {
-        void openCameraView(Intent intent, int REQUEST_CODE);
     }
 
     // endregion
