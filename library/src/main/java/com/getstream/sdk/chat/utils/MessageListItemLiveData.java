@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.rest.Message;
@@ -147,7 +148,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new HashMap<>();
             }
             readsByUser = reads;
-            Log.i(TAG, "broadcast because reads changed");
+            StreamChat.getLogger().logI(this,"broadcast because reads changed");
             broadcastValue();
         });
 
@@ -168,7 +169,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
-            Log.i(TAG, "broadcast because typing changed");
+            StreamChat.getLogger().logI(this,"broadcast because typing changed");
             broadcastValue();
         });
     }
@@ -234,7 +235,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
-        Log.i(TAG, "broadcast because messages changed");
+        StreamChat.getLogger().logI(this,"broadcast because messages changed");
         broadcastValue();
     }
 

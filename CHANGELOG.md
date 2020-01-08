@@ -1,4 +1,6 @@
-## Upcoming (3.6.0)
+## Upcoming
+
+## January 6th, 2020 - 3.6.0
 
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
@@ -8,6 +10,8 @@
 - Add `NotificationManager` with customization opportunity
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
+- Add `StreamLoggerHandler` interface for custom logging client data
+- Add logging customization ability
 - fix markdown for mention if there is no space at prefix @
 - fix Edit Attachment behavior
 - add support for channel.hide with clear history + events

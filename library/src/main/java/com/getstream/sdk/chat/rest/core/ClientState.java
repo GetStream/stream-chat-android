@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.rest.core;
 
 import android.util.Log;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Watcher;
@@ -99,14 +100,14 @@ public class ClientState {
     }
 
     void setCurrentUser(User currentUser) {
-        Log.d(TAG, "setCurrentUser: " + currentUser);
+        StreamChat.getLogger().logD(this,"setCurrentUser: " + currentUser);
         this.currentUser = currentUser;
         this.totalUnreadCount = currentUser.getTotalUnreadCount();
         this.unreadChannels = currentUser.getUnreadChannels();
     }
 
     void reset() {
-        Log.d(TAG, "reset");
+        StreamChat.getLogger().logD(this,"reset");
         currentUser = null;
         totalUnreadCount = 0;
         unreadChannels = 0;
@@ -122,7 +123,7 @@ public class ClientState {
      */
     public User getUser(String userID) {
         User result = users.get(userID);
-        Log.d(TAG, "getUser: " + userID + " with result: " + result);
+        StreamChat.getLogger().logD(this,"getUser: " + userID + " with result: " + result);
         return result;
     }
 
@@ -134,7 +135,7 @@ public class ClientState {
     }
 
     public void updateUsers(List<User> newUsers) {
-        Log.d(TAG, "updateUsers");
+        StreamChat.getLogger().logD(this,"updateUsers");
         Map<String, Channel> channelMap = client.getActiveChannelMap();
 
         for (User newUser : newUsers) {

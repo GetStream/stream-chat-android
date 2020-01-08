@@ -8,8 +8,14 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.logger.StreamChatLogger;
+import com.getstream.sdk.chat.logger.StreamLogger;
+import com.getstream.sdk.chat.logger.StreamLoggerHandler;
+import com.getstream.sdk.chat.logger.StreamLoggerLevel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
 import com.getstream.sdk.chat.notifications.NotificationMessageLoadListener;
@@ -30,6 +36,9 @@ import io.getstream.chat.example.utils.AppDataConfig;
 
 
 public class BaseApplication extends Application {
+    private StreamLogger logger;
+    private ApiClientOptions apiClientOptions;
+    private StreamChatStyle style;
 
     private static final String TAG = BaseApplication.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
@@ -43,20 +52,73 @@ public class BaseApplication extends Application {
 
         AppDataConfig.init(this);
 
-        ApiClientOptions apiClientOptions = new ApiClientOptions.Builder()
+        setupLogger();
+        setupClientOptions();
+        setupChatStyle();
+        initChat();
+
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
+    }
+
+    private void setupLogger() {
+        StreamLoggerHandler loggerHandler = new StreamLoggerHandler() {
+            @Override
+            public void logT(@NonNull Throwable throwable) {
+                // display throwable logs here
+            }
+
+            @Override
+            public void logT(@NonNull String className, @NonNull Throwable throwable) {
+                // display throwable logs here
+            }
+
+            @Override
+            public void logI(@NonNull String className, @NonNull String message) {
+                // display info logs here
+            }
+
+            @Override
+            public void logD(@NonNull String className, @NonNull String message) {
+                // display debug logs here
+            }
+
+            @Override
+            public void logW(@NonNull String className, @NonNull String message) {
+                // display warning logs here
+            }
+
+            @Override
+            public void logE(@NonNull String className, @NonNull String message) {
+                // display error logs here
+            }
+        };
+
+        logger = new StreamChatLogger.Builder()
+                .loggingLevel(BuildConfig.DEBUG ? StreamLoggerLevel.ALL : StreamLoggerLevel.NOTHING)
+                .setLoggingHandler(loggerHandler)
+                .build();
+    }
+
+    private void setupClientOptions() {
+        apiClientOptions = new ApiClientOptions.Builder()
                 .BaseURL(AppDataConfig.getApiEndpoint())
                 .Timeout(AppDataConfig.getApiTimeout())
                 .CDNTimeout(AppDataConfig.getCdnTimeout())
                 .build();
+    }
 
-        StreamChatStyle style = new StreamChatStyle.Builder()
+    private void setupChatStyle() {
+        style = new StreamChatStyle.Builder()
                 //.setDefaultFont(R.font.lilyofthe_valley)
                 //.setDefaultFont("fonts/odibeesans_regular.ttf")
                 .build();
+    }
 
+    private void initChat() {
         StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
+        configuration.setLogger(logger);
         StreamChat.init(configuration);
 
         Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());

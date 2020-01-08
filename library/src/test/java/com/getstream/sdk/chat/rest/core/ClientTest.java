@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.Filters;
 import com.getstream.sdk.chat.enums.QuerySort;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
@@ -125,6 +126,9 @@ public class ClientTest {
 
         StorageProvider storageProvider = mock(StorageProvider.class);
         doReturn(storage).when(storageProvider).provideStorage(any(), any(), anyBoolean());
+
+        StreamLogger logger = mock(StreamLogger.class);
+        StreamChat.setLogger(logger);
 
         client = new Client(TEST_API_KEY,
                 new ApiClientOptions(),

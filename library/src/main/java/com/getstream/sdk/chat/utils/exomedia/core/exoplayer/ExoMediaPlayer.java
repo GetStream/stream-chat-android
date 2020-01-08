@@ -33,6 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.Size;
 import androidx.collection.ArrayMap;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia.RendererType;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.CaptionListener;
@@ -566,7 +567,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             cumulativePositionMs += windowDurationMs;
         }
 
-        Log.e(TAG, "Unable to seek across windows, falling back to in-window seeking");
+        StreamChat.getLogger().logE(this, "Unable to seek across windows, falling back to in-window seeking");
         player.seekTo(positionMs);
         stateStore.setMostRecentState(stateStore.isLastReportedPlayWhenReady(), StateStore.STATE_SEEKING);
     }
@@ -725,10 +726,10 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
                 wakeLock = pm.newWakeLock(mode | PowerManager.ON_AFTER_RELEASE, ExoMediaPlayer.class.getName());
                 wakeLock.setReferenceCounted(false);
             } else {
-                Log.e(TAG, "Unable to acquire WAKE_LOCK due to a null power manager");
+                StreamChat.getLogger().logE(this, "Unable to acquire WAKE_LOCK due to a null power manager");
             }
         } else {
-            Log.w(TAG, "Unable to acquire WAKE_LOCK due to missing manifest permission");
+            StreamChat.getLogger().logW(this,"Unable to acquire WAKE_LOCK due to missing manifest permission");
         }
 
         stayAwake(wasHeld);
@@ -888,7 +889,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
             return sessionManager;
         } catch (Exception e) {
-            Log.d(TAG, "Unable to create a DrmSessionManager due to an exception", e);
+            StreamChat.getLogger().logD(this,"Unable to create a DrmSessionManager due to an exception. Error: " + e);
             return null;
         }
     }

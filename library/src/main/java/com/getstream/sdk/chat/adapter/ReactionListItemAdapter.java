@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ReactionListItemAdapter extends RecyclerView.Adapter<ReactionListIt
             try {
                 emoji = reactionTypes.get(reaction);
             } catch (Exception e) {
-                e.printStackTrace();
+                StreamChat.getLogger().logT(this, e);
             }
         }
         holder.tv_emoji.setText(emoji);

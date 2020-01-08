@@ -102,7 +102,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                         binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    StreamChat.getLogger().logT(this, e);
                 }
             }
 

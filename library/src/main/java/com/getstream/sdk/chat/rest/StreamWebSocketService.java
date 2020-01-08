@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.rest;
 
 import android.os.Message;
-import android.util.Log;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.model.Event;
@@ -78,10 +78,10 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         @Override
         public void run() {
             if (isShuttingDown()) {
-                Log.i(TAG, "connection is shutting down, quit health check");
+                StreamChat.getLogger().logI(this, "connection is shutting down, quit health check");
                 return;
             }
-            Log.i(TAG, "send health check");
+            StreamChat.getLogger().logI(this, "send health check");
             try {
                 Event event = new Event();
                 event.setType(EventType.HEALTH_CHECK);
@@ -104,10 +104,10 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         @Override
         public void run() {
             if (isShuttingDown()) {
-                Log.i(TAG, "connection is shutting down, quit monitor");
+                StreamChat.getLogger().logI(this, "connection is shutting down, quit monitor");
                 return;
             }
-            Log.i(TAG, "check connection health");
+            StreamChat.getLogger().logI(this, "check connection health");
             long millisNow = new Date().getTime();
             int monitorInterval = 1000;
             if (getLastEvent() != null) {
@@ -128,10 +128,10 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
 
     @Override
     public void connect() {
-        Log.i(TAG, "connect...");
+        StreamChat.getLogger().logI(this, "connect...");
 
         if (isConnecting()) {
-            Log.w(TAG, "already connecting");
+            StreamChat.getLogger().logW(this, "already connecting");
             return;
         }
 
@@ -152,7 +152,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
 
     @Override
     public void disconnect() {
-        Log.i(TAG, "disconnect was called");
+        StreamChat.getLogger().logI(this, "disconnect was called");
         webSocket.close(1000, "bye");
         shuttingDown = true;
         eventThread.mHandler.removeCallbacksAndMessages(null);
@@ -197,7 +197,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
     }
 
     private void setupWS() {
-        Log.i(TAG, "setupWS");
+        StreamChat.getLogger().logI(this, "setupWS");
         wsId++;
         httpClient = new OkHttpClient();
         Request request = new Request.Builder().url(wsURL).build();
@@ -207,7 +207,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
     }
 
     private void setHealth(boolean healthy) {
-        Log.i(TAG, "setHealth " + healthy);
+        StreamChat.getLogger().logI(this, "setHealth " + healthy);
         if (healthy && !isHealthy()) {
             setHealthy(true);
             Event wentOnline = new Event(true);
@@ -215,7 +215,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         }
         if (!healthy && isHealthy()) {
             setHealthy(false);
-            Log.i(TAG, "spawn mOfflineNotifier");
+            StreamChat.getLogger().logI(this, "spawn mOfflineNotifier");
             eventThread.mHandler.postDelayed(mOfflineNotifier, 5000);
         }
     }
@@ -230,7 +230,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         if (isConnecting() || isHealthy() || shuttingDown) {
             return;
         }
-        Log.i(TAG, "schedule reconnection in " + getRetryInterval() + "ms");
+        StreamChat.getLogger().logI(this, "schedule reconnection in " + getRetryInterval() + "ms");
         eventThread.mHandler.postDelayed(mReconnect, delay ? getRetryInterval() : 0);
     }
 
@@ -258,7 +258,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         try {
             httpClient.dispatcher().cancelAll();
         } catch (Exception e) {
-            e.printStackTrace();
+            StreamChat.getLogger().logT(this, e);
         }
     }
 
@@ -273,13 +273,13 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
             if (wsId > 1) {
                 eventThread.mHandler.post(() -> webSocketListener.connectionRecovered());
             }
-            Log.d(TAG, "WebSocket #" + wsId + " Connected : " + response);
+            StreamChat.getLogger().logD(this, "WebSocket #" + wsId + " Connected : " + response);
         }
 
         @Override
         public synchronized void onMessage(WebSocket webSocket, String text) {
             // TODO: synchronized onMessage is not great for performance when receiving many messages at once. Minor concern since its pretty fast at handling a message
-            Log.d(TAG, "WebSocket # " + wsId + " Response : " + text);
+            StreamChat.getLogger().logD(this, "WebSocket # " + wsId + " Response : " + text);
 
             if (isShuttingDown()) return;
 
@@ -320,11 +320,11 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
                 event.setReceivedAt(now);
                 setLastEvent(now);
             } catch (JsonSyntaxException e) {
-                e.printStackTrace();
+                StreamChat.getLogger().logT(this, e);
                 return;
             }
 
-            Log.d(TAG, String.format("Received event of type %s", event.getType().toString()));
+            StreamChat.getLogger().logD(this, String.format("Received event of type %s", event.getType().toString()));
 
             // resolve on the first good message
             if (!isConnectionResolved()) {
@@ -340,7 +340,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         @Override
         public synchronized void onClosing(WebSocket webSocket, int code, String reason) {
             if (isShuttingDown()) return;
-            Log.d(TAG, "WebSocket # " + wsId + " Closing : " + code + " / " + reason);
+            StreamChat.getLogger().logD(this, "WebSocket # " + wsId + " Closing : " + code + " / " + reason);
             // this usually happens only when the connection fails for auth reasons
             if (code == NORMAL_CLOSURE_STATUS) {
                 webSocket.close(code, reason);
@@ -357,9 +357,9 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
             if (isShuttingDown()) return;
             try {
-                Log.i(TAG, "WebSocket # " + wsId + " Error: " + t.getMessage());
+                StreamChat.getLogger().logI(this, "WebSocket # " + wsId + " Error: " + t.getMessage());
             } catch (Exception e) {
-                e.printStackTrace();
+                StreamChat.getLogger().logT(this, e);
             }
             consecutiveFailures++;
             setConnecting(false);

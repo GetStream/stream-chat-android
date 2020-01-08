@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.rest.providers;
 
+import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
@@ -11,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /*
  * Created by Anton Bevza on 2019-10-24.
@@ -24,6 +27,8 @@ public class StreamWebSocketServiceProviderTest {
     void setUp() {
         apiKey = "test-key";
         provider = new StreamWebSocketServiceProvider(new ApiClientOptions(), apiKey);
+        StreamLogger logger = mock(StreamLogger.class);
+        StreamChat.setLogger(logger);
     }
 
     @Test
