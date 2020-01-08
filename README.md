@@ -321,17 +321,22 @@ StreamChat.initStyle(
 You can set custom fonts for specific UI components with or without settings for the entire library.  
 See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
 
-## Navigation
+## Navigation customisation
 
-SDK has few builtin activties, webview and system browser Intents. Navigation between these components handled internally by `StreamChatNavigator`.
+SDK has few builtin activties, webview and system browser Intents. Navigation between these components handled internally by `StreamChatNavigator`. It has similar concept and principles as [Google Navigation component](https://developer.android.com/jetpack/androidx/releases/navigation):
+
+- `ChatDestination` represents a destination like camera app or system web browser.
+- SDK allows to intercept destinations and handle them in a custom way.
+- destination object carries required information like `WebLinkDestination` has `url` field which will be passed to system web browser.
 
 For example if you need to open your custom webview when user clicks on a link you can override `WebLinkDestination` and `AttachmentDestination`.
 ```java
-Config config = new Config(this, "key");
+StreamChat.Config config = new StreamChat.Config(this, "apiKey");
 
 config.navigationHandler(destination -> {
 
     String url = "";
+    boolean handled = false;
 
     if (destination instanceof WebLinkDestination) {
         url = ((WebLinkDestination) destination).url;
@@ -343,12 +348,10 @@ config.navigationHandler(destination -> {
         // handle/change/update url
         // open your webview, system browser or your own activity
         // and return true to override default behaviour
-        return true;
-    } else {
-        return false;
+        handled = true;
     }
 
-
+    return handled;
 });
 StreamChat.init(config);
 
