@@ -363,7 +363,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:inputType="textCapSentences"
+                    android:inputType="textCapSentences|textMultiLine"
                     android:maxLines="7"
                     android:padding="17dp"
                     android:textSize="15sp"
