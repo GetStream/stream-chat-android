@@ -165,7 +165,7 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     private void loadMessage(Context context, @NonNull String messageId) {
-        StreamChat.getInstance(context).getMessage(messageId, new MessageCallback() {
+         StreamChat.getInstance(context).getMessage(messageId, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 if (failMessageListener != null) {
@@ -224,13 +224,13 @@ public class StreamNotificationsManager implements NotificationsManager {
     private void showDefaultNotification(Context context, String messageId) {
         StreamNotification notificationItem = notificationsMap.get(messageId);
 
-        if (notificationItem != null) {
+        if (notificationItem != null && !isForeground()) {
             notificationItem.setChannelName(context.getString(R.string.stream_default_notification_title));
             notificationItem.setMessageText(context.getString(R.string.stream_default_notification_message));
 
             Notification notification = prepareNotification(context, messageId, null, true);
             showNotification(notificationItem.getNotificationId(), notification, context);
-            removeNotificationItem(notificationItem.getNotificationId());
+            //removeNotificationItem(notificationItem.getNotificationId());
         }
     }
 

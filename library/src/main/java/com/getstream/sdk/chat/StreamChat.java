@@ -24,16 +24,12 @@ import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class StreamChat {
-    private static final String TAG = StreamChat.class.getSimpleName();
-
     private static Client INSTANCE;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
@@ -85,7 +81,7 @@ public class StreamChat {
         }
     }
 
-    public static boolean isConnected(){
+    public static boolean isConnected() {
         return INSTANCE != null && INSTANCE.isConnected();
     }
 
@@ -237,6 +233,8 @@ public class StreamChat {
         StreamChat.notificationsManager = notificationsManager;
     }
 
+    public static NotificationsManager getNotificationsManager() { return notificationsManager; }
+
     @NotNull
     public static StreamChatStyle getChatStyle() {
         return chatStyle;
@@ -247,31 +245,35 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static StreamLogger getLogger() { return  logger; }
+    public static StreamLogger getLogger() {
+        return logger;
+    }
 
     public static synchronized boolean init(@NonNull Config config) {
         ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
         StreamLogger logger = config.getLogger() != null ? config.getLogger() : new StreamChatSilentLogger();
-        return init(config.getApiKey(), options, context, logger);
+        NotificationsManager notificationsManager = config.getNotificationsManager() != null ? config.getNotificationsManager() : new StreamNotificationsManager();
+        return init(config.getApiKey(), options, context, logger, notificationsManager);
     }
 
     public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger());
-        return init(apiKey, new ApiClientOptions(), context, new StreamNotificationsManager());
+        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger(), new StreamNotificationsManager());
     }
 
     public static synchronized boolean init(String apiKey,
                                             ApiClientOptions apiClientOptions,
                                             @NonNull Context context) {
-        return init(apiKey, apiClientOptions, context, new StreamNotificationsManager());
+        return init(apiKey, apiClientOptions, context, new StreamChatSilentLogger(), new StreamNotificationsManager());
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context, StreamLogger logger) {
     public static synchronized boolean init(String apiKey,
                                             ApiClientOptions apiClientOptions,
                                             @NonNull Context context,
+                                            StreamLogger logger,
                                             @NonNull NotificationsManager notificationsManager) {
         StreamChat.context = context;
+        StreamChat.notificationsManager = notificationsManager;
+
         if (INSTANCE != null) {
             return true;
         }
@@ -290,11 +292,13 @@ public class StreamChat {
         }
     }
 
+
     public static class Config {
 
         private String apiKey;
         private ApiClientOptions apiClientOptions;
         private StreamLogger logger;
+        private NotificationsManager notificationsManager;
 
         public Config(@NonNull Context context, @NonNull String apiKey) {
             StreamChat.context = context;
@@ -321,10 +325,20 @@ public class StreamChat {
 
         /**
          * Set custom logger.
+         *
          * @param logger - {@link StreamLogger}
          */
         public void setLogger(StreamLogger logger) {
             this.logger = logger;
+        }
+
+        /**
+         * Set custom notification manager.
+         *
+         * @param notificationsManager - {@link NotificationsManager}
+         */
+        public void setNotificationsManager(NotificationsManager notificationsManager) {
+            this.notificationsManager = notificationsManager;
         }
 
         private String getApiKey() {
@@ -338,27 +352,9 @@ public class StreamChat {
         private StreamLogger getLogger() {
             return logger;
         }
-    }
 
-    private static void registerFirebaseToken(Context context) {
-        Log.i(TAG, "Start registering device");
-
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(task -> {
-                            Log.i(TAG, "Device FCM instanceID received");
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                if (StreamChat.getNotificationsManager() != null) {
-                                    StreamChat.getNotificationsManager().setFirebaseToken(
-                                            task.getResult().getToken(), context);
-                                } else {
-                                    Log.e(TAG, "NotificationsManager is null");
-                                }
-                            }
-                        }
-                );
-    }
-
-    public static NotificationsManager getNotificationsManager() {
-        return notificationsManager;
+        private NotificationsManager getNotificationsManager() {
+            return notificationsManager;
+        }
     }
 }

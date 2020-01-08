@@ -4,9 +4,6 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +16,7 @@ import com.getstream.sdk.chat.logger.StreamLoggerLevel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
 import com.getstream.sdk.chat.notifications.NotificationMessageLoadListener;
+import com.getstream.sdk.chat.notifications.NotificationsManager;
 import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.notifications.options.NotificationIntentProvider;
 import com.getstream.sdk.chat.notifications.options.StreamNotificationOptions;
@@ -39,6 +37,7 @@ public class BaseApplication extends Application {
     private StreamLogger logger;
     private ApiClientOptions apiClientOptions;
     private StreamChatStyle style;
+    private NotificationsManager notificationsManager;
 
     private static final String TAG = BaseApplication.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
@@ -55,6 +54,7 @@ public class BaseApplication extends Application {
         setupLogger();
         setupClientOptions();
         setupChatStyle();
+        setupNotifications();
         initChat();
 
         Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
@@ -114,19 +114,7 @@ public class BaseApplication extends Application {
                 .build();
     }
 
-    private void initChat() {
-        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
-        configuration.setApiClientOptions(apiClientOptions);
-        configuration.setStyle(style);
-        configuration.setLogger(logger);
-        StreamChat.init(configuration);
-
-        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
-
-        configNotifications();
-    }
-
-    private void configNotifications() {
+    private void setupNotifications() {
         // Configure and adding notification options for notifications
         StreamNotificationOptions notificationOptions = new StreamNotificationOptions();
 
@@ -154,36 +142,48 @@ public class BaseApplication extends Application {
                     }
                 }
         );
+
         // Device register listener
         DeviceRegisteredListener onDeviceRegistered = new DeviceRegisteredListener() {
             @Override
             public void onDeviceRegisteredSuccess() {
                 // Device successfully registered on server
-                Log.i(TAG, "Device registered successfully");
+                StreamChat.getLogger().logI(TAG, "Device registered successfully");
             }
 
             @Override
             public void onDeviceRegisteredError(@NonNull String errorMessage, int errorCode) {
                 // Some problem with registration
-                Log.e(TAG, "onDeviceRegisteredError: " + errorMessage + " Code: " + errorCode);
+                StreamChat.getLogger().logE(TAG, "onDeviceRegisteredError: " + errorMessage + " Code: " + errorCode);
             }
         };
 
         NotificationMessageLoadListener messageListener = new NotificationMessageLoadListener() {
             @Override
             public void onLoadMessageSuccess(@NonNull Message message) {
-                Log.d(TAG, "On message loaded. Message:" + message);
+                StreamChat.getLogger().logD(TAG, "On message loaded. Message:" + message);
             }
 
             @Override
             public void onLoadMessageFail(@NonNull String messageId) {
-                Log.d(TAG, "Message from notification load fails. MessageId:" + messageId);
+                StreamChat.getLogger().logD(TAG, "Message from notification load fails. MessageId:" + messageId);
             }
         };
 
         StreamNotificationsManager notificationsManager = new StreamNotificationsManager(notificationOptions, onDeviceRegistered);
         notificationsManager.setFailMessageListener(messageListener);
 
-        StreamChat.setNotificationsManager(notificationsManager);
+        this.notificationsManager = notificationsManager;
+    }
+
+    private void initChat() {
+        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
+        configuration.setApiClientOptions(apiClientOptions);
+        configuration.setStyle(style);
+        configuration.setLogger(logger);
+        configuration.setNotificationsManager(notificationsManager);
+        StreamChat.init(configuration);
+
+        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
     }
 }
