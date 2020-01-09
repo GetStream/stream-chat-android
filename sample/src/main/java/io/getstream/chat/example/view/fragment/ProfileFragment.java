@@ -49,10 +49,7 @@ public class ProfileFragment extends Fragment {
 
                             if (task.isSuccessful()) {
                                 String token = task.getResult().getToken();
-
-                                //TODO Only for reproducing issue. Remove under merging to master
-                                //removeDevice(token);
-                                ProfileFragment.this.onSuccess();
+                                removeDevice(token);
                             } else {
                                 onError(getString(R.string.error_getting_firebase_token));
                             }
