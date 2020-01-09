@@ -216,6 +216,7 @@ public class MessageListView extends RecyclerView {
             if (!entities.isEmpty()) {
                 Message lastMessage = entities.get(entities.size() - 1).getMessage();
                 if (lastMessage != null
+                        && scrolledBottom()
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     StreamChat.getLogger().logI(this, String.format("just update last message"));
