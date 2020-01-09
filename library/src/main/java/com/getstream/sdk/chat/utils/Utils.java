@@ -231,8 +231,9 @@ public class Utils {
 
         if (imagecursor == null) {
             StreamChat.getLogger().logE(Utils.class, "ContentResolver query return null");
-            return null;
+            return new ArrayList<>();
         }
+
         int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
         int count = imagecursor.getCount();
 
