@@ -1,3 +1,7 @@
+## Upcoming
+
+- Enable multiline edit text
+
 ## January 7th, 2020 - 3.6.1
 
 - Add navigation components with handler to override default behaviour
