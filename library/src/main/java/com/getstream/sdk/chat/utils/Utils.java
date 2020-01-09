@@ -84,7 +84,7 @@ public class Utils {
                 });
     }
 
-    public static boolean isSVGImage(String url){
+    public static boolean isSVGImage(String url) {
         return (TextUtils.isEmpty(url) || url.contains("random_svg"));
     }
 
@@ -208,7 +208,6 @@ public class Utils {
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
                 MediaStore.Files.FileColumns.MIME_TYPE,
                 MediaStore.Files.FileColumns.TITLE,
-                MediaStore.Video.Media.RESOLUTION,
                 MediaStore.Video.VideoColumns.DURATION,
         };
 
@@ -230,7 +229,11 @@ public class Utils {
                 MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // QuerySort order.
         );
 
-        int image_column_index = imagecursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
+        if (imagecursor == null) {
+            StreamChat.getLogger().logE(Utils.class, "ContentResolver query return null");
+            return null;
+        }
+        int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
         int count = imagecursor.getCount();
 
         ArrayList<Attachment> attachments = new ArrayList<>();
@@ -254,13 +257,14 @@ public class Utils {
             }
             attachments.add(attachment);
         }
+        imagecursor.close();
         return attachments;
     }
 
     public static void configFileAttachment(Attachment attachment,
                                             File file,
                                             String type,
-                                            String mimeType){
+                                            String mimeType) {
         attachment.setType(type);
         attachment.setMime_type(mimeType);
         attachment.setTitle(file.getName());
@@ -308,6 +312,7 @@ public class Utils {
             }
             return true;
         }
+
         abstract public void onLinkClick(String url);
     }
 }

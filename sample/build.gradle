@@ -20,11 +20,11 @@ repositories {
 def appVersion = "19.0"
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "io.getstream.chat.sdk"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 18
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
