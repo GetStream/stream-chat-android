@@ -39,13 +39,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
 import io.getstream.chat.example.navigation.ChannelDestination;
 import io.getstream.chat.example.navigation.SearchDestination;
-import io.getstream.chat.example.utils.AppDataConfig;
+import io.getstream.chat.example.utils.AppConfig;
 
 import static com.getstream.sdk.chat.enums.Filters.eq;
 import static java.util.UUID.randomUUID;
@@ -64,15 +65,17 @@ public class ChannelListFragment extends Fragment {
     private void configureStreamClient() {
         client = StreamChat.getInstance(getContext());
 
-        if (AppDataConfig.getCurrentUser() == null) {
+        AppConfig appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
+
+        if (appConfig.getCurrentUser() == null) {
             StreamChat.getLogger().logE(this, "Current user is null");
             return;
         }
 
-        String USER_ID = AppDataConfig.getCurrentUser().getId();
-        String USER_TOKEN = AppDataConfig.getCurrentUser().getToken();
-        String USER_NAME = AppDataConfig.getCurrentUser().getName();
-        String USER_IMAGE = AppDataConfig.getCurrentUser().getImage();
+        String USER_ID = appConfig.getCurrentUser().getId();
+        String USER_TOKEN = appConfig.getCurrentUser().getToken();
+        String USER_NAME = appConfig.getCurrentUser().getName();
+        String USER_IMAGE = appConfig.getCurrentUser().getImage();
 
         Crashlytics.setUserIdentifier(USER_ID);
         if (offlineEnabled) {
