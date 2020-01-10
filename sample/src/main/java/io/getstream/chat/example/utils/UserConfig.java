@@ -35,8 +35,4 @@ public class UserConfig {
     public String getImage() {
         return image;
     }
-
-    public static void logout() {
-        AppDataConfig.setCurrentUser(null);
-    }
 }
