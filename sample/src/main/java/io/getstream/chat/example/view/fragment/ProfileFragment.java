@@ -48,6 +48,11 @@ public class ProfileFragment extends Fragment {
                 .addOnCompleteListener(task -> {
 
                             if (task.isSuccessful()) {
+                                if (task.getResult() == null) {
+                                    StreamChat.getLogger().logE(this, "Filed to get firebase result. Result:" + task.getResult());
+                                    return;
+                                }
+
                                 String token = task.getResult().getToken();
                                 removeDevice(token);
                             } else {

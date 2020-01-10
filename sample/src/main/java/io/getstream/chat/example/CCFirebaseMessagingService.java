@@ -14,6 +14,9 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ProcessLifecycleOwner;
+
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -40,8 +43,10 @@ public class CCFirebaseMessagingService extends FirebaseMessagingService {
             Map payload = remoteMessage.getData();
             String title = (String) payload.get("title");
             String body = (String) payload.get("body");
-            sendNotification(body, title);
-            setBadge(getApplicationContext(), 1);
+            if (!isForeground()) {
+                sendNotification(body, title);
+                setBadge(getApplicationContext(), 1);
+            }
         }
     }
 
@@ -127,5 +132,9 @@ public class CCFirebaseMessagingService extends FirebaseMessagingService {
     private Bitmap getBitmapIcon() {
         return BitmapFactory.decodeResource(getResources(),
                 R.drawable.icon);
+    }
+
+    private boolean isForeground() {
+        return ProcessLifecycleOwner.get().getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED);
     }
 }
