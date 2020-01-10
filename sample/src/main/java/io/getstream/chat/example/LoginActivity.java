@@ -61,6 +61,12 @@ public class LoginActivity extends AppCompatActivity {
                             if (!task.isSuccessful()) {
                                 return;
                             }
+
+                            if (task.getResult() == null) {
+                                StreamChat.getLogger().logE(this, "Filed to get firebase result. Result:" + task.getResult());
+                                return;
+                            }
+
                             StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
                                 @Override
                                 public void onSuccess(CompletableResponse response) {
