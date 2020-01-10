@@ -17,7 +17,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def appVersion = "19.0"
+def appVersion = "20.0"
 
 android {
     compileSdkVersion 28
@@ -53,7 +53,7 @@ android {
 
             buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
 
-            def usersConfig = loadJson()
+            def usersConfig = loadJson(true)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
         }
 
@@ -63,7 +63,7 @@ android {
 
             buildConfigField "String", "SDK_VERSION", '"master"'
 
-            def usersConfig = loadJson()
+            def usersConfig = loadJson(false)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
 
 
@@ -103,7 +103,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     implementation "androidx.legacy:legacy-support-v4:$rootProject.legacySupportVersion"
-    implementation project(':library')
 
     releaseImplementation "com.github.getstream:stream-chat-android:$releaseSdkVersion"
     debugImplementation project(':library')
@@ -140,16 +139,22 @@ def checkSigningEnvVars() {
     return storagePath != null && password != null && keyAlias != null && keyPassword != null
 }
 
-def loadJson() {
+def loadJson(useDefault) {
     def defaultConfigPath = projectDir.getAbsolutePath() + "/app-config.json"
     def customConfigPath = projectDir.getAbsolutePath() + "/app-config-custom.json"
     def file = null
 
-    if (new File(customConfigPath).exists()) {
-        file = new File(customConfigPath)
-    } else {
+    if (useDefault){
         file = new File(defaultConfigPath)
+    } else {
+        if (new File(customConfigPath).exists()) {
+            file = new File(customConfigPath)
+        } else {
+            file = new File(defaultConfigPath)
+        }
     }
+
+
 
     def json = new JsonSlurper().parseText(file.text)
     println("App config: " + json)
