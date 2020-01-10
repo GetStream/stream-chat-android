@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.rest.core.Client;
@@ -13,28 +14,72 @@ import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.InverseBindingAdapter;
 import androidx.fragment.app.Fragment;
-import io.getstream.chat.example.LoginActivity;
+import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
 import io.getstream.chat.example.navigation.LoginDestination;
-import io.getstream.chat.example.utils.UserConfig;
+import io.getstream.chat.example.utils.AppConfig;
 
 public class ProfileFragment extends Fragment {
 
     ProgressDialog pd;
     AlertDialog errorDialog;
+    AppConfig appConfig;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
         Client client = StreamChat.getInstance(getContext());
+        appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
         binding.setUser(client.getUser());
+        binding.setAppConfig(appConfig);
         binding.btnLogOut.setOnClickListener(view -> logOut());
 
+        binding.btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                appConfig.reset();
+                binding.invalidateAll();
+            }
+        });
+
+        binding.btnRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getActivity().getBaseContext().getPackageManager().getLaunchIntentForPackage(getActivity().getBaseContext().getPackageName());
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(0);
+            }
+        });
+
         return binding.getRoot();
+    }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    @InverseBindingAdapter(attribute = "android:text")
+    public static int getIntegerFromBinding(EditText view) {
+        String string = view.getText().toString();
+        return string.isEmpty() ? 0 : Integer.parseInt(string);
+    }
+
+    @BindingAdapter("android:text")
+    public static void bindIntegerInText(EditText tv, int value) {
+        tv.setText(String.valueOf(value));
+        tv.setSelection(tv.getText().length());
     }
 
     public void logOut() {
@@ -97,7 +142,7 @@ public class ProfileFragment extends Fragment {
         client.disconnect();
         StreamChat.getNavigator().navigate(new LoginDestination(getContext()));
         getActivity().finish();
-        UserConfig.logout();
+        ((BaseApplication) getContext().getApplicationContext()).getAppConfig().setCurrentUser(null);
     }
 
     private void onError(String message) {
@@ -106,5 +151,9 @@ public class ProfileFragment extends Fragment {
                 .setMessage(message)
                 .setPositiveButton(R.string.ok, (dialog, which) -> errorDialog.dismiss()).create();
         errorDialog.show();
+    }
+
+    private void updateAppConfigView(FragmentProfileBinding binding) {
+        //binding.
     }
 }
