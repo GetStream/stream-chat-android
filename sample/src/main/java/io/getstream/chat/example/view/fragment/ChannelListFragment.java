@@ -103,7 +103,6 @@ public class ChannelListFragment extends Fragment {
 
         // Set custom delay in 5 min
         client.setWebSocketDisconnectDelay(1000 * 60 * 5);
-        return client;
     }
 
     @Override
@@ -174,7 +173,10 @@ public class ChannelListFragment extends Fragment {
 
         // setup an onclick listener to capture clicks to the user profile or channel
 
-        binding.channelList.setOnChannelClickListener(this::openChannel);
+        binding.channelList.setOnChannelClickListener(channel -> {
+            // open the channel activity
+            StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
+        });
 
         binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
@@ -205,14 +207,6 @@ public class ChannelListFragment extends Fragment {
         HomeActivity homeActivity = (HomeActivity) getActivity();
         Toolbar toolbar = getView().findViewById(R.id.toolbar);
         homeActivity.setSupportActionBar(toolbar);
-    }
-
-    // open the channel activity
-    void openChannel(Channel channel) {
-        Intent intent = new Intent(getContext(), ChannelActivity.class);
-        intent.putExtra(EXTRA_CHANNEL_TYPE, channel.getType());
-        intent.putExtra(EXTRA_CHANNEL_ID, channel.getId());
-        startActivity(intent);
     }
 
     private void createNewChannelDialog() {

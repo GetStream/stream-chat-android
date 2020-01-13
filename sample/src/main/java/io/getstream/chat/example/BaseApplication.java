@@ -1,10 +1,10 @@
 package io.getstream.chat.example;
 
 import android.app.Application;
-import android.widget.Toast;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -14,9 +14,9 @@ import com.getstream.sdk.chat.logger.StreamChatLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.logger.StreamLoggerHandler;
 import com.getstream.sdk.chat.logger.StreamLoggerLevel;
+import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
-import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.notifications.DeviceRegisteredListener;
 import com.getstream.sdk.chat.notifications.NotificationMessageLoadListener;
 import com.getstream.sdk.chat.notifications.NotificationsManager;
@@ -32,7 +32,6 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import io.fabric.sdk.android.Fabric;
 import io.getstream.chat.example.utils.AppConfig;
 
@@ -215,7 +214,5 @@ public class BaseApplication extends Application {
         });
         configuration.setNotificationsManager(notificationsManager);
         StreamChat.init(configuration);
-
-        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
     }
 }
