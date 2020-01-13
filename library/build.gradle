@@ -107,3 +107,16 @@ task javadoc(type: Javadoc) {
     exclude '**/ModelType.java'
     failOnError false
 }
+
+task deleteJar(type: Delete) {
+    delete 'jars/stream-chat-android.jar'
+}
+
+task exportJar(type: Copy) {
+    from('library/build/intermediates/full_jar/release/createFullJarRelease')
+    into('jars/')
+    include('full.jar')
+    rename('full.jar', 'stream-chat-android.jar')
+}
+
+exportJar.dependsOn(deleteJar, build)
