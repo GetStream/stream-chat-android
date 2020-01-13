@@ -84,7 +84,7 @@ class RetrofitClientTest {
     }
 
     @Test
-    void validSuccessDurationTest() throws IOException, InterruptedException {
+    void checkValidTimeoutDurationTest() throws IOException, InterruptedException {
         MockResponse mockSuccessResponse = new MockResponse().setResponseCode(200).setBody("{}");
         mockSuccessResponse.setBodyDelay(BuildConfig.DEFAULT_API_TIMEOUT, TimeUnit.MILLISECONDS);
         mockWebServer.enqueue(mockSuccessResponse);
@@ -94,7 +94,7 @@ class RetrofitClientTest {
     }
 
     @Test
-    void validTimeoutDurationTest() throws IOException, InterruptedException {
+    void checkNotValidTimeoutDurationTest() throws IOException, InterruptedException {
         MockResponse mockFailResponse = new MockResponse().setResponseCode(200).setBody("{}");
 
         mockFailResponse.setBodyDelay(BuildConfig.DEFAULT_API_TIMEOUT + 1000, TimeUnit.MILLISECONDS);
