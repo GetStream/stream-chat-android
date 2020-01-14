@@ -111,6 +111,9 @@ client.getChannels { result -> showChannels(result) }
 
 - Prefix `Chat` for all public classes to avoid spoiling public class name space
 - Postix `Impl` for interface implementations
+- No `m` field name prefix
+- `id`, not `ID`
+- `t` for `Throwable`
 
 ```kotlin
 open interface ChatClient {}
