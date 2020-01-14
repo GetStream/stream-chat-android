@@ -104,3 +104,15 @@ client.getChannels { result -> showChannels(result) }
 - [MVVM + LiveData](docs/example-mvvm-livedata.md)
 - [Pagination: channels](docs/example-pagination-channels.md)
 - [Pagination: messages](docs/example-pagination-messages.md)
+
+## Development and support
+
+### Naming
+
+- Prefix `Chat` for all public classes to avoid spoiling public class name space
+- Postif `Impl` for interface implementations
+
+```kotlin
+open interface ChatClient {}
+class ChatClientImpl: ChatClient() {} 
+```
