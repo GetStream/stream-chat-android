@@ -36,5 +36,5 @@ deploy:
   api_key: $GITHUB_TOKEN_TEMP
   file: "../jars/stream-chat-android.jar"
   skip_cleanup: true
-  on:
-    tags: true
+  #on:
+  #  tags: true
