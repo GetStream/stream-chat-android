@@ -11,13 +11,16 @@ class ChannelsRepositorySync(
     private val cache: ChannelsCache
 ) {
     fun getChannels(): List<Channel> {
-        val result = client.queryChannels().execute()
-        return if (result.isSuccess()) {
-            val channels = ApiMapper.mapChannels(result.data())
-            cache.storeSync(channels)
-            channels
-        } else {
-            cache.getAllSync()
-        }
+
+        return null!!
+
+//        val result = client.queryChannels().execute()
+//        return if (result.isSuccess()) {
+//            val channels = ApiMapper.mapChannels(result.data())
+//            cache.storeSync(channels)
+//            channels
+//        } else {
+//            cache.getAllSync()
+//        }
     }
 }

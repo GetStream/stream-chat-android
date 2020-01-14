@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
+import io.getstream.chat.android.core.poc.library.errors.ClientError
 import retrofit2.Response
 
 class RetrofitCallMapper {
@@ -41,7 +42,13 @@ class RetrofitCallMapper {
                 }
 
                 override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
-                    callback(Result(null, ClientError(0, "", t)))
+                    callback(Result(null,
+                        ClientError(
+                            0,
+                            "",
+                            t
+                        )
+                    ))
                 }
             })
         }
@@ -55,10 +62,19 @@ class RetrofitCallMapper {
                 if (response.isSuccessful) {
                     data = response.body()
                 } else {
-                    error = ClientError(response.code(), "Network call error: ${response.code()}")
+                    error =
+                        ClientError(
+                            response.code(),
+                            "Network call error: ${response.code()}"
+                        )
                 }
             } catch (t: Throwable) {
-                error = ClientError(-1, t.message.toString(), t)
+                error =
+                    ClientError(
+                        -1,
+                        t.message.toString(),
+                        t
+                    )
             }
 
             return Result(data, error)
@@ -77,7 +93,12 @@ class RetrofitCallMapper {
                     return if (result.isSuccessful) {
                         Result(mapper(result.body()!!), null)
                     } else {
-                        Result(null, ClientError(result.code(), result.message()))
+                        Result(null,
+                            ClientError(
+                                result.code(),
+                                result.message()
+                            )
+                        )
                     }
                 }
 
@@ -96,7 +117,13 @@ class RetrofitCallMapper {
                         }
 
                         override fun onFailure(call: retrofit2.Call<A>, t: Throwable) {
-                            callback(Result(null, ClientError(0, "", t)))
+                            callback(Result(null,
+                                ClientError(
+                                    0,
+                                    "",
+                                    t
+                                )
+                            ))
                         }
                     })
                 }

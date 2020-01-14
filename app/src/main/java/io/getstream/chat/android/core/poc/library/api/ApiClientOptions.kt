@@ -1,15 +1,12 @@
 package io.getstream.chat.android.core.poc.library.api
 
 
-class ApiClientOptions constructor(
+class ApiClientOptions private constructor() {
 
-) {
     var baseURL: String = ""
     var cdnURL: String = ""
     var timeout: Int = 0
     var cdntimeout: Int = 0
-
-
 
     val httpURL: String
         get() = "https://$baseURL/"
@@ -24,17 +21,17 @@ class ApiClientOptions constructor(
 
         private val options = ApiClientOptions()
 
-        fun Timeout(timeout: Int): Builder {
+        fun timeout(timeout: Int): Builder {
             options.timeout = timeout
             return this
         }
 
-        fun CDNTimeout(timeout: Int): Builder {
+        fun cdnTimeout(timeout: Int): Builder {
             options.cdntimeout = timeout
             return this
         }
 
-        fun BaseURL(baseURL: String?): Builder {
+        fun baseURL(baseURL: String?): Builder {
             var baseURL = baseURL
             if (baseURL != null && baseURL.startsWith("https://")) {
                 baseURL = baseURL.split("https://").toTypedArray()[1]
@@ -49,7 +46,7 @@ class ApiClientOptions constructor(
             return this
         }
 
-        fun CDNURL(cdnURL: String?): Builder {
+        fun cdnUrl(cdnURL: String?): Builder {
             var cdnURL = cdnURL
             if (cdnURL != null && cdnURL.startsWith("https://")) {
                 cdnURL = cdnURL.split("https://").toTypedArray()[1]

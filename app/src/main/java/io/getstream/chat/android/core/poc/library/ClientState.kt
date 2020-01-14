@@ -1,5 +1,14 @@
 package io.getstream.chat.android.core.poc.library
 
 class ClientState {
-    var currentUser:User? = null
+
+    var user: User? = null
+
+    fun reset() {
+        user = null
+    }
+
+    fun getUser(id: String): User {
+        return null!!
+    }
 }

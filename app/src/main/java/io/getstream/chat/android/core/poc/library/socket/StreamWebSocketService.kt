@@ -1,17 +1,28 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import android.os.Message
+import android.util.Log
 import com.google.gson.Gson
 import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.EventType
+import io.getstream.chat.android.core.poc.library.User
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
+import java.io.UnsupportedEncodingException
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-class StreamWebSocketService(val wsURL: String, val webSocketListener: WSResponseHandler) :
+class StreamWebSocketService(
+    val wsEndpoint: String,
+    val apiKey: String,
+    val user: User?,
+    val userToken: String?,
+    val webSocketListener: WSResponseHandler
+) :
     WebSocketListener(), WebSocketService {
 
     private val NORMAL_CLOSURE_STATUS = 1000
@@ -42,10 +53,10 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
     private val mHealthCheck: Runnable = object : Runnable {
         override fun run() {
             if (shuttingDown) {
-                //Log.i(TAG, "connection is shutting down, quit health check")
+                Log.i(TAG, "connection is shutting down, quit health check")
                 return
             }
-            //Log.i(TAG, "send health check")
+            Log.i(TAG, "send health check")
             try {
                 val event = Event()
                 event.setType(EventType.HEALTH_CHECK)
@@ -59,10 +70,10 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
     private val mMonitor = object : Runnable {
         override fun run() {
             if (shuttingDown) {
-                //Log.i(TAG, "connection is shutting down, quit monitor")
+                Log.i(TAG, "connection is shutting down, quit monitor")
                 return
             }
-            //Log.i(TAG, "check connection health")
+            Log.i(TAG, "check connection health")
             val millisNow = Date().time
             val monitorInterval = 1000
             if (lastEvent != null) {
@@ -112,7 +123,7 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
 
     override fun connect() {
         if (isConnecting) {
-            //Log.w(TAG, "already connecting");
+            Log.w(TAG, "already connecting");
             return
         }
 
@@ -146,7 +157,7 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
         if (isConnecting || isHealthy || shuttingDown) {
             return
         }
-        //Log.i(TAG, "schedule reconnection in " + getRetryInterval().toString() + "ms")
+        Log.i(TAG, "schedule reconnection in " + getRetryInterval().toString() + "ms")
         eventThread!!.mHandler.postDelayed(
             mReconnect,
             if (delay) getRetryInterval() else 0.toLong()
@@ -177,7 +188,7 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
     }
 
     fun setHealth(healthy: Boolean) {
-        //Log.i(TAG, "setHealth $healthy")
+        Log.i(TAG, "setHealth $healthy")
         if (healthy && !isHealthy) {
             isHealthy = true
             val wentOnline = Event(true)
@@ -185,7 +196,7 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
         }
         if (!healthy && isHealthy) {
             isHealthy = false
-            //Log.i(TAG, "spawn mOfflineNotifier")
+            Log.i(TAG, "spawn mOfflineNotifier")
             eventThread!!.mHandler.postDelayed(mOfflineNotifier, 5000)
         }
     }
@@ -197,10 +208,9 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
     }
 
     private fun setupWS() {
-        //Log.i(TAG, "setupWS")
         wsId++
         httpClient = OkHttpClient()
-        val request: Request = Request.Builder().url(wsURL).build()
+        val request: Request = Request.Builder().url(getWsUrl()).build()
         listener = EchoWebSocketListener(this)
         webSocket = httpClient!!.newWebSocket(request, listener)
         httpClient!!.dispatcher().executorService().shutdown()
@@ -212,6 +222,32 @@ class StreamWebSocketService(val wsURL: String, val webSocketListener: WSRespons
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun getWsUrl(): String {
+        var json = buildUserDetailJson(user)
+        return try {
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
+            val baseWsUrl: String =
+                wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
+            if (user == null) {
+                "$baseWsUrl&stream-auth-type=anonymous"
+            } else {
+                "$baseWsUrl&authorization=$userToken&stream-auth-type=jwt"
+            }
+        } catch (throwable: Throwable) {
+            throw UnsupportedEncodingException("Unable to encode user details json: $json")
+        }
+    }
+
+    private fun buildUserDetailJson(user: User?): String {
+        val data = mutableMapOf<String, Any>()
+        user?.let {
+            data["user_details"] = user
+            data["user_id"] = user.id
+        }
+        data["server_determines_connection_id"] = true
+        return Gson().toJson(data)
     }
 
 }

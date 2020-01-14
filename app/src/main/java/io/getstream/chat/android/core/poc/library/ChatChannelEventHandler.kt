@@ -4,23 +4,23 @@ import android.R
 
 
 abstract class ChatChannelEventHandler {
-    fun onAnyEvent(event: Event?) {}
-    fun onTypingStart(event: Event?) {}
-    fun onTypingStop(event: Event?) {}
-    fun onMessageNew(event: Event?) {}
-    fun onMessageUpdated(event: Event?) {}
-    fun onMessageDeleted(event: Event?) {}
-    fun onMessageRead(event: Event?) {}
-    fun onReactionNew(event: Event?) {}
-    fun onReactionDeleted(event: Event?) {}
-    fun onMemberAdded(event: Event?) {}
-    fun onMemberRemoved(event: Event?) {}
-    fun onMemberUpdated(event: Event?) {}
-    fun onChannelUpdated(event: Event?) {}
-    fun onChannelHidden(event: Event?) {}
-    fun onChannelDeleted(event: Event?) {}
-    fun onUserWatchingStart(event: Event?) {}
-    fun onUserWatchingStop(event: Event?) {}
+    fun onAnyEvent(event: Event) {}
+    fun onTypingStart(event: Event) {}
+    fun onTypingStop(event: Event) {}
+    fun onMessageNew(event: Event) {}
+    fun onMessageUpdated(event: Event) {}
+    fun onMessageDeleted(event: Event) {}
+    fun onMessageRead(event: Event) {}
+    fun onReactionNew(event: Event) {}
+    fun onReactionDeleted(event: Event) {}
+    fun onMemberAdded(event: Event) {}
+    fun onMemberRemoved(event: Event) {}
+    fun onMemberUpdated(event: Event) {}
+    fun onChannelUpdated(event: Event) {}
+    fun onChannelHidden(event: Event) {}
+    fun onChannelDeleted(event: Event) {}
+    fun onUserWatchingStart(event: Event) {}
+    fun onUserWatchingStop(event: Event) {}
     fun dispatchEvent(event: Event) {
         onAnyEvent(event)
         when (event.getType()) {

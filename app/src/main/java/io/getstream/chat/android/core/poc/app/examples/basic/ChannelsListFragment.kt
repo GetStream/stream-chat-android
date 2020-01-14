@@ -14,11 +14,11 @@ class ChannelsListFragment : BaseChannelsListFragment() {
         super.onCreate(savedInstanceState)
 
 
-        App.client.queryChannels(
-            ChannelsQuery().apply {
-                this.limit = 10
-                this.offset = 10
-            }
-        )
+//        App.client.queryChannels(
+//            ChannelsQuery().apply {
+//                this.limit = 10
+//                this.offset = 10
+//            }
+//        )
     }
 }

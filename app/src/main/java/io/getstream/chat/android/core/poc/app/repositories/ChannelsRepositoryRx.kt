@@ -33,19 +33,21 @@ class ChannelsRepositoryRx(
     }
 
     private fun updateCache(offset: Int, limit: Int): Completable {
-        return fromAction {
 
-            val result = client.queryChannels(ChannelsQuery().apply {
-                this.offset = offset
-                this.limit = limit
-            }).execute()
-
-            if (result.isSuccess()) {
-                cache.storeSync(ApiMapper.mapChannels(result.data()))
-            } else {
-                throw RuntimeException("Channels loading error", result.error())
-            }
-        }
+        return null!!
+//        return fromAction {
+//
+//            val result = client.queryChannels(ChannelsQuery().apply {
+//                this.offset = offset
+//                this.limit = limit
+//            }).execute()
+//
+//            if (result.isSuccess()) {
+//                cache.storeSync(ApiMapper.mapChannels(result.data()))
+//            } else {
+//                throw RuntimeException("Channels loading error", result.error())
+//            }
+//        }
     }
 
     private fun getCached(offset: Int, limit: Int): Observable<List<Channel>> {

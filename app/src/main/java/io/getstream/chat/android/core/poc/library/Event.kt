@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.util.*
 
 
@@ -38,20 +39,20 @@ class Event : UserEntity {
     val channel: Channel? = null
     @SerializedName("total_unread_count")
     @Expose
-    val totalUnreadCount: Number? = null
+    val totalUnreadCount: Number = 0
     @SerializedName("unread_channels")
     @Expose
-    val unreadChannels: Number? = null
+    val unreadChannels: Number = 0
     @SerializedName("watcher_count")
     @Expose
-    val watcherCount: Number? = null
+    val watcherCount: Number = 0
     @SerializedName("created_at")
     @Expose
-    val createdAt: Long = 0
+    val createdAt: Date = UndefinedDate
     @SerializedName("clear_history")
     @Expose
     var clearHistory: Boolean? = null
-    var receivedAt: Date? = null
+    var receivedAt: Date = UndefinedDate
     var online = false
         private set
 
@@ -88,5 +89,10 @@ class Event : UserEntity {
     override fun getUserId(): String {
         return user!!.id
     }
+
+    override fun toString(): String {
+        return "Event(type=$type)"
+    }
+
 
 }

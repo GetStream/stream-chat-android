@@ -7,5 +7,5 @@ interface WSResponseHandler {
     fun connectionResolved(event: Event)
     fun connectionRecovered()
     fun tokenExpired()
-    fun onError(error: WsErrorMessage?)
+    fun onError(error: WsErrorMessage)
 }
