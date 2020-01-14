@@ -116,6 +116,20 @@ client.getChannels { result -> showChannels(result) }
 - `t` for `Throwable`
 
 ```kotlin
-open interface ChatClient {}
-class ChatClientImpl: ChatClient() {} 
+open interface ChatClient {
+  fun onError(t:Throwable)
+  fun getUserId(): String
+}
+class ChatClientImpl: ChatClient() {
+
+  private val userId:String = ""
+
+  override fun onError(t:Throwable) {
+  
+  }
+  
+  override fun getUserId(): String {
+    return userId
+  }
+} 
 ```
