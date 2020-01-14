@@ -1,14 +1,6 @@
 package io.getstream.chat.example.view.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
@@ -41,15 +39,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import io.getstream.chat.example.ChannelActivity;
+import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentChannelListBinding;
 import io.getstream.chat.example.navigation.ChannelDestination;
 import io.getstream.chat.example.navigation.SearchDestination;
-import io.getstream.chat.example.search.MessageSearchActivity;
-import io.getstream.chat.example.utils.AppDataConfig;
+import io.getstream.chat.example.utils.AppConfig;
 
 import static com.getstream.sdk.chat.enums.Filters.eq;
 import static java.util.UUID.randomUUID;
@@ -60,18 +57,25 @@ public class ChannelListFragment extends Fragment {
 
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
-    final Boolean offlineEnabled = false;
-    private FragmentChannelListBinding binding;
+    private final Boolean offlineEnabled = false;
     private ChannelListViewModel viewModel;
+    private Client client;
 
     // establish a websocket connection to stream
-    protected Client configureStreamClient() {
-        Client client = StreamChat.getInstance(getContext());
+    private void configureStreamClient() {
+        client = StreamChat.getInstance(getContext());
 
-        String USER_ID = AppDataConfig.getCurrentUser().getId();
-        String USER_TOKEN = AppDataConfig.getCurrentUser().getToken();
-        String USER_NAME = AppDataConfig.getCurrentUser().getName();
-        String USER_IMAGE = AppDataConfig.getCurrentUser().getImage();
+        AppConfig appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
+
+        if (appConfig.getCurrentUser() == null) {
+            StreamChat.getLogger().logE(this, "Current user is null");
+            return;
+        }
+
+        String USER_ID = appConfig.getCurrentUser().getId();
+        String USER_TOKEN = appConfig.getCurrentUser().getToken();
+        String USER_NAME = appConfig.getCurrentUser().getName();
+        String USER_IMAGE = appConfig.getCurrentUser().getImage();
 
         Crashlytics.setUserIdentifier(USER_ID);
         if (offlineEnabled) {
@@ -95,7 +99,6 @@ public class ChannelListFragment extends Fragment {
                 Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
             }
         });
-        return client;
     }
 
     @Override
@@ -109,7 +112,7 @@ public class ChannelListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // setup the client
-        Client client = configureStreamClient();
+        configureStreamClient();
         // example for how to observe the unread counts
         StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
             Log.i(TAG, String.format("Total unread message count is now %d", count));
@@ -119,7 +122,7 @@ public class ChannelListFragment extends Fragment {
         });
 
         // we're using data binding in this example
-        binding = FragmentChannelListBinding.inflate(inflater, container, false);
+        FragmentChannelListBinding binding = FragmentChannelListBinding.inflate(inflater, container, false);
 
         // Specify the current activity as the lifecycle owner.
         binding.setLifecycleOwner(this);
@@ -229,7 +232,6 @@ public class ChannelListFragment extends Fragment {
     }
 
     private void createNewChannel(String channelName) {
-        Client client = configureStreamClient();
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("name", channelName);
 

@@ -17,13 +17,15 @@ import com.google.firebase.FirebaseApp;
 
 import androidx.annotation.NonNull;
 import io.fabric.sdk.android.Fabric;
-import io.getstream.chat.example.utils.AppDataConfig;
+import io.getstream.chat.example.utils.AppConfig;
 
 
 public class BaseApplication extends Application {
+
     private StreamLogger logger;
     private ApiClientOptions apiClientOptions;
     private StreamChatStyle style;
+    private AppConfig appConfig;
 
     @Override
     public void onCreate() {
@@ -31,14 +33,18 @@ public class BaseApplication extends Application {
         Fabric.with(this, new Crashlytics());
         FirebaseApp.initializeApp(getApplicationContext());
 
-        AppDataConfig.init(this);
+        appConfig = new AppConfig(this);
 
         setupLogger();
         setupClientOptions();
         setupChatStyle();
         initChat();
 
-        Crashlytics.setString("apiKey", AppDataConfig.getCurrentApiKey());
+        Crashlytics.setString("apiKey", appConfig.getApiKey());
+    }
+
+    public AppConfig getAppConfig() {
+        return appConfig;
     }
 
     private void setupLogger() {
@@ -82,9 +88,9 @@ public class BaseApplication extends Application {
 
     private void setupClientOptions() {
         apiClientOptions = new ApiClientOptions.Builder()
-                .BaseURL(AppDataConfig.getApiEndpoint())
-                .Timeout(AppDataConfig.getApiTimeout())
-                .CDNTimeout(AppDataConfig.getCdnTimeout())
+                .BaseURL(appConfig.getApiEndPoint())
+                .Timeout(appConfig.getApiTimeout())
+                .CDNTimeout(appConfig.getCdnTimeout())
                 .build();
     }
 
@@ -96,7 +102,7 @@ public class BaseApplication extends Application {
     }
 
     private void initChat() {
-        StreamChat.Config configuration = new StreamChat.Config(this, AppDataConfig.getCurrentApiKey());
+        StreamChat.Config configuration = new StreamChat.Config(this, appConfig.getApiKey());
         configuration.setApiClientOptions(apiClientOptions);
         configuration.setStyle(style);
         configuration.setLogger(logger);
