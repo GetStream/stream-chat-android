@@ -3,7 +3,6 @@ package io.getstream.chat.android.core.poc.library.socket
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
-import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 
 class ChatSocketConnectionImpl(
     val apiKey: String,
