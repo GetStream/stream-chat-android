@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc.library
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 
 class Watcher : UserEntity {
@@ -10,7 +11,7 @@ class Watcher : UserEntity {
     @SerializedName("user")
     @Expose
     lateinit var user: User
-    val createdAt: Long = 0
+    val createdAt = Date()
 
     override fun equals(obj: Any?): Boolean {
         if(obj == null) return false

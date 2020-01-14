@@ -1,76 +1,134 @@
 package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class Message {
+class Message: UserEntity {
     val id: String = ""
 
 
-    private val cid: String? = null
+    var cid: String = ""
 
     @SerializedName("text")
-    private val text: String? = null
+    var text: String = ""
 
     @SerializedName("html")
-    private val html: String? = null
+    val html: String? = null
 
     @SerializedName("type")
-    private val type: String? = null
+    val type: String = ""
 
-    private val syncStatus: Int? = null
+    var syncStatus: Int = 0
 
 
     @SerializedName("user")
-    private val user: User? = null
+    lateinit var user: User
 
 
     @SerializedName("channel")
-    private val channel: Channel? = null
+    val channel: Channel? = null
 
-    private val userID: String? = null
+    val userID: String? = null
 
-    private val attachments: List<Attachment>? = null
+    val attachments: List<Attachment>? = null
 
     @SerializedName("latest_reactions")
-    private val latestReactions: List<Reaction>? = null
+    val latestReactions: List<Reaction>? = null
 
     @SerializedName("own_reactions")
-    private val ownReactions: List<Reaction>? = null
+    val ownReactions: List<Reaction>? = null
 
     @SerializedName("reply_count")
-    private val replyCount = 0
+    val replyCount = 0
 
     @SerializedName("created_at")
-    private val createdAt: Long = 0
+    var createdAt = UndefinedDate
 
     @SerializedName("updated_at")
-    private val updatedAt: Long = 0
+    var updatedAt = UndefinedDate
 
-
-    private val deletedAt: Long = 0
+    var deletedAt = UndefinedDate
 
     @SerializedName("mentioned_users")
-    private val mentionedUsers: List<User>? =
+    val mentionedUsers: List<User>? =
         null
 
 
-    private val mentionedUsersId: List<String>? = null
+    val mentionedUsersId: List<String>? = null
 
-    private val reactionCounts: Map<String, Int>? = null
+    val reactionCounts: Map<String, Int>? = null
 
-    private val parentId: String? = null
+    val parentId: String? = null
 
-    private val command: String? = null
+    val command: String? = null
 
-    private val commandInfo: Map<String, String>? = null
+    val commandInfo: Map<String, String>? = null
 
 
-    private val extraData: HashMap<String, Any>? = null
+    val extraData: HashMap<String, Any>? = null
 
-    private val isStartDay = false
-    private val isYesterday = false
-    private val isToday = false
-    private val date: String? = null
-    private var time: String? = null
+    var isStartDay = false
+    var isYesterday = false
+    var isToday = false
+    var date: String = ""
+    var time: String = ""
+
+
+
+    companion object {
+
+        val locale = Locale("en", "US", "POSIX")
+        val messageDateFormat: DateFormat =
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale)
+
+        fun setStartDay(messages: List<Message>?, preMessage0: Message?) {
+            if (messages == null) return
+            if (messages.size == 0) return
+            var preMessage =
+                preMessage0 ?: messages[0]
+            setFormattedDate(preMessage)
+            val startIndex = if (preMessage0 != null) 0 else 1
+            for (i in startIndex until messages.size) {
+                if (i != startIndex) {
+                    preMessage = messages[i - 1]
+                }
+                val message = messages[i]
+                setFormattedDate(message)
+                message.isStartDay = !message.date.equals(preMessage.date)
+            }
+        }
+
+        private fun setFormattedDate(message: Message?) {
+            if (message == null || message.date != null) return
+            messageDateFormat.timeZone = TimeZone.getTimeZone("GMT")
+            val smsTime = Calendar.getInstance()
+            smsTime.timeInMillis = message.createdAt.time
+            val now = Calendar.getInstance()
+            if (now[Calendar.DATE] === smsTime[Calendar.DATE]) {
+                message.isToday = true
+                message.date = "today"
+            } else if (now[Calendar.DATE] - smsTime[Calendar.DATE] === 1) {
+                message.isYesterday = true
+                message.date = "yesterday"
+            } else if (now[Calendar.WEEK_OF_YEAR] === smsTime[Calendar.WEEK_OF_YEAR]) {
+                val dayName: DateFormat = SimpleDateFormat("EEEE")
+                message.date = dayName.format(message.createdAt)
+            } else {
+                val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG)
+                message.date = dateFormat.format(message.createdAt)
+            }
+            val timeFormat: DateFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
+            message.time = timeFormat.format(message.createdAt)
+        }
+    }
+
+    override fun getUserId(): String {
+        return user?.id
+    }
+
+
 }

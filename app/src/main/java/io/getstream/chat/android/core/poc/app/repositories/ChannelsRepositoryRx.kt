@@ -4,7 +4,6 @@ import io.getstream.chat.android.core.poc.app.ChannelsCache
 import io.getstream.chat.android.core.poc.app.common.ApiMapper
 import io.getstream.chat.android.core.poc.app.common.Channel
 import io.getstream.chat.android.core.poc.library.StreamChatClient
-import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
 import io.reactivex.Completable
 import io.reactivex.Completable.fromAction
 import io.reactivex.Observable

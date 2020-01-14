@@ -1,15 +1,24 @@
 package io.getstream.chat.android.core.poc.library
 
-import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
+import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 
-class Api(
-    val apiService: RetrofitApiService
-) {
+class Api(private val retrofitApi: RetrofitApi) {
+
+    var apiKey: String = ""
+    var userId: String = ""
+    var clientId: String = ""
 
     private val callMapper = RetrofitCallMapper()
 
-    fun queryChannels(query: ChannelsQuery): Call<List<ChatChannel>> {
-        return callMapper.map(apiService.queryChannels(query))
+    fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResponse> {
+        return callMapper.map(
+            retrofitApi.queryChannels(
+                apiKey,
+                userId,
+                clientId,
+                query
+            )
+        )
     }
 
 }

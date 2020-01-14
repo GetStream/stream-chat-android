@@ -12,9 +12,9 @@ class User : UserEntity {
     var name: String = ""
     var image: String = ""
     var role: String = ""
-    var createdAt: Long = 0
-    var updatedAt: Long = 0
-    var lastActive: Long = 0
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
+    var lastActive: Date = Date()
     var online: Boolean = false
     var invisible: Boolean = false
     var banned: Boolean = false

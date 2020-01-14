@@ -4,34 +4,38 @@ import android.text.TextUtils
 import androidx.room.Embedded
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.isUndefined
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class ChannelState @JvmOverloads constructor() {
 
-    var cid: String? = null
+    var cid: String = ""
 
     lateinit var channel: Channel
-    
+
     @SerializedName("messages")
     @Expose
-    private var messages: MutableList<Message>? = null
+    private var messages = mutableListOf<Message>()
     @Embedded(prefix = "last_message_")
     private var lastMessage: Message? = null
     @SerializedName("read")
     @Expose
-    private var reads: MutableList<ChannelUserRead>? = null
+    private var reads = mutableListOf<ChannelUserRead>()
     @SerializedName("members")
     @Expose
     private var members: MutableList<Member> = mutableListOf()
-    
+
     @SerializedName("watchers")
     @Expose
     private var watchers: MutableList<Watcher> = mutableListOf()
-    
+
     @SerializedName("watcher_count")
     var watcherCount = 0
-    
-    private var lastKnownActiveWatcher: Long = 0
+
+    private var lastKnownActiveWatcher: Date = Date()
 
     fun getWatchers(): List<Watcher> {
         return watchers
@@ -42,7 +46,7 @@ class ChannelState @JvmOverloads constructor() {
         lastMessage = computeLastMessage()
     }
 
-    private fun getLastKnownActiveWatcher(): Long {
+    private fun getLastKnownActiveWatcher(): Date {
         return lastKnownActiveWatcher
     }
 
@@ -50,8 +54,8 @@ class ChannelState @JvmOverloads constructor() {
         val clone = ChannelState()
         clone.channel = channel
         clone.reads = ArrayList()
-        for (read in getReads()!!) {
-            clone.reads!!.add(ChannelUserRead(read.getUser(), read.getLastRead()))
+        for (read in getReads()) {
+            clone.reads.add(ChannelUserRead(read.user, read.lastRead))
         }
         clone.setLastMessage(getLastMessage())
         return clone
@@ -71,21 +75,16 @@ class ChannelState @JvmOverloads constructor() {
     }
 
     fun addOrUpdateMember(member: Member) {
-        if (members == null) {
-            members = ArrayList()
-        }
-        val index = members!!.indexOf(member)
+        val index = members.indexOf(member)
         if (index >= 0) {
-            members!![index] = member
+            members[index] = member
         } else {
-            members!!.add(member)
+            members.add(member)
         }
     }
 
     fun removeMemberById(userId: String) {
-        if (members == null || members!!.isEmpty()) return
-        val it =
-            members!!.iterator()
+        val it = members.iterator()
         while (it.hasNext()) {
             val member = it.next()
             if (member.getUserId() == userId) {
@@ -98,26 +97,25 @@ class ChannelState @JvmOverloads constructor() {
         get() {
             val users: MutableList<User> =
                 ArrayList()
-            if (members != null) {
-                for (m in members!!) {
-                    if (!channel.client.fromCurrentUser(m)) {
-                        val user: User =
-                            channel.client.getState().getUser(m.user.id)
 
-                        users.add(user)
-                    }
+            for (m in members) {
+                if (!channel.client.fromCurrentUser(m)) {
+                    val user: User =
+                        channel.client.getState().getUser(m.user.id)
+
+                    users.add(user)
                 }
             }
-            if (watchers != null) {
-                for (w in watchers!!) {
-                    if (!channel.client.fromCurrentUser(w)) {
-                        val user: User =
-                            channel.client.getState().getUser(w.getUser().getId())
 
-                        if (!users.contains(user)) users.add(user)
-                    }
+            for (w in watchers) {
+                if (!channel.client.fromCurrentUser(w)) {
+                    val user: User =
+                        channel.client.getState().getUser(w.user.id)
+
+                    if (!users.contains(user)) users.add(user)
                 }
             }
+
             return users
         }
 
@@ -131,22 +129,20 @@ class ChannelState @JvmOverloads constructor() {
     // last time the channel had a message from another user or (when more recent) the time a watcher was last active
     val lastActive: Date?
         get() {
-            var lastActive: Date? = channel.getCreatedAt()
-            if (lastActive == null) lastActive = Date()
+            var lastActive: Date = channel.createdAt
             if (getLastKnownActiveWatcher().after(lastActive)) {
                 lastActive = getLastKnownActiveWatcher()
             }
             val message: Message? = lastMessageFromOtherUser
             if (message != null) {
-                if (message.getCreatedAt().after(lastActive)) {
-                    lastActive = message.getCreatedAt()
+                if (message.createdAt.after(lastActive)) {
+                    lastActive = message.createdAt
                 }
             }
             for (watcher in getWatchers()) {
-                if (watcher.getUser() == null || watcher.getUser().getLastActive() == null) continue
-                if (lastActive.before(watcher.getUser().getLastActive())) {
-                    if (channel.getClient().fromCurrentUser(watcher)) continue
-                    lastActive = watcher.getUser().getLastActive()
+                if (lastActive.before(watcher.user.lastActive)) {
+                    if (channel.client.fromCurrentUser(watcher)) continue
+                    lastActive = watcher.user.lastActive
                 }
             }
             return lastActive
@@ -155,7 +151,6 @@ class ChannelState @JvmOverloads constructor() {
     val channelNameOrMembers: String
         get() {
             var channelName: String
-            Log.i(TAG, "Channel name is" + channel.getName() + channel.getCid())
             if (!TextUtils.isEmpty(channel.getName())) {
                 channelName = channel.getName()
             } else {
@@ -165,7 +160,6 @@ class ChannelState @JvmOverloads constructor() {
                     users.subList(0, Math.min(3, users.size))
                 val usernames: MutableList<String?> = ArrayList()
                 for (u in top3) {
-                    if (u == null) continue
                     usernames.add(u.name)
                 }
                 channelName = TextUtils.join(", ", usernames)
@@ -182,7 +176,7 @@ class ChannelState @JvmOverloads constructor() {
                 return null
             }
             for (m in messages!!) {
-                if (m.getSyncStatus() === Sync.SYNCED) {
+                if (m.syncStatus == Sync.SYNCED) {
                     return m
                 }
             }
@@ -190,34 +184,20 @@ class ChannelState @JvmOverloads constructor() {
         }
 
     fun getMessages(): List<Message> {
-        if (messages == null) {
-            return ArrayList()
-        }
-        for (m in messages!!) {
-            m.setCid(cid)
+        for (m in messages) {
+            m.cid = cid
         }
         return messages
     }
 
-    fun setMessages(messages: MutableList<Message>?) {
-        this.messages = messages
-    }
-
-    fun getReads(): List<ChannelUserRead>? {
-        if (reads == null) {
-            reads = ArrayList()
-        }
+    fun getReads(): List<ChannelUserRead> {
         return reads
-    }
-
-    fun setReads(reads: MutableList<ChannelUserRead>?) {
-        this.reads = reads
     }
 
     val readsByUser: Map<String, Any>
         get() {
             val readsByUser: MutableMap<String, ChannelUserRead> = HashMap()
-            for (r in getReads()!!) {
+            for (r in getReads()) {
                 readsByUser[r.getUserId()] = r
             }
             return readsByUser
@@ -231,10 +211,10 @@ class ChannelState @JvmOverloads constructor() {
             val readLastMessage: MutableList<ChannelUserRead> = ArrayList()
             if (reads == null || lastMessage == null) return readLastMessage
             val client = channel.client
-            val userID: String = client.setUser()
-            for (r in reads!!) {
+            val userID: String = client.getUserId()
+            for (r in reads) {
                 if (r.getUserId().equals(userID)) continue
-                if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
+                if (r.lastRead.compareTo(lastMessage.createdAt) > -1) {
                     readLastMessage.add(r)
                 }
             }
@@ -242,7 +222,7 @@ class ChannelState @JvmOverloads constructor() {
             Collections.sort(
                 readLastMessage,
                 { o1: ChannelUserRead, o2: ChannelUserRead ->
-                    o1.getLastRead().compareTo(o2.getLastRead())
+                    o1.lastRead.compareTo(o2.lastRead)
                 })
             return readLastMessage
         }
@@ -264,7 +244,7 @@ class ChannelState @JvmOverloads constructor() {
 
     fun setLastMessage(lastMessage: Message?) {
         if (lastMessage == null) return
-        if (lastMessage.getDeletedAt() != null) {
+        if (lastMessage.deletedAt.isUndefined()) {
             this.lastMessage = computeLastMessage()
             return
         }
@@ -276,35 +256,22 @@ class ChannelState @JvmOverloads constructor() {
         val messages: List<Message> = getMessages()
         for (i in messages.indices.reversed()) {
             val message: Message = messages[i]
-            if (message.getDeletedAt() == null && message.getType().equals(ModelType.message_regular)) {
+            if (message.deletedAt.isUndefined() && message.type == ModelType.message_regular) {
                 lastMessage = message
                 break
             }
         }
-        Message.setStartDay(Collections.singletonList(lastMessage), null)
+        if (lastMessage != null) Message.setStartDay(listOf(lastMessage), null)
         return lastMessage
     }
 
     private val lastMessageFromOtherUser: Message?
         private get() {
-            var lastMessage: Message? = null
-            try {
-                val messages: List<Message> = getMessages()
-                for (i in messages.indices.reversed()) {
-                    val message: Message = messages[i]
-                    if (message.getDeletedAt() == null && !channel.getClient().fromCurrentUser(
-                            message
-                        )
-                    ) {
-                        lastMessage = message
-                        break
-                    }
-                }
-                Message.setStartDay(Collections.singletonList(lastMessage), null)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            return getMessages().reversed().firstOrNull {
+                it.deletedAt.isUndefined() && !channel.client.fromCurrentUser(it)
+            }?.apply {
+                Message.setStartDay(listOf(this), null)
             }
-            return lastMessage
         }
 
     val lastReader: User?
@@ -313,8 +280,8 @@ class ChannelState @JvmOverloads constructor() {
             var lastReadUser: User? = null
             for (i in reads!!.indices.reversed()) {
                 val channelUserRead: ChannelUserRead = reads!![i]
-                if (!channel.getClient().fromCurrentUser(channelUserRead)) {
-                    lastReadUser = channelUserRead.getUser()
+                if (!channel.client.fromCurrentUser(channelUserRead)) {
+                    lastReadUser = channelUserRead.user
                     break
                 }
             }
@@ -324,11 +291,9 @@ class ChannelState @JvmOverloads constructor() {
     private fun addOrUpdateMessage(newMessage: Message) {
         if (messages!!.size > 0) {
             for (i in messages!!.indices.reversed()) {
-                if (messages!![i].getId().equals(newMessage.getId())) {
-                    messages!![i] = newMessage
-                    return
-                }
-                if (messages!![i].getCreatedAt().before(newMessage.getCreatedAt())) {
+                messages!![i] = newMessage
+                return
+                if (messages!![i].createdAt.before(newMessage.createdAt)) {
                     messages!!.add(newMessage)
                     return
                 }
@@ -347,7 +312,7 @@ class ChannelState @JvmOverloads constructor() {
 
     private fun addMessagesSorted(messages: List<Message>?) {
         for (m in messages!!) {
-            if (m.getParentId() == null) {
+            if (m.parentId == null) {
                 addOrUpdateMessage(m)
             }
         }
@@ -376,8 +341,7 @@ class ChannelState @JvmOverloads constructor() {
 
     val currentUserUnreadMessageCount: Int
         get() {
-            val client: com.sun.security.ntlm.Client = channel.getClient()
-            val userID: String = client.getUserId()
+            val userID: String = channel.client.getUserId()
             return getUnreadMessageCount(userID)
         }
 
@@ -388,9 +352,8 @@ class ChannelState @JvmOverloads constructor() {
             getReadDateOfChannelLastMessage(userId) ?: return unreadMessageCount
         for (i in messages!!.indices.reversed()) {
             val message: Message = messages!![i]
-            if (message.getUser().getId().equals(userId)) continue
-            if (message.getDeletedAt() != null) continue
-            if (message.getCreatedAt().getTime() > lastReadDate.getTime()) unreadMessageCount++
+            if (message.user.id == userId) continue
+            if (message.createdAt.time > lastReadDate.time) unreadMessageCount++
         }
         return unreadMessageCount
     }
@@ -401,8 +364,8 @@ class ChannelState @JvmOverloads constructor() {
         try {
             for (i in reads!!.indices.reversed()) {
                 val channelUserRead: ChannelUserRead = reads!![i]
-                if (channelUserRead.getUser().getId().equals(userId)) {
-                    lastReadDate = channelUserRead.getLastRead()
+                if (channelUserRead.user.id == userId) {
+                    lastReadDate = channelUserRead.lastRead
                     break
                 }
             }
@@ -414,31 +377,36 @@ class ChannelState @JvmOverloads constructor() {
 
     fun setReadDateOfChannelLastMessage(
         user: User,
-        readDate: Date?
+        readDate: Date
     ) {
-        for (i in getReads()!!.indices) {
+        for (i in getReads().indices) {
             val current: ChannelUserRead = reads!![i]
             if (current.getUserId().equals(user.id)) {
-                reads!!.removeAt(i)
-                current.setLastRead(readDate)
-                reads!!.add(current)
+                reads.removeAt(i)
+                current.lastRead = readDate
+                reads.add(current)
                 return
             }
         }
         val channelUserRead = ChannelUserRead(user, readDate)
-        reads!!.add(channelUserRead)
+        reads.add(channelUserRead)
     }
 
     // if user read the last message returns true, else false.
     fun readLastMessage(): Boolean {
-        val client= channel.client
+        val client = channel.client
         val userID: String = client.getUserId()
         val myReadDate: Date? = getReadDateOfChannelLastMessage(userID)
         return if (myReadDate == null) {
             false
-        } else if (getLastMessage() == null) {
-            true
-        } else myReadDate.getTime() > getLastMessage().getCreatedAt().getTime()
+        } else {
+            val lastMessage1 = getLastMessage()
+            if (lastMessage1 == null) {
+                true
+            } else {
+                myReadDate.time > lastMessage1.createdAt.time
+            }
+        }
     }
 
     override fun toString(): String {
@@ -453,14 +421,10 @@ class ChannelState @JvmOverloads constructor() {
     }
 
     init {
-        if (channel == null || channel.getChannelState() == null) {
-            messages = ArrayList()
-            reads = ArrayList()
-            members = ArrayList()
-        } else {
-            messages = channel.getChannelState().messages
-            reads = channel.getChannelState().reads
-            members = channel.getChannelState().members
+        if (channel != null) {
+            messages = channel.channelState.messages
+            reads = channel.channelState.reads
+            members = channel.channelState.members
         }
     }
 }

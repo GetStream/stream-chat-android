@@ -1,8 +1,6 @@
 package io.getstream.chat.android.core.poc
 
 import com.google.gson.Gson
-import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
-import io.getstream.chat.android.core.poc.library.requests.Field
 import org.junit.Test
 
 /**

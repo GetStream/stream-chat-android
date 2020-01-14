@@ -2,12 +2,13 @@ package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 
 class Event : UserEntity {
     @SerializedName("connection_id")
     @Expose
-    var connectionId: String? = null
+    var connectionId: String = ""
     @SerializedName("cid")
     @Expose
     val cid: String? = null
@@ -50,7 +51,7 @@ class Event : UserEntity {
     @SerializedName("clear_history")
     @Expose
     var clearHistory: Boolean? = null
-    var receivedAt: Long = 0
+    var receivedAt: Date? = null
     var online = false
         private set
 
@@ -85,7 +86,7 @@ class Event : UserEntity {
         } else true
 
     override fun getUserId(): String {
-        return user.id
+        return user!!.id
     }
 
 }

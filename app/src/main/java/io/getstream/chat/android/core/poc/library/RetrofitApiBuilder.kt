@@ -2,7 +2,6 @@ package io.getstream.chat.android.core.poc.library
 
 import android.os.Handler
 import android.os.Looper
-import io.getstream.chat.android.core.poc.library.requests.ChannelsQuery
 import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,9 +20,9 @@ class RetrofitApiBuilder {
     private val executor = Executors.newSingleThreadExecutor()
     val channels = listOfChannels()
 
-    fun build(): RetrofitApiService {
+    fun build(): RetrofitApi {
 
-        return object : RetrofitApiService {
+        return object : RetrofitApi {
             override fun queryChannels(query: ChannelsQuery): Call<List<ChatChannel>> {
 
                 return object : Call<List<ChatChannel>> {

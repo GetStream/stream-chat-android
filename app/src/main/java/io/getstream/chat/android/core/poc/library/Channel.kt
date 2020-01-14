@@ -1,9 +1,11 @@
 package io.getstream.chat.android.core.poc.library
 
-import androidx.room.*
+import androidx.room.Embedded
+import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.api.ExtraDataConverter
+import java.util.*
 
 
 class Channel {
@@ -21,7 +23,7 @@ class Channel {
     @Expose
     var lastMessageDate: Long = 0
 
-    @get:Sync.Status n
+    @get:Sync.Status
     var syncStatus: Int? = null
 
     var lastKeystrokeAt: Long = 0
@@ -29,41 +31,48 @@ class Channel {
     
     var lastStartTypingEvent: Long = 0
     @Embedded(prefix = "state_")
-    private val lastState: ChannelState? = null
+    val lastState: ChannelState? = null
     @SerializedName("created_at")
     @Expose
-    private val createdAt: Long = 0
+    val createdAt = Date()
     @SerializedName("deleted_at")
     @Expose
-    private val deletedAt: Long = 0
+    val deletedAt = Date()
     @SerializedName("updated_at")
     @Expose
-    private val updatedAt: Long = 0
+    val updatedAt = Date()
     @SerializedName("created_by")
     @Expose
     
-    private val createdByUser: User? = null
-    private val createdByUserID: String? = null
+    val createdByUser: User? = null
+    val createdByUserID: String? = null
     @SerializedName("frozen")
     @Expose
-    private val frozen = false
+    val frozen = false
     @SerializedName("config")
     @Expose
     @Embedded(prefix = "config_")
-    private val config: Config? = null
+    val config: Config? = null
     @TypeConverters(ExtraDataConverter::class)
-    private val extraData: HashMap<String, Any>? = null
+    val extraData: HashMap<String, Any>? = null
     
-    private val reactionTypes: Map<String, String>? = null
+    val reactionTypes: Map<String, String>? = null
     
-    private val subRegistery: EventSubscriberRegistry<ChatChannelEventHandler>? = null
+    val subRegistery: EventSubscriberRegistry<ChatChannelEventHandler>? = null
     
     lateinit var client: StreamChatClient
     
-    private val channelState: ChannelState? = null
+    lateinit var channelState: ChannelState
 
     
     var isInitialized = false
+
+    fun getName(): String {
+        val name = extraData!!["name"]
+        return if (name is String) {
+            name
+        } else ""
+    }
 
     companion object {
         private val TAG = Channel::class.java.simpleName

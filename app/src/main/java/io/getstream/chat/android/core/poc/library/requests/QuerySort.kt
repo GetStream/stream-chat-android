@@ -1,21 +1,45 @@
 package io.getstream.chat.android.core.poc.library.requests
 
 
+
 class QuerySort {
+    private var mSort: MutableList<Map<String, Any>>? =
+        null
 
-    private val data = mutableListOf<Sort>()
+    val data: List<Map<String, Any>>?
+        get() = mSort
 
-    constructor(field: Field, direction: Direction) {
-        data.add(Sort(field, direction))
+    fun clone(): QuerySort {
+        val _this = QuerySort()
+        if (mSort == null) {
+            mSort = ArrayList()
+        }
+        _this.mSort = ArrayList(mSort!!)
+        return _this
     }
 
-    constructor()
-
-
-    fun add(field: Field, direction: Direction = Direction.ASC): QuerySort {
-        data.add(Sort(field, direction))
-        return this
+    private fun add(fieldName: String, direction: Number): QuerySort {
+        val v: MutableMap<String, Any> = HashMap()
+        v["field"] = fieldName
+        v["direction"] = direction
+        val _this = clone()
+        _this.mSort!!.add(v)
+        return _this
     }
 
-    data class Sort(val field: Field, val direction: Direction)
+    fun asc(fieldName: String): QuerySort {
+        return add(fieldName, ASC)
+    }
+
+    fun desc(fieldName: String): QuerySort {
+        return add(fieldName, DESC)
+    }
+
+    companion object {
+        private const val DESC = -1
+        private const val ASC = 1
+    }
 }
+
+
+

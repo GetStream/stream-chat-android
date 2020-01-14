@@ -7,6 +7,8 @@ import io.getstream.chat.android.core.poc.library.Device
 import io.getstream.chat.android.core.poc.library.Mute
 import io.getstream.chat.android.core.poc.library.User
 import java.io.IOException
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class UserGsonAdapter : TypeAdapter<User>() {
@@ -49,13 +51,13 @@ class UserGsonAdapter : TypeAdapter<User>() {
                     user.role = set.value as String
                 }
                 "created_at" -> {
-                    user.createdAt = set.value as Long
+                    user.createdAt = Date(set.value as Long)
                 }
                 "updated_at" -> {
-                    user.updatedAt = set.value as Long
+                    user.updatedAt = Date(set.value as Long)
                 }
                 "last_active" -> {
-                    user.lastActive = set.value as Long
+                    user.lastActive = Date(set.value as Long)
                 }
                 "online" -> {
                     user.online = set.value as Boolean
