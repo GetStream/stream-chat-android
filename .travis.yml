@@ -42,5 +42,4 @@ deploy:
     name: $NAME
     on:
         tags: true
-        branch: master
-        jdk: oraclejdk9
+        branch: jar
