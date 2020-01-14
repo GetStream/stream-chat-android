@@ -120,6 +120,7 @@ open interface ChatClient {
   fun onError(t:Throwable)
   fun getUserId(): String
 }
+
 class ChatClientImpl: ChatClient() {
 
   private val userId:String = ""
