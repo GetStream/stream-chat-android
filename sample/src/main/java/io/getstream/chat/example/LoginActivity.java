@@ -2,7 +2,6 @@ package io.getstream.chat.example;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,7 +16,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import io.getstream.chat.example.adapter.UserListItemAdapter;
 import io.getstream.chat.example.navigation.HomeDestination;
-import io.getstream.chat.example.utils.AppDataConfig;
+import io.getstream.chat.example.utils.AppConfig;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,40 +24,49 @@ public class LoginActivity extends AppCompatActivity {
 
     private UserListItemAdapter adapter;
     private ListView lv_users;
+    private AppConfig appConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        appConfig = ((BaseApplication) getApplicationContext()).getAppConfig();
+
         lv_users = findViewById(R.id.lv_users);
 
-        if (AppDataConfig.getCurrentUser() != null) {
+        if (appConfig.getCurrentUser() != null) {
             StreamChat.getNavigator().navigate(new HomeDestination(this));
             finish();
             return;
         }
-        if (AppDataConfig.getUsers() == null) {
+        if (appConfig.getUsers() == null) {
             Toast.makeText(this, R.string.failed_load_json, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        adapter = new UserListItemAdapter(this, AppDataConfig.getUsers());
+        adapter = new UserListItemAdapter(this, appConfig.getUsers());
         lv_users.setAdapter(adapter);
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
-            AppDataConfig.setCurrentUser(AppDataConfig.getUsers().get(position).getId());
+            appConfig.setCurrentUser(appConfig.getUsers().get(position).getId());
             setPushToken();
             StreamChat.getNavigator().navigate(new HomeDestination(this));
             finish();
         });
     }
 
-    private void setPushToken(){
+    private void setPushToken() {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                             if (!task.isSuccessful()) {
                                 return;
                             }
+
+                            if (task.getResult() == null) {
+                                StreamChat.getLogger().logE(this, "Filed to get firebase result. Result:" + task.getResult());
+                                return;
+                            }
+
                             StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
                                 @Override
                                 public void onSuccess(CompletableResponse response) {

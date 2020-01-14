@@ -20,7 +20,8 @@ import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.getstream.chat.example.utils.AppDataConfig;
+import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.utils.AppConfig;
 import io.getstream.chat.example.utils.SingleLiveEvent;
 import io.getstream.chat.example.utils.UserConfig;
 
@@ -38,19 +39,24 @@ public class MessageSearchVM extends AndroidViewModel {
     private Client client;
 
     private Context context;
+    private AppConfig appConfig;
     private String cid;
 
     public MessageSearchVM(@NonNull Application application) {
         super(application);
 
         context = application;
+        appConfig = ((BaseApplication) context.getApplicationContext()).getAppConfig();
 
         initLiveData();
         initComponents();
     }
 
     void search() {
-        UserConfig userConf = AppDataConfig.getCurrentUser();
+
+
+
+        UserConfig userConf = appConfig.getCurrentUser();
         if (userConf != null && searchQuery.getValue() != null) {
             loadQueryData(0, QUERY_LIMIT, userConf);
         } else {
@@ -65,7 +71,7 @@ public class MessageSearchVM extends AndroidViewModel {
     //TODO Implement this
     // We can't load more, because we have no metadata in search result
     void loadMore(int offset) {
-        UserConfig userConf = AppDataConfig.getCurrentUser();
+        UserConfig userConf = appConfig.getCurrentUser();
         if (userConf != null && searchQuery.getValue() != null) {
             loadQueryData(offset, QUERY_LIMIT, userConf);
         } else {

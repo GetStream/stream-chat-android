@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.rest.response.ErrorResponse;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.ConnectionPool;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,10 +54,13 @@ public class RetrofitClient {
 
         setupLoggingInterceptor();
 
+        ConnectionPool cp = new ConnectionPool(10, options.getKeepAliveDuration(), TimeUnit.MILLISECONDS);
+
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
                 .connectTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .writeTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
                 .readTimeout(options.getTimeout(), TimeUnit.MILLISECONDS)
+                .connectionPool(cp)
                 .addInterceptor(chain -> {
                     Request request = chain.request();
                     Response response = chain.proceed(request);

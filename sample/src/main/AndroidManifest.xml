@@ -26,12 +26,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity"></activity>
+        <activity android:name=".HomeActivity" />
+
         <activity android:name=".search.MessageSearchActivity"
             android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ChannelActivity"
-            android:parentActivityName=".HomeActivity"></activity>
+            android:parentActivityName=".HomeActivity"
+            android:launchMode="singleInstance"/>
 
         <service
             android:name=".CCFirebaseMessagingService"
