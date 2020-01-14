@@ -26,15 +26,21 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
-      - ./gradlew :library:createFullJarRelease
-      - ./gradlew :library:exportJar
-      - ./gradlew :library:bundleReleaseAar
-      - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-      - git tag $TRAVIS_TAG
+  - ./gradlew clean
+  - ./gradlew :library:createFullJarRelease
+  - ./gradlew :library:exportJar
+  - ./gradlew :library:bundleReleaseAar
+  - export NAME="v$(./gradlew version -q)"
+  - git tag $NAME
+
 deploy:
-  provider: releases
-  api_key: $GITHUB_TOKEN_TEMP
-  file: "../jars/stream-chat-android.jar"
-  skip_cleanup: true
-  #on:
-  #  tags: true
+  - provider: releases
+    api_key: "$GITHUB_TOKEN_TEMP"
+    file_glob: true
+    file: "attachments/*"
+    skip_cleanup: true
+    name: $NAME
+    on:
+        tags: true
+        branch: master
+        jdk: oraclejdk9
