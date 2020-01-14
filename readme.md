@@ -126,7 +126,7 @@ class ChatClientImpl: ChatClient() {
   private val userId:String = ""
 
   override fun onError(t:Throwable) {
-  
+    t.printStackTrace()
   }
   
   override fun getUserId(): String {
