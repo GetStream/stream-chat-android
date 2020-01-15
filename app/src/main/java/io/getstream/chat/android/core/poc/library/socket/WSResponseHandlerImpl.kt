@@ -4,14 +4,35 @@ import io.getstream.chat.android.core.poc.library.Event
 
 class WSResponseHandlerImpl : WSResponseHandler {
     override fun onWSEvent(event: Event) {
+
+        val name = Thread.currentThread().name
+
+        if (name.isNotEmpty()) {
+
+        }
+
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun connectionResolved(event: Event) {
+
+        val name = Thread.currentThread().name
+
+        if (name.isNotEmpty()) {
+
+        }
+
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun connectionRecovered() {
+
+        val name = Thread.currentThread().name
+
+        if (name.isNotEmpty()) {
+
+        }
+
 //        clientID = event.connectionId
 //        if (event.me != null && !event.isAnonymous) state.currentUser = event.me
 //
@@ -27,10 +48,25 @@ class WSResponseHandlerImpl : WSResponseHandler {
     }
 
     override fun tokenExpired() {
+
+        val name = Thread.currentThread().name
+
+        if (name.isNotEmpty()) {
+
+        }
+
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onError(error: WsErrorMessage) {
+
+        val name = Thread.currentThread().name
+
+        if (name.isNotEmpty()) {
+
+        }
+
+
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

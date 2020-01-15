@@ -14,6 +14,9 @@ import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
+import kotlin.math.floor
+import kotlin.math.max
+import kotlin.math.min
 
 
 class StreamWebSocketService(
@@ -27,30 +30,27 @@ class StreamWebSocketService(
 
     private val NORMAL_CLOSURE_STATUS = 1000
     private val TAG = StreamWebSocketService::class.java.simpleName
-
-    protected var listener: EchoWebSocketListener? = null
-    var httpClient: OkHttpClient? = null
-    var webSocket: WebSocket? = null
+    private var listener: EchoWebSocketListener? = null
+    private var httpClient: OkHttpClient? = null
+    private var webSocket: WebSocket? = null
     var eventThread: EventHandlerThread? = null
+    lateinit var connectionCallback: (User, Throwable?) -> Unit
 
     private val mOfflineNotifier = Runnable {
-        if (!isHealthy) {
-            val wentOffline = Event(false)
-            sendEventToHandlerThread(wentOffline)
-        }
+        if (!isHealthy)
+            sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, false))
     }
 
-    private val mReconnect = object : Runnable {
+    private val reconnect = object : Runnable {
         override fun run() {
-            if (isConnecting || isHealthy || shuttingDown) {
+            if (isConnecting || isHealthy || shuttingDown)
                 return
-            }
             destroyCurrentWSConnection()
             setupWS()
         }
     }
 
-    private val mHealthCheck: Runnable = object : Runnable {
+    private val healthCheck: Runnable = object : Runnable {
         override fun run() {
             if (shuttingDown) {
                 Log.i(TAG, "connection is shutting down, quit health check")
@@ -58,16 +58,15 @@ class StreamWebSocketService(
             }
             Log.i(TAG, "send health check")
             try {
-                val event = Event()
-                event.setType(EventType.HEALTH_CHECK)
+                val event = Event(EventType.HEALTH_CHECK)
                 webSocket!!.send(Gson().toJson(event))
             } finally {
-                eventThread!!.mHandler.postDelayed(this, healthCheckInterval.toLong())
+                eventThread!!.handler.postDelayed(this, healthCheckInterval.toLong())
             }
         }
     }
 
-    private val mMonitor = object : Runnable {
+    private val monitor = object : Runnable {
         override fun run() {
             if (shuttingDown) {
                 Log.i(TAG, "connection is shutting down, quit monitor")
@@ -83,7 +82,7 @@ class StreamWebSocketService(
                     reconnect(true)
                 }
             }
-            eventThread!!.mHandler.postDelayed(mHealthCheck, monitorInterval.toLong())
+            eventThread!!.handler.postDelayed(healthCheck, monitorInterval.toLong())
         }
 
     }
@@ -121,22 +120,23 @@ class StreamWebSocketService(
     var shuttingDown = false
     var wsId = 0
 
-    override fun connect() {
+    override fun connect(listener: (User, Throwable?) -> Unit) {
         if (isConnecting) {
-            Log.w(TAG, "already connecting");
+            Log.w(TAG, "already connecting")
             return
         }
+
+        this.connectionCallback = listener
 
         wsId = 0;
         isConnecting = true
         resetConsecutiveFailures()
 
-        // start the thread before setting up the websocket connection
-        eventThread = EventHandlerThread(this)
-        eventThread!!.name = "WSS - event handler thread"
-        eventThread!!.start()
+        eventThread = EventHandlerThread(this).apply {
+            name = "WSS - event handler thread"
+            start()
+        }
 
-        // WS connection
         setupWS()
 
         shuttingDown = false
@@ -145,7 +145,7 @@ class StreamWebSocketService(
     override fun disconnect() {
         webSocket!!.close(1000, "bye")
         shuttingDown = true
-        eventThread!!.mHandler.removeCallbacksAndMessages(null)
+        eventThread!!.handler.removeCallbacksAndMessages(null)
         destroyCurrentWSConnection()
     }
 
@@ -158,29 +158,29 @@ class StreamWebSocketService(
             return
         }
         Log.i(TAG, "schedule reconnection in " + getRetryInterval().toString() + "ms")
-        eventThread!!.mHandler.postDelayed(
-            mReconnect,
+        eventThread!!.handler.postDelayed(
+            reconnect,
             if (delay) getRetryInterval() else 0.toLong()
         )
     }
 
     private fun startMonitor() {
-        mHealthCheck.run()
-        mMonitor.run()
+        healthCheck.run()
+        monitor.run()
     }
 
-    fun setConnectionResolved() {
+    fun setConnectionResolved(user:User) {
+        connectionCallback(user, null)
         connectionResolved = true
         startMonitor()
     }
 
     private fun getRetryInterval(): Long {
-        val max = Math.min(500 + consecutiveFailures * 2000, 25000)
-        val min = Math.min(
-            Math.max(250, (consecutiveFailures - 1) * 2000),
-            25000
+        val max = min(500 + consecutiveFailures * 2000, 25000)
+        val min = min(
+            max(250, (consecutiveFailures - 1) * 2000), 25000
         )
-        return Math.floor(Math.random() * (max - min) + min).toLong()
+        return floor(Math.random() * (max - min) + min).toLong()
     }
 
     fun resetConsecutiveFailures() {
@@ -191,20 +191,18 @@ class StreamWebSocketService(
         Log.i(TAG, "setHealth $healthy")
         if (healthy && !isHealthy) {
             isHealthy = true
-            val wentOnline = Event(true)
-            sendEventToHandlerThread(wentOnline)
-        }
-        if (!healthy && isHealthy) {
+            sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, true))
+        } else if (!healthy && isHealthy) {
             isHealthy = false
             Log.i(TAG, "spawn mOfflineNotifier")
-            eventThread!!.mHandler.postDelayed(mOfflineNotifier, 5000)
+            eventThread!!.handler.postDelayed(mOfflineNotifier, 5000)
         }
     }
 
     fun sendEventToHandlerThread(event: Event) {
         val eventMsg = Message()
         eventMsg.obj = event
-        eventThread!!.mHandler.sendMessage(eventMsg)
+        eventThread!!.handler.sendMessage(eventMsg)
     }
 
     private fun setupWS() {

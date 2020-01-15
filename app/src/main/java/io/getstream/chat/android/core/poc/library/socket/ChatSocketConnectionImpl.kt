@@ -12,21 +12,25 @@ class ChatSocketConnectionImpl(
 
     private val responseHandler = WSResponseHandlerImpl()
 
-    fun connect(user: User? = null) {
+    fun connect(user: User? = null, callback: (User, Throwable?) -> Unit) {
 
         if (user == null) {
-            connect(null, null)
+            connect(null, null, callback)
         } else {
-
             tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
                 override fun onSuccess(token: String) {
-                    connect(user, token)
+                    connect(user, token, callback)
+
                 }
             })
         }
     }
 
-    private fun connect(user: User?, userToken: String?) {
+    fun disconnect() {
+
+    }
+
+    private fun connect(user: User?, userToken: String?, listener: (User, Throwable?) -> Unit) {
         val webSocketService = StreamWebSocketService(
             wssUrl,
             apiKey,
@@ -35,6 +39,6 @@ class ChatSocketConnectionImpl(
             responseHandler
         )
 
-        webSocketService.connect()
+        webSocketService.connect(listener)
     }
 }

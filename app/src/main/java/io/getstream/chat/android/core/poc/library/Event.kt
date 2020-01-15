@@ -12,10 +12,10 @@ class Event : UserEntity {
     var connectionId: String = ""
     @SerializedName("cid")
     @Expose
-    val cid: String? = null
+    val cid: String = ""
     @SerializedName("client_id")
     @Expose
-    var clientId: String? = null
+    var clientId: String = ""
     @SerializedName("type")
     @Expose
     private var type: String? = null
@@ -51,19 +51,21 @@ class Event : UserEntity {
     val createdAt: Date = UndefinedDate
     @SerializedName("clear_history")
     @Expose
-    var clearHistory: Boolean? = null
+    var clearHistory: Boolean = false
     var receivedAt: Date = UndefinedDate
     var online = false
-        private set
 
-    constructor() {}
-    constructor(type: String?) {
-        this.type = type
+    constructor() {
+
     }
 
-    constructor(online: Boolean) {
+    constructor(type: EventType) {
+        this.type = type.label
+    }
+
+    constructor(type: EventType, online: Boolean) {
         this.online = online
-        setType(EventType.CONNECTION_CHANGED)
+        this.type = type.label
     }
 
     val isChannelEvent: Boolean
@@ -91,7 +93,7 @@ class Event : UserEntity {
     }
 
     override fun toString(): String {
-        return "Event(type=$type)"
+        return "Event(type=$type, online=$online)"
     }
 
 

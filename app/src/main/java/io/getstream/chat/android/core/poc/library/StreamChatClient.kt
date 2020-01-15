@@ -31,7 +31,7 @@ class StreamChatClient(
 
     }
 
-    fun setUser(user: User, provider: TokenProvider) {
+    fun setUser(user: User, provider: TokenProvider, callback: (User, Throwable?) -> Unit) {
 
         state.user = user
         //api.userId = user.id
@@ -73,7 +73,7 @@ class StreamChatClient(
 
         val socket = ChatSocketConnectionImpl(apiKey, apiOptions.wssURL, this.tokenProvider!!)
 
-        socket.connect(user)
+        socket.connect(user, callback)
 
 //        api = ChatApiImpl(
 //            RetrofitClient.getClient(

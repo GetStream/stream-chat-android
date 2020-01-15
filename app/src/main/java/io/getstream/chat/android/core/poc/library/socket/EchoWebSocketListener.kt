@@ -20,7 +20,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         service.isConnecting = false
         service.resetConsecutiveFailures()
         if (service.wsId > 1) {
-            service.eventThread?.mHandler?.post { service.webSocketListener.connectionRecovered() }
+            service.eventThread?.handler?.post { service.webSocketListener.connectionRecovered() }
         }
         //Log.d(TAG, "WebSocket #" + wsId.toString() + " Connected : " + response)
     }
@@ -41,12 +41,12 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         if (isError) { // token expiration is handled separately (allowing you to refresh the token from your backend)
             if (errorMessage?.error!!.code == ErrorResponse.TOKEN_EXPIRED_CODE) { // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, "token expired");
-                service.eventThread?.mHandler?.post({ service.webSocketListener.tokenExpired() })
+                service.eventThread?.handler?.post({ service.webSocketListener.tokenExpired() })
                 return
             } else { // other errors are passed to the callback
 // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
-                service.eventThread?.mHandler?.post({ service.webSocketListener.onError(errorMessage) })
+                service.eventThread?.handler?.post({ service.webSocketListener.onError(errorMessage) })
                 return
             }
         }
@@ -64,9 +64,9 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         //Log.d(TAG, java.lang.String.format("Received event of type %s", event.getType().toString()))
         // resolve on the first good message
         if (!service.connectionResolved) {
-            service.eventThread?.mHandler?.post({
+            service.eventThread?.handler?.post({
                 service.webSocketListener.connectionResolved(event)
-                service.setConnectionResolved()
+                service.setConnectionResolved(event.me!!)
             })
         }
         service.sendEventToHandlerThread(event)

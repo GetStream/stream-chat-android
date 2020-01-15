@@ -13,13 +13,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".app.common.ChannelsListActivity">
+        <activity android:name=".app.common.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".app.common.SocketTestActivity" />
+        <activity android:name=".app.common.ChannelsListActivity" />
     </application>
 
 </manifest>
