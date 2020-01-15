@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest;
 
+import com.getstream.sdk.chat.BuildConfig;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.rest.controller.APIService;
@@ -9,6 +10,7 @@ import com.getstream.sdk.chat.rest.utils.TestCachedTokenProvider;
 import com.getstream.sdk.chat.rest.utils.TestTokenProvider;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +20,14 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.sql.Time;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.SocketPolicy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -75,6 +81,29 @@ class RetrofitClientTest {
         assertEquals("application/gzip", request.getHeader("Accept-Encoding"));
         //check user token
         assertEquals(TestTokenProvider.TEST_TOKEN, request.getHeader("Authorization"));
+    }
+
+    @Test
+    void checkValidTimeoutDurationTest() throws IOException, InterruptedException {
+        MockResponse mockSuccessResponse = new MockResponse().setResponseCode(200).setBody("{}");
+        mockSuccessResponse.setBodyDelay(BuildConfig.DEFAULT_API_TIMEOUT - 1000, TimeUnit.MILLISECONDS);
+        mockWebServer.enqueue(mockSuccessResponse);
+
+        //any request
+        service.queryUsers(null, null, null).execute();
+        RecordedRequest request = mockWebServer.takeRequest();
+    }
+
+    @Test
+    void checkNotValidTimeoutDurationTest() throws IOException, InterruptedException {
+        MockResponse mockFailResponse = new MockResponse().setResponseCode(200).setBody("{}");
+
+        mockFailResponse.setBodyDelay(BuildConfig.DEFAULT_API_TIMEOUT + 1000, TimeUnit.MILLISECONDS);
+        mockWebServer.enqueue(mockFailResponse);
+
+        Assertions.assertThrows(SocketTimeoutException.class, () -> {
+            service.queryUsers(null, null, null).execute();
+        });
     }
 
     @Test

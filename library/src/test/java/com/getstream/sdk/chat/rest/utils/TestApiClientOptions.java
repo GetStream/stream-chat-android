@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.rest.utils;
 
+import com.getstream.sdk.chat.BuildConfig;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 
 /*
@@ -8,8 +9,8 @@ import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 public class TestApiClientOptions extends ApiClientOptions {
 
     private String baseUrl;
-    private static int defaultTimeout = 100;
-    private static int defaultCDNTimeout = 100;
+    private static int defaultTimeout = BuildConfig.DEFAULT_API_TIMEOUT;
+    private static int defaultCDNTimeout = BuildConfig.DEFAULT_API_TIMEOUT;
 
     public TestApiClientOptions(String baseUrl) {
         this.baseUrl = baseUrl;
