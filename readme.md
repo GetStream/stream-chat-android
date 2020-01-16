@@ -1,4 +1,7 @@
 # Stream Chat Client
+
+Note: This is an updated version of the Stream low level chat client. It's a preview and not yet suitable for production usage. Right now we recommend using the regular Java based SDK.
+
 `Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications.
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android-core which comes with a collection of re-usable and customizable UI components.
