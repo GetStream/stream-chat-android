@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.poc.library.socket
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import io.getstream.chat.android.core.poc.library.Event
@@ -13,8 +14,10 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
 
     private val NORMAL_CLOSURE_STATUS = 1000
 
+
+
     @Synchronized
-    override fun onOpen(webSocket: WebSocket?, response: Response) {
+    override fun onOpen(webSocket: WebSocket, response: Response) {
         if (service.shuttingDown) return
         service.setHealth(true)
         service.isConnecting = false
@@ -61,12 +64,21 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
             e.printStackTrace()
             return
         }
+
+        Log.d("echo-event", text)
+
         //Log.d(TAG, java.lang.String.format("Received event of type %s", event.getType().toString()))
         // resolve on the first good message
         if (!service.connectionResolved) {
+
+            if (text.isNotEmpty()) {
+
+            }
+
             service.eventThread?.handler?.post({
                 service.webSocketListener.connectionResolved(event)
-                service.setConnectionResolved(event.me!!)
+                val clientId = event.clientId
+                service.setConnectionResolved(event.connectionId, event.me!!)
             })
         }
         service.sendEventToHandlerThread(event)
@@ -95,7 +107,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         }
     }
 
-    override fun onFailure(webSocket: WebSocket?, t: Throwable, response: Response?) {
+    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         if (service.shuttingDown) return
         try {
             //Log.i(TAG, "WebSocket # " + wsId.toString() + " Error: " + t.message)

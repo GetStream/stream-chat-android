@@ -12,7 +12,7 @@ class ChatSocketConnectionImpl(
 
     private val responseHandler = WSResponseHandlerImpl()
 
-    fun connect(user: User? = null, callback: (User, Throwable?) -> Unit) {
+    fun connect(user: User? = null, callback: (ConnectionData, Throwable?) -> Unit) {
 
         if (user == null) {
             connect(null, null, callback)
@@ -30,7 +30,7 @@ class ChatSocketConnectionImpl(
 
     }
 
-    private fun connect(user: User?, userToken: String?, listener: (User, Throwable?) -> Unit) {
+    private fun connect(user: User?, userToken: String?, listener: (ConnectionData, Throwable?) -> Unit) {
         val webSocketService = StreamWebSocketService(
             wssUrl,
             apiKey,

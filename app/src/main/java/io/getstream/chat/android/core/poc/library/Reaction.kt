@@ -2,6 +2,8 @@ package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
+import java.util.*
 
 
 class Reaction {
@@ -13,7 +15,7 @@ class Reaction {
     @SerializedName("type")
     @Expose
     var type: String = ""
-    var createdAt: Long = 0
+    var createdAt:Date = UndefinedDate
 
     var extraData: Map<String, Any>? = null
 

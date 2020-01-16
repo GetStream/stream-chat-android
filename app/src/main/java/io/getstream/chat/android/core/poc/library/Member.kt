@@ -3,6 +3,8 @@ package io.getstream.chat.android.core.poc.library
 import com.google.gson.annotations.Expose
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
+import java.util.*
 
 
 class Member : UserEntity {
@@ -14,19 +16,19 @@ class Member : UserEntity {
     var role: String = ""
     @SerializedName("created_at")
     @Expose
-    var createdAt: Long = 0
+    var createdAt:Date = UndefinedDate
     @SerializedName("updated_at")
     @Expose
-    var updatedAt: Long = 0
+    var updatedAt:Date = UndefinedDate
     @SerializedName("invited")
     @Expose
     var isInvited = false
     @SerializedName("invite_accepted_at")
     @Expose
-    var inviteAcceptedAt: Long = 0
+    var inviteAcceptedAt:Date = UndefinedDate
     @SerializedName("invite_rejected_at")
     @Expose
-    var inviteRejectedAt: Long = 0
+    var inviteRejectedAt:Date = UndefinedDate
 
     override fun getUserId(): String {
         return user.id

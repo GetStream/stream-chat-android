@@ -31,7 +31,7 @@ class ErrorResponse : IOException() {
 
         fun parseError(response: Response): ErrorResponse {
             val message: String
-            return if (response.body() == null) {
+            return if (response.body == null) {
                 ErrorResponse()
             } else try { // avoid consuming the response body stream (might crash other readers)
                 message = response.peekBody(Long.MAX_VALUE).string()

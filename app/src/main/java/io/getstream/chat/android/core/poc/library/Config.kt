@@ -2,15 +2,17 @@ package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
+import java.util.*
 
 
 class Config {
     @SerializedName("created_at")
     @Expose
-    var created_at: Long = 0
+    var created_at:Date = UndefinedDate
     @SerializedName("updated_at")
     @Expose
-    var updated_at: Long = 0
+    var updated_at:Date = UndefinedDate
     @SerializedName("name")
     @Expose
     var name: String = ""

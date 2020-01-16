@@ -40,8 +40,9 @@ class TokenAuthInterceptor internal constructor(
             var request: Request = chain.request()
             request = addTokenHeader(request)
             var response: Response = chain.proceed(request)
+
             // check the error and only hit this path if the token was expired (error response code)
-            if (!response.isSuccessful()) {
+            if (!response.isSuccessful) {
                 val err: ErrorResponse = ErrorResponse.parseError(response)
                 if (err.code == ErrorResponse.TOKEN_EXPIRED_CODE) {
                     Log.d(TAG, "Retrying new request")
@@ -56,7 +57,7 @@ class TokenAuthInterceptor internal constructor(
     }
 
     private fun addTokenHeader(req: Request): Request {
-        return req.newBuilder().header("Authorization", token).build()
+        return req.newBuilder().header("Authorization", token!!).build()
     }
 
 }

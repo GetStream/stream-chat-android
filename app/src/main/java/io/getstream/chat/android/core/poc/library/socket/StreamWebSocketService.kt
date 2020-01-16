@@ -34,7 +34,7 @@ class StreamWebSocketService(
     private var httpClient: OkHttpClient? = null
     private var webSocket: WebSocket? = null
     var eventThread: EventHandlerThread? = null
-    lateinit var connectionCallback: (User, Throwable?) -> Unit
+    lateinit var connectionCallback: (ConnectionData, Throwable?) -> Unit
 
     private val mOfflineNotifier = Runnable {
         if (!isHealthy)
@@ -120,7 +120,7 @@ class StreamWebSocketService(
     var shuttingDown = false
     var wsId = 0
 
-    override fun connect(listener: (User, Throwable?) -> Unit) {
+    override fun connect(listener: (ConnectionData, Throwable?) -> Unit) {
         if (isConnecting) {
             Log.w(TAG, "already connecting")
             return
@@ -169,8 +169,8 @@ class StreamWebSocketService(
         monitor.run()
     }
 
-    fun setConnectionResolved(user:User) {
-        connectionCallback(user, null)
+    fun setConnectionResolved(connectionId: String, user: User) {
+        connectionCallback(ConnectionData(connectionId, user), null)
         connectionResolved = true
         startMonitor()
     }
@@ -210,13 +210,13 @@ class StreamWebSocketService(
         httpClient = OkHttpClient()
         val request: Request = Request.Builder().url(getWsUrl()).build()
         listener = EchoWebSocketListener(this)
-        webSocket = httpClient!!.newWebSocket(request, listener)
-        httpClient!!.dispatcher().executorService().shutdown()
+        webSocket = httpClient!!.newWebSocket(request, listener!!)
+        httpClient!!.dispatcher.executorService.shutdown()
     }
 
     private fun destroyCurrentWSConnection() {
         try {
-            httpClient!!.dispatcher().cancelAll()
+            httpClient!!.dispatcher.cancelAll()
         } catch (e: Exception) {
             e.printStackTrace()
         }

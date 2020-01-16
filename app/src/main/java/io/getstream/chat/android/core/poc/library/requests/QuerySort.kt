@@ -1,20 +1,15 @@
 package io.getstream.chat.android.core.poc.library.requests
 
 
-
 class QuerySort {
-    private var mSort: MutableList<Map<String, Any>>? =
-        null
+    private var mSort = mutableListOf<Map<String, Any>>()
 
-    val data: List<Map<String, Any>>?
+    val data: List<Map<String, Any>>
         get() = mSort
 
     fun clone(): QuerySort {
         val _this = QuerySort()
-        if (mSort == null) {
-            mSort = ArrayList()
-        }
-        _this.mSort = ArrayList(mSort!!)
+        _this.mSort = ArrayList(mSort)
         return _this
     }
 

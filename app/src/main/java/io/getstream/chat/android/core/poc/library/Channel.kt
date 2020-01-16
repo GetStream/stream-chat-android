@@ -5,6 +5,7 @@ import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.api.ExtraDataConverter
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.util.*
 
 
@@ -13,46 +14,56 @@ class Channel {
     @SerializedName("cid")
     @Expose
     var cid: String = ""
+
     @SerializedName("id")
     @Expose
     var id: String = ""
+
     @SerializedName("type")
     @Expose
     var type: String = ""
+
     @SerializedName("last_message_at")
     @Expose
-    var lastMessageDate: Long = 0
+    var lastMessageDate:Date = UndefinedDate
 
     @get:Sync.Status
     var syncStatus: Int? = null
 
-    var lastKeystrokeAt: Long = 0
+    var lastKeystrokeAt:Date = UndefinedDate
 
-    
-    var lastStartTypingEvent: Long = 0
+    var lastStartTypingEvent:Date = UndefinedDate
+
     @Embedded(prefix = "state_")
-    val lastState: ChannelState? = null
+    var lastState: ChannelState? = null
+
     @SerializedName("created_at")
     @Expose
-    val createdAt = Date()
+    var createdAt:Date = UndefinedDate
+
     @SerializedName("deleted_at")
     @Expose
-    val deletedAt = Date()
+    var deletedAt:Date = UndefinedDate
+
     @SerializedName("updated_at")
     @Expose
-    val updatedAt = Date()
+    var updatedAt:Date = UndefinedDate
+
     @SerializedName("created_by")
     @Expose
-    
     val createdByUser: User? = null
+
     val createdByUserID: String? = null
+
     @SerializedName("frozen")
     @Expose
     val frozen = false
+
     @SerializedName("config")
     @Expose
     @Embedded(prefix = "config_")
     val config: Config? = null
+
     @TypeConverters(ExtraDataConverter::class)
     val extraData: HashMap<String, Any>? = null
     

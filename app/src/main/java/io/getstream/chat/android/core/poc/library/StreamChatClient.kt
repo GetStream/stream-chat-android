@@ -3,7 +3,9 @@ package io.getstream.chat.android.core.poc.library
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderListener
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
+import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
+import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.library.socket.StreamWebSocketService
 
 
@@ -31,7 +33,11 @@ class StreamChatClient(
 
     }
 
-    fun setUser(user: User, provider: TokenProvider, callback: (User, Throwable?) -> Unit) {
+    fun setUser(
+        user: User,
+        provider: TokenProvider,
+        callback: (ConnectionData, Throwable?) -> Unit
+    ) {
 
         state.user = user
         //api.userId = user.id
@@ -73,16 +79,22 @@ class StreamChatClient(
 
         val socket = ChatSocketConnectionImpl(apiKey, apiOptions.wssURL, this.tokenProvider!!)
 
-        socket.connect(user, callback)
+        api = ChatApiImpl(
+            apiKey,
+            RetrofitClient.getClient(
+                apiOptions,
+                tokenProvider!!
+            ) { isAnonymous }!!.create(
+                RetrofitApi::class.java
+            )
+        )
 
-//        api = ChatApiImpl(
-//            RetrofitClient.getClient(
-//                apiOptions,
-//                tokenProvider!!
-//            ) { isAnonymous }!!.create(
-//                RetrofitApi::class.java
-//            )
-//        )
+        socket.connect(user) { connection, error ->
+            api.clientId = connection.connectionId
+            api.userId = connection.user.id
+            callback(connection, error)
+        }
+
 
         //connect(anonymousConnection)
     }

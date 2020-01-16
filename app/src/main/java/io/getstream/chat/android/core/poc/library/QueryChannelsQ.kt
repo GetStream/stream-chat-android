@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.security.MessageDigest
+import java.util.*
+import kotlin.collections.HashMap
 
 
 class QueryChannelsQ(val filter: FilterObject, val sort: QuerySort) {
@@ -11,8 +13,8 @@ class QueryChannelsQ(val filter: FilterObject, val sort: QuerySort) {
     val TAG = QueryChannelsQ::class.java.simpleName
     var id: String = ""
     var channelCIDs = mutableListOf<String>()
-    var createdAt = UndefinedDate
-    var updatedAt = UndefinedDate
+    var createdAt: Date = UndefinedDate
+    var updatedAt: Date  = UndefinedDate
 
     private fun computeID() {
         val data: MutableMap<String, Any?> = HashMap()

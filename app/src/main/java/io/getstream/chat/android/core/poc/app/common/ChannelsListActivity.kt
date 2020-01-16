@@ -3,14 +3,15 @@ package io.getstream.chat.android.core.poc.app.common
 import android.content.DialogInterface
 import android.os.Bundle
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_channels.*
+import io.getstream.chat.android.core.poc.library.FilterObject
+import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
+import io.getstream.chat.android.core.poc.library.TokenProvider
+import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.requests.QuerySort
 
 
 class ChannelsListActivity : AppCompatActivity() {
@@ -20,52 +21,77 @@ class ChannelsListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
 
-        val coroutinesFragment =
-            io.getstream.chat.android.core.poc.app.examples.coroutines.ChannelsListFragment()
 
-        val liveDataFragment =
-            io.getstream.chat.android.core.poc.app.examples.livedata.ChannelsListFragment()
-
-        val rxDataFragment =
-            io.getstream.chat.android.core.poc.app.examples.rx.ChannelsListFragment()
-
-        val fragment = rxDataFragment
-
-        btnReloadView.setOnClickListener {
-            fragment.reload()
-        }
-
-
-        App.db.channels()
-            .getPageRx(0, 5)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Toast.makeText(this, "page:" + it.size, Toast.LENGTH_SHORT).show()
+        App.client.setUser(User("bender"), object : TokenProvider {
+            override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
+        }) { user, error ->
+            if (error == null) {
+                App.client.queryChannels(
+                    QueryChannelsRequest(
+                        FilterObject(),
+                        QuerySort()
+                    ).withLimit(1)
+                )
+                    .enqueue {
+                        if (it.isSuccess()) {
 
-        btnRemoveChannel.setOnClickListener {
-            showRemoveChannel()
+                        } else {
+
+                        }
+                    }
+            } else {
+
+            }
         }
 
-        btnClearDb.setOnClickListener {
-
-
-            App.db.channels()
-                .deleteAll()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    //Toast.makeText(this, "Cleared", Toast.LENGTH_SHORT).show()
-                }
-        }
-
-        if (savedInstanceState == null) {
-
-            supportFragmentManager.beginTransaction()
-                .add(R.id.root, fragment)
-                .commit()
-        }
+//        val coroutinesFragment =
+//            io.getstream.chat.android.core.poc.app.examples.coroutines.ChannelsListFragment()
+//
+//        val liveDataFragment =
+//            io.getstream.chat.android.core.poc.app.examples.livedata.ChannelsListFragment()
+//
+//        val rxDataFragment =
+//            io.getstream.chat.android.core.poc.app.examples.rx.ChannelsListFragment()
+//
+//        val fragment = rxDataFragment
+//
+//        btnReloadView.setOnClickListener {
+//            fragment.reload()
+//        }
+//
+//
+//        App.db.channels()
+//            .getPageRx(0, 5)
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe {
+//                Toast.makeText(this, "page:" + it.size, Toast.LENGTH_SHORT).show()
+//            }
+//
+//        btnRemoveChannel.setOnClickListener {
+//            showRemoveChannel()
+//        }
+//
+//        btnClearDb.setOnClickListener {
+//
+//
+//            App.db.channels()
+//                .deleteAll()
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe {
+//                    //Toast.makeText(this, "Cleared", Toast.LENGTH_SHORT).show()
+//                }
+//        }
+//
+//        if (savedInstanceState == null) {
+//
+//            supportFragmentManager.beginTransaction()
+//                .add(R.id.root, fragment)
+//                .commit()
+//        }
     }
 
     private fun showRemoveChannel() {

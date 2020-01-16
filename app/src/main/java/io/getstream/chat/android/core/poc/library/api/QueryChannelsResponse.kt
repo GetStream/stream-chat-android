@@ -9,7 +9,8 @@ import io.getstream.chat.android.core.poc.library.ChannelState
 class QueryChannelsResponse {
 
     @SerializedName("channels")
-    lateinit var channelStates: List<ChannelState>
+    @Expose
+    var channelStates = emptyList<ChannelState>()
 
     fun getChannels(): List<Channel> {
         return channelStates.map { state -> state.channel }

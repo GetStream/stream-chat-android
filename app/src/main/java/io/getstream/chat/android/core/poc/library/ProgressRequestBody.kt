@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc.library
 import android.os.Handler
 import android.os.Looper
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File
@@ -17,7 +18,7 @@ class ProgressRequestBody(
     RequestBody() {
 
     override fun contentType(): MediaType? {
-        return MediaType.parse(content_type)
+        return content_type.toMediaTypeOrNull()
     }
 
     override fun contentLength(): Long {

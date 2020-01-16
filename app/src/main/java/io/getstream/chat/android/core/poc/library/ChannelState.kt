@@ -10,10 +10,12 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class ChannelState @JvmOverloads constructor() {
+class ChannelState {
 
     var cid: String = ""
 
+    @Expose
+    @SerializedName("channel")
     lateinit var channel: Channel
 
     @SerializedName("messages")
@@ -42,7 +44,7 @@ class ChannelState @JvmOverloads constructor() {
     }
 
     fun preStorage() {
-        cid = channel.cid
+        //cid = channel.cid
         lastMessage = computeLastMessage()
     }
 
@@ -421,11 +423,9 @@ class ChannelState @JvmOverloads constructor() {
     }
 
     init {
-        if (channel != null) {
-            messages = channel.channelState.messages
-            reads = channel.channelState.reads
-            members = channel.channelState.members
-        }
+//        messages = channel.channelState.messages
+//        reads = channel.channelState.reads
+//        members = channel.channelState.members
     }
 }
 
