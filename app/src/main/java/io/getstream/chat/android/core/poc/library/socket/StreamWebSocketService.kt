@@ -54,6 +54,10 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
         webSocketListeners.forEach { it.onWSEvent(event) }
     }
 
+    fun removeSocketListener(listener: WsListener) {
+        webSocketListeners.remove(listener)
+    }
+
     fun addSocketListener(listener: WsListener) {
         webSocketListeners.add(listener)
     }

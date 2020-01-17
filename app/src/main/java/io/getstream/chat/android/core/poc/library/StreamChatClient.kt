@@ -5,6 +5,7 @@ import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderLis
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.library.socket.StreamWebSocketService
@@ -96,7 +97,7 @@ class StreamChatClient(
         }
     }
 
-    fun events(): ChatSocketConnectionImpl.ChatObservable {
+    fun events(): ChatObservable {
         return socket.events()
     }
 
