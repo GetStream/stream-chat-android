@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
+import io.getstream.chat.android.core.poc.library.call.ChatCall
 
 class ChatApiImpl(
     private val apiKey:String,
@@ -12,7 +13,7 @@ class ChatApiImpl(
 
     private val callMapper = RetrofitCallMapper()
 
-    fun queryChannels(query: QueryChannelsRequest): Call<QueryChannelsResponse> {
+    fun queryChannels(query: QueryChannelsRequest): ChatCall<QueryChannelsResponse> {
         return callMapper.map(
             retrofitApi.queryChannels(
                 apiKey,

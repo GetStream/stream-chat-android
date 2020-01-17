@@ -1,6 +1,10 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.CachedTokenProvider
+import io.getstream.chat.android.core.poc.library.Result
+import io.getstream.chat.android.core.poc.library.TokenProvider
+import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.call.ChatCallImpl
 import io.getstream.chat.android.core.poc.library.errors.SocketChatError
 
@@ -12,13 +16,12 @@ class ChatSocketConnectionImpl(
 
     private val responseHandler = WSResponseHandlerImpl()
 
-    fun connect(user: User? = null): Call<ConnectionData> {
+    fun connect(user: User? = null): ChatCall<ConnectionData> {
 
-
-        val call = SSS()
+        val result = ConnectionCall()
 
         val callback: (ConnectionData, Throwable?) -> Unit = { c, t ->
-            call.deliverResult(c, t)
+            result.deliverResult(c, t)
         }
 
         if (user == null) {
@@ -32,7 +35,7 @@ class ChatSocketConnectionImpl(
             })
         }
 
-        return call
+        return result
     }
 
     fun disconnect() {
@@ -55,7 +58,7 @@ class ChatSocketConnectionImpl(
         webSocketService.connect(listener)
     }
 
-    private class SSS : ChatCallImpl<ConnectionData>() {
+    private class ConnectionCall : ChatCallImpl<ConnectionData>() {
 
         lateinit var callback: (Result<ConnectionData>) -> Unit
 
@@ -71,7 +74,7 @@ class ChatSocketConnectionImpl(
         }
 
         override fun execute(): Result<ConnectionData> {
-            return Result(null, SocketChatError("Sync socket connection is not supportd"))
+            return Result(null, SocketChatError("Sync socket connection is not supported"))
         }
 
         override fun enqueue(callback: (Result<ConnectionData>) -> Unit) {

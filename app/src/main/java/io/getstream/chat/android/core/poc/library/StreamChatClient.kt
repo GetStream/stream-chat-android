@@ -4,6 +4,7 @@ import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderListener
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
+import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.library.socket.StreamWebSocketService
@@ -36,7 +37,7 @@ class StreamChatClient(
     fun setUser(
         user: User,
         provider: TokenProvider
-    ): Call<ConnectionData> {
+    ): ChatCall<ConnectionData> {
 
         state.user = user
         //api.userId = user.id
@@ -142,7 +143,7 @@ class StreamChatClient(
 
     fun queryChannels(
         request: QueryChannelsRequest
-    ): Call<List<Channel>> {
+    ): ChatCall<List<Channel>> {
         return api.queryChannels(request).map { response ->
             response.getChannels()
         }

@@ -1,12 +1,13 @@
 package io.getstream.chat.android.core.poc.library
 
+import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.call.ChatCallImpl
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import retrofit2.Response
 
 class RetrofitCallMapper {
 
-    fun <T> map(call: retrofit2.Call<T>): Call<T> {
+    fun <T> map(call: retrofit2.Call<T>): ChatCall<T> {
 
         return object : ChatCallImpl<T>() {
 

@@ -1,9 +1,8 @@
 package io.getstream.chat.android.core.poc.library.call
 
-import io.getstream.chat.android.core.poc.library.Call
 import io.getstream.chat.android.core.poc.library.Result
 
-abstract open class ChatCallImpl<T> : Call<T> {
+abstract class ChatCallImpl<T> : ChatCall<T> {
 
     protected var canceled = false
 
@@ -15,13 +14,13 @@ abstract open class ChatCallImpl<T> : Call<T> {
         canceled = true
     }
 
-    override fun <K> map(mapper: (T) -> K): Call<K> {
+    override fun <K> map(mapper: (T) -> K): ChatCall<K> {
         return callMapper(this, mapper)
     }
 
     companion object {
         private fun <A, B> callMapper(
-            callA: Call<A>,
+            callA: ChatCall<A>,
             mapper: (A) -> B
         ): ChatCallImpl<B> {
             return object : ChatCallImpl<B>() {
