@@ -22,7 +22,6 @@ class StreamChatClient(
     private var tokenProvider: CachedTokenProvider? = null
     private var cacheUserToken: String = ""
     private var fetchingToken = false
-    private var webSocketService: StreamWebSocketService? = null
     private var isAnonymous = false
     private var clientID = ""
     private var connected = false
@@ -159,20 +158,21 @@ class StreamChatClient(
             return
         }
 
-        if (webSocketService != null) {
-            return
-        }
+//        if (webSocketService != null) {
+//            return
+//        }
         //connectionRecovered()
 
         connect(anonymousConnection);
     }
 
     fun disconnectWebSocket() {
-        if (webSocketService != null) {
-            webSocketService!!.disconnect()
-            webSocketService = null
-            clientID = ""
-        }
+        socket.disconnect()
+//        if (webSocketService != null) {
+//            webSocketService!!.disconnect()
+//            webSocketService = null
+//            clientID = ""
+//        }
         //onWSEvent(Event(false))
         connected = false
     }

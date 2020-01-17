@@ -15,18 +15,34 @@ class SocketTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_socket_tests)
 
-        textSocketState.text = "Connecting..."
+        val client = App.client
 
-        App.client.setUser(User("bender"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
-            }
-        }).enqueue {
-            if (it.isSuccess()) {
-                textSocketState.text = "Connected with " + it.data().user.id
-            } else {
-                textSocketState.text = "Connection error " + it.error()
+        client.events().subscribe {
+            textSocketEvent.text = it.getType().toString() + " at " + it.createdAt
+        }
+
+        btnConnect.setOnClickListener {
+
+            textSocketState.text = "Connecting..."
+
+            client.setUser(User("bender"), object : TokenProvider {
+                override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                    listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+                }
+            }).enqueue {
+                if (it.isSuccess) {
+                    textSocketState.text = "Connected with " + it.data().user.id
+                } else {
+                    textSocketState.text = "Connection error " + it.error()
+                }
             }
         }
+
+        btnDisconnect.setOnClickListener {
+            client.disconnect()
+            textSocketState.text = "Disconnected"
+        }
+
+
     }
 }

@@ -28,7 +28,7 @@ abstract class ChatCallImpl<T> : ChatCall<T> {
 
                     val resultA = callA.execute()
 
-                    return if (resultA.isSuccess()) {
+                    return if (resultA.isSuccess) {
                         Result(mapper(resultA.data()), null)
                     } else {
                         Result(null, resultA.error())
@@ -39,7 +39,7 @@ abstract class ChatCallImpl<T> : ChatCall<T> {
                     callA.enqueue {
 
                         if (!canceled) {
-                            if (it.isSuccess()) {
+                            if (it.isSuccess) {
                                 callback(Result(mapper(it.data()), null))
                             } else {
                                 callback(Result(null, it.error()))

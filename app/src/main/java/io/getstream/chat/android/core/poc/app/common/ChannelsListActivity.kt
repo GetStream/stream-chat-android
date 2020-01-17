@@ -13,7 +13,6 @@ import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
-import kotlinx.android.synthetic.main.activity_channels.*
 
 
 class ChannelsListActivity : AppCompatActivity() {
@@ -29,17 +28,8 @@ class ChannelsListActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
-        }).enqueue {
-            if (it.isSuccess()) {
-
-                val subscribtion = client.events().subscribe {
-                    Log.d("chat-events", it.toString())
-                }
-
-                root.postDelayed({
-                    subscribtion.unsubscribe()
-                    Log.d("chat-events", "unsubscribed")
-                }, 10000)
+        }).enqueue { connection ->
+            if (connection.isSuccess) {
 
 
                 client.queryChannels(
@@ -47,9 +37,8 @@ class ChannelsListActivity : AppCompatActivity() {
                         FilterObject(),
                         QuerySort()
                     ).withLimit(1)
-                ).enqueue {
-
-                    if (it.isSuccess()) {
+                ).enqueue { channels ->
+                    if (channels.isSuccess) {
 
                     } else {
 
@@ -58,6 +47,10 @@ class ChannelsListActivity : AppCompatActivity() {
             } else {
 
             }
+        }
+
+        client.events().subscribe {
+            Log.d("chat-events", it.toString())
         }
 
 //        val coroutinesFragment =

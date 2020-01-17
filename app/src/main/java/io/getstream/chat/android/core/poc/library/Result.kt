@@ -6,9 +6,9 @@ data class Result<T>(
     private val data: T?,
     private val error: ChatError?
 ) {
-    fun isSuccess(): Boolean {
-        return data != null
-    }
+
+    val isSuccess: Boolean
+        get() = data != null
 
     fun data(): T {
         return data!!
