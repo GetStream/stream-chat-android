@@ -10,7 +10,7 @@
             type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
     </data>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="io.getstream.chat.example.ChannelActivity">
@@ -19,44 +19,55 @@
             android:id="@+id/channelHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            app:streamChannelHeaderOptionsButtonShow="true"
             app:streamChannelHeaderOptionsButtonBackground="@drawable/ic_search"
-            app:streamChannelHeaderOptionsButtonShow="true" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.getstream.sdk.chat.view.MessageListView
             android:id="@+id/messageList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginBottom="10dp"
             android:paddingBottom="10dp"
-            android:layout_above="@+id/message_input"
-            android:layout_below="@+id/channelHeader"/>
+            app:layout_constraintBottom_toTopOf="@+id/message_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/stream_gray"
-            android:layout_above="@+id/messageList" />
+            app:layout_constraintTop_toBottomOf="@+id/messageList" />
 
         <com.getstream.sdk.chat.view.MessageInputView
             android:id="@+id/message_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" />
+            android:layout_marginTop="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="parent" />
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            app:isGone="@{!safeUnbox(viewModel.loading)}" />
+            app:isGone="@{!safeUnbox(viewModel.loading)}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
-            app:isGone="@{!safeUnbox(viewModel.loadingMore)}" />
+            app:isGone="@{!safeUnbox(viewModel.loadingMore)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/channelHeader" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
