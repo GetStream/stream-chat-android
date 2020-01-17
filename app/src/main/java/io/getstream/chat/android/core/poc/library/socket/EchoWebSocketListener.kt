@@ -1,6 +1,5 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import io.getstream.chat.android.core.poc.library.Event
@@ -23,7 +22,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         service.isConnecting = false
         service.resetConsecutiveFailures()
         if (service.wsId > 1) {
-            service.eventThread?.handler?.post { service.webSocketListener.connectionRecovered() }
+            service.eventHandler.post { service.connectionRecovered() }
         }
         //Log.d(TAG, "WebSocket #" + wsId.toString() + " Connected : " + response)
     }
@@ -44,12 +43,12 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         if (isError) { // token expiration is handled separately (allowing you to refresh the token from your backend)
             if (errorMessage?.error!!.code == ErrorResponse.TOKEN_EXPIRED_CODE) { // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, "token expired");
-                service.eventThread?.handler?.post({ service.webSocketListener.tokenExpired() })
+                service.eventHandler.post { service.tokenExpired() }
                 return
             } else { // other errors are passed to the callback
 // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
-                service.eventThread?.handler?.post({ service.webSocketListener.onError(errorMessage) })
+                service.eventHandler.post { service.onError(errorMessage) }
                 return
             }
         }
@@ -61,25 +60,23 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
             event.receivedAt = now
             service.lastEvent = now
         } catch (e: JsonSyntaxException) {
+            //TODO: log error
             e.printStackTrace()
             return
         }
 
-        Log.d("echo-event", text)
+        val name = Thread.currentThread().name
+
+        if(name.isNotEmpty()){
+
+        }
 
         //Log.d(TAG, java.lang.String.format("Received event of type %s", event.getType().toString()))
         // resolve on the first good message
         if (!service.connectionResolved) {
-
-            if (text.isNotEmpty()) {
-
-            }
-
-            service.eventThread?.handler?.post({
-                service.webSocketListener.connectionResolved(event)
-                val clientId = event.clientId
+            service.eventHandler.post {
                 service.setConnectionResolved(event.connectionId, event.me!!)
-            })
+            }
         }
         service.sendEventToHandlerThread(event)
     }

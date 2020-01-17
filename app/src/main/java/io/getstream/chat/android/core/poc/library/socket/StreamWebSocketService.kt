@@ -19,22 +19,44 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class StreamWebSocketService(
-    val wsEndpoint: String,
-    val apiKey: String,
-    val user: User?,
-    val userToken: String?,
-    val webSocketListener: WSResponseHandler
-) :
-    WebSocketListener(), WebSocketService {
+class StreamWebSocketService : WebSocketListener(), WebSocketService {
 
     private val NORMAL_CLOSURE_STATUS = 1000
     private val TAG = StreamWebSocketService::class.java.simpleName
-    private var listener: EchoWebSocketListener? = null
+
+    private var wsEndpoint: String = ""
+    private var apiKey: String = ""
+    private var userToken: String? = ""
+    private var user: User? = null
+
+    private val listener: EchoWebSocketListener = EchoWebSocketListener(this)
     private var httpClient: OkHttpClient? = null
     private var webSocket: WebSocket? = null
-    var eventThread: EventHandlerThread? = null
+    private val webSocketListeners = mutableListOf<WsListener>()
+
     lateinit var connectionCallback: (ConnectionData, Throwable?) -> Unit
+
+    val eventHandler = EventHandler(this)
+
+    fun connectionRecovered() {
+        webSocketListeners.forEach { it.connectionRecovered() }
+    }
+
+    fun tokenExpired() {
+        webSocketListeners.forEach { it.tokenExpired() }
+    }
+
+    fun onError(error: WsErrorMessage) {
+        webSocketListeners.forEach { it.onError(error) }
+    }
+
+    fun onWsEvent(event: Event) {
+        webSocketListeners.forEach { it.onWSEvent(event) }
+    }
+
+    fun addSocketListener(listener: WsListener) {
+        webSocketListeners.add(listener)
+    }
 
     private val mOfflineNotifier = Runnable {
         if (!isHealthy)
@@ -61,7 +83,7 @@ class StreamWebSocketService(
                 val event = Event(EventType.HEALTH_CHECK)
                 webSocket!!.send(Gson().toJson(event))
             } finally {
-                eventThread!!.handler.postDelayed(this, healthCheckInterval.toLong())
+                eventHandler.postDelayed(this, healthCheckInterval)
             }
         }
     }
@@ -74,7 +96,7 @@ class StreamWebSocketService(
             }
             Log.i(TAG, "check connection health")
             val millisNow = Date().time
-            val monitorInterval = 1000
+            val monitorInterval = 1000L
             if (lastEvent != null) {
                 if (millisNow - lastEvent!!.time > healthCheckInterval + 10 * 1000) {
                     consecutiveFailures += 1
@@ -82,7 +104,7 @@ class StreamWebSocketService(
                     reconnect(true)
                 }
             }
-            eventThread!!.handler.postDelayed(healthCheck, monitorInterval.toLong())
+            eventHandler.postDelayed(healthCheck, monitorInterval)
         }
 
     }
@@ -110,7 +132,7 @@ class StreamWebSocketService(
     /**
      * Send a health check message every 30 seconds
      */
-    val healthCheckInterval = 30 * 1000
+    val healthCheckInterval = 30 * 1000L
 
     /**
      * consecutive failures influence the duration of the timeout
@@ -120,22 +142,27 @@ class StreamWebSocketService(
     var shuttingDown = false
     var wsId = 0
 
-    override fun connect(listener: (ConnectionData, Throwable?) -> Unit) {
+    override fun connect(
+        wsEndpoint: String,
+        apiKey: String,
+        user: User?,
+        userToken: String?,
+        listener: (ConnectionData, Throwable?) -> Unit
+    ) {
         if (isConnecting) {
             Log.w(TAG, "already connecting")
             return
         }
 
+        this.wsEndpoint = wsEndpoint
+        this.apiKey = apiKey
+        this.user = user
+        this.userToken = userToken
         this.connectionCallback = listener
 
-        wsId = 0;
+        wsId = 0
         isConnecting = true
         resetConsecutiveFailures()
-
-        eventThread = EventHandlerThread(this).apply {
-            name = "WSS - event handler thread"
-            start()
-        }
 
         setupWS()
 
@@ -145,12 +172,8 @@ class StreamWebSocketService(
     override fun disconnect() {
         webSocket!!.close(1000, "bye")
         shuttingDown = true
-        eventThread!!.handler.removeCallbacksAndMessages(null)
+        eventHandler.removeCallbacksAndMessages(null)
         destroyCurrentWSConnection()
-    }
-
-    override fun webSocketListener(): WSResponseHandler {
-        return webSocketListener
     }
 
     fun reconnect(delay: Boolean) {
@@ -158,9 +181,9 @@ class StreamWebSocketService(
             return
         }
         Log.i(TAG, "schedule reconnection in " + getRetryInterval().toString() + "ms")
-        eventThread!!.handler.postDelayed(
+        eventHandler.postDelayed(
             reconnect,
-            if (delay) getRetryInterval() else 0.toLong()
+            if (delay) getRetryInterval() else 0L
         )
     }
 
@@ -170,7 +193,8 @@ class StreamWebSocketService(
     }
 
     fun setConnectionResolved(connectionId: String, user: User) {
-        connectionCallback(ConnectionData(connectionId, user), null)
+        val connectionData = ConnectionData(connectionId, user)
+        connectionCallback(connectionData, null)
         connectionResolved = true
         startMonitor()
     }
@@ -195,22 +219,21 @@ class StreamWebSocketService(
         } else if (!healthy && isHealthy) {
             isHealthy = false
             Log.i(TAG, "spawn mOfflineNotifier")
-            eventThread!!.handler.postDelayed(mOfflineNotifier, 5000)
+            eventHandler.postDelayed(mOfflineNotifier, 5000)
         }
     }
 
     fun sendEventToHandlerThread(event: Event) {
         val eventMsg = Message()
         eventMsg.obj = event
-        eventThread!!.handler.sendMessage(eventMsg)
+        eventHandler.sendMessage(eventMsg)
     }
 
     private fun setupWS() {
         wsId++
         httpClient = OkHttpClient()
         val request: Request = Request.Builder().url(getWsUrl()).build()
-        listener = EchoWebSocketListener(this)
-        webSocket = httpClient!!.newWebSocket(request, listener!!)
+        webSocket = httpClient!!.newWebSocket(request, listener)
         httpClient!!.dispatcher.executorService.shutdown()
     }
 

@@ -1,22 +1,31 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
-import io.getstream.chat.android.core.poc.library.Result
+import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.call.ChatCall
-import io.getstream.chat.android.core.poc.library.call.ChatCallImpl
-import io.getstream.chat.android.core.poc.library.errors.SocketChatError
 
 class ChatSocketConnectionImpl(
     val apiKey: String,
-    val wssUrl: String,
-    val tokenProvider: CachedTokenProvider
+    val wssUrl: String
 ) {
 
-    private val responseHandler = WSResponseHandlerImpl()
+    private val service = StreamWebSocketService()
 
-    fun connect(user: User? = null): ChatCall<ConnectionData> {
+    fun connect(): ChatCall<ConnectionData> {
+        val result = ConnectionCall()
+
+        val callback: (ConnectionData, Throwable?) -> Unit = { c, t ->
+            result.deliverResult(c, t)
+        }
+
+        connect(null, null, callback)
+
+        return result
+    }
+
+    fun connect(user: User, tokenProvider: CachedTokenProvider): ChatCall<ConnectionData> {
 
         val result = ConnectionCall()
 
@@ -24,22 +33,46 @@ class ChatSocketConnectionImpl(
             result.deliverResult(c, t)
         }
 
-        if (user == null) {
-            connect(null, null, callback)
-        } else {
-            tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
-                override fun onSuccess(token: String) {
-                    connect(user, token, callback)
+        tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
+            override fun onSuccess(token: String) {
+                connect(user, token, callback)
+            }
+        })
 
-                }
-            })
-        }
+        return result
+    }
+
+    fun events(): ChatObservable {
+
+        val result = ChatObservable()
+
+        service.addSocketListener(object : WsListener {
+            override fun onWSEvent(event: Event) {
+                result.onNext(event)
+            }
+
+            override fun connectionResolved(event: Event) {
+
+            }
+
+            override fun connectionRecovered() {
+
+            }
+
+            override fun tokenExpired() {
+
+            }
+
+            override fun onError(error: WsErrorMessage) {
+
+            }
+        })
 
         return result
     }
 
     fun disconnect() {
-
+        service.disconnect()
     }
 
     private fun connect(
@@ -47,39 +80,34 @@ class ChatSocketConnectionImpl(
         userToken: String?,
         listener: (ConnectionData, Throwable?) -> Unit
     ) {
-        val webSocketService = StreamWebSocketService(
-            wssUrl,
-            apiKey,
-            user,
-            userToken,
-            responseHandler
-        )
-
-        webSocketService.connect(listener)
+        service.connect(wssUrl, apiKey, user, userToken, listener)
     }
 
-    private class ConnectionCall : ChatCallImpl<ConnectionData>() {
+    class ChatObservable {
 
-        lateinit var callback: (Result<ConnectionData>) -> Unit
+        private val subscribtions = mutableListOf<Subscription>()
 
-        fun deliverResult(connection: ConnectionData, error: Throwable?) {
+        fun onNext(event: Event) {
+            subscribtions.forEach { it.onNext(event) }
+        }
 
-            if (canceled) return
+        fun subscribe(listener: (Event) -> Unit): Subscription {
+            val result = Subscription(this, listener)
+            subscribtions.add(result)
+            return result
+        }
 
-            if (error == null) {
-                callback(Result(connection, null))
-            } else {
-                callback(Result(connection, SocketChatError("Connection error, see cause", error)))
+        class Subscription(val observable: ChatObservable, var listener: ((Event) -> Unit)?) {
+
+            fun unsubscribe() {
+                listener = null
+                observable.subscribtions.remove(this)
+            }
+
+            fun onNext(event: Event) {
+                listener?.invoke(event)
             }
         }
-
-        override fun execute(): Result<ConnectionData> {
-            return Result(null, SocketChatError("Sync socket connection is not supported"))
-        }
-
-        override fun enqueue(callback: (Result<ConnectionData>) -> Unit) {
-            this.callback = callback
-        }
-
     }
+
 }

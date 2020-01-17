@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.app.common
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -21,29 +22,36 @@ class ChannelsListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
 
+        val client = App.client
 
-        App.client.setUser(User("bender"), object : TokenProvider {
+        client.setUser(User("bender"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
         }).enqueue {
             if (it.isSuccess()) {
-                App.client.queryChannels(
+
+
+                client.queryChannels(
                     QueryChannelsRequest(
                         FilterObject(),
                         QuerySort()
                     ).withLimit(1)
-                )
-                    .enqueue {
-                        if (it.isSuccess()) {
+                ).enqueue {
 
-                        } else {
+                    if (it.isSuccess()) {
 
-                        }
+                    } else {
+
                     }
+                }
             } else {
 
             }
+        }
+
+        client.events().subscribe {
+            Log.d("chat-events", it.toString())
         }
 
 //        val coroutinesFragment =

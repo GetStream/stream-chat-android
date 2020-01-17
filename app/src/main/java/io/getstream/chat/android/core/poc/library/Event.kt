@@ -18,7 +18,7 @@ class Event : UserEntity {
     var clientId: String = ""
     @SerializedName("type")
     @Expose
-    private var type: String? = null
+    private var type: String = ""
     @SerializedName("user")
     @Expose
     val user: User? = null
@@ -37,27 +37,30 @@ class Event : UserEntity {
     @SerializedName("channel")
     @Expose
     val channel: Channel? = null
+
     @SerializedName("total_unread_count")
     @Expose
     val totalUnreadCount: Number = 0
+
     @SerializedName("unread_channels")
     @Expose
     val unreadChannels: Number = 0
+
     @SerializedName("watcher_count")
     @Expose
     val watcherCount: Number = 0
+
     @SerializedName("created_at")
     @Expose
     val createdAt: Date = UndefinedDate
+
     @SerializedName("clear_history")
     @Expose
     var clearHistory: Boolean = false
+
     var receivedAt: Date = UndefinedDate
+
     var online = false
-
-    constructor() {
-
-    }
 
     constructor(type: EventType) {
         this.type = type.label
@@ -69,13 +72,13 @@ class Event : UserEntity {
     }
 
     val isChannelEvent: Boolean
-        get() = cid != null && cid != "*"
+        get() = cid != "*"
 
     fun getType(): EventType {
         return EventType.findByString(type)
     }
 
-    fun setType(type: String?) {
+    fun setType(type: String) {
         this.type = type
     }
 

@@ -26,6 +26,8 @@ class StreamChatClient(
     private var clientID = ""
     private var connected = false
 
+    private val socket = ChatSocketConnectionImpl(apiKey, apiOptions.wssURL)
+
     fun getClientID(): String {
         return clientID
     }
@@ -77,8 +79,6 @@ class StreamChatClient(
 
         }
 
-        val socket = ChatSocketConnectionImpl(apiKey, apiOptions.wssURL, this.tokenProvider!!)
-
         api = ChatApiImpl(
             apiKey,
             RetrofitClient.getClient(
@@ -89,11 +89,15 @@ class StreamChatClient(
             )
         )
 
-        return socket.connect(user).map {
+        return socket.connect(user, this.tokenProvider!!).map {
             api.clientId = it.connectionId
             api.userId = it.user.id
             it
         }
+    }
+
+    fun events(): ChatSocketConnectionImpl.ChatObservable {
+        return socket.events()
     }
 
     private fun connect(anonymousConnection: Boolean) {
