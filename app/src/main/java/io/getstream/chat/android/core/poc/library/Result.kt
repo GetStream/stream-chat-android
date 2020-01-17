@@ -1,8 +1,11 @@
 package io.getstream.chat.android.core.poc.library
 
-import io.getstream.chat.android.core.poc.library.errors.ClientError
+import io.getstream.chat.android.core.poc.library.errors.ChatError
 
-data class Result<T>(val data: T?, val error: ClientError?) {
+data class Result<T>(
+    private val data: T?,
+    private val error: ChatError?
+) {
     fun isSuccess(): Boolean {
         return data != null
     }
@@ -11,7 +14,7 @@ data class Result<T>(val data: T?, val error: ClientError?) {
         return data!!
     }
 
-    fun error(): ClientError {
+    fun error(): ChatError {
         return error!!
     }
 }

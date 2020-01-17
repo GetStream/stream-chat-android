@@ -35,9 +35,8 @@ class StreamChatClient(
 
     fun setUser(
         user: User,
-        provider: TokenProvider,
-        callback: (ConnectionData, Throwable?) -> Unit
-    ) {
+        provider: TokenProvider
+    ): Call<ConnectionData> {
 
         state.user = user
         //api.userId = user.id
@@ -89,14 +88,11 @@ class StreamChatClient(
             )
         )
 
-        socket.connect(user) { connection, error ->
-            api.clientId = connection.connectionId
-            api.userId = connection.user.id
-            callback(connection, error)
+        return socket.connect(user).map {
+            api.clientId = it.connectionId
+            api.userId = it.user.id
+            it
         }
-
-
-        //connect(anonymousConnection)
     }
 
     private fun connect(anonymousConnection: Boolean) {

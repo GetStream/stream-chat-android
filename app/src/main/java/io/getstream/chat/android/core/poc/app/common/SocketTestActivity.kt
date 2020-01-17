@@ -21,11 +21,11 @@ class SocketTestActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
-        }) { connection, error ->
-            if (error == null) {
-                textSocketState.text = "Connected with " + connection.user.id
+        }).enqueue {
+            if (it.isSuccess()) {
+                textSocketState.text = "Connected with " + it.data().user.id
             } else {
-                textSocketState.text = "Connection error " + error
+                textSocketState.text = "Connection error " + it.error()
             }
         }
     }
