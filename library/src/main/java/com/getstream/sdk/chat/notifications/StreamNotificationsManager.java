@@ -1,12 +1,16 @@
 package com.getstream.sdk.chat.notifications;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -34,7 +38,6 @@ import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.google.firebase.messaging.RemoteMessage;
-import com.google.gson.internal.LinkedTreeMap;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -156,6 +159,7 @@ public class StreamNotificationsManager implements NotificationsManager {
 
     /**
      * Calls on message load fails
+     *
      * @param failMessageListener - on Fail callback
      */
     @Override
@@ -164,7 +168,7 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     private void loadMessage(Context context, @NonNull String messageId) {
-         StreamChat.getInstance(context).getMessage(messageId, new MessageCallback() {
+        StreamChat.getInstance(context).getMessage(messageId, new MessageCallback() {
             @Override
             public void onSuccess(MessageResponse response) {
                 if (failMessageListener != null) {
@@ -230,11 +234,11 @@ public class StreamNotificationsManager implements NotificationsManager {
 
             Notification notification = prepareNotification(context, messageId, null, true);
             showNotification(notificationItem.getNotificationId(), notification, context);
-            //removeNotificationItem(notificationItem.getNotificationId());
         }
     }
 
     private Notification prepareNotification(Context context, String messageId, @Nullable Bitmap image, boolean defaultNotification) {
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         StreamNotification notificationItem = notificationsMap.get(messageId);
         NotificationCompat.Builder notificationBuilder = notificationOptions.getNotificationBuilder(context);
 
@@ -246,7 +250,8 @@ public class StreamNotificationsManager implements NotificationsManager {
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setShowWhen(true)
-                    .setContentIntent(contentIntent);
+                    .setContentIntent(contentIntent)
+                    .setSound(defaultSoundUri);
 
             if (notificationItem.getPendingIntent() != null) {
                 notificationBuilder.addAction(getReadAction(context, notificationItem.getPendingIntent()))
@@ -348,9 +353,19 @@ public class StreamNotificationsManager implements NotificationsManager {
 
         if (notificationManager != null && !isForeground()) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                notificationManager.createNotificationChannel(
-                        notificationOptions.getNotificationChannel(context));
+
+                NotificationChannel notificationChannel = notificationOptions.getNotificationChannel(context);
+
+                notificationChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.RED);
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                notificationChannel.setShowBadge(false);
+
+                notificationManager.createNotificationChannel(notificationChannel);
             }
+
 
             notificationManager.notify(notificationId, notification);
         }

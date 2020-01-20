@@ -76,8 +76,7 @@ public class StreamNotificationOptions implements NotificationOptions {
         if (notificationBuilder == null) {
             checkForDefaultIcons(context);
 
-            return new NotificationCompat.Builder(context,
-                    getNotificationChannelId(context))
+            return new NotificationCompat.Builder(context, getNotificationChannelId(context))
                     .setAutoCancel(true)
                     .setSmallIcon(smallIcon)
                     .setLargeIcon(largeIcon)
