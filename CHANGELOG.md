@@ -1,3 +1,7 @@
+## Upcoming
+
+- Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
+
 ## January 10th, 2020 - 3.6.2
 
 - Enable multiline edit text
