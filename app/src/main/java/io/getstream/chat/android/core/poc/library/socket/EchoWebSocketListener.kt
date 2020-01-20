@@ -14,7 +14,6 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
     private val NORMAL_CLOSURE_STATUS = 1000
 
 
-
     @Synchronized
     override fun onOpen(webSocket: WebSocket, response: Response) {
         if (service.shuttingDown) return
@@ -67,7 +66,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
 
         val name = Thread.currentThread().name
 
-        if(name.isNotEmpty()){
+        if (name.isNotEmpty()) {
 
         }
 
@@ -104,8 +103,21 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         }
     }
 
+    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        if (code == 1000) {
+
+        }
+    }
+
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        if (service.shuttingDown) return
+        if (service.shuttingDown) {
+            service.shuttingDown = false
+            service.isConnecting = false
+            service.isHealthy = false
+            service.connected = false
+            service.resetConsecutiveFailures()
+            return
+        }
         try {
             //Log.i(TAG, "WebSocket # " + wsId.toString() + " Error: " + t.message)
         } catch (e: Exception) {

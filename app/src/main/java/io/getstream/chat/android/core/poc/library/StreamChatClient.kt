@@ -8,7 +8,6 @@ import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
-import io.getstream.chat.android.core.poc.library.socket.StreamWebSocketService
 
 
 class StreamChatClient(
@@ -24,7 +23,6 @@ class StreamChatClient(
     private var fetchingToken = false
     private var isAnonymous = false
     private var clientID = ""
-    private var connected = false
 
     private val socket = ChatSocketConnectionImpl(apiKey, apiOptions.wssURL)
 
@@ -90,7 +88,7 @@ class StreamChatClient(
         )
 
         return socket.connect(user, this.tokenProvider!!).map {
-            api.clientId = it.connectionId
+            api.connectionId = it.connectionId
             api.userId = it.user.id
             it
         }
@@ -128,7 +126,7 @@ class StreamChatClient(
             //log
         }
 
-        disconnectWebSocket()
+        socket.disconnect()
 
         // unset token facilities
         tokenProvider = null
@@ -164,16 +162,5 @@ class StreamChatClient(
         //connectionRecovered()
 
         connect(anonymousConnection);
-    }
-
-    fun disconnectWebSocket() {
-        socket.disconnect()
-//        if (webSocketService != null) {
-//            webSocketService!!.disconnect()
-//            webSocketService = null
-//            clientID = ""
-//        }
-        //onWSEvent(Event(false))
-        connected = false
     }
 }

@@ -9,7 +9,7 @@ class ChatApiImpl(
 ) {
 
     var userId: String = ""
-    var clientId: String = ""
+    var connectionId: String = ""
 
     private val callMapper = RetrofitCallMapper()
 
@@ -18,7 +18,7 @@ class ChatApiImpl(
             retrofitApi.queryChannels(
                 apiKey,
                 userId,
-                clientId,
+                connectionId,
                 query
             )
         )

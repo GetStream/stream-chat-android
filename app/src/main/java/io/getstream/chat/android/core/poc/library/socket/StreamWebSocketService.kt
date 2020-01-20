@@ -30,7 +30,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
     private var user: User? = null
 
     private val listener: EchoWebSocketListener = EchoWebSocketListener(this)
-    private var httpClient: OkHttpClient? = null
+    private var httpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
     private val webSocketListeners = mutableListOf<WsListener>()
 
@@ -85,7 +85,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             Log.i(TAG, "send health check")
             try {
                 val event = Event(EventType.HEALTH_CHECK)
-                webSocket!!.send(Gson().toJson(event))
+                //webSocket!!.send(Gson().toJson(event))
             } finally {
                 eventHandler.postDelayed(this, healthCheckInterval)
             }
@@ -101,13 +101,17 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             Log.i(TAG, "check connection health")
             val millisNow = Date().time
             val monitorInterval = 1000L
-            if (lastEvent != null) {
-                if (millisNow - lastEvent!!.time > healthCheckInterval + 10 * 1000) {
+
+            lastEvent?.let {
+                val diff = millisNow - it.time
+                val checkInterval = healthCheckInterval + 10 * 1000
+                if (diff > checkInterval) {
                     consecutiveFailures += 1
                     setHealth(false)
                     reconnect(true)
                 }
             }
+
             eventHandler.postDelayed(healthCheck, monitorInterval)
         }
 
@@ -122,6 +126,8 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
      * We only make 1 attempt to reconnectWebSocket at the same time..
      */
     var isConnecting = false
+
+    var connected = false
 
     /**
      * Boolean that indicates if we have a working connection to the server
@@ -174,8 +180,15 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
     }
 
     override fun disconnect() {
-        webSocket!!.close(1000, "bye")
         shuttingDown = true
+        connectionResolved = false
+        connected = false
+        isHealthy = false
+        lastEvent = null
+        sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, false))
+        //webSocket?.cancel()
+        webSocket?.close(1000, "bye")
+        webSocket = null
         eventHandler.removeCallbacksAndMessages(null)
         destroyCurrentWSConnection()
     }
@@ -197,9 +210,10 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
     }
 
     fun setConnectionResolved(connectionId: String, user: User) {
+        connectionResolved = true
+        connected = true
         val connectionData = ConnectionData(connectionId, user)
         connectionCallback(connectionData, null)
-        connectionResolved = true
         startMonitor()
     }
 
@@ -235,15 +249,17 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
 
     private fun setupWS() {
         wsId++
-        httpClient = OkHttpClient()
         val request: Request = Request.Builder().url(getWsUrl()).build()
-        webSocket = httpClient!!.newWebSocket(request, listener)
-        httpClient!!.dispatcher.executorService.shutdown()
+        httpClient = OkHttpClient()
+        webSocket = httpClient.newWebSocket(request, listener)
+        httpClient.dispatcher.executorService.shutdown()
     }
 
     private fun destroyCurrentWSConnection() {
         try {
-            httpClient!!.dispatcher.cancelAll()
+            httpClient.dispatcher.cancelAll()
+//            httpClient.connectionPool.evictAll()
+//            httpClient.dispatcher.executorService.shutdown()
         } catch (e: Exception) {
             e.printStackTrace()
         }

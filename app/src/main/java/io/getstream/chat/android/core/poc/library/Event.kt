@@ -96,7 +96,7 @@ class Event : UserEntity {
     }
 
     override fun toString(): String {
-        return "Event(type=$type, online=$online)"
+        return "Event(type=$type)"
     }
 
 
