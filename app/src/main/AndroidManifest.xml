@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".app.common.SocketTestActivity" />
         <activity android:name=".app.common.ChannelsListActivity" />
+        <activity android:name=".app.common.TestApiMethodsActivity" />
     </application>
 
 </manifest>

@@ -18,5 +18,9 @@ class HomeActivity : AppCompatActivity() {
         btnChannels.setOnClickListener {
             startActivity(Intent(this, ChannelsListActivity::class.java))
         }
+
+        btnTesApis.setOnClickListener {
+            startActivity(Intent(this, TestApiMethodsActivity::class.java))
+        }
     }
 }

@@ -5,6 +5,7 @@ import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderLis
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
@@ -151,6 +152,18 @@ class StreamChatClient(
         }
     }
 
+    fun updateChannel(
+        channelId: String,
+        channelType: String,
+        updateMessage: Message,
+        channelExtraData: Map<String, Any> = emptyMap()
+    ): ChatCall<Channel> {
+        val request = UpdateChannelRequest(channelExtraData, updateMessage)
+        return api.updateChannel(channelId, channelType, request).map { response ->
+            response.channel
+        }
+    }
+
     fun reconnectWebSocket() {
         if (getUser() == null) {
             return
@@ -161,6 +174,6 @@ class StreamChatClient(
 //        }
         //connectionRecovered()
 
-        connect(anonymousConnection);
+        connect(anonymousConnection)
     }
 }

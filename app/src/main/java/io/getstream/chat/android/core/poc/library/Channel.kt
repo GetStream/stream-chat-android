@@ -65,7 +65,7 @@ class Channel {
     val config: Config? = null
 
     @TypeConverters(ExtraDataConverter::class)
-    val extraData: HashMap<String, Any>? = null
+    var extraData = mutableMapOf<String, Any>()
     
     val reactionTypes: Map<String, String>? = null
     

@@ -16,4 +16,10 @@
         android:layout_height="wrap_content"
         android:text="Socket" />
 
+    <Button
+        android:id="@+id/btnTesApis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test APIs" />
+
 </LinearLayout>

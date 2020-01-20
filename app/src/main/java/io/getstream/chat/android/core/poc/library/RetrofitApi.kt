@@ -1,6 +1,8 @@
 package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
+import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
+import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -14,6 +16,15 @@ interface RetrofitApi {
         @Query("client_id") clientID: String,
         @Query("payload") payload: QueryChannelsRequest
     ): Call<QueryChannelsResponse>
+
+    @POST("/channels/{type}/{id}")
+    fun updateChannel(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("client_id") clientID: String,
+        @Body body: UpdateChannelRequest
+    ): Call<ChannelResponse>
 
     @Multipart
     @POST("/channels/{type}/{id}/image")
