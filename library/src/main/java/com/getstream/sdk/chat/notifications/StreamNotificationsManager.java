@@ -22,6 +22,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.EventType;
+import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.StreamNotification;
 import com.getstream.sdk.chat.notifications.options.NotificationOptions;
@@ -51,8 +52,6 @@ public class StreamNotificationsManager implements NotificationsManager {
     private static final int DEFAULT_REQUEST_CODE = 999;
     public static final String CHANNEL_ID_KEY = "id";
     public static final String CHANNEL_TYPE_KEY = "type";
-    private static final String CHANNEL_KEY = "channel";
-    private static final String CHANNEL_NAME_KEY = "name";
     private static final String FIREBASE_MESSAGE_ID_KEY = "message_id";
 
     private HashMap<String, StreamNotification> notificationsMap = new HashMap<>();
@@ -187,20 +186,21 @@ public class StreamNotificationsManager implements NotificationsManager {
     }
 
     private void onMessageLoaded(@NotNull Context context, @NotNull Message message) {
-        LinkedTreeMap<String, String> channelObj = (LinkedTreeMap<String, String>) message.getExtraData().get(CHANNEL_KEY);
+        //LinkedTreeMap<String, String> channelObj = (LinkedTreeMap<String, String>) message.getExtraData().get(CHANNEL_KEY);
+        Channel channel = message.getChannel();
 
-        if (channelObj != null) {
+        if (channel != null) {
             String messageId = message.getId();
-            String channelName = channelObj.get(CHANNEL_NAME_KEY);
+            String channelName = channel.getName();
             String messageText = message.getText();
-            String type = channelObj.get(CHANNEL_TYPE_KEY);
-            String id = channelObj.get(CHANNEL_ID_KEY);
+            String type = channel.getType();
+            String id = channel.getCid();
 
             if (checkRequireFields(channelName, messageText)) {
                 StreamNotification notificationItem = notificationsMap.get(messageId);
 
                 if (notificationItem != null) {
-                    notificationItem.setChannelName(channelObj.get(CHANNEL_NAME_KEY));
+                    notificationItem.setChannelName(channel.getName());
                     notificationItem.setMessageText(message.getText());
                     notificationItem.setPendingIntent(preparePendingIntent(context, id, type, notificationItem.getNotificationId()));
                     loadUserImage(context, messageId, message.getUser().getImage());
