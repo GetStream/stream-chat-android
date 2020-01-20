@@ -129,8 +129,8 @@ public class AttachmentDestination extends ChatDestination {
             if (mimeType.contains("audio") ||
                     mimeType.contains("video")) {
                 Intent intent = new Intent(context, AttachmentMediaActivity.class);
-                intent.putExtra("mimeType", mimeType);
-                intent.putExtra("url", url);
+                intent.putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType);
+                intent.putExtra(AttachmentMediaActivity.URL_KEY, url);
                 start(intent);
             } else if (mimeType.equals("application/msword") ||
                     mimeType.equals(ModelType.attach_mime_txt) ||
