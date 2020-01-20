@@ -6,22 +6,25 @@ public class ApiClientOptions {
 
     private String baseURL;
     private int timeout;
+    private int keepAliveDuration;
 
     private String cdnURL;
     private int cdntimeout;
 
-    public ApiClientOptions(String baseURL, int timeout, int cdntimeout) {
+    public ApiClientOptions(String baseURL, int timeout, int cdntimeout, int keepAliveDuration) {
         this.baseURL = baseURL;
         this.timeout = timeout;
         this.cdnURL = baseURL;
         this.cdntimeout = cdntimeout;
+        this.keepAliveDuration = keepAliveDuration;
     }
 
     public ApiClientOptions() {
         this(
                 BuildConfig.DEFAULT_API_ENDPOINT,
                 BuildConfig.DEFAULT_API_TIMEOUT,
-                BuildConfig.DEFAULT_CDN_TIMEOUT
+                BuildConfig.DEFAULT_CDN_TIMEOUT,
+                BuildConfig.DEFAULT_API_KEEP_ALIVE_TIMEOUT
         );
     }
 
@@ -43,6 +46,10 @@ public class ApiClientOptions {
 
     public int getCdntimeout() {
         return cdntimeout;
+    }
+
+    public int getKeepAliveDuration() {
+        return keepAliveDuration;
     }
 
     public static class Builder {
