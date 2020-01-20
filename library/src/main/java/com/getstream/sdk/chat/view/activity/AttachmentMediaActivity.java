@@ -36,8 +36,8 @@ public class AttachmentMediaActivity extends AppCompatActivity {
 
     private void init() {
         Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
-        String url = intent.getStringExtra("url");
+        String type = intent.getStringExtra(TYPE_KEY);
+        String url = intent.getStringExtra(URL_KEY);
         if (TextUtils.isEmpty(type) || TextUtils.isEmpty(url)) {
             Toast.makeText(this, "Something error!", Toast.LENGTH_SHORT).show();
             return;
