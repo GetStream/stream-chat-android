@@ -6,10 +6,10 @@ import io.getstream.chat.android.core.poc.library.Message
 
 class UpdateChannelRequest(data: Map<String, Any>, updateMessage: Message) {
 
-    @Expose
+    
     var data: Map<String, Any>
 
-    @Expose
+    
     var message: Message
 
     init {

@@ -9,16 +9,16 @@ import java.io.IOException
 
 class ErrorResponse : IOException() {
 
-    @Expose
+    
     @SerializedName("code")
     var code: Int = -1
-    @Expose
+    
     @SerializedName("message")
     override var message: String = ""
-    @Expose
+    
     @SerializedName("StatusCode")
     var statusCode: Int = -1
-    @Expose
+    
     @SerializedName("duration")
     var duration: String = ""
 

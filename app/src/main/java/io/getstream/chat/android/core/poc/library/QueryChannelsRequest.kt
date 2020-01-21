@@ -1,6 +1,5 @@
 package io.getstream.chat.android.core.poc.library
 
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 
@@ -14,15 +13,14 @@ class QueryChannelsRequest(
     BaseQueryChannelRequest<QueryChannelsRequest>() {
 
 
-    @Expose
     @SerializedName("message_limit")
     var messageLimit = 0
-    @Expose
+
     var limit = 0
-    @Expose
+
     var offset = 0
 
-    @Expose
+
     @SerializedName("sort")
     val sortList = sort.data
 

@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
 class WsErrorMessage {
 
     @SerializedName("error")
-    @Expose
+    
     val error: ErrorResponse? = null
 }

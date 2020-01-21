@@ -9,11 +9,11 @@ import java.util.*
 class ChannelUserRead : UserEntity {
 
     @SerializedName("user")
-    @Expose
+    
     lateinit var user: User
 
     @SerializedName("last_read")
-    @Expose
+    
     var lastRead = Date()
 
     constructor(user: User, lastRead: Date) {

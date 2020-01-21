@@ -11,49 +11,49 @@ import java.text.DecimalFormat
 class Attachment {
     var config = Config() // Local file Attach Config
     @SerializedName("title")
-    @Expose
+    
     var title: String? = null
     @SerializedName("author_name")
-    @Expose
+    
     var author: String? = null
     @SerializedName("text")
-    @Expose
+    
     var text: String? = null
     @SerializedName("type")
-    @Expose
+    
     var type: String? = null
     @SerializedName("image")
-    @Expose
+    
     var image: String? = null
     @SerializedName("url")
-    @Expose
+    
     var url: String? = null
     @SerializedName("name")
-    @Expose
+    
     var name: String? = null
     @SerializedName("title_link")
-    @Expose
+    
     var titleLink: String? = null
     @SerializedName("thumb_url")
-    @Expose
+    
     var thumbURL: String? = null
     @SerializedName("fallback")
-    @Expose
+    
     var fallback: String? = null
     @SerializedName("image_url")
-    @Expose
+    
     var imageURL: String? = null
     @SerializedName("asset_url")
-    @Expose
+    
     var assetURL: String? = null
     @SerializedName("og_scrape_url")
-    @Expose
+    
     var ogURL: String? = null
     @SerializedName("mime_type")
-    @Expose
+    
     var mime_type: String? = null
     @SerializedName("file_size")
-    @Expose
+    
     var file_size = 0
     // Additional Params
     @TypeConverters(ExtraDataConverter::class)

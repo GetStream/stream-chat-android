@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc.library
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
+import io.getstream.chat.android.core.poc.library.rest.EventResponse
 import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 
 class ChatApiImpl(
@@ -38,6 +39,16 @@ class ChatApiImpl(
                 apiKey,
                 connectionId,
                 request
+            )
+        )
+    }
+
+    fun markAllRead(): ChatCall<EventResponse> {
+        return callMapper.map(
+            retrofitApi.markAllRead(
+                apiKey,
+                userId,
+                connectionId
             )
         )
     }

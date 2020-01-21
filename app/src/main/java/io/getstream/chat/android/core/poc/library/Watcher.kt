@@ -9,7 +9,7 @@ import java.util.*
 class Watcher : UserEntity {
 
     @SerializedName("user")
-    @Expose
+    
     lateinit var user: User
     val createdAt = Date()
 

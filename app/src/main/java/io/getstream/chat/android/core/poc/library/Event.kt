@@ -8,54 +8,54 @@ import java.util.*
 
 class Event : UserEntity {
     @SerializedName("connection_id")
-    @Expose
+    
     var connectionId: String = ""
     @SerializedName("cid")
-    @Expose
+    
     val cid: String = ""
     @SerializedName("client_id")
-    @Expose
+    
     var clientId: String = ""
     @SerializedName("type")
-    @Expose
+    
     private var type: String = ""
     @SerializedName("user")
-    @Expose
+    
     val user: User? = null
     @SerializedName("me")
-    @Expose
+    
     val me: User? = null
     @SerializedName("member")
-    @Expose
+    
     val member: Member? = null
     @SerializedName("message")
-    @Expose
+    
     var message: Message? = null
     @SerializedName("reaction")
-    @Expose
+    
     val reaction: Reaction? = null
     @SerializedName("channel")
-    @Expose
+    
     val channel: Channel? = null
 
     @SerializedName("total_unread_count")
-    @Expose
+    
     val totalUnreadCount: Number = 0
 
     @SerializedName("unread_channels")
-    @Expose
+    
     val unreadChannels: Number = 0
 
     @SerializedName("watcher_count")
-    @Expose
+    
     val watcherCount: Number = 0
 
     @SerializedName("created_at")
-    @Expose
+    
     val createdAt: Date = UndefinedDate
 
     @SerializedName("clear_history")
-    @Expose
+    
     var clearHistory: Boolean = false
 
     var receivedAt: Date = UndefinedDate

@@ -14,24 +14,24 @@ class ChannelState {
 
     var cid: String = ""
 
-    @Expose
+    
     @SerializedName("channel")
     lateinit var channel: Channel
 
     @SerializedName("messages")
-    @Expose
+    
     private var messages = mutableListOf<Message>()
     @Embedded(prefix = "last_message_")
     private var lastMessage: Message? = null
     @SerializedName("read")
-    @Expose
+    
     private var reads = mutableListOf<ChannelUserRead>()
     @SerializedName("members")
-    @Expose
+    
     private var members: MutableList<Member> = mutableListOf()
 
     @SerializedName("watchers")
-    @Expose
+    
     private var watchers: MutableList<Watcher> = mutableListOf()
 
     @SerializedName("watcher_count")

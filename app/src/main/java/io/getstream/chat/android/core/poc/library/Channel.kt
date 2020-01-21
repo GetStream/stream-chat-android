@@ -12,19 +12,19 @@ import java.util.*
 class Channel {
 
     @SerializedName("cid")
-    @Expose
+    
     var cid: String = ""
 
     @SerializedName("id")
-    @Expose
+    
     var id: String = ""
 
     @SerializedName("type")
-    @Expose
+    
     var type: String = ""
 
     @SerializedName("last_message_at")
-    @Expose
+    
     var lastMessageDate:Date = UndefinedDate
 
     @get:Sync.Status
@@ -38,29 +38,29 @@ class Channel {
     var lastState: ChannelState? = null
 
     @SerializedName("created_at")
-    @Expose
+    
     var createdAt:Date = UndefinedDate
 
     @SerializedName("deleted_at")
-    @Expose
+    
     var deletedAt:Date = UndefinedDate
 
     @SerializedName("updated_at")
-    @Expose
+    
     var updatedAt:Date = UndefinedDate
 
     @SerializedName("created_by")
-    @Expose
+    
     val createdByUser: User? = null
 
     val createdByUserID: String? = null
 
     @SerializedName("frozen")
-    @Expose
+    
     val frozen = false
 
     @SerializedName("config")
-    @Expose
+    
     @Embedded(prefix = "config_")
     val config: Config? = null
 

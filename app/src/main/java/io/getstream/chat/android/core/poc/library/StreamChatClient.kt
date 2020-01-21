@@ -164,6 +164,12 @@ class StreamChatClient(
         }
     }
 
+    fun markAllRead(): ChatCall<Event> {
+        return api.markAllRead().map {
+            it.event
+        }
+    }
+
     fun reconnectWebSocket() {
         if (getUser() == null) {
             return
