@@ -60,24 +60,23 @@ class RetrofitCallMapper {
             var statusCode = -1
             var streamCode = -1
 
-            if (t is ErrorResponse) {
-                statusCode = t.statusCode
-                streamCode = t.code
-            }
-
             return ChatHttpError(streamCode, statusCode, t.message.toString(), t)
         }
 
 
-        private fun <T> getResult(response: Response<T>): Result<T> {
+        private fun <T> getResult(retrofitResponse: Response<T>): Result<T> {
 
             var data: T? = null
             var error: ChatHttpError? = null
 
-            try {
-                data = response.body()
-            } catch (t: Throwable) {
-                error = failedError(t)
+            if (retrofitResponse.isSuccessful) {
+                try {
+                    data = retrofitResponse.body()
+                } catch (t: Throwable) {
+                    error = failedError(t)
+                }
+            } else {
+                error = ErrorResponse.parseError(retrofitResponse.raw())
             }
 
             return Result(data, error)

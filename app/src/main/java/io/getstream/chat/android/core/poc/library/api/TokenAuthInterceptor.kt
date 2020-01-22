@@ -43,8 +43,8 @@ class TokenAuthInterceptor internal constructor(
 
             // check the error and only hit this path if the token was expired (error response code)
             if (!response.isSuccessful) {
-                val err: ErrorResponse = ErrorResponse.parseError(response)
-                if (err.code == ErrorResponse.TOKEN_EXPIRED_CODE) {
+                val err = ErrorResponse.parseError(response)
+                if (err.streamCode == ErrorResponse.TOKEN_EXPIRED_CODE) {
                     Log.d(TAG, "Retrying new request")
                     token = null // invalidate local cache
                     tokenProvider.tokenExpired()

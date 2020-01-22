@@ -173,6 +173,10 @@ class StreamChatClient(
         }
     }
 
+    fun acceptInvite(channelType: String, channelId: String, message:String): ChatCall<Channel> {
+        return api.acceptInvite(channelType, channelId, message)
+    }
+
     fun markAllRead(): ChatCall<Event> {
         return api.markAllRead().map {
             it.event

@@ -1,7 +1,9 @@
 package io.getstream.chat.android.core.poc.library.rest
 
+import io.getstream.chat.android.core.poc.library.User
 
-class AcceptInviteRequest(message: String? = null) {
+
+class AcceptInviteRequest(val user: User, message: String? = null) {
 
     val accept_invite = true
     val message: AcceptInviteMessage?

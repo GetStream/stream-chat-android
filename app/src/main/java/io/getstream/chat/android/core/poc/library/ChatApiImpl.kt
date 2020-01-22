@@ -2,10 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
-import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
-import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
-import io.getstream.chat.android.core.poc.library.rest.EventResponse
-import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
+import io.getstream.chat.android.core.poc.library.rest.*
 
 class ChatApiImpl(
     private val apiKey: String,
@@ -85,8 +82,14 @@ class ChatApiImpl(
         )
     }
 
-    fun acceptInvite() {
-
+    fun acceptInvite(channelType: String, channelId: String, message:String):ChatCall<Channel> {
+        return callMapper.map(
+            retrofitApi.acceptInvite(
+                channelType, channelId, apiKey, connectionId, AcceptInviteRequest(User(userId), message)
+            )
+        ).map {
+            it.channel
+        }
     }
 
     fun deleteChannel(channelType: String, channelId: String): ChatCall<ChannelResponse> {

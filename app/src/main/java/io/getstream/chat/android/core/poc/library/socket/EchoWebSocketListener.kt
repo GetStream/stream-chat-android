@@ -48,7 +48,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
                 //TODO: should be delivered to setUser
 // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
-                service.eventHandler.post { service.onError(errorMessage) }
+                service.eventHandler.post { service.onError(errorMessage!!) }
                 return
             }
         }

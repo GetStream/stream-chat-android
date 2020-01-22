@@ -1,5 +1,7 @@
 package io.getstream.chat.android.core.poc.library
 
+import io.getstream.chat.android.core.poc.library.errors.ChatError
+import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -25,8 +27,8 @@ class StreamPublicStorage(
         val callbackWrapper: Callback<UploadFileResponse> =
             object : Callback<UploadFileResponse> {
                 override fun onFailure(call: Call<UploadFileResponse>, t: Throwable) {
-                    if (t is ErrorResponse) {
-                        callback.onError(t.message, t.code)
+                    if (t is ChatHttpError) {
+                        callback.onError(t.message, t.statusCode)
                     } else {
                         var errorMsg = t.localizedMessage
                         if (t.localizedMessage.toLowerCase().equals("timeout")) errorMsg =

@@ -1,8 +1,8 @@
 package io.getstream.chat.android.core.poc.library.errors
 
 class ChatHttpError(
-    streamCode: Int,
-    statusCode: Int,
+    val streamCode: Int,
+    val statusCode: Int,
     message: String = "",
     cause: Throwable? = null
 ) :

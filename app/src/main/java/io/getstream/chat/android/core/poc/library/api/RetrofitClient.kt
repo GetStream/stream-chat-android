@@ -40,14 +40,14 @@ object RetrofitClient {
             .writeTimeout(options.timeout.toLong(), TimeUnit.MILLISECONDS)
             .readTimeout(options.timeout.toLong(), TimeUnit.MILLISECONDS)
             .addInterceptor(logging)
-            .addInterceptor { chain: Interceptor.Chain ->
-                val request: Request = chain.request()
-                val response: Response = chain.proceed(request)
-                if (!response.isSuccessful) {
-                    throw ErrorResponse.parseError(response)
-                }
-                response
-            }
+//            .addInterceptor { chain: Interceptor.Chain ->
+//                val request: Request = chain.request()
+//                val response: Response = chain.proceed(request)
+//                if (!response.isSuccessful) {
+//                    throw ErrorResponse.parseError(response)
+//                }
+//                response
+//            }
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.proceed(
                     prepareRequest(chain, anonymousAuth())
