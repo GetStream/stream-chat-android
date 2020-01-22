@@ -1,7 +1,8 @@
 package io.getstream.chat.android.core.poc.library
 
 import android.text.TextUtils
-import io.getstream.chat.android.core.poc.library.api.ExtraDataConverter
+import io.getstream.chat.android.core.poc.library.json.IgnoreSerialisation
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -12,9 +13,12 @@ class User : UserEntity {
     var name: String = ""
     var image: String = ""
     var role: String = ""
-    var createdAt: Date = Date()
-    var updatedAt: Date = Date()
-    var lastActive: Date = Date()
+    @IgnoreSerialisation
+    var created_at: Date = UndefinedDate
+    @IgnoreSerialisation
+    var updated_at: Date = UndefinedDate
+    @IgnoreSerialisation
+    var last_active: Date = UndefinedDate
     var online: Boolean = false
     var invisible: Boolean = false
     var banned: Boolean = false
@@ -59,9 +63,9 @@ class User : UserEntity {
         name = user.name
         online = user.online
         image = user.image
-        createdAt = user.createdAt
-        lastActive = user.lastActive
-        updatedAt = user.updatedAt
+        created_at = user.created_at
+        last_active = user.last_active
+        updated_at = user.updated_at
         extraData = HashMap(user.extraData)
     }
 

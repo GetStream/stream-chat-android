@@ -11,6 +11,8 @@ import kotlinx.android.synthetic.main.activity_test_api.*
 class TestApiMethodsActivity : AppCompatActivity() {
 
     val client = App.client
+    val channelId = "general"
+    val channelType = "team"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +43,13 @@ class TestApiMethodsActivity : AppCompatActivity() {
 
         btnQueryChannels.setOnClickListener { queryChannels() }
         btnUpdateChannel.setOnClickListener { updateChannel() }
+        btnStopWatching.setOnClickListener { stopWatching() }
     }
 
     private fun updateChannel() {
-        val channelId = "demo"
-        val channelType = "messaging"
         val message = Message()
         message.text = "Hello"
-        client.updateChannel(channelId, channelType, message).enqueue {
+        client.updateChannel(channelType, channelId, message).enqueue {
             if (it.isSuccess) {
 
             }
@@ -62,6 +63,17 @@ class TestApiMethodsActivity : AppCompatActivity() {
                 QuerySort()
             ).withLimit(1)
         ).enqueue {
+            if (it.isSuccess) {
+
+            } else {
+
+            }
+        }
+    }
+
+    private fun stopWatching() {
+
+        client.stopWatching(channelType, channelId).enqueue {
             if (it.isSuccess) {
 
             } else {

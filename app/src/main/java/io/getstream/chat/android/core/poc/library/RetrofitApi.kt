@@ -56,12 +56,13 @@ interface RetrofitApi {
     ): Call<ChannelResponse>
 
     @POST("/channels/{type}/{id}/stop-watching")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun stopWatching(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
-        @Body body: Map<*, *>
+        @Body body: Map<Any, Any>
     ): Call<CompletableResponse>
 
     @POST("/channels/{type}/{id}")

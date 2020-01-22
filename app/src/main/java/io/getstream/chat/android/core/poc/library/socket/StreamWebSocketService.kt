@@ -2,10 +2,10 @@ package io.getstream.chat.android.core.poc.library.socket
 
 import android.os.Message
 import android.util.Log
-import com.google.gson.Gson
 import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.json.ChatGson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -85,7 +85,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             Log.i(TAG, "send health check")
             try {
                 val event = Event(EventType.HEALTH_CHECK)
-                //webSocket!!.send(Gson().toJson(event))
+                webSocket!!.send(ChatGson.instance.toJson(event))
             } finally {
                 eventHandler.postDelayed(this, healthCheckInterval)
             }
@@ -288,7 +288,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             data["user_id"] = user.id
         }
         data["server_determines_connection_id"] = true
-        return Gson().toJson(data)
+        return ChatGson.instance.toJson(data)
     }
 
 }

@@ -2,8 +2,6 @@ package io.getstream.chat.android.core.poc.library
 
 import android.text.TextUtils
 import androidx.room.Embedded
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.utils.isUndefined
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,34 +12,16 @@ class ChannelState {
 
     var cid: String = ""
 
-    
-    @SerializedName("channel")
     lateinit var channel: Channel
-
-    @SerializedName("messages")
-    
-    private var messages = mutableListOf<Message>()
+    val messages = mutableListOf<Message>()
     @Embedded(prefix = "last_message_")
     private var lastMessage: Message? = null
-    @SerializedName("read")
-    
-    private var reads = mutableListOf<ChannelUserRead>()
-    @SerializedName("members")
-    
-    private var members: MutableList<Member> = mutableListOf()
-
-    @SerializedName("watchers")
-    
-    private var watchers: MutableList<Watcher> = mutableListOf()
-
-    @SerializedName("watcher_count")
-    var watcherCount = 0
+    var read = mutableListOf<ChannelUserRead>()
+    var members: MutableList<Member> = mutableListOf()
+    val watchers: MutableList<Watcher> = mutableListOf()
+    var watcher_count = 0
 
     private var lastKnownActiveWatcher: Date = Date()
-
-    fun getWatchers(): List<Watcher> {
-        return watchers
-    }
 
     fun preStorage() {
         //cid = channel.cid
@@ -52,16 +32,16 @@ class ChannelState {
         return lastKnownActiveWatcher
     }
 
-    fun copy(): ChannelState {
-        val clone = ChannelState()
-        clone.channel = channel
-        clone.reads = ArrayList()
-        for (read in getReads()) {
-            clone.reads.add(ChannelUserRead(read.user, read.lastRead))
-        }
-        clone.setLastMessage(getLastMessage())
-        return clone
-    }
+//    fun copy(): ChannelState {
+//        val clone = ChannelState()
+//        clone.channel = channel
+//        clone.read = ArrayList()
+//        for (read in getReads()) {
+//            clone.read.add(ChannelUserRead(read.user, read.lastRead))
+//        }
+//        clone.setLastMessage(getLastMessage())
+//        return clone
+//    }
 
     @Synchronized
     fun addWatcher(watcher: Watcher) {
@@ -70,8 +50,8 @@ class ChannelState {
     }
 
     fun removeWatcher(watcher: Watcher) {
-        if (watcher.user.lastActive.after(getLastKnownActiveWatcher())) {
-            lastKnownActiveWatcher = watcher.user.lastActive
+        if (watcher.user.last_active.after(getLastKnownActiveWatcher())) {
+            lastKnownActiveWatcher = watcher.user.last_active
         }
         watchers!!.remove(watcher)
     }
@@ -137,14 +117,14 @@ class ChannelState {
             }
             val message: Message? = lastMessageFromOtherUser
             if (message != null) {
-                if (message.createdAt.after(lastActive)) {
-                    lastActive = message.createdAt
+                if (message.created_at.after(lastActive)) {
+                    lastActive = message.created_at
                 }
             }
-            for (watcher in getWatchers()) {
-                if (lastActive.before(watcher.user.lastActive)) {
+            for (watcher in watchers) {
+                if (lastActive.before(watcher.user.last_active)) {
                     if (channel.client.fromCurrentUser(watcher)) continue
-                    lastActive = watcher.user.lastActive
+                    lastActive = watcher.user.last_active
                 }
             }
             return lastActive
@@ -185,15 +165,8 @@ class ChannelState {
             return null
         }
 
-    fun getMessages(): List<Message> {
-        for (m in messages) {
-            m.cid = cid
-        }
-        return messages
-    }
-
     fun getReads(): List<ChannelUserRead> {
-        return reads
+        return read
     }
 
     val readsByUser: Map<String, Any>
@@ -211,12 +184,12 @@ class ChannelState {
         get() {
             val lastMessage: Message? = getLastMessage()
             val readLastMessage: MutableList<ChannelUserRead> = ArrayList()
-            if (reads == null || lastMessage == null) return readLastMessage
+            if (read == null || lastMessage == null) return readLastMessage
             val client = channel.client
             val userID: String = client.getUserId()
-            for (r in reads) {
+            for (r in read) {
                 if (r.getUserId().equals(userID)) continue
-                if (r.lastRead.compareTo(lastMessage.createdAt) > -1) {
+                if (r.lastRead.compareTo(lastMessage.created_at) > -1) {
                     readLastMessage.add(r)
                 }
             }
@@ -229,14 +202,6 @@ class ChannelState {
             return readLastMessage
         }
 
-    fun getMembers(): List<Member> {
-        return members
-    }
-
-    fun setMembers(members: MutableList<Member>) {
-        this.members = members
-    }
-
     fun getLastMessage(): Message? {
         if (lastMessage == null) {
             lastMessage = computeLastMessage()
@@ -246,7 +211,7 @@ class ChannelState {
 
     fun setLastMessage(lastMessage: Message?) {
         if (lastMessage == null) return
-        if (lastMessage.deletedAt.isUndefined()) {
+        if (lastMessage.deleted_at.isUndefined()) {
             this.lastMessage = computeLastMessage()
             return
         }
@@ -255,10 +220,10 @@ class ChannelState {
 
     fun computeLastMessage(): Message? {
         var lastMessage: Message? = null
-        val messages: List<Message> = getMessages()
+        val messages: List<Message> = this.messages
         for (i in messages.indices.reversed()) {
             val message: Message = messages[i]
-            if (message.deletedAt.isUndefined() && message.type == ModelType.message_regular) {
+            if (message.deleted_at.isUndefined() && message.type == ModelType.message_regular) {
                 lastMessage = message
                 break
             }
@@ -269,8 +234,8 @@ class ChannelState {
 
     private val lastMessageFromOtherUser: Message?
         private get() {
-            return getMessages().reversed().firstOrNull {
-                it.deletedAt.isUndefined() && !channel.client.fromCurrentUser(it)
+            return messages.reversed().firstOrNull {
+                it.deleted_at.isUndefined() && !channel.client.fromCurrentUser(it)
             }?.apply {
                 Message.setStartDay(listOf(this), null)
             }
@@ -278,10 +243,10 @@ class ChannelState {
 
     val lastReader: User?
         get() {
-            if (reads == null || reads!!.isEmpty()) return null
+            if (read == null || read!!.isEmpty()) return null
             var lastReadUser: User? = null
-            for (i in reads!!.indices.reversed()) {
-                val channelUserRead: ChannelUserRead = reads!![i]
+            for (i in read!!.indices.reversed()) {
+                val channelUserRead: ChannelUserRead = read!![i]
                 if (!channel.client.fromCurrentUser(channelUserRead)) {
                     lastReadUser = channelUserRead.user
                     break
@@ -295,7 +260,7 @@ class ChannelState {
             for (i in messages!!.indices.reversed()) {
                 messages!![i] = newMessage
                 return
-                if (messages!![i].createdAt.before(newMessage.createdAt)) {
+                if (messages!![i].created_at.before(newMessage.created_at)) {
                     messages!!.add(newMessage)
                     return
                 }
@@ -321,9 +286,9 @@ class ChannelState {
     }
 
     fun init(incoming: ChannelState) {
-        reads = incoming.reads
-        watcherCount = incoming.watcherCount
-        if (watcherCount > 1) {
+        read = incoming.read
+        watcher_count = incoming.watcher_count
+        if (watcher_count > 1) {
             lastKnownActiveWatcher = Date()
         }
         if (incoming.messages != null) {
@@ -349,23 +314,23 @@ class ChannelState {
 
     private fun getUnreadMessageCount(userId: String): Int {
         var unreadMessageCount = 0
-        if (reads == null || reads!!.isEmpty()) return unreadMessageCount
+        if (read == null || read!!.isEmpty()) return unreadMessageCount
         val lastReadDate: Date =
             getReadDateOfChannelLastMessage(userId) ?: return unreadMessageCount
         for (i in messages!!.indices.reversed()) {
             val message: Message = messages!![i]
             if (message.user.id == userId) continue
-            if (message.createdAt.time > lastReadDate.time) unreadMessageCount++
+            if (message.created_at.time > lastReadDate.time) unreadMessageCount++
         }
         return unreadMessageCount
     }
 
     fun getReadDateOfChannelLastMessage(userId: String?): Date? {
-        if (reads == null || reads!!.isEmpty()) return null
+        if (read == null || read!!.isEmpty()) return null
         var lastReadDate: Date? = null
         try {
-            for (i in reads!!.indices.reversed()) {
-                val channelUserRead: ChannelUserRead = reads!![i]
+            for (i in read!!.indices.reversed()) {
+                val channelUserRead: ChannelUserRead = read!![i]
                 if (channelUserRead.user.id == userId) {
                     lastReadDate = channelUserRead.lastRead
                     break
@@ -382,16 +347,16 @@ class ChannelState {
         readDate: Date
     ) {
         for (i in getReads().indices) {
-            val current: ChannelUserRead = reads!![i]
+            val current: ChannelUserRead = read!![i]
             if (current.getUserId().equals(user.id)) {
-                reads.removeAt(i)
+                read.removeAt(i)
                 current.lastRead = readDate
-                reads.add(current)
+                read.add(current)
                 return
             }
         }
         val channelUserRead = ChannelUserRead(user, readDate)
-        reads.add(channelUserRead)
+        read.add(channelUserRead)
     }
 
     // if user read the last message returns true, else false.
@@ -406,7 +371,7 @@ class ChannelState {
             if (lastMessage1 == null) {
                 true
             } else {
-                myReadDate.time > lastMessage1.createdAt.time
+                myReadDate.time > lastMessage1.created_at.time
             }
         }
     }

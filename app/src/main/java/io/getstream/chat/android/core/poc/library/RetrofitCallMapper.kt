@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc.library
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.call.ChatCallImpl
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
+import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
 import retrofit2.Response
 
 class RetrofitCallMapper {
@@ -54,8 +55,19 @@ class RetrofitCallMapper {
             return Result(null, failedError(t))
         }
 
-        private fun failedError(t: Throwable) =
-            ChatHttpError(-1, "Http call error, see cause", t)
+        private fun failedError(t: Throwable): ChatHttpError {
+
+            var statusCode = -1
+            var streamCode = -1
+
+            if (t is ErrorResponse) {
+                statusCode = t.statusCode
+                streamCode = t.code
+            }
+
+            return ChatHttpError(streamCode, statusCode, t.message.toString(), t)
+        }
+
 
         private fun <T> getResult(response: Response<T>): Result<T> {
 
@@ -63,11 +75,7 @@ class RetrofitCallMapper {
             var error: ChatHttpError? = null
 
             try {
-                if (response.isSuccessful) {
-                    data = response.body()
-                } else {
-                    error = ChatHttpError(response.code(), "Http call error, see cause.")
-                }
+                data = response.body()
             } catch (t: Throwable) {
                 error = failedError(t)
             }

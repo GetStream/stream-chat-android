@@ -2,10 +2,10 @@ package io.getstream.chat.android.core.poc.library.api
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.core.poc.library.Device
 import io.getstream.chat.android.core.poc.library.Mute
 import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.json.ChatGson
 import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap
@@ -21,13 +21,13 @@ class UserGsonAdapter : TypeAdapter<User>() {
         data["id"] = user.id
         data["name"] = user.name
         data["image"] = user.image
-        val adapter = Gson().getAdapter(HashMap::class.java)
+        val adapter = ChatGson.instance.getAdapter(HashMap::class.java)
         adapter.write(writer, data)
     }
 
     override fun read(reader: com.google.gson.stream.JsonReader): User {
 
-        val gson = Gson()
+        val gson = ChatGson.instance
 
         val adapter: TypeAdapter<*> = gson.getAdapter(HashMap::class.java)
 
@@ -51,13 +51,13 @@ class UserGsonAdapter : TypeAdapter<User>() {
                     user.role = set.value as String
                 }
                 "created_at" -> {
-                    user.createdAt = Date(set.value as Long)
+                    user.created_at = Date(set.value as Long)
                 }
                 "updated_at" -> {
-                    user.updatedAt = Date(set.value as Long)
+                    user.updated_at = Date(set.value as Long)
                 }
                 "last_active" -> {
-                    user.lastActive = Date(set.value as Long)
+                    user.last_active = Date(set.value as Long)
                 }
                 "online" -> {
                     user.online = set.value as Boolean

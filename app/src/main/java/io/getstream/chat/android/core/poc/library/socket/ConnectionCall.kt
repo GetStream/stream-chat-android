@@ -24,7 +24,7 @@ class ConnectionCall : ChatCallImpl<ConnectionData>() {
                 Result(
                     connection,
                     SocketChatError(
-                        "Connection error, see cause",
+                        "Connection error",
                         error
                     )
                 )

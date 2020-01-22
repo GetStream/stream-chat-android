@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
 import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
 import io.getstream.chat.android.core.poc.library.rest.EventResponse
 import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
@@ -27,9 +28,50 @@ class ChatApiImpl(
         )
     }
 
-    fun updateChannel(
-        channelId: String,
+    fun stopWatching(
         channelType: String,
+        channelId: String
+    ): ChatCall<Unit> {
+        return callMapper.map(
+            retrofitApi.stopWatching(channelType, channelId, apiKey, connectionId, emptyMap())
+        ).map {
+            Unit
+        }
+    }
+
+    fun queryChannel(
+        query: ChannelQueryRequest,
+        channelType: String,
+        channelId: String = ""
+    ): ChatCall<ChannelState> {
+
+        if (channelId.isEmpty()) {
+            return callMapper.map(
+                retrofitApi.queryChannel(
+                    channelType,
+                    apiKey,
+                    userId,
+                    connectionId,
+                    query
+                )
+            )
+        } else {
+            return callMapper.map(
+                retrofitApi.queryChannel(
+                    channelType,
+                    channelId,
+                    apiKey,
+                    userId,
+                    connectionId,
+                    query
+                )
+            )
+        }
+    }
+
+    fun updateChannel(
+        channelType: String,
+        channelId: String,
         request: UpdateChannelRequest
     ): ChatCall<ChannelResponse> {
         return callMapper.map(
@@ -40,6 +82,16 @@ class ChatApiImpl(
                 connectionId,
                 request
             )
+        )
+    }
+
+    fun acceptInvite() {
+
+    }
+
+    fun deleteChannel(channelType: String, channelId: String): ChatCall<ChannelResponse> {
+        return callMapper.map(
+            retrofitApi.deleteChannel(channelType, channelId, apiKey, connectionId)
         )
     }
 

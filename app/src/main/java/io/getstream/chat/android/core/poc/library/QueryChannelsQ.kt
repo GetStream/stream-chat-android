@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.Gson
+import io.getstream.chat.android.core.poc.library.json.ChatGson
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.security.MessageDigest
@@ -20,7 +21,7 @@ class QueryChannelsQ(val filter: FilterObject, val sort: QuerySort) {
         val data: MutableMap<String, Any?> = HashMap()
         data["sort"] = sort.data
         data["filter"] = filter.getData()
-        val gson: Gson = Gson()
+        val gson = ChatGson.instance
         val json = gson.toJson(data)
         val MD5 = "MD5"
         try { // Create MD5 Hash

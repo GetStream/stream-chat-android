@@ -144,6 +144,10 @@ class StreamChatClient(
         //activeChannelMap.clear()
     }
 
+    fun stopWatching(channelType: String, channelId: String): ChatCall<Unit> {
+        return api.stopWatching(channelType, channelId)
+    }
+
     fun queryChannels(
         request: QueryChannelsRequest
     ): ChatCall<List<Channel>> {
@@ -153,13 +157,13 @@ class StreamChatClient(
     }
 
     fun updateChannel(
-        channelId: String,
         channelType: String,
+        channelId: String,
         updateMessage: Message,
         channelExtraData: Map<String, Any> = emptyMap()
     ): ChatCall<Channel> {
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
-        return api.updateChannel(channelId, channelType, request).map { response ->
+        return api.updateChannel(channelType, channelId, request).map { response ->
             response.channel
         }
     }

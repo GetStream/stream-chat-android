@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc.library.socket
 import com.google.gson.Gson
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.json.ChatGson
 import okhttp3.Response
 import java.io.IOException
 
@@ -26,7 +27,7 @@ class ErrorResponse : IOException() {
 
         const val TOKEN_EXPIRED_CODE = 40
         fun parseError(response: String?): ErrorResponse {
-            return Gson().fromJson(response, ErrorResponse::class.java)
+            return ChatGson.instance.fromJson(response, ErrorResponse::class.java)
         }
 
         fun parseError(response: Response): ErrorResponse {

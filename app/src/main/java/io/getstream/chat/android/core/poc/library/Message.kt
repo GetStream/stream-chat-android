@@ -1,65 +1,43 @@
 package io.getstream.chat.android.core.poc.library
 
-import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.core.poc.library.json.IgnoreSerialisation
 import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class Message: UserEntity {
+class Message : UserEntity {
+
     val id: String = ""
-
-
     var cid: String = ""
-
-    @SerializedName("text")
     var text: String = ""
-
-    @SerializedName("html")
-    val html: String? = null
-
-    @SerializedName("type")
-    val type: String = ""
+    val html: String = ""
 
     var syncStatus: Int = 0
-
-
-    @SerializedName("user")
     lateinit var user: User
+    lateinit var channel: Channel
+    val userID: String = ""
 
+    val attachments = emptyList<Reaction>()
+    @IgnoreSerialisation
+    val type: String = ""
+    @IgnoreSerialisation
+    val latest_reactions = emptyList<Reaction>()
+    @IgnoreSerialisation
+    val own_reactions = emptyList<Reaction>()
+    @IgnoreSerialisation
+    val reply_count = 0
 
-    @SerializedName("channel")
-    val channel: Channel? = null
+    @IgnoreSerialisation
+    var created_at: Date = UndefinedDate
+    @IgnoreSerialisation
+    var updated_at: Date = UndefinedDate
+    @IgnoreSerialisation
+    var deleted_at: Date = UndefinedDate
 
-    val userID: String? = null
-
-    val attachments: List<Attachment>? = null
-
-    @SerializedName("latest_reactions")
-    val latestReactions: List<Reaction>? = null
-
-    @SerializedName("own_reactions")
-    val ownReactions: List<Reaction>? = null
-
-    @SerializedName("reply_count")
-    val replyCount = 0
-
-    @SerializedName("created_at")
-    var createdAt = UndefinedDate
-
-    @SerializedName("updated_at")
-    var updatedAt = UndefinedDate
-
-    var deletedAt = UndefinedDate
-
-    @SerializedName("mentioned_users")
-    val mentionedUsers: List<User>? =
-        null
-
-
+    val mentioned_users = emptyList<User>()
     val mentionedUsersId: List<String>? = null
-
     val reactionCounts: Map<String, Int>? = null
 
     val parentId: String? = null
@@ -76,7 +54,6 @@ class Message: UserEntity {
     var isToday = false
     var date: String = ""
     var time: String = ""
-
 
 
     companion object {
@@ -106,7 +83,7 @@ class Message: UserEntity {
             if (message == null || message.date != null) return
             messageDateFormat.timeZone = TimeZone.getTimeZone("GMT")
             val smsTime = Calendar.getInstance()
-            smsTime.timeInMillis = message.createdAt.time
+            smsTime.timeInMillis = message.created_at.time
             val now = Calendar.getInstance()
             if (now[Calendar.DATE] === smsTime[Calendar.DATE]) {
                 message.isToday = true
@@ -116,13 +93,13 @@ class Message: UserEntity {
                 message.date = "yesterday"
             } else if (now[Calendar.WEEK_OF_YEAR] === smsTime[Calendar.WEEK_OF_YEAR]) {
                 val dayName: DateFormat = SimpleDateFormat("EEEE")
-                message.date = dayName.format(message.createdAt)
+                message.date = dayName.format(message.created_at)
             } else {
                 val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG)
-                message.date = dateFormat.format(message.createdAt)
+                message.date = dateFormat.format(message.created_at)
             }
             val timeFormat: DateFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
-            message.time = timeFormat.format(message.createdAt)
+            message.time = timeFormat.format(message.created_at)
         }
     }
 

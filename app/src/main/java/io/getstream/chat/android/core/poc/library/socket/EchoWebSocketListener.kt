@@ -1,8 +1,8 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import io.getstream.chat.android.core.poc.library.Event
+import io.getstream.chat.android.core.poc.library.json.ChatGson
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -34,7 +34,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         //Log.d(TAG, "WebSocket # " + wsId.toString() + " Response : " + text)
         if (service.shuttingDown) return
         val errorMessage = try {
-            Gson().fromJson(text, WsErrorMessage::class.java)
+            ChatGson.instance.fromJson(text, WsErrorMessage::class.java)
         } catch (ignored: JsonSyntaxException) {
             null
         }
@@ -45,6 +45,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
                 service.eventHandler.post { service.tokenExpired() }
                 return
             } else { // other errors are passed to the callback
+                //TODO: should be delivered to setUser
 // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, String.format("error with code %d", errorMessage.getError().getCode()));
                 service.eventHandler.post { service.onError(errorMessage) }
@@ -53,7 +54,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         }
         val event: Event
         try {
-            event = Gson().fromJson(text, Event::class.java)
+            event = ChatGson.instance.fromJson(text, Event::class.java)
             // set received at, prevents clock issues from breaking our ability to remove old typing indicators
             val now = Date()
             event.receivedAt = now
