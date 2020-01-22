@@ -83,6 +83,15 @@ interface RetrofitApi {
         @Body body: RejectInviteRequest
     ): Call<ChannelResponse>
 
+    @POST("/channels/{type}/{id}/hide")
+    fun hideChannel(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("client_id") clientID: String,
+        @Body body: HideChannelRequest
+    ): Call<CompletableResponse>
+
     @POST("/channels/{type}/{id}/show")
     fun showChannel(
         @Path("type") channelType: String,
@@ -102,15 +111,6 @@ interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
     ): Call<UploadFileResponse>
-
-    @POST("/channels/{type}/{id}/hide")
-    fun hideChannel(
-        @Path("type") channelType: String,
-        @Path("id") channelId: String,
-        @Query("api_key") apiKey: String,
-        @Query("client_id") clientID: String,
-        @Body body: HideChannelRequest
-    ): Call<CompletableResponse>
 
     @Multipart
     @POST("/channels/{type}/{id}/file")

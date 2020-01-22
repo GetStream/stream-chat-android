@@ -149,6 +149,10 @@ class StreamChatClient(
         //activeChannelMap.clear()
     }
 
+    fun hideChannel(channelType: String, channelId: String, clearHistory:Boolean = false): ChatCall<Unit> {
+        return api.hideChannel(channelType, channelId, clearHistory)
+    }
+
     fun stopWatching(channelType: String, channelId: String): ChatCall<Unit> {
         return api.stopWatching(channelType, channelId)
     }

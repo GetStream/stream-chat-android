@@ -82,6 +82,14 @@ class ChatApiImpl(
         )
     }
 
+    fun hideChannel(channelType: String, channelId: String, clearHistory:Boolean = false): ChatCall<Unit> {
+        return callMapper.map(
+            retrofitApi.hideChannel(channelType, channelId, apiKey, connectionId, HideChannelRequest(clearHistory))
+        ).map {
+            Unit
+        }
+    }
+
     fun rejectInvite(channelType: String, channelId: String):ChatCall<Channel> {
         return callMapper.map(
             retrofitApi.rejectInvite(
@@ -91,7 +99,6 @@ class ChatApiImpl(
             it.channel
         }
     }
-
 
     fun acceptInvite(channelType: String, channelId: String, message:String):ChatCall<Channel> {
         return callMapper.map(

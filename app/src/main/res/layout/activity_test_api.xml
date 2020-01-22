@@ -41,6 +41,12 @@
             android:layout_height="wrap_content"
             android:text="Reject invite" />
 
+        <Button
+            android:id="@+id/btnHideChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hide channel" />
+
     </LinearLayout>
 
 
