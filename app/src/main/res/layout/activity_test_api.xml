@@ -35,6 +35,12 @@
             android:layout_height="wrap_content"
             android:text="Accept invite" />
 
+        <Button
+            android:id="@+id/btnRejectInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reject invite" />
+
     </LinearLayout>
 
 

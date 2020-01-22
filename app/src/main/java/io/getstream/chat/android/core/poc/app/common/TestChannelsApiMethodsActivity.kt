@@ -44,6 +44,13 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnUpdateChannel.setOnClickListener { updateChannel() }
         btnStopWatching.setOnClickListener { stopWatching() }
         btnAcceptInvite.setOnClickListener { acceptInvite() }
+        btnRejectInvite.setOnClickListener { rejectInvite() }
+    }
+
+    private fun rejectInvite() {
+        client.rejectInvite(channelType, channelId).enqueue {
+            echoResult(it)
+        }
     }
 
     private fun acceptInvite() {

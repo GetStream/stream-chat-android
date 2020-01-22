@@ -173,6 +173,10 @@ class StreamChatClient(
         }
     }
 
+    fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel> {
+        return api.rejectInvite(channelType, channelId)
+    }
+
     fun acceptInvite(channelType: String, channelId: String, message:String): ChatCall<Channel> {
         return api.acceptInvite(channelType, channelId, message)
     }

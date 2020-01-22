@@ -82,6 +82,17 @@ class ChatApiImpl(
         )
     }
 
+    fun rejectInvite(channelType: String, channelId: String):ChatCall<Channel> {
+        return callMapper.map(
+            retrofitApi.rejectInvite(
+                channelType, channelId, apiKey, connectionId, RejectInviteRequest()
+            )
+        ).map {
+            it.channel
+        }
+    }
+
+
     fun acceptInvite(channelType: String, channelId: String, message:String):ChatCall<Channel> {
         return callMapper.map(
             retrofitApi.acceptInvite(
