@@ -5,39 +5,31 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/buttonsContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatTextView
+
+        <Button
+            android:id="@+id/btnQueryChannels"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Status: " />
+            android:text="Query channels" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textRequestStatus"
+        <Button
+            android:id="@+id/btnUpdateChannel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="no request" />
+            android:text="Update channel" />
+
+        <Button
+            android:id="@+id/btnStopWatching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop watching" />
+
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnQueryChannels"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Query channels" />
-
-    <Button
-        android:id="@+id/btnUpdateChannel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update channel" />
-
-    <Button
-        android:id="@+id/btnStopWatching"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop watching" />
 
 
 </LinearLayout>

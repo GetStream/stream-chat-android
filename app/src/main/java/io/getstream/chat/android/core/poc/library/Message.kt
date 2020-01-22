@@ -55,7 +55,6 @@ class Message : UserEntity {
     var date: String = ""
     var time: String = ""
 
-
     companion object {
 
         val locale = Locale("en", "US", "POSIX")

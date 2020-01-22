@@ -1,14 +1,16 @@
 package io.getstream.chat.android.core.poc.app.common
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import kotlinx.android.synthetic.main.activity_test_api.*
 
-class TestApiMethodsActivity : AppCompatActivity() {
+class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
     val client = App.client
     val channelId = "general"
@@ -18,28 +20,25 @@ class TestApiMethodsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_api)
 
-
-
-        btnQueryChannels.isEnabled = false
-        btnUpdateChannel.isEnabled = false
+        buttonsContainer.children.iterator().forEach {
+            it.isEnabled = false
+        }
 
         client.setUser(User("bender"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
-        }).enqueue {
-            if (it.isSuccess) {
-                initButtons()
-            }
+        }) {
+            echoResult(it, "Connected", "Socket connection error")
+            initButtons()
         }
-
-
     }
 
     private fun initButtons() {
 
-        btnQueryChannels.isEnabled = true
-        btnUpdateChannel.isEnabled = true
+        buttonsContainer.children.iterator().forEach {
+            it.isEnabled = true
+        }
 
         btnQueryChannels.setOnClickListener { queryChannels() }
         btnUpdateChannel.setOnClickListener { updateChannel() }
@@ -50,9 +49,7 @@ class TestApiMethodsActivity : AppCompatActivity() {
         val message = Message()
         message.text = "Hello"
         client.updateChannel(channelType, channelId, message).enqueue {
-            if (it.isSuccess) {
-
-            }
+            echoResult(it)
         }
     }
 
@@ -63,22 +60,25 @@ class TestApiMethodsActivity : AppCompatActivity() {
                 QuerySort()
             ).withLimit(1)
         ).enqueue {
-            if (it.isSuccess) {
-
-            } else {
-
-            }
+            echoResult(it)
         }
     }
 
     private fun stopWatching() {
-
         client.stopWatching(channelType, channelId).enqueue {
-            if (it.isSuccess) {
+            echoResult(it)
+        }
+    }
 
-            } else {
-
-            }
+    private fun echoResult(
+        result: Result<*>,
+        success: String = "Success",
+        error: String = "Error"
+    ) {
+        if (result.isSuccess) {
+            Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, error + ": " + result.error().message, Toast.LENGTH_SHORT).show()
         }
     }
 }

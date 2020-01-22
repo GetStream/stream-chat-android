@@ -21,6 +21,16 @@ object ChatGson {
                 }
 
             })
+            .addDeserializationExclusionStrategy(object : ExclusionStrategy {
+                override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                    return false
+                }
+
+                override fun shouldSkipField(f: FieldAttributes): Boolean {
+                    return f.getAnnotation(IgnoreDeserialisation::class.java) != null
+                }
+
+            })
             .create()
     }
 }

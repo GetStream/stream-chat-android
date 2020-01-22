@@ -17,9 +17,15 @@
         android:text="Socket" />
 
     <Button
-        android:id="@+id/btnTesApis"
+        android:id="@+id/btnTestChannelsApis"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test APIs" />
+        android:text="Test Channels APIs" />
+
+    <Button
+        android:id="@+id/btnTestUsersApis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Users APIs" />
 
 </LinearLayout>

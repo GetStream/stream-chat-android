@@ -37,8 +37,9 @@ class StreamChatClient(
 
     fun setUser(
         user: User,
-        provider: TokenProvider
-    ): ChatCall<ConnectionData> {
+        provider: TokenProvider,
+        callback: (Result<ConnectionData>) -> Unit
+    ) {
 
         state.user = user
         //api.userId = user.id
@@ -88,10 +89,14 @@ class StreamChatClient(
             )
         )
 
-        return socket.connect(user, this.tokenProvider!!).map {
-            api.connectionId = it.connectionId
-            api.userId = it.user.id
-            it
+        socket.connect(user, this.tokenProvider!!).enqueue {
+
+            if (it.isSuccess) {
+                api.connectionId = it.data().connectionId
+                api.userId = it.data().user.id
+            }
+
+            callback(it)
         }
     }
 
