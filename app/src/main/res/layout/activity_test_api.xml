@@ -47,6 +47,12 @@
             android:layout_height="wrap_content"
             android:text="Hide channel" />
 
+        <Button
+            android:id="@+id/btnShowChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show channel" />
+
     </LinearLayout>
 
 

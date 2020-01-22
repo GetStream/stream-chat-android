@@ -82,6 +82,14 @@ class ChatApiImpl(
         )
     }
 
+    fun showChannel(channelType: String, channelId: String): ChatCall<Unit> {
+        return callMapper.map(
+            retrofitApi.showChannel(channelType, channelId, apiKey, connectionId, emptyMap())
+        ).map {
+            Unit
+        }
+    }
+
     fun hideChannel(channelType: String, channelId: String, clearHistory:Boolean = false): ChatCall<Unit> {
         return callMapper.map(
             retrofitApi.hideChannel(channelType, channelId, apiKey, connectionId, HideChannelRequest(clearHistory))

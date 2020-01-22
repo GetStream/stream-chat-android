@@ -46,6 +46,13 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnAcceptInvite.setOnClickListener { acceptInvite() }
         btnRejectInvite.setOnClickListener { rejectInvite() }
         btnHideChannel.setOnClickListener { hideChannel() }
+        btnShowChannel.setOnClickListener { showChannel() }
+    }
+
+    private fun showChannel(){
+        client.showChannel(channelType, channelId).enqueue {
+            echoResult(it)
+        }
     }
 
     private fun hideChannel(){

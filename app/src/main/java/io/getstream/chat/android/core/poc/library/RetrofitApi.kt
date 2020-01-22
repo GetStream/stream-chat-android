@@ -93,12 +93,13 @@ interface RetrofitApi {
     ): Call<CompletableResponse>
 
     @POST("/channels/{type}/{id}/show")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun showChannel(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
-        @Body body: Map<*, *>
+        @Body body: Map<Any, Any>
     ): Call<CompletableResponse>
 
     @Multipart
