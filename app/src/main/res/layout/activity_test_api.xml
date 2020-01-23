@@ -23,11 +23,7 @@
             android:layout_height="wrap_content"
             android:text="Update channel" />
 
-        <Button
-            android:id="@+id/btnStopWatching"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop watching" />
+
 
         <Button
             android:id="@+id/btnAcceptInvite"
@@ -52,6 +48,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Show channel" />
+
+        <Button
+            android:id="@+id/btnMarkReadMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mark read message" />
+
+        <Button
+            android:id="@+id/btnWatchChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watch channel" />
+
+        <Button
+            android:id="@+id/btnStopWatching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop watching" />
 
     </LinearLayout>
 

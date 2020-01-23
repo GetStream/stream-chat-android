@@ -3,7 +3,7 @@ package io.getstream.chat.android.core.poc.library.rest
 import io.getstream.chat.android.core.poc.library.BaseQueryChannelRequest
 
 
-class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() {
+open class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() {
 
     var messages = mutableMapOf<String, Any>()
     var watchers = mutableMapOf<String, Any>()
@@ -22,7 +22,7 @@ class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() {
         return _this
     }
 
-    fun withData(data: Map<String, Any>): ChannelQueryRequest {
+    open fun withData(data: Map<String, Any>): ChannelQueryRequest {
         val clone = cloneOpts()
         clone.data = data.toMutableMap()
         return clone
@@ -52,7 +52,7 @@ class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() {
         return clone
     }
 
-    fun withMessages(limit: Int): ChannelQueryRequest {
+    open fun withMessages(limit: Int): ChannelQueryRequest {
         val clone = cloneOpts()
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
@@ -60,7 +60,7 @@ class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() {
         return clone
     }
 
-    fun withMessages(
+    open fun withMessages(
         direction: Pagination,
         messageId: String,
         limit: Int

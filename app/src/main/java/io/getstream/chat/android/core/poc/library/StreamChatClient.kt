@@ -5,6 +5,7 @@ import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderLis
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
 import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
@@ -149,11 +150,27 @@ class StreamChatClient(
         //activeChannelMap.clear()
     }
 
+    fun queryChannel(
+        channelType: String,
+        channelId: String,
+        request: ChannelQueryRequest
+    ): ChatCall<Channel> {
+        return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
+    }
+
+    fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit> {
+        return api.markRead(channelType, channelId, messageId)
+    }
+
     fun showChannel(channelType: String, channelId: String): ChatCall<Unit> {
         return api.showChannel(channelType, channelId)
     }
 
-    fun hideChannel(channelType: String, channelId: String, clearHistory:Boolean = false): ChatCall<Unit> {
+    fun hideChannel(
+        channelType: String,
+        channelId: String,
+        clearHistory: Boolean = false
+    ): ChatCall<Unit> {
         return api.hideChannel(channelType, channelId, clearHistory)
     }
 
@@ -164,9 +181,9 @@ class StreamChatClient(
     fun queryChannels(
         request: QueryChannelsRequest
     ): ChatCall<List<Channel>> {
-        return api.queryChannels(request).map { response ->
-            response.getChannels()
-        }
+        return api.queryChannels(request)
+            .map { response -> response.getChannels() }
+            .map { attachClient(it) }
     }
 
     fun updateChannel(
@@ -176,17 +193,17 @@ class StreamChatClient(
         channelExtraData: Map<String, Any> = emptyMap()
     ): ChatCall<Channel> {
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
-        return api.updateChannel(channelType, channelId, request).map { response ->
-            response.channel
-        }
+        return api.updateChannel(channelType, channelId, request)
+            .map { response -> response.channel }
+            .map { attachClient(it) }
     }
 
     fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel> {
-        return api.rejectInvite(channelType, channelId)
+        return api.rejectInvite(channelType, channelId).map { attachClient(it) }
     }
 
-    fun acceptInvite(channelType: String, channelId: String, message:String): ChatCall<Channel> {
-        return api.acceptInvite(channelType, channelId, message)
+    fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel> {
+        return api.acceptInvite(channelType, channelId, message).map { attachClient(it) }
     }
 
     fun markAllRead(): ChatCall<Event> {
@@ -206,5 +223,15 @@ class StreamChatClient(
         //connectionRecovered()
 
         connect(anonymousConnection)
+    }
+
+    private fun attachClient(channels: List<Channel>): List<Channel> {
+        channels.forEach { attachClient(it) }
+        return channels
+    }
+
+    private fun attachClient(channel: Channel): Channel {
+        channel.client = this
+        return channel
     }
 }
