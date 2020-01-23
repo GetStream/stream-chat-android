@@ -39,6 +39,7 @@ class ErrorResponse {
                 statusCode = okHttpResponse.code
                 ChatHttpError(error.code, statusCode, error.message)
             } catch (t: Throwable) {
+                //TODO: check java.lang.IllegalStateException: Cannot read raw response body of a converted body.
                 ChatHttpError(okHttpResponse.code, statusCode, t.message.toString(), t)
             }
         }

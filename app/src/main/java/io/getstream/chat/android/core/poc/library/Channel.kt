@@ -91,6 +91,11 @@ class Channel {
         return client.queryChannel(type, id, request)
     }
 
+    override fun toString(): String {
+        return "Channel(cid='$cid')"
+    }
+
+
     companion object {
         private val TAG = Channel::class.java.simpleName
     }
