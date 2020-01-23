@@ -114,6 +114,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private boolean reachedEndOfPaginationThread;
     private Date lastMarkRead;
 
+    private MutableLiveData<String> messageInputText;
+
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;
     }
@@ -138,6 +140,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     private MessageListItemLiveData entities;
     private boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
+
+
     public ChannelViewModel(@NonNull Application application) {
         super(application);
 
@@ -151,6 +155,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         loading = new MutableLiveData<>(false);
         threadParentMessage = new MutableLiveData<>(null);
         messageListScrollUp = new MutableLiveData<>(false);
+        messageInputText = new MutableLiveData<>("");
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
@@ -1174,6 +1179,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
             typingUsers.postValue(getCleanedTypingUsers());
         }
+    }
+
+    public MutableLiveData<String> getMessageInputText() {
+        return messageInputText;
+    }
+
+    public void setMessageInputText(MutableLiveData<String> messageInputText) {
+        this.messageInputText = messageInputText;
     }
 
     /**
