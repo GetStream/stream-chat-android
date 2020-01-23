@@ -398,6 +398,75 @@ StreamChatLogger logger = new StreamChatLogger.Builder()
                 .build();
 ```
 
+### Editing this library
+
+This guide assumes that you're working on your own project in the `project` folder and clone the chat SDK library in a separate folder.
+
+1. First of all you'll want to clone this repo
+
+```
+git clone git@github.com:GetStream/stream-chat-android.git
+```
+
+2. Next you'll edit your project's settings.graddle and add this
+
+```
+include ':chat'
+
+project(":chat").projectDir=new File("ABSOLUTEPATHTOstream-chat-android here")
+```
+
+3. Open up your `project/app/build.gradle` and replace the production SDK with your local copy
+
+```
+//implementation 'com.github.getstream:stream-chat-android:3.6.2'
+implementation project(':chat')
+```
+
+4. Next open up `project/build.gradle`. 
+
+Add the following to the buildscript {} entry
+
+```
+
+buildscript {
+...
+
+    ext {
+        googleServiceVersion = '4.3.2'
+        gradleVersion = '3.5.2'
+        gradlePluginVersion = '2.1'
+        jacocoVersion = '0.1.4'
+        mannodermausVersion = '1.5.1.0'
+
+    }
+    
+...
+}
+
+```
+
+Next in the dependencies setup these libraries. (They are needed to compile stream-chat-android
+
+```
+buildscript {
+	dependecies {
+	....
+	
+	classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
+        classpath "com.google.gms:google-services:$googleServiceVersion"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
+        classpath "com.dicedmelon.gradle:jacoco-android:$jacocoVersion"
+	}
+}
+```
+
+5.
+
+Hit build/clean project in android studio and build your app.
+
+
 ## FAQ
 
 ### Channel List loading icons spins forever
