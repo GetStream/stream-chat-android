@@ -15,6 +15,7 @@ class ErrorResponse {
     @SerializedName("StatusCode")
     var statusCode: Int = -1
 
+    //TODO: move parsing logic out of the model
     companion object {
 
         const val TOKEN_EXPIRED_CODE = 40
