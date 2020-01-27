@@ -323,9 +323,44 @@ class ChannelsApiCallsTests {
     }
 
     @Test
+    fun markAllReadSuccess() {
+
+        val event = Event("type")
+
+        Mockito.`when`(
+            retrofitApi.markAllRead(
+                apiKey,
+                user.id,
+                connection.connectionId
+            )
+        ).thenReturn(RetroSuccess(EventResponse(event)))
+
+        val result = client.markAllRead().execute()
+
+        verifySuccess(result, event)
+    }
+
+    @Test
+    fun markAllReadError() {
+
+        Mockito.`when`(
+            retrofitApi.markAllRead(
+                apiKey,
+                user.id,
+                connection.connectionId
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.markAllRead().execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
     fun markReadSuccess() {
 
         val messageId = "message-id"
+        val event = Event("type")
 
         Mockito.`when`(
             retrofitApi.markRead(
@@ -336,7 +371,7 @@ class ChannelsApiCallsTests {
                 connection.connectionId,
                 MarkReadRequest(messageId)
             )
-        ).thenReturn(RetroSuccess(EventResponse()))
+        ).thenReturn(RetroSuccess(EventResponse(event)))
 
         val result =
             client.markRead(channelType, channelId, messageId).execute()
