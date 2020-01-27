@@ -3,6 +3,7 @@ package io.getstream.chat.android.core.poc
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
+import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.utils.RetroError
@@ -115,6 +116,44 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroError(serverErrorCode))
 
         val result = client.showChannel(channelType, channelId).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun deleteChannelSuccess() {
+
+        val response = Channel()
+
+        Mockito.`when`(
+            retrofitApi.deleteChannel(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId
+            )
+        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = response }))
+
+
+        val result = client.deleteChannel(channelType, channelId).execute()
+
+        verifySuccess(result, response)
+    }
+
+    @Test
+    fun deleteChannelError() {
+
+        Mockito.`when`(
+            retrofitApi.deleteChannel(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+
+        val result = client.deleteChannel(channelType, channelId).execute()
 
         verifyError(result, serverErrorCode)
     }

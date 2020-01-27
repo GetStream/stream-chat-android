@@ -79,6 +79,7 @@ interface ChatClient {
     fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
     fun markAllRead(): ChatCall<Event>
-
+    fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
     //endregion
+
 }

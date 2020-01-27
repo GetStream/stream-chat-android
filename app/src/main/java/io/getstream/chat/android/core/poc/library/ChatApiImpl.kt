@@ -326,10 +326,12 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteChannel(channelType: String, channelId: String): ChatCall<ChannelResponse> {
+    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel> {
         return callMapper.map(
             retrofitApi.deleteChannel(channelType, channelId, apiKey, connectionId)
-        )
+        ).map {
+            it.channel
+        }
     }
 
     override fun markAllRead(): ChatCall<EventResponse> {

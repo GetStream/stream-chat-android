@@ -127,6 +127,10 @@ internal class ChatClientImpl constructor(
         return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
     }
 
+    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>{
+        return api.deleteChannel(channelType, channelId)
+    }
+
     override fun markRead(
         channelType: String,
         channelId: String,
