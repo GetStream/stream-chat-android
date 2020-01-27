@@ -36,27 +36,27 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
-    private final String TAG = ChannelListViewModel.class.getSimpleName();
+    protected final String TAG = ChannelListViewModel.class.getSimpleName();
 
     @NonNull
-    private LazyQueryChannelLiveData<List<Channel>> channels;
-    private MutableLiveData<Boolean> loading;
-    private MutableLiveData<Boolean> loadingMore;
+    protected LazyQueryChannelLiveData<List<Channel>> channels;
+    protected MutableLiveData<Boolean> loading;
+    protected MutableLiveData<Boolean> loadingMore;
 
-    private FilterObject filter;
-    private QuerySort sort;
+    protected FilterObject filter;
+    protected QuerySort sort;
 
-    private boolean reachedEndOfPagination;
-    private AtomicBoolean initialized;
-    private AtomicBoolean isLoading;
-    private AtomicBoolean isLoadingMore;
-    private boolean queryChannelDone;
-    private int pageSize;
-    private int subscriptionId = 0;
-    private int recoverySubscriptionId = 0;
-    private Handler retryLooper;
+    protected boolean reachedEndOfPagination;
+    protected AtomicBoolean initialized;
+    protected AtomicBoolean isLoading;
+    protected AtomicBoolean isLoadingMore;
+    protected boolean queryChannelDone;
+    protected int pageSize;
+    protected int subscriptionId = 0;
+    protected int recoverySubscriptionId = 0;
+    protected Handler retryLooper;
 
-    private QueryChannelListCallback queryChannelListCallback;
+    protected QueryChannelListCallback queryChannelListCallback;
 
     public RetryPolicy getRetryPolicy() {
         return retryPolicy;
@@ -66,7 +66,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         this.retryPolicy = retryPolicy;
     }
 
-    private RetryPolicy retryPolicy;
+    protected RetryPolicy retryPolicy;
 
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
@@ -111,7 +111,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return channels;
     }
 
-    private void setChannels(List<ChannelState> newChannelsState) {
+    protected void setChannels(List<ChannelState> newChannelsState) {
         // - offline loads first
         // - after that we query the API and load more channels
         // - it's possible that the offline results no longer match the query (so we should remove them)
@@ -161,7 +161,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             loading.postValue(false);
     }
 
-    private boolean setLoadingMore() {
+    protected boolean setLoadingMore() {
         if (isLoadingMore.compareAndSet(false, true)) {
             loadingMore.postValue(true);
             return true;
@@ -169,7 +169,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return false;
     }
 
-    private void setLoadingMoreDone() {
+    protected void setLoadingMoreDone() {
         if (isLoadingMore.compareAndSet(true, false))
             loadingMore.postValue(false);
     }
@@ -267,7 +267,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         StreamChat.getLogger().logD(this,"stopped");
     }
 
-    private void setupConnectionRecovery() {
+    protected void setupConnectionRecovery() {
         recoverySubscriptionId = client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
@@ -294,14 +294,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
-    private EventHandler eventHandler;
+    protected EventHandler eventHandler;
 
     public void setEventInterceptor(EventInterceptor interceptor) {
         this.eventHandler = new EventHandler(interceptor);
         initEventHandlers();
     }
 
-    private void setEventHandler(EventHandler eventHandler) {
+    protected void setEventHandler(EventHandler eventHandler) {
         this.eventHandler = eventHandler;
         initEventHandlers();
     }
@@ -321,7 +321,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     public class EventHandler extends ChatEventHandler {
-        private EventInterceptor interceptor;
+        protected EventInterceptor interceptor;
 
         public EventHandler(EventInterceptor interceptor) {
             this.interceptor = interceptor;
@@ -430,14 +430,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         }
     }
 
-    synchronized private void initEventHandlers() {
+    synchronized protected void initEventHandlers() {
         if (subscriptionId != 0) {
             client().removeEventHandler(subscriptionId);
         }
         subscriptionId = client().addEventHandler(eventHandler);
     }
 
-    private boolean updateChannel(Channel channel, boolean moveToTop) {
+    protected boolean updateChannel(Channel channel, boolean moveToTop) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
@@ -454,7 +454,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return idx != -1;
     }
 
-    private void upsertChannel(Channel channel) {
+    protected void upsertChannel(Channel channel) {
         List<Channel> channelCopy = channels.getValue();
         if (channelCopy == null) {
             channelCopy = new ArrayList<>();
@@ -492,7 +492,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
 
-    private void queryChannelsInner(int attempt) {
+    protected void queryChannelsInner(int attempt) {
 
         QueryChannelsRequest request = new QueryChannelsRequest(filter, sort)
                 .withLimit(pageSize)
@@ -652,7 +652,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         });
     }
 
-    private void clean() {
+    protected void clean() {
         retryLooper.removeCallbacksAndMessages(null);
         initialized.set(true);
         channels.postValue(new ArrayList<>());
