@@ -42,7 +42,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     @NonNull
     protected LazyQueryChannelLiveData<List<Channel>> channels;
 
-    
+
 
     protected MutableLiveData<Boolean> loading;
     protected MutableLiveData<Boolean> loadingMore;
