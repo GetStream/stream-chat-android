@@ -13,13 +13,12 @@ class ChatApiImpl(
 
     private var userId: String = ""
     private var connectionId: String = ""
+    private val callMapper = RetrofitCallMapper()
 
     override fun setConnection(connection: ConnectionData) {
         userId = connection.user.id
         connectionId = connection.connectionId
     }
-
-    private val callMapper = RetrofitCallMapper()
 
     override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {
         return callMapper.map(
@@ -57,7 +56,11 @@ class ChatApiImpl(
         }
     }
 
-    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>> {
+    override fun getRepliesMore(
+        messageId: String,
+        firstId: String,
+        limit: Int
+    ): ChatCall<List<Message>> {
         return callMapper.map(
             retrofitApi.getRepliesMore(messageId, apiKey, userId, connectionId, limit, firstId)
         ).map {
@@ -79,7 +82,11 @@ class ChatApiImpl(
         }
     }
 
-    override fun getReactions(messageId: String, limit: Int, offset: Int): ChatCall<List<Reaction>> {
+    override fun getReactions(
+        messageId: String,
+        limit: Int,
+        offset: Int
+    ): ChatCall<List<Reaction>> {
         return callMapper.map(
             retrofitApi.getReactions(
                 messageId,
@@ -246,7 +253,11 @@ class ChatApiImpl(
         )
     }
 
-    override fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit> {
+    override fun markRead(
+        channelType: String,
+        channelId: String,
+        messageId: String
+    ): ChatCall<Unit> {
         return callMapper.map(
             retrofitApi.markRead(
                 channelType,
@@ -297,7 +308,11 @@ class ChatApiImpl(
         }
     }
 
-    override fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel> {
+    override fun acceptInvite(
+        channelType: String,
+        channelId: String,
+        message: String
+    ): ChatCall<Channel> {
         return callMapper.map(
             retrofitApi.acceptInvite(
                 channelType,

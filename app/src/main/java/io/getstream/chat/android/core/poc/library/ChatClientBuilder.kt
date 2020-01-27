@@ -11,7 +11,9 @@ class ChatClientBuilder(
 ) {
 
     private var isAnonymous = false
+
     private var tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
+    private val socket: ChatSocket = ChatSocketImpl(apiKey, apiOptions.wssURL, tokenProvider)
 
     private val api: ChatApi = ChatApiImpl(
         apiKey,
@@ -23,7 +25,7 @@ class ChatClientBuilder(
             RetrofitApi::class.java
         )
     )
-    private val socket: ChatSocket = ChatSocketImpl(apiKey, apiOptions.wssURL, tokenProvider)
+
 
     fun build(): ChatClient {
         return ChatClientImpl(api, socket)
