@@ -3,12 +3,12 @@ package io.getstream.chat.android.core.poc.library
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 
 
-class QueryChannelsRequest(
-    val filter: FilterObject,
-    val querySort: QuerySort,
-    var message_limit: Int = 0,
+data class QueryChannelsRequest(
+    var offset: Int = 0,
     var limit: Int = 0,
-    var offset: Int = 0
+    val filter: FilterObject = FilterObject(),
+    val querySort: QuerySort = QuerySort(),
+    var message_limit: Int = 0
 ) : BaseQueryChannelRequest<QueryChannelsRequest>() {
 
     val sort = querySort.data
@@ -41,11 +41,9 @@ class QueryChannelsRequest(
     }
 
     override fun cloneOpts(): QueryChannelsRequest {
-        val _this = QueryChannelsRequest(filter, querySort)
+        val _this = QueryChannelsRequest(offset, limit, filter, querySort)
         _this.state = this.state
         _this.watch = this.watch
-        _this.limit = limit
-        _this.offset = offset
         _this.presence = this.presence
         _this.message_limit = message_limit
         return _this

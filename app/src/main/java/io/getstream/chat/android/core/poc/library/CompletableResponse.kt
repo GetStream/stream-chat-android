@@ -1,6 +1,4 @@
 package io.getstream.chat.android.core.poc.library
 
 
-class CompletableResponse {
-    val duration: String = ""
-}
+data class CompletableResponse(val duration: String = "")

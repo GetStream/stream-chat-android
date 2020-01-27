@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
@@ -361,6 +362,108 @@ class ChannelsApiCallsTests {
 
         val result =
             client.markRead(channelType, channelId, messageId).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun queryChannelsSuccess() {
+
+        val offset = 0
+        val limit = 1
+        val channel = Channel().apply { id = "10" }
+
+        val channelState = ChannelState()
+        channelState.channel = channel
+        channel.channelState = channelState
+
+        val request = QueryChannelsRequest(offset, limit)
+
+        Mockito.`when`(
+            retrofitApi.queryChannels(
+                apiKey,
+                user.id,
+                connection.connectionId,
+                request
+            )
+        ).thenReturn(RetroSuccess(QueryChannelsResponse(listOf(channelState))))
+
+        val result = client.queryChannels(request).execute()
+
+        verifySuccess(result, listOf(channel))
+    }
+
+    @Test
+    fun queryChannelsError() {
+
+        val offset = 0
+        val limit = 1
+        val channel = Channel().apply { id = "10" }
+
+        val channelState = ChannelState()
+        channelState.channel = channel
+        channel.channelState = channelState
+
+        val request = QueryChannelsRequest(offset, limit)
+
+        Mockito.`when`(
+            retrofitApi.queryChannels(
+                apiKey,
+                user.id,
+                connection.connectionId,
+                request
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.queryChannels(request).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun stopWatchingSuccess() {
+
+        val channel = Channel().apply { id = "10" }
+
+        val channelState = ChannelState()
+        channelState.channel = channel
+        channel.channelState = channelState
+
+        Mockito.`when`(
+            retrofitApi.stopWatching(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                emptyMap()
+            )
+        ).thenReturn(RetroSuccess(CompletableResponse()))
+
+        val result = client.stopWatching(channelType, channelId).execute()
+
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun stopWatchingError() {
+
+        val channel = Channel().apply { id = "10" }
+
+        val channelState = ChannelState()
+        channelState.channel = channel
+        channel.channelState = channelState
+
+        Mockito.`when`(
+            retrofitApi.stopWatching(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                emptyMap()
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.stopWatching(channelType, channelId).execute()
 
         verifyError(result, serverErrorCode)
     }

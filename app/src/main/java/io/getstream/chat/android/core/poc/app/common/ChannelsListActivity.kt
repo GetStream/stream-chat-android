@@ -34,9 +34,11 @@ class ChannelsListActivity : AppCompatActivity() {
 
                 client.queryChannels(
                     QueryChannelsRequest(
+                        0,
+                        1,
                         FilterObject(),
                         QuerySort()
-                    ).withLimit(1)
+                    )
                 ).enqueue { channels ->
                     if (channels.isSuccess) {
 

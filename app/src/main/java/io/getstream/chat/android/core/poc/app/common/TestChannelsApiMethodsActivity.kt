@@ -1,6 +1,5 @@
 package io.getstream.chat.android.core.poc.app.common
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -9,7 +8,6 @@ import androidx.core.view.children
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.*
-import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_test_api.*
@@ -71,9 +69,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         Thread {
 
             val withLimit = QueryChannelsRequest(
-                FilterObject(),
-                QuerySort()
-            ).withLimit(100)
+                0,
+                100
+            )
 
             val channelsResult = client.queryChannels(withLimit).execute()
 
@@ -129,9 +127,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     private fun queryChannels() {
         client.queryChannels(
             QueryChannelsRequest(
-                FilterObject(),
-                QuerySort()
-            ).withLimit(100)
+                0,
+                100
+            )
         ).enqueue {
             echoResult(it)
         }
