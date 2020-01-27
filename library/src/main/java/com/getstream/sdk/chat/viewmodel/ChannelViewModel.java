@@ -73,9 +73,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected LazyQueryChannelLiveData<List<Message>> messages;
     /** The numbers of users currently watching this channel */
     protected LiveData<Number> watcherCount;
-
     /** The list of users currently typing */
     protected LazyQueryChannelLiveData<List<User>> typingUsers;
+    /** Mutable live data object for the current messageInputText */
+    protected MutableLiveData<String> messageInputText;
 
 
     public void setChannel(Channel channel) {
@@ -123,7 +124,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected boolean reachedEndOfPaginationThread;
     protected Date lastMarkRead;
 
-    protected MutableLiveData<String> messageInputText;
+
 
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;

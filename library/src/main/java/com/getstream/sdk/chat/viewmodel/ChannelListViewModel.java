@@ -38,8 +38,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
     protected final String TAG = ChannelListViewModel.class.getSimpleName();
 
+    /** The list of channels */
     @NonNull
     protected LazyQueryChannelLiveData<List<Channel>> channels;
+
+    
+
     protected MutableLiveData<Boolean> loading;
     protected MutableLiveData<Boolean> loadingMore;
 
