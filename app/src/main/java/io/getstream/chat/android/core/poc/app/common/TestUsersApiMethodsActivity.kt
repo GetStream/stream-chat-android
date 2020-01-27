@@ -6,10 +6,10 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
-import io.getstream.chat.android.core.poc.extensions.echoResult
-import io.getstream.chat.android.core.poc.extensions.makeGoneIf
-import io.getstream.chat.android.core.poc.extensions.makeVisibleIf
+import io.getstream.chat.android.core.poc.extensions.*
+import io.getstream.chat.android.core.poc.library.Result
 import io.getstream.chat.android.core.poc.library.FilterObject
+import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
@@ -22,7 +22,9 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         fun getIntent(context: Context) = context.intentFor<TestUsersApiMethodsActivity>()
     }
 
-    val client = App.client
+    private val client = App.client
+    private val channelId = "general"
+    private val channelType = "team"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +41,25 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         testUserApiAnonymousBtn?.setOnClickListener {
             setAnonymousUser()
         }
+        testUserApiSetRegularUserBtn?.setOnClickListener {
+            setRegularUser()
+        }
         testUserApiQueryUsersBtn?.setOnClickListener {
             getUsers()
+        }
+        testUserApiAddMembersBtn?.setOnClickListener {
+            addMembers()
+        }
+        testUserApiRemoveMembersBtn?.setOnClickListener {
+            removeMembers()
+        }
+        testUserApiMuteUserBtn?.setOnClickListener {
+            muteUser()
         }
     }
 
     private fun setGuestUser() {
+        testUserApiLoadingShapeContainer.makeVisible()
         client.setGuestUser(User("guest_user")) { result ->
             echoResult(result, "Guest user set up successful")
 
@@ -54,17 +69,58 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun setAnonymousUser() {
+        testUserApiLoadingShapeContainer.makeVisible()
         client.setAnonymousUser { result ->
             echoResult(result, "Guest user set up successful")
+            initButtons(result)
+        }
+    }
 
-            testUserApiFunctionalityGroup?.makeVisibleIf(result.isSuccess, View.GONE)
-            testUserApiLoginGroup?.makeGoneIf(result.isSuccess)
+    private fun setRegularUser() {
+        testUserApiLoadingShapeContainer.makeVisible()
+        client.setUser(User("bender"), object : TokenProvider {
+            override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+            }
+        }) {
+            echoResult(it, "Connected", "Socket connection error")
+            initButtons(it)
         }
     }
 
     private fun getUsers() {
         client.getUsers(getQueryUserRequest()).enqueue { result ->
-            echoResult(result, "Guest user set up successful")
+            echoResult(result, "Users gets successful")
+        }
+    }
+
+    private fun addMembers() {
+        client.addMembers(
+            channelId = channelId,
+            channelType = channelType,
+            members = listOf("bender")
+        ).enqueue { result ->
+            echoResult(result, "Member added successful")
+        }
+    }
+
+    private fun removeMembers() {
+        client.removeMembers(
+            channelId = channelId,
+            channelType = channelType,
+            members = listOf("bender")
+        ).enqueue { result ->
+            echoResult(result, "Member removed successful")
+        }
+    }
+
+    private fun muteUser() {
+        client.muteUser(
+            channelId = channelId,
+            channelType = channelType,
+            targetId = "bender"
+        ).enqueue { result ->
+            echoResult(result, "Member removed successful")
         }
     }
 
@@ -72,5 +128,12 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         val filter = FilterObject()
         val sort: QuerySort = QuerySort().asc("last_active")
         return QueryUsers(filter, sort).withLimit(10)
+    }
+
+    private fun initButtons(result: Result<*>) {
+        testUserApiFunctionalityGroup?.makeVisibleIf(result.isSuccess, View.GONE)
+        testUserApiLoginGroup?.makeGoneIf(result.isSuccess)
+
+        testUserApiLoadingShapeContainer.makeGone()
     }
 }

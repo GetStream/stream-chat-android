@@ -5,6 +5,7 @@ import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
+import java.util.*
 
 class ChatApiImpl(
     private val apiKey: String,
@@ -190,6 +191,62 @@ class ChatApiImpl(
                 apiKey = apiKey,
                 connectionId = connectionId,
                 payload = payload
+            )
+        )
+    }
+
+    fun addMembers(
+        apiKey: String,
+        connectionId: String,
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = callMapper.map(
+        retrofitApi.addMembers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            body = AddMembersRequest(
+                members = members
+            )
+        )
+    )
+
+    fun removeMembers(
+        apiKey: String,
+        connectionId: String,
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = callMapper.map(
+        retrofitApi.removeMembers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            body = RemoveMembersRequest(
+                members = members
+            )
+        )
+    )
+
+    fun muteUser(
+        apiKey: String,
+        connectionId: String,
+        userId: String,
+        targetId: String
+    ): ChatCall<MuteUserResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_id"] = targetId
+        body["user_id"] = userId
+
+        return callMapper.map(
+            retrofitApi.muteUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
             )
         )
     }

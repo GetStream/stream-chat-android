@@ -20,6 +20,13 @@
         android:text="Test set anonymous user"
         app:layout_constraintTop_toBottomOf="@+id/testUserApiGuestBtn"/>
 
+    <Button
+        android:id="@+id/testUserApiSetRegularUserBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Regular User"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiAnonymousBtn"/>
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/testUserApiLoginGroup"
         android:layout_width="wrap_content"
@@ -31,13 +38,53 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="testUserApiQueryUsersBtn"/>
+        app:constraint_referenced_ids="testUserApiQueryUsersBtn,testUserApiAddMembersBtn,testUserApiAddMembersBtn,testUserApiMuteUserBtn"/>
 
     <Button
         android:id="@+id/testUserApiQueryUsersBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Get active users"
-        app:layout_constraintTop_toBottomOf="@+id/testUserApiAnonymousBtn"/>
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/testUserApiAddMembersBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add members"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiQueryUsersBtn"/>
+
+    <Button
+        android:id="@+id/testUserApiRemoveMembersBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remove members"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiAddMembersBtn"/>
+
+    <Button
+        android:id="@+id/testUserApiMuteUserBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mute user"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiRemoveMembersBtn"/>
+
+    <RelativeLayout
+        android:id="@+id/testUserApiLoadingShapeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:clickable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ProgressBar
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

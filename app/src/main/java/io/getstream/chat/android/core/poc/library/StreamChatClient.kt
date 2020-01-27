@@ -7,6 +7,8 @@ import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
+import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
+import io.getstream.chat.android.core.poc.library.rest.MuteUserResponse
 import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
@@ -241,6 +243,35 @@ class StreamChatClient(
             connectionId = api.connectionId,
             queryUser = queryUser
         ).map { it.users }
+    }
+
+    fun addMembers(channelType: String, channelId: String, members: List<String>): ChatCall<ChannelResponse> {
+        return api.addMembers(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            members = members
+        )
+    }
+
+    fun removeMembers(channelType: String, channelId: String, members: List<String>): ChatCall<ChannelResponse> {
+        return api.removeMembers(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            members = members
+        )
+    }
+
+    fun muteUser(channelType: String, channelId: String, targetId: String): ChatCall<MuteUserResponse> {
+        return api.muteUser(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            userId = api.userId,
+            targetId = targetId
+        )
     }
 
     private fun initTokenProvider(provider: TokenProvider) {
