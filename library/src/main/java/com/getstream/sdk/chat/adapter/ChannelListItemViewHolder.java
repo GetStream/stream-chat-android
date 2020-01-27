@@ -36,19 +36,19 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
 
-    private TextView tv_name, tv_last_message, tv_date;
-    private ReadStateView<ChannelListViewStyle> read_state;
-    private AvatarGroupView<ChannelListViewStyle> avatarGroupView;
-    private ImageView iv_attachment_type;
-    private View click_area;
-    private Context context;
+    protected TextView tv_name, tv_last_message, tv_date;
+    protected ReadStateView<ChannelListViewStyle> read_state;
+    protected AvatarGroupView<ChannelListViewStyle> avatarGroupView;
+    protected ImageView iv_attachment_type;
+    protected View click_area;
+    protected Context context;
 
-    private ChannelListView.UserClickListener userClickListener;
-    private ChannelListView.ChannelClickListener channelClickListener;
-    private ChannelListView.ChannelClickListener channelLongClickListener;
-    private ChannelListViewStyle style;
+    protected ChannelListView.UserClickListener userClickListener;
+    protected ChannelListView.ChannelClickListener channelClickListener;
+    protected ChannelListView.ChannelClickListener channelLongClickListener;
+    protected ChannelListViewStyle style;
 
-    private MarkdownImpl.MarkdownListener markdownListener;
+    protected MarkdownImpl.MarkdownListener markdownListener;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -68,7 +68,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         channelLongClickListener = l;
     }
 
-    private void findReferences() {
+    protected void findReferences() {
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_last_message = itemView.findViewById(R.id.tv_last_message);
         iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
