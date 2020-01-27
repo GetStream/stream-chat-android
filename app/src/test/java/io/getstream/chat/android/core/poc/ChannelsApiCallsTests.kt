@@ -5,10 +5,7 @@ import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
-import io.getstream.chat.android.core.poc.utils.RetroError
-import io.getstream.chat.android.core.poc.utils.RetroSuccess
-import io.getstream.chat.android.core.poc.utils.SuccessCall
-import io.getstream.chat.android.core.poc.utils.SuccessTokenProvider
+import io.getstream.chat.android.core.poc.utils.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -22,14 +19,13 @@ class ChannelsApiCallsTests {
 
     val channelType = "test-type"
     val channelId = "test-id"
+    val apiKey = "api-key"
+    val serverErrorCode = 500
 
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket
     lateinit var client: ChatClient
     lateinit var retrofitApi: RetrofitApi
-
-    val apiKey = "api-key"
-    val serverErrorCode = 500
 
     @Before
     fun before() {
@@ -327,18 +323,6 @@ class ChannelsApiCallsTests {
         verifyError(result, serverErrorCode)
     }
 
-    private fun <T> verifyError(result: Result<T>, statusCode: Int) {
-        assertThat(result.isSuccess).isFalse()
-        assertThat(result.error()).isInstanceOf(ChatHttpError::class.java)
-
-        val error = result.error() as ChatHttpError
-        assertThat(error.statusCode).isEqualTo(statusCode)
-    }
-
-    private fun <T> verifySuccess(result: Result<T>, equalsTo: T) {
-        assertThat(result.isSuccess).isTrue()
-        assertThat(result.data()).isEqualTo(equalsTo)
-    }
 
 
 }
