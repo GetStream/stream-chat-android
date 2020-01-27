@@ -1,12 +1,10 @@
 package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
-import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.utils.*
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -323,6 +321,49 @@ class ChannelsApiCallsTests {
         verifyError(result, serverErrorCode)
     }
 
+    @Test
+    fun markReadSuccess() {
+
+        val messageId = "message-id"
+
+        Mockito.`when`(
+            retrofitApi.markRead(
+                channelType,
+                channelId,
+                apiKey,
+                user.id,
+                connection.connectionId,
+                MarkReadRequest(messageId)
+            )
+        ).thenReturn(RetroSuccess(EventResponse()))
+
+        val result =
+            client.markRead(channelType, channelId, messageId).execute()
+
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun markReadError() {
+
+        val messageId = "message-id"
+
+        Mockito.`when`(
+            retrofitApi.markRead(
+                channelType,
+                channelId,
+                apiKey,
+                user.id,
+                connection.connectionId,
+                MarkReadRequest(messageId)
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result =
+            client.markRead(channelType, channelId, messageId).execute()
+
+        verifyError(result, serverErrorCode)
+    }
 
 
 }

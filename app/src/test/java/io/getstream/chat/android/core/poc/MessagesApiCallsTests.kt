@@ -440,4 +440,52 @@ class MessagesApiCallsTests {
 
         verifyError(result, serverErrorCode)
     }
+
+
+    @Test
+    fun updateMessageSuccess() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message(messageId).apply { text = messageText }
+
+        Mockito.`when`(
+            retrofitApi
+                .updateMessage(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    MessageRequest(message)
+                )
+        ).thenReturn(RetroSuccess(MessageResponse(message)))
+
+        val result = client.updateMessage(message).execute()
+
+        verifySuccess(result, message)
+    }
+
+
+    @Test
+    fun updateMessageError() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message(messageId).apply { text = messageText }
+
+        Mockito.`when`(
+            retrofitApi
+                .updateMessage(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    MessageRequest(message)
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.updateMessage(message).execute()
+
+        verifyError(result, serverErrorCode)
+    }
 }
