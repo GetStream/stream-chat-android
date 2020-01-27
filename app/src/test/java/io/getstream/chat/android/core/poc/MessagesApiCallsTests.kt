@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.rest.MessageRequest
 import io.getstream.chat.android.core.poc.library.rest.MessageResponse
 import io.getstream.chat.android.core.poc.library.rest.SearchMessagesRequest
 import io.getstream.chat.android.core.poc.library.rest.SearchMessagesResponse
@@ -16,8 +17,9 @@ class MessagesApiCallsTests {
     val user = User("test-id")
     val apiKey = "api-key"
     val connection = ConnectionData("connection-id", user)
-    val tokenProvider =
-        SuccessTokenProvider()
+    val tokenProvider = SuccessTokenProvider()
+    val channelType = "test-type"
+    val channelId = "test-id"
     val serverErrorCode = 500
 
     lateinit var client: ChatClient
@@ -156,6 +158,52 @@ class MessagesApiCallsTests {
         ).thenReturn(RetroError(serverErrorCode))
 
         val result = client.searchMessages(searchRequest).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun sendMessageSuccess() {
+
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+
+        Mockito.`when`(
+            retrofitApi
+                .sendMessage(
+                    channelType,
+                    channelId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    MessageRequest(message)
+                )
+        ).thenReturn(RetroSuccess(MessageResponse(message)))
+
+        val result = client.sendMessage(channelType, channelId, message).execute()
+
+        verifySuccess(result, message)
+    }
+
+    @Test
+    fun sendMessageError() {
+
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+
+        Mockito.`when`(
+            retrofitApi
+                .sendMessage(
+                    channelType,
+                    channelId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    MessageRequest(message)
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.sendMessage(channelType, channelId, message).execute()
 
         verifyError(result, serverErrorCode)
     }

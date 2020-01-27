@@ -54,5 +54,19 @@ class ClientConnectionTests {
         verify(call, times(1)).call(Result(null, error))
     }
 
+    @Test
+    fun connectAndDisconnect() {
+        `when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
+        val callback: (Result<ConnectionData>) -> Unit = { call.call(it) }
+
+        client.setUser(user, tokenProvider, callback)
+
+        verify(call, times(1)).call(Result(connection, null))
+
+        client.disconnect()
+
+        verify(socket, times(1)).disconnect()
+    }
+
 
 }
