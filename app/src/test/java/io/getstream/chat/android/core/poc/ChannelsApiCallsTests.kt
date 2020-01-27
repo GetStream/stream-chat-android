@@ -2,10 +2,7 @@ package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
-import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
-import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
-import io.getstream.chat.android.core.poc.library.rest.HideChannelRequest
-import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
+import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.utils.RetroError
@@ -237,6 +234,95 @@ class ChannelsApiCallsTests {
 
         val result =
             client.updateChannel(channelType, channelId, updateMessage, updateChannelData).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun acceptInviteSuccess() {
+
+        val responseChannel = Channel()
+        val acceptInviteMessage = "accept-message"
+
+        Mockito.`when`(
+            retrofitApi.acceptInvite(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                AcceptInviteRequest(
+                    user,
+                    AcceptInviteRequest.AcceptInviteMessage(acceptInviteMessage)
+                )
+            )
+        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
+
+        val result =
+            client.acceptInvite(channelType, channelId, acceptInviteMessage).execute()
+
+        verifySuccess(result, responseChannel)
+    }
+
+    @Test
+    fun acceptInviteError() {
+
+        val acceptInviteMessage = "accept-message"
+
+        Mockito.`when`(
+            retrofitApi.acceptInvite(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                AcceptInviteRequest(
+                    user,
+                    AcceptInviteRequest.AcceptInviteMessage(acceptInviteMessage)
+                )
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result =
+            client.acceptInvite(channelType, channelId, acceptInviteMessage).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun rejectInviteSuccess() {
+
+        val responseChannel = Channel()
+
+        Mockito.`when`(
+            retrofitApi.rejectInvite(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                RejectInviteRequest()
+            )
+        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
+
+        val result =
+            client.rejectInvite(channelType, channelId).execute()
+
+        verifySuccess(result, responseChannel)
+    }
+
+    @Test
+    fun rejectInviteError() {
+
+        Mockito.`when`(
+            retrofitApi.rejectInvite(
+                channelType,
+                channelId,
+                apiKey,
+                connection.connectionId,
+                RejectInviteRequest()
+            )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result =
+            client.rejectInvite(channelType, channelId).execute()
 
         verifyError(result, serverErrorCode)
     }

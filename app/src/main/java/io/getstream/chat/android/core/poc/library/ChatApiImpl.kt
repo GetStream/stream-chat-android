@@ -319,7 +319,7 @@ class ChatApiImpl(
                 channelId,
                 apiKey,
                 connectionId,
-                AcceptInviteRequest(User(userId), message)
+                AcceptInviteRequest(User(userId), AcceptInviteRequest.AcceptInviteMessage(message))
             )
         ).map {
             it.channel
