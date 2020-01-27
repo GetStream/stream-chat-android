@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
+import io.getstream.chat.android.core.poc.extensions.echoResult
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
@@ -67,7 +68,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
             if (channelsResult.isSuccess) {
                 val watchResult = channelsResult.data()[0].watch(ChannelWatchRequest()).execute()
-
                 echoResult(watchResult)
             }
         }.start()
@@ -126,21 +126,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     private fun stopWatching() {
         client.stopWatching(channelType, channelId).enqueue {
             echoResult(it)
-        }
-    }
-
-    private fun echoResult(
-        result: Result<*>,
-        success: String = "Success",
-        error: String = "Error"
-    ) {
-        runOnUiThread {
-            if (result.isSuccess) {
-                Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, error + ": " + result.error().message, Toast.LENGTH_SHORT)
-                    .show()
-            }
         }
     }
 }

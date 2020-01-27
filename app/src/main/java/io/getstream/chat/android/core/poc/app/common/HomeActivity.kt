@@ -25,7 +25,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnTestUsersApis.setOnClickListener {
-            Toast.makeText(this, "Undefined", Toast.LENGTH_SHORT).show()
+            startActivity(TestUsersApiMethodsActivity.getIntent(this))
         }
     }
 }

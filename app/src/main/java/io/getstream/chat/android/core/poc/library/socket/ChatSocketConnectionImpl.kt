@@ -24,7 +24,7 @@ class ChatSocketConnectionImpl(
         return result
     }
 
-    fun connect(user: User, tokenProvider: CachedTokenProvider): ChatCall<ConnectionData> {
+    fun connect(user: User, tokenProvider: CachedTokenProvider?): ChatCall<ConnectionData> {
 
         val result = ConnectionCall()
 
@@ -32,7 +32,7 @@ class ChatSocketConnectionImpl(
             result.deliverResult(c, t)
         }
 
-        tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
+        tokenProvider?.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
                 connect(user, token, callback)
             }

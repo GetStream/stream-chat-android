@@ -11,20 +11,20 @@ import java.util.concurrent.CountDownLatch
 
 
 class TokenAuthInterceptor internal constructor(
-    private val tokenProvider: CachedTokenProvider,
-    private val anonymousAuth: () -> Boolean
+    private val tokenProvider: CachedTokenProvider? = null,
+    private val anonymousAuth: Boolean?
 ) :
     Interceptor {
     private val TAG = javaClass.simpleName
     private var token: String? = null
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        if (anonymousAuth()) {
+        if (anonymousAuth == true) {
             return chain.proceed(chain.request())
         } else {
             val latch = CountDownLatch(if (token == null) 1 else 0)
             if (token == null) {
-                tokenProvider.getToken(object : TokenProviderListener {
+                tokenProvider?.getToken(object : TokenProviderListener {
                     override fun onSuccess(token: String) {
                         this@TokenAuthInterceptor.token = token
                         latch.countDown()
@@ -47,7 +47,7 @@ class TokenAuthInterceptor internal constructor(
                 if (err.streamCode == ErrorResponse.TOKEN_EXPIRED_CODE) {
                     Log.d(TAG, "Retrying new request")
                     token = null // invalidate local cache
-                    tokenProvider.tokenExpired()
+                    tokenProvider?.tokenExpired()
                     response.close()
                     response = chain.proceed(request)
                 }

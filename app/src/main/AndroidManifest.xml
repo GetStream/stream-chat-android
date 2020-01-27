@@ -23,6 +23,7 @@
         <activity android:name=".app.common.SocketTestActivity" />
         <activity android:name=".app.common.ChannelsListActivity" />
         <activity android:name=".app.common.TestChannelsApiMethodsActivity" />
+        <activity android:name=".app.common.TestUsersApiMethodsActivity" />
     </application>
 
 </manifest>

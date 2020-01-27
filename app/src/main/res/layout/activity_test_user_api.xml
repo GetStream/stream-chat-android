@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16dp">
+
+    <Button
+        android:id="@+id/testUserApiGuestBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test set guest user"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/testUserApiAnonymousBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test set anonymous user"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiGuestBtn"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/testUserApiLoginGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="testUserApiAnonymousBtn,testUserApiGuestBtn"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/testUserApiFunctionalityGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="testUserApiQueryUsersBtn"/>
+
+    <Button
+        android:id="@+id/testUserApiQueryUsersBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get active users"
+        app:layout_constraintTop_toBottomOf="@+id/testUserApiAnonymousBtn"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

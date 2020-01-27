@@ -5,11 +5,13 @@ import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderLis
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
 import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
+import java.util.UUID.randomUUID
 
 
 class StreamChatClient(
@@ -32,8 +34,53 @@ class StreamChatClient(
         return clientID
     }
 
-    fun setAnonymousUser() {
+    fun setAnonymousUser(callback: (Result<ConnectionData>) -> Unit) {
+        isAnonymous = true
 
+        state.user = User(id = randomUUID().toString())
+
+        RetrofitClient.getClient(
+            options = apiOptions,
+            tokenProvider = null,
+            anonymousAuth = true
+        )?.create(
+            RetrofitApi::class.java
+        )?.let {
+            api = ChatApiImpl(apiKey, it)
+        }
+
+        connect(callback, anonymousConnection = true)
+    }
+
+    fun setGuestUser(
+        user: User,
+        callback: (Result<ConnectionData>) -> Unit
+    ) {
+        isAnonymous = true
+
+        RetrofitClient.getClient(
+            options = apiOptions,
+            tokenProvider = null,
+            anonymousAuth = true
+        )?.create(
+            RetrofitApi::class.java
+        )?.let {
+            api = ChatApiImpl(apiKey, it)
+        }
+
+        api.setGuestUser(apiKey, user.id, user.name).enqueue { result ->
+            if (result.isSuccess) {
+                state.user = result.data().user
+
+                initTokenProvider(object : TokenProvider {
+                    override fun getToken(listener: TokenProviderListener) {
+                        listener.onSuccess(result.data().access_token)
+                    }
+                })
+
+                connect(callback)
+            }
+        }
     }
 
     fun setUser(
@@ -41,56 +88,23 @@ class StreamChatClient(
         provider: TokenProvider,
         callback: (Result<ConnectionData>) -> Unit
     ) {
-
         state.user = user
-        //api.userId = user.id
 
-        state.user = user
-        val listeners = mutableListOf<TokenProviderListener>()
+        initTokenProvider(provider)
 
-        this.tokenProvider = object : CachedTokenProvider {
-            override fun getToken(listener: TokenProviderListener) {
-                if (cacheUserToken.isNotEmpty()) {
-                    listener.onSuccess(cacheUserToken)
-                    return
-                }
-
-                if (fetchingToken) {
-                    listeners.add(listener)
-                    return
-                } else {
-                    // token is not in cache and there are no in-flight requests, go fetch it
-                    fetchingToken = true
-                }
-
-                provider.getToken(object : TokenProviderListener {
-                    override fun onSuccess(token: String) {
-                        fetchingToken = false
-                        listener.onSuccess(token)
-                        for (l in listeners)
-                            l.onSuccess(token)
-                        listeners.clear()
-                    }
-                })
-            }
-
-            override fun tokenExpired() {
-                cacheUserToken = ""
-            }
-
+        RetrofitClient.getClient(
+            options = apiOptions,
+            tokenProvider = tokenProvider,
+            anonymousAuth = isAnonymous
+        )?.create(
+            RetrofitApi::class.java
+        )?.let { client ->
+            api = ChatApiImpl(apiKey, client)
         }
 
-        api = ChatApiImpl(
-            apiKey,
-            RetrofitClient.getClient(
-                apiOptions,
-                tokenProvider!!
-            ) { isAnonymous }!!.create(
-                RetrofitApi::class.java
-            )
-        )
+        connect(callback)
 
-        socket.connect(user, this.tokenProvider!!).enqueue {
+        /*socket.connect(user, this.tokenProvider!!).enqueue {
 
             if (it.isSuccess) {
                 api.connectionId = it.data().connectionId
@@ -98,15 +112,11 @@ class StreamChatClient(
             }
 
             callback(it)
-        }
+        }*/
     }
 
     fun events(): ChatObservable {
         return socket.events()
-    }
-
-    private fun connect(anonymousConnection: Boolean) {
-
     }
 
     fun getState(): ClientState {
@@ -222,7 +232,80 @@ class StreamChatClient(
 //        }
         //connectionRecovered()
 
-        connect(anonymousConnection)
+        //connect(anonymousConnection)
+    }
+
+    fun getUsers(queryUser: QueryUsers): ChatCall<List<User>> {
+        return api.getUsers(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            queryUser = queryUser
+        ).map { it.users }
+    }
+
+    private fun initTokenProvider(provider: TokenProvider) {
+        val listeners = mutableListOf<TokenProviderListener>()
+        this.tokenProvider = object : CachedTokenProvider {
+            override fun getToken(listener: TokenProviderListener) {
+                if (cacheUserToken.isNotEmpty()) {
+                    listener.onSuccess(cacheUserToken)
+                    return
+                }
+
+                if (fetchingToken) {
+                    listeners.add(listener)
+                    return
+                } else {
+                    // token is not in cache and there are no in-flight requests, go fetch it
+                    fetchingToken = true
+                }
+
+                provider.getToken(object : TokenProviderListener {
+                    override fun onSuccess(token: String) {
+                        fetchingToken = false
+                        listener.onSuccess(token)
+                        for (l in listeners)
+                            l.onSuccess(token)
+                        listeners.clear()
+                    }
+                })
+            }
+
+            override fun tokenExpired() {
+                cacheUserToken = ""
+            }
+
+        }
+    }
+
+    private fun connect(
+        callback: (Result<ConnectionData>) -> Unit,
+        anonymousConnection: Boolean? = false
+    ) {
+        if (anonymousConnection == true) {
+            socket.connect().enqueue { connectionData ->
+
+                if (connectionData.isSuccess) {
+                    api.connectionId = connectionData.data().connectionId
+                    api.userId = connectionData.data().user.id
+                    state.user = connectionData.data().user
+                }
+
+                callback(connectionData)
+            }
+        } else {
+            state.user?.let { user ->
+                socket.connect(user, this.tokenProvider).enqueue {
+
+                    if (it.isSuccess) {
+                        api.connectionId = it.data().connectionId
+                        api.userId = it.data().user.id
+                    }
+
+                    callback(it)
+                }
+            }
+        }
     }
 
     private fun attachClient(channels: List<Channel>): List<Channel> {

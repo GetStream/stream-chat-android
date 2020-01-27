@@ -1,7 +1,9 @@
 package io.getstream.chat.android.core.poc.library
 
+import com.google.gson.Gson
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 
 class ChatApiImpl(
@@ -163,6 +165,31 @@ class ChatApiImpl(
                 apiKey,
                 userId,
                 connectionId
+            )
+        )
+    }
+
+    fun setGuestUser(apiKey: String, userId: String, userName: String?) = callMapper.map(
+        retrofitApi.setGuestUser(
+            apiKey = apiKey,
+            body = GuestUserRequest(
+                id = userId,
+                name = userName
+            )
+        )
+    )
+
+    fun getUsers(
+        apiKey: String,
+        connectionId: String,
+        queryUser: QueryUsers
+    ): ChatCall<QueryUserListResponse> {
+        val payload = Gson().toJson(queryUser)
+        return callMapper.map(
+            retrofitApi.queryUsers(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                payload = payload
             )
         )
     }

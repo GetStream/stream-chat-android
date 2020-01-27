@@ -26,8 +26,8 @@ object RetrofitClient {
 
     fun getClient(
         options: ApiClientOptions,
-        tokenProvider: CachedTokenProvider,
-        anonymousAuth: () -> Boolean
+        tokenProvider: CachedTokenProvider? = null,
+        anonymousAuth: Boolean? = false
     ): Retrofit? {
 
         var authInterceptor = TokenAuthInterceptor(tokenProvider, anonymousAuth)
@@ -50,7 +50,7 @@ object RetrofitClient {
 //            }
             .addInterceptor { chain: Interceptor.Chain ->
                 chain.proceed(
-                    prepareRequest(chain, anonymousAuth())
+                    prepareRequest(chain, anonymousAuth)
                 )
             }
             .followRedirects(false)
@@ -71,7 +71,7 @@ object RetrofitClient {
         tokenProvider: CachedTokenProvider,
         options: ApiClientOptions
     ): Retrofit {
-        val authInterceptor = TokenAuthInterceptor(tokenProvider) { false }
+        val authInterceptor = TokenAuthInterceptor(tokenProvider, false)
         val client = OkHttpClient.Builder()
             .connectTimeout(options.cdntimeout.toLong(), TimeUnit.MILLISECONDS)
             .writeTimeout(options.cdntimeout.toLong(), TimeUnit.MILLISECONDS)
@@ -105,9 +105,9 @@ object RetrofitClient {
 
     private fun prepareRequest(
         chain: Interceptor.Chain,
-        isAnonymousClient: Boolean
+        isAnonymousClient: Boolean ?
     ): Request {
-        val authType = if (isAnonymousClient) "anonymous" else "jwt"
+        val authType = if (isAnonymousClient == true) "anonymous" else "jwt"
         return chain.request()
             .newBuilder()
             .addHeader("Content-Type", "application/json")
