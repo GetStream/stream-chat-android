@@ -169,6 +169,10 @@ internal class ChatClientImpl constructor(
         updateMessage: Message,
         channelExtraData: Map<String, Any>
     ): ChatCall<Channel> {
+
+        val toMutableMap = channelExtraData.toMutableMap()
+        toMutableMap.remove("members")
+
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
         return api.updateChannel(channelType, channelId, request)
             .map { response -> response.channel }
