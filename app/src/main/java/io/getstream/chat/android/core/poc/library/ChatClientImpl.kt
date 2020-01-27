@@ -89,6 +89,10 @@ internal class ChatClientImpl constructor(
         return api.getReplies(messageId, limit)
     }
 
+    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>> {
+        return api.getRepliesMore(messageId, firstId, limit)
+    }
+
     override fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message> {
         return api.deleteReaction(messageId, reactionType)
     }

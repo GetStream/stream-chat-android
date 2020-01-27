@@ -36,6 +36,7 @@ interface ChatClient {
     fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
     fun getReplies(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
     fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>
+    fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
     fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message>
     fun sendAction(request: SendActionRequest): ChatCall<Message>
     fun deleteMessage(messageId: String): ChatCall<Message>

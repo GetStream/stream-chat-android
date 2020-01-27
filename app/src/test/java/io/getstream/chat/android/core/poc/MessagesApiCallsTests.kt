@@ -1,10 +1,7 @@
 package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
-import io.getstream.chat.android.core.poc.library.rest.MessageRequest
-import io.getstream.chat.android.core.poc.library.rest.MessageResponse
-import io.getstream.chat.android.core.poc.library.rest.SearchMessagesRequest
-import io.getstream.chat.android.core.poc.library.rest.SearchMessagesResponse
+import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import io.getstream.chat.android.core.poc.utils.*
@@ -204,6 +201,149 @@ class MessagesApiCallsTests {
         ).thenReturn(RetroError(serverErrorCode))
 
         val result = client.sendMessage(channelType, channelId, message).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun sendActionSuccess() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+
+        val request = SendActionRequest(channelId, messageId, "type", emptyMap())
+
+        Mockito.`when`(
+            retrofitApi
+                .sendAction(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    request
+                )
+        ).thenReturn(RetroSuccess(MessageResponse(message)))
+
+        val result = client.sendAction(request).execute()
+
+        verifySuccess(result, message)
+    }
+
+    @Test
+    fun sendActionError() {
+
+        val messageId = "message-id"
+        val request = SendActionRequest(channelId, messageId, "type", emptyMap())
+
+        Mockito.`when`(
+            retrofitApi
+                .sendAction(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    request
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.sendAction(request).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun getRepliesSuccess() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+        val limit = 10
+
+        Mockito.`when`(
+            retrofitApi
+                .getReplies(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    limit
+                )
+        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))))
+
+        val result = client.getReplies(messageId, limit).execute()
+
+        verifySuccess(result, listOf(message))
+    }
+
+    @Test
+    fun getRepliesError() {
+
+        val messageId = "message-id"
+        val limit = 10
+
+        Mockito.`when`(
+            retrofitApi
+                .getReplies(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    limit
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.getReplies(messageId, limit).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun getRepliesMoreSuccess() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+        val limit = 10
+        val firstId = "first-id"
+
+        Mockito.`when`(
+            retrofitApi
+                .getRepliesMore(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    limit,
+                    firstId
+                )
+        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))))
+
+        val result = client.getRepliesMore(messageId, firstId, limit).execute()
+
+        verifySuccess(result, listOf(message))
+    }
+
+    @Test
+    fun getRepliesMoreError() {
+
+        val messageId = "message-id"
+        val limit = 10
+        val firstId = "first-id"
+
+        Mockito.`when`(
+            retrofitApi
+                .getRepliesMore(
+                    messageId,
+                    apiKey,
+                    user.id,
+                    connection.connectionId,
+                    limit,
+                    firstId
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.getRepliesMore(messageId, firstId, limit).execute()
 
         verifyError(result, serverErrorCode)
     }
