@@ -27,15 +27,12 @@ abstract class ChatChannelEventHandler {
             EventType.TYPING_START -> onTypingStart(event)
             EventType.TYPING_STOP -> onTypingStop(event)
             EventType.MESSAGE_NEW -> {
-                event.message?.syncStatus = Sync.SYNCED
                 onMessageNew(event)
             }
             EventType.MESSAGE_UPDATED -> {
-                event.message?.syncStatus = Sync.SYNCED
                 onMessageUpdated(event)
             }
             EventType.MESSAGE_DELETED -> {
-                event.message?.syncStatus = Sync.SYNCED
                 //TODO: define R.string.stream_delete_message
                 event.message?.text = "Deleted message"
                 //event.message?.text = StreamChat.getStrings().get(R.string.stream_delete_message)
@@ -44,11 +41,9 @@ abstract class ChatChannelEventHandler {
             }
             EventType.MESSAGE_READ -> onMessageRead(event)
             EventType.REACTION_NEW -> {
-                event.message?.syncStatus = Sync.SYNCED
                 onReactionNew(event)
             }
             EventType.REACTION_DELETED -> {
-                event.message?.syncStatus = Sync.SYNCED
                 onReactionDeleted(event)
             }
             EventType.MEMBER_ADDED -> onMemberAdded(event)

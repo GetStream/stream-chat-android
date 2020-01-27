@@ -14,7 +14,6 @@ data class Message constructor(val id: String = ""): UserEntity {
     var text: String = ""
     val html: String = ""
 
-    var syncStatus: Int = 0
     lateinit var user: User
     lateinit var channel: Channel
     val userID: String = ""
