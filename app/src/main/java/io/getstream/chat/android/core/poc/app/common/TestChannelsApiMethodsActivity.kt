@@ -1,6 +1,8 @@
 package io.getstream.chat.android.core.poc.app.common
 
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
@@ -9,6 +11,7 @@ import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
+import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_test_api.*
 
 class TestChannelsApiMethodsActivity : AppCompatActivity() {
@@ -16,6 +19,10 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val client = App.client
     val channelId = "general"
     val channelType = "team"
+    var chatSub: ChatObservable.Subscription? = null
+
+
+    class UserZ(val name: String?, val age:Int? = null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,14 +32,19 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        client.setUser(User("bender"), object : TokenProvider {
+        client.setUser(User("stream-eugene"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
         }) {
             echoResult(it, "Connected", "Socket connection error")
             initButtons()
         }
+    }
+
+    override fun onDestroy() {
+        chatSub?.unsubscribe()
+        super.onDestroy()
     }
 
     private fun initButtons() {
@@ -50,6 +62,11 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnShowChannel.setOnClickListener { showChannel() }
         btnMarkReadMessage.setOnClickListener { markReadMessage() }
         btnWatchChannel.setOnClickListener { watchChannel() }
+
+
+        chatSub = client.events().subscribe {
+            Log.d("events", it.toString())
+        }
     }
 
     private fun watchChannel() {
@@ -59,7 +76,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             val withLimit = QueryChannelsRequest(
                 FilterObject(),
                 QuerySort()
-            ).withLimit(1)
+            ).withLimit(100)
 
             val channelsResult = client.queryChannels(withLimit).execute()
 
@@ -117,14 +134,15 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             QueryChannelsRequest(
                 FilterObject(),
                 QuerySort()
-            ).withLimit(1)
+            ).withLimit(100)
         ).enqueue {
             echoResult(it)
         }
     }
 
     private fun stopWatching() {
-        client.stopWatching(channelType, channelId).enqueue {
+
+        client.stopWatching("messaging", "new-ch").enqueue {
             echoResult(it)
         }
     }

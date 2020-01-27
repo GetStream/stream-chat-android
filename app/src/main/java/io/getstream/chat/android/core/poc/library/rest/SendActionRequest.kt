@@ -5,5 +5,5 @@ class SendActionRequest(
     val channelId: String,
     val messageId: String,
     val type: String,
-    val form_data: Map<*, *>
+    val form_data: Map<Any, Any>
 )

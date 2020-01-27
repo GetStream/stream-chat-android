@@ -249,22 +249,24 @@ interface RetrofitApi {
     //region messages
 
     @POST("/channels/{type}/{id}/message")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun sendMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
-        @Body message: Map<*, *>
+        @Body message: MessageRequest
     ): Call<MessageResponse>
 
     @POST("/messages/{id}")
+    @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
     fun updateMessage(
         @Path("id") messageId: String,
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
-        @Body message: Map<*, *>
+        @Body message: MessageRequest
     ): Call<MessageResponse>
 
     @GET("/messages/{id}")
@@ -354,10 +356,10 @@ interface RetrofitApi {
     // region Device
     @GET("/devices")
     fun getDevices(
-        @Query("api_key") apiKey: String?, @Query("user_id") userId: String?, @Query(
-            "client_id"
-        ) connectionId: String?
-    ): Call<GetDevicesResponse?>?
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("client_id") connectionId: String
+    ): Call<GetDevicesResponse>
 
     @POST("devices")
     fun addDevices(

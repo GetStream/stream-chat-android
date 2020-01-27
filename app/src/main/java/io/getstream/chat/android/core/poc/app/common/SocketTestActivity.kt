@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
-import io.getstream.chat.android.core.poc.library.StreamChatClient
+import io.getstream.chat.android.core.poc.library.ChatClientBuilder
+import io.getstream.chat.android.core.poc.library.ChatClientImpl
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
@@ -16,14 +17,14 @@ class SocketTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_socket_tests)
 
-        val client = StreamChatClient(
-            "qk4nn7rpcn75", ApiClientOptions.Builder()
-                .baseURL("chat-us-east-1.stream-io-api.com")
-                .cdnUrl("chat-us-east-1.stream-io-api.com")
-                .timeout(10000)
-                .cdnTimeout(10000)
-                .build()
-        )
+        val apiOptions = ApiClientOptions.Builder()
+            .baseURL("chat-us-east-1.stream-io-api.com")
+            .cdnUrl("chat-us-east-1.stream-io-api.com")
+            .timeout(10000)
+            .cdnTimeout(10000)
+            .build()
+        val apiKey = "qk4nn7rpcn75"
+        val client = ChatClientBuilder(apiKey, apiOptions).build()
 
         client.events().subscribe {
             textSocketEvent.text = it.getType().toString() + " at " + it.createdAt

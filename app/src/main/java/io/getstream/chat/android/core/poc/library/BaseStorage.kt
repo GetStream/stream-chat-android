@@ -9,6 +9,7 @@ abstract class BaseStorage  {
         channel: Channel,
         file: File,
         mimeType: String,
+        apiKey:String,
         callback: UploadFileCallback<File, Int>
     )
 

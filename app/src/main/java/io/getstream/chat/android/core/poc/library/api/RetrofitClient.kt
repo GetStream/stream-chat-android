@@ -1,11 +1,8 @@
 package io.getstream.chat.android.core.poc.library.api
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
-import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
 import io.getstream.chat.android.core.poc.library.json.ChatGson
-import io.getstream.chat.android.core.poc.library.json.TypeAdapterFactory
 import io.getstream.chat.android.core.poc.library.json.ZConverter
 import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
 import okhttp3.Interceptor
@@ -26,9 +23,9 @@ object RetrofitClient {
 
     fun getClient(
         options: ApiClientOptions,
-        tokenProvider: CachedTokenProvider,
+        tokenProvider: () -> CachedTokenProvider,
         anonymousAuth: () -> Boolean
-    ): Retrofit? {
+    ): Retrofit {
 
         var authInterceptor = TokenAuthInterceptor(tokenProvider, anonymousAuth)
 
@@ -68,7 +65,7 @@ object RetrofitClient {
     }
 
     fun getAuthorizedCDNClient(
-        tokenProvider: CachedTokenProvider,
+        tokenProvider: () -> CachedTokenProvider,
         options: ApiClientOptions
     ): Retrofit {
         val authInterceptor = TokenAuthInterceptor(tokenProvider) { false }
@@ -124,7 +121,6 @@ object RetrofitClient {
         gsonBuilder.registerTypeAdapter(type, typeAdapter)
         return GsonConverterFactory.create(gsonBuilder.create())
     }
-
 
 
 }
