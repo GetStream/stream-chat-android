@@ -9,18 +9,27 @@ import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 interface ChatClient {
+
     fun setUser(
         user: User,
         provider: TokenProvider,
         callback: (Result<ConnectionData>) -> Unit
     )
 
+    fun disconnect()
+
+    //region Events
+
     fun events(): ChatObservable
+
+    //endregion
+
+    //region Api calls
+
     fun getState(): ClientState
     fun fromCurrentUser(entity: UserEntity): Boolean
     fun getUserId(): String
     fun getClientId(): String
-    fun disconnect()
     fun getDevices(): ChatCall<List<Device>>
     fun deleteDevice(deviceId: String): ChatCall<Unit>
     fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
@@ -70,7 +79,6 @@ interface ChatClient {
     fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
     fun markAllRead(): ChatCall<Event>
-    fun attachClient(channels: List<Channel>): List<Channel>
-    fun attachClient(channel: Channel): Channel
-    fun getUser(): User?
+
+    //endregion
 }

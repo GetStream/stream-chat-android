@@ -191,17 +191,17 @@ internal class ChatClientImpl constructor(
 
     //endregion
 
-    override fun attachClient(channels: List<Channel>): List<Channel> {
+    private fun attachClient(channels: List<Channel>): List<Channel> {
         channels.forEach { attachClient(it) }
         return channels
     }
 
-    override fun attachClient(channel: Channel): Channel {
+    private fun attachClient(channel: Channel): Channel {
         channel.client = this
         return channel
     }
 
-    override fun getUser(): User? {
+    private fun getUser(): User? {
         return state.user
     }
 }
