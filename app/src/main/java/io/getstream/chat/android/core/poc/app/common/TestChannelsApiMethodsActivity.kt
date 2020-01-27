@@ -21,9 +21,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val channelType = "team"
     var chatSub: ChatObservable.Subscription? = null
 
-
-    class UserZ(val name: String?, val age:Int? = null)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_api)
