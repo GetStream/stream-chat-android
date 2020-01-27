@@ -40,15 +40,8 @@ interface ChatClient {
     fun sendAction(request: SendActionRequest): ChatCall<Message>
     fun deleteMessage(messageId: String): ChatCall<Message>
     fun getMessage(messageId: String): ChatCall<Message>
-    fun sendMessage(
-        channelType: String,
-        channelId: String,
-        message: Message
-    ): ChatCall<Message>
-
-    fun updateMessage(
-        message: Message
-    ): ChatCall<Message>
+    fun sendMessage(channelType: String, channelId: String, message: Message): ChatCall<Message>
+    fun updateMessage(message: Message): ChatCall<Message>
 
     fun queryChannel(
         channelType: String,
@@ -65,9 +58,7 @@ interface ChatClient {
     ): ChatCall<Unit>
 
     fun stopWatching(channelType: String, channelId: String): ChatCall<Unit>
-    fun queryChannels(
-        request: QueryChannelsRequest
-    ): ChatCall<List<Channel>>
+    fun queryChannels(request: QueryChannelsRequest): ChatCall<List<Channel>>
 
     fun updateChannel(
         channelType: String,

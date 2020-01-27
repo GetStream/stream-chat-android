@@ -7,9 +7,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class Message : UserEntity {
+data class Message constructor(val id: String = ""): UserEntity {
 
-    val id: String = ""
+
     var cid: String = ""
     var text: String = ""
     val html: String = ""
@@ -103,7 +103,7 @@ class Message : UserEntity {
     }
 
     override fun getUserId(): String {
-        return user?.id
+        return user.id
     }
 
 

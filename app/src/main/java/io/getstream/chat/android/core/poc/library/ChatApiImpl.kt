@@ -2,7 +2,6 @@ package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
-import io.getstream.chat.android.core.poc.library.json.ChatGson
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
@@ -48,7 +47,7 @@ class ChatApiImpl(
 
     override fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>> {
         return callMapper.map(
-            retrofitApi.searchMessages(apiKey, connectionId, ChatGson.instance.toJson(request)!!)
+            retrofitApi.searchMessages(apiKey, connectionId, request)
         ).map {
             it.results.map { resp ->
                 resp.message

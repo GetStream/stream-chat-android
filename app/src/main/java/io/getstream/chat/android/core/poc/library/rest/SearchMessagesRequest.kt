@@ -2,13 +2,14 @@ package io.getstream.chat.android.core.poc.library.rest
 
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.FilterObject
+import java.util.logging.Filter
 
 
-class SearchMessagesRequest(
+data class SearchMessagesRequest(
     val query: String,
-    @SerializedName("filter_conditions")
-    val filter: FilterObject,
+    val offset: Int,
     val limit: Int,
-    val offset: Int
+    @SerializedName("filter_conditions")
+    val filter: FilterObject = FilterObject()
 )
 
