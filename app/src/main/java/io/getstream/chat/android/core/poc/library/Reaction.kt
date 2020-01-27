@@ -1,13 +1,13 @@
 package io.getstream.chat.android.core.poc.library
 
+import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.util.*
 
 
-class Reaction(
-    var messageId: String,
-    val user: User,
-    var userID: String,
-    val type: String,
-    val createdAt: Date,
-    val extraData: Map<String, Any>
-)
+data class Reaction(val messageId: String){
+    lateinit var user: User
+    var userID: String = ""
+    val type: String = ""
+    val createdAt: Date = UndefinedDate
+    val extraData: Map<String, Any> = emptyMap()
+}

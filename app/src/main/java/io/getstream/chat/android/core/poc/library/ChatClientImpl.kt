@@ -77,20 +77,20 @@ internal class ChatClientImpl constructor(
         return api.searchMessages(request)
     }
 
-    override fun getReplies(
-        messageId: String,
-        firstId: String,
-        limit: Int
-    ): ChatCall<List<Message>> {
-        return api.getRepliesMore(messageId, firstId, limit)
-    }
-
     override fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>> {
         return api.getReplies(messageId, limit)
     }
 
     override fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>> {
         return api.getRepliesMore(messageId, firstId, limit)
+    }
+
+    override fun getReactions(
+        messageId: String,
+        offset:Int,
+        limit: Int
+    ): ChatCall<List<Reaction>> {
+        return api.getReactions(messageId, offset, limit)
     }
 
     override fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message> {

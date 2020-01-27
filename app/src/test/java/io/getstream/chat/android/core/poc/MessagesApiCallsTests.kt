@@ -347,4 +347,97 @@ class MessagesApiCallsTests {
 
         verifyError(result, serverErrorCode)
     }
+
+    @Test
+    fun deleteReactionSuccess() {
+
+        val messageId = "message-id"
+        val messageText = "message-a"
+        val message = Message().apply { text = messageText }
+        val reactionType = "reactionType"
+
+        Mockito.`when`(
+            retrofitApi
+                .deleteReaction(
+                    messageId,
+                    reactionType,
+                    apiKey,
+                    user.id,
+                    connection.connectionId
+                )
+        ).thenReturn(RetroSuccess(MessageResponse(message)))
+
+        val result = client.deleteReaction(messageId, reactionType).execute()
+
+        verifySuccess(result, message)
+    }
+
+    @Test
+    fun deleteReactionError() {
+
+        val messageId = "message-id"
+        val reactionType = "reactionType"
+
+        Mockito.`when`(
+            retrofitApi
+                .deleteReaction(
+                    messageId,
+                    reactionType,
+                    apiKey,
+                    user.id,
+                    connection.connectionId
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.deleteReaction(messageId, reactionType).execute()
+
+        verifyError(result, serverErrorCode)
+    }
+
+    @Test
+    fun getReactionsSuccess() {
+
+        val messageId = "message-id"
+        val offset = 0
+        val limit = 1
+        val reaction = Reaction(messageId)
+
+        Mockito.`when`(
+            retrofitApi
+                .getReactions(
+                    messageId,
+                    apiKey,
+                    connection.connectionId,
+                    offset,
+                    limit
+                )
+        ).thenReturn(RetroSuccess(GetReactionsResponse(listOf(reaction))))
+
+        val result = client.getReactions(messageId, offset, limit).execute()
+
+        verifySuccess(result, listOf(reaction))
+    }
+
+    @Test
+    fun getReactionsError() {
+
+        val messageId = "message-id"
+        val offset = 0
+        val limit = 1
+
+        Mockito.`when`(
+            retrofitApi
+                .getReactions(
+                    messageId,
+                    apiKey,
+                    connection.connectionId,
+                    offset,
+                    limit
+                )
+        ).thenReturn(RetroError(serverErrorCode))
+
+        val result = client.getReactions(messageId, offset, limit).execute()
+
+        verifyError(result, serverErrorCode)
+    }
 }
