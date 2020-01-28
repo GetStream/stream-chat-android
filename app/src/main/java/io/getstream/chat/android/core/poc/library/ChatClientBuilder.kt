@@ -19,8 +19,8 @@ class ChatClientBuilder(
         apiKey,
         RetrofitClient.getClient(
             apiOptions,
-            { tokenProvider },
-            { isAnonymous }
+            tokenProvider,
+            isAnonymous
         ).create(
             RetrofitApi::class.java
         )

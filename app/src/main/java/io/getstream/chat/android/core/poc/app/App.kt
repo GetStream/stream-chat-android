@@ -23,6 +23,7 @@ class App : Application() {
             .timeout(10000)
             .cdnTimeout(10000)
             .build()
+
         client = ChatClientBuilder(apiKey, apiOptions).build()
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())

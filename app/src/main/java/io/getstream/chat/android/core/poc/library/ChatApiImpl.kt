@@ -86,8 +86,8 @@ class ChatApiImpl(
 
     override fun getReactions(
         messageId: String,
-        limit: Int,
-        offset: Int
+        offset: Int,
+        limit: Int
     ): ChatCall<List<Reaction>> {
         return callMapper.map(
             retrofitApi.getReactions(
@@ -346,7 +346,7 @@ class ChatApiImpl(
         )
     }
 
-    fun setGuestUser(apiKey: String, userId: String, userName: String?) = callMapper.map(
+    override fun setGuestUser( userId: String, userName: String?) = callMapper.map(
         retrofitApi.setGuestUser(
             apiKey = apiKey,
             body = GuestUserRequest(
@@ -356,9 +356,7 @@ class ChatApiImpl(
         )
     )
 
-    fun getUsers(
-        apiKey: String,
-        connectionId: String,
+    override fun getUsers(
         queryUser: QueryUsers
     ): ChatCall<QueryUserListResponse> {
         val payload = Gson().toJson(queryUser)
@@ -371,9 +369,7 @@ class ChatApiImpl(
         )
     }
 
-    fun addMembers(
-        apiKey: String,
-        connectionId: String,
+    override fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
@@ -389,9 +385,7 @@ class ChatApiImpl(
         )
     )
 
-    fun removeMembers(
-        apiKey: String,
-        connectionId: String,
+    override fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
@@ -407,10 +401,7 @@ class ChatApiImpl(
         )
     )
 
-    fun muteUser(
-        apiKey: String,
-        connectionId: String,
-        userId: String,
+    override fun muteUser(
         targetId: String
     ): ChatCall<MuteUserResponse> {
         val body: MutableMap<String, String> = HashMap()
@@ -427,10 +418,7 @@ class ChatApiImpl(
         )
     }
 
-    fun unMuteUser(
-        apiKey: String,
-        connectionId: String,
-        userId: String,
+    override fun unMuteUser(
         targetId: String
     ): ChatCall<MuteUserResponse> {
         val body: MutableMap<String, String> = HashMap()
@@ -447,10 +435,7 @@ class ChatApiImpl(
         )
     }
 
-    fun flag(
-        apiKey: String,
-        connectionId: String,
-        userId: String,
+    override fun flag(
         targetId: String
     ): ChatCall<FlagResponse> {
         val body: MutableMap<String, String> = HashMap()
@@ -466,9 +451,7 @@ class ChatApiImpl(
         )
     }
 
-    fun banUser(
-        apiKey: String,
-        connectionId: String,
+    override fun banUser(
         targetId: String,
         timeout: Int?,
         reason: String?,
@@ -491,9 +474,7 @@ class ChatApiImpl(
         )
     }
 
-    fun unBanUser(
-        apiKey: String,
-        connectionId: String,
+    override fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String

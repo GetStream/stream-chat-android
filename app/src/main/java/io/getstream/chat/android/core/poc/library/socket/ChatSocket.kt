@@ -6,6 +6,7 @@ import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 
 interface ChatSocket {
+    fun connect(): ChatCall<ConnectionData>
     fun connect(user: User, tokenProvider: TokenProvider): ChatCall<ConnectionData>
     //fun connect(user: User, tokenProvider: CachedTokenProvider): ChatCall<ConnectionData>
     fun events(): ChatObservable

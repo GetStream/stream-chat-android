@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
@@ -30,6 +31,45 @@ internal class ChatClientImpl constructor(
             }
 
             callback(result)
+        }
+    }
+
+    override fun setAnonymousUser(callback: (Result<ConnectionData>) -> Unit) {
+        socket.connect().enqueue { result ->
+
+            if (result.isSuccess) {
+                api.setConnection(result.data())
+            }
+
+            callback(result)
+        }
+    }
+
+    override fun setGuestUser(
+        user: User,
+        callback: (Result<ConnectionData>) -> Unit
+    ) {
+        api.setGuestUser(
+            userId = user.id,
+            userName = user.name
+        ).enqueue { result ->
+            if (result.isSuccess) {
+                state.user = user
+                val provider = object : TokenProvider {
+                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                        listener.onSuccess(result.data().access_token)
+                    }
+                }
+
+                socket.connect(user, provider).enqueue { connectionResult ->
+
+                    if (connectionResult.isSuccess) {
+                        api.setConnection(connectionResult.data())
+                    }
+
+                    callback(connectionResult)
+                }
+            }
         }
     }
 
@@ -81,13 +121,17 @@ internal class ChatClientImpl constructor(
         return api.getReplies(messageId, limit)
     }
 
-    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>> {
+    override fun getRepliesMore(
+        messageId: String,
+        firstId: String,
+        limit: Int
+    ): ChatCall<List<Message>> {
         return api.getRepliesMore(messageId, firstId, limit)
     }
 
     override fun getReactions(
         messageId: String,
-        offset:Int,
+        offset: Int,
         limit: Int
     ): ChatCall<List<Reaction>> {
         return api.getReactions(messageId, offset, limit)
@@ -131,7 +175,7 @@ internal class ChatClientImpl constructor(
         return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
     }
 
-    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>{
+    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel> {
         return api.deleteChannel(channelType, channelId)
     }
 
@@ -200,6 +244,64 @@ internal class ChatClientImpl constructor(
             it.event
         }
     }
+
+    override fun getUsers(query: QueryUsers) = api.getUsers(
+        queryUser = query
+    ).map { it.users }
+
+    override fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse> {
+        return api.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            members = members
+        )
+    }
+
+    override fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = api.removeMembers(
+        channelType = channelType,
+        channelId = channelId,
+        members = members
+    )
+
+    override fun muteUser(targetId: String) = api.muteUser(
+        targetId = targetId
+    )
+
+    override fun unMuteUser(targetId: String) = api.unMuteUser(
+        targetId = targetId
+    )
+
+    override fun flag(targetId: String) = api.flag(
+        targetId = targetId
+    )
+
+    override fun banUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        reason: String?,
+        timeout: Int?
+    ): ChatCall<CompletableResponse> = api.banUser(
+        targetId, timeout, reason, channelType, channelId
+    )
+
+    override fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ) = api.unBanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId
+    )
 
     //endregion
 

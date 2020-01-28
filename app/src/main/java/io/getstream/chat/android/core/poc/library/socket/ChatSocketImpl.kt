@@ -7,13 +7,13 @@ import io.getstream.chat.android.core.poc.library.call.ChatCall
 
 class ChatSocketImpl(
     val apiKey: String,
-    val wssUrl: String,
-    val cachedTokenProvider: CachedTokenProvider
+    private val wssUrl: String,
+    private val cachedTokenProvider: CachedTokenProvider
 ) : ChatSocket {
 
     private val service = StreamWebSocketService()
 
-    fun connect(): ChatCall<ConnectionData> {
+    override fun connect(): ChatCall<ConnectionData> {
         val result = ConnectionCall()
 
         val callback: (ConnectionData, Throwable?) -> Unit = { c, t ->
@@ -25,7 +25,7 @@ class ChatSocketImpl(
         return result
     }
 
-    override fun connect(user: User, tokenProvider: TokenProvider?): ChatCall<ConnectionData> {
+    override fun connect(user: User, tokenProvider: TokenProvider): ChatCall<ConnectionData> {
 
         cachedTokenProvider.setTokenProvider(tokenProvider)
 
@@ -35,7 +35,7 @@ class ChatSocketImpl(
             result.deliverResult(c, t)
         }
 
-        tokenProvider?.getToken(object : TokenProvider.TokenProviderListener {
+        tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
                 connect(user, token, callback)
             }

@@ -25,7 +25,7 @@ object RetrofitClient {
         options: ApiClientOptions,
         tokenProvider: CachedTokenProvider? = null,
         anonymousAuth: Boolean? = false
-    ): Retrofit? {
+    ): Retrofit {
 
         var authInterceptor = TokenAuthInterceptor(tokenProvider, anonymousAuth)
 

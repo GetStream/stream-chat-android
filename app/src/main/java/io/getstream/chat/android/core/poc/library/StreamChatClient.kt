@@ -1,16 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
-import android.text.TextUtils
-import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderListener
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
-import io.getstream.chat.android.core.poc.library.api.RetrofitClient
-import io.getstream.chat.android.core.poc.library.call.ChatCall
-import io.getstream.chat.android.core.poc.library.requests.QueryUsers
-import io.getstream.chat.android.core.poc.library.rest.*
-import io.getstream.chat.android.core.poc.library.socket.ChatObservable
-import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
-import io.getstream.chat.android.core.poc.library.socket.ConnectionData
-import java.util.UUID.randomUUID
 
 
 class StreamChatClient(
@@ -18,7 +8,7 @@ class StreamChatClient(
     val apiOptions: ApiClientOptions
 ) {
 
-    private lateinit var api: ChatApiImpl
+    /*private lateinit var api: ChatApiImpl
     private var anonymousConnection = false
     private val state = ClientState()
     private var tokenProvider: CachedTokenProvider? = null
@@ -67,7 +57,7 @@ class StreamChatClient(
             api = ChatApiImpl(apiKey, it)
         }
 
-        api.setGuestUser(apiKey, user.id, user.name).enqueue { result ->
+        api.setGuestUser(user.id, user.name).enqueue { result ->
             if (result.isSuccess) {
                 state.user = result.data().user
 
@@ -103,7 +93,7 @@ class StreamChatClient(
 
         connect(callback)
 
-        /*socket.connect(user, this.tokenProvider!!).enqueue {
+        *//*socket.connect(user, this.tokenProvider!!).enqueue {
 
             if (it.isSuccess) {
                 api.connectionId = it.data().connectionId
@@ -111,7 +101,7 @@ class StreamChatClient(
             }
 
             callback(it)
-        }*/
+        }*//*
     }
 
     fun events(): ChatObservable {
@@ -384,5 +374,5 @@ class StreamChatClient(
     private fun attachClient(channel: Channel): Channel {
         channel.client = this
         return channel
-    }
+    }*/
 }
