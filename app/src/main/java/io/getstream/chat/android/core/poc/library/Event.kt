@@ -6,19 +6,19 @@ import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
 import java.util.*
 
 
-class Event : UserEntity {
+data class Event(@SerializedName("type")
+                 private var type: String = "") : UserEntity {
     @SerializedName("connection_id")
-    
     var connectionId: String = ""
+
     @SerializedName("cid")
-    
     val cid: String = ""
+
     @SerializedName("client_id")
-    
     var clientId: String = ""
-    @SerializedName("type")
-    
-    private var type: String = ""
+
+
+
     @SerializedName("user")
     
     val user: User? = null
@@ -62,11 +62,11 @@ class Event : UserEntity {
 
     var online = false
 
-    constructor(type: EventType) {
+    constructor(type: EventType) : this(type.label) {
         this.type = type.label
     }
 
-    constructor(type: EventType, online: Boolean) {
+    constructor(type: EventType, online: Boolean) : this(type.label) {
         this.online = online
         this.type = type.label
     }

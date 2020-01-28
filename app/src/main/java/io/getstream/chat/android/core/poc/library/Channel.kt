@@ -72,7 +72,7 @@ class Channel {
 
     val subRegistery: EventSubscriberRegistry<ChatChannelEventHandler>? = null
 
-    lateinit var client: StreamChatClient
+    lateinit var client: ChatClient
 
     lateinit var channelState: ChannelState
 

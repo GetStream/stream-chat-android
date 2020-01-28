@@ -2,12 +2,12 @@ package io.getstream.chat.android.core.poc.app.repositories
 
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.core.poc.app.ChannelsCache
-import io.getstream.chat.android.core.poc.app.common.ApiMapper
 import io.getstream.chat.android.core.poc.app.common.Channel
-import io.getstream.chat.android.core.poc.library.StreamChatClient
+import io.getstream.chat.android.core.poc.library.ChatClient
+import io.getstream.chat.android.core.poc.library.ChatClientImpl
 
 class ChannelsRepositoryLive(
-    private val client: StreamChatClient,
+    private val client: ChatClient,
     private val cache: ChannelsCache
 ) {
 

@@ -35,9 +35,11 @@ class ErrorResponse {
             var statusCode = -1
 
             return try {
+
+                statusCode = okHttpResponse.code
+
                 val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
                 val error = parseError(body)
-                statusCode = okHttpResponse.code
                 ChatHttpError(error.code, statusCode, error.message)
             } catch (t: Throwable) {
                 //TODO: check java.lang.IllegalStateException: Cannot read raw response body of a converted body.
@@ -45,5 +47,4 @@ class ErrorResponse {
             }
         }
     }
-
 }

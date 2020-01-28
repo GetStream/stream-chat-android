@@ -73,9 +73,33 @@ open class ChannelQueryRequest : BaseQueryChannelRequest<ChannelQueryRequest>() 
         return clone
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ChannelQueryRequest
+
+        if (messages != other.messages) return false
+        if (watchers != other.watchers) return false
+        if (members != other.members) return false
+        if (data != other.data) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = messages.hashCode()
+        result = 31 * result + watchers.hashCode()
+        result = 31 * result + members.hashCode()
+        result = 31 * result + data.hashCode()
+        return result
+    }
+
     init {
         watch = false
         presence = false
         state = true
     }
+
+
 }

@@ -1,11 +1,8 @@
 package io.getstream.chat.android.core.poc.library.api
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
-import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
 import io.getstream.chat.android.core.poc.library.json.ChatGson
-import io.getstream.chat.android.core.poc.library.json.TypeAdapterFactory
 import io.getstream.chat.android.core.poc.library.json.ZConverter
 import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
 import okhttp3.Interceptor
@@ -105,7 +102,7 @@ object RetrofitClient {
 
     private fun prepareRequest(
         chain: Interceptor.Chain,
-        isAnonymousClient: Boolean ?
+        isAnonymousClient: Boolean?
     ): Request {
         val authType = if (isAnonymousClient == true) "anonymous" else "jwt"
         return chain.request()
@@ -124,7 +121,6 @@ object RetrofitClient {
         gsonBuilder.registerTypeAdapter(type, typeAdapter)
         return GsonConverterFactory.create(gsonBuilder.create())
     }
-
 
 
 }

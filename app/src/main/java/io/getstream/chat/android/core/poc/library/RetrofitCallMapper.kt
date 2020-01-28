@@ -30,12 +30,7 @@ class RetrofitCallMapper {
     companion object {
 
         private fun <T> execute(call: retrofit2.Call<T>): Result<T> {
-            try {
-                val execute = call.execute()
-                return Result(execute.body(), null)
-            } catch (t: Throwable) {
-                return failedResult(t)
-            }
+            return getResult(call)
         }
 
         private fun <T> enqueue(call: retrofit2.Call<T>, callback: (Result<T>) -> Unit) {
@@ -63,6 +58,13 @@ class RetrofitCallMapper {
             return ChatHttpError(streamCode, statusCode, t.message.toString(), t)
         }
 
+        private fun <T> getResult(retroCall: retrofit2.Call<T>): Result<T> {
+            return try {
+                getResult(retroCall.execute())
+            } catch (t: Throwable) {
+                failedResult(t)
+            }
+        }
 
         private fun <T> getResult(retrofitResponse: Response<T>): Result<T> {
 
@@ -81,67 +83,6 @@ class RetrofitCallMapper {
 
             return Result(data, error)
         }
-
-//        private fun <A, B> callMapper(
-//            retroCall: retrofit2.Call<A>,
-//            chatCall: Call<A>,
-//            mapper: (A) -> B
-//        ): Call<B> {
-//
-//            return object : Call<B> {
-//
-//                override fun execute(): Result<B> {
-//                    val result = retroCall.execute()
-//                    return if (result.isSuccessful) {
-//                        Result(mapper(result.body()!!), null)
-//                    } else {
-//                        Result(null,
-//                            ClientError(
-//                                result.code(),
-//                                result.message()
-//                            )
-//                        )
-//                    }
-//                }
-//
-//                override fun enqueue(callback: (Result<B>) -> Unit) {
-//                    retroCall.enqueue(object : retrofit2.Callback<A> {
-//
-//                        override fun onResponse(call: retrofit2.Call<A>, response: Response<A>) {
-//                            val aResult = getResult(response)
-//                            if (aResult.isSuccess()) {
-//                                val b = mapper(aResult.data())
-//                                callback(Result(b, null))
-//                            } else {
-//                                callback(Result(null, aResult.error))
-//                            }
-//
-//                        }
-//
-//                        override fun onFailure(call: retrofit2.Call<A>, t: Throwable) {
-//                            callback(Result(null,
-//                                ClientError(
-//                                    0,
-//                                    "",
-//                                    t
-//                                )
-//                            ))
-//                        }
-//                    })
-//                }
-//
-//                override fun cancel() {
-//                    chatCall.cancel()
-//                }
-//
-//                override fun <C> map(mapperToC: (B) -> C): Call<C> {
-//                    val toB = callMapper(retroCall, chatCall, mapper)
-//                    return toB.map(mapperToC)
-//                }
-//
-//
-//            }
-//        }
     }
 
 }

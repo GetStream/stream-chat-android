@@ -1,8 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
-import io.getstream.chat.android.core.poc.library.errors.ChatError
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
-import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,7 +8,7 @@ import java.io.File
 
 
 class StreamPublicStorage(
-    val client: StreamChatClient,
+    val client: ChatClient,
     val mCDNService: RetrofitApi
 ) : BaseStorage() {
 
@@ -18,6 +16,7 @@ class StreamPublicStorage(
         channel: Channel,
         file: File,
         mimeType: String,
+        apiKey:String,
         callback: UploadFileCallback<File, Int>
     ) {
         val fileReqBody = ProgressRequestBody(file, mimeType, callback)
@@ -51,18 +50,18 @@ class StreamPublicStorage(
                 channel.type,
                 channel.id,
                 part,
-                client.apiKey,
+                apiKey,
                 client.getUserId(),
-                client.getClientID()
+                client.getClientId()
             ).enqueue(callbackWrapper)
         } else {
             mCDNService.sendFile(
                 channel.type,
                 channel.id,
                 part,
-                client.apiKey,
+                apiKey,
                 client.getUserId(),
-                client.getClientID()
+                client.getClientId()
             ).enqueue(callbackWrapper)
         }
     }

@@ -5,10 +5,11 @@ import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 
-class ChatSocketConnectionImpl(
+class ChatSocketImpl(
     val apiKey: String,
-    val wssUrl: String
-) {
+    val wssUrl: String,
+    val cachedTokenProvider: CachedTokenProvider
+) : ChatSocket {
 
     private val service = StreamWebSocketService()
 
@@ -24,7 +25,9 @@ class ChatSocketConnectionImpl(
         return result
     }
 
-    fun connect(user: User, tokenProvider: CachedTokenProvider?): ChatCall<ConnectionData> {
+    override fun connect(user: User, tokenProvider: TokenProvider?): ChatCall<ConnectionData> {
+
+        cachedTokenProvider.setTokenProvider(tokenProvider)
 
         val result = ConnectionCall()
 
@@ -41,11 +44,11 @@ class ChatSocketConnectionImpl(
         return result
     }
 
-    fun events(): ChatObservable {
+    override fun events(): ChatObservable {
         return ChatObservable(service)
     }
 
-    fun disconnect() {
+    override fun disconnect() {
         service.disconnect()
     }
 
