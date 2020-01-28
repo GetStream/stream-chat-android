@@ -94,8 +94,8 @@ class ChatApiImpl(
                 messageId,
                 apiKey,
                 connectionId,
-                limit,
-                offset
+                offset,
+                limit
             )
         ).map {
             it.reactions

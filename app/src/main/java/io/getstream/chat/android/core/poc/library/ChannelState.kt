@@ -14,7 +14,6 @@ class ChannelState {
 
     lateinit var channel: Channel
     val messages = mutableListOf<Message>()
-    @Embedded(prefix = "last_message_")
     private var lastMessage: Message? = null
     var read = mutableListOf<ChannelUserRead>()
     var members: MutableList<Member> = mutableListOf()
@@ -23,25 +22,9 @@ class ChannelState {
 
     private var lastKnownActiveWatcher: Date = Date()
 
-    fun preStorage() {
-        //cid = channel.cid
-        lastMessage = computeLastMessage()
-    }
-
     private fun getLastKnownActiveWatcher(): Date {
         return lastKnownActiveWatcher
     }
-
-//    fun copy(): ChannelState {
-//        val clone = ChannelState()
-//        clone.channel = channel
-//        clone.read = ArrayList()
-//        for (read in getReads()) {
-//            clone.read.add(ChannelUserRead(read.user, read.lastRead))
-//        }
-//        clone.setLastMessage(getLastMessage())
-//        return clone
-//    }
 
     @Synchronized
     fun addWatcher(watcher: Watcher) {
@@ -53,7 +36,7 @@ class ChannelState {
         if (watcher.user.last_active.after(getLastKnownActiveWatcher())) {
             lastKnownActiveWatcher = watcher.user.last_active
         }
-        watchers!!.remove(watcher)
+        watchers.remove(watcher)
     }
 
     fun addOrUpdateMember(member: Member) {
@@ -377,12 +360,6 @@ class ChannelState {
 
     companion object {
         private val TAG = ChannelState::class.java.simpleName
-    }
-
-    init {
-//        messages = channel.channelState.messages
-//        reads = channel.channelState.reads
-//        members = channel.channelState.members
     }
 }
 

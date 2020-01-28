@@ -40,7 +40,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         }
         val isError = errorMessage != null && errorMessage.error != null
         if (isError) { // token expiration is handled separately (allowing you to refresh the token from your backend)
-            if (errorMessage?.error!!.code == ErrorResponse.TOKEN_EXPIRED_CODE) { // the server closes the connection after sending an error, so we don't need to close it here
+            if (errorMessage?.error!!.code == 40) { // the server closes the connection after sending an error, so we don't need to close it here
 // webSocket.close(NORMAL_CLOSURE_STATUS, "token expired");
                 service.eventHandler.post { service.tokenExpired() }
                 return
