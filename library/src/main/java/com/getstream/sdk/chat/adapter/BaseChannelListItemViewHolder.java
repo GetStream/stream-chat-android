@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
@@ -26,4 +27,7 @@ public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHol
     public abstract void setChannelClickListener(ChannelListView.ChannelClickListener l);
 
     public abstract void setChannelLongClickListener(ChannelListView.ChannelClickListener l);
+
+    public abstract void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener);
+
 }
