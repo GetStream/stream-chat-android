@@ -18,8 +18,6 @@ class ErrorResponse {
     //TODO: move parsing logic out of the model
     companion object {
 
-        const val TOKEN_EXPIRED_CODE = 40
-
         private fun parseError(body: String?): ErrorResponse {
             return try {
                 ChatGson.instance.fromJson(body, ErrorResponse::class.java)

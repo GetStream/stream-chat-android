@@ -83,16 +83,16 @@ class ChatApiImpl(
 
     override fun getReactions(
         messageId: String,
-        limit: Int,
-        offset: Int
+        offset: Int,
+        limit: Int
     ): ChatCall<List<Reaction>> {
         return callMapper.map(
             retrofitApi.getReactions(
                 messageId,
                 apiKey,
                 connectionId,
-                limit,
-                offset
+                offset,
+                limit
             )
         ).map {
             it.reactions

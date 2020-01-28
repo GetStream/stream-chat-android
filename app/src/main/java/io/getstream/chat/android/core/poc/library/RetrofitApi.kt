@@ -317,8 +317,8 @@ interface RetrofitApi {
         @Path("id") messageId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Query("limit") limit: Int,
-        @Query("offset") offset: Int
+        @Query("offset") offset: Int,
+        @Query("limit") limit: Int
     ): Call<GetReactionsResponse>
 
     @GET("/messages/{parent_id}/replies")
