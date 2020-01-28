@@ -154,15 +154,7 @@ class ChannelState {
 
     private val oldestMessage: Message?
         private get() {
-            if (messages == null) {
-                return null
-            }
-            for (m in messages!!) {
-                if (m.syncStatus == Sync.SYNCED) {
-                    return m
-                }
-            }
-            return null
+            return messages.lastOrNull()
         }
 
     fun getReads(): List<ChannelUserRead> {

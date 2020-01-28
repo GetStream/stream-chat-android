@@ -25,11 +25,7 @@ class Channel {
     var type: String = ""
 
     @SerializedName("last_message_at")
-
     var lastMessageDate: Date = UndefinedDate
-
-    @get:Sync.Status
-    var syncStatus: Int? = null
 
     var lastKeystrokeAt: Date = UndefinedDate
 

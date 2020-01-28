@@ -22,7 +22,8 @@ internal class ChatClientImpl constructor(
         callback: (Result<ConnectionData>) -> Unit
     ) {
 
-        state.user = user
+        if(state.user != null) return
+        else state.user = user
 
         socket.connect(user, provider).enqueue { result ->
 
