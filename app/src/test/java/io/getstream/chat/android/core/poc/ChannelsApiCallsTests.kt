@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
+import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
@@ -31,7 +32,7 @@ class ChannelsApiCallsTests {
         api = Mockito.mock(ChatApi::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi), socket)
+        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl()), socket)
 
         Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
 

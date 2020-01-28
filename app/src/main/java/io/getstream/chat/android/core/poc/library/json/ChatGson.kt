@@ -6,31 +6,5 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 object ChatGson {
-    val instance: Gson by lazy {
-        GsonBuilder()
-            .registerTypeAdapterFactory(TypeAdapterFactory())
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            .setPrettyPrinting()
-            .addSerializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
 
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.getAnnotation(IgnoreSerialisation::class.java) != null
-                }
-
-            })
-            .addDeserializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
-
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.getAnnotation(IgnoreDeserialisation::class.java) != null
-                }
-
-            })
-            .create()
-    }
 }

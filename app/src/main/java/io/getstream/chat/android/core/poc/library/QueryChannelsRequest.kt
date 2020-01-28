@@ -13,10 +13,6 @@ data class QueryChannelsRequest(
 
     val sort = querySort.data
 
-    fun query(): QueryChannelsQ {
-        return QueryChannelsQ(filter, querySort)
-    }
-
     fun withMessageLimit(limit: Int): QueryChannelsRequest {
         val clone = cloneOpts()
         return clone

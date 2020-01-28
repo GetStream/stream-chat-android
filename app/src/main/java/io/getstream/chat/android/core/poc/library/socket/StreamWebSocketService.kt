@@ -5,7 +5,8 @@ import android.util.Log
 import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.User
-import io.getstream.chat.android.core.poc.library.json.ChatGson
+import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -19,7 +20,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class StreamWebSocketService : WebSocketListener(), WebSocketService {
+class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
+    WebSocketService {
 
     private val NORMAL_CLOSURE_STATUS = 1000
     private val TAG = StreamWebSocketService::class.java.simpleName
@@ -29,7 +31,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
     private var userToken: String? = ""
     private var user: User? = null
 
-    private val listener: EchoWebSocketListener = EchoWebSocketListener(this)
+    private val listener: EchoWebSocketListener = EchoWebSocketListener(this, jsonParser)
     private var httpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
     private val webSocketListeners = mutableListOf<WsListener>()
@@ -85,7 +87,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             Log.i(TAG, "send health check")
             try {
                 val event = Event(EventType.HEALTH_CHECK)
-                webSocket!!.send(ChatGson.instance.toJson(event))
+                webSocket!!.send(jsonParser.toJson(event))
             } finally {
                 eventHandler.postDelayed(this, healthCheckInterval)
             }
@@ -288,7 +290,7 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             data["user_id"] = user.id
         }
         data["server_determines_connection_id"] = true
-        return ChatGson.instance.toJson(data)
+        return jsonParser.toJson(data)
     }
 
 }

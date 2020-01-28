@@ -1,10 +1,7 @@
 package io.getstream.chat.android.core.poc.library
 
-import androidx.room.TypeConverters
-import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.R
-import io.getstream.chat.android.core.poc.library.api.ExtraDataConverter
 import java.text.DecimalFormat
 
 
@@ -56,7 +53,6 @@ class Attachment {
     
     var file_size = 0
     // Additional Params
-    @TypeConverters(ExtraDataConverter::class)
     var extraData: HashMap<String, Any>? = null
         private set
 

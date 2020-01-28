@@ -2,6 +2,8 @@ package io.getstream.chat.android.core.poc.library.socket
 
 import com.google.gson.JsonSyntaxException
 import io.getstream.chat.android.core.poc.library.Event
+import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import io.getstream.chat.android.core.poc.library.json.ChatGson
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -9,7 +11,10 @@ import okhttp3.WebSocketListener
 import java.util.*
 
 
-class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketListener() {
+class EchoWebSocketListener(
+    val service: StreamWebSocketService,
+    val jsonParser: JsonParser
+) : WebSocketListener() {
 
     private val NORMAL_CLOSURE_STATUS = 1000
 
@@ -34,7 +39,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         //Log.d(TAG, "WebSocket # " + wsId.toString() + " Response : " + text)
         if (service.shuttingDown) return
         val errorMessage = try {
-            ChatGson.instance.fromJson(text, WsErrorMessage::class.java)
+            jsonParser.fromJson(text, WsErrorMessage::class.java)
         } catch (ignored: JsonSyntaxException) {
             null
         }
@@ -54,7 +59,7 @@ class EchoWebSocketListener(val service: StreamWebSocketService) : WebSocketList
         }
         val event: Event
         try {
-            event = ChatGson.instance.fromJson(text, Event::class.java)
+            event = jsonParser.fromJson(text, Event::class.java)
             // set received at, prevents clock issues from breaking our ability to remove old typing indicators
             val now = Date()
             event.receivedAt = now

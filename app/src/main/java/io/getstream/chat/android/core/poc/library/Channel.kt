@@ -3,7 +3,6 @@ package io.getstream.chat.android.core.poc.library
 import androidx.room.Embedded
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.core.poc.library.api.ExtraDataConverter
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
 import io.getstream.chat.android.core.poc.library.utils.UndefinedDate
@@ -61,7 +60,6 @@ class Channel {
     @Embedded(prefix = "config_")
     val config: Config? = null
 
-    @TypeConverters(ExtraDataConverter::class)
     var extraData = mutableMapOf<String, Any>()
 
     val reactionTypes: Map<String, String>? = null

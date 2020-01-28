@@ -5,13 +5,13 @@ import com.google.gson.TypeAdapter
 import io.getstream.chat.android.core.poc.library.Device
 import io.getstream.chat.android.core.poc.library.Mute
 import io.getstream.chat.android.core.poc.library.User
-import io.getstream.chat.android.core.poc.library.json.ChatGson
 import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap
 
 
-class UserGsonAdapter : TypeAdapter<User>() {
+class UserGsonAdapter(val gson: Gson) : TypeAdapter<User>() {
+
     @Throws(IOException::class)
     override fun write(writer: com.google.gson.stream.JsonWriter, user: User) {
         val data: HashMap<String, Any> = HashMap()
@@ -21,16 +21,13 @@ class UserGsonAdapter : TypeAdapter<User>() {
         data["id"] = user.id
         data["name"] = user.name
         data["image"] = user.image
-        val adapter = ChatGson.instance.getAdapter(HashMap::class.java)
+        val adapter = gson.getAdapter(HashMap::class.java)
         adapter.write(writer, data)
     }
 
     override fun read(reader: com.google.gson.stream.JsonReader): User {
 
-        val gson = ChatGson.instance
-
         val adapter: TypeAdapter<*> = gson.getAdapter(HashMap::class.java)
-
 
         val value = adapter.read(reader) as HashMap<String, Any>
         val user = User("")

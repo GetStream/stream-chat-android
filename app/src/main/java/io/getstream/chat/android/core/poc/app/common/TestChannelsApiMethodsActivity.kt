@@ -151,7 +151,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, error + ": " + result.error().message, Toast.LENGTH_SHORT)
+                result.error().printStackTrace()
+                val message = result.error().message
+                Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT)
                     .show()
             }
         }
