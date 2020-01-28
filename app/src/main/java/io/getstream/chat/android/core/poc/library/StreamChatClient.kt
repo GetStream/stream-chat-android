@@ -6,10 +6,7 @@ import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
-import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
-import io.getstream.chat.android.core.poc.library.rest.ChannelResponse
-import io.getstream.chat.android.core.poc.library.rest.MuteUserResponse
-import io.getstream.chat.android.core.poc.library.rest.UpdateChannelRequest
+import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketConnectionImpl
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
@@ -265,12 +262,52 @@ class StreamChatClient(
         )
     }
 
-    fun muteUser(channelType: String, channelId: String, targetId: String): ChatCall<MuteUserResponse> {
+    fun muteUser(targetId: String): ChatCall<MuteUserResponse> {
         return api.muteUser(
             apiKey = apiKey,
             connectionId = api.connectionId,
             userId = api.userId,
             targetId = targetId
+        )
+    }
+
+    fun unMuteUser(targetId: String): ChatCall<MuteUserResponse> {
+        return api.unMuteUser(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            userId = api.userId,
+            targetId = targetId
+        )
+    }
+
+    fun flag(targetId: String): ChatCall<FlagResponse> {
+        return api.flag(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            userId = api.userId,
+            targetId = targetId
+        )
+    }
+
+    fun banUser(targetId: String, channelType: String? = null, channelId: String? = null, timeout: Int? = null, reason: String? = null): ChatCall<CompletableResponse> {
+        return api.banUser(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            targetId = targetId,
+            timeout = timeout,
+            channelId = channelId,
+            channelType = channelType,
+            reason = reason
+        )
+    }
+
+    fun unBanUser(targetId: String, channelType: String, channelId: String): ChatCall<CompletableResponse> {
+        return api.unBanUser(
+            apiKey = apiKey,
+            connectionId = api.connectionId,
+            targetId = targetId,
+            channelType = channelType,
+            channelId = channelId
         )
     }
 

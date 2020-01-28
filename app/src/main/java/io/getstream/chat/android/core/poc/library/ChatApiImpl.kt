@@ -251,4 +251,87 @@ class ChatApiImpl(
         )
     }
 
+    fun unMuteUser(
+        apiKey: String,
+        connectionId: String,
+        userId: String,
+        targetId: String
+    ): ChatCall<MuteUserResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_id"] = targetId
+        body["user_id"] = userId
+
+        return callMapper.map(
+            retrofitApi.unMuteUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
+            )
+        )
+    }
+
+    fun flag(
+        apiKey: String,
+        connectionId: String,
+        userId: String,
+        targetId: String
+    ): ChatCall<FlagResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_user_id"] = targetId
+
+        return callMapper.map(
+            retrofitApi.flag(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
+            )
+        )
+    }
+
+    fun banUser(
+        apiKey: String,
+        connectionId: String,
+        targetId: String,
+        timeout: Int?,
+        reason: String?,
+        channelType: String?,
+        channelId: String?
+    ): ChatCall<CompletableResponse> {
+
+        return callMapper.map(
+            retrofitApi.banUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                body = BanUserRequest(
+                    targetUserId = targetId,
+                    timeout = timeout,
+                    reason = reason,
+                    channelType = channelType,
+                    channelId = channelId
+                )
+            )
+        )
+    }
+
+    fun unBanUser(
+        apiKey: String,
+        connectionId: String,
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): ChatCall<CompletableResponse> {
+
+        return callMapper.map(
+            retrofitApi.unBanUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                targetUserId = targetId,
+                channelId = channelId,
+                channelType = channelType
+            )
+        )
+    }
+
 }

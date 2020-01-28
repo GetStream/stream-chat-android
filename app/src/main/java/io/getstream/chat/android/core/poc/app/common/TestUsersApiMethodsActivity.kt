@@ -56,6 +56,18 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         testUserApiMuteUserBtn?.setOnClickListener {
             muteUser()
         }
+        testUserApiUnMuteUserBtn?.setOnClickListener {
+            unMuteUser()
+        }
+        testUserApiFlagUserBtn?.setOnClickListener {
+            flag()
+        }
+        testUserApiBanUserBtn?.setOnClickListener {
+            banUser()
+        }
+        testUserApiUnBanUserBtn?.setOnClickListener {
+            unBanUser()
+        }
     }
 
     private fun setGuestUser() {
@@ -116,11 +128,46 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun muteUser() {
         client.muteUser(
-            channelId = channelId,
-            channelType = channelType,
             targetId = "bender"
         ).enqueue { result ->
-            echoResult(result, "Member removed successful")
+            echoResult(result, "Member muted successful")
+        }
+    }
+
+    private fun unMuteUser() {
+        client.unMuteUser(
+            targetId = "bender"
+        ).enqueue { result ->
+            echoResult(result, "Member unmuted successful")
+        }
+    }
+
+    private fun flag() {
+        client.flag(
+            targetId = "bender"
+        ).enqueue { result ->
+            echoResult(result, "Flag successful")
+        }
+    }
+
+    private fun banUser() {
+        client.banUser(
+            targetId = "bender",
+            channelType = channelType,
+            channelId = channelId,
+            timeout = 10
+        ).enqueue { result ->
+            echoResult(result, "User baned successful")
+        }
+    }
+
+    private fun unBanUser() {
+        client.unBanUser(
+            targetId = "bender",
+            channelType = channelType,
+            channelId = channelId
+        ).enqueue { result ->
+            echoResult(result, "User unbaned successful")
         }
     }
 
