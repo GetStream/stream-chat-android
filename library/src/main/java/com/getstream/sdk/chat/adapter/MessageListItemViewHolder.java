@@ -52,44 +52,44 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     final String TAG = MessageListItemViewHolder.class.getSimpleName();
     @DimenRes
     int avatarWidth;
-    private TextView tv_text;
-    private RecyclerView rv_reaction;
-    private AvatarGroupView<MessageListViewStyle> avatar;
-    private ImageView iv_tail;
-    private Space space_reaction_tail, space_header, space_same_user, space_reaction, space_attachment;
-    private TextView tv_username, tv_messagedate;
+    protected TextView tv_text;
+    protected RecyclerView rv_reaction;
+    protected AvatarGroupView<MessageListViewStyle> avatar;
+    protected ImageView iv_tail;
+    protected Space space_reaction_tail, space_header, space_same_user, space_reaction, space_attachment;
+    protected TextView tv_username, tv_messagedate;
     // Delivered Indicator
-    private ReadStateView<MessageListViewStyle> read_state;
-    private ProgressBar pb_deliver;
-    private ImageView iv_deliver;
-    private AttachmentListView attachmentview;
+    protected ReadStateView<MessageListViewStyle> read_state;
+    protected ProgressBar pb_deliver;
+    protected ImageView iv_deliver;
+    protected AttachmentListView attachmentview;
     // Replay
-    private ImageView iv_reply;
-    private TextView tv_reply;
+    protected ImageView iv_reply;
+    protected TextView tv_reply;
 
-    private RecyclerView.LayoutManager mLayoutManager;
+    protected RecyclerView.LayoutManager mLayoutManager;
 
-    private ChannelState channelState;
-    private MessageListViewStyle style;
-    private MessageListView.BubbleHelper bubbleHelper;
-    private MessageViewHolderFactory viewHolderFactory;
-    private int position;
-    private Context context;
-    private Message message;
-    private MessageListItem messageListItem;
+    protected ChannelState channelState;
+    protected MessageListViewStyle style;
+    protected MessageListView.BubbleHelper bubbleHelper;
+    protected MessageViewHolderFactory viewHolderFactory;
+    protected int position;
+    protected Context context;
+    protected Message message;
+    protected MessageListItem messageListItem;
 
-    private MessageListView.MessageClickListener messageClickListener;
-    private MessageListView.MessageLongClickListener messageLongClickListener;
-    private MessageListView.AttachmentClickListener attachmentClickListener;
-    private MessageListView.ReactionViewClickListener reactionViewClickListener;
-    private MessageListView.UserClickListener userClickListener;
-    private MessageListView.ReadStateClickListener readStateClickListener;
-    private MarkdownImpl.MarkdownListener markdownListener;
-    private MessageListView.GiphySendListener giphySendListener;
+    protected MessageListView.MessageClickListener messageClickListener;
+    protected MessageListView.MessageLongClickListener messageLongClickListener;
+    protected MessageListView.AttachmentClickListener attachmentClickListener;
+    protected MessageListView.ReactionViewClickListener reactionViewClickListener;
+    protected MessageListView.UserClickListener userClickListener;
+    protected MessageListView.ReadStateClickListener readStateClickListener;
+    protected MarkdownImpl.MarkdownListener markdownListener;
+    protected MessageListView.GiphySendListener giphySendListener;
 
-    private List<MessageViewHolderFactory.Position> positions;
+    protected List<MessageViewHolderFactory.Position> positions;
 
-    private ConstraintSet set;
+    protected ConstraintSet set;
 
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
@@ -150,7 +150,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     // region Init
-    private void init() {
+    protected void init() {
         // Configure UIs
         configMessageText();
         configAttachmentView();
@@ -211,7 +211,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     // region Config
     // extra spacing
-    private void configSpaces() {
+    protected void configSpaces() {
         if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
             // TOP
             space_header.setVisibility(View.VISIBLE);
@@ -237,7 +237,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void configUserAvatar() {
+    protected void configUserAvatar() {
         avatar.setVisibility(isBottomPosition() ? View.VISIBLE : View.GONE);
         avatar.setUser(message.getUser(), style);
         avatar.setOnClickListener(view -> {
@@ -246,7 +246,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configUserNameAndMessageDateStyle() {
+    protected void configUserNameAndMessageDateStyle() {
         if (!isBottomPosition()
                 || (!style.isUserNameShow() && !style.isMessageDateShow())) {
             tv_username.setVisibility(View.GONE);
@@ -280,11 +280,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private boolean isBottomPosition() {
+    protected boolean isBottomPosition() {
         return positions.contains(MessageViewHolderFactory.Position.BOTTOM);
     }
 
-    private void configDeliveredIndicator() {
+    protected void configDeliveredIndicator() {
         iv_deliver.setVisibility(View.GONE);
         pb_deliver.setVisibility(View.GONE);
 
@@ -319,7 +319,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         }
     }
 
-    private void configReadIndicator() {
+    protected void configReadIndicator() {
         List<ChannelUserRead> readBy = messageListItem.getMessageReadBy();
         if (isDeletedMessage()
                 || isFailedMessage()
@@ -337,7 +337,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configMessageText() {
+    protected void configMessageText() {
         if ((TextUtils.isEmpty(message.getText())
                 && !isDeletedMessage())) {
             tv_text.setVisibility(View.GONE);
@@ -354,7 +354,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configMessageTextClickListener();
     }
 
-    private void configMessageTextViewText() {
+    protected void configMessageTextViewText() {
         if (isFailedMessage()) {
             // Set Failed Message Title Text
             SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -377,7 +377,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
     }
 
-    private void configMessageTextStyle() {
+    protected void configMessageTextStyle() {
         if (isDeletedMessage()) {
             tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size));
             tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
@@ -394,7 +394,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setLinkTextColor(style.getMessageLinkTextColor(messageListItem.isMine()));
     }
 
-    private void configMessageTextBackground() {
+    protected void configMessageTextBackground() {
         Drawable background;
         if (isFailedMessage()) {
             background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
@@ -412,9 +412,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             tv_text.setBackgroundResource(0);
     }
 
-    private boolean isLongClick = false;
+    protected boolean isLongClick = false;
 
-    private void configMessageTextClickListener() {
+    protected void configMessageTextClickListener() {
         tv_text.setOnClickListener(view -> {
             StreamChat.getLogger().logI(this, "onMessageClick: " + position);
 
@@ -444,7 +444,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configAttachmentView() {
+    protected void configAttachmentView() {
         if (isDeletedMessage()
                 || isFailedMessage()
                 || this.message.getAttachments() == null
@@ -464,7 +464,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void configReactionView() {
+    protected void configReactionView() {
         if (isDeletedMessage()
                 || isFailedMessage()
                 || !style.isReactionEnabled()
@@ -491,7 +491,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configReplyView() {
+    protected void configReplyView() {
         int replyCount = message.getReplyCount();
         if (!style.isThreadEnabled()
                 || !channelState.getChannel().getConfig().isRepliesEnabled()
@@ -522,7 +522,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     // endregion
 
     // region Layout Params
-    private void configMarginStartEnd() {
+    protected void configMarginStartEnd() {
         configMarginStartEnd_(tv_text);
         configMarginStartEnd_(attachmentview);
         configMarginStartEnd_(iv_reply);
@@ -530,7 +530,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configMarginStartEnd_(tv_messagedate);
     }
 
-    private void configMarginStartEnd_(View view) {
+    protected void configMarginStartEnd_(View view) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
         if (view.equals(tv_username)) {
             params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
@@ -547,7 +547,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         view.setLayoutParams(params);
     }
 
-    private void configParamsMessageText() {
+    protected void configParamsMessageText() {
         if (tv_text.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_text.getLayoutParams();
         if (messageListItem.isTheirs()) {
@@ -558,7 +558,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_text.setLayoutParams(params);
     }
 
-    private void configParamsMessageDate() {
+    protected void configParamsMessageDate() {
         if (tv_messagedate.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) tv_messagedate.getLayoutParams();
         if (!style.isUserNameShow() && style.isMessageDateShow()) {
@@ -575,7 +575,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         tv_messagedate.setLayoutParams(params);
     }
 
-    private void configParamsReactionSpace() {
+    protected void configParamsReactionSpace() {
         if (iv_tail.getVisibility() != View.VISIBLE) return;
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.space_reaction_tail, ConstraintSet.START);
@@ -595,7 +595,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configParamsReactionTail() {
+    protected void configParamsReactionTail() {
         if (iv_tail.getVisibility() != View.VISIBLE) return;
         set.clone((ConstraintLayout) itemView);
         set.clear(R.id.iv_tail, ConstraintSet.START);
@@ -615,7 +615,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configParamsReactionRecycleView() {
+    protected void configParamsReactionRecycleView() {
         if (rv_reaction.getVisibility() != View.VISIBLE) return;
         rv_reaction.setVisibility(View.INVISIBLE);
         iv_tail.setVisibility(View.INVISIBLE);
@@ -654,7 +654,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         });
     }
 
-    private void configParamsUserAvatar() {
+    protected void configParamsUserAvatar() {
         if (avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
         int marginStart = (int) context.getResources().getDimension(R.dimen.stream_message_avatar_margin);
@@ -672,7 +672,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         avatar.setLayoutParams(params);
     }
 
-    private void configParamsReply() {
+    protected void configParamsReply() {
         if (iv_reply.getVisibility() != View.VISIBLE) return;
         // Clear Constraint
         set.clone((ConstraintLayout) itemView);
@@ -724,7 +724,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     @IdRes
-    private int getActiveContentViewResId() {
+    protected int getActiveContentViewResId() {
         if (message.hasAttachments())
             return attachmentview.getId();
         else
@@ -732,7 +732,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-    private void configStyleReactionView() {
+    protected void configStyleReactionView() {
         if (style.getReactionViewBgDrawable() == -1) {
             rv_reaction.setBackground(new DrawableBuilder()
                     .rectangle()
@@ -755,20 +755,20 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
 
-    private boolean isDeletedMessage() {
+    protected boolean isDeletedMessage() {
         return message.getDeletedAt() != null;
     }
 
-    private boolean isFailedMessage() {
+    protected boolean isFailedMessage() {
         return message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error);
     }
 
-    private boolean isThread() {
+    protected boolean isThread() {
         return !(message == null || TextUtils.isEmpty(message.getParentId()));
     }
 
-    private boolean isEphemeral() {
+    protected boolean isEphemeral() {
         return (message != null
                 && message.getType().equals(ModelType.message_ephemeral));
     }
