@@ -11,7 +11,6 @@ class ChatClientBuilder(
 ) {
 
     private var isAnonymous = false
-
     private var tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
     private val socket: ChatSocket = ChatSocketImpl(apiKey, apiOptions.wssURL, tokenProvider)
 
@@ -19,8 +18,19 @@ class ChatClientBuilder(
         apiKey,
         RetrofitClient.getClient(
             apiOptions,
-            tokenProvider,
-            isAnonymous
+            { tokenProvider },
+            { isAnonymous }
+        ).create(
+            RetrofitApi::class.java
+        )
+    )
+
+    private val anonymousApi: ChatApi = ChatApiImpl(
+        apiKey,
+        RetrofitClient.getClient(
+            apiOptions,
+            { null },
+            { true }
         ).create(
             RetrofitApi::class.java
         )
@@ -28,6 +38,6 @@ class ChatClientBuilder(
 
 
     fun build(): ChatClient {
-        return ChatClientImpl(api, socket)
+        return ChatClientImpl(api, anonymousApi, socket)
     }
 }

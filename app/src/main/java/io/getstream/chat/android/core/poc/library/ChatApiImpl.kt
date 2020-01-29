@@ -5,8 +5,11 @@ import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
-import java.util.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.*
 
 class ChatApiImpl(
     private val apiKey: String,
@@ -346,15 +349,15 @@ class ChatApiImpl(
         )
     }
 
-    override fun setGuestUser( userId: String, userName: String?) = callMapper.map(
-        retrofitApi.setGuestUser(
+    override fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse> {
+        return callMapper.map(retrofitApi.setGuestUser(
             apiKey = apiKey,
             body = GuestUserRequest(
                 id = userId,
                 name = userName
             )
-        )
-    )
+        ))
+    }
 
     override fun getUsers(
         queryUser: QueryUsers

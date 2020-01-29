@@ -72,6 +72,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun setGuestUser() {
         testUserApiLoadingShapeContainer.makeVisible()
+
         client.setGuestUser(User("guest_user")) { result ->
             echoResult(result, "Guest user set up successful")
 
@@ -90,9 +91,10 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun setRegularUser() {
         testUserApiLoadingShapeContainer.makeVisible()
+
         client.setUser(User("bender"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
         }) {
             echoResult(it, "Connected", "Socket connection error")

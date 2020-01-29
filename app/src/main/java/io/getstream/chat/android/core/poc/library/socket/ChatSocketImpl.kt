@@ -4,6 +4,7 @@ import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import java.util.*
 
 class ChatSocketImpl(
     val apiKey: String,

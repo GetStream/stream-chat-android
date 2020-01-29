@@ -22,15 +22,17 @@ class MessagesApiCallsTests {
     lateinit var client: ChatClient
 
     lateinit var api: ChatApi
+    lateinit var anonymousApi: ChatApi
     lateinit var socket: ChatSocket
     lateinit var retrofitApi: RetrofitApi
 
     @Before
     fun before() {
         api = Mockito.mock(ChatApi::class.java)
+        anonymousApi = Mockito.mock(ChatApi::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi), socket)
+        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi), anonymousApi, socket)
 
         Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(
             SuccessCall(

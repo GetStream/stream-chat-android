@@ -149,6 +149,8 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
      */
     var consecutiveFailures = 0
 
+    var anonymousAuth = false
+
     var shuttingDown = false
     var wsId = 0
 
@@ -164,14 +166,20 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
             return
         }
 
+        if (user == null) {
+            anonymousAuth = true
+            this.user = User(id = UUID.randomUUID().toString())
+        } else {
+            this.user = user
+        }
         this.wsEndpoint = wsEndpoint
         this.apiKey = apiKey
-        this.user = user
         this.userToken = userToken
         this.connectionCallback = listener
 
         wsId = 0
         isConnecting = true
+
         resetConsecutiveFailures()
 
         setupWS()
@@ -249,7 +257,8 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
 
     private fun setupWS() {
         wsId++
-        val request: Request = Request.Builder().url(getWsUrl()).build()
+        val wsUrl = getWsUrl()
+        val request: Request = Request.Builder().url(wsUrl).build()
         httpClient = OkHttpClient()
         webSocket = httpClient.newWebSocket(request, listener)
         httpClient.dispatcher.executorService.shutdown()
@@ -269,9 +278,9 @@ class StreamWebSocketService : WebSocketListener(), WebSocketService {
         var json = buildUserDetailJson(user)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val baseWsUrl: String =
-                wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
-            if (user == null) {
+            val baseWsUrl: String = wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
+
+            if (anonymousAuth) {
                 "$baseWsUrl&stream-auth-type=anonymous"
             } else {
                 "$baseWsUrl&authorization=$userToken&stream-auth-type=jwt"

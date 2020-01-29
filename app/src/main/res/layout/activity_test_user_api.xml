@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="16dp"
     android:orientation="vertical">
 
@@ -31,14 +32,14 @@
         android:id="@+id/testUserApiLoginGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="testUserApiAnonymousBtn,testUserApiGuestBtn" />
+        app:constraint_referenced_ids="testUserApiAnonymousBtn,testUserApiGuestBtn,testUserApiGuestBtn,testUserApiLoadingShapeContainer" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/testUserApiFunctionalityGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="testUserApiQueryUsersBtn,testUserApiAddMembersBtn,testUserApiAddMembersBtn,testUserApiMuteUserBtn,testUserApiUnMuteUserBtn,testUserApiFlagUserBtn,testUserApiBanUserBtn,testUserApiUnBanUserBtn" />
+        app:constraint_referenced_ids="testUserApiQueryUsersBtn,testUserApiQueryUsersBtn,testUserApiAddMembersBtn,testUserApiRemoveMembersBtn,testUserApiMuteUserBtn,testUserApiUnMuteUserBtn,testUserApiFlagUserBtn,testUserApiBanUserBtn,testUserApiUnBanUserBtn" />
 
     <Button
         android:id="@+id/testUserApiQueryUsersBtn"
@@ -98,15 +99,16 @@
 
     <RelativeLayout
         android:id="@+id/testUserApiLoadingShapeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/transparentWhite"
         android:clickable="true"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
 
         <ProgressBar
             android:layout_width="48dp"

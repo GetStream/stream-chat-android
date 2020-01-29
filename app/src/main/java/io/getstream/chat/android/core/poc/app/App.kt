@@ -12,21 +12,23 @@ import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 
 class App : Application() {
 
+    private val apiKey = "d2q3juekvgsf"
+    private val apiOptions = ApiClientOptions.Builder()
+        .baseURL("chat-us-east-staging.stream-io-api.com")
+        .cdnUrl("chat-us-east-staging.stream-io-api.com")
+        .timeout(10000)
+        .cdnTimeout(10000)
+        .build()
 
     override fun onCreate() {
         super.onCreate()
+
         db = AppDatabase.getInstance(this)
-        val apiKey = "d2q3juekvgsf"
-        val apiOptions = ApiClientOptions.Builder()
-            .baseURL("chat-us-east-staging.stream-io-api.com")
-            .cdnUrl("chat-us-east-staging.stream-io-api.com")
-            .timeout(10000)
-            .cdnTimeout(10000)
-            .build()
 
         client = ChatClientBuilder(apiKey, apiOptions).build()
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
+
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)

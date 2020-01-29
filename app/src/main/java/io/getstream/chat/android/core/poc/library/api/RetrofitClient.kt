@@ -1,12 +1,17 @@
 package io.getstream.chat.android.core.poc.library.api
 
+import com.google.gson.GsonBuilder
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.json.ChatGson
 import io.getstream.chat.android.core.poc.library.json.ConverterFactory
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 
@@ -16,7 +21,7 @@ object RetrofitClient {
 
     fun getClient(
         options: ApiClientOptions,
-        tokenProvider: () -> CachedTokenProvider,
+        tokenProvider: () -> CachedTokenProvider?,
         anonymousAuth: () -> Boolean
     ): Retrofit {
         return getClient(
@@ -48,7 +53,7 @@ object RetrofitClient {
         connectTimeout: Long,
         writeTimeout: Long,
         readTimeout: Long,
-        tokenProvider: () -> CachedTokenProvider,
+        tokenProvider: () -> CachedTokenProvider?,
         anonymousAuth: () -> Boolean
     ): Retrofit {
 
