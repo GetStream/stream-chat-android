@@ -53,14 +53,13 @@ object RetrofitClient {
         )
     }
 
-
     private fun buildClient(
         endpoint: String,
         connectTimeout: Long,
         writeTimeout: Long,
         readTimeout: Long,
         tokenProvider: () -> CachedTokenProvider?,
-        anonymousAuth: () -> Boolean
+        anonymousAuth: () -> Boolean,
         jsonParser: JsonParserImpl
     ): Retrofit {
 

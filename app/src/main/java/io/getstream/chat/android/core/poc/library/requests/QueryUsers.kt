@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.FilterObject
 
 data class QueryUsers(
-    @SerializedName("filter_conditions") @Expose
+
+    @SerializedName("filter_conditions")
+    @Expose
     private var filter: FilterObject? = null,
 
     @SerializedName("sort")

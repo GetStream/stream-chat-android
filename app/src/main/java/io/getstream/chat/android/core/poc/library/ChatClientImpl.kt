@@ -1,8 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
 import android.text.TextUtils
-import io.getstream.chat.android.core.poc.app.App
-import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
@@ -53,8 +51,6 @@ internal class ChatClientImpl constructor(
         user: User,
         callback: (Result<ConnectionData>) -> Unit
     ) {
-        //App.client = ChatClientBuilder(App.apiKey, App.apiOptions, true).build()
-
         anonymousApi.setGuestUser(
             userId = user.id,
             userName = user.name
@@ -79,34 +75,6 @@ internal class ChatClientImpl constructor(
         }
 
     }
-
-    /*override fun setGuestUser(
-        user: User,
-        callback: (Result<ConnectionData>) -> Unit
-    ) {
-        api.setGuestUser(
-            userId = user.id,
-            userName = user.name
-        ).enqueue { result ->
-            if (result.isSuccess) {
-                state.user = user
-                val provider = object : TokenProvider {
-                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                        listener.onSuccess(result.data().access_token)
-                    }
-                }
-
-                socket.connect(user, provider).enqueue { connectionResult ->
-
-                    if (connectionResult.isSuccess) {
-                        api.setConnection(connectionResult.data())
-                    }
-
-                    callback(connectionResult)
-                }
-            }
-        }
-    }*/
 
     override fun events(): ChatObservable {
         return socket.events()
@@ -280,9 +248,11 @@ internal class ChatClientImpl constructor(
         }
     }
 
-    override fun getUsers(query: QueryUsers) = api.getUsers(
-        queryUser = query
-    ).map { it.users }
+    override fun getUsers(query: QueryUsers) : ChatCall<List<User>> {
+        return api.getUsers(
+            queryUser = query
+        ).map { it.users }
+    }
 
     override fun addMembers(
         channelType: String,

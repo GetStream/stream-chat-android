@@ -23,8 +23,8 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private val client = App.client
-    private val channelId = "general"
-    private val channelType = "team"
+    private val channelId = "new-ch"
+    private val channelType = "messaging"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +92,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setRegularUser() {
         testUserApiLoadingShapeContainer.makeVisible()
 
-        client.setUser(User("bender"), object : TokenProvider {
+        client.setUser(User("stream-eugene"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
@@ -112,7 +112,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         client.addMembers(
             channelId = channelId,
             channelType = channelType,
-            members = listOf("bender")
+            members = listOf("stream-eugene")
         ).enqueue { result ->
             echoResult(result, "Member added successful")
         }
@@ -122,7 +122,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         client.removeMembers(
             channelId = channelId,
             channelType = channelType,
-            members = listOf("bender")
+            members = listOf("stream-eugene")
         ).enqueue { result ->
             echoResult(result, "Member removed successful")
         }
@@ -130,7 +130,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun muteUser() {
         client.muteUser(
-            targetId = "bender"
+            targetId = "stream-eugene"
         ).enqueue { result ->
             echoResult(result, "Member muted successful")
         }
@@ -138,7 +138,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun unMuteUser() {
         client.unMuteUser(
-            targetId = "bender"
+            targetId = "stream-eugene"
         ).enqueue { result ->
             echoResult(result, "Member unmuted successful")
         }
@@ -146,7 +146,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun flag() {
         client.flag(
-            targetId = "bender"
+            targetId = "stream-eugene"
         ).enqueue { result ->
             echoResult(result, "Flag successful")
         }
@@ -154,7 +154,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun banUser() {
         client.banUser(
-            targetId = "bender",
+            targetId = "stream-eugene",
             channelType = channelType,
             channelId = channelId,
             timeout = 10
@@ -165,7 +165,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun unBanUser() {
         client.unBanUser(
-            targetId = "bender",
+            targetId = "stream-eugene",
             channelType = channelType,
             channelId = channelId
         ).enqueue { result ->
@@ -176,7 +176,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun getQueryUserRequest(): QueryUsers {
         val filter = FilterObject()
         val sort: QuerySort = QuerySort().asc("last_active")
-        return QueryUsers(filter, sort).withLimit(10)
+        return QueryUsers(filter, sort).withLimit(10).withOffset(0)
     }
 
     private fun initButtons(result: Result<*>) {

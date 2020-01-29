@@ -40,7 +40,8 @@ class ChatClientBuilder(
             jsonParser
         ).create(
             RetrofitApi::class.java
-        )
+        ),
+        jsonParser
     )
 
 

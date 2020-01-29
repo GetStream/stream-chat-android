@@ -34,7 +34,7 @@ class ChannelsApiCallsTests {
         anonymousApi = Mockito.mock(ChatApi::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl()),anonymousApi, socket)
+        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl()), anonymousApi, socket)
 
         Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
 

@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch
 
 class TokenAuthInterceptor internal constructor(
     private val tokenProvider: () -> CachedTokenProvider?,
-    private val anonymousAuth: () -> Boolean
+    private val anonymousAuth: () -> Boolean,
     private val jsonParser: JsonParserImpl
 ) : Interceptor {
 

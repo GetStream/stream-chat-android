@@ -32,7 +32,7 @@
         android:id="@+id/testUserApiLoginGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="testUserApiAnonymousBtn,testUserApiGuestBtn,testUserApiGuestBtn,testUserApiLoadingShapeContainer" />
+        app:constraint_referenced_ids="testUserApiAnonymousBtn,testUserApiGuestBtn,testUserApiGuestBtn" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/testUserApiFunctionalityGroup"
