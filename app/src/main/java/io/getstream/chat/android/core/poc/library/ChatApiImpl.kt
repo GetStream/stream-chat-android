@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
+import io.getstream.chat.android.core.poc.library.gson.JsonParser
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import retrofit2.Call
@@ -13,12 +14,13 @@ import java.util.*
 
 class ChatApiImpl(
     private val apiKey: String,
-    private val retrofitApi: RetrofitApi
+    private val retrofitApi: RetrofitApi,
+    private val jsonParser: JsonParser
 ) : ChatApi {
 
     private var userId: String = ""
     private var connectionId: String = ""
-    private val callMapper = RetrofitCallMapper()
+    private val callMapper = RetrofitCallMapper(jsonParser)
 
     override fun setConnection(connection: ConnectionData) {
         userId = connection.user.id

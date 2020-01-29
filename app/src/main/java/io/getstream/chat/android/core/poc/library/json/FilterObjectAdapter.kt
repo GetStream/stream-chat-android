@@ -6,16 +6,15 @@ import com.google.gson.stream.JsonWriter
 import io.getstream.chat.android.core.poc.library.FilterObject
 
 
-class FilterObjectAdapter : TypeAdapter<FilterObject>() {
+class FilterObjectAdapter(val gson: Gson) : TypeAdapter<FilterObject>() {
 
     override fun write(out: JsonWriter, value: FilterObject) {
-        val adapter = ChatGson.instance.getAdapter(HashMap::class.java)
+        val adapter = gson.getAdapter(HashMap::class.java)
         adapter.write(out, value.getData())
     }
 
-
     override fun read(reader: JsonReader): FilterObject {
-        val adapter = ChatGson.instance.getAdapter(HashMap::class.java)
+        val adapter = gson.getAdapter(HashMap::class.java)
         val data = adapter.read(reader) as HashMap<String, Any>
         return FilterObject(data)
     }

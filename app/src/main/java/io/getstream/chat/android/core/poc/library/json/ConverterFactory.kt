@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 
 class ConverterFactory(val gson: Gson) : Converter.Factory() {
+
     override fun stringConverter(
         type: Type,
         annotations: Array<Annotation?>,
@@ -14,7 +15,7 @@ class ConverterFactory(val gson: Gson) : Converter.Factory() {
     ): Converter<*, String>? {
         return if (type === QueryChannelsRequest::class.java) {
             QueryChannelsRequestConverter(gson)
-        } else null
+        } else super.stringConverter(type, annotations, retrofit)
     }
 }
 

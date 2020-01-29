@@ -4,15 +4,18 @@ import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import java.util.*
 
 class ChatSocketImpl(
     val apiKey: String,
-    private val wssUrl: String,
-    private val cachedTokenProvider: CachedTokenProvider
+    val wssUrl: String,
+    val cachedTokenProvider: CachedTokenProvider,
+    val jsonParser: JsonParser
 ) : ChatSocket {
 
-    private val service = StreamWebSocketService()
+    private val service = StreamWebSocketService(jsonParser)
 
     override fun connect(): ChatCall<ConnectionData> {
         val result = ConnectionCall()

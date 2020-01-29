@@ -3,16 +3,18 @@ package io.getstream.chat.android.core.poc.library.api
 import android.util.Log
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider.TokenProviderListener
-import io.getstream.chat.android.core.poc.library.socket.ErrorResponse
+import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import java.io.IOException
 import java.util.concurrent.CountDownLatch
 
 
 class TokenAuthInterceptor internal constructor(
     private val tokenProvider: () -> CachedTokenProvider?,
     private val anonymousAuth: () -> Boolean
+    private val jsonParser: JsonParserImpl
 ) : Interceptor {
 
     private val TOKEN_EXPIRED_CODE = 40
@@ -44,13 +46,15 @@ class TokenAuthInterceptor internal constructor(
 
             if (!response.isSuccessful) {
 
-                val err = ErrorResponse.parseError(response)
+                val err = jsonParser.toError(response)
                 if (err.streamCode == TOKEN_EXPIRED_CODE) {
                     Log.d(TAG, "Retrying new request")
                     token = null // invalidate local cache
                     tokenProvider()?.tokenExpired()
                     response.close()
                     response = chain.proceed(request)
+                } else {
+                    throw IOException(err.message, err.cause)
                 }
             }
             return response

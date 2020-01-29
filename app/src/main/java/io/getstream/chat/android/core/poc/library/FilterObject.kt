@@ -1,10 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
-import com.google.gson.annotations.JsonAdapter
-import io.getstream.chat.android.core.poc.library.json.FilterObjectAdapter
 
-
-@JsonAdapter(FilterObjectAdapter::class)
 class FilterObject {
     private var data: HashMap<String, Any>
 

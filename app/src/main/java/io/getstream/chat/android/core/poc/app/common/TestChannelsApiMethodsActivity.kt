@@ -141,4 +141,21 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             echoResult(it)
         }
     }
+
+    private fun echoResult(
+        result: Result<*>,
+        success: String = "Success",
+        error: String = "Error"
+    ) {
+        runOnUiThread {
+            if (result.isSuccess) {
+                Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
+            } else {
+                result.error().printStackTrace()
+                val message = result.error().message
+                Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
 }
