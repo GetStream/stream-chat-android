@@ -23,7 +23,6 @@ import kotlin.math.min
 
 class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
 
-    private val NORMAL_CLOSURE_STATUS = 1000
     private val TAG = StreamWebSocketService::class.java.simpleName
 
     private var wsEndpoint: String = ""
@@ -67,6 +66,8 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
      * consecutive failures influence the duration of the timeout
      */
     var consecutiveFailures = 0
+
+    var anonymousAuth = false
 
     var shuttingDown = false
     var wsId = 0
@@ -177,43 +178,6 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         }
 
     }
-
-    /**
-     * The connection is considered resolved after the WS connection returned a good message
-     */
-    var connectionResolved = false
-
-    /**
-     * We only make 1 attempt to reconnectWebSocket at the same time..
-     */
-    var isConnecting = false
-
-    var connected = false
-
-    /**
-     * Boolean that indicates if we have a working connection to the server
-     */
-    var isHealthy = false
-
-    /**
-     * Store the last event time for health checks
-     */
-    var lastEvent: Date? = null
-
-    /**
-     * Send a health check message every 30 seconds
-     */
-    val healthCheckInterval = 30 * 1000L
-
-    /**
-     * consecutive failures influence the duration of the timeout
-     */
-    var consecutiveFailures = 0
-
-    var anonymousAuth = false
-
-    var shuttingDown = false
-    var wsId = 0
 
     override fun connect(
         wsEndpoint: String,

@@ -2,12 +2,13 @@ package io.getstream.chat.android.core.poc.app.common
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
-import io.getstream.chat.android.core.poc.extensions.*
-import io.getstream.chat.android.core.poc.library.Result
+import io.getstream.chat.android.core.poc.extensions.echoResult
+import io.getstream.chat.android.core.poc.extensions.makeGone
+import io.getstream.chat.android.core.poc.extensions.makeVisible
+import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.FilterObject
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
@@ -73,19 +74,19 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setGuestUser() {
         testUserApiLoadingShapeContainer.makeVisible()
 
-        client.setGuestUser(User("guest_user")) { result ->
-            echoResult(result, "Guest user set up successful")
-
-            testUserApiFunctionalityGroup?.makeVisibleIf(result.isSuccess, View.GONE)
-            testUserApiLoginGroup?.makeGoneIf(result.isSuccess)
+        client.setGuestUser(User("guest_user"))?.subscribe {
+            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
+                initButtons()
+            }
         }
     }
 
     private fun setAnonymousUser() {
         testUserApiLoadingShapeContainer.makeVisible()
-        client.setAnonymousUser { result ->
-            echoResult(result, "Guest user set up successful")
-            initButtons(result)
+        client.setAnonymousUser().subscribe {
+            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
+                initButtons()
+            }
         }
     }
 
@@ -96,9 +97,10 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
-        }) {
-            echoResult(it, "Connected", "Socket connection error")
-            initButtons(it)
+        }).subscribe {
+            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
+                initButtons()
+            }
         }
     }
 
@@ -179,9 +181,9 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         return QueryUsers(filter, sort).withLimit(10).withOffset(0)
     }
 
-    private fun initButtons(result: Result<*>) {
-        testUserApiFunctionalityGroup?.makeVisibleIf(result.isSuccess, View.GONE)
-        testUserApiLoginGroup?.makeGoneIf(result.isSuccess)
+    private fun initButtons() {
+        testUserApiFunctionalityGroup?.makeVisible()
+        testUserApiLoginGroup?.makeGone()
 
         testUserApiLoadingShapeContainer.makeGone()
     }

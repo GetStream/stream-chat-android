@@ -39,22 +39,30 @@ internal class ChatClientImpl constructor(
         return socket.connect(user, provider)
     }
 
-    override fun setAnonymousUser(callback: (Result<ConnectionData>) -> Unit) {
-        socket.connect().enqueue { result ->
-
-            if (result.isSuccess) {
-                api.setConnection(result.data())
+    override fun setAnonymousUser(): ChatObservable {
+        eventsSub = socket.events().subscribe {
+            if (it is ConnectionEvent) {
+                state.user = it.me
+                state.connectionId = it.connectionId
+                api.setConnection(it.me.id, it.connectionId)
             }
-
-            callback(result)
         }
+
+        return socket.connect()
     }
 
-    override fun setGuestUser(
-        user: User,
-        callback: (Result<ConnectionData>) -> Unit
-    ) {
+    override fun setGuestUser(user: User): ChatObservable? {
         api.anonymousAuth = true
+
+        eventsSub = socket.events().subscribe {
+            if (it is ConnectionEvent) {
+                state.user = it.me
+                state.connectionId = it.connectionId
+                api.setConnection(it.me.id, it.connectionId)
+            }
+        }
+
+        var chatObservable: ChatObservable? = null
 
         api.setGuestUser(
             userId = user.id,
@@ -68,17 +76,11 @@ internal class ChatClientImpl constructor(
                     }
                 }
 
-                socket.connect(user, provider).enqueue { connectionResult ->
-
-                    if (connectionResult.isSuccess) {
-                        api.setConnection(connectionResult.data())
-                    }
-
-                    callback(connectionResult)
-                }
+                chatObservable = socket.connect(user, provider)
             }
         }
 
+        return chatObservable
     }
 
     override fun events(): ChatObservable {
@@ -254,7 +256,7 @@ internal class ChatClientImpl constructor(
         }
     }
 
-    override fun getUsers(query: QueryUsers) : ChatCall<List<User>> {
+    override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
         return api.getUsers(
             queryUser = query
         ).map { it.users }

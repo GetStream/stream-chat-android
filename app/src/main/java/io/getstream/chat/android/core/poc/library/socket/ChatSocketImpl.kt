@@ -16,7 +16,7 @@ class ChatSocketImpl(
 
     private val service = StreamWebSocketService(jsonParser)
 
-    fun connect(): ChatObservable {
+    override fun connect(): ChatObservable {
         connect(null, null)
         return events()
     }

@@ -30,8 +30,9 @@ class ClientConnectionTests {
         api = mock(ChatApi::class.java)
         anonymousApi = mock(ChatApi::class.java)
         socket = mock(ChatSocket::class.java)
-        client = ChatClientImpl(api, anonymousApi, socket)
+        client = ChatClientImpl(api, socket)
 
+        api.anonymousAuth = false
         call = mock(Callback::class.java) as Callback<Result<ConnectionData>>
     }
 
@@ -41,7 +42,7 @@ class ClientConnectionTests {
         `when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
         val callback: (Result<ConnectionData>) -> Unit = { call.call(it) }
 
-        client.setUser(user, tokenProvider, callback)
+        client.setUser(user, tokenProvider)
 
         verify(call, times(1)).call(Result(connection, null))
     }
