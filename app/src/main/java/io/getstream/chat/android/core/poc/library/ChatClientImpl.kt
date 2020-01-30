@@ -11,7 +11,6 @@ import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 internal class ChatClientImpl constructor(
     private val api: ChatApi,
-    private val anonymousApi: ChatApi,
     private val socket: ChatSocket
 ) : ChatClient {
 
@@ -22,6 +21,7 @@ internal class ChatClientImpl constructor(
         provider: TokenProvider,
         callback: (Result<ConnectionData>) -> Unit
     ) {
+        api.anonymousAuth = false
 
         if (state.user != null) return
         else state.user = user
@@ -51,7 +51,9 @@ internal class ChatClientImpl constructor(
         user: User,
         callback: (Result<ConnectionData>) -> Unit
     ) {
-        anonymousApi.setGuestUser(
+        api.anonymousAuth = true
+
+        api.setGuestUser(
             userId = user.id,
             userName = user.name
         ).enqueue { result ->

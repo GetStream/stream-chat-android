@@ -1,10 +1,6 @@
 package io.getstream.chat.android.core.poc.library.requests
 
-import com.google.gson.annotations.JsonAdapter
-import io.getstream.chat.android.core.poc.library.json.adapters.QuerySortAdapter
 
-
-@JsonAdapter(QuerySortAdapter::class)
 class QuerySort {
     private var mSort = mutableListOf<Map<String, Any>>()
 

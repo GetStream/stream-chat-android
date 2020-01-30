@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.poc.library
 
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
@@ -7,11 +8,11 @@ import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketImpl
 
 class ChatClientBuilder(
+    application: App,
     apiKey: String,
-    apiOptions: ApiClientOptions
+    apiOptions: ApiClientOptions,
+    anonymousAuth: () -> Boolean
 ) {
-
-    private var isAnonymous = false
 
     private val jsonParser = JsonParserImpl()
     private val tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
@@ -23,29 +24,16 @@ class ChatClientBuilder(
         RetrofitClient.buildClient(
             apiOptions,
             { tokenProvider },
-            { isAnonymous },
+            anonymousAuth,
             jsonParser
         ).create(
             RetrofitApi::class.java
         ),
-        jsonParser
+        jsonParser,
+        application = application
     )
-
-    private val anonymousApi: ChatApi = ChatApiImpl(
-        apiKey,
-        RetrofitClient.buildClient(
-            apiOptions,
-            { null },
-            { true },
-            jsonParser
-        ).create(
-            RetrofitApi::class.java
-        ),
-        jsonParser
-    )
-
 
     fun build(): ChatClient {
-        return ChatClientImpl(api, anonymousApi, socket)
+        return ChatClientImpl(api, socket)
     }
 }

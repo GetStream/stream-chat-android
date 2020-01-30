@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
@@ -24,7 +25,7 @@ class SocketTestActivity : AppCompatActivity() {
             .build()
         val apiKey = "qk4nn7rpcn75"
 
-        val client = ChatClientBuilder(apiKey, apiOptions).build()
+        val client = ChatClientBuilder(application as App, apiKey, apiOptions, anonymousAuth = { false }).build()
 
         client.events().subscribe {
             textSocketEvent.text = it.getType().toString() + " at " + it.createdAt

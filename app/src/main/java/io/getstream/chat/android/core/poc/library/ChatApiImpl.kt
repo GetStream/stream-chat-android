@@ -1,26 +1,31 @@
 package io.getstream.chat.android.core.poc.library
 
 import com.google.gson.Gson
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
-import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
-    private val jsonParser: JsonParser
+    private val jsonParser: JsonParser,
+    private val application: App
 ) : ChatApi {
 
     private var userId: String = ""
     private var connectionId: String = ""
     private val callMapper = RetrofitCallMapper(jsonParser)
+
+    override var anonymousAuth: Boolean = false
+        set(value) {
+            field = value
+            application.isAnonymous = value
+        }
 
     override fun setConnection(connection: ConnectionData) {
         userId = connection.user.id
@@ -352,13 +357,15 @@ class ChatApiImpl(
     }
 
     override fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse> {
-        return callMapper.map(retrofitApi.setGuestUser(
-            apiKey = apiKey,
-            body = GuestUserRequest(
-                id = userId,
-                name = userName
+        return callMapper.map(
+            retrofitApi.setGuestUser(
+                apiKey = apiKey,
+                body = GuestUserRequest(
+                    id = userId,
+                    name = userName
+                )
             )
-        ))
+        )
     }
 
     override fun getUsers(

@@ -12,6 +12,7 @@ import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 
 class App : Application() {
 
+    var isAnonymous = false
     private val apiKey = "d2q3juekvgsf"
     private val apiOptions = ApiClientOptions.Builder()
         .baseURL("chat-us-east-staging.stream-io-api.com")
@@ -25,7 +26,7 @@ class App : Application() {
 
         db = AppDatabase.getInstance(this)
 
-        client = ChatClientBuilder(apiKey, apiOptions).build()
+        client = ChatClientBuilder(this, apiKey, apiOptions) { isAnonymous }.build()
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
 
