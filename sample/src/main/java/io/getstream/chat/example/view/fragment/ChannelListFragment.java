@@ -4,12 +4,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,6 +34,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import io.getstream.chat.example.ChannelActivity;
 import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
@@ -99,6 +100,9 @@ public class ChannelListFragment extends Fragment {
                 Log.e(TAG, String.format("Failed to establish websocket connection. Code %d message %s", errCode, errMsg));
             }
         });
+
+        // Set custom delay in 5 min
+        client.setWebSocketDisconnectDelay(1000 * 60 * 5);
     }
 
     @Override
@@ -108,8 +112,20 @@ public class ChannelListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
+        FilterObject filter = eq("type", "messaging");
+        viewModel.setChannelFilter(filter);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // setup the client
         configureStreamClient();
@@ -161,26 +177,15 @@ public class ChannelListFragment extends Fragment {
             // open the channel activity
             StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
         });
+
         binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
         binding.channelList.setOnUserClickListener(user -> {
             // open your user profile
         });
+
         binding.ivAdd.setOnClickListener(view -> createNewChannelDialog());
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = eq("type", "messaging");
-        viewModel.setChannelFilter(filter);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -204,7 +209,6 @@ public class ChannelListFragment extends Fragment {
         homeActivity.setSupportActionBar(toolbar);
     }
 
-    // region create new channel
     private void createNewChannelDialog() {
         final EditText inputName = new EditText(getContext());
         inputName.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);

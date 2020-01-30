@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.core;
 
 import android.content.Context;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -133,6 +134,7 @@ public class Client implements WSResponseHandler {
     // Main Params
     private String apiKey;
 
+    private ApiClientOptions apiClientOptions;
     private Boolean offlineStorage;
     private boolean anonymousConnection;
     private ApiServiceProvider apiServiceProvider;
@@ -140,6 +142,8 @@ public class Client implements WSResponseHandler {
     private UploadStorageProvider uploadStorageProvider;
     private StorageProvider storageProvider;
     private Context context;
+    private Handler delayedDisconnectWebSocketHandler = new Handler();
+
 
     // Client params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
@@ -153,6 +157,9 @@ public class Client implements WSResponseHandler {
     private EventSubscriberRegistry<ChatEventHandler> subRegistry;
     // registry for callbacks on the setUser connection
     private EventSubscriberRegistry<ClientConnectionCallback> connectSubRegistry;
+
+    private static int defaultWebSocketDelay = 1000 * 10; // milliseconds * seconds
+    private int webSocketDisconnectDelay;
 
     private Map<String, Config> channelTypeConfigs;
 
@@ -275,6 +282,7 @@ public class Client implements WSResponseHandler {
             };
 
     public Client(String apiKey,
+                  ApiClientOptions apiClientOptions,
                   ApiServiceProvider apiServiceProvider,
                   WebSocketServiceProvider webSocketServiceProvider,
                   UploadStorageProvider uploadStorageProvider,
@@ -282,6 +290,7 @@ public class Client implements WSResponseHandler {
                   ConnectionLiveData connectionLiveData) {
         connected = false;
         this.apiKey = apiKey;
+        this.apiClientOptions = apiClientOptions;
         subRegistry = new EventSubscriberRegistry();
         connectSubRegistry = new EventSubscriberRegistry<>();
         channelTypeConfigs = new HashMap<>();
@@ -291,6 +300,7 @@ public class Client implements WSResponseHandler {
         this.uploadStorageProvider = uploadStorageProvider;
         this.storageProvider = storageProvider;
         this.state = new ClientState(this);
+        this.webSocketDisconnectDelay = defaultWebSocketDelay;
 
         StreamChat.getLogger().logD(this,"instance created: " + apiKey);
 
@@ -308,7 +318,9 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey, ApiClientOptions options) {
-        this(apiKey, new StreamApiServiceProvider(options),
+        this(apiKey,
+                options,
+                new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
                 new StreamStorageProvider(),
@@ -316,7 +328,9 @@ public class Client implements WSResponseHandler {
     }
 
     public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
-        this(apiKey, new StreamApiServiceProvider(options),
+        this(apiKey,
+                options,
+                new StreamApiServiceProvider(options),
                 new StreamWebSocketServiceProvider(options, apiKey),
                 new StreamUploadStorageProvider(options),
                 new StreamStorageProvider(),
@@ -352,6 +366,18 @@ public class Client implements WSResponseHandler {
 
     public String getClientID() {
         return clientID;
+    }
+
+    /**
+     * Set custom disconnection delay for websocket
+     * @param delayInMilliseconds - time in milliseconds
+     */
+    public void setWebSocketDisconnectDelay(int delayInMilliseconds) {
+        if (delayInMilliseconds < 0) {
+            Log.e(TAG, "Value should be greater than 0");
+            return;
+        }
+        this.webSocketDisconnectDelay = delayInMilliseconds;
     }
 
     public Map<String, Channel> getActiveChannelMap() {
@@ -2066,6 +2092,15 @@ public class Client implements WSResponseHandler {
                     }
                 }
         );
+    }
+
+    public void cancelScheduleWebSocketDisconnect() {
+        delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+    }
+
+    public void disconnectWebSocketWithDelay() {
+        delayedDisconnectWebSocketHandler.removeCallbacksAndMessages(null);
+        delayedDisconnectWebSocketHandler.postDelayed(this::disconnectWebSocket, webSocketDisconnectDelay);
     }
 
     /**
