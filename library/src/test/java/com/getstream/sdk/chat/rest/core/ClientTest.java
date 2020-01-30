@@ -131,6 +131,7 @@ public class ClientTest {
         StreamChat.setLogger(logger);
 
         client = new Client(TEST_API_KEY,
+                new ApiClientOptions(),
                 apiServiceProvider,
                 webSocketServiceProvider,
                 uploadStorageProvider,
