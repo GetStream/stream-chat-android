@@ -13,6 +13,7 @@
 * [Java API Docs](https://getstream.io/chat/docs/java/#introduction)
 * [Kotlin API Docs](https://getstream.io/chat/docs/kotlin/#introduction)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
+* [WhatsApp clone Tutorial] (https://getstream.io/blog/build-whatsapp-clone/)
 
 ## Java/Kotlin Chat Tutorial
 
