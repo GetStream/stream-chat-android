@@ -71,4 +71,7 @@ dependencies {
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-messaging:20.0.0'
 }
